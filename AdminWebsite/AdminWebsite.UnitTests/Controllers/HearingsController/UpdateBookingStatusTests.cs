@@ -35,6 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
         private readonly Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IConferencesService> _conferencesServiceMock;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
@@ -50,14 +51,29 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiClient = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
+            _conferencesServiceMock = new Mock<IConferencesService>();
 
-            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                userAccountService.Object, _notificationApiMock.Object, _videoApiClient.Object, _bookingsApiClient.Object, _participantGroupLogger.Object, _kinlyOptionsMock.Object);
-
+            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = new MeetingRoomResponse
+                    {
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = "expected_conference_phone_id"
+                    }
+                });
+            
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+            
+            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
+            _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
+                userAccountService.Object, _notificationApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -65,6 +81,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
+                _conferencesServiceMock.Object,
                 Mock.Of<IPublicHolidayRetriever>());
         }
 
@@ -151,19 +168,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, request));
-            _pollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
+            _conferencesServiceMock
+                .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(expectedConferenceDetailsResponse);
             _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
 
@@ -175,11 +181,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
-            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ),Times.AtLeastOnce);
 
             _notificationApiMock.Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
@@ -324,20 +325,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
 
-            _pollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                }) 
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
+            _conferencesServiceMock .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
+                                    .ThrowsAsync(new VideoApiException("", 0, "", null, null));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
@@ -353,11 +342,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                                                                                                      && b.UpdatedBy == "System"
                                                                                                                      && b.CancelReason == string.Empty
                                                                                                                                 )), Times.Once);
-            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-               (
-                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-               ), Times.AtLeastOnce);
         }
 
         [Test]

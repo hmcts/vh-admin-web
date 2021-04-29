@@ -29,6 +29,7 @@ namespace AdminWebsite.UnitTests.Services
         private HearingsService _service;
         private HearingDetailsResponse _hearing;
         private const string _expectedTeleConferencePhoneNumber = "expected_conference_phone_number";
+        private const string _expectedTeleConferenceId = "expected_conference_phone_id";
         
         [SetUp]
         public void Setup()
@@ -38,32 +39,24 @@ namespace AdminWebsite.UnitTests.Services
             {
                 ConferencePhoneNumber = _expectedTeleConferencePhoneNumber
             });
-            _service = _mocker.Create<HearingsService>();
-            _hearing = InitHearing();
-        }
 
-        [Test]
-        public async Task should_return_correct_tele_conference_id_and_phone_number()
-        {
-            // Arrange
-            var expectedTeleConferenceId = "tele_conference_id";
-            var service = new Mock<IHearingsService>();
-            service.Setup(s => s.GetTelephoneConferenceDetails(It.IsAny<Guid>())).CallBase();
-            service.Setup(s => s.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(
-                new ConferenceDetailsResponse
+            _mocker.Mock<IConferencesService>()
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
                 {
-                    MeetingRoom = new MeetingRoomResponse()
+                    MeetingRoom = new MeetingRoomResponse
                     {
-                        TelephoneConferenceId = expectedTeleConferenceId
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = _expectedTeleConferenceId
                     }
                 });
             
-            // Act
-            var teleConferenceDetails = await service.Object.GetTelephoneConferenceDetails(Guid.NewGuid());
-            
-            // Assert
-            teleConferenceDetails.TeleConferencePhoneNumber.Should().Be(_expectedTeleConferencePhoneNumber);
-            teleConferenceDetails.TeleConferenceId.Should().Be(expectedTeleConferenceId);
+            _service = _mocker.Create<HearingsService>();
+            _hearing = InitHearing();
         }
         
         [Test]
@@ -93,7 +86,6 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
         {
-            var expectedConferencePhoneNumber = "phone_number";
             _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
 
             var secondHearing = InitHearing();
@@ -102,7 +94,7 @@ namespace AdminWebsite.UnitTests.Services
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(secondHearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge")));
         }
 
@@ -299,6 +291,17 @@ namespace AdminWebsite.UnitTests.Services
                     Times.Exactly(0));
         }
 
+        [Test]
+        public async Task should_return_correct_tele_conference_id_and_phone_number()
+        {
+            // Act
+            var teleConferenceDetails = await _service.GetTelephoneConferenceDetails(Guid.NewGuid());
+            
+            // Assert
+            teleConferenceDetails.TeleConferencePhoneNumber.Should().Be(_expectedTeleConferencePhoneNumber);
+            teleConferenceDetails.TeleConferenceId.Should().Be(_expectedTeleConferenceId);
+        }
+        
         [Test]
         public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {

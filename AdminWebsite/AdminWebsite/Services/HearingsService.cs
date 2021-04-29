@@ -14,16 +14,26 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
-using VideoApi.Client;
-using VideoApi.Contract.Responses;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
- using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
+using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
 using UpdateEndpointRequest = BookingsApi.Contract.Requests.UpdateEndpointRequest;
 using UpdateParticipantRequest = BookingsApi.Contract.Requests.UpdateParticipantRequest;
 
 namespace AdminWebsite.Services
 {
+    public class TeleConferenceDetails
+    {
+        public string TeleConferencePhoneNumber { get; }
+        public string TeleConferenceId { get; }
+
+        public TeleConferenceDetails(string teleConferencePhoneNumber, string teleConferenceId)
+        {
+            TeleConferencePhoneNumber = teleConferencePhoneNumber;
+            TeleConferenceId = teleConferenceId;
+        }
+    }
+    
     public interface IHearingsService
     {
         Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
@@ -42,7 +52,6 @@ namespace AdminWebsite.Services
         /// Not to be confused with the "confirmed process".
         /// </summary>
         /// <param name="hearing"></param>
-        /// <param name="conferencePhoneNumber"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
         Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
@@ -66,13 +75,6 @@ namespace AdminWebsite.Services
         Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
-
-        // TODO: Abstract to a conferences service
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
-
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
-
-        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
     }
 
     public class HearingsService : IHearingsService
@@ -80,20 +82,20 @@ namespace AdminWebsite.Services
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IUserAccountService _userAccountService;
         private readonly INotificationApiClient _notificationApiClient;
-        private readonly IVideoApiClient _videoApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly IConferencesService _conferencesService;
         private readonly KinlyConfiguration _kinlyConfiguration;
 
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IOptions<KinlyConfiguration> kinlyOptions)
+            INotificationApiClient notificationApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferencesService conferencesService, IOptions<KinlyConfiguration> kinlyOptions)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
             _notificationApiClient = notificationApiClient;
-            _videoApiClient = videoApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _conferencesService = conferencesService;
             _kinlyConfiguration = kinlyOptions.Value;
         }
 
@@ -275,50 +277,14 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
-        {
-            try
-            {
-                var details = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    6, _ => TimeSpan.FromSeconds(8),
-                    retryAttempt =>
-                        _logger.LogWarning(
-                            "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => !videoApiResponseObject.HasValidMeetingRoom(),
-                    () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
-                );
-                return details;
-            }
-            catch (VideoApiException ex)
-            {
-                _logger.LogError(ex, $"{errorMessage}: {ex.Message}");
-            }
-
-            return new ConferenceDetailsResponse();
-        }
-
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
-        {
-            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
-        }
-
         public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
         {
-            try
-            {
-                var  conferenceDetailsResponse = await GetConferenceDetailsByHearingIdWithRetry(hearingId,
-                    "Couldn't get telephone conference details.");
-                if (conferenceDetailsResponse.HasValidMeetingRoom())
-                    return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
-                        conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
-                else
-                    throw new NotImplementedException();
-            }
-            catch (VideoApiException e)
-            {
-                throw new NotImplementedException();
-            }
+            var conferenceDetailsResponse = await _conferencesService.GetConferenceDetailsByHearingId(hearingId);
+            if (conferenceDetailsResponse.HasValidMeetingRoom())
+                return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
+                    conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
+
+            throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
         public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
@@ -605,17 +571,6 @@ namespace AdminWebsite.Services
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id, updateParticipantRequest);
                 }
             }
-        }
-    }
-
-    public class TeleConferenceDetails
-    {
-        public string TeleConferencePhoneNumber { get; }
-        public string TeleConferenceId { get; }
-        public TeleConferenceDetails(string teleConferencePhoneNumber, string teleConferenceId)
-        {
-            TeleConferencePhoneNumber = teleConferencePhoneNumber;
-            TeleConferenceId = teleConferenceId;
         }
     }
 }

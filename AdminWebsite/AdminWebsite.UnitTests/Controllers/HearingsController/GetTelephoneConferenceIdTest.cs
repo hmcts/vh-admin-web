@@ -27,6 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<IConferencesService> _conferencesServiceMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
         private AdminWebsite.Controllers.HearingsController _controller;
@@ -46,14 +47,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
+            _conferencesServiceMock = new Mock<IConferencesService>();
+            
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object,
-                _kinlyOptionsMock.Object);
+                _userAccountService.Object, _notificationApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -61,6 +63,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
+                _conferencesServiceMock.Object,
                 Mock.Of<IPublicHolidayRetriever>());
 
             _conference = new ConferenceDetailsResponse
@@ -79,7 +82,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_ok_status_and_telephone_conference_id_if_hearing_is_confirmed()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>())).ReturnsAsync(_conference);
+            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>())).ReturnsAsync(_conference);
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().Be(200);
@@ -101,9 +104,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_bad_request_if_exceptions_is_thrown()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>()))
-                            .Throws(new VideoApiException("Error", 400, null, null, null));
-
+            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>())).Throws(new VideoApiException("Error", 400, null, null, null));
+            
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (BadRequestObjectResult)result.Result;
             okRequestResult.StatusCode.Should().Be(400);

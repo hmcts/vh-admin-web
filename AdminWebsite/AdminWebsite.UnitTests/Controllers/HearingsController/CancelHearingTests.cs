@@ -35,6 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
+        private Mock<IConferencesService> _conferencesServiceMock;
 
         private IHearingsService _hearingsService;
 
@@ -48,6 +49,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
+            _conferencesServiceMock = new Mock<IConferencesService>();
 
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
@@ -55,9 +57,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
-                _bookingsApiClient.Object, _participantGroupLogger.Object,
-                _kinlyOptionsMock.Object);
+                _userAccountService.Object, _notificationApiMock.Object,
+                _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -65,6 +66,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
+                _conferencesServiceMock.Object,
                 Mock.Of<IPublicHolidayRetriever>());
 
             _guid = Guid.NewGuid();

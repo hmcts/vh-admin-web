@@ -19,6 +19,7 @@ using BookingsApi.Contract.Responses;
 using VideoApi.Client;
 using Microsoft.Extensions.Options;
 using AdminWebsite.Configuration;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -31,6 +32,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IConferencesService> _conferencesServiceMock;
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private HearingDetailsResponse _vhExistingHearing;
@@ -53,14 +55,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
 
+            _conferencesServiceMock = new Mock<IConferencesService>();
+            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = new MeetingRoomResponse
+                    {
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = "expected_conference_phone_id"
+                    }
+                });
+
+            
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
-                _bookingsApiClient.Object, _participantGroupLogger.Object,
+                _userAccountService.Object, _notificationApiMock.Object,
+                _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object,
                 _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
@@ -69,6 +87,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
+                _conferencesServiceMock.Object,
                 Mock.Of<IPublicHolidayRetriever>());
 
             _vhExistingHearing = new HearingDetailsResponse
