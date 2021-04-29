@@ -101,23 +101,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private string GetJudgeEmail(HearingDetailsResponse hearing)
         {
-            var judge = hearing.Participants.SingleOrDefault(x =>
-                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-            if (judge != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return judge.ContactEmail;
-            }
             if (hearing.IsJudgeEmailEJud())
             {
                 var judge = hearing.Participants.Single(x =>
                     x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
                 return judge.ContactEmail;
             }
-
             var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
             return email == string.Empty ? null : email;
         }
-        
+
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try
