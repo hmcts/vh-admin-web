@@ -86,7 +86,13 @@ namespace AdminWebsite.Mappers
                 participant.TelephoneNumber = hearing.GetJudgePhone();
             }
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
-                StringComparison.InvariantCultureIgnoreCase))
+                StringComparison.InvariantCultureIgnoreCase) && hearing.IsJudicialOfficeHolderEJud())
+            {
+                notificationType = NotificationType.HearingAmendmentEJudJoh;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
+             StringComparison.InvariantCultureIgnoreCase) && !hearing.IsJudicialOfficeHolderEJud())
             {
                 notificationType = NotificationType.HearingAmendmentJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");

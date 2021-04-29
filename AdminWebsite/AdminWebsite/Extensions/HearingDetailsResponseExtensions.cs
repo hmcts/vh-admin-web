@@ -12,12 +12,12 @@ namespace AdminWebsite.Extensions
         {
             return hearing.CaseTypeName.Equals("Generic", StringComparison.CurrentCultureIgnoreCase);
         }
-        
+
         public static bool HasScheduleAmended(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
-        
+
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse originalHearing)
         {
             if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
@@ -38,7 +38,7 @@ namespace AdminWebsite.Extensions
             var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
             return !string.IsNullOrEmpty(otherInformationDetails.JudgeEmail);
         }
-        
+
         public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
         {
             if (hearing.OtherInformation == null) return false;
@@ -48,7 +48,7 @@ namespace AdminWebsite.Extensions
 
         public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
-            
+
             var email = GetOtherInformationObject(hearing.OtherInformation)?.JudgeEmail;
             if (email == string.Empty)
             {
@@ -63,7 +63,15 @@ namespace AdminWebsite.Extensions
                 x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
             return judge?.ContactEmail != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
         }
-        
+
+        public static bool IsJudicialOfficeHolderEJud(this HearingDetailsResponse hearing)
+        {
+            var judge = hearing?.Participants.SingleOrDefault(x =>
+                x.UserRoleName.Contains("Judicial Office Holder", StringComparison.CurrentCultureIgnoreCase));
+
+            return judge?.ContactEmail != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
+        }
+
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
             var phone = GetOtherInformationObject(hearing.OtherInformation).JudgePhone;
@@ -109,17 +117,19 @@ namespace AdminWebsite.Extensions
             }
             catch (Exception)
             {
-                if(string.IsNullOrWhiteSpace(otherInformation)){
+                if (string.IsNullOrWhiteSpace(otherInformation))
                 {
-                    return new OtherInformationDetails {OtherInformation = otherInformation};
-                }}
+                    {
+                        return new OtherInformationDetails { OtherInformation = otherInformation };
+                    }
+                }
                 var properties = otherInformation.Split("|");
                 if (properties.Length > 2)
                 {
-                    return new OtherInformationDetails {OtherInformation = properties[2]};
+                    return new OtherInformationDetails { OtherInformation = properties[2] };
                 }
 
-                return new OtherInformationDetails {OtherInformation = otherInformation};
+                return new OtherInformationDetails { OtherInformation = otherInformation };
             }
         }
     }

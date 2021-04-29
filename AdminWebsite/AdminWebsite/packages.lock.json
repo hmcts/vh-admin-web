@@ -166,9 +166,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.3, )",
-        "resolved": "1.25.3",
-        "contentHash": "leUUzJ7rb7cM6CqhyI3vqdRl6cEjNvgkrbH6yY5edONKTVklxkr/tCJfCB7x+t9B+0kPuR6knp5RKeivA4/ecw==",
+        "requested": "[1.25.6, )",
+        "resolved": "1.25.6",
+        "contentHash": "kN1pEEyc18vnKA7i4zG6kY0Cj5DHw22QmThxEhWyRuRpnJK7/9dtNHzy7b8QA+8YipIHym9p3LA7V9vvZZmxew==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
