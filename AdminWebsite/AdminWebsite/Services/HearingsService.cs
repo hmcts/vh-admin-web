@@ -22,18 +22,6 @@ using UpdateParticipantRequest = BookingsApi.Contract.Requests.UpdateParticipant
 
 namespace AdminWebsite.Services
 {
-    public class TeleConferenceDetails
-    {
-        public string TeleConferencePhoneNumber { get; }
-        public string TeleConferenceId { get; }
-
-        public TeleConferenceDetails(string teleConferencePhoneNumber, string teleConferenceId)
-        {
-            TeleConferencePhoneNumber = teleConferencePhoneNumber;
-            TeleConferenceId = teleConferenceId;
-        }
-    }
-    
     public interface IHearingsService
     {
         Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
