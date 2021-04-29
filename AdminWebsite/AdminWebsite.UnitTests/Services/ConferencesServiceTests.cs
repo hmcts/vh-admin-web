@@ -15,13 +15,13 @@ namespace AdminWebsite.UnitTests.Services
     public class ConferencesServiceTests
     {
         private AutoMock _mocker;
-        private IConferencesService _serviceUnderTest;
+        private IConferenceDetailsService _serviceUnderTest;
         
         [SetUp]
         public void SetUp()
         {
             _mocker = AutoMock.GetLoose();
-            _serviceUnderTest = _mocker.Create<ConferencesService>();
+            _serviceUnderTest = _mocker.Create<ConferenceDetailsService>();
         }
 
         [Test]

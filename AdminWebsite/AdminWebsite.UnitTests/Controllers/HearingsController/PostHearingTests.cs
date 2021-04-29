@@ -45,7 +45,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
-        private Mock<IConferencesService> _conferencesServiceMock;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
         private IHearingsService _hearingsService;
@@ -65,7 +65,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
-            _conferencesServiceMock = new Mock<IConferencesService>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
 
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse

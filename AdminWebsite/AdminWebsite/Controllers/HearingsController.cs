@@ -38,7 +38,7 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
-        private readonly IConferencesService _conferencesService;
+        private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
@@ -49,7 +49,7 @@ namespace AdminWebsite.Controllers
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            ILogger<HearingsController> logger, IHearingsService hearingsService, IConferencesService conferencesService, IPublicHolidayRetriever publicHolidayRetriever)
+            ILogger<HearingsController> logger, IHearingsService hearingsService, IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -57,7 +57,7 @@ namespace AdminWebsite.Controllers
             _editHearingRequestValidator = editHearingRequestValidator;
             _logger = logger;
             _hearingsService = hearingsService;
-            _conferencesService = conferencesService;
+            _conferenceDetailsService = conferenceDetailsService;
             _publicHolidayRetriever = publicHolidayRetriever;
         }
 
@@ -411,7 +411,7 @@ namespace AdminWebsite.Controllers
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
                     var conferenceDetailsResponse =
-                        await _conferencesService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                        await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
                     if (conferenceDetailsResponse.HasValidMeetingRoom()) 
                     {
@@ -469,7 +469,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var conferenceDetailsResponse = await _conferencesService.GetConferenceDetailsByHearingId(hearingId);
+                var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
 
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
                     return Ok(new PhoneConferenceResponse

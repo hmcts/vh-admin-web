@@ -40,7 +40,7 @@ namespace AdminWebsite.UnitTests.Services
                 ConferencePhoneNumber = _expectedTeleConferencePhoneNumber
             });
 
-            _mocker.Mock<IConferencesService>()
+            _mocker.Mock<IConferenceDetailsService>()
                 .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {

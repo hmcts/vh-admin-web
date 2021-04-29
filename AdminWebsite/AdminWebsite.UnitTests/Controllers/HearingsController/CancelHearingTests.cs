@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
-        private Mock<IConferencesService> _conferencesServiceMock;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
 
         private IHearingsService _hearingsService;
 
@@ -49,7 +49,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            _conferencesServiceMock = new Mock<IConferencesService>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
 
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();

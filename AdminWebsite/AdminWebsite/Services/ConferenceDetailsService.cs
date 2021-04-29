@@ -11,20 +11,20 @@ using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.Services
 {
-    public interface IConferencesService
+    public interface IConferenceDetailsService
     {
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
     }
     
-    public class ConferencesService : IConferencesService
+    public class ConferenceDetailsService : IConferenceDetailsService
     {
         private readonly IPollyRetryService _pollyRetryService;
-        private readonly ILogger<ConferencesService> _logger;
+        private readonly ILogger<ConferenceDetailsService> _logger;
         private readonly IVideoApiClient _videoApiClient;
 
-        public ConferencesService(IPollyRetryService pollyRetryService, ILogger<ConferencesService> logger, IVideoApiClient videoApiClient)
+        public ConferenceDetailsService(IPollyRetryService pollyRetryService, ILogger<ConferenceDetailsService> logger, IVideoApiClient videoApiClient)
         {
             _pollyRetryService = pollyRetryService;
             _logger = logger;

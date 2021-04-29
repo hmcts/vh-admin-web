@@ -40,7 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private Mock<IConferencesService> _conferencesServiceMock;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
@@ -57,7 +57,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            _conferencesServiceMock = new Mock<IConferencesService>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
 
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse

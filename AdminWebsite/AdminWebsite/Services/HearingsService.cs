@@ -84,18 +84,18 @@ namespace AdminWebsite.Services
         private readonly INotificationApiClient _notificationApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
-        private readonly IConferencesService _conferencesService;
+        private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly KinlyConfiguration _kinlyConfiguration;
 
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferencesService conferencesService, IOptions<KinlyConfiguration> kinlyOptions)
+            INotificationApiClient notificationApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
             _notificationApiClient = notificationApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
-            _conferencesService = conferencesService;
+            _conferenceDetailsService = conferenceDetailsService;
             _kinlyConfiguration = kinlyOptions.Value;
         }
 
@@ -279,7 +279,7 @@ namespace AdminWebsite.Services
 
         public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
         {
-            var conferenceDetailsResponse = await _conferencesService.GetConferenceDetailsByHearingId(hearingId);
+            var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
             if (conferenceDetailsResponse.HasValidMeetingRoom())
                 return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
                     conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);

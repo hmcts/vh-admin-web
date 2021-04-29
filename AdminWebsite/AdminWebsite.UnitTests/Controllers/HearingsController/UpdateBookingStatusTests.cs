@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
         private readonly Mock<INotificationApiClient> _notificationApiMock;
-        private Mock<IConferencesService> _conferencesServiceMock;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
@@ -51,7 +51,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiClient = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            _conferencesServiceMock = new Mock<IConferencesService>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
 
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse
