@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -10,6 +11,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
@@ -33,7 +35,7 @@ namespace AdminWebsite.Services
         Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict);
 
-        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, string conferencePhoneNumber, List<ParticipantResponse> participants = null);
+        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null);
 
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
@@ -43,10 +45,10 @@ namespace AdminWebsite.Services
         /// <param name="conferencePhoneNumber"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
-        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, string conferencePhoneNumber, List<ParticipantResponse> participants = null);
-        Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days, string conferencePhoneNumber);
+        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
+        Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
 
-        Task SendHearingReminderEmail(HearingDetailsResponse hearing, string conferencePhoneNumber);
+        Task SendHearingReminderEmail(HearingDetailsResponse hearing);
         
         Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
@@ -65,9 +67,12 @@ namespace AdminWebsite.Services
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
+        // TODO: Abstract to a conferences service
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
+
+        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
     }
 
     public class HearingsService : IHearingsService
@@ -78,9 +83,10 @@ namespace AdminWebsite.Services
         private readonly IVideoApiClient _videoApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IOptions<KinlyConfiguration> kinlyOptions)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
@@ -88,6 +94,7 @@ namespace AdminWebsite.Services
             _videoApiClient = videoApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _kinlyConfiguration = kinlyOptions.Value;
         }
 
         public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
@@ -142,7 +149,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, string conferencePhoneNumber, List<ParticipantResponse> participants = null)
+        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
         {
             if (updatedHearing.IsGenericHearing())
             {
@@ -161,10 +168,12 @@ namespace AdminWebsite.Services
                     .ToList();
             }
 
+            var teleConferenceDetails = await GetTelephoneConferenceDetails(updatedHearing.Id);
+            
             var requests = participantsToEmail
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
-                        caseName, caseNumber, originalHearing.ScheduledDateTime, updatedHearing.ScheduledDateTime, conferencePhoneNumber))
+                        caseName, caseNumber, originalHearing.ScheduledDateTime, updatedHearing.ScheduledDateTime, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
                 .ToList();
 
             foreach (var request in requests)
@@ -173,7 +182,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, string conferencePhoneNumber, List<ParticipantResponse> participants = null)
+        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null)
         {
             if (hearing.IsGenericHearing())
             {
@@ -182,9 +191,12 @@ namespace AdminWebsite.Services
 
             var participantsToEmail = participants ?? hearing.Participants;
 
+            
+            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
+            
             var requests = participantsToEmail
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant, conferencePhoneNumber))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
                 .ToList();
 
             foreach (var request in requests)
@@ -193,16 +205,18 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days, string conferencePhoneNumber)
+        public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
         {
             if (hearing.IsGenericHearing())
             {
                 return;
             }
 
+            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
+            
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days, conferencePhoneNumber))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
                 .ToList();
 
             foreach (var request in requests)
@@ -211,7 +225,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendHearingReminderEmail(HearingDetailsResponse hearing, string conferencePhoneNumber)
+        public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
         {
             if (hearing.IsGenericHearing())
             {
@@ -223,9 +237,11 @@ namespace AdminWebsite.Services
                 await SendJudgeConfirmationEmail(hearing);
             }
 
+            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
+            
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant, conferencePhoneNumber))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferencePhoneNumber))
                 .ToList();
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
@@ -240,7 +256,7 @@ namespace AdminWebsite.Services
             {
                 var judge = hearing.Participants
                     .First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge, null);
+                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge, null, null);
             }
             else
             {
@@ -250,7 +266,7 @@ namespace AdminWebsite.Services
                     return;
                 }
                 var judge = firstHearingForGroup.Participants.First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count, null);
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count, null, null);
             }
 
             if (request.ContactEmail != null)
@@ -285,6 +301,24 @@ namespace AdminWebsite.Services
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
         {
             return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
+        }
+
+        public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
+        {
+            try
+            {
+                var  conferenceDetailsResponse = await GetConferenceDetailsByHearingIdWithRetry(hearingId,
+                    "Couldn't get telephone conference details.");
+                if (conferenceDetailsResponse.HasValidMeetingRoom())
+                    return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
+                        conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
+                else
+                    throw new NotImplementedException();
+            }
+            catch (VideoApiException e)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
@@ -571,6 +605,17 @@ namespace AdminWebsite.Services
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id, updateParticipantRequest);
                 }
             }
+        }
+    }
+
+    public class TeleConferenceDetails
+    {
+        public string TeleConferencePhoneNumber { get; }
+        public string TeleConferenceId { get; }
+        public TeleConferenceDetails(string teleConferencePhoneNumber, string teleConferenceId)
+        {
+            TeleConferencePhoneNumber = teleConferencePhoneNumber;
+            TeleConferenceId = teleConferenceId;
         }
     }
 }

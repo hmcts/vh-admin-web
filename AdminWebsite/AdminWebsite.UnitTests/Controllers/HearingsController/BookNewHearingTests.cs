@@ -70,7 +70,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
                 _userAccountService, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object,
-                _participantGroupLogger.Object);
+                _participantGroupLogger.Object, _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -78,8 +78,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>(),
-                _kinlyOptionsMock.Object);
+                Mock.Of<IPublicHolidayRetriever>());
 
             InitHearingForTest();
         }

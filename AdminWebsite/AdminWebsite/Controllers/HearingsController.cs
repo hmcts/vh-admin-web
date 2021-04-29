@@ -42,14 +42,13 @@ namespace AdminWebsite.Controllers
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
-        private readonly KinlyConfiguration _kinlyConfiguration;
 
         /// <summary>
         ///     Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            ILogger<HearingsController> logger, IHearingsService hearingsService, IPublicHolidayRetriever publicHolidayRetriever, IOptions<KinlyConfiguration> kinlyConfiguration)
+            ILogger<HearingsController> logger, IHearingsService hearingsService, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -58,7 +57,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _publicHolidayRetriever = publicHolidayRetriever;
-            _kinlyConfiguration = kinlyConfiguration.Value;
         }
 
         /// <summary>
@@ -113,11 +111,11 @@ namespace AdminWebsite.Controllers
                     var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
                         request.MultiHearingDetails.EndDate, publicHolidays);
                     var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
-                    await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays, _kinlyConfiguration.ConferencePhoneNumber);
+                    await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
                 }
                 else
                 {
-                    await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse, _kinlyConfiguration.ConferencePhoneNumber);
+                    await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse);
                 }
 
                 return Created("", hearingDetailsResponse);
@@ -273,8 +271,7 @@ namespace AdminWebsite.Controllers
 
                 var participantsForAmendment = updatedHearing.Participants
                     .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, _kinlyConfiguration.ConferencePhoneNumber,
-                    participantsForAmendment);
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, participantsForAmendment);
 
 
                 return Ok(updatedHearing);
@@ -320,7 +317,8 @@ namespace AdminWebsite.Controllers
 
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, _kinlyConfiguration.ConferencePhoneNumber, participantsForConfirmation);
+                
+                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
         }
@@ -413,12 +411,12 @@ namespace AdminWebsite.Controllers
                     var conferenceDetailsResponse =
                         await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
-                    if (conferenceDetailsResponse.HasValidMeetingRoom())
+                    if (conferenceDetailsResponse.HasValidMeetingRoom()) 
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
 
                         _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
-                        await _hearingsService.SendHearingReminderEmail(hearing, _kinlyConfiguration.ConferencePhoneNumber);
+                        await _hearingsService.SendHearingReminderEmail(hearing);
 
                         return Ok(new UpdateBookingStatusResponse
                         {

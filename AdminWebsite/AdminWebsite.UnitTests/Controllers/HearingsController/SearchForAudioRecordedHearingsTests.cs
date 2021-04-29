@@ -56,7 +56,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object);
+                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object,
+                _kinlyOptionsMock.Object);
 
             _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
             _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
@@ -68,8 +69,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>(),
-                _kinlyOptionsMock.Object);
+                Mock.Of<IPublicHolidayRetriever>());
 
             _vhExistingHearing = new HearingDetailsResponse
             {
