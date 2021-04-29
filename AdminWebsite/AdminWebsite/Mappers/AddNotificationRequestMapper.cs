@@ -102,24 +102,9 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentLip;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
-            
-            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
-            {
-                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-                parameters.Add("conference phone id", $"{conferencePhoneId}");
-            }
 
-
-            return new AddNotificationRequest
-            {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
-                NotificationType = notificationType,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
-                Parameters = parameters
-            };
+            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
+                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
         }
 
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
@@ -161,22 +146,8 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
-            {
-                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-                parameters.Add("conference phone id", $"{conferencePhoneId}");
-            }
-
-            return new AddNotificationRequest
-            {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
-                NotificationType = notificationType,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
-                Parameters = parameters
-            };
+            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
+                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
         }
 
         public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
@@ -226,23 +197,9 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationLipMultiDay;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
-            
-            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
-            {
-                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-                parameters.Add("conference phone id", $"{conferencePhoneId}");
-            }
 
-            return new AddNotificationRequest
-            {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
-                NotificationType = notificationType,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
-                Parameters = parameters
-            };
+            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
+                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
         }
 
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
@@ -269,7 +226,13 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingReminderLip;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
-            
+
+            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
+                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
+        }
+
+        private static AddNotificationRequest CreateNotificationRequest(Guid hearingId, MessageType messageType, string participantContactEmail, NotificationType notificationType, Guid participantId, string participantTelephoneNumber, Dictionary<string, string> parameters, string conferencePhoneNumber, string conferencePhoneId)
+        {
             if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
             {
                 parameters.Add("conference phone number", $"{conferencePhoneNumber}");
@@ -278,12 +241,12 @@ namespace AdminWebsite.Mappers
 
             return new AddNotificationRequest
             {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
+                HearingId = hearingId,
+                MessageType = messageType,
+                ContactEmail = participantContactEmail,
                 NotificationType = notificationType,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
+                ParticipantId = participantId,
+                PhoneNumber = participantTelephoneNumber,
                 Parameters = parameters
             };
         }
