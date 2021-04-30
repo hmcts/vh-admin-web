@@ -86,15 +86,9 @@ namespace AdminWebsite.Mappers
                 participant.TelephoneNumber = hearing.GetJudgePhone();
             }
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
-                StringComparison.InvariantCultureIgnoreCase) && hearing.IsJudicialOfficeHolderEJud())
+                StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = NotificationType.HearingAmendmentEJudJoh;
-                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
-            }
-            else if (participant.UserRoleName.Contains("Judicial Office Holder",
-             StringComparison.InvariantCultureIgnoreCase) && !hearing.IsJudicialOfficeHolderEJud())
-            {
-                notificationType = NotificationType.HearingAmendmentJoh;
+                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingAmendmentEJudJoh : NotificationType.HearingAmendmentJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -240,14 +234,9 @@ namespace AdminWebsite.Mappers
 
             NotificationType notificationType;
             if (participant.UserRoleName.Contains("Judicial Office Holder",
-                StringComparison.InvariantCultureIgnoreCase) && !hearing.IsJudicialOfficeHolderEJud())
+                StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = NotificationType.HearingReminderJoh;
-                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
-            }else  if (participant.UserRoleName.Contains("Judicial Office Holder",
-                StringComparison.InvariantCultureIgnoreCase) && hearing.IsJudicialOfficeHolderEJud())
-            {
-                notificationType = NotificationType.HearingReminderEJudJoh;
+                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingReminderEJudJoh : NotificationType.HearingReminderJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
