@@ -240,9 +240,14 @@ namespace AdminWebsite.Mappers
 
             NotificationType notificationType;
             if (participant.UserRoleName.Contains("Judicial Office Holder",
-                StringComparison.InvariantCultureIgnoreCase))
+                StringComparison.InvariantCultureIgnoreCase) && !hearing.IsJudicialOfficeHolderEJud())
             {
                 notificationType = NotificationType.HearingReminderJoh;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }else  if (participant.UserRoleName.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase) && hearing.IsJudicialOfficeHolderEJud())
+            {
+                notificationType = NotificationType.HearingReminderEJudJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
