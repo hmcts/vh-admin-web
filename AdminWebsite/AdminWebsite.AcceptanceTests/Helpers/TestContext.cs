@@ -6,6 +6,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.Services.Models;
 using TestApi.Contract.Dtos;
 using Notify.Interfaces;
 
@@ -24,5 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public List<UserDto> Users { get; set; }
         public AdminWebConfig WebConfig { get; set; }
         public IAsyncNotificationClient NotifyClient { get; set; }
+        public List<PublicHoliday> PublicHolidays { get; set; }
     }
 }
