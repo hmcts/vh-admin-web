@@ -1,3 +1,6 @@
 @import "../node_modules/govuk-frontend/govuk/all";
 @import "../node_modules/@hmcts/frontend/all";
 
+.break-all {
+    word-break: break-all;
+}
