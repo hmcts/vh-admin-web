@@ -236,7 +236,7 @@ namespace AdminWebsite.Mappers
             if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = NotificationType.HearingReminderJoh;
+                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingReminderEJudJoh : NotificationType.HearingReminderJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
