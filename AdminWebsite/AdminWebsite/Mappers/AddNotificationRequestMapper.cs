@@ -139,7 +139,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = NotificationType.HearingConfirmationJoh;
+                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingConfirmationEJudJoh: NotificationType.HearingConfirmationJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -199,7 +199,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = NotificationType.HearingConfirmationJohMultiDay;
+                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingConfirmationEJudJohMultiDay : NotificationType.HearingConfirmationJohMultiDay;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))

@@ -162,6 +162,48 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
+        [Test]
+        public void should_map_to_ejud_joh_confirmation_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingConfirmationEJudJoh;
+            var participant = new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                Username = "testusername@hmcts.net",
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact_judiciary@hmcts.net",
+                FirstName = "John",
+                HearingRoleName = "hearingrolename",
+                LastName = "Doe",
+                TelephoneNumber = "0123456789",
+                UserRoleName = "Judicial Office Holder",
+                DisplayName = "Johnny"
+            };
+
+            var hearing = InitHearing();
+            hearing.Participants = new List<ParticipantResponse> { participant };
+
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", hearing.Cases.First().Name},
+                {"case number", hearing.Cases.First().Number},
+                {"time", "2:10 PM"},
+                {"day month year", "12 October 2020"},
+                {"judicial office holder", $"{participant.FirstName} {participant.LastName}"}
+            };
+
+            var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
+
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
+
         private HearingDetailsResponse InitHearing()
         {
             var @case = new CaseResponse
