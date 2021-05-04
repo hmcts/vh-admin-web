@@ -107,11 +107,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
                 return judge.ContactEmail;
             }
-            
             var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
             return email == string.Empty ? null : email;
         }
-        
+
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try

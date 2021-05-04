@@ -63,6 +63,7 @@ namespace AdminWebsite.Controllers
                 var eJudiciaryJudges = persons.Select(x => JudgeResponseMapper.MapTo(x));
 
                 var allJudges = courtRoomJudges.Concat(eJudiciaryJudges)
+
                     .OrderBy(x => x.Email).Take(20).ToList();
 
                 return Ok(allJudges);
