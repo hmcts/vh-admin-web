@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { interval, Subscription } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
@@ -9,6 +10,7 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    BookingStatus,
     HearingDetailsResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
@@ -126,6 +128,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
+    get canRetryConfirmation(): boolean {
+        if (!this.booking || this.booking.status !== BookingStatus.Failed) {
+            return false;
+        }
+        const scheduledTime = moment(this.booking.scheduled_date_time);
+        return scheduledTime.isAfter(moment(new Date()));
+    }
+
     mapHearing(hearingResponse: HearingDetailsResponse) {
         this.hearing = this.bookingDetailsService.mapBooking(hearingResponse);
         const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
@@ -221,6 +231,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.videoHearingService.getHearingById(this.hearingId).subscribe(
                 newData => {
+                    newData.status = BookingStatus.Created;
                     this.mapHearing(newData);
                 },
                 error => {

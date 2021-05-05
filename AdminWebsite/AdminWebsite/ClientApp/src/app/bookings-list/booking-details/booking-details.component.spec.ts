@@ -12,25 +12,26 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { CancelBookingFailedPopupComponent } from '../../popups/cancel-booking-failed-popup/cancel-booking-failed-popup.component';
 import { ConfirmBookingFailedPopupComponent } from '../../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    BookingStatus,
     HearingDetailsResponse,
+    PhoneConferenceResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    UserProfileResponse,
-    PhoneConferenceResponse
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
-import { CancelBookingFailedPopupComponent } from '../../popups/cancel-booking-failed-popup/cancel-booking-failed-popup.component';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -495,6 +496,62 @@ describe('BookingDetailsComponent', () => {
         component.booking.scheduled_date_time = futureDate;
         const timeframe = component.timeForEditing;
         expect(timeframe).toBe(true);
+        discardPeriodicTasks();
+    }));
+
+    it('should not be able to see retry confirmation when booking is not defined', fakeAsync(() => {
+        component.booking = null;
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        component.booking = undefined;
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        discardPeriodicTasks();
+    }));
+
+    it('should not be able to see retry confirmation when booking status created', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
+        component.booking.status = BookingStatus.Created;
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        discardPeriodicTasks();
+    }));
+
+    it('should not be able to see retry confirmation when booking status cancelled', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
+        component.booking.status = BookingStatus.Cancelled;
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        discardPeriodicTasks();
+    }));
+
+    it('should not be able to see retry confirmation when booking is scheduled in the past', fakeAsync(() => {
+        const date = new Date();
+        date.setHours(date.getHours() - 1);
+
+        component.ngOnInit();
+        tick(1000);
+        component.booking.status = BookingStatus.Failed;
+        component.booking.scheduled_date_time = date;
+
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        discardPeriodicTasks();
+    }));
+
+    it('should be able to see retry confirmation when booking is scheduled in the future', fakeAsync(() => {
+        const date = new Date();
+        date.setHours(date.getHours() + 1);
+
+        component.ngOnInit();
+        tick(1000);
+        component.booking.status = BookingStatus.Failed;
+        component.booking.scheduled_date_time = date;
+
+        expect(component.canRetryConfirmation).toBeTruthy();
+
         discardPeriodicTasks();
     }));
 });
