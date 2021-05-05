@@ -171,7 +171,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Username = "testusername@hmcts.net",
                 CaseRoleName = "caserolename",
-                ContactEmail = "contact_judiciary@hmcts.net",
+                ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
                 HearingRoleName = "hearingrolename",
                 LastName = "Doe",

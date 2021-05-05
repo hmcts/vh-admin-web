@@ -65,15 +65,20 @@ namespace AdminWebsite.Extensions
         {
             var judge = hearing?.Participants.SingleOrDefault(x =>
                 x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-            return judge?.ContactEmail != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
+            return IsEmailEjud(judge?.ContactEmail);
         }
 
-        public static bool IsJudicialOfficeHolderEJud(this HearingDetailsResponse hearing)
+        public static bool IsParticipantAEJudJudicialOfficeHolder(this HearingDetailsResponse hearing, Guid participantId)
         {
-            var judge = hearing?.Participants.SingleOrDefault(x =>
-                x.UserRoleName.Contains("Judicial Office Holder", StringComparison.CurrentCultureIgnoreCase));
+            var joh = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
+               x.UserRoleName.Contains("Judicial Office Holder", StringComparison.CurrentCultureIgnoreCase));
 
-            return judge?.ContactEmail != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
+            return IsEmailEjud(joh?.ContactEmail);
+        }
+
+        private static bool IsEmailEjud(string email)
+        {
+            return !string.IsNullOrEmpty(email)  && email.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
         }
 
         public static string GetJudgePhone(this HearingDetailsResponse hearing)

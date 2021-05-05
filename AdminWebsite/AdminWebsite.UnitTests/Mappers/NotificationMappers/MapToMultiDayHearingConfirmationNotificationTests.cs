@@ -142,20 +142,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         [Test]
         public void should_map_to_joh_confirmation_notification()
         {
-            var expectedNotificationType = NotificationType.HearingConfirmationEJudJohMultiDay;
-            var participant = new ParticipantResponse
-            {
-                Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
-                CaseRoleName = "caserolename",
-                ContactEmail = "contact_judiciary@hmcts.net",
-                FirstName = "John",
-                HearingRoleName = "hearingrolename",
-                LastName = "Doe",
-                TelephoneNumber = "0123456789",
-                UserRoleName = "Judicial Office Holder",
-                DisplayName = "Johnny",
-            };
+            var expectedNotificationType = NotificationType.HearingConfirmationJohMultiDay;
+            var participant = InitParticipant("Judicial Office Holder");
+
             var hearing = InitHearing();
             hearing.Participants = new List<ParticipantResponse> { participant };
 
@@ -190,7 +179,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Username = "testusername@hmcts.net",
                 CaseRoleName = "caserolename",
-                ContactEmail = "contact_judiciary@hmcts.net",
+                ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
                 HearingRoleName = "hearingrolename",
                 LastName = "Doe",

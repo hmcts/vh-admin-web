@@ -88,7 +88,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingAmendmentEJudJoh : NotificationType.HearingAmendmentJoh;
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingAmendmentEJudJoh : NotificationType.HearingAmendmentJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -139,7 +139,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingConfirmationEJudJoh: NotificationType.HearingConfirmationJoh;
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJoh: NotificationType.HearingConfirmationJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -199,7 +199,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingConfirmationEJudJohMultiDay : NotificationType.HearingConfirmationJohMultiDay;
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJohMultiDay : NotificationType.HearingConfirmationJohMultiDay;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -236,7 +236,7 @@ namespace AdminWebsite.Mappers
             if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsJudicialOfficeHolderEJud() ? NotificationType.HearingReminderEJudJoh : NotificationType.HearingReminderJoh;
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingReminderEJudJoh : NotificationType.HearingReminderJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
