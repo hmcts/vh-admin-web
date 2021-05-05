@@ -15,8 +15,8 @@
 
   <ItemGroup>
     <PackageReference Include="BookingsApi.Client" Version="1.25.3" />
-    <PackageReference Include="NotificationApi.Client" Version="1.25.7" />
     <PackageReference Include="GovukNotify" Version="4.0.0" />
+    <PackageReference Include="NotificationApi.Client" Version="1.25.8" />
     <PackageReference Include="TestApi.Client" Version="1.25.2" />
     <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.30" />
   </ItemGroup>
