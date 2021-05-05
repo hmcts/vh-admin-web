@@ -187,6 +187,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJohMultiDay;
             var participant = InitParticipant("Judicial Office Holder");
             var hearing = InitHearing();
+            hearing.Participants = new List<ParticipantResponse> { participant };
 
             var expectedParameters = new Dictionary<string, string>
             {
