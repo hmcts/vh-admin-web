@@ -185,7 +185,19 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_an_ejud_joh__multi_day_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJohMultiDay;
-            var participant = InitParticipant("Judicial Office Holder");
+            var participant = var participant = new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                Username = "testusername@hmcts.net",
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact_judiciary@hmcts.net",
+                FirstName = "John",
+                HearingRoleName = "hearingrolename",
+                LastName = "Doe",
+                TelephoneNumber = "0123456789",
+                UserRoleName = "Judicial Office Holder",
+                DisplayName = "Johnny"
+            };
             var hearing = InitHearing();
             hearing.Participants = new List<ParticipantResponse> { participant };
 
