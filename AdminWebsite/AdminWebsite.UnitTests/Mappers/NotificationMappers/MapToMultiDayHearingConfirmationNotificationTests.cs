@@ -185,7 +185,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_an_ejud_joh__multi_day_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJohMultiDay;
-            var participant = var participant = new ParticipantResponse
+            var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
                 Username = "testusername@hmcts.net",
