@@ -231,7 +231,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.videoHearingService.getHearingById(this.hearingId).subscribe(
                 newData => {
-                    newData.status = BookingStatus.Created;
                     this.mapHearing(newData);
                 },
                 error => {
