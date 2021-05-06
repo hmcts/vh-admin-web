@@ -64,6 +64,16 @@
         >
           Confirm booking
         </button>
+
+        <button
+          *ngIf="hearing.hasBookingConfirmationFailed && canRetryConfirmation"
+          data-module="govuk-button"
+          class="govuk-button govuk-button--warning"
+          id="retry-confirm-button"
+          (click)="confirmHearing()"
+        >
+          Retry booking confirmation
+        </button>
       </div>
     </div>
   </div>
