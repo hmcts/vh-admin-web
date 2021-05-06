@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.Controllers
 {
@@ -469,7 +470,10 @@ namespace AdminWebsite.Controllers
 
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
                     return Ok(new PhoneConferenceResponse
-                    { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
+                    {
+                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId,
+                        IsConferenceClosed = conferenceDetailsResponse.CurrentStatus == ConferenceState.Closed
+                    });
 
                 return NotFound();
             }

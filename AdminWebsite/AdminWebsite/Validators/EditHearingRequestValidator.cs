@@ -24,10 +24,10 @@ namespace AdminWebsite.Validators
 
             RuleForEach(x => x.Participants).NotNull().SetValidator(new EditParticipantRequestValidation());
 
-            var timeToCheckHearingAgainst = DateTime.Now.AddMinutes(30);
-            RuleFor(x => x.ScheduledDateTime)
-                .Must(x => x >= timeToCheckHearingAgainst)
-                .WithMessage(SCHEDLUED_TIME_MSG);
+            // var timeToCheckHearingAgainst = DateTime.Now.AddMinutes(30);
+            // RuleFor(x => x.ScheduledDateTime)
+            //     .Must(x => x >= timeToCheckHearingAgainst)
+            //     .WithMessage(SCHEDLUED_TIME_MSG);
         }
     }
 }

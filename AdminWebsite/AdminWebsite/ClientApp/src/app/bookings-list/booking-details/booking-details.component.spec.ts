@@ -450,7 +450,7 @@ describe('BookingDetailsComponent', () => {
         const futureDate = new Date();
         futureDate.setHours(futureDate.getHours() + 1);
         component.booking.scheduled_date_time = futureDate;
-        const timeframe = component.timeForEditing;
+        const timeframe = component.canCancelHearing;
         expect(timeframe).toBe(true);
         discardPeriodicTasks();
     }));

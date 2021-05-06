@@ -115,17 +115,22 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
-    get timeForEditing(): boolean {
+    get canCancelHearing(): boolean {
         if (this.booking) {
             let withinTimeFrame: boolean;
-            const current = new Date();
-            current.setMinutes(current.getMinutes() + 30);
-            withinTimeFrame = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+            const thirtyMinuteBeforeScheduleTime = new Date(this.booking.scheduled_date_time);
+            thirtyMinuteBeforeScheduleTime.setMinutes(thirtyMinuteBeforeScheduleTime.getMinutes() - 30);
+            const currentTime = new Date();
+            withinTimeFrame = thirtyMinuteBeforeScheduleTime.valueOf() >= currentTime.valueOf();
             if (!withinTimeFrame && this.booking.status === 'Created' && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
             return withinTimeFrame;
-        }
+        } else { return false; }
+    }
+
+    get canEditHearing(): boolean {
+        return !this.videoHearingService.isConferenceClosed();
     }
 
     get canRetryConfirmation(): boolean {

@@ -3,7 +3,7 @@
     <h3 class="govuk-heading-s remove-header-padding" [attr.id]="'detailsTitle' + elementId">{{ title }}</h3>
   </div>
   <div class="govuk-grid-column-one-half">
-    <a
+    <a *ngIf="canEdit"
       [routerLink]="[editLink]"
       class="vhlink remove-header-padding"
       href="javascript:void(0)"

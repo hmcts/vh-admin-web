@@ -23,7 +23,8 @@ import {
     BookHearingRequest,
     LinkedParticipantRequest,
     LinkedParticipantResponse,
-    LinkedParticipant
+    LinkedParticipant,
+    BookingStatus
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -31,6 +32,7 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
+import * as moment from 'moment';
 
 @Injectable({
     providedIn: 'root'
@@ -440,5 +442,21 @@ export class VideoHearingsService {
 
     getJudge(): ParticipantModel {
         return this.modelHearing.participants.find(x => x.is_judge);
+    }
+
+    isConferenceClosed(): boolean {
+        this.checkForExistingHearing();
+        if ( this.modelHearing.status === BookingStatus.Booked ) {
+            return false;
+        } else if ( this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id) {
+            return true;
+        } else { return false; }
+    }
+
+    isHearingAboutToStart(): boolean {
+        this.checkForExistingHearing();
+        const currentDateTime = new Date(new Date().getTime());
+        const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
+        return difference <= 30;
     }
 }
