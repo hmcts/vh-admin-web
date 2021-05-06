@@ -405,6 +405,7 @@ namespace AdminWebsite.Controllers
 
                 try
                 {
+                    TimeSpan.From
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
                     var conferenceDetailsResponse =
                         await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
