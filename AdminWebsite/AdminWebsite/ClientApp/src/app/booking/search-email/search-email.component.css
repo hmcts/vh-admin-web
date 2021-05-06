@@ -1,6 +1,6 @@
 .vh-li-email {
     margin-top: 3px;
-    width: fit-content;
+    width: auto;
     list-style: none;
     border: 1px solid;
     font-size: 18px;
