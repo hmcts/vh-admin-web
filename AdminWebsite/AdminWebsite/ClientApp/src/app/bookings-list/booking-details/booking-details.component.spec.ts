@@ -170,7 +170,7 @@ class BookingDetailsServiceMock {
     }
 }
 
-fdescribe('BookingDetailsComponent', () => {
+describe('BookingDetailsComponent', () => {
     videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
         'getHearingById',
         'saveHearing',
