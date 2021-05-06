@@ -264,7 +264,7 @@ namespace AdminWebsite.Services
             {
                 var details = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
-                    6, _ => TimeSpan.FromSeconds(8),
+                    8, _ => TimeSpan.FromSeconds(8),
                     retryAttempt =>
                         _logger.LogWarning(
                             "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),

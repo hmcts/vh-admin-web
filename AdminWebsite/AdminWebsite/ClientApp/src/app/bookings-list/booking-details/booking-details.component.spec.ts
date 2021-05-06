@@ -1,39 +1,30 @@
-import { HttpClientModule } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
-import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { ConfirmBookingFailedPopupComponent } from '../../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
-import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    BookingStatus,
     HearingDetailsResponse,
+    PhoneConferenceResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    UserProfileResponse,
-    PhoneConferenceResponse
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
-import { CancelBookingFailedPopupComponent } from '../../popups/cancel-booking-failed-popup/cancel-booking-failed-popup.component';
 
 let component: BookingDetailsComponent;
-let fixture: ComponentFixture<BookingDetailsComponent>;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let returnUrlServiceSpy: jasmine.SpyObj<ReturnUrlService>;
@@ -144,26 +135,6 @@ export class BookingDetailsTestData {
     }
 }
 
-@Component({
-    selector: 'app-booking-participant-list',
-    template: ''
-})
-class BookingParticipantListMockComponent {
-    @Input() participants: Array<ParticipantDetailsModel> = [];
-
-    @Input() judges: Array<ParticipantDetailsModel> = [];
-
-    @Input() vh_officer_admin: boolean;
-}
-
-@Component({
-    selector: 'app-hearing-details',
-    template: ''
-})
-class HearingDetailsMockComponent {
-    @Input() hearing: BookingsDetailsModel;
-}
-
 const hearingResponse = new HearingDetailsResponse();
 
 const caseModel = new CaseModel();
@@ -231,32 +202,18 @@ describe('BookingDetailsComponent', () => {
         bookingPersistServiceSpy.selectedHearingId = '44';
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
-        TestBed.configureTestingModule({
-            declarations: [
-                BookingDetailsComponent,
-                BookingParticipantListMockComponent,
-                HearingDetailsMockComponent,
-                CancelBookingPopupComponent,
-                WaitPopupComponent,
-                ConfirmBookingFailedPopupComponent,
-                CancelBookingFailedPopupComponent
-            ],
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
-                { provide: Router, useValue: routerSpy },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: ReturnUrlService, useValue: returnUrlServiceSpy }
-            ]
-        }).compileComponents();
-        fixture = TestBed.createComponent(BookingDetailsComponent);
-        component = fixture.componentInstance;
+        const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
+        component = new BookingDetailsComponent(
+            videoHearingServiceSpy,
+            bookingPersistServiceMock,
+            userIdentityServiceSpy,
+            routerSpy,
+            bookingServiceSpy,
+            bookingPersistServiceSpy,
+            loggerSpy,
+            returnUrlServiceSpy
+        );
         component.hearingId = '1';
-        fixture.detectChanges();
     });
 
     it('should get hearings details', fakeAsync(() => {
@@ -497,4 +454,43 @@ describe('BookingDetailsComponent', () => {
         expect(timeframe).toBe(true);
         discardPeriodicTasks();
     }));
+
+    it('should not be able to see retry confirmation when booking is not defined', () => {
+        component.booking = null;
+        expect(component.canRetryConfirmation).toBeFalsy();
+
+        component.booking = undefined;
+        expect(component.canRetryConfirmation).toBeFalsy();
+    });
+
+    it('should not be able to see retry confirmation when booking status created', () => {
+        component.booking = hearingModel;
+        component.booking.status = BookingStatus.Created;
+        expect(component.canRetryConfirmation).toBeFalsy();
+    });
+
+    it('should not be able to see retry confirmation when booking status cancelled', () => {
+        component.booking = hearingModel;
+        component.booking.status = BookingStatus.Cancelled;
+        expect(component.canRetryConfirmation).toBeFalsy();
+    });
+
+    it('should not be able to see retry confirmation when booking is scheduled in the past', () => {
+        component.booking = hearingModel;
+        const date = new Date();
+        date.setHours(date.getHours() - 1);
+
+        component.booking.status = BookingStatus.Failed;
+        component.booking.scheduled_date_time = date;
+    });
+
+    it('should be able to see retry confirmation when booking is scheduled in the future', () => {
+        component.booking = hearingModel;
+        const date = new Date();
+        date.setHours(date.getHours() + 1);
+        component.booking.status = BookingStatus.Failed;
+        component.booking.scheduled_date_time = date;
+
+        expect(component.canRetryConfirmation).toBeTruthy();
+    });
 });
