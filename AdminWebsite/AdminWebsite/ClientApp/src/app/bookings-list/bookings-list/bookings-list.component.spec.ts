@@ -44,10 +44,9 @@ export class ResponseTestData {
         byDate.scheduled_date = new Date('2019-10-22 13:58:40.3730067');
         byDate.hearings = new Array<BookingsHearingResponse>();
 
-        const bhr = new BookingsHearingResponse();
+        const bhr = new BookingsHearingResponse({ hearing_date: new Date('2019-10-22 13:58:40.3730067') });
         bhr.hearing_id = '1';
         bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.hearing_date = new Date('2019-10-22 13:58:40.3730067');
         bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
         bhr.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
 
