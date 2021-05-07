@@ -28,7 +28,7 @@
       name="participantEmail"
       [(ngModel)]="email"
       (blur)="blurEmail(); populateParticipantInfo($event.target.value)"
-      class="govuk-input govuk-input--width-20"
+      class="govuk-input govuk-input--width-25"
       (keyup)="searchTerm.next($event.target.value)"
       (input)="onChange()"
       type="email"
