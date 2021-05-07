@@ -91,14 +91,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             if (!_c.Test.HearingSchedule.MultiDays) return;
             SelectMultiDaysHearing();
-            _c.Test.HearingSchedule.ScheduledDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate);
-            _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday()));
+            _c.Test.HearingSchedule.ScheduledDate = DateHelper.GetNextIfDayIfNotAWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays);
+            _c.Test.HearingSchedule.EndHearingDate = DateHelper.GetNextWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays, NotCountingToday());
             _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
-        }
-
-        private DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
-        {
-            return DateHelper.GetNextIfNotAWorkingDay(date, _c.PublicHolidays);
         }
 
         private int NotCountingToday()
