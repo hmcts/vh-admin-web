@@ -121,7 +121,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             const current = new Date();
             current.setMinutes(current.getMinutes() + 30);
             withinTimeFrame = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
-            if (!withinTimeFrame && this.booking.status === 'Created' && this.timeSubscription) {
+            if (!withinTimeFrame && this.booking.status === BookingStatus.Created && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
             return withinTimeFrame;
@@ -276,10 +276,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    getConferencePhoneDetails() {
-        if (this.hearing.Status === 'Created') {
+    async getConferencePhoneDetails() {
+        if (this.hearing.Status === BookingStatus.Created) {
             try {
-                this.videoHearingService
+                await this.videoHearingService
                     .getTelephoneConferenceId(this.hearingId)
                     .toPromise()
                     .then(phoneResponse => {

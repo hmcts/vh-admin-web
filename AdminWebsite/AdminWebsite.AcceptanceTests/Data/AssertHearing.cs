@@ -56,11 +56,9 @@ namespace AdminWebsite.AcceptanceTests.Data
         public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isMultiDayHearing,
             bool isRunningOnSauceLabs, List<PublicHoliday> publicHolidays)
         {
-            expected = expected.AddDays(day - 1);
-
             if (isMultiDayHearing)
             {
-                var newDate = DateHelper.GetNextIfNotAWorkingDay(expected, publicHolidays);
+                var newDate = DateHelper.GetNextWorkingDay(expected, publicHolidays, day - 1);
                 expected = newDate;
             }
 
