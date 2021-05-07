@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
 
 @Component({
@@ -22,7 +23,11 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     isEditRemoveVisible = true;
     isEditMode = false;
 
-    constructor(private router: Router, private logger: Logger) {}
+    constructor(
+        private router: Router,
+        private logger: Logger,
+        private videoHearingsService: VideoHearingsService,
+        ) {}
 
     ngOnChanges() {
         this.sortParticipants();
@@ -108,5 +113,9 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         interpreteeList.forEach(i => {
             i.is_interpretee = false;
         });
+    }
+
+    get canEditParticipant(): boolean {
+        return !this.videoHearingsService.isConferenceClosed() && !this.videoHearingsService.isHearingAboutToStart();
     }
 }

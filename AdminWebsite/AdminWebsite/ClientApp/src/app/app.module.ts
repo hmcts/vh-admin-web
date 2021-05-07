@@ -13,6 +13,7 @@ import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './security/auth.guard';
 import { AdminGuard } from './security/admin.guard';
+import { LastMinuteAmendments } from './security/last-minute-amendments.guard';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
@@ -83,6 +84,7 @@ export function loadConfig(configService: ConfigService) {
         DatePipe,
         UserIdentityService,
         AdminGuard,
+        LastMinuteAmendments,
         VhOfficerAdminGuard,
         { provide: ErrorHandler, useClass: ErrorService },
         LoggerService,

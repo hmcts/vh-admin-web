@@ -446,11 +446,7 @@ export class VideoHearingsService {
 
     isConferenceClosed(): boolean {
         this.checkForExistingHearing();
-        if ( this.modelHearing.status === BookingStatus.Booked ) {
-            return false;
-        } else if ( this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id) {
-            return true;
-        } else { return false; }
+        return this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id === '';
     }
 
     isHearingAboutToStart(): boolean {

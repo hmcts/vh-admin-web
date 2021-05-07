@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../security/auth.guard';
 import { AdminGuard } from '../security/admin.guard';
+import { LastMinuteAmendments } from '../security/last-minute-amendments.guard';
 
 import { AddParticipantComponent } from './add-participant/add-participant.component';
 import { AssignJudgeComponent } from './assign-judge/assign-judge.component';
@@ -13,16 +14,16 @@ import { SummaryComponent } from './summary/summary.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
 
 export const routes: Routes = [
-    { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendments] },
+    { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendments] },
     {
         path: 'assign-judge',
         component: AssignJudgeComponent,
-        canActivate: [AuthGuard, AdminGuard]
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendments]
     },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendments] },
+    { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendments] },
     { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] }
 ];

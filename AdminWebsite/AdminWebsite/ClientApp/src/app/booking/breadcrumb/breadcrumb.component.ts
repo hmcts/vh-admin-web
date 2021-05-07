@@ -18,7 +18,7 @@ export class BreadcrumbComponent implements OnInit {
     @Input()
     canNavigate: boolean;
 
-    constructor(private router: Router, private videoHearingService: VideoHearingsService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;
@@ -44,7 +44,7 @@ export class BreadcrumbComponent implements OnInit {
             return;
         }
         if (this.canNavigate) {
-            if (this.videoHearingService.validCurrentRequest()) {
+            if (this.videoHearingsService.validCurrentRequest()) {
                 this.router.navigate([nextItem.Url]);
             }
             return;
@@ -56,7 +56,10 @@ export class BreadcrumbComponent implements OnInit {
         if (this.currentItem) {
             for (const item of this.breadcrumbItems) {
                 item.Value = item.Url === this.currentRouter;
-                item.Active = item.Id <= this.currentItem.Id;
+                if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart() &&
+                item.Id !== 4) {
+                    item.Active = false;
+                } else { item.Active = item.Id <= this.currentItem.Id; }
             }
         }
     }
