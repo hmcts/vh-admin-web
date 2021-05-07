@@ -20,7 +20,6 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     $selectedForRemove = new EventEmitter<string>();
 
     isSummaryPage = false;
-    isEditRemoveVisible = true;
     isEditMode = false;
 
     constructor(
@@ -37,7 +36,6 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const currentUrl = this.router.url;
         if (currentUrl) {
             this.isSummaryPage = currentUrl.includes('summary');
-            this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
         }
         this.sortParticipants();
     }
@@ -115,7 +113,15 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         });
     }
 
-    get canEditParticipant(): boolean {
-        return !this.videoHearingsService.isConferenceClosed() && !this.videoHearingsService.isHearingAboutToStart();
+    canEditParticipant(particpant: ParticipantModel): boolean {
+        if (this.router.url.includes('assign-judge')) {
+            return false;
+        } else if (this.videoHearingsService.isConferenceClosed()) {
+            return false;
+        } else if (this.videoHearingsService.isHearingAboutToStart()) {
+            if (particpant.duringHearing) {
+                return true;
+            } else { return false; }
+        } else { return true; }
     }
 }

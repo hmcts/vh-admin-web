@@ -5,7 +5,7 @@
     *ngFor="let p of sortedParticipants"
     [hearing]="hearing"
     [participant]="p"
-    [canEdit]="canEditParticipant"
+    [canEdit]="canEditParticipant(p)"
     [isSummaryPage]="isSummaryPage"
     (edit)="editParticipant($event)"
     (remove)="removeParticipant($event)"
