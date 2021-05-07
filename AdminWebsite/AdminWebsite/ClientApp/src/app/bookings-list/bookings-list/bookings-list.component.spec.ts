@@ -39,16 +39,17 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
+        const fixedDate = new Date('2019-10-22 13:58:40.3730067');
         const response = new BookingsResponse();
         const byDate = new BookingsByDateResponse();
-        byDate.scheduled_date = new Date('2019-10-22 13:58:40.3730067');
+        byDate.scheduled_date = fixedDate;
         byDate.hearings = new Array<BookingsHearingResponse>();
 
-        const bhr = new BookingsHearingResponse({ hearing_date: new Date('2019-10-22 13:58:40.3730067') });
+        const bhr = new BookingsHearingResponse({ hearing_date: fixedDate });
         bhr.hearing_id = '1';
-        bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
+        bhr.created_date = fixedDate;
+        bhr.last_edit_date = fixedDate;
+        bhr.scheduled_date_time = fixedDate;
 
         const bhr1 = new BookingsHearingResponse();
         bhr1.hearing_id = '2';
