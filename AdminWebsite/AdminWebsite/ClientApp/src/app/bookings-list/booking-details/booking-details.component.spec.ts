@@ -444,14 +444,33 @@ describe('BookingDetailsComponent', () => {
         expect(component.timeSubscription).toBeFalsy();
         component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
     }));
-    it('should show edit button if 30min or more remain to start of hearing', fakeAsync(() => {
+    it('should show edit & cancel button if 30min or more remain to start of hearing and hearing is created', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
         const futureDate = new Date();
         futureDate.setHours(futureDate.getHours() + 1);
         component.booking.scheduled_date_time = futureDate;
-        const timeframe = component.canCancelHearing;
+        const timeframe = component.canCancelHearing && component.canEditHearing;
         expect(timeframe).toBe(true);
+        discardPeriodicTasks();
+    }));
+    it('should show edit but not cancel button if 30min or less remain to start of hearing', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
+        const futureDate = new Date();
+        futureDate.setMinutes(futureDate.getMinutes() + 29);
+        component.booking.scheduled_date_time = futureDate;
+        const timeframe = !component.canCancelHearing && component.canEditHearing;
+        expect(timeframe).toBe(true);
+        discardPeriodicTasks();
+    }));
+    it('should show neither edit or cancel button if hearing is closed', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
+        component.hearing.Status = 'Created';
+        component.hearing.TelephoneConferenceId = '';
+        const timeframe = component.canCancelHearing && component.canEditHearing;
+        expect(timeframe).toBe(false);
         discardPeriodicTasks();
     }));
 

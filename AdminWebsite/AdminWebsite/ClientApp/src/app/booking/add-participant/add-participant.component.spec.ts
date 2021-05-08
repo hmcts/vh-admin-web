@@ -263,7 +263,7 @@ describe('AddParticipantComponent', () => {
             );
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-            component.participantsListComponent = new ParticipantListComponent(routerSpy, loggerSpy);
+            component.participantsListComponent = new ParticipantListComponent(routerSpy, loggerSpy, videoHearingsServiceSpy);
 
             component.ngOnInit();
 
@@ -876,7 +876,7 @@ describe('AddParticipantComponent', () => {
     });
 });
 
-describe('AddParticipantComponent edit mode', () => {
+fdescribe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -884,7 +884,9 @@ describe('AddParticipantComponent edit mode', () => {
                 'getParticipantRoles',
                 'setBookingHasChanged',
                 'updateHearingRequest',
-                'cancelRequest'
+                'cancelRequest',
+                'isConferenceClosed',
+                'isHearingAboutToStart'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
 
@@ -953,6 +955,14 @@ describe('AddParticipantComponent edit mode', () => {
         expect(component.editMode).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+    });
+
+    it('should set duringHearing to true if participant added during hearing', () => {
+        debugger;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        component.saveParticipant();
+        expect(participant.duringHearing).toBe(true);
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
@@ -1212,7 +1222,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             );
             component.participantsListComponent = new ParticipantListComponent(
                 jasmine.createSpyObj<Router>(['navigate']),
-                loggerSpy
+                loggerSpy,
+                videoHearingsServiceSpy
             );
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
 

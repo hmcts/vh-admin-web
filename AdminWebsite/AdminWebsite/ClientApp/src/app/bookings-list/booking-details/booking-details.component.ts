@@ -130,7 +130,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     get canEditHearing(): boolean {
-        return !this.videoHearingService.isConferenceClosed();
+        return !this.videoHearingService.isConferenceClosed;
     }
 
     get canRetryConfirmation(): boolean {

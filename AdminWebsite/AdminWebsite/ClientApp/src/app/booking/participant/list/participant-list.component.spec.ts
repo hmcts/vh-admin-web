@@ -63,7 +63,7 @@ describe('ParticipantListComponent', () => {
     it('previous url summary', () => {
         component.ngOnInit();
         expect(component.isSummaryPage).toBeTruthy();
-        expect(component.isEditRemoveVisible).toBeTruthy();
+        expect(component.canEditParticipant).toBeTruthy();
     });
     it('should emit on remove', () => {
         spyOn(component.$selectedForRemove, 'emit');
