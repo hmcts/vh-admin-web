@@ -327,8 +327,8 @@ namespace AdminWebsite.Services
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge")
+            // Judge and panel member is manually created in AD, no need to create one
+            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member")
             {
                 if (hearing.Participants != null && hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
                 {
@@ -366,9 +366,9 @@ namespace AdminWebsite.Services
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value,
                         updateParticipantRequest);
                 }
-                else if (existingParticipant.UserRoleName == "Judge")
+                else if (existingParticipant.UserRoleName == "Judge"|| existingParticipant.UserRoleName == "Judicial Office Holder")
                 {
-                    //Update Judge
+                    //Update Judge and panel member
                     _logger.LogDebug("Updating judge {Participant} in hearing {Hearing}",
                         existingParticipant.Id, hearingId);
                     var updateParticipantRequest = new UpdateParticipantRequest
