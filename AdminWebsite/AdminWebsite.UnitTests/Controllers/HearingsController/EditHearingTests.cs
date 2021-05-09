@@ -400,6 +400,45 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Once);
         }
 
+        [TestCase("Confirmed By")]
+        [TestCase("")]
+        public async Task Should_add_panel_members_for_a_hearing(string confirmedBy)
+        {
+            //Arrange
+            var updatedHearing = new HearingDetailsResponse
+            {
+                Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                CaseTypeName = "Unit Test",
+                ConfirmedBy = confirmedBy
+            };
+
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
+            {
+                CaseRoleName = "Panel Member",
+                ContactEmail = "new@hmcts.net",
+                DisplayName = "new@hmcts.net"
+            });
+
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+
+            var userName = _addNewParticipantRequest.Participants.Last().ContactEmail;
+            _userAccountService
+               .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+               .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
+               .ReturnsAsync(new User { UserName = userName, Password = "test123" });
+
+            //Act
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+
+            //Assert
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()));
+        }
+
         [Test]
         public async Task Should_send_email_for_new_individual_participant_added()
         {
