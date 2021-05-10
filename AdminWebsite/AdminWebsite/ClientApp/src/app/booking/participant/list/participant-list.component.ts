@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
@@ -13,17 +12,17 @@ import { HearingModel } from '../../../common/model/hearing.model';
 })
 export class ParticipantListComponent implements OnInit, OnChanges {
     @Input() hearing: HearingModel;
-
     sortedParticipants: ParticipantModel[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
 
-    isSummaryPage = false;
+    @Input() isSummaryPage = false;
+    @Input() canEdit = false;
+
     isEditMode = false;
 
     constructor(
-        private router: Router,
         private logger: Logger,
         private videoHearingsService: VideoHearingsService,
         ) {}
@@ -33,10 +32,6 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        const currentUrl = this.router.url;
-        if (currentUrl) {
-            this.isSummaryPage = currentUrl.includes('summary');
-        }
         this.sortParticipants();
     }
 
@@ -114,7 +109,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     canEditParticipant(particpant: ParticipantModel): boolean {
-        if (this.router.url.includes('assign-judge')) {
+        if (this.canEdit) {
             return false;
         } else if (this.videoHearingsService.isConferenceClosed()) {
             return false;

@@ -195,6 +195,7 @@ participant.representee = 'test representee';
 
 const routerSpy: jasmine.SpyObj<Router> = {
     events: of(new NavigationEnd(2, '/', '/')),
+    url: 'assign-judge',
     ...jasmine.createSpyObj<Router>(['navigate'])
 } as jasmine.SpyObj<Router>;
 
@@ -227,7 +228,9 @@ describe('AddParticipantComponent', () => {
                 'getCurrentRequest',
                 'setBookingHasChanged',
                 'updateHearingRequest',
-                'cancelRequest'
+                'cancelRequest',
+                'isConferenceClosed',
+                'isHearingAboutToStart',
             ]);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -263,7 +266,8 @@ describe('AddParticipantComponent', () => {
             );
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-            component.participantsListComponent = new ParticipantListComponent(routerSpy, loggerSpy, videoHearingsServiceSpy);
+            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
+            
 
             component.ngOnInit();
 
@@ -424,53 +428,69 @@ describe('AddParticipantComponent', () => {
         expect(component.displayAddButton).toBeFalsy();
         expect(component.displayClearButton).toBeFalsy();
     });
-    it('saved participant added to list of participants', () => {
-        component.showDetails = true;
-        spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
-        component.searchEmail.email = 'mock@hmcts.net';
-        role.setValue('Litigant in person');
-        party.setValue('Applicant');
-        firstName.setValue('Sam');
-        lastName.setValue('Green');
-        title.setValue('Mrs');
-        phone.setValue('12345');
-        displayName.setValue('Sam Green');
-        companyName.setValue('CC');
-
-        component.isRoleSelected = true;
-        component.isPartySelected = true;
-
-        component.saveParticipant();
-
-        expect(component.isShowErrorSummary).toBeFalsy();
-        expect(component.hearing.participants.length).toBeGreaterThan(0);
-    });
+    
     it('saved participant with invalid details should show error summary', () => {
         component.isRoleSelected = false;
         component.isPartySelected = false;
         component.saveParticipant();
         expect(component.isShowErrorSummary).toBeTruthy();
     });
-    it('should see next button and hide add button after saved participant', () => {
-        component.showDetails = true;
-        spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
-        component.searchEmail.email = 'mock@hmcts.net';
-        role.setValue('Appellant');
-        party.setValue('CaseRole');
-        firstName.setValue('Sam');
-        lastName.setValue('Green');
-        title.setValue('Mrs');
-        phone.setValue('12345');
-        displayName.setValue('Sam');
-        companyName.setValue('CC');
-        component.isRoleSelected = true;
-        component.isPartySelected = true;
-        component.hearing.participants = [];
-        component.saveParticipant();
-        expect(component.displayNextButton).toBeTruthy();
-        expect(component.displayAddButton).toBeFalsy();
-        expect(component.displayClearButton).toBeFalsy();
-    });
+
+    fdescribe('Valid participant', () => {
+        beforeEach(() => {
+            component.showDetails = true;
+            spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+            component.searchEmail.email = 'mock@hmcts.net';
+            role.setValue('Litigant in person');
+            party.setValue('Applicant');
+            firstName.setValue('Sam');
+            lastName.setValue('Green');
+            title.setValue('Mrs');
+            phone.setValue('12345');
+            displayName.setValue('Sam Green');
+            companyName.setValue('CC');
+    
+            component.isRoleSelected = true;
+            component.isPartySelected = true;
+
+            component.participantDetails = participant;
+        })
+        it('saved participant added to list of participants', () => {
+            
+    
+            component.saveParticipant();
+    
+            expect(component.isShowErrorSummary).toBeFalsy();
+            expect(component.hearing.participants.length).toBeGreaterThan(0);
+        });
+        it('should see next button and hide add button after saved participant', () => {
+            component.hearing.participants = [];
+            component.saveParticipant();
+            expect(component.displayNextButton).toBeTruthy();
+            expect(component.displayAddButton).toBeFalsy();
+            expect(component.displayClearButton).toBeFalsy();
+        });
+    
+        it('should set duringHearing to true if participant added during hearing', () => {
+            component.hearing.participants = []
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);            
+            component.saveParticipant();
+            const addedParticipant = component.hearing.participants[0];
+            expect(addedParticipant.addedDuringHearing).toBe(true);
+        });
+
+        it('should set duringHearing to false if participant added not during hearing', () => {
+            component.hearing.participants = []
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+            component.saveParticipant();
+            const addedParticipant = component.hearing.participants[0];
+            expect(addedParticipant.addedDuringHearing).toBe(false);
+        });
+    })
+
+
     it('press button cancel display pop up confirmation dialog', () => {
         component.addParticipantCancel();
         expect(component.showCancelPopup).toBeTruthy();
@@ -876,7 +896,7 @@ describe('AddParticipantComponent', () => {
     });
 });
 
-fdescribe('AddParticipantComponent edit mode', () => {
+describe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -955,14 +975,6 @@ fdescribe('AddParticipantComponent edit mode', () => {
         expect(component.editMode).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
-    });
-
-    fit('should set duringHearing to true if participant added during hearing', () => {
-        debugger;
-        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
-        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
-        component.saveParticipant();
-        expect(participant.addedDuringHearing).toBe(true);
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
@@ -1221,7 +1233,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 loggerSpy
             );
             component.participantsListComponent = new ParticipantListComponent(
-                jasmine.createSpyObj<Router>(['navigate']),
                 loggerSpy,
                 videoHearingsServiceSpy
             );

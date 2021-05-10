@@ -563,7 +563,6 @@ describe('SummaryComponent  with multi days request', () => {
         participantServiceSpy
     );
     component.participantsListComponent = new ParticipantListComponent(
-        jasmine.createSpyObj<Router>(['navigate']),
         loggerSpy,
         videoHearingsServiceSpy
     );
