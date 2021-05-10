@@ -27,7 +27,10 @@ describe('BookingEditComponent', () => {
             TestBed.configureTestingModule({
                 imports: [RouterTestingModule],
                 declarations: [BookingEditComponent],
-                providers: [BookingService]
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy }
+                ],
             }).compileComponents();
         })
     );
@@ -35,10 +38,7 @@ describe('BookingEditComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(BookingEditComponent);
         debugElement = fixture.debugElement;
-        component = new BookingEditComponent(
-            bookingServiceSpy,
-            videoHearingServiceSpy
-        );
+        component = debugElement.componentInstance;
 
         fixture.detectChanges();
     });
@@ -53,24 +53,24 @@ describe('BookingEditComponent', () => {
         component.editLink = 'summary';
         expect(component.editLink).toEqual('/summary');
     });
-    // fit('should be able to edit when conference is open and not within 30 minutes of starting', () => {
-    //     const futureDate = new Date();
-    //     futureDate.setHours(futureDate.getHours() + 1);
-    //     debugger;
-    //     const test1 = !videoHearingServiceSpy.isConferenceClosed;
-    //     const test2 = !videoHearingServiceSpy.isHearingAboutToStart;
-    //     spyOn(videoHearingServiceSpy, "isConferenceClosed").and.returnValue(true);
-    //     spyOn(videoHearingServiceSpy, "isHearingAboutToStart").and.returnValue(true);
-    //     expect(test3).toBeTruthy();
-    // });
-    // it('should show edit & cancel button if 30min or more remain to start of hearing', fakeAsync(() => {
-    //     component.ngOnInit();
-    //     tick(1000);
-    //     const futureDate = new Date();
-    //     futureDate.setHours(futureDate.getHours() + 1);
-    //     component.booking.scheduled_date_time = futureDate;
-    //     const timeframe = component.canCancelHearing && component.canEditHearing;
-    //     expect(timeframe).toBe(true);
-    //     discardPeriodicTasks();
-    // }));
+    it('should be able to edit when conference is not about to start and is open', () => {
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(false);
+        expect(component.canEdit).toBe(true);
+    });
+    it('should not be able to edit when conference is about to start and is open', () => {
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(false);
+        expect(component.canEdit).toBe(false);
+    });
+    it('should not able to edit when conference is not about to start and is closed', () => {
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEdit).toBe(false);
+    });
+    it('should not able to edit when conference is about to start and is closed', () => {
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEdit).toBe(false);
+    });
 });

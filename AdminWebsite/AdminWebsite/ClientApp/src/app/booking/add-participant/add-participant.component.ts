@@ -592,8 +592,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.form.markAsPristine();
             this.form.updateValueAndValidity();
             const newParticipant = new ParticipantModel();
-            if (!this.videoHearingService.isConferenceClosed && this.videoHearingService.isHearingAboutToStart) {
-                newParticipant.duringHearing = true;
+            if (!this.videoHearingService.isConferenceClosed() && this.videoHearingService.isHearingAboutToStart()) {
+                this.participantDetails.addedDuringHearing = true;
             }
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
@@ -726,13 +726,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         } else {
             newParticipant.company = this.companyNameIndividual.value;
         }
+        debugger;
         newParticipant.username = this.participantDetails ? this.participantDetails.username : '';
         newParticipant.representee = this.representing.value;
         newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
         newParticipant.interpreterFor = this.interpreterFor.value === this.constants.PleaseSelect ? null : this.interpreterFor.value;
         newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
-        this.participantDetails.duringHearing = newParticipant.duringHearing;
+        newParticipant.addedDuringHearing = this.participantDetails.addedDuringHearing;
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {

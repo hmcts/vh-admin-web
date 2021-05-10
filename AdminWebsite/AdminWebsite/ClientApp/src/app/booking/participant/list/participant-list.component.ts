@@ -119,7 +119,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         } else if (this.videoHearingsService.isConferenceClosed()) {
             return false;
         } else if (this.videoHearingsService.isHearingAboutToStart()) {
-            if (particpant.duringHearing) {
+            if (particpant.addedDuringHearing) {
                 return true;
             } else { return false; }
         } else { return true; }

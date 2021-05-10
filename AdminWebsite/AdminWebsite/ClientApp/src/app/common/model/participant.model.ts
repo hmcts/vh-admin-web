@@ -23,7 +23,7 @@ export class ParticipantModel {
     is_interpretee?: boolean | undefined;
     user_role_name?: string | undefined;
     is_courtroom_account?: boolean;
-    duringHearing?: boolean | undefined;
+    addedDuringHearing?: boolean | undefined;
 
     static fromPersonResponse(person: PersonResponse): ParticipantModel {
         return person

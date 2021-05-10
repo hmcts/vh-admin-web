@@ -29,7 +29,7 @@ export class BookingEditComponent {
     }
 
     get canEdit() {
-        return !this.videoHearingsService.isConferenceClosed && !this.videoHearingsService.isHearingAboutToStart;
+        return !this.videoHearingsService.isConferenceClosed() && !this.videoHearingsService.isHearingAboutToStart();
     }
 
     edit() {

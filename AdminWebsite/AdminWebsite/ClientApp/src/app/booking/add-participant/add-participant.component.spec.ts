@@ -957,12 +957,12 @@ fdescribe('AddParticipantComponent edit mode', () => {
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     });
 
-    it('should set duringHearing to true if participant added during hearing', () => {
+    fit('should set duringHearing to true if participant added during hearing', () => {
         debugger;
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
         component.saveParticipant();
-        expect(participant.duringHearing).toBe(true);
+        expect(participant.addedDuringHearing).toBe(true);
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
