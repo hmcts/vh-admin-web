@@ -453,6 +453,6 @@ export class VideoHearingsService {
         this.checkForExistingHearing();
         const currentDateTime = new Date().getTime();
         const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
-        return difference <= 30;
+        return difference < 30;
     }
 }

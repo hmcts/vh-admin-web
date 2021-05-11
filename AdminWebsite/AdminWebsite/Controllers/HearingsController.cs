@@ -471,8 +471,7 @@ namespace AdminWebsite.Controllers
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
                     return Ok(new PhoneConferenceResponse
                     {
-                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId,
-                        IsConferenceClosed = conferenceDetailsResponse.CurrentStatus == ConferenceState.Closed
+                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                     });
 
                 return NotFound();
