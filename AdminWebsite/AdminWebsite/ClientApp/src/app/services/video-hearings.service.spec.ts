@@ -20,7 +20,7 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { Component } from '@angular/core';
 
-fdescribe('Video hearing service', () => {
+describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
     const newRequestKey = 'bh-newRequest';
