@@ -4,7 +4,7 @@ import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 
 describe('BreadcrumbComponent', () => {
-    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['validCurrentRequest']);
+    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['validCurrentRequest', 'isConferenceClosed', 'isHearingAboutToStart']);
 
     let component: BreadcrumbComponent;
     const router = {
