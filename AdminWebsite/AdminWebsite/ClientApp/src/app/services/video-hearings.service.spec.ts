@@ -518,7 +518,7 @@ describe('Video hearing service', () => {
         });
     });
 
-    fdescribe('isHearingAboutToStart', () => {
+    describe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
 
         it('should return false if hearing is not about to start', () => {
