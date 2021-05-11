@@ -350,7 +350,9 @@ namespace AdminWebsite.UnitTests.Services
             var updatedParticipant = new EditParticipantRequest
             {
                 DisplayName = "New Display Name",
-                Id = participantId
+                Id = participantId,
+                TelephoneNumber="12345",
+                Title = "New Title"
             };
 
             //Act
@@ -361,7 +363,9 @@ namespace AdminWebsite.UnitTests.Services
                 .Verify(x => x.UpdateParticipantDetailsAsync(
                     It.Is<Guid>(h => h == _hearing.Id),
                     It.Is<Guid>(p => p == participantId),
-                    It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName)), Times.Once);
+                    It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName
+                        && r.TelephoneNumber == updatedParticipant.TelephoneNumber
+                        && r.Title == updatedParticipant.Title)), Times.Once);
         }
 
         [Test]
