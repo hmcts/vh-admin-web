@@ -524,7 +524,7 @@ describe('Video hearing service', () => {
         it('should return false if hearing is not about to start', () => {
             const model = new HearingModel();
             model.scheduled_date_time = new Date();
-            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 1);
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
@@ -532,7 +532,7 @@ describe('Video hearing service', () => {
         it('should return true if hearing is not about to start', () => {
             const model = new HearingModel();
             model.scheduled_date_time = new Date();
-            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 1);
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(true);
         });

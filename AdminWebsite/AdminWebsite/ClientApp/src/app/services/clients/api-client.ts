@@ -4616,7 +4616,6 @@ export interface IHearingsForAudioFileSearchResponse {
 
 export class PhoneConferenceResponse implements IPhoneConferenceResponse {
     telephone_conference_id?: string | undefined;
-    is_conference_closed?: boolean;
 
     constructor(data?: IPhoneConferenceResponse) {
         if (data) {
@@ -4629,7 +4628,6 @@ export class PhoneConferenceResponse implements IPhoneConferenceResponse {
     init(_data?: any) {
         if (_data) {
             this.telephone_conference_id = _data['telephone_conference_id'];
-            this.is_conference_closed = _data['is_conference_closed'];
         }
     }
 
@@ -4643,14 +4641,12 @@ export class PhoneConferenceResponse implements IPhoneConferenceResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['telephone_conference_id'] = this.telephone_conference_id;
-        data['is_conference_closed'] = this.is_conference_closed;
         return data;
     }
 }
 
 export interface IPhoneConferenceResponse {
     telephone_conference_id?: string | undefined;
-    is_conference_closed?: boolean;
 }
 
 export enum JudgeAccountType {

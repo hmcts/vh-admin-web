@@ -270,12 +270,12 @@ export class ResponseTestData {
         return bookingsResponse;
     }
     getTestData(): BookingsByDateResponse {
-        const bhr = new BookingsHearingResponse();
+        const date = new Date('2019-10-22 13:58:40.3730067');
+        const bhr = new BookingsHearingResponse({ hearing_date: date });
         bhr.hearing_id = '1';
-        bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.hearing_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
+        bhr.created_date = date;
+        bhr.last_edit_date = date;
+        bhr.scheduled_date_time = date;
         bhr.court_address = 'court address';
         bhr.court_room = '12A';
         bhr.hearing_name = 'A vs B';
@@ -288,12 +288,11 @@ export class ResponseTestData {
         bhr.audio_recording_required = true;
         bhr.cancel_reason = 'some more information';
 
-        const bhr1 = new BookingsHearingResponse();
+        const bhr1 = new BookingsHearingResponse({ hearing_date: date });
         bhr1.hearing_id = '2';
-        bhr1.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.hearing_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
+        bhr1.created_date = date;
+        bhr1.last_edit_date = date;
+        bhr1.scheduled_date_time = date;
         bhr1.court_address = 'court address';
         bhr1.court_room = '12A';
         bhr1.hearing_name = 'A vs B';
