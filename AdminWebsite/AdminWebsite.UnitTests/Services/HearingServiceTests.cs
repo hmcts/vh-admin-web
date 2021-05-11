@@ -364,8 +364,6 @@ namespace AdminWebsite.UnitTests.Services
                     It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName)), Times.Once);
         }
 
-        private HearingDetailsResponse InitHearing()
-
         [Test]
         public void Should_return_false_if_HearingRoomName_is_not_changed()
         {
@@ -417,25 +415,6 @@ namespace AdminWebsite.UnitTests.Services
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
-        }
-
-        [Test]
-        public async Task Should_save_updated_panel_menber_details()
-        {
-            //Arrange 
-            var participantId = _hearing.Participants[0].Id;
-            var updatedParticipant = new EditParticipantRequest {DisplayName = "New Display Name", Id = participantId};
-
-            //Act
-            await _service.ProcessExistingParticipants(_hearing.Id, _hearing, updatedParticipant);
-
-            //Assert
-            _mocker.Mock<IBookingsApiClient>()
-                .Verify(
-                    x => x.UpdateParticipantDetailsAsync(It.Is<Guid>(h => h == _hearing.Id),
-                        It.Is<Guid>(p => p == participantId),
-                        It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName)),
-                    Times.Once);
         }
 
         [Test]
