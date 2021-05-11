@@ -100,7 +100,7 @@ namespace AdminWebsite.Services
                 _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
                 return;
             }
-
+            
             var tasks = participantGroup.Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName, hearing.Id))
                 .ToList();
 
@@ -158,12 +158,10 @@ namespace AdminWebsite.Services
                     .ToList();
             }
 
-            var teleConferenceDetails = await GetTelephoneConferenceDetails(updatedHearing.Id);
-            
             var requests = participantsToEmail
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
-                        caseName, caseNumber, originalHearing.ScheduledDateTime, updatedHearing.ScheduledDateTime, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
+                        caseName, caseNumber, originalHearing.ScheduledDateTime, updatedHearing.ScheduledDateTime))
                 .ToList();
 
             foreach (var request in requests)
@@ -181,12 +179,9 @@ namespace AdminWebsite.Services
 
             var participantsToEmail = participants ?? hearing.Participants;
 
-            
-            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
-            
             var requests = participantsToEmail
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
 
             foreach (var request in requests)
@@ -202,11 +197,9 @@ namespace AdminWebsite.Services
                 return;
             }
 
-            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
-            
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferenceId))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
                 .ToList();
 
             foreach (var request in requests)
@@ -231,7 +224,7 @@ namespace AdminWebsite.Services
             
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant, teleConferenceDetails.TeleConferencePhoneNumber, teleConferenceDetails.TeleConferencePhoneNumber))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
                 .ToList();
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
@@ -246,7 +239,7 @@ namespace AdminWebsite.Services
             {
                 var judge = hearing.Participants
                     .First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge, null, null);
+                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
             }
             else
             {
@@ -256,7 +249,7 @@ namespace AdminWebsite.Services
                     return;
                 }
                 var judge = firstHearingForGroup.Participants.First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count, null, null);
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count);
             }
 
             if (request.ContactEmail != null)

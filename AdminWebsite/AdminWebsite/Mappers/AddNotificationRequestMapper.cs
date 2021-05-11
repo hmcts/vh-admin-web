@@ -57,7 +57,7 @@ namespace AdminWebsite.Mappers
 
         public static AddNotificationRequest MapToHearingAmendmentNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime,
-            DateTime newDateTime, string conferencePhoneNumber, string conferencePhoneId)
+            DateTime newDateTime)
         {
             var parameters = new Dictionary<string, string>
             {
@@ -70,14 +70,7 @@ namespace AdminWebsite.Mappers
             };
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                hearing.IsJudgeEmailEJud())
-            {
-                notificationType = NotificationType.HearingAmendmentEJudJudge;
-                parameters.Add("judge", participant.DisplayName);
-            }
-            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                     !hearing.IsJudgeEmailEJud())
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -103,24 +96,25 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
-                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
         }
 
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant, string conferencePhoneNumber, string conferencePhoneId)
+            ParticipantResponse participant)
         {
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                hearing.IsJudgeEmailEJud())
-            {
-                notificationType = NotificationType.HearingConfirmationEJudJudge;
-                parameters.Add("judge", participant.DisplayName);
-            }
-            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                     !hearing.IsJudgeEmailEJud())
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -146,13 +140,21 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
-                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
         }
 
         public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
             HearingDetailsResponse hearing,
-            ParticipantResponse participant, int days, string conferencePhoneNumber, string conferencePhoneId)
+            ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
             var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
@@ -165,14 +167,7 @@ namespace AdminWebsite.Mappers
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                hearing.IsJudgeEmailEJud())
-            {
-                notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
-                parameters.Add("judge", participant.DisplayName);
-            }
-            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
-                     !hearing.IsJudgeEmailEJud())
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.DisplayName);
@@ -198,12 +193,20 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
-                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
         }
 
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant, string conferencePhoneNumber, string conferencePhoneId)
+            ParticipantResponse participant)
         {
             var parameters = InitConfirmReminderParams(hearing);
             parameters.Add("username", participant.Username.ToLower());
@@ -227,26 +230,14 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            return CreateNotificationRequest(hearing.Id, MessageType.Email, participant.ContactEmail, notificationType,
-                participant.Id, participant.TelephoneNumber, parameters, conferencePhoneNumber, conferencePhoneId);
-        }
-
-        private static AddNotificationRequest CreateNotificationRequest(Guid hearingId, MessageType messageType, string participantContactEmail, NotificationType notificationType, Guid participantId, string participantTelephoneNumber, Dictionary<string, string> parameters, string conferencePhoneNumber, string conferencePhoneId)
-        {
-            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
-            {
-                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-                parameters.Add("conference phone id", $"{conferencePhoneId}");
-            }
-
             return new AddNotificationRequest
             {
-                HearingId = hearingId,
-                MessageType = messageType,
-                ContactEmail = participantContactEmail,
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
                 NotificationType = notificationType,
-                ParticipantId = participantId,
-                PhoneNumber = participantTelephoneNumber,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
         }
