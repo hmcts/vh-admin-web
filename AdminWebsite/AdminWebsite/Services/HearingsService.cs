@@ -327,8 +327,6 @@ namespace AdminWebsite.Services
                 }
 
                 newParticipant.Username = participant.ContactEmail;
-                newParticipant.Title = participant.Title;
-                newParticipant.TelephoneNumber = participant.TelephoneNumber;
             }
             else
             {
