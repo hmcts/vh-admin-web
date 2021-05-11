@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
@@ -70,6 +71,9 @@ namespace AdminWebsite.Services
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
+
+        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse);
     }
 
     public class HearingsService : IHearingsService
@@ -130,6 +134,34 @@ namespace AdminWebsite.Services
                         StringComparison.CurrentCultureIgnoreCase));
                 endpoint.DefenceAdvocateUsername = defenceAdvocate.Username;
             }
+        }
+
+        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            var originalParticipants = hearingDetailsResponse.Participants
+                .Select(EditParticipantRequestMapper.MapFrom).ToList();
+            var requestParticipants = editHearingRequest.Participants;
+            var hearingCase = hearingDetailsResponse.Cases.First();
+            var originalEndpoints = hearingDetailsResponse.Endpoints == null
+                ? new List<EditEndpointRequest>()
+                : hearingDetailsResponse.Endpoints
+                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
+            if (originalParticipants.Count == requestParticipants.Count) return false;
+            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName && editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName && editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation && editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime && editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration && editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired && editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired && hearingCase.Name == editHearingRequest.Case.Name && hearingCase.Number == editHearingRequest.Case.Number && originalEndpoints.Count == requestEndpoints.Count && (originalEndpoints
+                .Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0) && (requestEndpoints
+                .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0) && (originalParticipants
+                .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                .ToList()
+                .Count == 0) && ((originalParticipants.Count != requestParticipants.Count) || (requestParticipants.Except(originalParticipants,
+                    EditParticipantRequest.EditParticipantRequestComparer)
+                .ToList()
+                .Count != 0));
         }
 
         public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
