@@ -70,6 +70,8 @@ namespace AdminWebsite.Services
 
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
+
+        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
     }
 
     public class HearingsService : IHearingsService
@@ -254,8 +256,6 @@ namespace AdminWebsite.Services
             {
                 await SendJudgeConfirmationEmail(hearing);
             }
-
-            var teleConferenceDetails = await GetTelephoneConferenceDetails(hearing.Id);
             
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
