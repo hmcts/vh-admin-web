@@ -112,11 +112,16 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
     beforeEach(
         waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'isConferenceClosed',
+                'isHearingAboutToStart'
+            ]);
             TestBed.configureTestingModule({
                 declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: router }
+                    { provide: Router, useValue: router },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
