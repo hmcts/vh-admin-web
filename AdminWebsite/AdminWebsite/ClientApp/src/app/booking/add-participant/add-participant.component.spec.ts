@@ -436,7 +436,7 @@ describe('AddParticipantComponent', () => {
         expect(component.isShowErrorSummary).toBeTruthy();
     });
 
-    fdescribe('Valid participant', () => {
+    describe('Valid participant', () => {
         beforeEach(() => {
             component.showDetails = true;
             spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
