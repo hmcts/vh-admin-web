@@ -12,10 +12,7 @@ describe('LastMinuteAmendmentsGuard', () => {
         navigate: jasmine.createSpy('navigate')
     };
 
-    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-        'isConferenceClosed',
-        'isHearingAboutToStart'
-    ]);
+    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
 
     beforeEach(() => {
