@@ -8,12 +8,14 @@ import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantListComponent } from './participant-list.component';
 import { ParticipantItemComponent } from '../item/participant-item.component';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
     navigate: jasmine.createSpy('navigate'),
     url: '/summary'
 };
+let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
 describe('ParticipantListComponent', () => {
     let component: ParticipantListComponent;
@@ -22,15 +24,21 @@ describe('ParticipantListComponent', () => {
     const pat1 = new ParticipantModel();
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
+    pat1.addedDuringHearing = false;
     const participants: any[] = [pat1, pat1];
 
     beforeEach(
         waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'isConferenceClosed',
+                'isHearingAboutToStart'
+            ]);
             TestBed.configureTestingModule({
                 declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: router }
+                    { provide: Router, useValue: router },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
@@ -60,15 +68,40 @@ describe('ParticipantListComponent', () => {
             done();
         });
     });
-    it('previous url summary', () => {
-        component.ngOnInit();
-        expect(component.isSummaryPage).toBeTruthy();
-        expect(component.canEditParticipant).toBeTruthy();
-    });
     it('should emit on remove', () => {
         spyOn(component.$selectedForRemove, 'emit');
         component.removeParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false });
         expect(component.$selectedForRemove.emit).toHaveBeenCalled();
+    });
+    it('should not be able to edit participant if canEdit is false', () => {
+        component.canEdit = false;
+        expect(component.canEditParticipant(pat1)).toBe(false);
+    });
+    it('should not be able to edit participant if canEdit is true and hearing is closed', () => {
+        component.canEdit = true;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEditParticipant(pat1)).toBe(false);
+    });
+    it('should not be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is false', () => {
+        component.canEdit = true;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        pat1.addedDuringHearing = false;
+        expect(component.canEditParticipant(pat1)).toBe(false);
+    });
+    it('should be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is true',
+    () => {
+        component.canEdit = true;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        pat1.addedDuringHearing = true;
+        expect(component.canEditParticipant(pat1)).toBe(true);
+    });
+    it('should be able to edit participant if canEdit is true, hearing is open and hearing is not about to start', () => {
+        component.canEdit = true;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        expect(component.canEditParticipant(pat1)).toBe(true);
     });
 });
 
@@ -79,11 +112,16 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
     beforeEach(
         waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'isConferenceClosed',
+                'isHearingAboutToStart'
+            ]);
             TestBed.configureTestingModule({
                 declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: router }
+                    { provide: Router, useValue: router },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
