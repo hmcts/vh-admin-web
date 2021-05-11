@@ -25,6 +25,7 @@ import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-fa
 import { Logger } from '../services/logger';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { LastMinuteAmendmentsGuard } from '../security/last-minute-amendments.guard';
 
 describe('BookingModuleRouting', () => {
     let location: Location;
@@ -36,6 +37,7 @@ describe('BookingModuleRouting', () => {
     let oidcSecurityService;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+    const lastMinuteAmendmentsGuardSpy: jasmine.SpyObj<LastMinuteAmendmentsGuard> = jasmine.createSpyObj('LastMinuteAmendmentsGuard', ['canActivate']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -54,6 +56,7 @@ describe('BookingModuleRouting', () => {
                 { provide: AdminGuard, useClass: MockAdminGuard },
                 { provide: OidcSecurityService, useClass: MockOidcSecurityService },
                 { provide: ChangesGuard, useClass: MockChangesGuard },
+                { provide: LastMinuteAmendmentsGuard, useValue: lastMinuteAmendmentsGuardSpy },
                 { provide: Logger, useValue: loggerSpy },
                 HttpClient,
                 HttpHandler,
@@ -75,6 +78,7 @@ describe('BookingModuleRouting', () => {
             oidcSecurityService.setAuthenticated(true);
             changesGuard.setflag(true);
             bookingGuard.setflag(true);
+            lastMinuteAmendmentsGuardSpy.canActivate.and.returnValue(true);
             createHearing.ngOnInit();
             router.navigate(['/book-hearing']);
             tick();
