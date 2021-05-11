@@ -86,7 +86,8 @@ describe('ParticipantListComponent', () => {
         pat1.addedDuringHearing = false;
         expect(component.canEditParticipant(pat1)).toBe(false);
     });
-    it('should be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is true', () => {
+    it('should be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is true',
+    () => {
         component.canEdit = true;
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
