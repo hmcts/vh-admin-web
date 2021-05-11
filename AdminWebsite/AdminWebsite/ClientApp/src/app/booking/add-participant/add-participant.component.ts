@@ -593,10 +593,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.form.updateValueAndValidity();
             const newParticipant = new ParticipantModel();
 
-            this.participantDetails.addedDuringHearing = (
-                !this.videoHearingService.isConferenceClosed()
-                && this.videoHearingService.isHearingAboutToStart()
-            );
+            if (this.participantDetails) {
+                this.participantDetails.addedDuringHearing = (
+                    !this.videoHearingService.isConferenceClosed()
+                    && this.videoHearingService.isHearingAboutToStart()
+                );
+            }
+
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
                 this.addLinkedParticipant(newParticipant);
