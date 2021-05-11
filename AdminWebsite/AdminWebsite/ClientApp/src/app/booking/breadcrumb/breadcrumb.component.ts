@@ -54,8 +54,11 @@ export class BreadcrumbComponent implements OnInit {
         if (this.currentItem) {
             for (const item of this.breadcrumbItems) {
                 item.Value = item.Url === this.currentRouter;
-                if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart() &&
-                !item.LastMinuteAmendable) {
+                if (
+                    !this.videoHearingsService.isConferenceClosed() &&
+                    this.videoHearingsService.isHearingAboutToStart() &&
+                    !item.LastMinuteAmendable
+                ) {
                     item.Active = false;
                 } else {
                     item.Active = item.Id <= this.currentItem.Id;

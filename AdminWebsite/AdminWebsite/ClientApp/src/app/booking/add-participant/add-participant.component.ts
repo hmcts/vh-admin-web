@@ -594,10 +594,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const newParticipant = new ParticipantModel();
 
             if (this.participantDetails) {
-                this.participantDetails.addedDuringHearing = (
-                    !this.videoHearingService.isConferenceClosed()
-                    && this.videoHearingService.isHearingAboutToStart()
-                );
+                this.participantDetails.addedDuringHearing =
+                    !this.videoHearingService.isConferenceClosed() && this.videoHearingService.isHearingAboutToStart();
             }
 
             this.mapParticipant(newParticipant);

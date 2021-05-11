@@ -22,10 +22,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
 
     isEditMode = false;
 
-    constructor(
-        private logger: Logger,
-        private videoHearingsService: VideoHearingsService,
-        ) {}
+    constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngOnChanges() {
         this.sortParticipants();
@@ -116,7 +113,11 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         } else if (this.videoHearingsService.isHearingAboutToStart()) {
             if (particpant.addedDuringHearing) {
                 return true;
-            } else { return false; }
-        } else { return true; }
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 }

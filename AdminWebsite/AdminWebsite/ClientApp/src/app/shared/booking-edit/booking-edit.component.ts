@@ -7,10 +7,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
     templateUrl: './booking-edit.component.html'
 })
 export class BookingEditComponent {
-    constructor(
-        private bookingService: BookingService,
-        private videoHearingsService: VideoHearingsService,
-        ) {}
+    constructor(private bookingService: BookingService, private videoHearingsService: VideoHearingsService) {}
 
     private _editLink = '/';
     @Input()

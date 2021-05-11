@@ -13,6 +13,8 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
         if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
             this.router.navigate(['/summary']);
             return false;
-        } else { return true; }
+        } else {
+            return true;
+        }
     }
 }

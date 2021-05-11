@@ -13,14 +13,9 @@ describe('BookingEditComponent', () => {
     let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 
-    videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
-        'isConferenceClosed',
-        'isHearingAboutToStart'
-    ]);
+    videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', ['isConferenceClosed', 'isHearingAboutToStart']);
 
-    bookingServiceSpy = jasmine.createSpyObj('BookingService', [
-        'setEditMode'
-    ]);
+    bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
 
     beforeEach(
         waitForAsync(() => {
@@ -30,7 +25,7 @@ describe('BookingEditComponent', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: BookingService, useValue: bookingServiceSpy }
-                ],
+                ]
             }).compileComponents();
         })
     );

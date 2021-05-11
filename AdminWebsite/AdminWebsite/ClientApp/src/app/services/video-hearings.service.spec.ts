@@ -516,9 +516,9 @@ describe('Video hearing service', () => {
             service.updateHearingRequest(model);
             expect(service.isConferenceClosed()).toBe(true);
         });
-    })
+    });
 
-    describe('isHearingAboutToStart', () => {
+    fdescribe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
 
         it('should return false if hearing is not about to start', () => {

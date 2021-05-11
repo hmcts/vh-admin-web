@@ -1,13 +1,13 @@
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 
-export const BreadcrumbItems: BreadcrumbItemModel [] = [
+export const BreadcrumbItems: BreadcrumbItemModel[] = [
     {
         Id: 1,
         Value: true,
         Name: 'Hearing details',
         Url: '/book-hearing',
         Active: true,
-        LastMinuteAmendable: false,
+        LastMinuteAmendable: false
     },
     {
         Id: 2,
@@ -15,7 +15,7 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Hearing schedule',
         Url: '/hearing-schedule',
         Active: false,
-        LastMinuteAmendable: false,
+        LastMinuteAmendable: false
     },
     {
         Id: 3,
@@ -23,7 +23,7 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Judge',
         Url: '/assign-judge',
         Active: false,
-        LastMinuteAmendable: false,
+        LastMinuteAmendable: false
     },
     {
         Id: 4,
@@ -31,7 +31,7 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Participants',
         Url: '/add-participants',
         Active: false,
-        LastMinuteAmendable: true,
+        LastMinuteAmendable: true
     },
     {
         Id: 5,
@@ -39,7 +39,7 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Video access points',
         Url: '/video-access-points',
         Active: false,
-        LastMinuteAmendable: false,
+        LastMinuteAmendable: false
     },
     {
         Id: 6,
@@ -47,7 +47,7 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Other information',
         Url: '/other-information',
         Active: false,
-        LastMinuteAmendable: false,
+        LastMinuteAmendable: false
     },
     {
         Id: 7,
@@ -55,6 +55,6 @@ export const BreadcrumbItems: BreadcrumbItemModel [] = [
         Name: 'Summary',
         Url: '/summary',
         Active: false,
-        LastMinuteAmendable: true,
+        LastMinuteAmendable: true
     }
 ];

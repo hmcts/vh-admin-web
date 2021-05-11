@@ -29,16 +29,13 @@ describe('ParticipantListComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-                'isConferenceClosed',
-                'isHearingAboutToStart'
-            ]);
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
             TestBed.configureTestingModule({
                 declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
                     { provide: Router, useValue: router },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
@@ -89,8 +86,7 @@ describe('ParticipantListComponent', () => {
         pat1.addedDuringHearing = false;
         expect(component.canEditParticipant(pat1)).toBe(false);
     });
-    it('should be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is true',
-    () => {
+    it('should be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is true', () => {
         component.canEdit = true;
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
@@ -112,16 +108,13 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
     beforeEach(
         waitForAsync(() => {
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-                'isConferenceClosed',
-                'isHearingAboutToStart'
-            ]);
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
             TestBed.configureTestingModule({
                 declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
                     { provide: Router, useValue: router },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();

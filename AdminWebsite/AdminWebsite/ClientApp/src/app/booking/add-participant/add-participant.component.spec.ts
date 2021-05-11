@@ -230,7 +230,7 @@ describe('AddParticipantComponent', () => {
                 'updateHearingRequest',
                 'cancelRequest',
                 'isConferenceClosed',
-                'isHearingAboutToStart',
+                'isHearingAboutToStart'
             ]);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -267,7 +267,6 @@ describe('AddParticipantComponent', () => {
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-
 
             component.ngOnInit();
 
@@ -1240,10 +1239,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 bookingServiceSpy,
                 loggerSpy
             );
-            component.participantsListComponent = new ParticipantListComponent(
-                loggerSpy,
-                videoHearingsServiceSpy
-            );
+            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
 
             component.editMode = true;

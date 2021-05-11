@@ -6,7 +6,11 @@ import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { BreadcrumbItems } from './breadcrumbItems';
 
 describe('BreadcrumbComponent', () => {
-    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['validCurrentRequest', 'isConferenceClosed', 'isHearingAboutToStart']);
+    const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+        'validCurrentRequest',
+        'isConferenceClosed',
+        'isHearingAboutToStart'
+    ]);
 
     let component: BreadcrumbComponent;
     const router = {
@@ -92,7 +96,14 @@ describe('BreadcrumbComponent', () => {
         const breadCrumbUrl1 = 'BreadCrumbUrl1';
         const breadCrumbLastMinuteAmendable1 = false;
 
-        const breadCrumb1 = new BreadcrumbItemModel(breadCrumbId1, breadCrumbValue1, breadCrumbName1, breadCrumbUrl1, defaultActive, breadCrumbLastMinuteAmendable1);
+        const breadCrumb1 = new BreadcrumbItemModel(
+            breadCrumbId1,
+            breadCrumbValue1,
+            breadCrumbName1,
+            breadCrumbUrl1,
+            defaultActive,
+            breadCrumbLastMinuteAmendable1
+        );
 
         const breadCrumbId2 = 2;
         const breadCrumbValue2 = true;
@@ -100,7 +111,14 @@ describe('BreadcrumbComponent', () => {
         const breadCrumbUrl2 = 'BreadCrumbUrl2';
         const breadCrumbLastMinuteAmendable2 = true;
 
-        const breadCrumb2 = new BreadcrumbItemModel(breadCrumbId2, breadCrumbValue2, breadCrumbName2, breadCrumbUrl2, defaultActive, breadCrumbLastMinuteAmendable2);
+        const breadCrumb2 = new BreadcrumbItemModel(
+            breadCrumbId2,
+            breadCrumbValue2,
+            breadCrumbName2,
+            breadCrumbUrl2,
+            defaultActive,
+            breadCrumbLastMinuteAmendable2
+        );
 
         const breadCrumbId3 = 3;
         const breadCrumbValue3 = true;
@@ -108,7 +126,14 @@ describe('BreadcrumbComponent', () => {
         const breadCrumbUrl3 = 'BreadCrumbUrl3';
         const breadCrumbLastMinuteAmendable3 = false;
 
-        const breadCrumb3 = new BreadcrumbItemModel(breadCrumbId3, breadCrumbValue3, breadCrumbName3, breadCrumbUrl3, defaultActive, breadCrumbLastMinuteAmendable3);
+        const breadCrumb3 = new BreadcrumbItemModel(
+            breadCrumbId3,
+            breadCrumbValue3,
+            breadCrumbName3,
+            breadCrumbUrl3,
+            defaultActive,
+            breadCrumbLastMinuteAmendable3
+        );
 
         const breadCrumbId4 = 4;
         const breadCrumbValue4 = true;
@@ -116,7 +141,14 @@ describe('BreadcrumbComponent', () => {
         const breadCrumbUrl4 = 'BreadCrumbUrl4';
         const breadCrumbLastMinuteAmendable4 = true;
 
-        const breadCrumb4 = new BreadcrumbItemModel(breadCrumbId4, breadCrumbValue4, breadCrumbName4, breadCrumbUrl4, defaultActive, breadCrumbLastMinuteAmendable4);
+        const breadCrumb4 = new BreadcrumbItemModel(
+            breadCrumbId4,
+            breadCrumbValue4,
+            breadCrumbName4,
+            breadCrumbUrl4,
+            defaultActive,
+            breadCrumbLastMinuteAmendable4
+        );
 
         const breadCrumbId5 = 5;
         const breadCrumbValue5 = true;
@@ -124,109 +156,103 @@ describe('BreadcrumbComponent', () => {
         const breadCrumbUrl5 = 'BreadCrumbUrl5';
         const breadCrumbLastMinuteAmendable5 = false;
 
-        const breadCrumb5 = new BreadcrumbItemModel(breadCrumbId5, breadCrumbValue5, breadCrumbName5, breadCrumbUrl5, defaultActive, breadCrumbLastMinuteAmendable5);
+        const breadCrumb5 = new BreadcrumbItemModel(
+            breadCrumbId5,
+            breadCrumbValue5,
+            breadCrumbName5,
+            breadCrumbUrl5,
+            defaultActive,
+            breadCrumbLastMinuteAmendable5
+        );
 
-        const breadCrumbs = [
-            breadCrumb1,
-            breadCrumb2,
-            breadCrumb3,
-            breadCrumb4,  
-            breadCrumb5,          
-        ]
+        const breadCrumbs = [breadCrumb1, breadCrumb2, breadCrumb3, breadCrumb4, breadCrumb5];
 
         beforeAll(() => {
-            BreadcrumbItems.splice(0, BreadcrumbItems.length)
+            BreadcrumbItems.splice(0, BreadcrumbItems.length);
             BreadcrumbItems.push(...breadCrumbs);
         });
-        
 
         it('if currentRouter does not match any breadcrumbs, all breadcrumbs.active should not change', () => {
             // @ts-ignore: force this readonly property value for testing.
             router.url = 'NoMatches';
             component.ngOnInit();
 
-
             component.breadcrumbItems.map(item => {
                 expect(item.Active).toBe(defaultActive);
-            })
-            
-        })
-
+            });
+        });
 
         describe('currentRouter matches a breadcrumb', () => {
             const activeIndex = 2;
-
-
-
-
             beforeEach(() => {
                 // @ts-ignore: force this readonly property value for testing.
                 router.url = breadCrumbs[activeIndex].Url;
             });
 
             it('ensure all test cases are covered', () => {
-                expect(breadCrumbs.some(breadCrumb => (breadCrumb.Id < breadCrumbs[activeIndex].Id && breadCrumb.LastMinuteAmendable))).toBe(true);
-                expect(breadCrumbs.some(breadCrumb => (breadCrumb.Id < breadCrumbs[activeIndex].Id && !breadCrumb.LastMinuteAmendable))).toBe(true);
-                expect(breadCrumbs.some(breadCrumb => (breadCrumb.Id > breadCrumbs[activeIndex].Id && breadCrumb.LastMinuteAmendable))).toBe(true);
-                expect(breadCrumbs.some(breadCrumb => (breadCrumb.Id > breadCrumbs[activeIndex].Id && !breadCrumb.LastMinuteAmendable))).toBe(true);
-            })
+                expect(breadCrumbs.some(breadCrumb => breadCrumb.Id < breadCrumbs[activeIndex].Id && breadCrumb.LastMinuteAmendable)).toBe(
+                    true
+                );
+                expect(breadCrumbs.some(breadCrumb => breadCrumb.Id < breadCrumbs[activeIndex].Id && !breadCrumb.LastMinuteAmendable)).toBe(
+                    true
+                );
+                expect(breadCrumbs.some(breadCrumb => breadCrumb.Id > breadCrumbs[activeIndex].Id && breadCrumb.LastMinuteAmendable)).toBe(
+                    true
+                );
+                expect(breadCrumbs.some(breadCrumb => breadCrumb.Id > breadCrumbs[activeIndex].Id && !breadCrumb.LastMinuteAmendable)).toBe(
+                    true
+                );
+            });
 
             describe('when not last minute amendment', () => {
                 describe('conference closed', () => {
                     beforeEach(() => {
                         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
-                    })
-
-                    it('only ids before current router should be active', () => {
-                    
                     });
+
+                    it('only ids before current router should be active', () => {});
                 });
 
-                describe('hearing not about to start', ()=> {
+                describe('hearing not about to start', () => {
                     beforeEach(() => {
                         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
-                    })
-
-                    it('only ids before current router should be active', () => {
-                    
                     });
+
+                    it('only ids before current router should be active', () => {});
                 });
 
-                describe('conference close adn hearing not about to start', ()=> {
+                describe('conference close adn hearing not about to start', () => {
                     beforeEach(() => {
                         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
                         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
-                    })
-
-                    it('only ids before current router should be active', () => {
-                    
                     });
+
+                    it('only ids before current router should be active', () => {});
                 });
 
                 afterEach(() => {
                     component.ngOnInit();
-                    for(let i = 0; i < breadCrumbs.length; i++){
-                        expect(breadCrumbs[i].Active).toBe(breadCrumbs[i].Id <= breadCrumbs[activeIndex].Id)
+                    for (let i = 0; i < breadCrumbs.length; i++) {
+                        expect(breadCrumbs[i].Active).toBe(breadCrumbs[i].Id <= breadCrumbs[activeIndex].Id);
                     }
-                })
+                });
             });
 
             describe('when last minute amendment', () => {
                 beforeEach(() => {
                     videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
                     videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
-                })
+                });
 
                 it('only ids before current router and marked as lastMinuteAmendable should be active', () => {
-
                     component.ngOnInit();
-                    console.table(breadCrumbs);
-                    for(let i = 0; i < breadCrumbs.length; i++){
+                    for (let i = 0; i < breadCrumbs.length; i++) {
                         const currentBreadCrumb = breadCrumbs[i];
-                        
-                        expect(currentBreadCrumb.Active).toBe((currentBreadCrumb.Id <= breadCrumbs[activeIndex].Id && currentBreadCrumb.LastMinuteAmendable));
-                    }
 
+                        expect(currentBreadCrumb.Active).toBe(
+                            currentBreadCrumb.Id <= breadCrumbs[activeIndex].Id && currentBreadCrumb.LastMinuteAmendable
+                        );
+                    }
                 });
             });
         });

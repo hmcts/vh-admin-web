@@ -37,7 +37,9 @@ describe('BookingModuleRouting', () => {
     let oidcSecurityService;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
-    const lastMinuteAmendmentsGuardSpy: jasmine.SpyObj<LastMinuteAmendmentsGuard> = jasmine.createSpyObj('LastMinuteAmendmentsGuard', ['canActivate']);
+    const lastMinuteAmendmentsGuardSpy: jasmine.SpyObj<LastMinuteAmendmentsGuard> = jasmine.createSpyObj('LastMinuteAmendmentsGuard', [
+        'canActivate'
+    ]);
 
     beforeEach(() => {
         TestBed.configureTestingModule({

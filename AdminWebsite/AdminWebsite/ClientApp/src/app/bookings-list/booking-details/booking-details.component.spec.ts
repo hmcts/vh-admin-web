@@ -461,7 +461,7 @@ describe('BookingDetailsComponent', () => {
         videoHearingServiceSpy.isConferenceClosed.and.returnValue(false);
         expect(component.canEditHearing).toBe(true);
     });
-    it('should not show edit button if hearing is closed',() => {
+    it('should not show edit button if hearing is closed', () => {
         component.ngOnInit();
         videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
         expect(component.canEditHearing).toBe(false);
