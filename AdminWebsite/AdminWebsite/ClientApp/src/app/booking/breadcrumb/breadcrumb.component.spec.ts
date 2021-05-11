@@ -31,7 +31,6 @@ describe('BreadcrumbComponent', () => {
     it('breadcrumb component currentItem should match the current route and be type BreadcrumbItemModel', () => {
         expect(component.currentRouter).toEqual('/hearing-schedule');
         expect(component.currentItem.Url).toEqual(component.currentRouter);
-        expect(component.currentItem instanceof BreadcrumbItemModel).toBeTruthy();
     });
 
     it('breadcrumb component currentItem should have property Active set to true and property Value set to true', () => {
