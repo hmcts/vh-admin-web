@@ -183,10 +183,10 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId,
             [FromBody] EditHearingRequest request)
@@ -220,7 +220,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode != (int)HttpStatusCode.NotFound)
+                if (e.StatusCode != (int) HttpStatusCode.NotFound)
                     throw;
 
                 return NotFound($"No hearing with id found [{hearingId}]");
@@ -228,41 +228,57 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                //Save hearing details
-                var updateHearingRequest =
-                    HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
-                await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
-
                 var newParticipantList = new List<ParticipantRequest>();
 
-                foreach (var participant in request.Participants)
-                    if (!participant.Id.HasValue)
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                            usernameAdIdDict, newParticipantList);
-                    else
+                if (CheckHearingWithinThirtyMinutes(originalHearing))
+                {
+                    //Save hearing details
+                    var updateHearingRequest =
+                        HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
+                    await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
+
+                    //Update existing participant
+                    foreach (var participant in request.Participants.Where(participant => participant.Id.HasValue))
                         await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
 
-                // Delete existing participants if the request doesn't contain any update information
-                originalHearing.Participants ??= new List<ParticipantResponse>();
-                await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
+                    // Delete existing participants if the request doesn't contain any update information
+                    originalHearing.Participants ??= new List<ParticipantResponse>();
+                    await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
+                }
+                else
+                {
+                    if (!_hearingsService.IsAddingParticipantOnly(request, originalHearing))
+                    {
+                        _logger.LogWarning("You can't edit a hearing within 30 minutes of it starting");
+                        ModelState.AddModelError(nameof(hearingId),
+                            $"You can't edit a hearing [{hearingId}] within 30 minutes of it starting");
+                        return BadRequest(ModelState);
+                    }
+                }
 
                 // Add new participants
+                foreach (var participant in request.Participants.Where(participant => !participant.Id.HasValue))
+                    await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
+                        usernameAdIdDict, newParticipantList);
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
                 var addedParticipantToHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, addedParticipantToHearing);
 
-                // endpoints
-                await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
-
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
                 await _hearingsService.AddParticipantLinks(hearingId, request, updatedHearing);
+
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
+                // endpoints
+                if (CheckHearingWithinThirtyMinutes(originalHearing))
+                    await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
                 // Send a notification email to newly created participants
                 var newParticipantEmails = newParticipantList.Select(p => p.ContactEmail).ToList();
-                await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict, newParticipantEmails);
+                await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict,
+                    newParticipantEmails);
 
                 await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
@@ -273,7 +289,6 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
                     participantsForAmendment);
 
-
                 return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
@@ -281,7 +296,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
                 throw;
             }
@@ -305,6 +320,11 @@ namespace AdminWebsite.Controllers
             if (updatedHearing.HasJudgeEmailChanged(originalHearing) &&
                 updatedHearing.Status == BookingStatus.Created)
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+        }
+        private static bool CheckHearingWithinThirtyMinutes(HearingDetailsResponse originalHearing)
+        {
+            var timeToCheckHearingAgainst = DateTime.Now.AddMinutes(30);
+            return originalHearing.ScheduledDateTime > timeToCheckHearingAgainst;
         }
 
         private async Task SendEmailsToParticipantsAddedToHearing(List<ParticipantRequest> newParticipantList,

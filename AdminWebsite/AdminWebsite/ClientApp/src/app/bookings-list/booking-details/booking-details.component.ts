@@ -271,10 +271,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    getConferencePhoneDetails() {
-        if (this.hearing.Status === 'Created') {
+    async getConferencePhoneDetails() {
+        if (this.hearing.Status === BookingStatus.Created) {
             try {
-                this.videoHearingService
+                await this.videoHearingService
                     .getTelephoneConferenceId(this.hearingId)
                     .toPromise()
                     .then(phoneResponse => {

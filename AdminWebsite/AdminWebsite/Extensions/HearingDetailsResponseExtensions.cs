@@ -22,12 +22,29 @@ namespace AdminWebsite.Extensions
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,
             HearingDetailsResponse originalHearing)
         {
-            if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) &&
-                string.IsNullOrWhiteSpace(hearing.OtherInformation))
+            var isNewJudgeEJud = IsJudgeEmailEJud(hearing);
+            var isOriginalJudgeEJud = IsJudgeEmailEJud(originalHearing);
+            var isNewJudgeVhJudge = hearing.GetJudgeEmail() != null;
+            var isOriginalJudgeVhJudge = originalHearing.GetJudgeEmail() != null;
+            
+            
+            if (isNewJudgeEJud && isOriginalJudgeEJud)
             {
-                return false;
+                var judgeA = hearing.Participants.FirstOrDefault(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                
+                var judgeB = originalHearing.Participants.FirstOrDefault(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+
+                return judgeA?.ContactEmail != judgeB?.ContactEmail;
             }
-            return hearing.GetJudgeEmail() != originalHearing.GetJudgeEmail();
+
+            if (isNewJudgeVhJudge && isOriginalJudgeVhJudge)
+            {
+                return hearing.GetJudgeEmail() != originalHearing.GetJudgeEmail();
+            }
+
+            return isNewJudgeEJud || isOriginalJudgeEJud || isNewJudgeVhJudge || isOriginalJudgeVhJudge;
         }
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)

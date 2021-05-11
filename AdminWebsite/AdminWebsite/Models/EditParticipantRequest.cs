@@ -77,5 +77,32 @@ namespace AdminWebsite.Models
         ///     List of linked participants
         /// </summary>
         public IList<LinkedParticipant> LinkedParticipants { get; set; }
+        
+        private sealed class EditParticipantRequestEqualityComparer : IEqualityComparer<EditParticipantRequest>
+        {
+            public bool Equals(EditParticipantRequest x, EditParticipantRequest y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return Nullable.Equals(x.Id, y.Id) && x.Title == y.Title && x.TelephoneNumber == y.TelephoneNumber && x.DisplayName == y.DisplayName && x.Representee == y.Representee && x.OrganisationName == y.OrganisationName;
+            }
+
+            public int GetHashCode(EditParticipantRequest obj)
+            {
+                var hashCode = new HashCode();
+                hashCode.Add(obj.Id);
+                hashCode.Add(obj.Title);
+                hashCode.Add(obj.TelephoneNumber);
+                hashCode.Add(obj.DisplayName);
+                hashCode.Add(obj.Representee);
+                hashCode.Add(obj.OrganisationName);
+                return hashCode.ToHashCode();
+            }
+        }
+
+        public static IEqualityComparer<EditParticipantRequest> EditParticipantRequestComparer { get; } = new EditParticipantRequestEqualityComparer();
+
     }
 }

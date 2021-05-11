@@ -8,7 +8,6 @@ namespace AdminWebsite.Validators
     {
         private const string ROOM_MSG = "Room name should be between 1 - 255 characters";
         private const string PARTICIPANT_MSG = "Please provide at least one participant";
-        private const string SCHEDLUED_TIME_MSG = "You can't edit a confirmed hearing within 30 minutes of it starting";
 
         public EditHearingRequestValidator()
         {
@@ -24,10 +23,6 @@ namespace AdminWebsite.Validators
 
             RuleForEach(x => x.Participants).NotNull().SetValidator(new EditParticipantRequestValidation());
 
-            // var timeToCheckHearingAgainst = DateTime.Now.AddMinutes(30);
-            // RuleFor(x => x.ScheduledDateTime)
-            //     .Must(x => x >= timeToCheckHearingAgainst)
-            //     .WithMessage(SCHEDLUED_TIME_MSG);
         }
     }
 }
