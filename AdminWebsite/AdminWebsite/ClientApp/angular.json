@@ -30,14 +30,8 @@
                 "output": "assets/fonts/"
               }
             ],
-            "styles": [
-              "src/styles.css",
-              "src/styles.scss"
-            ],
-            "scripts": [
-              "node_modules/govuk-frontend/govuk/all.js",
-              "src/scripts/init-script.js"
-            ]
+            "styles": ["src/styles.css", "src/styles.scss"],
+            "scripts": ["node_modules/govuk-frontend/govuk/all.js", "src/scripts/init-script.js"]
           },
           "configurations": {
             "production": {
@@ -89,13 +83,8 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "codeCoverageExclude": [
-              "src/app/services/clients/api-client.ts",
-              "src/app/testing/**"
-            ],
-            "styles": [
-              "src/styles.css"
-            ],
+            "codeCoverageExclude": ["src/app/services/clients/api-client.ts", "src/app/testing/**"],
+            "styles": ["src/styles.css", "src/styles.scss"],
             "scripts": [],
             "assets": [
               "src/favicon.ico",
@@ -106,20 +95,14 @@
                 "input": "node_modules/govuk-frontend/govuk/assets/fonts",
                 "output": "assets/fonts/"
               }
-            ],
-            "sourceMap": false
+            ]
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

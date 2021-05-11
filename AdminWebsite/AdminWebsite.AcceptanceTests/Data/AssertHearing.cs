@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Steps;
+using AdminWebsite.Services.Models;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
 
@@ -51,16 +53,13 @@ namespace AdminWebsite.AcceptanceTests.Data
             }
         }
 
-        public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isMultiDayHearing, bool isRunningOnSauceLabs)
+        public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isMultiDayHearing,
+            bool isRunningOnSauceLabs, List<PublicHoliday> publicHolidays)
         {
-            expected = expected.AddDays(day - 1);
-
             if (isMultiDayHearing)
             {
-                if (expected.DayOfWeek == DayOfWeek.Saturday || expected.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    expected = expected.AddDays(2);
-                }
+                var newDate = DateHelper.GetNextWorkingDay(expected, publicHolidays, day - 1);
+                expected = newDate;
             }
 
             actual.ToShortDateString().Should().Be(expected.ToShortDateString());

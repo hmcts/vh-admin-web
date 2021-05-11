@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
@@ -33,7 +34,8 @@ namespace AdminWebsite.Services
         Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict);
 
-        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null);
+        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing,
+            List<ParticipantResponse> participants = null);
 
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
@@ -42,11 +44,13 @@ namespace AdminWebsite.Services
         /// <param name="hearing"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
-        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
+        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing,
+            List<ParticipantResponse> participants = null);
+
         Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
 
         Task SendHearingReminderEmail(HearingDetailsResponse hearing);
-        
+
         Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
@@ -63,6 +67,9 @@ namespace AdminWebsite.Services
         Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
+
+        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse);
     }
 
     public class HearingsService : IHearingsService
@@ -119,6 +126,34 @@ namespace AdminWebsite.Services
                         StringComparison.CurrentCultureIgnoreCase));
                 endpoint.DefenceAdvocateUsername = defenceAdvocate.Username;
             }
+        }
+
+        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            var originalParticipants = hearingDetailsResponse.Participants
+                .Select(EditParticipantRequestMapper.MapFrom).ToList();
+            var requestParticipants = editHearingRequest.Participants;
+            var hearingCase = hearingDetailsResponse.Cases.First();
+            var originalEndpoints = hearingDetailsResponse.Endpoints == null
+                ? new List<EditEndpointRequest>()
+                : hearingDetailsResponse.Endpoints
+                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
+            if (originalParticipants.Count == requestParticipants.Count) return false;
+            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName && editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName && editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation && editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime && editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration && editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired && editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired && hearingCase.Name == editHearingRequest.Case.Name && hearingCase.Number == editHearingRequest.Case.Number && originalEndpoints.Count == requestEndpoints.Count && (originalEndpoints
+                .Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0) && (requestEndpoints
+                .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0) && (originalParticipants
+                .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                .ToList()
+                .Count == 0) && ((originalParticipants.Count != requestParticipants.Count) || (requestParticipants.Except(originalParticipants,
+                    EditParticipantRequest.EditParticipantRequestComparer)
+                .ToList()
+                .Count != 0));
         }
 
         public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
@@ -274,8 +309,8 @@ namespace AdminWebsite.Services
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge")
+            // Judge and panel member is manually created in AD, no need to create one
+            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member")
             {
                 if (hearing.Participants != null && hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
                 {
@@ -313,9 +348,9 @@ namespace AdminWebsite.Services
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value,
                         updateParticipantRequest);
                 }
-                else if (existingParticipant.UserRoleName == "Judge")
+                else if (existingParticipant.UserRoleName == "Judge"|| existingParticipant.UserRoleName == "Judicial Office Holder")
                 {
-                    //Update Judge
+                    //Update Judge and panel member
                     _logger.LogDebug("Updating judge {Participant} in hearing {Hearing}",
                         existingParticipant.Id, hearingId);
                     var updateParticipantRequest = new UpdateParticipantRequest

@@ -42,7 +42,17 @@ module.exports = function (config) {
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        browsers: ['Chrome'],
+        browsers: ['ChromeNoPrompt'],
+        customLaunchers: {
+            ChromeNoPrompt: {
+                base: 'Chrome',
+                flags: ['--remote-debugging-port=9222', '--use-fake-ui-for-media-stream', '--mute-audio']
+            },
+            ChromeHeadlessNoPrompt: {
+                base: 'ChromeHeadless',
+                flags: ['--remote-debugging-port=9222', '--use-fake-ui-for-media-stream', '--mute-audio']
+            }
+        },
         singleRun: false
     });
 };

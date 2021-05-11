@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -90,19 +91,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             if (!_c.Test.HearingSchedule.MultiDays) return;
             SelectMultiDaysHearing();
-            _c.Test.HearingSchedule.ScheduledDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate);
-            _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday()));
+            _c.Test.HearingSchedule.ScheduledDate = DateHelper.GetNextIfDayIfNotAWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays);
+            _c.Test.HearingSchedule.EndHearingDate = DateHelper.GetNextWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays, NotCountingToday());
             _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
-        }
-
-        private static DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
-        {
-            return FallOnAWeekend(date) ? date.AddDays(2) : date;
-        }
-
-        private static bool FallOnAWeekend(DateTime date)
-        {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
         }
 
         private int NotCountingToday()

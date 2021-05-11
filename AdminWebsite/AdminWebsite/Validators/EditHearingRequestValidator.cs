@@ -1,4 +1,5 @@
-﻿using AdminWebsite.Models;
+﻿using System;
+using AdminWebsite.Models;
 using FluentValidation;
 
 namespace AdminWebsite.Validators
@@ -21,6 +22,7 @@ namespace AdminWebsite.Validators
                 .WithMessage(PARTICIPANT_MSG);
 
             RuleForEach(x => x.Participants).NotNull().SetValidator(new EditParticipantRequestValidation());
+
         }
     }
 }

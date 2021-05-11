@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.AudioRecordings;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
-using TestApi.Contract.Dtos;
+using AdminWebsite.Services;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Requests.Enums;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Memory;
 using TechTalk.SpecFlow;
 using TestApi.Contract.Enums;
 using TestApi.Contract.Requests;
@@ -35,6 +37,14 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             _scenario = scenario;
         }
 
+        [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
+        public async Task RetrievePublicHolidays()
+        {
+            var publicHolidayRetriever =
+                new UkPublicHolidayRetriever(new HttpClient(), new MemoryCache(new MemoryCacheOptions()));
+            _c.PublicHolidays = await  publicHolidayRetriever.RetrieveUpcomingHolidays();
+        }
+        
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
         public void AddExistingUsers(ScenarioContext scenario)
         {

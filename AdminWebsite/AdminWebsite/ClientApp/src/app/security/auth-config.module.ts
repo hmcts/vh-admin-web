@@ -1,6 +1,7 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { AuthInterceptor, AuthModule, LogLevel, OidcConfigService, OidcSecurityService } from 'angular-auth-oidc-client';
+import { environment } from 'src/environments/environment';
 import { ConfigService } from '../services/config.service';
 import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
 
@@ -11,12 +12,13 @@ export function loadConfig(configService: ConfigService, oidcConfigService: Oidc
             oidcConfigService.withConfig({
                 stsServer: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.redirect_uri,
+                postLogoutRedirectUri: clientSettings.post_logout_redirect_uri,
                 clientId: clientSettings.client_id,
-                scope: `openid profile api://${clientSettings.client_id}/feapi`,
+                scope: `openid profile offline_access api://${clientSettings.client_id}/feapi`,
                 responseType: 'code',
                 maxIdTokenIatOffsetAllowedInSeconds: 600,
                 autoUserinfo: false,
-                logLevel: LogLevel.Debug,
+                logLevel: environment.production ? LogLevel.Warn : LogLevel.Debug,
                 secureRoutes: ['.'],
                 ignoreNonceAfterRefresh: true,
                 tokenRefreshInSeconds: 5,
