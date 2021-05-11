@@ -22,9 +22,7 @@ export class BreadcrumbComponent implements OnInit {
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.breadcrumbItems = BreadcrumbItems.map(s => {
-            return new BreadcrumbItemModel(s.id, s.value, s.name, s.url, s.active);
-        });
+        this.breadcrumbItems = BreadcrumbItems;
         this.initBreadcrumb();
     }
 
@@ -57,9 +55,11 @@ export class BreadcrumbComponent implements OnInit {
             for (const item of this.breadcrumbItems) {
                 item.Value = item.Url === this.currentRouter;
                 if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart() &&
-                item.Name !== 'Participants') {
+                !item.LastMinuteAmendable) {
                     item.Active = false;
-                } else { item.Active = item.Id <= this.currentItem.Id; }
+                } else {
+                    item.Active = item.Id <= this.currentItem.Id;
+                }
             }
         }
     }
