@@ -267,7 +267,7 @@ describe('AddParticipantComponent', () => {
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-            
+
 
             component.ngOnInit();
 
@@ -428,7 +428,7 @@ describe('AddParticipantComponent', () => {
         expect(component.displayAddButton).toBeFalsy();
         expect(component.displayClearButton).toBeFalsy();
     });
-    
+
     it('saved participant with invalid details should show error summary', () => {
         component.isRoleSelected = false;
         component.isPartySelected = false;
@@ -449,17 +449,13 @@ describe('AddParticipantComponent', () => {
             phone.setValue('12345');
             displayName.setValue('Sam Green');
             companyName.setValue('CC');
-    
             component.isRoleSelected = true;
             component.isPartySelected = true;
 
             component.participantDetails = participant;
-        })
+        });
         it('saved participant added to list of participants', () => {
-            
-    
             component.saveParticipant();
-    
             expect(component.isShowErrorSummary).toBeFalsy();
             expect(component.hearing.participants.length).toBeGreaterThan(0);
         });
@@ -470,27 +466,39 @@ describe('AddParticipantComponent', () => {
             expect(component.displayAddButton).toBeFalsy();
             expect(component.displayClearButton).toBeFalsy();
         });
-    
-        it('should set duringHearing to true if participant added during hearing', () => {
-            component.hearing.participants = []
+        it('should set addedDuringHearing to true if participant added while hearing open and is about to start', () => {
+            component.hearing.participants = [];
             videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
-            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);            
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
             component.saveParticipant();
             const addedParticipant = component.hearing.participants[0];
             expect(addedParticipant.addedDuringHearing).toBe(true);
         });
-
-        it('should set duringHearing to false if participant added not during hearing', () => {
-            component.hearing.participants = []
+        it('should set addedDuringHearing to false if participant added while hearing open and is not about to start', () => {
+            component.hearing.participants = [];
             videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
             videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
             component.saveParticipant();
             const addedParticipant = component.hearing.participants[0];
             expect(addedParticipant.addedDuringHearing).toBe(false);
         });
-    })
-
-
+        it('should set addedDuringHearing to false if participant added while hearing closed and is not about to start', () => {
+            component.hearing.participants = [];
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+            component.saveParticipant();
+            const addedParticipant = component.hearing.participants[0];
+            expect(addedParticipant.addedDuringHearing).toBe(false);
+        });
+        it('should set addedDuringHearing to false if participant added while hearing closed and is about to start', () => {
+            component.hearing.participants = [];
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+            component.saveParticipant();
+            const addedParticipant = component.hearing.participants[0];
+            expect(addedParticipant.addedDuringHearing).toBe(false);
+        });
+    });
     it('press button cancel display pop up confirmation dialog', () => {
         component.addParticipantCancel();
         expect(component.showCancelPopup).toBeTruthy();
