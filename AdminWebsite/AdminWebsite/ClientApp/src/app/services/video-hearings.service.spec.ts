@@ -520,21 +520,35 @@ describe('Video hearing service', () => {
 
     describe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
+        let model: HearingModel;
+        beforeEach(() => {
+            model = new HearingModel();
+            model.scheduled_date_time = new Date();
+            model.status = BookingStatus.Created;
+        });
 
         it('should return false if hearing is not about to start', () => {
-            const model = new HearingModel();
-            model.scheduled_date_time = new Date();
             model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
 
         it('should return true if hearing is not about to start', () => {
-            const model = new HearingModel();
-            model.scheduled_date_time = new Date();
             model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(true);
+        });
+
+        it('should return false if there is no scheduled_date_time', () => {
+            model.scheduled_date_time = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return false if there is no status', () => {
+            model.status = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
         });
     });
 });
