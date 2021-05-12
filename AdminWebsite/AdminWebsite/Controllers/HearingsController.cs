@@ -420,18 +420,24 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
+                
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
+                
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
+                
                 _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
+               
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
 
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
+                    
                     var conferenceDetailsResponse =
                         await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                    
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
                     if (conferenceDetailsResponse.HasValidMeetingRoom()) 
                     {
