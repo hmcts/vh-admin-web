@@ -50,6 +50,8 @@ export class VideoHearingsService {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
+
+        this.checkForExistingHearing();
     }
 
     private checkForExistingHearing() {
@@ -88,7 +90,6 @@ export class VideoHearingsService {
     }
 
     getCurrentRequest(): HearingModel {
-        this.checkForExistingHearing();
         return this.modelHearing;
     }
 
@@ -120,6 +121,7 @@ export class VideoHearingsService {
     }
 
     cancelRequest() {
+        this.modelHearing = new HearingModel();
         sessionStorage.removeItem(this.newRequestKey);
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }
@@ -445,13 +447,12 @@ export class VideoHearingsService {
     }
 
     isConferenceClosed(): boolean {
-        this.checkForExistingHearing();
         return this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id === '';
     }
 
     isHearingAboutToStart(): boolean {
-        this.checkForExistingHearing();
-        if (this.modelHearing.scheduled_date_time) {
+        console.log(this.modelHearing);
+        if (this.modelHearing.scheduled_date_time && this.modelHearing.status) {
             const currentDateTime = new Date().getTime();
             const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
             return difference < 30;
