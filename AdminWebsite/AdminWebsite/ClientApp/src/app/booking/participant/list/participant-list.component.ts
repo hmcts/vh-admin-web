@@ -108,14 +108,10 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     canEditParticipant(particpant: ParticipantModel): boolean {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
-        } else if (this.videoHearingsService.isHearingAboutToStart()) {
-            if (particpant.addedDuringHearing) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
         }
+        if (this.videoHearingsService.isHearingAboutToStart() || !particpant.addedDuringHearing) {
+            return false;
+        }
+        return true;
     }
 }
