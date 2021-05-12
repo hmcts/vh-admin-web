@@ -47,7 +47,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(_conference);
             
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
-
         }
 
         [Test]
