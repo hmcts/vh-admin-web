@@ -65,6 +65,7 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/hearing-schedule', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledTimes(0);
+        expect(videoHearingsServiceSpy.validCurrentRequest).not.toHaveBeenCalled();
     });
 
     it('should not navigate to next route if the difference between next item id and the current is greater than 1', () => {
@@ -72,6 +73,7 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledTimes(0);
+        expect(videoHearingsServiceSpy.validCurrentRequest).not.toHaveBeenCalled();
     });
 
     it('should not navigate to next route if the next item with the given url is not found', () => {
@@ -85,6 +87,31 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
+    });
+
+    describe('when other checks fail', () => {
+        const route = '/add-participants';
+        let step: BreadcrumbItemModel;
+
+        beforeEach(() => {
+            step = new BreadcrumbItemModel(3, false, 'Hearing schedule', route, false, false);
+            videoHearingsServiceSpy.validCurrentRequest.calls.reset();
+            router.navigate.calls.reset();
+        });
+
+        it('should not navigate when canNavigate set to true and is not validCurrentRequest', () => {
+            videoHearingsServiceSpy.validCurrentRequest.and.returnValue(false);
+            component.clickBreadcrumbs(step);
+            expect(router.navigate).not.toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.validCurrentRequest).toHaveBeenCalledTimes(1);
+        });
+
+        it('should navigate to next route if canNavigate set to true and is validCurrentRequest', () => {
+            videoHearingsServiceSpy.validCurrentRequest.and.returnValue(true);
+            component.clickBreadcrumbs(step);
+            expect(router.navigate).toHaveBeenCalledWith([route]);
+            expect(videoHearingsServiceSpy.validCurrentRequest).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('Set correct active', () => {

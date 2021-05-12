@@ -28,7 +28,6 @@ export class BreadcrumbComponent implements OnInit {
 
     clickBreadcrumbs(step: BreadcrumbItemModel) {
         const nextItem = this.breadcrumbItems.find(s => s.Url === step.Url);
-
         if (!nextItem) {
             return;
         }
