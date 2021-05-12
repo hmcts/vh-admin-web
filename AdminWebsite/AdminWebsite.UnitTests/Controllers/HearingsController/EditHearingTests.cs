@@ -1079,6 +1079,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ContactEmail = "existing@hmcts.net",
                 Username = "existing@hmcts.net",
                 CaseRoleName = "Judge",
+                UserRoleName = "Judge",
+                HearingRoleName = "Judge",
                 Id = existingJudgeId
             });
 
@@ -1086,6 +1088,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
+                HearingRoleName = "Judge",
                 FirstName = "New",
                 LastName = "Judge",
                 ContactEmail = newJudgeEmail
@@ -1102,12 +1105,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             newPats.Add(new ParticipantResponse
             {
-                CaseRoleName = "Judge",
                 FirstName = "New",
                 LastName = "Judge",
                 ContactEmail = newJudgeEmail,
                 Username = newJudgeEmail,
-                UserRoleName = "Judge"
+                UserRoleName = "Judge",
+                CaseRoleName = "Judge",
+                HearingRoleName = "Judge",
             });
             var updatedHearing = new HearingDetailsResponse
             {
