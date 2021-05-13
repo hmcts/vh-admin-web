@@ -81,9 +81,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
-            var participant = InitParticipant("Judge");            
-            var expectedConferencePhoneNumber = "phone_number";
-            var expectedConferencePhoneId = "phone_id";
+            var participant = InitParticipant("Judge");       
             _hearing.OtherInformation = new OtherInformationDetails
                 {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
   
