@@ -179,7 +179,9 @@ describe('BookingDetailsComponent', () => {
         'updateBookingStatus',
         'getCurrentRequest',
         'getTelephoneConferenceId',
-        'getConferencePhoneNumber'
+        'getConferencePhoneNumber',
+        'isHearingAboutToStart',
+        'isConferenceClosed'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -444,16 +446,26 @@ describe('BookingDetailsComponent', () => {
         expect(component.timeSubscription).toBeFalsy();
         component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
     }));
-    it('should show edit button if 30min or more remain to start of hearing', fakeAsync(() => {
+    it('should show cancel button if hearing is not about to start', () => {
         component.ngOnInit();
-        tick(1000);
-        const futureDate = new Date();
-        futureDate.setHours(futureDate.getHours() + 1);
-        component.booking.scheduled_date_time = futureDate;
-        const timeframe = component.timeForEditing;
-        expect(timeframe).toBe(true);
-        discardPeriodicTasks();
-    }));
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        expect(component.canCancelHearing).toBe(true);
+    });
+    it('should not show cancel button if hearing is about to start', () => {
+        component.ngOnInit();
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        expect(component.canCancelHearing).toBe(false);
+    });
+    it('should show edit button if hearing is open', () => {
+        component.ngOnInit();
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(false);
+        expect(component.canEditHearing).toBe(true);
+    });
+    it('should not show edit button if hearing is closed', () => {
+        component.ngOnInit();
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEditHearing).toBe(false);
+    });
 
     it('should not be able to see retry confirmation when booking is not defined', () => {
         component.booking = null;
