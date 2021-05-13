@@ -197,6 +197,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
                 this.updateStatusHandler(status);
+                this.booking.isConfirmed = true;
             } else {
                 this.showConfirmingFailed = true;
                 this.updateStatusHandler(UpdateBookingStatus.Failed);
