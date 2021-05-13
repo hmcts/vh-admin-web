@@ -534,7 +534,6 @@ describe('Video hearing service', () => {
         });
 
         it('should return true if hearing is not about to start & is confirmed', () => {
-            debugger;
             model.isConfirmed = true;
             model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
