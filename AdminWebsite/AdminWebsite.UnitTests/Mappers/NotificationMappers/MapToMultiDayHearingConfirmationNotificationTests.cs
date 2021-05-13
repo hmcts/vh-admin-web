@@ -86,7 +86,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationLipMultiDay;
             var participant = InitParticipant("Individual");
             var hearing = InitHearing();
-
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", CaseName},

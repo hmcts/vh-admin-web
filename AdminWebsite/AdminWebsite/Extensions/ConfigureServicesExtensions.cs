@@ -78,6 +78,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<VideoApiTokenHandler>();
             serviceCollection.AddTransient<NotificationApiTokenHandler>();
             serviceCollection.AddTransient<IHearingsService, HearingsService>();
+            serviceCollection.AddTransient<IConferenceDetailsService, ConferenceDetailsService>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<AzureAdConfiguration>();
