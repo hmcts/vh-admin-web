@@ -518,7 +518,7 @@ describe('Video hearing service', () => {
         });
     });
 
-    describe('isHearingAboutToStart', () => {
+    fdescribe('isHearingAboutToStart', () => {
         const aboutToStartMinutesThreshold = 30;
         let model: HearingModel;
         beforeEach(() => {
@@ -533,7 +533,10 @@ describe('Video hearing service', () => {
             expect(service.isHearingAboutToStart()).toBe(false);
         });
 
-        it('should return true if hearing is not about to start', () => {
+        fit('should return true if hearing is not about to start, has a status & is confirmed', () => {
+            debugger;
+            model.isConfirmed = true;
+            model.status = BookingStatus.Created;
             model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(true);
