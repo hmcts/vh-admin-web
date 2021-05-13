@@ -367,7 +367,7 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
+        public void should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
         {
             // Arrange
             _mocker.Mock<IConferenceDetailsService>()
