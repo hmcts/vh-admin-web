@@ -157,16 +157,26 @@ describe('SearchService', () => {
             service.participantSearch(terms, roleJudiciary).subscribe(participants => {
                 expect(participants.length).toEqual(participantList.length);
             });
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledWith(terms);
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+            expect(service.searchEntries).toHaveBeenCalledWith(terms);
+            expect(service.searchEntries).toHaveBeenCalledTimes(1);
 
-            expect(service.searchEntries).toHaveBeenCalledTimes(0);
+            expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
-            judiciaryPersonList.forEach(person => {
+            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(personList.length);
+            personList.forEach(person => {
                 expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
             });
+            // expect(service.searchJudiciaryEntries).toHaveBeenCalledWith(terms);
+            // expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+
+            // expect(service.searchEntries).toHaveBeenCalledTimes(0);
+            // expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
+
+            // expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
+            // judiciaryPersonList.forEach(person => {
+            //     expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
+            // });
         });
 
         it('should call searchJudgeAccounts and map response when role is judge ', () => {
