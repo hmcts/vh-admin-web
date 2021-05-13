@@ -21,6 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationJudge;
             var participant = InitParticipant("Judge");
             var hearing = InitHearing();
+
             hearing.OtherInformation = new OtherInformationDetails
                 {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
             
@@ -110,8 +111,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             var expectedNotificationType = NotificationType.HearingConfirmationRepresentative;
             var participant = InitParticipant("Representative", "Jane Doe");
-            var hearing = InitHearing();
-
+            var hearing = InitHearing(); 
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", hearing.Cases.First().Name},
@@ -121,9 +122,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"solicitor name", $"{participant.FirstName} {participant.LastName}"},
                 {"client name", $"{participant.Representee}"}
             };
-            
+
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
-            
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -149,9 +150,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"day month year", "12 October 2020"},
                 {"judicial office holder", $"{participant.FirstName} {participant.LastName}"}
             };
-            
+
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
-            
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);

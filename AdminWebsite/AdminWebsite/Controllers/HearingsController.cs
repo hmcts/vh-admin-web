@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
@@ -19,6 +20,7 @@ using BookingsApi.Contract.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
@@ -36,6 +38,7 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
+        private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
@@ -46,7 +49,7 @@ namespace AdminWebsite.Controllers
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            ILogger<HearingsController> logger, IHearingsService hearingsService, IPublicHolidayRetriever publicHolidayRetriever)
+            ILogger<HearingsController> logger, IHearingsService hearingsService, IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -54,6 +57,7 @@ namespace AdminWebsite.Controllers
             _editHearingRequestValidator = editHearingRequestValidator;
             _logger = logger;
             _hearingsService = hearingsService;
+            _conferenceDetailsService = conferenceDetailsService;
             _publicHolidayRetriever = publicHolidayRetriever;
         }
 
@@ -285,8 +289,7 @@ namespace AdminWebsite.Controllers
 
                 var participantsForAmendment = updatedHearing.Participants
                     .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
-                    participantsForAmendment);
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, participantsForAmendment);
 
                 return Ok(updatedHearing);
             }
@@ -336,6 +339,7 @@ namespace AdminWebsite.Controllers
 
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
+                
                 await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
@@ -416,20 +420,26 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
+                
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
+                
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
+                
                 _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
+               
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
 
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
+                    
                     var conferenceDetailsResponse =
-                        await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                        await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                    
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
-                    if (conferenceDetailsResponse.HasValidMeetingRoom())
+                    if (conferenceDetailsResponse.HasValidMeetingRoom()) 
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
 
@@ -485,7 +495,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingId(hearingId);
+                var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
 
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
                     return Ok(new PhoneConferenceResponse
