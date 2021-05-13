@@ -15,62 +15,59 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Requests.Enums;
 using VideoApi.Client;
+using Microsoft.Extensions.Options;
+using AdminWebsite.Configuration;
+using Autofac.Extras.Moq;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class CancelHearingTests
     {
-        private Mock<IBookingsApiClient> _bookingsApiClient;
-        private Mock<IUserIdentity> _userIdentity;
-        private Mock<IUserAccountService> _userAccountService;
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
+        private AutoMock _mocker;
         private AdminWebsite.Controllers.HearingsController _controller;
-        private Guid _guid;
-        private UpdateBookingStatusRequest _updateBookingStatusRequest;
-        private Mock<IVideoApiClient> _videoApiMock;
-        private Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private Mock<INotificationApiClient> _notificationApiMock;
-        private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private IHearingsService _hearingsService;
 
         [SetUp]
         public void Setup()
         {
-            _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _userIdentity = new Mock<IUserIdentity>();
-            _userAccountService = new Mock<IUserAccountService>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            _videoApiMock = new Mock<IVideoApiClient>();
-            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
-            _notificationApiMock = new Mock<INotificationApiClient>();
-
-            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
-                _bookingsApiClient.Object, _participantGroupLogger.Object);
-
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
-                _userIdentity.Object,
-                _userAccountService.Object,
-                _editHearingRequestValidator.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>());
-
-            _guid = Guid.NewGuid();
-
-            _updateBookingStatusRequest = new UpdateBookingStatusRequest()
-                {Status = UpdateBookingStatus.Cancelled, UpdatedBy = "admin user"};
+            _mocker = AutoMock.GetLoose();
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = new MeetingRoomResponse
+                    {
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = "expected_conference_phone_id"
+                    }
+                });
+            
+            _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
 
         [Test]
         public async Task Should_update_status_of_hearing_to_cancelled_given_status_and_updatedby()
         {
-            var response = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
+            // Arrange
+            var bookingGuid = Guid.NewGuid();
+            var updateBookingStatusRequest = new UpdateBookingStatusRequest {
+                Status = UpdateBookingStatus.Cancelled, 
+                UpdatedBy = "admin user"
+            };
+            
+            // Act
+            var response = await _controller.UpdateBookingStatus(bookingGuid, updateBookingStatusRequest);
+            
+            // Assert
             var result = (OkObjectResult) response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should()
-                .BeTrue();
+            
+            result.Value.Should().NotBeNull()
+                                 .And.BeAssignableTo<UpdateBookingStatusResponse>()
+                                 .Subject.Success.Should().BeTrue();
         }
     }
 }
