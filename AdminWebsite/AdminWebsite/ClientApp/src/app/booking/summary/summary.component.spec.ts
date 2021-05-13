@@ -562,10 +562,7 @@ describe('SummaryComponent  with multi days request', () => {
         recordingGuardServiceSpy,
         participantServiceSpy
     );
-    component.participantsListComponent = new ParticipantListComponent(
-        jasmine.createSpyObj<Router>(['navigate']),
-        loggerSpy
-    );
+    component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
     component.removeInterpreterPopupComponent.isLastParticipant = false;
     component.removePopupComponent = new RemovePopupComponent();

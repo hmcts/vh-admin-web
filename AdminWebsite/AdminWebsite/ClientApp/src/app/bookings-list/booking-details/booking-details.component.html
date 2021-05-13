@@ -35,9 +35,9 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
-        <span *ngIf="!hearing.isCreated || (hearing.isCreated && timeForEditing)">
+        <span>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-button"
@@ -46,7 +46,7 @@
             Edit
           </button>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canCancelHearing"
             class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel"
             data-module="govuk-button"
             id="cancel-button"

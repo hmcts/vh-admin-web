@@ -1,51 +1,60 @@
-export const BreadcrumbItems = [
+import { BreadcrumbItemModel } from './breadcrumbItem.model';
+
+export const BreadcrumbItems: BreadcrumbItemModel[] = [
     {
-        id: 1,
-        value: true,
-        name: 'Hearing details',
-        url: '/book-hearing',
-        active: true
+        Id: 1,
+        Value: true,
+        Name: 'Hearing details',
+        Url: '/book-hearing',
+        Active: true,
+        LastMinuteAmendable: false
     },
     {
-        id: 2,
-        value: false,
-        name: 'Hearing schedule',
-        url: '/hearing-schedule',
-        active: false
+        Id: 2,
+        Value: false,
+        Name: 'Hearing schedule',
+        Url: '/hearing-schedule',
+        Active: false,
+        LastMinuteAmendable: false
     },
     {
-        id: 3,
-        value: false,
-        name: 'Judge',
-        url: '/assign-judge',
-        active: false
+        Id: 3,
+        Value: false,
+        Name: 'Judge',
+        Url: '/assign-judge',
+        Active: false,
+        LastMinuteAmendable: false
     },
     {
-        id: 4,
-        value: false,
-        name: 'Participants',
-        url: '/add-participants',
-        active: false
+        Id: 4,
+        Value: false,
+        Name: 'Participants',
+        Url: '/add-participants',
+        Active: false,
+        LastMinuteAmendable: true
     },
     {
-        id: 5,
-        value: false,
-        name: 'Video access points',
-        url: '/video-access-points',
-        active: false
+        Id: 5,
+        Value: false,
+        Name: 'Video access points',
+        Url: '/video-access-points',
+        Active: false,
+        LastMinuteAmendable: false
     },
     {
-        id: 6,
-        value: false,
-        name: 'Other information',
-        url: '/other-information',
-        active: false
+        Id: 6,
+        Value: false,
+        Name: 'Other information',
+        Url: '/other-information',
+        Active: false,
+        LastMinuteAmendable: false
     },
     {
-        id: 7,
-        value: false,
-        name: 'Summary',
-        url: '/summary',
-        active: false
+        Id: 7,
+        Value: false,
+        Name: 'Summary',
+        Url: '/summary',
+        Active: false,
+        LastMinuteAmendable: true
     }
 ];
