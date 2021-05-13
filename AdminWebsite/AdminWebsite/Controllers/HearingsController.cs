@@ -245,13 +245,6 @@ namespace AdminWebsite.Controllers
                     await Task.WhenAll(request.Participants.Where(participant => participant.Id.HasValue)
                         .Select(participant => _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant)));
 
-
-
-
-
-                    //foreach (var participant in request.Participants.Where(participant => participant.Id.HasValue))
-                    //    await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
-
                     // Delete existing participants if the request doesn't contain any update information
                     originalHearing.Participants ??= new List<ParticipantResponse>();
                     await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
@@ -269,9 +262,6 @@ namespace AdminWebsite.Controllers
                     .Select(participant => _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
                         usernameAdIdDict, newParticipantList)));
 
-                //foreach (var participant in request.Participants.Where(participant => !participant.Id.HasValue))
-                //    await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                //        usernameAdIdDict, newParticipantList);
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
                 var addedParticipantToHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, addedParticipantToHearing);
