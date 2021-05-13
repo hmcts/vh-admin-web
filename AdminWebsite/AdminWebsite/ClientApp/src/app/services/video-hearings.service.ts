@@ -452,7 +452,7 @@ export class VideoHearingsService {
     }
 
     isHearingAboutToStart(): boolean {
-        if (this.modelHearing.scheduled_date_time && this.modelHearing.status) {
+        if (this.modelHearing.scheduled_date_time && this.modelHearing.isConfirmed) {
             const currentDateTime = new Date().getTime();
             const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
             return difference < 30;
