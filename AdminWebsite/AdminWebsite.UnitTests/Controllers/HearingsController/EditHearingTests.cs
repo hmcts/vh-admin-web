@@ -340,7 +340,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Should()
                 .BeEquivalentTo(new[]
                 {
-                    $"You can't edit a hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting"
+                    $"You can't edit a confirmed hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting"
                 });
         }
 
