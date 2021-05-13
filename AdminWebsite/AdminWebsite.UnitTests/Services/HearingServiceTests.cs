@@ -402,10 +402,7 @@ namespace AdminWebsite.UnitTests.Services
             var participantId = _hearing.Participants[0].Id;
             var updatedParticipant = new EditParticipantRequest
             {
-                DisplayName = "New Display Name",
-                Id = participantId,
-                TelephoneNumber="12345",
-                Title = "New Title"
+                DisplayName = "New Display Name", Id = participantId, TelephoneNumber = "12345", Title = "New Title"
             };
 
             //Act
@@ -413,12 +410,13 @@ namespace AdminWebsite.UnitTests.Services
 
             //Assert
             _mocker.Mock<IBookingsApiClient>()
-                .Verify(x => x.UpdateParticipantDetailsAsync(
-                    It.Is<Guid>(h => h == _hearing.Id),
-                    It.Is<Guid>(p => p == participantId),
-                    It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName
-                        && r.TelephoneNumber == updatedParticipant.TelephoneNumber
-                        && r.Title == updatedParticipant.Title)), Times.Once);
+                .Verify(
+                    x => x.UpdateParticipantDetailsAsync(It.Is<Guid>(h => h == _hearing.Id),
+                        It.Is<Guid>(p => p == participantId),
+                        It.Is<UpdateParticipantRequest>(r =>
+                            r.DisplayName == updatedParticipant.DisplayName &&
+                            r.TelephoneNumber == updatedParticipant.TelephoneNumber &&
+                            r.Title == updatedParticipant.Title)), Times.Once);
         }
 
         [Test]
@@ -464,7 +462,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_QuestionnaireNotRequired_is_changed()
+        public void Should_return_false_when_QuestionnaireNotRequired_is_changed()
         {
             _addNewParticipantRequest.QuestionnaireNotRequired =
                 !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
@@ -475,7 +473,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_count_is_changed()
+        public void Should_return_false_when_endpoint_count_is_changed()
         {
             _addNewParticipantRequest.Endpoints.Add(new EditEndpointRequest
             {
@@ -488,7 +486,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_displayName_is_changed()
+        public void Should_return_false_when_endpoint_displayName_is_changed()
         {
             _addNewParticipantRequest.Endpoints.First().DisplayName = "test1";
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -496,7 +494,20 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_defenceAdvocateUsername_is_changed()
+        public void Should_return_false_when_endpoint_removed()
+        {
+            _updatedExistingParticipantHearingOriginal.Endpoints.Add(new EndpointResponse
+            {
+                Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateId = Guid.NewGuid(),
+            });
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+
+            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+                _updatedExistingParticipantHearingOriginal));
+        }
+
+        [Test]
+        public void Should_return_false_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -504,7 +515,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_participant_removed()
+        public void Should_return_false_when_participant_removed()
         {
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse {Id = Guid.NewGuid()});
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -512,7 +523,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_participant_added()
+        public void Should_return_true_when_participant_added()
         {
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
             Assert.True(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -520,10 +531,13 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_nothing_changed()
+        public void Should_return_false_when_nothing_changed_in_participants()
         {
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
-                _updatedExistingParticipantHearingOriginal));
+            var participantRequest1 = new EditParticipantRequest {Id = It.IsAny<Guid>(), DisplayName = "Test",};
+            var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
+            var editParticipants2 = new List<EditParticipantRequest> {participantRequest1};
+
+            Assert.False(_service.HasParticipantsOnlyBeenAdded(editParticipants1, editParticipants2));
         }
 
         [Test]
