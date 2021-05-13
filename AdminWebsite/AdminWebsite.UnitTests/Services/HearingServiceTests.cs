@@ -367,6 +367,21 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
+        public async Task should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
+        {
+            // Arrange
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = null
+                });
+            
+            // Act & Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.GetTelephoneConferenceDetails(Guid.NewGuid()));
+        }
+        
+        [Test]
         public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
             var expectedConferencePhoneNumber = "phone_number";
