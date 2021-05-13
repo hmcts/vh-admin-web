@@ -44,7 +44,7 @@ namespace AdminWebsite.Controllers
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
-        private static readonly int thirty = 30;
+        private static readonly int startingSoonMinutesThreshold = 30;
 
         /// <summary>
         ///     Instantiates the controller
@@ -230,7 +230,7 @@ namespace AdminWebsite.Controllers
                     !_hearingsService.IsAddingParticipantOnly(request, originalHearing))
                 {
                     var errorMessage =
-                        $"You can't edit a confirmed hearing [{hearingId}] within {thirty} minutes of it starting";
+                        $"You can't edit a confirmed hearing [{hearingId}] within {startingSoonMinutesThreshold} minutes of it starting";
                     _logger.LogWarning(errorMessage);
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
@@ -308,7 +308,7 @@ namespace AdminWebsite.Controllers
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
         {
-            var timeToCheckHearingAgainst = DateTime.UtcNow.AddMinutes(thirty);
+            var timeToCheckHearingAgainst = DateTime.UtcNow.AddMinutes(startingSoonMinutesThreshold);
             return originalHearing.ScheduledDateTime < timeToCheckHearingAgainst;
         }
 
