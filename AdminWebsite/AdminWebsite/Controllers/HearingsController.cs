@@ -224,7 +224,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var newParticipantList = new List<ParticipantRequest>();
-                if (IsHearingStartingStartSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
+                if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
                     !_hearingsService.IsAddingParticipantOnly(request, originalHearing))
                 {
                     _logger.LogWarning("You can't edit a hearing within 30 minutes of it starting");
@@ -232,7 +232,7 @@ namespace AdminWebsite.Controllers
                         $"You can't edit a hearing [{hearingId}] within 30 minutes of it starting");
                     return BadRequest(ModelState);
                 }
-                else if(!IsHearingStartingStartSoon(originalHearing) || originalHearing.Status == BookingStatus.Booked)
+                else if(!IsHearingStartingSoon(originalHearing) || originalHearing.Status == BookingStatus.Booked)
                 {
                     //Save hearing details
                     var updateHearingRequest =
@@ -259,7 +259,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
                 // endpoints
-                if (!IsHearingStartingStartSoon(originalHearing) || originalHearing.Status == BookingStatus.Booked)
+                if (!IsHearingStartingSoon(originalHearing) || originalHearing.Status == BookingStatus.Booked)
                     await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
                 // Send a notification email to newly created participants
                 var newParticipantEmails = newParticipantList.Select(p => p.ContactEmail).ToList();
@@ -303,7 +303,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
         }
 
-        private static bool IsHearingStartingStartSoon(HearingDetailsResponse originalHearing)
+        private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
         {
             var timeToCheckHearingAgainst = DateTime.UtcNow.AddMinutes(30);
             return originalHearing.ScheduledDateTime < timeToCheckHearingAgainst;
