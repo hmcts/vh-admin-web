@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
 
 @Component({
@@ -12,28 +12,23 @@ import { HearingModel } from '../../../common/model/hearing.model';
 })
 export class ParticipantListComponent implements OnInit, OnChanges {
     @Input() hearing: HearingModel;
-
     sortedParticipants: ParticipantModel[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
 
-    isSummaryPage = false;
-    isEditRemoveVisible = true;
+    @Input() isSummaryPage = false;
+    @Input() canEdit = false;
+
     isEditMode = false;
 
-    constructor(private router: Router, private logger: Logger) {}
+    constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngOnChanges() {
         this.sortParticipants();
     }
 
     ngOnInit() {
-        const currentUrl = this.router.url;
-        if (currentUrl) {
-            this.isSummaryPage = currentUrl.includes('summary');
-            this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
-        }
         this.sortParticipants();
     }
 
@@ -108,5 +103,15 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         interpreteeList.forEach(i => {
             i.is_interpretee = false;
         });
+    }
+
+    canEditParticipant(particpant: ParticipantModel): boolean {
+        if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
+            return false;
+        }
+        if (this.videoHearingsService.isHearingAboutToStart() && !particpant.addedDuringHearing) {
+            return false;
+        }
+        return true;
     }
 }

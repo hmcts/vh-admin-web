@@ -24,6 +24,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.Controllers
 {
@@ -241,28 +242,26 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                     //Update existing participant
-                    foreach (var participant in request.Participants.Where(participant => participant.Id.HasValue))
-                        await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
+                    await Task.WhenAll(request.Participants.Where(participant => participant.Id.HasValue)
+                        .Select(participant => _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant)));
 
                     // Delete existing participants if the request doesn't contain any update information
                     originalHearing.Participants ??= new List<ParticipantResponse>();
                     await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
                 }
-                else
+                else if (!_hearingsService.IsAddingParticipantOnly(request, originalHearing))
                 {
-                    if (!_hearingsService.IsAddingParticipantOnly(request, originalHearing))
-                    {
-                        _logger.LogWarning("You can't edit a hearing within 30 minutes of it starting");
-                        ModelState.AddModelError(nameof(hearingId),
-                            $"You can't edit a hearing [{hearingId}] within 30 minutes of it starting");
-                        return BadRequest(ModelState);
-                    }
+                    _logger.LogWarning("You can't edit a hearing within 30 minutes of it starting");
+                    ModelState.AddModelError(nameof(hearingId),
+                        $"You can't edit a hearing [{hearingId}] within 30 minutes of it starting");
+                    return BadRequest(ModelState);                    
                 }
 
                 // Add new participants
-                foreach (var participant in request.Participants.Where(participant => !participant.Id.HasValue))
-                    await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                        usernameAdIdDict, newParticipantList);
+                await Task.WhenAll(request.Participants.Where(participant => !participant.Id.HasValue)
+                    .Select(participant => _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
+                        usernameAdIdDict, newParticipantList)));
+
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
                 var addedParticipantToHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, addedParticipantToHearing);
@@ -499,7 +498,9 @@ namespace AdminWebsite.Controllers
 
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
                     return Ok(new PhoneConferenceResponse
-                    { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
+                    {
+                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                    });
 
                 return NotFound();
             }

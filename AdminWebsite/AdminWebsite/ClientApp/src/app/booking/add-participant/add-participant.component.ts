@@ -592,6 +592,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.form.markAsPristine();
             this.form.updateValueAndValidity();
             const newParticipant = new ParticipantModel();
+
+            if (this.participantDetails) {
+                this.participantDetails.addedDuringHearing =
+                    !this.videoHearingService.isConferenceClosed() && this.videoHearingService.isHearingAboutToStart();
+            }
+
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
                 this.addLinkedParticipant(newParticipant);
@@ -729,6 +735,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         newParticipant.interpreterFor = this.interpreterFor.value === this.constants.PleaseSelect ? null : this.interpreterFor.value;
         newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
+        newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
