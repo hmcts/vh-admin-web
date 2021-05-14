@@ -115,17 +115,12 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
-    get timeForEditing(): boolean {
-        if (this.booking) {
-            let withinTimeFrame: boolean;
-            const current = new Date();
-            current.setMinutes(current.getMinutes() + 30);
-            withinTimeFrame = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
-            if (!withinTimeFrame && this.booking.status === BookingStatus.Created && this.timeSubscription) {
-                this.timeSubscription.unsubscribe();
-            }
-            return withinTimeFrame;
-        }
+    get canCancelHearing(): boolean {
+        return !this.videoHearingService.isHearingAboutToStart();
+    }
+
+    get canEditHearing(): boolean {
+        return !this.videoHearingService.isConferenceClosed();
     }
 
     get canRetryConfirmation(): boolean {
@@ -202,6 +197,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
                 this.updateStatusHandler(status);
+                this.booking.isConfirmed = true;
             } else {
                 this.showConfirmingFailed = true;
                 this.updateStatusHandler(UpdateBookingStatus.Failed);

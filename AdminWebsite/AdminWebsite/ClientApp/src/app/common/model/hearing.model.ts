@@ -39,4 +39,5 @@ export class HearingModel {
     end_hearing_date_time?: Date | undefined;
     telephone_conference_id?: string | undefined;
     linked_participants?: LinkedParticipantModel[] | undefined;
+    isConfirmed?: boolean;
 }
