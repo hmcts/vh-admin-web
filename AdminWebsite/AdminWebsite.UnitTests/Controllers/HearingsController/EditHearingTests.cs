@@ -144,7 +144,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
                 Cases = cases,
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
@@ -163,7 +164,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Cases = cases,
                 CaseTypeName = "Unit Test",
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             var participant1 = Guid.NewGuid();
@@ -191,7 +193,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         FirstName = "testuser1", LinkedParticipants = null
                     }
                 },
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
             _existingHearingWithLinkedParticipants = new HearingDetailsResponse
             {
@@ -226,7 +229,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         }
                     }
                 },
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             var guid1 = Guid.NewGuid();
@@ -408,7 +412,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Never);
+                Times.Once);
         }
 
         [Test]
@@ -1486,9 +1490,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             }
                         }
                     }
-                }
+                },
+                OtherInformation = ""
             };
-
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(

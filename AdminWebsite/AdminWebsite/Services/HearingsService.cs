@@ -149,19 +149,18 @@ namespace AdminWebsite.Services
                 : hearingDetailsResponse.Endpoints
                     .Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
+            var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
 
-            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
+            return addedParticipant.Any() &&
+                   editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
                    editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName &&
                    editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
                    editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
                    editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
                    editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
-                   editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired &&
                    hearingCase.Name == editHearingRequest.Case.Name &&
                    hearingCase.Number == editHearingRequest.Case.Number &&
-                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints) &&
-                   (originalParticipants.Count <= requestParticipants.Count) &&
-                   HasParticipantsOnlyBeenAdded(originalParticipants, requestParticipants);
+                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
@@ -174,16 +173,17 @@ namespace AdminWebsite.Services
                 .ToList()
                 .Count == 0;
         }
-        public bool HasParticipantsOnlyBeenAdded(List<EditParticipantRequest> originalParticipants,
+        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants,
             List<EditParticipantRequest> requestParticipants)
         {
-            return (originalParticipants
+            return originalParticipants
                 .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
                 .ToList()
-                .Count == 0) && (requestParticipants
-                .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
-                .ToList()
-                .Count != 0);
+                .Count == 0
+                ? requestParticipants
+                    .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                    .ToList()
+                : new List<EditParticipantRequest>();
         }
 
 

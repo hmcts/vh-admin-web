@@ -537,7 +537,7 @@ namespace AdminWebsite.UnitTests.Services
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest1};
 
-            Assert.False(_service.HasParticipantsOnlyBeenAdded(editParticipants1, editParticipants2));
+            Assert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
         }
 
         [Test]
@@ -563,15 +563,6 @@ namespace AdminWebsite.UnitTests.Services
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
             Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_addNewParticipantRequest,
-                _updatedExistingParticipantHearingOriginal));
-        }
-
-        [Test]
-        public void Should_return_false_if_AudioRecordingRequired_changed()
-        {
-            _addNewParticipantRequest.AudioRecordingRequired =
-                !_updatedExistingParticipantHearingOriginal.AudioRecordingRequired;
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
