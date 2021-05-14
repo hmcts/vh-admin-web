@@ -326,15 +326,46 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_bad_request_if_hearing_starts_in_less_than_thirty_minutes()
+        public async Task
+            Should_return_bad_request_if_edit_confirmed_hearing_except_only_adding_participant_prior_30_minutes_of_it_starting()
         {
             _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(-1);
+            _updatedExistingParticipantHearingOriginal.Status = BookingStatus.Created;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var badRequestResult = (BadRequestObjectResult)result.Result;
-            var errors = (SerializableError)badRequestResult.Value;
-            errors["hearingId"].Should().BeEquivalentTo(new[] { $"You can't edit a hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting" });
+            var badRequestResult = (BadRequestObjectResult) result.Result;
+            var errors = (SerializableError) badRequestResult.Value;
+            errors["hearingId"]
+                .Should()
+                .BeEquivalentTo(new[]
+                {
+                    $"You can't edit a confirmed hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting"
+                });
+        }
+
+        [Test]
+        public async Task
+            Should_allow_edit_confirmed_hearing_up_until_30_minutes_before_starting()
+        {
+            _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(1);
+            _addNewParticipantRequest.ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime;
+            _updatedExistingParticipantHearingOriginal.Status = BookingStatus.Booked;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
+
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(
+                x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()),
+                Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                Times.Once);
         }
         [Test]
         public async Task Should_allow_only_add_participant_if_hearing_starts_in_less_than_thirty_minutes()
