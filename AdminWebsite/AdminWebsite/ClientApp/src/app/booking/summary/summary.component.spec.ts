@@ -89,10 +89,15 @@ function initBadHearingRequest(): HearingModel {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 const stringifier = new PipeStringifierService();
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
+recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+    'switchOffRecording',
+    'mandatoryRecordingForHearingRole'
+]);
 
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
     'getHearingTypes',
@@ -124,7 +129,8 @@ describe('SummaryComponent with valid request', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
                 ],
                 declarations: [
                     SummaryComponent,
@@ -378,7 +384,8 @@ describe('SummaryComponent  with existing request', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -541,11 +548,13 @@ describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
-    let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
     let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
-    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording']);
+    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+        'switchOffRecording',
+        'mandatoryRecordingForHearingRole'
+    ]);
     existingRequest = initExistingHearingRequest();
     existingRequest.multiDays = true;
     existingRequest.hearing_id = '12345ty';
