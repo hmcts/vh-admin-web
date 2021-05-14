@@ -44,7 +44,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
             result.Cases.Should().BeEquivalentTo(_caseRequest);
             result.QuestionnaireNotRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
-            result.AudioRecordingRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
+            result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
 
         [Test]

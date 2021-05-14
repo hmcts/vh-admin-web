@@ -84,7 +84,8 @@ namespace AdminWebsite.Services
         private readonly ILogger<HearingsService> _logger;
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly KinlyConfiguration _kinlyConfiguration;
-
+        
+        #pragma warning disable S00107s
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
             IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
@@ -97,7 +98,7 @@ namespace AdminWebsite.Services
             _conferenceDetailsService = conferenceDetailsService;
             _kinlyConfiguration = kinlyOptions.Value;
         }
-
+        #pragma warning restore S00107
         public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
         {
