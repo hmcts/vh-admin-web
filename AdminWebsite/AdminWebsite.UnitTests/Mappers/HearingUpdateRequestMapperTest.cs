@@ -19,18 +19,14 @@ namespace AdminWebsite.UnitTests.Mappers
         [SetUp]
         public void Setup()
         {
-            var username = "username";
-            var scheduledDateTime = new DateTime(2020, 12, 12);
-            var caseRequest = new CaseRequest {Name = "casename", Number = "casenumber"};
-
             _newParticipantRequest = new EditHearingRequest
             {
                 HearingRoomName = "roomname",
                 HearingVenueName = "venuename",
                 OtherInformation = "other information",
-                ScheduledDateTime = scheduledDateTime,
+                ScheduledDateTime = _scheduledDateTime,
                 ScheduledDuration = 45,
-                Case = new EditCaseRequest {Name = caseRequest.Name, Number = caseRequest.Number},
+                Case = new EditCaseRequest {Name = _caseRequest.Name, Number = _caseRequest.Number},
                 QuestionnaireNotRequired = false,
                 AudioRecordingRequired = false
             };
@@ -52,7 +48,7 @@ namespace AdminWebsite.UnitTests.Mappers
         }
 
         [Test]
-        public void Should_map_proAudioRecordingRequired_with_true_value_for_when_linkedParticipant_is_interpreter()
+        public void Should_map_property_AudioRecordingRequired_with_true_value_for_when_linkedParticipant_is_interpreter()
         {
             _newParticipantRequest.Participants = new List<EditParticipantRequest>
             {
