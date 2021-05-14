@@ -94,7 +94,10 @@ const stringifier = new PipeStringifierService();
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
-recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording', 'mandatoryRecordingForHearingRole']);
+recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+    'switchOffRecording',
+    'mandatoryRecordingForHearingRole'
+]);
 
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
     'getHearingTypes',
@@ -548,7 +551,10 @@ describe('SummaryComponent  with multi days request', () => {
     let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
-    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording', 'mandatoryRecordingForHearingRole']);
+    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+        'switchOffRecording',
+        'mandatoryRecordingForHearingRole'
+    ]);
     existingRequest = initExistingHearingRequest();
     existingRequest.multiDays = true;
     existingRequest.hearing_id = '12345ty';
