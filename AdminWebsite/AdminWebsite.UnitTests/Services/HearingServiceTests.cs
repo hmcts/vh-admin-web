@@ -33,7 +33,7 @@ namespace AdminWebsite.UnitTests.Services
         private HearingDetailsResponse _hearing;
         private const string _expectedTeleConferencePhoneNumber = "expected_conference_phone_number";
         private const string _expectedTeleConferenceId = "expected_conference_phone_id";
-        
+
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Guid _validId;
         private EditHearingRequest _addNewParticipantRequest;
@@ -61,12 +61,12 @@ namespace AdminWebsite.UnitTests.Services
                         TelephoneConferenceId = _expectedTeleConferenceId
                     }
                 });
-            
+
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
             _validId = Guid.NewGuid();
 
-            var cases = new List<CaseResponse> {new CaseResponse {Name = "Case", Number = "123"}};
+            var cases = new List<CaseResponse> { new CaseResponse { Name = "Case", Number = "123" } };
 
             _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
@@ -117,7 +117,7 @@ namespace AdminWebsite.UnitTests.Services
                     .ToList()
             };
         }
-        
+
         [Test]
         public async Task should_send_confirmation_email_to_all_participants_except_judge()
         {
@@ -143,7 +143,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
         {
-            _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
+            _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails { JudgeEmail = null });
 
             var secondHearing = InitHearing();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
@@ -161,7 +161,7 @@ namespace AdminWebsite.UnitTests.Services
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
 
             secondHearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
             await _service.SendHearingUpdateEmail(_hearing, secondHearing);
 
@@ -177,7 +177,7 @@ namespace AdminWebsite.UnitTests.Services
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
 
             secondHearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
             await _service.SendHearingUpdateEmail(secondHearing, secondHearing);
 
@@ -196,10 +196,10 @@ namespace AdminWebsite.UnitTests.Services
         {
             var secondHearing = InitHearing();
             secondHearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
+                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
 
             await _service.SendJudgeConfirmationEmail(secondHearing);
 
@@ -216,7 +216,7 @@ namespace AdminWebsite.UnitTests.Services
 
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> {_hearing, secondHearing});
+                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing, secondHearing });
 
             await _service.SendJudgeConfirmationEmail(secondHearing);
 
@@ -228,9 +228,9 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            
+
             await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
-            
+
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
@@ -267,10 +267,10 @@ namespace AdminWebsite.UnitTests.Services
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
+                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
@@ -286,14 +286,14 @@ namespace AdminWebsite.UnitTests.Services
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             var hearing2 = InitHearing();
             _hearing.GroupId = _hearing.Id;
             hearing2.GroupId = _hearing.GroupId;
             _hearing.Cases[0].Name = "Day 1 of 2 Confirming a hearing";
             hearing2.Cases[0].Name = "Day 2 of 2 Confirming a hearing";
             hearing2.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1);
-            var listOfHearings = new List<HearingDetailsResponse> {_hearing, hearing2};
+            var listOfHearings = new List<HearingDetailsResponse> { _hearing, hearing2 };
             listOfHearings = listOfHearings.OrderBy(x => x.ScheduledDateTime).ToList();
 
             _mocker.Mock<IBookingsApiClient>()
@@ -315,14 +315,14 @@ namespace AdminWebsite.UnitTests.Services
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
-                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
             var hearing2 = InitHearing();
             _hearing.GroupId = _hearing.Id;
             hearing2.GroupId = _hearing.GroupId;
             _hearing.Cases[0].Name = "Day 1 of 2 Confirming a hearing";
             hearing2.Cases[0].Name = "Day 2 of 2 Confirming a hearing";
             hearing2.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1);
-            var listOfHearings = new List<HearingDetailsResponse> {_hearing, hearing2};
+            var listOfHearings = new List<HearingDetailsResponse> { _hearing, hearing2 };
             listOfHearings = listOfHearings.OrderBy(x => x.ScheduledDateTime).ToList();
 
             _mocker.Mock<IBookingsApiClient>()
@@ -343,10 +343,10 @@ namespace AdminWebsite.UnitTests.Services
             should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_if_no_judge_email_exists()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = null}.ToOtherInformationString();
+            _hearing.OtherInformation = new OtherInformationDetails { JudgeEmail = null }.ToOtherInformationString();
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
+                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
@@ -360,12 +360,12 @@ namespace AdminWebsite.UnitTests.Services
         {
             // Act
             var teleConferenceDetails = await _service.GetTelephoneConferenceDetails(Guid.NewGuid());
-            
+
             // Assert
             teleConferenceDetails.TeleConferencePhoneNumber.Should().Be(_expectedTeleConferencePhoneNumber);
             teleConferenceDetails.TeleConferenceId.Should().Be(_expectedTeleConferenceId);
         }
-        
+
         [Test]
         public void should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
         {
@@ -376,11 +376,11 @@ namespace AdminWebsite.UnitTests.Services
                 {
                     MeetingRoom = null
                 });
-            
+
             // Act & Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.GetTelephoneConferenceDetails(Guid.NewGuid()));
         }
-        
+
         [Test]
         public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
@@ -402,7 +402,10 @@ namespace AdminWebsite.UnitTests.Services
             var participantId = _hearing.Participants[0].Id;
             var updatedParticipant = new EditParticipantRequest
             {
-                DisplayName = "New Display Name", Id = participantId, TelephoneNumber = "12345", Title = "New Title"
+                DisplayName = "New Display Name",
+                Id = participantId,
+                TelephoneNumber = "12345",
+                Title = "New Title"
             };
 
             //Act
@@ -423,7 +426,7 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_false_if_HearingRoomName_is_not_changed()
         {
             _addNewParticipantRequest.HearingRoomName = "Updated HearingRoomName";
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -433,7 +436,7 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_false_if_HearingVenueName_is_changed()
         {
             _addNewParticipantRequest.HearingRoomName = "Updated HearingVenueName";
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -444,7 +447,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _addNewParticipantRequest.OtherInformation = "Updated OtherInformation";
 
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -455,7 +458,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _addNewParticipantRequest.ScheduledDuration =
                 _updatedExistingParticipantHearingOriginal.ScheduledDuration + 1;
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -466,7 +469,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _addNewParticipantRequest.QuestionnaireNotRequired =
                 !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -477,9 +480,11 @@ namespace AdminWebsite.UnitTests.Services
         {
             _addNewParticipantRequest.Endpoints.Add(new EditEndpointRequest
             {
-                Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateUsername = Guid.NewGuid().ToString(),
+                Id = Guid.NewGuid(),
+                DisplayName = "test",
+                DefenceAdvocateUsername = Guid.NewGuid().ToString(),
             });
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -498,9 +503,11 @@ namespace AdminWebsite.UnitTests.Services
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.Add(new EndpointResponse
             {
-                Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                DisplayName = "test",
+                DefenceAdvocateId = Guid.NewGuid(),
             });
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
@@ -517,7 +524,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void Should_return_false_when_participant_removed()
         {
-            _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse {Id = Guid.NewGuid()});
+            _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse { Id = Guid.NewGuid() });
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
@@ -525,7 +532,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void Should_return_true_when_participant_added()
         {
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
             Assert.True(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
@@ -533,11 +540,11 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void Should_return_false_when_nothing_changed_in_participants()
         {
-            var participantRequest1 = new EditParticipantRequest {Id = It.IsAny<Guid>(), DisplayName = "Test",};
-            var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
-            var editParticipants2 = new List<EditParticipantRequest> {participantRequest1};
+            var participantRequest1 = new EditParticipantRequest { Id = It.IsAny<Guid>(), DisplayName = "Test", };
+            var editParticipants1 = new List<EditParticipantRequest> { participantRequest1 };
+            var editParticipants2 = new List<EditParticipantRequest> { participantRequest1 };
 
-            Assert.False(_service.HasParticipantsOnlyBeenAdded(editParticipants1, editParticipants2));
+            Assert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
         }
 
         [Test]
@@ -563,15 +570,6 @@ namespace AdminWebsite.UnitTests.Services
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
             Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_addNewParticipantRequest,
-                _updatedExistingParticipantHearingOriginal));
-        }
-
-        [Test]
-        public void Should_return_false_if_AudioRecordingRequired_changed()
-        {
-            _addNewParticipantRequest.AudioRecordingRequired =
-                !_updatedExistingParticipantHearingOriginal.AudioRecordingRequired;
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -603,7 +601,7 @@ namespace AdminWebsite.UnitTests.Services
 
         private HearingDetailsResponse InitHearing()
         {
-            var cases = new List<CaseResponse> {new CaseResponse {Name = "Test", Number = "123456"}};
+            var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };
             var rep = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Representative")
@@ -621,7 +619,7 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.UserRoleName = "Judge")
                 .Build();
             return Builder<HearingDetailsResponse>.CreateNew()
-                .With(h => h.Participants = new List<ParticipantResponse> {rep, ind, joh, judge})
+                .With(h => h.Participants = new List<ParticipantResponse> { rep, ind, joh, judge })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();
