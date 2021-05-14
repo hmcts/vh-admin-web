@@ -49,9 +49,11 @@ namespace AdminWebsite.Controllers
         /// <summary>
         ///     Instantiates the controller
         /// </summary>
+#pragma warning disable csharpsquid:S00107
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            ILogger<HearingsController> logger, IHearingsService hearingsService, IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
+            ILogger<HearingsController> logger, IHearingsService hearingsService,
+            IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -62,7 +64,7 @@ namespace AdminWebsite.Controllers
             _conferenceDetailsService = conferenceDetailsService;
             _publicHolidayRetriever = publicHolidayRetriever;
         }
-
+#pragma warning restore csharpsquid:S00107
         /// <summary>
         ///     Create a hearing
         /// </summary>
