@@ -149,21 +149,43 @@ namespace AdminWebsite.Services
                 : hearingDetailsResponse.Endpoints
                     .Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
-            if (originalParticipants.Count == requestParticipants.Count) return false;
-            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName && editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName && editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation && editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime && editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration && editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired && editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired && hearingCase.Name == editHearingRequest.Case.Name && hearingCase.Number == editHearingRequest.Case.Number && originalEndpoints.Count == requestEndpoints.Count && (originalEndpoints
-                .Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+
+            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
+                   editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName &&
+                   editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
+                   editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
+                   editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
+                   editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
+                   editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired &&
+                   hearingCase.Name == editHearingRequest.Case.Name &&
+                   hearingCase.Number == editHearingRequest.Case.Number &&
+                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints) &&
+                   (originalParticipants.Count <= requestParticipants.Count) &&
+                   HasParticipantsOnlyBeenAdded(originalParticipants, requestParticipants);
+        }
+
+        public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
+            List<EditEndpointRequest> requestEndpoints)
+        {
+            return originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
                 .ToList()
-                .Count == 0) && (requestEndpoints
+                .Count == 0 && requestEndpoints
                 .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
                 .ToList()
-                .Count == 0) && (originalParticipants
+                .Count == 0;
+        }
+        public bool HasParticipantsOnlyBeenAdded(List<EditParticipantRequest> originalParticipants,
+            List<EditParticipantRequest> requestParticipants)
+        {
+            return (originalParticipants
                 .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
                 .ToList()
-                .Count == 0) && ((originalParticipants.Count != requestParticipants.Count) || (requestParticipants.Except(originalParticipants,
-                    EditParticipantRequest.EditParticipantRequestComparer)
+                .Count == 0) && (requestParticipants
+                .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
                 .ToList()
-                .Count != 0));
+                .Count != 0);
         }
+
 
         public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
