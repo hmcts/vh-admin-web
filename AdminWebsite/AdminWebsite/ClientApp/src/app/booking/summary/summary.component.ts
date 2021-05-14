@@ -56,6 +56,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDetailsResponseMulti: HearingDetailsResponse;
     multiDays: boolean;
     endHearingDate: Date;
+    interpreterPresent: boolean;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -82,6 +83,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
+        this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
+        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
+        this.retrieveHearingSummary();
+
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
