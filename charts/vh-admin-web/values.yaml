@@ -1,0 +1,57 @@
+---
+java:
+  image: 'sdshmctspublic.azurecr.io/vh/admin-web:20210326.8'
+  applicationPort: 8080
+  replicas: 2
+  ingressHost: vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
+  releaseNameOverride: vh-admin-web
+  readinessPath: /health/liveness
+  livenessPath: /health/liveness
+  livenessDelay: 360
+  livenessPeriod: 120
+  aadIdentityName: vh-aad-identity
+  keyVaults:
+    vh-infra-core:
+      excludeEnvironmentSuffix: false
+      resourceGroup: vh-infra-core-{{ .Values.global.environment }}
+      usePodIdentity: true
+      secrets:
+        - applicationinsights--instrumentationkey
+        - notifyconfiguration--apikey
+        - wowzaconfiguration--storageaccountkey
+        - azuread--temporarypassword
+        - testusersecrets--testuserpassword
+    vh-admin-web:
+      excludeEnvironmentSuffix: false
+      esourceGroup: vh-infra-core-{{ .Values.global.environment }}
+      usePodIdentity: true
+      secrets:
+        - azuread--clientsecret
+        - azuread--clientid
+  environment:
+    ASPNETCORE_URLS: http://+:8080
+    AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
+    DISABLEHTTPSREDIRECTION: true
+    Logging__LogLevel__Default: debug
+    Logging__LogLevel__System: debug
+    Logging__LogLevel__Microsoft: debug
+    AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
+    AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
+    AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
+    TESTUSERSECRETS__TESTUSERNAMESTEM: "@hearings.reform.hmcts.net"
+    VHSERVICES__ADMINWEBRESOURCEID: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__ADMINWEBURL: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__BOOKINGSAPIRESOURCEID: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__TESTAPIRESOURCEID: https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__TESTAPIURL: https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__USERAPIRESOURCEID: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__USERAPIURL: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__VIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__NOTIFICATIONAPIRESOURCEID: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__NOTIFICATIONAPIURL: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "01234567890"
+    KINLYCONFIGURATION__JOINBYPHONEFROMDATE: ""
+    WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhinfrawowza{{ .Values.global.environment }}
+    WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
