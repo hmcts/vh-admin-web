@@ -85,7 +85,7 @@ namespace AdminWebsite.Services
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly KinlyConfiguration _kinlyConfiguration;
         
-        #pragma warning disable S00107s
+        #pragma warning disable S00107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
             IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
