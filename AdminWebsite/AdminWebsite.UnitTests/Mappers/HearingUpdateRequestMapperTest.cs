@@ -47,12 +47,12 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
             result.Cases.Should().BeEquivalentTo(_caseRequest);
-            result.QuestionnaireNotRequired.Should().BeFalse();
-            result.AudioRecordingRequired.Should().BeFalse();
+            result.QuestionnaireNotRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
+            result.AudioRecordingRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
         }
 
         [Test]
-        public void Should_Be_true_for_when_linkedParticipant_is_interpreter()
+        public void Should_map_proAudioRecordingRequired_with_true_value_for_when_linkedParticipant_is_interpreter()
         {
             _newParticipantRequest.Participants = new List<EditParticipantRequest>
             {
@@ -71,14 +71,6 @@ namespace AdminWebsite.UnitTests.Mappers
                 }
             };
             var result = HearingUpdateRequestMapper.MapTo(_newParticipantRequest, _username);
-
-            result.HearingRoomName.Should().Be(_newParticipantRequest.HearingRoomName);
-            result.HearingVenueName.Should().Be(_newParticipantRequest.HearingVenueName);
-            result.ScheduledDateTime.Should().Be(_scheduledDateTime);
-            result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
-            result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
-            result.Cases.Should().BeEquivalentTo(_caseRequest);
-            result.QuestionnaireNotRequired.Should().BeFalse();
             result.AudioRecordingRequired.Should().BeTrue();
         }
     }
