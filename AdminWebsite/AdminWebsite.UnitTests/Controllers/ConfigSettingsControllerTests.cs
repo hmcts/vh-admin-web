@@ -14,7 +14,7 @@ namespace AdminWebsite.UnitTests
         [Test]
         public void Should_return_response_with_settings()
         {
-            var securitySettings = new SecuritySettings
+            var azureAdConfiguration = new AzureAdConfiguration
             {
                 ClientId = "ClientId", 
                 TenantId = "TenantId",
@@ -26,10 +26,11 @@ namespace AdminWebsite.UnitTests
 
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@email.com"
+                TestUsernameStem = "@hmcts.net"
             };
 
-            var serviceSettings = new ServiceSettings { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
+            var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
+            var applicationInsightsConfiguration = new ApplicationInsightsConfiguration();
 
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
@@ -41,9 +42,10 @@ namespace AdminWebsite.UnitTests
             };
 
             var configSettingsController = new ConfigSettingsController(
-                Options.Create(securitySettings),
-                Options.Create(testSettings),
-                Options.Create(serviceSettings)) {
+                Options.Create(azureAdConfiguration),
+                Options.Create(kinlyConfiguration),
+                Options.Create(applicationInsightsConfiguration),
+                Options.Create(testSettings)) {
 
                 ControllerContext = controllerContext
             };
@@ -51,13 +53,13 @@ namespace AdminWebsite.UnitTests
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
             
-            clientSettings.ClientId.Should().Be(securitySettings.ClientId);
-            clientSettings.TenantId.Should().Be(securitySettings.TenantId);
-            clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
-            clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
+            clientSettings.ClientId.Should().Be(azureAdConfiguration.ClientId);
+            clientSettings.TenantId.Should().Be(azureAdConfiguration.TenantId);
+            clientSettings.RedirectUri.Should().Be(azureAdConfiguration.RedirectUri);
+            clientSettings.PostLogoutRedirectUri.Should().Be(azureAdConfiguration.PostLogoutRedirectUri);
+            clientSettings.ConferencePhoneNumber.Should().Be(kinlyConfiguration.ConferencePhoneNumber);
+            clientSettings.JoinByPhoneFromDate.Should().Be(kinlyConfiguration.JoinByPhoneFromDate);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
-            clientSettings.ConferencePhoneNumber.Should().Be(serviceSettings.ConferencePhoneNumber);
-            clientSettings.JoinByPhoneFromDate.Should().Be(serviceSettings.JoinByPhoneFromDate);
 
         }
     }

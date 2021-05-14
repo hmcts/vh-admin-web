@@ -11,7 +11,7 @@ describe('QuestionnaireService', () => {
         displayName: 'participant one',
         updatedAt: new Date(),
         caseNumber: 'a',
-        hearingRole: 'Claimant',
+        hearingRole: 'Applicant',
         representee: '',
         answers: []
     });
@@ -20,7 +20,7 @@ describe('QuestionnaireService', () => {
         displayName: 'participant two',
         caseNumber: 'a',
         updatedAt: new Date(),
-        hearingRole: 'Claimant',
+        hearingRole: 'Applicant',
         representee: '',
         answers: []
     });

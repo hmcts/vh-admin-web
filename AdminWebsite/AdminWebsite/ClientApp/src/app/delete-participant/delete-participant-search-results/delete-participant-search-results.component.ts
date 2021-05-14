@@ -33,15 +33,15 @@ export class DeleteParticipantSearchResultsComponent {
     }
 
     get existsWithoutHearings(): boolean {
-        return this.results && this.results.length === 0;
+        return this.results && !this.results.length;
     }
 
-    get existsWithHearings() {
-        return this.results && this.results.length > 0;
+    get existsWithHearings(): boolean {
+        return this.results && !!this.results.length;
     }
 
-    get userNotFound() {
-        return this.results === null;
+    get userNotFound(): boolean {
+        return !this.results;
     }
 
     editHearing(hearingId: string) {

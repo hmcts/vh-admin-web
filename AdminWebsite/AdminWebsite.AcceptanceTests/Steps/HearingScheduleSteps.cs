@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -7,9 +8,9 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -17,10 +18,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class HearingScheduleSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
 
-        public HearingScheduleSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public HearingScheduleSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
@@ -90,19 +91,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             if (!_c.Test.HearingSchedule.MultiDays) return;
             SelectMultiDaysHearing();
-            _c.Test.HearingSchedule.ScheduledDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate);
-            _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday()));
+            _c.Test.HearingSchedule.ScheduledDate = DateHelper.GetNextIfDayIfNotAWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays);
+            _c.Test.HearingSchedule.EndHearingDate = DateHelper.GetNextWorkingDay(_c.Test.HearingSchedule.ScheduledDate, _c.PublicHolidays, NotCountingToday());
             _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
-        }
-
-        private static DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
-        {
-            return FallOnAWeekend(date) ? date.AddDays(2) : date;
-        }
-
-        private static bool FallOnAWeekend(DateTime date)
-        {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
         }
 
         private int NotCountingToday()

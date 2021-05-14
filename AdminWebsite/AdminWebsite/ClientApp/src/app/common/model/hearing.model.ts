@@ -1,6 +1,7 @@
 import { CaseModel } from './case.model';
 import { ParticipantModel } from './participant.model';
 import { EndpointModel } from './endpoint.model';
+import { LinkedParticipantModel } from './linked-participant.model';
 
 export class HearingModel {
     constructor() {
@@ -8,6 +9,7 @@ export class HearingModel {
         this.participants = [];
         this.scheduled_duration = 0;
         this.endpoints = [];
+        this.linked_participants = [];
     }
     hearing_id?: string | undefined;
     scheduled_date_time?: Date | undefined;
@@ -18,6 +20,8 @@ export class HearingModel {
     created_by?: string | undefined;
     case_type?: string | undefined;
     other_information?: string | undefined;
+    judge_email?: string | undefined;
+    judge_phone?: string | undefined;
     court_room?: string | undefined;
     hearing_venue_id?: number | undefined;
     case_type_id?: number | undefined;
@@ -34,4 +38,6 @@ export class HearingModel {
     multiDays?: boolean | undefined;
     end_hearing_date_time?: Date | undefined;
     telephone_conference_id?: string | undefined;
+    linked_participants?: LinkedParticipantModel[] | undefined;
+    isConfirmed?: boolean;
 }

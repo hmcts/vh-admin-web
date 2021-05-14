@@ -14,7 +14,7 @@ function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
     const p1 = new ParticipantModel();
     p1.display_name = 'display name1';
-    p1.email = 'test1@TestBed.com';
+    p1.email = 'test1@hmcts.net';
     p1.first_name = 'first';
     p1.last_name = 'last';
     p1.is_judge = true;
@@ -22,7 +22,7 @@ function initHearingRequest(): HearingModel {
 
     const p2 = new ParticipantModel();
     p2.display_name = 'display name2';
-    p2.email = 'test2@TestBed.com';
+    p2.email = 'test2@hmcts.net';
     p2.first_name = 'first2';
     p2.last_name = 'last2';
     p2.is_judge = true;
@@ -30,7 +30,7 @@ function initHearingRequest(): HearingModel {
 
     const p3 = new ParticipantModel();
     p3.display_name = 'display name3';
-    p3.email = 'test3@TestBed.com';
+    p3.email = 'test3@hmcts.net';
     p3.first_name = 'first3';
     p3.last_name = 'last3';
     p3.is_judge = true;
@@ -38,7 +38,7 @@ function initHearingRequest(): HearingModel {
 
     const p4 = new ParticipantModel();
     p4.display_name = 'display name3';
-    p4.email = 'test3@TestBed.com';
+    p4.email = 'test3@hmcts.net';
     p4.first_name = 'first3';
     p4.last_name = 'last3';
     p4.is_judge = true;

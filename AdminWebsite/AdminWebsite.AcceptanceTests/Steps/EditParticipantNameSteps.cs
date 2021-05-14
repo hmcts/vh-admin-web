@@ -2,7 +2,7 @@
 using AcceptanceTests.Common.Driver.Helpers;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using System.Collections.Generic;
 using TechTalk.SpecFlow;
@@ -13,10 +13,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class EditParticipantNameSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
-        private User _participant;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
+        private UserDto _participant;
 
-        public EditParticipantNameSteps(TestContext c, Dictionary<User, UserBrowser> browsers)
+        public EditParticipantNameSteps(TestContext c, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = c;
             _browsers = browsers;
@@ -31,21 +31,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"then update First and Last Name")]
         public void WhenThenUpdateFirstAndLastName()
         {
-            var emailLink = EditParticipantNamePage.ContactEmailLink(_participant.Contact_email);
+            var emailLink = EditParticipantNamePage.ContactEmailLink(_participant.ContactEmail);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(emailLink);
             _browsers[_c.CurrentUser].Click(emailLink);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).Clear();
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).SendKeys(_participant.First_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).SendKeys(_participant.FirstName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).Clear();
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).SendKeys(_participant.Last_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).SendKeys(_participant.LastName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.SaveButton);
             _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SaveButton);
         }
 
-        [Then(@"the pariticpant's details are updated")]
-        public void ThenThePariticpantSDetailsAreUpdated()
+        [Then(@"the participant's details are updated")]
+        public void ThenTheParticipantSDetailsAreUpdated()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.CompleteSignField).Text.ToLower().Trim().Should().Be(EditParticipantNamePage.CompleteSignText);
+            _browsers[_c.CurrentUser].TextOf(EditParticipantNamePage.CompleteSignField).ToLower().Should().Be(EditParticipantNamePage.CompleteSignText);
         }
 
         [Then(@"the user does not exists message is displayed")]
@@ -71,26 +71,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private string GetParticipantEmail(string userType)
         {
-            switch(userType)
+            _participant = userType switch
             {
-                case "Individual":
-                    _participant = Users.GetIndividualUser(_c.Users);
-                    break;
-                case "Representative":
-                    _participant = Users.GetRepresentativeUser(_c.Users);
-                    break;
-                case "PanelMember":
-                    _participant = Users.GetPanelMemberUser(_c.Users);
-                    break;
-                case "Judge":
-                    _participant = Users.GetJudgeUser(_c.Users);
-                    break;
-                default:
-                    _participant = null;
-                    break;
-            } 
-            
-            return _participant == null ? "user@notexists.com": _participant.Contact_email;
+                "Individual" => Users.GetIndividualUser(_c.Users),
+                "Representative" => Users.GetRepresentativeUser(_c.Users),
+                "PanelMember" => Users.GetPanelMemberUser(_c.Users),
+                "Judge" => Users.GetJudgeUser(_c.Users),
+                _ => null
+            };
+
+            return _participant == null ? "user@hmcts.net": _participant.ContactEmail;
         }
 
     }

@@ -30,7 +30,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.hearing_type_id = 2;
     existingRequest.hearing_venue_id = 1;
     existingRequest.questionnaire_not_required = false;
-    existingRequest.case_type = 'Civil Money Claims';
+    existingRequest.case_type = 'Generic';
 
     return existingRequest;
 }
@@ -233,7 +233,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     const existingRequest = initExistingHearingRequest();
-    existingRequest.hearing_type_name = 'Application to Set Aside Judgement (SAJ)';
+    existingRequest.hearing_type_name = 'Automated Test';
 
     beforeEach(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -338,6 +338,23 @@ describe('CreateHearingComponent with existing request in session', () => {
         component.caseNameOnBlur();
         fixture.detectChanges();
         expect(component.caseName.value).toBe('text');
+    });
+    it('should return true if participants have been added', () => {
+        component.hearing.participants = [
+            { is_judge: false, is_exist_person: true },
+            { is_judge: true, is_exist_person: true }
+        ];
+        expect(component.isExistingHearingOrParticipantsAdded()).toBe(true);
+    });
+    it('should return false if participants have not been added', () => {
+        component.hearing.participants = [];
+        expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
+        component.hearing.participants = [{ is_judge: true, is_exist_person: true }];
+        expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
+    });
+    it('should return false if hearing is undefined', () => {
+        component.hearing = null;
+        expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
     it('should unsibscribe subcription on destroy', () => {
         component.ngOnDestroy();

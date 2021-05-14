@@ -5,7 +5,7 @@ import { Logger } from 'src/app/services/logger';
 import { ParticipantEditService } from 'src/app/services/participant-edit-service.service';
 import { EditParticipantSearchComponent } from './edit-participant-search.component';
 
-const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hearing.com');
+const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hmcts.net');
 
 describe('EditParticipantSearchComponent', () => {
     let component: EditParticipantSearchComponent;
@@ -25,7 +25,7 @@ describe('EditParticipantSearchComponent', () => {
     });
 
     it('should init form', () => {
-        const contactEmail = 'unit@test.com';
+        const contactEmail = 'unit@hmcts.net';
         component.form.setValue({ contactEmail: contactEmail });
         expect(component.contactEmail.value).toBe(contactEmail);
 
@@ -44,7 +44,7 @@ describe('EditParticipantSearchComponent', () => {
     });
 
     it('should update result on successful search', async () => {
-        const contactEmail = 'john@doe.com';
+        const contactEmail = 'john@hmcts.net';
         component.form.setValue({ contactEmail: contactEmail });
 
         await component.search();
@@ -54,7 +54,7 @@ describe('EditParticipantSearchComponent', () => {
     });
 
     it('should update result on unsuccessful search', async () => {
-        const contactEmail = 'john@doe.com';
+        const contactEmail = 'john@hmcts.net';
         component.form.setValue({ contactEmail: contactEmail });
         service.searchForPerson.and.returnValue(Promise.resolve(null));
 
@@ -65,7 +65,7 @@ describe('EditParticipantSearchComponent', () => {
     });
 
     it('should update result on unauthorised search', async () => {
-        const contactEmail = 'john@doe.com';
+        const contactEmail = 'john@hmcts.net';
         const exception = new BookHearingException('Unauthorized', 401, 'Only searches for non Judge persons are allowed', null, null);
         service.searchForPerson.and.callFake(() => {
             throw exception;

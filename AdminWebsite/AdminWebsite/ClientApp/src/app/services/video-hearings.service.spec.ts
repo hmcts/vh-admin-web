@@ -8,14 +8,17 @@ import {
     EndpointResponse,
     MultiHearingRequest,
     ClientSettingsResponse,
-    HearingRole
+    HearingRole,
+    LinkedParticipantResponse,
+    BookingStatus
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
-import { EndpointsComponent } from '../booking/endpoints/endpoints.component';
+import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
+import { Component } from '@angular/core';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -97,7 +100,7 @@ describe('Video hearing service', () => {
     it('should cache participant roles', async () => {
         // given the api responds with
         const serverResponse = new CaseAndHearingRolesResponse({
-            name: 'Defendant',
+            name: 'Respondent',
             hearing_roles: [
                 new HearingRole({ name: 'Representative', user_role: 'Representative' }),
                 new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })
@@ -106,11 +109,11 @@ describe('Video hearing service', () => {
         clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
 
         // we get the response the first time
-        const response = await service.getParticipantRoles('Defendant');
+        const response = await service.getParticipantRoles('Respondent');
         expect(response).toEqual([serverResponse]);
 
         // second time we get a cached value
-        await service.getParticipantRoles('Defendant');
+        await service.getParticipantRoles('Respondent');
         expect(clientApiSpy.getParticipantRoles).toHaveBeenCalledTimes(1);
     });
 
@@ -219,11 +222,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.contact_email = 'dan@email.aa';
+        participant.contact_email = 'dan@hmcts.net';
         participant.telephone_number = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -248,11 +251,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -277,12 +280,19 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipantModel.linkedParticipantId = '200';
+        linkedParticipantModel.participantId = '100';
+        linkedParticipants.push(linkedParticipantModel);
+        participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
@@ -310,6 +320,8 @@ describe('Video hearing service', () => {
         const actualCase = editHearingRequest.case;
         const actualEndpoint = editHearingRequest.endpoints[0].display_name;
         const expectedEndpoint = hearingModel.endpoints[0].displayName;
+        const actualLinkedParticipants = editHearingRequest.participants[0].linked_participants[0];
+        const expectedLinkedParticipants = hearingModel.participants[0].linked_participants[0];
         expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
         expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
         expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
@@ -318,7 +330,6 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
         expect(editHearingRequest.questionnaire_not_required).toBeFalsy();
         expect(editHearingRequest.audio_recording_required).toBeTruthy();
-
         expect(actualParticipant.title).toEqual(expectedParticipant.title);
         expect(actualParticipant.first_name).toEqual(expectedParticipant.first_name);
         expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
@@ -327,8 +338,9 @@ describe('Video hearing service', () => {
         expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
         expect(actualCase.name).toEqual(expectedCase.name);
         expect(actualCase.number).toEqual(expectedCase.number);
-
         expect(actualEndpoint).toEqual(expectedEndpoint);
+        expect(actualLinkedParticipants.linked_id).toEqual(expectedLinkedParticipants.linkedParticipantId);
+        expect(actualLinkedParticipants.type).toEqual(expectedLinkedParticipants.linkType);
     });
 
     it('should map Existing hearing', () => {
@@ -338,12 +350,19 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipantModel.linkedParticipantId = '200';
+        linkedParticipantModel.participantId = '100';
+        linkedParticipants.push(linkedParticipantModel);
+        participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
@@ -383,6 +402,12 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.questionnaire_not_required).toEqual(hearingModel.questionnaire_not_required);
         expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);
         expect(editHearingRequest.endpoints[0].display_name).toEqual(hearingModel.endpoints[0].displayName);
+        expect(editHearingRequest.participants[0].linked_participants[0].linked_id).toEqual(
+            hearingModel.participants[0].linked_participants[0].linkedParticipantId
+        );
+        expect(editHearingRequest.participants[0].linked_participants[0].type).toEqual(
+            hearingModel.participants[0].linked_participants[0].linkType
+        );
     });
 
     it('should map EndpointResponse to EndpointModel', () => {
@@ -407,7 +432,7 @@ describe('Video hearing service', () => {
     it('should get telephone conference Id for hearing', async () => {
         clientApiSpy.getTelephoneConferenceIdById.and.returnValue(of());
 
-        await service.getTelephoneConferenceId('hearingId');
+        service.getTelephoneConferenceId('hearingId');
         expect(clientApiSpy.getTelephoneConferenceIdById).toHaveBeenCalled();
     });
 
@@ -431,5 +456,107 @@ describe('Video hearing service', () => {
         const cachedRequest = sessionStorage.getItem(conferencePhoneNumberKey);
 
         expect(cachedRequest).toBeDefined();
+    });
+    it('should map LinkedParticipantModel to LinkedParticipantRequest', () => {
+        const linkedParticipantModelList: LinkedParticipantModel[] = [];
+        let linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.participantEmail = 'interpreter@email.com';
+        linkedParticipantModel.linkedParticipantEmail = 'interpretee@email.com';
+        linkedParticipantModelList.push(linkedParticipantModel);
+
+        linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.participantEmail = 'interpretee@email.com';
+        linkedParticipantModel.linkedParticipantEmail = 'interpreter@email.com';
+        linkedParticipantModelList.push(linkedParticipantModel);
+
+        const model = service.mapLinkedParticipants(linkedParticipantModelList);
+        expect(model[0].participant_contact_email).toEqual(linkedParticipantModelList[0].participantEmail);
+        expect(model[0].linked_participant_contact_email).toEqual(linkedParticipantModelList[0].linkedParticipantEmail);
+        expect(model[1].participant_contact_email).toEqual(linkedParticipantModelList[1].participantEmail);
+        expect(model[1].linked_participant_contact_email).toEqual(linkedParticipantModelList[1].linkedParticipantEmail);
+    });
+    it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
+        const linkedParticipants: LinkedParticipantResponse[] = [];
+        const linkedParticipant = new LinkedParticipantResponse();
+        linkedParticipant.type = LinkedParticipantType.Interpreter;
+        linkedParticipant.linked_id = '100';
+        linkedParticipants.push(linkedParticipant);
+
+        const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
+        expect(model[0].linkType).toEqual(linkedParticipant.type);
+        expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
+    });
+
+    describe('isConferenceClosed', () => {
+        it('should return false if booking status booked and telephone conference Id is empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Booked;
+            model.telephone_conference_id = '';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return false if booking status created and telephone conference Id is not empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Created;
+            model.telephone_conference_id = '1111';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return false if booking status booked and telephone conference Id is not empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Booked;
+            model.telephone_conference_id = '1111';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return true if booking status created and telephone conference Id is empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Created;
+            model.telephone_conference_id = '';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(true);
+        });
+    });
+
+    describe('isHearingAboutToStart', () => {
+        const aboutToStartMinutesThreshold = 30;
+        let model: HearingModel;
+        beforeEach(() => {
+            model = new HearingModel();
+            model.scheduled_date_time = new Date();
+            model.status = BookingStatus.Created;
+        });
+
+        it('should return false if hearing is not about to start', () => {
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return false if hearing is not about to start & is not confirmed', () => {
+            model.isConfirmed = false;
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return true if hearing is not about to start & is confirmed', () => {
+            model.isConfirmed = true;
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(true);
+        });
+
+        it('should return false if there is no scheduled_date_time', () => {
+            model.scheduled_date_time = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return false if there is no status', () => {
+            model.status = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
     });
 });

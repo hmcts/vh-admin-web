@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <DefaultData>
   <HearingDetails>
-    <CaseType>Civil Money Claims</CaseType>
-    <HearingType>Application to set Judgment Aside</HearingType>
+    <CaseType>Generic</CaseType>
+    <HearingType>Automated Test</HearingType>
     <DoNotSendQuestionnaires>false</DoNotSendQuestionnaires>
   </HearingDetails>
   <HearingSchedule>
@@ -26,9 +26,9 @@
   <VideoAccessPoints>
     <DisplayName>Endpoint 001 - CourtRoom1</DisplayName>
   </VideoAccessPoints>
-  <OtherInformation>
-    <Other>Other Info</Other>
-  </OtherInformation>
+  <OtherInformationDetails>
+    <OtherInformation>|JudgeEmail|test@test.com|JudgePhone|01234567890|OtherInformation|Other Info</OtherInformation>
+  </OtherInformationDetails>
   <Questionnaire>
     <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>
     <SelfTestQuestion2>Could you see the bar moving when you spoke?</SelfTestQuestion2>

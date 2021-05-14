@@ -22,7 +22,12 @@
       <app-hearing-details [hearing]="hearing" [participants]="participants" [phoneDetails]="phoneDetails"></app-hearing-details>
     </div>
     <div class="govuk-grid-column-one-half vh-top">
-      <app-booking-participant-list [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin">
+      <app-booking-participant-list
+        [hearing]="hearing"
+        [participants]="participants"
+        [judges]="judges"
+        [vh_officer_admin]="isVhOfficerAdmin"
+      >
       </app-booking-participant-list>
     </div>
   </div>
@@ -30,9 +35,9 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
-        <span *ngIf="!hearing.isCreated || (hearing.isCreated && isConfirmationTimeValid)">
+        <span>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-button"
@@ -41,7 +46,7 @@
             Edit
           </button>
           <button
-            *ngIf="!hearing.hasBookingConfirmationFailed"
+            *ngIf="!hearing.hasBookingConfirmationFailed && canCancelHearing"
             class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel"
             data-module="govuk-button"
             id="cancel-button"
@@ -59,6 +64,16 @@
         >
           Confirm booking
         </button>
+
+        <button
+          *ngIf="hearing.hasBookingConfirmationFailed && canRetryConfirmation"
+          data-module="govuk-button"
+          class="govuk-button govuk-button--warning"
+          id="retry-confirm-button"
+          (click)="confirmHearing()"
+        >
+          Retry booking confirmation
+        </button>
       </div>
     </div>
   </div>
@@ -74,4 +89,8 @@
 
 <div *ngIf="showCancelBooking">
   <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)"> </app-cancel-booking-popup>
+</div>
+
+<div *ngIf="showCancelBookingFailed">
+  <app-cancel-booking-failed-popup (popupClose)="closeCancelFailed()"></app-cancel-booking-failed-popup>
 </div>

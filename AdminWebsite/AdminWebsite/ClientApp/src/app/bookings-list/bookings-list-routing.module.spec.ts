@@ -4,17 +4,17 @@ import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AdalService } from 'adal-angular4';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { MomentModule } from 'ngx-moment';
 import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
 import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { AdminGuard } from '../security/admin.guard';
-import { AuthGuard } from '../security/auth.gaurd';
+import { AuthGuard } from '../security/auth.guard';
 import { Logger } from '../services/logger';
-import { MockAdalService } from '../testing/mocks/MockAdalService';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
+import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { BookingDetailsComponent } from './booking-details/booking-details.component';
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
 import { routes } from './bookings-list-routing.module';
@@ -27,7 +27,7 @@ describe('BookingsListRouting', () => {
     let router: Router;
     let fixture: ComponentFixture<BookingsListComponent>;
     let bookingsList: BookingsListComponent;
-    let adalSvc;
+    let oidcSecurityService;
     let bookingGuard;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
 
@@ -48,7 +48,7 @@ describe('BookingsListRouting', () => {
             providers: [
                 AuthGuard,
                 { provide: AdminGuard, useClass: MockAdminGuard },
-                { provide: AdalService, useClass: MockAdalService },
+                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
                 HttpClient,
                 HttpHandler,
                 { provide: Logger, useValue: loggerSpy }
@@ -59,13 +59,13 @@ describe('BookingsListRouting', () => {
         location = TestBed.inject(Location);
         fixture = TestBed.createComponent(BookingsListComponent);
         bookingsList = fixture.componentInstance;
-        adalSvc = TestBed.inject(AdalService);
+        oidcSecurityService = TestBed.inject(OidcSecurityService);
         bookingGuard = TestBed.inject(AdminGuard);
     });
 
     describe('admin can navigate to booking list', () => {
         it('it should be able to navigate to bookings list', fakeAsync(() => {
-            adalSvc.setAuthenticated(true);
+            oidcSecurityService.setAuthenticated(true);
             bookingGuard.setflag(true);
             bookingsList.ngOnInit();
 

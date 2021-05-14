@@ -20,6 +20,12 @@ Scenario: Cannot Add Participants with reform email address
 	When the user attempts to add a participant with a reform email
 	Then an error message is displayed for the invalid email
 
+Scenario: Add Participant as Interpreter
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form with an Interpreter
+	And the user has progressed to the Summary page
+	Then the user views the information on the summary form
+	
 @VIH-6938
 Scenario: Adding Interpreter sets and disables audio recording option
 	Given the Video Hearings Officer user has progressed to the Add Participants page
@@ -37,3 +43,34 @@ Scenario: Edit Audio Recording option
 	Given the Video Hearings Officer user has progressed to the Other information page
 	When the user sets audio recording to No
 	Then audio recording is set to No
+
+Scenario: Removing Participant and Interpreter
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form with an Interpreter And Litigant In Person
+	And the user has progressed to the Summary page
+	And the user removes participant
+	Then the user views the information on the summary form
+
+Scenario: Removing Interpreter
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form with an Interpreter
+	And the user has progressed to the Summary page
+	And the user removes Interpreter
+	Then the user views the information on the summary form
+
+Scenario: Edit Interpreter
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	And the user completes the add participants form with an Interpreter	
+	When the user adds a Litigant in person 
+	And the user edits an Interpreter
+	And the user has progressed to the summary page
+	Then the user views the information on the summary form
+
+Scenario: Edit Interpreter After Saving Booking
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	And the user completes the add participants form with an Interpreter
+	And the user has progressed to the Booking Confirmation page
+	When the user edits booking and adds a Litigant in person 
+	And the user has progressed to the summary page
+	And the user edits a saved Interpreter	
+	Then the user views the information on the summary form

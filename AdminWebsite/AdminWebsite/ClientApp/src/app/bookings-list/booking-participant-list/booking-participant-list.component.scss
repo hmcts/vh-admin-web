@@ -1,0 +1,30 @@
+﻿:host {
+  display: block;
+  border-color: #cccccc;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 11px;
+  padding: 25px;
+
+  font-family: 'nta', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  color: #0b0c0c;
+
+  .participant-detail:not(:last-child) {
+    &:after {
+      content: '';
+      display: block;
+      margin-left: -25px;
+      width: calc(100% + 50px);
+      border-bottom: 1px solid #bfc1c3;
+    }
+  }
+}
+
+.participant-details {
+  margin-top: -1em;
+}

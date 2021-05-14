@@ -1,5 +1,4 @@
 ﻿using AdminWebsite.Attributes;
-using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using AdminWebsite.Models;
 using AdminWebsite.UnitTests.Controllers;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.UnitTests.Attributes
 {
@@ -36,20 +36,20 @@ namespace AdminWebsite.UnitTests.Attributes
                 .Should().NotBeNull()
                 .And.Subject.As<BookNewHearingRequest>();
 
-            request.Hearing_room_name.Should().BeEquivalentTo(expectedText);
-            request.Hearing_venue_name.Should().BeEquivalentTo(expectedText);
-            request.Other_information.Should().BeEquivalentTo(expectedText);
+            request.HearingRoomName.Should().BeEquivalentTo(expectedText);
+            request.HearingVenueName.Should().BeEquivalentTo(expectedText);
+            request.OtherInformation.Should().BeEquivalentTo(expectedText);
             request.Cases.Should().OnlyContain(x => x.Name == expectedText && x.Number == expectedText);
             request.Participants.Should().OnlyContain
             (x => 
                 x.Title == expectedText && 
-                x.First_name == expectedText &&
-                x.Middle_names == expectedText &&
-                x.Last_name == expectedText &&
-                x.Display_name == expectedText &&
-                x.Telephone_number == expectedText &&
+                x.FirstName == expectedText &&
+                x.MiddleNames == expectedText &&
+                x.LastName == expectedText &&
+                x.DisplayName == expectedText &&
+                x.TelephoneNumber == expectedText &&
                 x.Representee == expectedText &&
-                x.Organisation_name == expectedText
+                x.OrganisationName == expectedText
             );
         }
 
@@ -97,7 +97,7 @@ namespace AdminWebsite.UnitTests.Attributes
                 .Should().NotBeNull()
                 .And.Subject.As<BookNewHearingRequest>();
 
-            request.Hearing_room_name.Should().BeEquivalentTo(inputText);
+            request.HearingRoomName.Should().BeEquivalentTo(inputText);
 
         }
 
@@ -107,25 +107,25 @@ namespace AdminWebsite.UnitTests.Attributes
             {
                 { requestKey, new BookNewHearingRequest
                     {
-                        Hearing_room_name = text,
-                        Hearing_venue_name = text,
-                        Other_information = text,
+                        HearingRoomName = text,
+                        HearingVenueName = text,
+                        OtherInformation = text,
                         Cases = new List<CaseRequest>
                         {
                             new CaseRequest{Name = text, Number = text}
                         },
-                        Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                        Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
                         {
-                            new BookingsAPI.Client.ParticipantRequest
+                            new BookingsApi.Contract.Requests.ParticipantRequest
                             {
                                 Title = text,
-                                First_name = text,
-                                Middle_names = text,
-                                Last_name = text,
-                                Display_name = text,
-                                Telephone_number = text,
+                                FirstName = text,
+                                MiddleNames = text,
+                                LastName = text,
+                                DisplayName = text,
+                                TelephoneNumber = text,
                                 Representee = text,
-                                Organisation_name = text
+                                OrganisationName = text
                             }
                         }
                     }

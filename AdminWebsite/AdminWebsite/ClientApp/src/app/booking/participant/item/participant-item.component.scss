@@ -1,0 +1,59 @@
+:host {
+  display: block;
+  line-height: 1.3em;
+}
+
+.container {
+  padding: 1em 0;
+
+  .judge-row,
+  .participant-row {
+    display: flex;
+    align-items: center;
+
+    > div {
+      padding-left: 15px;
+      flex: 1 1 auto;
+    }
+
+    &__actions {
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    > div:last-child {
+      padding-right: 15px;
+    }
+  }
+
+  .judge-row {
+    > div:first-child {
+      flex: 0 0 auto;
+    }
+    &__email {
+      color: #505a5f;
+      font-size: 1.1875rem;
+      line-height: 1.31578947;
+    }
+  }
+
+  .participant-row {
+    > div:first-child {
+      flex: 0 0 auto;
+    }
+    .interpreter-icon:empty {
+      margin-left: 40px;
+    }
+    justify-content: space-between;
+
+    &__name {
+      font-weight: bold;
+    }
+  }
+}
+
+.wrap {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}

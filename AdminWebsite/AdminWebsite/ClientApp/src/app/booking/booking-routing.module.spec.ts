@@ -3,15 +3,13 @@ import { Location } from '@angular/common';
 import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
-import { AuthGuard } from '../security/auth.gaurd';
+import { AuthGuard } from '../security/auth.guard';
 import { AdminGuard } from '../security/admin.guard';
 
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { ChangesGuard } from '../common/guards/changes.guard';
-import { AdalService } from 'adal-angular4';
 import { MockChangesGuard } from '../testing/mocks//MockChangesGuard';
-import { MockAdalService } from '../testing/mocks/MockAdalService';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
 
 import { CreateHearingComponent } from './create-hearing/create-hearing.component';
@@ -25,6 +23,9 @@ import { Components } from './booking.module';
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { Logger } from '../services/logger';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { LastMinuteAmendmentsGuard } from '../security/last-minute-amendments.guard';
 
 describe('BookingModuleRouting', () => {
     let location: Location;
@@ -32,10 +33,13 @@ describe('BookingModuleRouting', () => {
     let fixture: ComponentFixture<CreateHearingComponent>;
     let createHearing: CreateHearingComponent;
     let changesGuard;
-    let adalSvc;
     let bookingGuard;
+    let oidcSecurityService;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+    const lastMinuteAmendmentsGuardSpy: jasmine.SpyObj<LastMinuteAmendmentsGuard> = jasmine.createSpyObj('LastMinuteAmendmentsGuard', [
+        'canActivate'
+    ]);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -52,8 +56,9 @@ describe('BookingModuleRouting', () => {
             providers: [
                 AuthGuard,
                 { provide: AdminGuard, useClass: MockAdminGuard },
-                { provide: AdalService, useClass: MockAdalService },
+                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
                 { provide: ChangesGuard, useClass: MockChangesGuard },
+                { provide: LastMinuteAmendmentsGuard, useValue: lastMinuteAmendmentsGuardSpy },
                 { provide: Logger, useValue: loggerSpy },
                 HttpClient,
                 HttpHandler,
@@ -66,15 +71,16 @@ describe('BookingModuleRouting', () => {
         fixture = TestBed.createComponent(CreateHearingComponent);
         createHearing = fixture.componentInstance;
         changesGuard = TestBed.inject(ChangesGuard);
-        adalSvc = TestBed.inject(AdalService);
         bookingGuard = TestBed.inject(AdminGuard);
+        oidcSecurityService = TestBed.inject(OidcSecurityService);
     });
 
     describe('when create hearing', () => {
         it('it should be able to navigate away from current route', fakeAsync(() => {
-            adalSvc.setAuthenticated(true);
+            oidcSecurityService.setAuthenticated(true);
             changesGuard.setflag(true);
             bookingGuard.setflag(true);
+            lastMinuteAmendmentsGuardSpy.canActivate.and.returnValue(true);
             createHearing.ngOnInit();
             router.navigate(['/book-hearing']);
             tick();

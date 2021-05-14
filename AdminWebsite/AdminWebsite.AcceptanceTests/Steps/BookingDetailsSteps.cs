@@ -11,9 +11,14 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using AdminWebsite.Extensions;
+using AdminWebsite.Models;
+using BookingsApi.Contract.Enums;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -21,11 +26,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class BookingDetailsSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
         private readonly BookingsListSteps _bookingsListSteps;
 
-        public BookingDetailsSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps, BookingsListSteps bookingsListSteps)
+        public BookingDetailsSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, CommonSharedSteps commonSharedSteps, BookingsListSteps bookingsListSteps)
         {
             _c = testContext;
             _browsers = browsers;
@@ -56,47 +61,73 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyTheBookingDetails()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumberTitle).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CreatedBy).Text.Should().Be(_c.Test.CreatedBy);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CreatedDate).Text.Should().NotBeNullOrWhiteSpace();
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CaseName).Text.Should().Contain(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CourtroomAddress).Text.Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.AudioRecorded).Text.Should().Be("Yes");
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.OtherInformation).Text.Should().Be(_c.Test.OtherInformation);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.VideoAccessPoints(0)).Text.Should().Be(_c.Test.VideoAccessPoints.DisplayName);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.HearingStartDate).Text.ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CaseNumberTitle).Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CreatedBy).Should().Be(_c.Test.CreatedBy);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CreatedDate).Should().NotBeNullOrWhiteSpace();
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CaseNumber).Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CaseName).Should().Contain(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CaseType).Should().Be(_c.Test.HearingDetails.CaseType.Name);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.HearingType).Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.CourtroomAddress).Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.AudioRecorded).Should().Be("Yes");
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.OtherInformation).Should().Be(OtherInformationSteps.GetOtherInfo(_c.Test.TestData.OtherInformationDetails.OtherInformation));
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.VideoAccessPoints(0)).Should().Be(_c.Test.VideoAccessPoints.DisplayName);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.HearingStartDate).ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
 
             var expectedDuration = _c.Test.HearingSchedule.MultiDays ? "listed for 8 hours" : $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text.Should().Contain(expectedDuration);
-        }
-
-        [Then(@"the user views the booking conference phone details")]
-        public void WhenTheUserViewsTheBookingConferencePhoneDetails()
-        {
-            VerifyTheBookingConferencePhoneDetails();
-        }
-
-        private void VerifyTheBookingConferencePhoneDetails()
-        {
-            // commented as Kinly will change the link to phone from some Date, and we should hide this option until
-           // _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConferencePhoneDetails).Text.Should().Contain(_c.WebConfig.KinlyConfiguration.ConferencePhoneNumber);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.Duration).Should().Contain(expectedDuration);
         }
 
         private void VerifyJudgeInParticipantsList()
         {
             var hearings = GetHearings();
             var hearing = GetTheFirstHearing(hearings);
-            var hearingJudge = hearing.Participants.First(x => x.User_role_name.Equals("Judge"));
+            var hearingJudge = hearing.Participants.First(x => x.UserRoleName.Equals("Judge"));
             var judge = UserManager.GetJudgeUser(_c.Test.HearingParticipants);
 
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Should().Contain(judge.DisplayName);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.JudgeName).Should().Contain(judge.DisplayName);
 
             if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) return;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Text.Should().Be(judge.AlternativeEmail);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(hearingJudge.Id)).Text.Should().Be(judge.Username);
+            if (GetJudgeEmail(hearing) != null)
+            {
+                _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Should().Be(judge.AlternativeEmail);
+            }
+            else
+            {
+                _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Should().Be("TBC");
+            }
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantUsername(hearingJudge.Id)).Should().Be(judge.Username);
+        }
+
+        private string GetJudgeEmail(HearingDetailsResponse hearing)
+        {
+            if (hearing.IsJudgeEmailEJud())
+            {
+                var judge = hearing.Participants.Single(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                return judge.ContactEmail;
+            }
+            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
+            return email == string.Empty ? null : email;
+        }
+
+        private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
+        {
+            try
+            {
+                var properties = otherInformation.Split("|");
+                return new OtherInformationDetails
+                {
+                    JudgeEmail = properties[2],
+                    JudgePhone = properties[4],
+                    OtherInformation = properties[6]
+                };
+            }
+            catch (Exception)
+            {
+                var properties = otherInformation.Split("|");
+                return properties.Length > 2 ? new OtherInformationDetails {OtherInformation = properties[2]} : new OtherInformationDetails {OtherInformation = properties[0]};
+            }
         }
 
         private static HearingDetailsResponse GetTheFirstHearing(IReadOnlyCollection<HearingDetailsResponse> hearings)
@@ -116,7 +147,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             foreach (var participant in hearing.Participants)
             {
-                if (participant.User_role_name.Equals("Judge"))
+                if (participant.UserRoleName.Equals("Judge"))
                 {
                     VerifyJudgeDetails(participant);
                 }
@@ -126,29 +157,36 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 }
 
                 if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) continue;
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(participant.Id)).Text.Trim().Should().Be(participant.Contact_email);
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(participant.Id)).Text.Trim().Should().Be(participant.Username);
+                if (participant.HearingRoleName.ToLower() == "judge" && GetJudgeEmail(hearing) == null)
+                {
+                    _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantEmail(participant.Id)).Should().Be("TBC");
+                }
+                else
+                {
+                    _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantEmail(participant.Id)).Should().Be(participant.ContactEmail);
+                }
+                _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantUsername(participant.Id)).Should().Be(participant.Username);
             }
         }
 
         private void VerifyJudgeDetails(ParticipantResponse participant)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Trim().Should().Contain(participant.Display_name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.JudgeRole).Text.Trim().Should().Be(participant.User_role_name);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.JudgeName).Should().Contain(participant.DisplayName);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.JudgeRole).Should().Be(participant.UserRoleName);
         }
 
         private void VerifyParticipant(ParticipantResponse participant)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantName(participant.Id)).Text.Trim().Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.First_name} {participant.Last_name}");
-            if (participant.User_role_name.Equals("Representative"))
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantName(participant.Id)).Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.FirstName} {participant.LastName}");
+            if (participant.UserRoleName.Equals("Representative"))
             {
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRepresentee(participant.Id)).Text.Trim().Should().Be(participant.Representee);
+                _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantRepresentee(participant.Id)).Should().Be(participant.Representee);
             }
             else
             {
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(participant.Id)).Text.Trim().Should().Be(participant.Hearing_role_name);
+                _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantRole(participant.Id)).Should().Be(participant.HearingRoleName);
             }
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantPhone(participant.Id)).Text.Trim().Should().Be(participant.Telephone_number);
+            _browsers[_c.CurrentUser].TextOf(BookingDetailsPage.ParticipantPhone(participant.Id)).Should().Be(participant.TelephoneNumber);
         }
 
         [When(@"the user confirms the hearing")]

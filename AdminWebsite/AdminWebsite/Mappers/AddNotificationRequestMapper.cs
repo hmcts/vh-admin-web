@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdminWebsite.BookingsAPI.Client;
+using System.Linq;
+using AdminWebsite.Extensions;
+using BookingsApi.Contract.Responses;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 
@@ -10,11 +12,12 @@ namespace AdminWebsite.Mappers
     {
         private const string Individual = "INDIVIDUAL";
 
-        public static AddNotificationRequest MapToNewUserNotification(Guid hearingId, ParticipantResponse participant, string password)
+        public static AddNotificationRequest MapToNewUserNotification(Guid hearingId, ParticipantResponse participant,
+            string password)
         {
             var parameters = new Dictionary<string, string>
             {
-                {"name", $"{participant.First_name} {participant.Last_name}"},
+                {"name", $"{participant.FirstName} {participant.LastName}"},
                 {"username", $"{participant.Username}"},
                 {"random password", $"{password}"}
             };
@@ -22,23 +25,26 @@ namespace AdminWebsite.Mappers
             {
                 HearingId = hearingId,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
-                NotificationType = participant.User_role_name.ToUpper() == Individual ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = participant.UserRoleName.ToUpper() == Individual
+                    ? NotificationType.CreateIndividual
+                    : NotificationType.CreateRepresentative,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
             return addNotificationRequest;
         }
 
-        public static AddNotificationRequest MapToPasswordResetNotification(string name, string newPassword, string contactEmail)
+        public static AddNotificationRequest MapToPasswordResetNotification(string name, string newPassword,
+            string contactEmail)
         {
             var parameters = new Dictionary<string, string>
             {
                 {"name", name},
                 {"password", newPassword}
             };
-            
+
             var addNotificationRequest = new AddNotificationRequest
             {
                 MessageType = MessageType.Email,
@@ -47,6 +53,226 @@ namespace AdminWebsite.Mappers
                 Parameters = parameters
             };
             return addNotificationRequest;
+        }
+
+        public static AddNotificationRequest MapToHearingAmendmentNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime,
+            DateTime newDateTime)
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {"case name", caseName},
+                {"case number", caseNumber},
+                {"Old time", originalDateTime.ToEmailTimeGbLocale()},
+                {"New time", newDateTime.ToEmailTimeGbLocale()},
+                {"Old Day Month Year", originalDateTime.ToEmailDateGbLocale()},
+                {"New Day Month Year", newDateTime.ToEmailDateGbLocale()}
+            };
+
+            NotificationType notificationType;
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingAmendmentEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingAmendmentJudge;
+                parameters.Add("judge", participant.DisplayName);
+                parameters.Add("courtroom account username", participant.Username);
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
+            }
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingAmendmentEJudJoh : NotificationType.HearingAmendmentJoh;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingAmendmentRepresentative;
+                parameters.Add("client name", participant.Representee);
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
+            }
+            else
+            {
+                notificationType = NotificationType.HearingAmendmentLip;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant)
+        {
+            var parameters = InitConfirmReminderParams(hearing);
+
+            NotificationType notificationType;
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationJudge;
+                parameters.Add("judge", participant.DisplayName);
+                parameters.Add("courtroom account username", participant.Username);
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
+            }
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJoh: NotificationType.HearingConfirmationJoh;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingConfirmationRepresentative;
+                parameters.Add("client name", participant.Representee);
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
+            }
+            else
+            {
+                notificationType = NotificationType.HearingConfirmationLip;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
+            HearingDetailsResponse hearing,
+            ParticipantResponse participant, int days)
+        {
+            var @case = hearing.Cases.First();
+            var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
+            var parameters = new Dictionary<string, string>
+            {
+                {"case name", cleanedCaseName},
+                {"case number", @case.Number},
+                {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
+                {"Start Day Month Year", hearing.ScheduledDateTime.ToEmailDateGbLocale()},
+                {"number of days", days.ToString()}
+            };
+            NotificationType notificationType;
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
+                parameters.Add("judge", participant.DisplayName);
+                parameters.Add("courtroom account username", participant.Username);
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
+            }
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJohMultiDay : NotificationType.HearingConfirmationJohMultiDay;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingConfirmationRepresentativeMultiDay;
+                parameters.Add("client name", participant.Representee);
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
+            }
+            else
+            {
+                notificationType = NotificationType.HearingConfirmationLipMultiDay;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant)
+        {
+            var parameters = InitConfirmReminderParams(hearing);
+            parameters.Add("username", participant.Username.ToLower());
+
+            NotificationType notificationType;
+            if (participant.UserRoleName.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingReminderEJudJoh : NotificationType.HearingReminderJoh;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingReminderRepresentative;
+                parameters.Add("client name", participant.Representee);
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
+            }
+            else
+            {
+                notificationType = NotificationType.HearingReminderLip;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        private static Dictionary<string, string> InitConfirmReminderParams(HearingDetailsResponse hearing)
+        {
+            var @case = hearing.Cases.First();
+            return new Dictionary<string, string>
+            {
+                {"case name", @case.Name},
+                {"case number", @case.Number},
+                {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
+                {"day month year", hearing.ScheduledDateTime.ToEmailDateGbLocale()}
+            };
         }
     }
 }

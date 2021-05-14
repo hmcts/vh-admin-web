@@ -41,7 +41,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var judgeData = new JudgeResponse()
             {
-                Email = "Test.Judge01@madeupemail.com",
+                Email = "Test.Judge01@hmcts.net",
                 DisplayName = "Test Judge01",
                 FirstName = "Test",
                 LastName = "Judge01"
@@ -49,7 +49,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _judgeResponse.Add(judgeData);
             judgeData = new JudgeResponse()
             {
-                Email = "Test.Judge02@madeupemail.com",
+                Email = "Test.Judge02@hmcts.net",
                 DisplayName = "Test Judge02",
                 FirstName = "Test",
                 LastName = "Judge021"
@@ -70,7 +70,28 @@ namespace AdminWebsite.UnitTests.Controllers
             var judges = (List<JudgeResponse>) okObjectResult.Value;
 
             var testJudge = judges.First(j =>
-                j.Email.Equals("Test.Judge01@madeupemail.com", StringComparison.CurrentCultureIgnoreCase));
+                j.Email.Equals("Test.Judge01@hmcts.net", StringComparison.CurrentCultureIgnoreCase));
+
+            testJudge.LastName.Should().Be("Judge01");
+            testJudge.FirstName.Should().Be("Test");
+            testJudge.DisplayName.Should().Be("Test Judge01");
+        }
+
+        [Test]
+        public void Should_return_a_list_of_judges_with_correct_search_term()
+        {
+            var term = "SearchTerm";
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(term)).ReturnsAsync(_judgeResponse);
+
+            _controller = new UserDataController(_userAccountService.Object);
+            var result = _controller.SearchJudgesByEmail(term).Result;
+            var okObjectResult = (OkObjectResult)result.Result;
+            okObjectResult.StatusCode.Should().Be(200);
+
+            var judges = (List<JudgeResponse>)okObjectResult.Value;
+
+            var testJudge = judges.First(j =>
+                j.Email.Equals("Test.Judge01@hmcts.net", StringComparison.CurrentCultureIgnoreCase));
 
             testJudge.LastName.Should().Be("Judge01");
             testJudge.FirstName.Should().Be("Test");
@@ -91,7 +112,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _userAccountService.Setup(x => x.ResetParticipantPassword(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
-            var response = _controller.ResetPassword("unknown.user@domain.com");
+            var response = _controller.ResetPassword("unknown.user@hmcts.net");
             response.Result.Should().BeOfType<NotFoundObjectResult>();
         }
 

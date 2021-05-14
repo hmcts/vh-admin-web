@@ -17,6 +17,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By DisplayNameTextfield = By.Id("displayName");
         public static By RepresentingTextfield = By.Id("representing");
         public static By AddParticipantLink = By.Id("addParticipantBtn");
+        public static By UpdateParticipantLink = By.Id("updateParticipantBtn");        
         public static By ClearDetailsLink = By.PartialLinkText("Clear details");
         public static By NextButton = By.Id(("nextButton"));
         public static By CancelButton = By.Id("cancelButton");
@@ -24,5 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ParticipantsList = By.XPath("//*[contains(@class, 'vhtable-header')]");
         public static By InvalidEmailError = CommonLocators.ElementContainingText("Please enter a valid email address");
         public static By JudgeUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
+        public static By InterpreteeDropdown = By.Id("interpreterFor");
     }
 }

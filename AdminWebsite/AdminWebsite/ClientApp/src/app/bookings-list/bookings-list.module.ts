@@ -10,7 +10,6 @@ import { HearingDetailsComponent } from './hearing-details/hearing-details.compo
 import { PopupModule } from '../popups/popup.module';
 import { CopySipComponent } from './copy-sip/copy-sip.component';
 import { CopyConferencePhoneComponent } from './copy-conference-phone/copy-conference-phone.component';
-import { ConfigSettingsResolveService } from 'src/app/bookings-list/services/config-settings-resolve.service';
 
 @NgModule({
     imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule],
@@ -23,7 +22,7 @@ import { ConfigSettingsResolveService } from 'src/app/bookings-list/services/con
         CopySipComponent,
         CopyConferencePhoneComponent
     ],
-    providers: [ConfigSettingsResolveService],
+    providers: [],
     exports: [
         BookingsListComponent,
         BookingDetailsComponent,

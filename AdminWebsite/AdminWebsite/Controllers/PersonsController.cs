@@ -1,5 +1,4 @@
 ﻿using System;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,6 +10,9 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -54,13 +56,10 @@ namespace AdminWebsite.Controllers
             try
             {
                 term = _encoder.Encode(term);
-                var searchTerm = new SearchTermRequest
-                {
-                    Term = term
-                };
+                var searchTerm = new SearchTermRequest(term);
 
                 var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
-                personsResponse = personsResponse?.Where(p => !p.Contact_email.Contains(_testSettings.TestUsernameStem)).ToList();
+                personsResponse = personsResponse?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
 
                 return Ok(personsResponse);
             }
@@ -86,33 +85,22 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletionAsync([FromQuery] string username)
         {
-            var userId = await _userAccountService.GetAdUserIdForUsername(username);
-            var userExists = !string.IsNullOrWhiteSpace(userId);
-
             try
             {
-
                 var response = await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
                 return Ok(response);
             }
             catch (BookingsApiException e)
             {
-                if (userExists && e.StatusCode == (int)HttpStatusCode.NotFound)
+                switch (e.StatusCode)
                 {
-                    return Ok(new List<HearingsByUsernameForDeletionResponse>());
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
+                    case (int)HttpStatusCode.Unauthorized:
+                        return Unauthorized();
+                    default:
+                        throw;
                 }
-
-                if (!userExists && e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
-
-                if (e.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    return Unauthorized();
-                }
-
-                throw;
             }
         }
 
@@ -180,8 +168,8 @@ namespace AdminWebsite.Controllers
 
                 var updateBookingPersonRequest = new UpdatePersonDetailsRequest
                 {
-                    First_name = updatedPerson.FirstName,
-                    Last_name = updatedPerson.LastName,
+                    FirstName = updatedPerson.FirstName,
+                    LastName = updatedPerson.LastName,
                     Username = updatedPerson.Email
                 };
                 await _bookingsApiClient.UpdatePersonDetailsAsync(personId, updateBookingPersonRequest);

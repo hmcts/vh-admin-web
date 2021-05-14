@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { interval, Subscription } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
@@ -9,6 +10,7 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    BookingStatus,
     HearingDetailsResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
@@ -46,6 +48,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     telephoneConferenceId: string;
     previousUrl: string = null;
     phoneDetails = '';
+    showCancelBookingFailed = false;
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -62,23 +65,31 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirmingFailed = false;
     }
 
-    async ngOnInit() {
+    ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            const hearingDetailsResponse = await this.videoHearingService.getHearingById(this.hearingId).toPromise();
-            this.mapHearing(hearingDetailsResponse);
-            this.getConferencePhoneDetails();
-            // mapping to Hearing model for edit on summary page
-            this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
-            this.setBookingInStorage();
-            this.setTimeObserver();
-            this.setSubscribers();
+            this.videoHearingService
+                .getHearingById(this.hearingId)
+                .toPromise()
+                .then(hearingDetailsResponse => {
+                    this.mapHearing(hearingDetailsResponse);
+                    this.getConferencePhoneDetails();
+                    // mapping to Hearing model for edit on summary page
+                    this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+                    this.setBookingInStorage();
+                    this.setTimeObserver();
+                    this.setSubscribers();
+                });
         }
         this.$subscriptions.push(
             this.userIdentityService.getUserInformation().subscribe(userProfile => {
                 this.getUserRole(userProfile);
             })
         );
+    }
+
+    closeCancelFailed() {
+        this.showCancelBookingFailed = false;
     }
 
     getUserRole(userProfile: UserProfileResponse) {
@@ -95,14 +106,29 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setTimeObserver() {
         if (this.booking) {
-            let current = new Date();
-            current.setMinutes(current.getMinutes() + 30);
-            current = new Date(current);
-            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+            const endofday = new Date(this.booking.scheduled_date_time);
+            endofday.setHours(23, 59);
+            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() <= endofday.valueOf();
             if (!this.isConfirmationTimeValid && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
         }
+    }
+
+    get canCancelHearing(): boolean {
+        return !this.videoHearingService.isHearingAboutToStart();
+    }
+
+    get canEditHearing(): boolean {
+        return !this.videoHearingService.isConferenceClosed();
+    }
+
+    get canRetryConfirmation(): boolean {
+        if (!this.booking || this.booking.status !== BookingStatus.Failed) {
+            return false;
+        }
+        const scheduledTime = moment(this.booking.scheduled_date_time);
+        return scheduledTime.isAfter(moment(new Date()));
     }
 
     mapHearing(hearingResponse: HearingDetailsResponse) {
@@ -171,6 +197,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
                 this.updateStatusHandler(status);
+                this.booking.isConfirmed = true;
             } else {
                 this.showConfirmingFailed = true;
                 this.updateStatusHandler(UpdateBookingStatus.Failed);
@@ -180,6 +207,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
             this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
         } catch (error) {
+            if (status === UpdateBookingStatus.Cancelled) {
+                this.showCancelBooking = false;
+                this.showConfirming = false;
+                this.showCancelBookingFailed = true;
+                this.logger.error(`${this.loggerPrefix} Error to update to Cancelled hearing status`, error);
+                return;
+            }
             this.errorHandler(error, status);
             this.updateStatusHandler(UpdateBookingStatus.Failed);
         }
@@ -239,12 +273,18 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     async getConferencePhoneDetails() {
-        if (this.hearing.Status === 'Created') {
+        if (this.hearing.Status === BookingStatus.Created) {
             try {
-                const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
-                this.telephoneConferenceId = phoneResponse.telephone_conference_id;
-                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-                this.updateWithConferencePhoneDetails();
+                await this.videoHearingService
+                    .getTelephoneConferenceId(this.hearingId)
+                    .toPromise()
+                    .then(phoneResponse => {
+                        this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+                        this.videoHearingService.getConferencePhoneNumber().then(conferencePhoneNumber => {
+                            this.conferencePhoneNumber = conferencePhoneNumber;
+                            this.updateWithConferencePhoneDetails();
+                        });
+                    });
             } catch (error) {
                 this.logger.warn(
                     `${this.loggerPrefix} Could not get conference phone Id , the hearing ${this.hearingId} is closed`,

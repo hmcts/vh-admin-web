@@ -79,16 +79,14 @@ parameters:
     value: $(notify-api-key)
     
   # AzureAd
-  - name: AzureAd:Authority
-    value: $(Authority)
   - name: AzureAd:TenantId
     value: tenantid
     secret: true
   - name: AzureAd:ClientId
-    value: vh-video-web-appid
+    value: vh-video-web-appid-v2
     secret: true
   - name: AzureAd:ClientSecret
-    value: vh-video-web-key
+    value: vh-video-web-key-v2
     secret: true
   - name: AzureAd:PostLogoutRedirectUri
     slot: true
@@ -124,6 +122,10 @@ parameters:
     value: $(wowza_storageAccountKey)
   - name: WowzaConfiguration:StorageContainerName
     value: $(wowza_storageContainerName)
+    
+  # Ejud - test setting only
+  - name: UsingEjud
+    value: $(UsingEjud)
 
 - name: appSettings
   type: object
@@ -139,10 +141,10 @@ parameters:
 
   # AzureAd
   - name: AzureAd:ClientId
-    value: vh-admin-web-appid
+    value: vh-admin-web-appid-v2
     secret: true
   - name: AzureAd:ClientSecret
-    value: vh-admin-web-key
+    value: vh-admin-web-key-v2
     secret: true
   - name: AzureAd:PostLogoutRedirectUri
     slot:
@@ -159,8 +161,6 @@ parameters:
   - name: AzureAd:TenantId
     value: tenantid
     secret: true
-  - name: AzureAd:Authority
-    value: $(Authority)
     
   # Testing
   - name: TestUserSecrets:TestUsernameStem
@@ -240,7 +240,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
-    useNugetConfig: true
+    useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
     nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
@@ -248,7 +248,7 @@ extends:
     PackageAcceptanceTests: ${{ parameters.PackageACTests }}
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
-      useNugetConfig: true
+      useNugetConfig: false
       nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
       nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
@@ -288,7 +288,7 @@ extends:
       appName: vh-admin-web-$(environment)
       resourceGroup: vh-admin-web-$(environment)
       appSettings: ${{ parameters.appSettings }}
-      testCaseFilter: TestCategory=smoketest
+      testCaseFilter: TestCategory=Smoketest
       dependentApps:
         - name: vh-user-api-$(environment)
           resourceGroup: vh-user-api-$(environment)

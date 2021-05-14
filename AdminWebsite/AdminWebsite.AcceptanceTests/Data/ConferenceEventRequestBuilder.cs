@@ -1,6 +1,7 @@
 ﻿using System;
-using AdminWebsite.TestAPI.Client;
-using AdminWebsite.Testing.Common.Data;
+using VideoApi.Contract.Enums;
+using VideoApi.Contract.Requests;
+using RoomType = AdminWebsite.Testing.Common.Data.RoomType;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -12,23 +13,23 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             _request = new ConferenceEventRequest()
             {
-                Event_id = Guid.NewGuid().ToString(),
+                EventId = Guid.NewGuid().ToString(),
                 Reason = "Automated",
-                Time_stamp_utc = DateTime.UtcNow,
-                Transfer_from = RoomType.WaitingRoom,
-                Transfer_to = RoomType.WaitingRoom
+                TimeStampUtc = DateTime.UtcNow,
+                TransferFrom = RoomType.WaitingRoom,
+                TransferTo = RoomType.WaitingRoom
             };
         }
 
         public ConferenceEventRequestBuilder FromRoomType(string roomType)
         {
-            _request.Transfer_to = roomType;
+            _request.TransferTo = roomType;
             return this;
         }
 
         public ConferenceEventRequestBuilder WithConferenceId(Guid conferenceId)
         {
-            _request.Conference_id = conferenceId.ToString();
+            _request.ConferenceId = conferenceId.ToString();
             return this;
         }
 
@@ -36,13 +37,13 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             if (participantId == null)
                 throw new DataMisalignedException("Participant Id cannot be null");
-            _request.Participant_id = participantId.ToString();
+            _request.ParticipantId = participantId.ToString();
             return this;
         }
 
         public ConferenceEventRequestBuilder WithEventType(EventType eventType)
         {
-            _request.Event_type = eventType;
+            _request.EventType = eventType;
             return this;
         }
 

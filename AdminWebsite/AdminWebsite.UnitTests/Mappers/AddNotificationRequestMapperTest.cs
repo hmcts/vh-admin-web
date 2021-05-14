@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using NotificationApi.Contract;
 using NUnit.Framework;
@@ -31,13 +31,13 @@ namespace AdminWebsite.UnitTests.Mappers
             {
                 Id = participantId,
                 Username = userName,
-                Case_role_name = "caserolename",
-                Contact_email = "contact@email.com",
-                First_name = firstName,
-                Hearing_role_name = "hearingrolename",
-                Last_name = lastName,
-                Telephone_number = "0123456789",
-                User_role_name = "Individual"
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact@hmcts.net",
+                FirstName = firstName,
+                HearingRoleName = "hearingrolename",
+                LastName = lastName,
+                TelephoneNumber = "0123456789",
+                UserRoleName = "Individual"
             };
 
             var result = AddNotificationRequestMapper.MapToNewUserNotification(hearingId, source, password);
@@ -45,10 +45,10 @@ namespace AdminWebsite.UnitTests.Mappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearingId);
             result.ParticipantId.Should().Be(participantId);
-            result.ContactEmail.Should().Be(source.Contact_email);
+            result.ContactEmail.Should().Be(source.ContactEmail);
             result.NotificationType.Should().Be(NotificationType.CreateIndividual);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(source.Telephone_number);
+            result.PhoneNumber.Should().Be(source.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(parameters);
         }
 
@@ -73,13 +73,13 @@ namespace AdminWebsite.UnitTests.Mappers
             {
                 Id = participantId,
                 Username = userName,
-                Case_role_name = "caserolename",
-                Contact_email = "contact@email.com",
-                First_name = firstName,
-                Hearing_role_name = "hearingrolename",
-                Last_name = lastName,
-                Telephone_number = "0123456789",
-                User_role_name = "Representative"
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact@hmcts.net",
+                FirstName = firstName,
+                HearingRoleName = "hearingrolename",
+                LastName = lastName,
+                TelephoneNumber = "0123456789",
+                UserRoleName = "Representative"
             };
 
             var result = AddNotificationRequestMapper.MapToNewUserNotification(hearingId, source, password);
@@ -87,10 +87,10 @@ namespace AdminWebsite.UnitTests.Mappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearingId);
             result.ParticipantId.Should().Be(participantId);
-            result.ContactEmail.Should().Be(source.Contact_email);
+            result.ContactEmail.Should().Be(source.ContactEmail);
             result.NotificationType.Should().Be(NotificationType.CreateRepresentative);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(source.Telephone_number);
+            result.PhoneNumber.Should().Be(source.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(parameters);
         }
     }

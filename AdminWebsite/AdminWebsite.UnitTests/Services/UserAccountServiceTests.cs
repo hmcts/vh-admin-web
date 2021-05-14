@@ -1,6 +1,5 @@
 using System;
 using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
@@ -10,8 +9,9 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.UnitTests.Helper;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using NotificationApi.Contract;
@@ -25,11 +25,10 @@ namespace AdminWebsite.UnitTests.Services
 {
     public class UserAccountServiceTests
     {
-        private Mock<IOptions<AppConfigSettings>> _appSettings;
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<INotificationApiClient> _notificationApiClient;
-        private Mock<IOptions<SecuritySettings>> _securitySettings;
+        private Mock<IOptions<AzureAdConfiguration>> _azureAdConfiguration;
         private Mock<ILogger<UserAccountService>> _logger;
 
         private UserAccountService _service;
@@ -41,13 +40,10 @@ namespace AdminWebsite.UnitTests.Services
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _notificationApiClient = new Mock<INotificationApiClient>();
             _logger = new Mock<ILogger<UserAccountService>>();
-            _appSettings = new Mock<IOptions<AppConfigSettings>>();
-            _appSettings.Setup(x => x.Value)
-                .Returns(new AppConfigSettings());
 
-            _securitySettings = new Mock<IOptions<SecuritySettings>>();
-            _securitySettings.Setup(x => x.Value)
-                .Returns(new SecuritySettings());
+            _azureAdConfiguration = new Mock<IOptions<AzureAdConfiguration>>();
+            _azureAdConfiguration.Setup(x => x.Value)
+                .Returns(new AzureAdConfiguration());
 
             _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiClient.Object, _logger.Object);
@@ -63,13 +59,13 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserApiException>(() =>
-                _service.UpdateParticipantUsername(new BookingsAPI.Client.ParticipantRequest()));
+                _service.UpdateParticipantUsername(new BookingsApi.Contract.Requests.ParticipantRequest()));
         }
 
         [Test]
         public async Task Should_add_individual_to_external_user_group_only()
         {
-            await _service.AssignParticipantToGroup("rep@test.com", "Individual");
+            await _service.AssignParticipantToGroup("rep@hmcts.net", "Individual");
 
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
@@ -79,12 +75,16 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
                     y.GroupName == UserAccountService.VirtualRoomProfessionalUser)),
                 Times.Never);
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
+                    y.GroupName == UserAccountService.JudicialOfficeHolder)),
+                Times.Never);
         }
 
         [Test]
         public async Task Should_add_representative_to_professional_user_group()
         {
-            await _service.AssignParticipantToGroup("rep@test.com", "Representative");
+            await _service.AssignParticipantToGroup("rep@hmcts.net", "Representative");
 
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
@@ -99,7 +99,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_add_JOH_role_to_JOH_user_group()
         {
-            await _service.AssignParticipantToGroup("rep@test.com", "Judicial Office Holder");
+            await _service.AssignParticipantToGroup("rep@hmcts.net", "Judicial Office Holder");
 
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
@@ -114,9 +114,9 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_not_create_users_that_already_exists()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                Username = "existin@user.com"
+                Username = "existin@hmcts.net"
             };
 
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
@@ -130,11 +130,11 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_create_users_if_not_exists()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                First_name = "First Name Space",
-                Last_name = "Last Name Space",
-                Username = "notexistin@user.com"
+                FirstName = "First Name Space",
+                LastName = "Last Name Space",
+                Username = "notexistin@hmcts.net"
             };
 
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
@@ -145,8 +145,8 @@ namespace AdminWebsite.UnitTests.Services
             await _service.UpdateParticipantUsername(participant);
 
             _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(c =>
-                c.FirstName == participant.First_name.Replace(" ", string.Empty)
-                && c.LastName == participant.Last_name.Replace(" ", string.Empty)
+                c.FirstName == participant.FirstName.Replace(" ", string.Empty)
+                && c.LastName == participant.LastName.Replace(" ", string.Empty)
                 && !c.IsTestUser
             )), Times.Once);
         }
@@ -172,7 +172,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_update_password_if_a_user_was_found_in_aad()
         {
             const string userName = "existingUser";
-            var userProfile = new UserProfile {UserName = "existingUser@email.com"};
+            var userProfile = new UserProfile {UserName = "existingUser@hmcts.net"};
             var updatedUserResponse = new UpdateUserResponse {NewPassword = "SomePassword"};
 
             _userApiClient
@@ -208,7 +208,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_remove_user_in_ad_and_bookings_api()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
 
@@ -225,7 +225,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_remove_user_in_ad_but_not_bookings_api()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
 
@@ -242,7 +242,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_remove_user_in_bookings_api_but_not_ad()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
 
@@ -259,7 +259,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void should_fail_to_delete_judge_account()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
 
@@ -278,7 +278,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void should_fail_to_delete_admin()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
 
@@ -297,7 +297,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void should_fail_to_delete_account_when_user_api_throws()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
 
@@ -314,7 +314,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void should_fail_to_delete_account_when_bookings_api_throws()
         {
-            var username = "valid.user@test.com";
+            var username = "valid.user@hmcts.net";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
@@ -339,7 +339,7 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync(profile);
 
 
-            var id = await _service.GetAdUserIdForUsername("do_not_exist@test.com");
+            var id = await _service.GetAdUserIdForUsername("do_not_exist@hmcts.net");
             id.Should().Be(profile.UserId);
         }
 
@@ -350,7 +350,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
 
 
-            var id = await _service.GetAdUserIdForUsername("do_not_exist@test.com");
+            var id = await _service.GetAdUserIdForUsername("do_not_exist@hmcts.net");
             id.Should().BeNull();
         }
 
@@ -363,5 +363,17 @@ namespace AdminWebsite.UnitTests.Services
             Assert.ThrowsAsync<UserApiException>(() =>
                 _service.GetAdUserIdForUsername("123"));
         }
+        
+        [Test]
+        public void Should_throw_exception_when_add_user_to_group_has_null_user_name()
+        {
+            _userApiClient.Setup(x => x.AddUserToGroupAsync(It.IsAny<AddUserToGroupRequest>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<UserApiException>(() =>
+                _service.AssignParticipantToGroup(null,"Individual"));
+        }
+        
+        
     }
 }

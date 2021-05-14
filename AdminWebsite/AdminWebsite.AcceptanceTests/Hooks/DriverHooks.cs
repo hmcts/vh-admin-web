@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AcceptanceTests.Common.Data.Time;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Settings;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
 using BoDi;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
     [Binding]
     public sealed class DriverHooks
     {
-        private Dictionary<User, UserBrowser> _browsers;
+        private Dictionary<UserDto, UserBrowser> _browsers;
         private readonly IObjectContainer _objectContainer;
 
         public DriverHooks(IObjectContainer objectContainer)
@@ -31,7 +30,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario(Order = (int)HooksSequence.InitialiseBrowserHooks)]
         public void InitialiseBrowserContainer()
         {
-            _browsers = new Dictionary<User, UserBrowser>();
+            _browsers = new Dictionary<UserDto, UserBrowser>();
             _objectContainer.RegisterInstanceAs(_browsers);
         }
 
@@ -54,7 +53,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var sauceLabsOptions = new SauceLabsOptions()
             {
-                EnableLogging = EnableLogging(),
+                EnableLogging = false,
                 Name = scenario.ScenarioInfo.Title
             };
 
@@ -65,11 +64,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public void SetTimeZone(TestContext context)
         {
             context.TimeZone = new TimeZone(context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), context.WebConfig.TestConfig.TargetOS);
-        }
-
-        private static bool EnableLogging()
-        {
-            return false;
         }
 
         [AfterScenario(Order = (int)HooksSequence.LogResultHooks)]

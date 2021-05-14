@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
+using TestApi.Contract.Enums;
+using TestApi.Contract.Requests;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -8,23 +10,23 @@ namespace AdminWebsite.AcceptanceTests.Data
     {
         private readonly CreateHearingRequest _request;
         private const string DEFAULT_VENUE = "Birmingham Civil and Family Justice Centre";
-        private const string CACD_CASE_TYPE_NAME = "Court of Appeal Criminal Division";
+        private const string CACD_CaseTypeName = "Court of Appeal Criminal Division";
 
         public HearingRequestBuilder()
         {
             _request = new CreateHearingRequest()
             {
                 Application = Application.AdminWeb,
-                Audio_recording_required = false,
-                Questionnaire_not_required = false,
-                Scheduled_date_time = DateTime.UtcNow.AddHours(1),
-                Test_type = TestType.Automated,
-                Users = new List<User>(),
+                AudioRecordingRequired = false,
+                QuestionnaireNotRequired = false,
+                ScheduledDateTime = DateTime.UtcNow.AddHours(1),
+                TestType = TestType.Automated,
+                Users = new List<UserDto>(),
                 Venue = DEFAULT_VENUE
             };
         }
 
-        public HearingRequestBuilder WithUsers(List<User> users)
+        public HearingRequestBuilder WithUsers(List<UserDto> users)
         {
             _request.Users = users;
             return this;
@@ -32,7 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public HearingRequestBuilder WithAudioRecordingRequired(bool audioRecording)
         {
-            _request.Audio_recording_required = audioRecording;
+            _request.AudioRecordingRequired = audioRecording;
             return this;
         }
 
@@ -43,7 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public HearingRequestBuilder WithCACDCaseType()
         {
-            _request.Case_type = CACD_CASE_TYPE_NAME;
+            _request.CaseType = CACD_CaseTypeName;
             return this;
         }
     }

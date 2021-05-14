@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Data.Questions;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
@@ -11,14 +11,14 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             var answer1 = new SuitabilityAnswersRequest
             {
                 Key = SelfTestQuestionKeys.SeeYourselfQuestion,
-                Extended_answer = null,
+                ExtendedAnswer = null,
                 Answer = "true"
             };
 
             var answer2 = new SuitabilityAnswersRequest
             {
                 Key = SelfTestQuestionKeys.MicrophoneQuestion,
-                Extended_answer = null,
+                ExtendedAnswer = null,
                 Answer = "true"
             };
 
@@ -26,13 +26,13 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             if (role.ToLower().Equals("individual"))
             {
                 answer3.Key = IndividualQuestionKeys.AboutYouQuestion;
-                answer3.Extended_answer = extendedAnswer;
+                answer3.ExtendedAnswer = extendedAnswer;
                 answer3.Answer = "true";
             }
             else
             {
                 answer3.Key = RepresentativeQuestionKeys.OtherInformation;
-                answer3.Extended_answer = extendedAnswer;
+                answer3.ExtendedAnswer = extendedAnswer;
                 answer3.Answer = "true";
             }
 

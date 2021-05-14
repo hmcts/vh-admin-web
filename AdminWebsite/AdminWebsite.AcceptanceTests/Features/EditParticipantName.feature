@@ -8,7 +8,7 @@ Scenario Outline: Edit Participant Name
 	Given the Video Hearings Officer user has progressed to the Edit Participant Name page
 	When I search for '<ParticipantTypes>' by contact email
 	And then update First and Last Name
-	Then the pariticpant's details are updated
+	Then the participant's details are updated
  Examples:
       | ParticipantTypes	|
       | Individual			|

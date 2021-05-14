@@ -4,6 +4,31 @@
     <h1 class="govuk-heading-l">{{ constants.BookHearingTitle }}</h1>
   </div>
 </div>
+
+<div
+  *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount"
+  class="govuk-error-summary govuk-!-width-full"
+  aria-labelledby="error-summary-title"
+  role="alert"
+  tabindex="-1"
+  data-module="error-summary"
+>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      <li *ngIf="errorAlternativeEmail">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohJudgeErrorMsg }}</a>
+      </li>
+      <li *ngIf="errorJohAccountNotFound">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.NotFoundJohEmail }}</a>
+      </li>
+      <li *ngIf="errorJudiciaryAccount">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohEmailErrorMsg }}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <h2 class="govuk-heading-m">Add a participant</h2>
@@ -35,12 +60,12 @@
           </option>
         </select>
       </div>
-      <div *ngIf="showDetails">
+      <div *ngIf="showDetails" id="search-email-component">
         <app-search-email
           [disabled]="emailDisabled"
           (findParticipant)="getParticipant($event)"
-          (participantsNotFound)="notFoundParticipant()"
           (emailChanged)="emailChanged()"
+          [hearingRoleParticipant]="role.value"
         >
         </app-search-email>
 
@@ -107,6 +132,22 @@
           </legend>
           <label class="govuk-label" for="phone"> Telephone </label>
           <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
+
+        <div *ngIf="isInterpreter">
+          <div class="govuk-form-group" [class.govuk-form-group--error]="interpreterForInvalid">
+            <legend id="interpreterFor-error" *ngIf="interpreterForInvalid">
+              <span class="govuk-error-message">
+                {{ constants.Error.InterpreterForErrorMsg }}
+              </span>
+            </legend>
+            <label class="govuk-label" for="interpreterFor"> Interpreting for </label>
+            <select id="interpreterFor" formControlName="interpreterFor" class="govuk-select vh-input-w390">
+              <option *ngFor="let interpreterFor of interpreteeList" [ngValue]="interpreterFor.email">
+                {{ interpreterFor.first_name }} {{ interpreterFor.last_name }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': displayNameInvalid }">
@@ -204,8 +245,8 @@
     </div>
   </div>
 
-  <div class="govuk-grid-column-one-half" style="margin: 0">
-    <app-participants-list [participants]="hearing.participants"></app-participants-list>
+  <div class="govuk-grid-column-one-half">
+    <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="true"></app-participant-list>
   </div>
 </div>
 
@@ -228,4 +269,8 @@
 
 <div *ngIf="attemptingDiscardChanges">
   <app-discard-confirm-popup (continueEditing)="handleContinueBooking()" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
+</div>
+<div *ngIf="showConfirmRemoveInterpretee">
+  <app-remove-interpreter-popup (continueRemove)="handleContinueRemoveInterpreter()" (cancelRemove)="handleCancelRemoveInterpreter()">
+  </app-remove-interpreter-popup>
 </div>

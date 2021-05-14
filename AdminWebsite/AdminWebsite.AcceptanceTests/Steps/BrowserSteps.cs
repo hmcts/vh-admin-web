@@ -5,7 +5,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Enums;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -14,18 +14,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class BrowserSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
 
-        public BrowserSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        public BrowserSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
         }
 
-        [Given(@"a new browser is open for user (.*)")]
-        [Given(@"a new browser is open for the (.*)")]
-        [Given(@"a new browser is open for a (.*)")]
-        [Given(@"a new browser is open for an (.*)")]
+        [Given(@"a new browser is open for (?:user|the|a|an) (.*)")]
+        [Given(@"(?:the|an|a) (.*) is on the login page")]
         public void GivenANewBrowserIsOpenFor(string user)
         {
             SwitchCurrentUser(user);
@@ -77,12 +75,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return user.ToLower().Equals("participant");
         }
 
-        private User GetDefaultParticipant()
+        private UserDto GetDefaultParticipant()
         {
             return Users.GetDefaultParticipantUser(_c.Users);
         }
 
-        private User GetMatchingDisplayName(string user)
+        private UserDto GetMatchingDisplayName(string user)
         {
             return Users.GetUserFromDisplayName(_c.Users, user);
         }
@@ -94,6 +92,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Then(@"the user is on the (.*) page")]
+        [Then(@"they should be on the (.*) page")]
         public void ThenTheUserIsOnThePage(string page)
         {
             _browsers[_c.CurrentUser].PageUrl(Page.FromString(page).Url);

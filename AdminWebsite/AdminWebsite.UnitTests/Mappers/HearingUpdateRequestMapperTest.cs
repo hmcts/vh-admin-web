@@ -1,7 +1,7 @@
 ﻿using System;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
+using BookingsApi.Contract.Requests;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -30,14 +30,14 @@ namespace AdminWebsite.UnitTests.Mappers
 
             var result = HearingUpdateRequestMapper.MapTo(source, username);
 
-            result.Hearing_room_name.Should().Be(source.HearingRoomName);
-            result.Hearing_venue_name.Should().Be(source.HearingVenueName);
-            result.Scheduled_date_time.Should().Be(scheduledDateTime);
-            result.Scheduled_duration.Should().Be(source.ScheduledDuration);
-            result.Other_information.Should().Be(source.OtherInformation);
+            result.HearingRoomName.Should().Be(source.HearingRoomName);
+            result.HearingVenueName.Should().Be(source.HearingVenueName);
+            result.ScheduledDateTime.Should().Be(scheduledDateTime);
+            result.ScheduledDuration.Should().Be(source.ScheduledDuration);
+            result.OtherInformation.Should().Be(source.OtherInformation);
             result.Cases.Should().BeEquivalentTo(caseRequest);
-            result.Questionnaire_not_required.Should().BeFalse();
-            result.Audio_recording_required.Should().BeFalse();
+            result.QuestionnaireNotRequired.Should().BeFalse();
+            result.AudioRecordingRequired.Should().BeFalse();
         }
     }
 }

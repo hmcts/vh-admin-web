@@ -1,25 +1,34 @@
 <app-breadcrumb [canNavigate]="canNavigateNext"></app-breadcrumb>
 <h1 class="govuk-heading-l">Book a video hearing</h1>
 
-<h2 class="govuk-heading-m">Assign a courtroom account</h2>
+<h2 class="govuk-heading-m">Assign a judge or courtroom account</h2>
 
 <div
-  *ngIf="failedSubmission && form.invalid"
-  class="govuk-error-summary govuk-!-width-one-half"
+  *ngIf="(failedSubmission && form.invalid) || isJudgeParticipantError"
+  class="govuk-error-summary govuk-!-width-full"
   aria-labelledby="error-summary-title"
   role="alert"
   tabindex="-1"
   data-module="error-summary"
 >
-  <h2 class="govuk-error-summary__title" id="error-summary-title">Please complete the missing information</h2>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    {{ isJudgeParticipantError ? 'There is a problem' : 'Please complete the missing information' }}
+  </h2>
   <div class="govuk-error-summary__body">
     <ul class="govuk-list govuk-error-summary__list">
-      <li *ngIf="judgeName.invalid">
-        <a (click)="goToDiv('judgeName-error')">Please select a courtroom account</a>
-      </li>
-      <li *ngIf="judgeDisplayNameInvalid">
-        <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
-      </li>
+      <ng-container *ngIf="judge; else nonJudge">
+        <li *ngIf="judgeDisplayNameInvalid">
+          <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
+        </li>
+        <li *ngIf="isJudgeParticipantError">
+          <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
+        </li>
+      </ng-container>
+      <ng-template #nonJudge>
+        <li>
+          <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeEmailErrorMsg }}</a>
+        </li>
+      </ng-template>
     </ul>
   </div>
 </div>
@@ -27,32 +36,81 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
-      <div [ngClass]="judgeNameInvalid || !isJudgeSelected ? 'govuk-form-group--error' : 'govuk-form-group'">
-        <label class="govuk-label govuk-!-width-one-half" for="judgeName"> Courtroom account </label>
-        <select class="govuk-select" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
-        </select>
-        <div *ngIf="judgeNameInvalid || !isJudgeSelected" class="alert alert-danger">
-          <span id="judgeName-error" class="govuk-error-message"> Please assign a courtroom account to this hearing </span>
+      <div
+        [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
+      >
+        <label class="govuk-label" for="judgeName" id="judgeEmail-error"> Judge or courtroom account </label>
+        <app-search-email
+          [disabled]="false"
+          hearingRoleParticipant="Judge"
+          (findParticipant)="updateJudge($event)"
+          [initialValue]="courtAccountJudgeEmail"
+        >
+        </app-search-email>
+        <div *ngIf="updateJudgeAttempted && !isJudgeSelected" class="alert alert-danger">
+          <span id="judgeName-error" class="govuk-error-message"> Please assign a judge or courtroom account to this hearing </span>
+        </div>
+        <div *ngIf="isJudgeParticipantError" class="alert alert-danger">
+          <span id="judgeName-error" class="govuk-error-message"> Please select an alternative account</span>
         </div>
       </div>
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div class="govuk-!-margin-bottom-9" [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }">
+      <div [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }">
         <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
           <span class="govuk-error-message">
             {{ constants.Error.JudgeDisplayNameErrorMsg }}
           </span>
         </legend>
-        <label class="govuk-label" for="judgeDisplayName"> Judge name </label>
+        <label class="govuk-label" for="judgeDisplayNameFld"> Judge name </label>
         <div class="govuk-body govuk-hint">Please enter TBC if you don't know the name of the judge</div>
         <input
           (focusout)="changeDisplayName()"
           type="text"
-          formControlName="judgeDisplayName"
-          id="judgeDisplayName"
-          class="govuk-input govuk-input--width-20"
+          formControlName="judgeDisplayNameFld"
+          id="judgeDisplayNameFld"
+          class="govuk-input govuk-input--width-25"
+        />
+      </div>
+
+      <p class="govuk-body govuk-!-margin-bottom-5"></p>
+
+      <div [ngClass]="{ 'govuk-form-group--error': judgePhoneInvalid }">
+        <legend id="judgePhone-error" *ngIf="judgePhoneInvalid">
+          <span class="govuk-error-message">
+            {{ constants.Error.PhoneErrorMsg }}
+          </span>
+        </legend>
+        <label class="govuk-label" for="judgePhoneFld"> Judge telephone number (optional) </label>
+        <input
+          (focusout)="changeTelephone()"
+          type="text"
+          formControlName="judgePhoneFld"
+          id="judgePhoneFld"
+          class="govuk-input govuk-input--width-25"
+        />
+      </div>
+
+      <p class="govuk-body govuk-!-margin-bottom-5"></p>
+
+      <div
+        class="govuk-!-margin-bottom-9"
+        [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }"
+        *ngIf="displayEmailField"
+      >
+        <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
+          <span class="govuk-error-message">
+            {{ constants.Error.EmailErrorMsg }}
+          </span>
+        </legend>
+        <label class="govuk-label" for="judgeEmailFld"> Judge email (optional)</label>
+        <input
+          (focusout)="changeEmail()"
+          type="text"
+          formControlName="judgeEmailFld"
+          id="judgeEmailFld"
+          class="govuk-input govuk-input--width-25"
         />
       </div>
 
@@ -79,8 +137,8 @@
       </div>
     </form>
   </div>
-  <div class="govuk-grid-column-one-half" style="margin: 0">
-    <app-participants-list [participants]="hearing.participants"></app-participants-list>
+  <div class="govuk-grid-column-one-half" *ngIf="hearing.participants.length">
+    <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="false"></app-participant-list>
   </div>
 </div>
 

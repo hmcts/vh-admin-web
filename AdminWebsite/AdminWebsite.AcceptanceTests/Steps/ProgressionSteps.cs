@@ -68,6 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"the user has progressed to the (.*) page")]
+        [Given(@"the user has progressed to the (.*) page")]
         public void WhenIHaveContinuedToThePage(string page)
         {
             Progression(FromString("Video Access Points"), "Video Access Points", page);
@@ -136,7 +137,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Journey.Questionnaire, new QuestionnaireJourney()},
                 {Journey.EditParticipantName, new EditParticipantNameJourney()}
             };
-            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.User_type);
+            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.UserType);
             journeys[userJourney].VerifyDestinationIsInThatJourney(endPage);
             _c.Route = journeys[userJourney].GetNextPage(GetRouteBasedOn(userJourney));
             var journey = journeys[userJourney].Journey();

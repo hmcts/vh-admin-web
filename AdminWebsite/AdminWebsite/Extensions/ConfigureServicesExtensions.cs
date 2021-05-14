@@ -1,26 +1,25 @@
-﻿using AdminWebsite.BookingsAPI.Client;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
 using AdminWebsite.Validators;
+using BookingsApi.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using AdminWebsite.Contracts.Responses;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using NotificationApi.Client;
+using Swashbuckle.AspNetCore.Swagger;
 using UserApi.Client;
 using VideoApi.Client;
 
@@ -79,21 +78,27 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<VideoApiTokenHandler>();
             serviceCollection.AddTransient<NotificationApiTokenHandler>();
             serviceCollection.AddTransient<IHearingsService, HearingsService>();
+            serviceCollection.AddTransient<IConferenceDetailsService, ConferenceDetailsService>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
-            serviceCollection.AddScoped<SecuritySettings>();
-            serviceCollection.AddScoped<AppConfigSettings>();
+            serviceCollection.AddScoped<AzureAdConfiguration>();
             serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
             serviceCollection.AddScoped<ICachedUserClaimBuilder, CachedUserClaimBuilder>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();
-            var settings = container.GetService<IOptions<ServiceSettings>>().Value;
+            var settings = container.GetService<IOptions<ServiceConfiguration>>().Value;
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
-                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true });
+                .AddTypedClient(httpClient =>
+                {
+                    var client = BookingsApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.BookingsApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (IBookingsApiClient)client;
+                });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
@@ -104,10 +109,16 @@ namespace AdminWebsite.Extensions
                     client.ReadResponseAsString = true;
                     return (IUserApiClient)client;
                 });
-            
+
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
-                .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });
+                .AddTypedClient(httpClient =>
+                {
+                    var client = VideoApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.VideoApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (IVideoApiClient) client;
+                });
 
             serviceCollection.AddHttpClient<INotificationApiClient, NotificationApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())
@@ -120,6 +131,7 @@ namespace AdminWebsite.Extensions
 
                 });
 
+            serviceCollection.AddHttpClient<IPublicHolidayRetriever, UkPublicHolidayRetriever>();
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
                 var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;

@@ -3,6 +3,8 @@ import { ParticipantDetailsModel } from 'src/app/common/model/participant-detail
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
+import { OtherInformationModel } from '../../common/model/other-information.model';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
     selector: 'app-hearing-details',
@@ -18,7 +20,7 @@ export class HearingDetailsComponent {
 
     private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
-    constructor(private route: ActivatedRoute, private logger: Logger) {}
+    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
 
     getParticipantInfo(participantId: string): string {
         let represents = '';
@@ -30,9 +32,8 @@ export class HearingDetailsComponent {
     }
 
     isJoinByPhone(): boolean {
-        const config = this.route.snapshot.data['configSettings'];
+        const config = this.configService.getConfig();
         const datePhone = config.join_by_phone_from_date;
-        this.logger.debug(`${this.loggerPrefix} join by phone from date setting is: ${datePhone}`);
 
         if (!datePhone || datePhone.length === 0) {
             return true;
@@ -48,5 +49,14 @@ export class HearingDetailsComponent {
     getDateFromString(datePhone: string): Date {
         const dateParts = datePhone.split('-');
         return new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2]);
+    }
+
+    getOtherInformationText(): string {
+        try {
+            const otherInfo = OtherInformationModel.init(this.hearing?.OtherInformation);
+            return otherInfo.OtherInformation;
+        } catch (e) {
+            return this.hearing?.OtherInformation;
+        }
     }
 }

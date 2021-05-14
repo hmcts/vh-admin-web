@@ -86,7 +86,7 @@ stages:
         devOpsResource: vh_admin_web
         appName: vh-admin-web-$(environment)
         resourceGroup: vh-admin-web-$(environment)
-        testCaseFilter: TestCategory=smoketest
+        testCaseFilter: TestCategory=Smoketest
         dependentApps:
         - name: vh-user-api-$(environment)
           resourceGroup: vh-user-api-$(environment)
@@ -181,10 +181,10 @@ stages:
 
           # AzureAd
           - name: AzureAd:ClientId
-            value: vh-admin-web-appid
+            value: vh-admin-web-appid-v2
             secret: true
           - name: AzureAd:ClientSecret
-            value: vh-admin-web-key
+            value: vh-admin-web-key-v2
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot:
@@ -201,8 +201,6 @@ stages:
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
-          - name: AzureAd:Authority
-            value: $(Authority)
               
           # Testing
           - name: TestUserSecrets:TestUsernameStem
@@ -276,16 +274,14 @@ stages:
             value: $(notification_api_url)
 
           # AzureAd
-          - name: AzureAd:Authority
-            value: $(Authority)
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
           - name: AzureAd:ClientId
-            value: vh-video-web-appid
+            value: vh-video-web-appid-v2
             secret: true
           - name: AzureAd:ClientSecret
-            value: vh-video-web-key
+            value: vh-video-web-key-v2
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot: true
@@ -325,3 +321,7 @@ stages:
             value: $(wowza_storageAccountKey)
           - name: WowzaConfiguration:StorageContainerName
             value: $(wowza_storageContainerName)
+
+          # Ejud - test setting only
+          - name: UsingEjud
+            value: $(UsingEjud)

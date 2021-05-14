@@ -24,17 +24,17 @@ namespace AdminWebsite.UnitTests.Mappers
 
             var result = NewParticipantRequestMapper.MapTo(source);
 
-            result.Case_role_name.Should().Be(source.CaseRoleName);
-            result.Contact_email.Should().Be(source.ContactEmail);
-            result.Display_name.Should().Be(source.DisplayName);
-            result.First_name.Should().Be(source.FirstName);
-            result.Last_name.Should().Be(source.LastName);
-            result.Hearing_role_name.Should().Be(source.HearingRoleName);
-            result.Middle_names.Should().Be(source.MiddleNames);
+            result.CaseRoleName.Should().Be(source.CaseRoleName);
+            result.ContactEmail.Should().Be(source.ContactEmail);
+            result.DisplayName.Should().Be(source.DisplayName);
+            result.FirstName.Should().Be(source.FirstName);
+            result.LastName.Should().Be(source.LastName);
+            result.HearingRoleName.Should().Be(source.HearingRoleName);
+            result.MiddleNames.Should().Be(source.MiddleNames);
             result.Representee.Should().Be(source.Representee);
-            result.Telephone_number.Should().Be(source.TelephoneNumber);
+            result.TelephoneNumber.Should().Be(source.TelephoneNumber);
             result.Title.Should().Be(source.Title);
-            result.Organisation_name.Should().Be(source.OrganisationName);
+            result.OrganisationName.Should().Be(source.OrganisationName);
         }
     }
 }

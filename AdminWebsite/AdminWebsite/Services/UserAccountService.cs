@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
-using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -27,6 +27,16 @@ namespace AdminWebsite.Services
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
         Task<IEnumerable<JudgeResponse>> GetJudgeUsers();
+
+
+        /// <summary>
+        ///     Returns a list of judges filtered by email in the active directory
+        /// </summary>
+        /// <remarks>
+        /// Filters test accounts if configured to run as live environment 
+        /// </remarks>
+        Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term);
+
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
@@ -77,7 +87,11 @@ namespace AdminWebsite.Services
         /// <param name="bookingsApiClient"></param>
         /// <param name="notificationApiClient"></param>
         /// <param name="logger"></param>
-        public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, INotificationApiClient notificationApiClient, ILogger<UserAccountService> logger)
+        public UserAccountService(
+            IUserApiClient userApiClient, 
+            IBookingsApiClient bookingsApiClient, 
+            INotificationApiClient notificationApiClient, 
+            ILogger<UserAccountService> logger)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
@@ -89,11 +103,11 @@ namespace AdminWebsite.Services
         public async Task<User> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
-            _logger.LogDebug("Checking for username with contact email {contactEmail}.", participant.Contact_email);
-            var userProfile = await GetUserByContactEmail(participant.Contact_email);
+            _logger.LogDebug("Checking for username with contact email {contactEmail}.", participant.ContactEmail);
+            var userProfile = await GetUserByContactEmail(participant.ContactEmail);
             if (userProfile == null)
             {
-                _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.Contact_email);
+                _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.ContactEmail);
                 // create the user in AD.
                 var newUser = await CreateNewUserInAD(participant);
                 return new User
@@ -170,17 +184,17 @@ namespace AdminWebsite.Services
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
             const string BLANK = " ";
-            _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.Contact_email);
+            _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.ContactEmail);
             var createUserRequest = new CreateUserRequest
             {
-                FirstName = participant.First_name?.Replace(BLANK, string.Empty),
-                LastName = participant.Last_name?.Replace(BLANK, string.Empty),
-                RecoveryEmail = participant.Contact_email,
+                FirstName = participant.FirstName?.Replace(BLANK, string.Empty),
+                LastName = participant.LastName?.Replace(BLANK, string.Empty),
+                RecoveryEmail = participant.ContactEmail,
                 IsTestUser = false
             };
 
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-            _logger.LogDebug("Successfully created an AD user with contact email {contactEmail}.", participant.Contact_email);
+            _logger.LogDebug("Successfully created an AD user with contact email {contactEmail}.", participant.ContactEmail);
             participant.Username = newUserResponse.Username;
             return newUserResponse;
         }
@@ -191,6 +205,19 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Attempting to get all judge accounts.");
             var judgesList = await _userApiClient.GetJudgesAsync();
             return judgesList.Select(x => new JudgeResponse
+            {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                DisplayName = x.DisplayName,
+                Email = x.Email
+            }).ToList();
+        }
+
+        public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
+        {
+            _logger.LogDebug("Attempting to get all judge accounts.");
+            var judgesList = await _userApiClient.GetJudgesAsync();
+            return judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).Select(x => new JudgeResponse
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
@@ -272,17 +299,26 @@ namespace AdminWebsite.Services
             };
             return _userApiClient.UpdateUserAccountAsync(userId, request);
         }
-        
+
         private async Task AddGroup(string username, string groupName)
         {
-            var addUserToGroupRequest = new AddUserToGroupRequest
+            try
             {
-                UserId = username,
-                GroupName = groupName
-            };
-
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
+                var addUserToGroupRequest = new AddUserToGroupRequest
+                {
+                    UserId = username,
+                    GroupName = groupName
+                };
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+                _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
+            }
+            catch (UserApiException e)
+            {
+                _logger.LogError(e,
+                    $"Failed to add user {username} to {groupName} in User API. " +
+                    $"Status Code {e.StatusCode} - Message {e.Message}");
+                throw;
+            }
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)

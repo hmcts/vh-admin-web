@@ -23,12 +23,12 @@
         /// <summary>
         /// The participants first name
         /// </summary>
-        public string First_name { get; set; }
+        public string FirstName { get; set; }
 
         /// <summary>
         /// The participants last name
         /// </summary>
-        public string Last_name { get; set; }
+        public string LastName { get; set; }
 
         /// <summary>
         /// The participants role in the system

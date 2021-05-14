@@ -32,7 +32,7 @@ export class ResponseTestData {
             true,
             'reason1',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b2 = new BookingsDetailsModel(
@@ -56,7 +56,7 @@ export class ResponseTestData {
             true,
             'reason2',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b3 = new BookingsDetailsModel(
@@ -80,7 +80,7 @@ export class ResponseTestData {
             true,
             'reason3',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -118,7 +118,7 @@ export class ResponseTestData {
             true,
             'reason11',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b2 = new BookingsDetailsModel(
@@ -142,7 +142,7 @@ export class ResponseTestData {
             true,
             'reason12',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b3 = new BookingsDetailsModel(
@@ -166,7 +166,7 @@ export class ResponseTestData {
             true,
             'reason13',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -198,7 +198,7 @@ export class ResponseTestData {
             true,
             'reason21',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b21 = new BookingsDetailsModel(
@@ -222,7 +222,7 @@ export class ResponseTestData {
             true,
             'reason32',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b31 = new BookingsDetailsModel(
@@ -246,7 +246,7 @@ export class ResponseTestData {
             true,
             'reason33',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -270,12 +270,12 @@ export class ResponseTestData {
         return bookingsResponse;
     }
     getTestData(): BookingsByDateResponse {
-        const bhr = new BookingsHearingResponse();
+        const date = new Date('2019-10-22 13:58:40.3730067');
+        const bhr = new BookingsHearingResponse({ hearing_date: date });
         bhr.hearing_id = '1';
-        bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.hearing_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
+        bhr.created_date = date;
+        bhr.last_edit_date = date;
+        bhr.scheduled_date_time = date;
         bhr.court_address = 'court address';
         bhr.court_room = '12A';
         bhr.hearing_name = 'A vs B';
@@ -288,12 +288,11 @@ export class ResponseTestData {
         bhr.audio_recording_required = true;
         bhr.cancel_reason = 'some more information';
 
-        const bhr1 = new BookingsHearingResponse();
+        const bhr1 = new BookingsHearingResponse({ hearing_date: date });
         bhr1.hearing_id = '2';
-        bhr1.created_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.hearing_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
-        bhr1.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
+        bhr1.created_date = date;
+        bhr1.last_edit_date = date;
+        bhr1.scheduled_date_time = date;
         bhr1.court_address = 'court address';
         bhr1.court_room = '12A';
         bhr1.hearing_name = 'A vs B';
@@ -426,7 +425,7 @@ describe('Booking list service functionality', () => {
             true,
             'reason',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         bookingEdited.IsStartTimeChanged = true;
@@ -464,7 +463,7 @@ describe('Booking list service functionality', () => {
             true,
             'reason1',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 

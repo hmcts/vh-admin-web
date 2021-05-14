@@ -3,7 +3,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.PageObject.Pages;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -13,17 +13,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class LoginSteps : ISteps
     {
         private LoginSharedSteps _loginSharedSteps;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly TestContext _c;
         private const int ReachedThePageRetries = 2;
 
-        public LoginSteps(Dictionary<User, UserBrowser> browsers, TestContext testContext)
+        public LoginSteps(Dictionary<UserDto, UserBrowser> browsers, TestContext testContext)
         {
             _browsers = browsers;
             _c = testContext;
         }
 
-        [When(@"the user logs in with valid credentials")]
+        [When(@"they attempt to login with valid credentials")]
         public void ProgressToNextPage()
         {
             _loginSharedSteps = new LoginSharedSteps(_browsers[_c.CurrentUser], _c.CurrentUser.Username, _c.WebConfig.TestConfig.TestUserPassword);
@@ -47,6 +47,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheUserShouldBeNavigatedToSignInScreen()
         {
             _browsers[_c.CurrentUser].Retry(() => _browsers[_c.CurrentUser].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), ReachedThePageRetries);
+        }
+
+        [Then(@"they should be able to logout")]
+        public void ThenTheyShouldBeAbleToLogout()
+        {
+            WhenTheUserAttemptsToLogout();
+            ThenTheUserShouldBeNavigatedToSignInScreen();
         }
     }
 }

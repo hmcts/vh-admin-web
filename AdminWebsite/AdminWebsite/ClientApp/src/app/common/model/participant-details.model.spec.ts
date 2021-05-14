@@ -16,7 +16,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
 
         expect(model.fullName).toEqual('title first_name last_name');
@@ -37,7 +39,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
 
         expect(model.fullName).toEqual('Judge last_name');
@@ -58,7 +62,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
 
         expect(model.fullName).toEqual('first_name Judge');
@@ -70,7 +76,7 @@ describe('participant details model', () => {
             'title',
             'first_name',
             'last_name',
-            'user_role_name',
+            'Representative',
             'username',
             'contact_email',
             'case_role_name',
@@ -79,7 +85,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
 
         expect(model.isRepresenting).toBeTruthy();
@@ -100,7 +108,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
 
         expect(model.isRepresenting).toBeFalsy();
@@ -120,7 +130,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
@@ -139,7 +151,9 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
@@ -158,8 +172,52 @@ describe('participant details model', () => {
             'middle_names',
             'organisation',
             'representee',
-            '007867678678'
+            '007867678678',
+            'interpretee',
+            false
         );
         expect(model.showCaseRole()).toBeTruthy();
+    });
+    it('should return true when hearing role is interpreter', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Citizen',
+            'Interpreter',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'interpretee',
+            false
+        );
+        expect(model.isInterpreter).toBeTruthy();
+    });
+    it('should return true when hearing role is interpreter', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Citizen',
+            'Interpreter',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'interpretee',
+            false
+        );
+        expect(model.isRepOrInterpreter).toBeTruthy();
     });
 });

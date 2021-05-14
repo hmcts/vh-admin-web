@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             _userAccountService = new Mock<IUserAccountService>();
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@madeUpEmail.com"
+                TestUsernameStem = "@hmcts.net"
             };
 
             _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
@@ -41,11 +41,11 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         public async Task Should_return_ok_with_list_of_hearings_for_username()
         {
             var responseMock = Builder<HearingsByUsernameForDeletionResponse>.CreateListOfSize(3).All()
-                .With(x => x.Hearing_id = Guid.NewGuid()).Build().ToList();
+                .With(x => x.HearingId = Guid.NewGuid()).Build().ToList();
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ReturnsAsync(responseMock);
             
-            var result = await _controller.GetHearingsByUsernameForDeletionAsync("realusername@test.com");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("realusername@hmcts.net");
 
             var okResult = (OkObjectResult) result.Result;
             okResult.Should().NotBeNull();
@@ -57,23 +57,21 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
-            var result = await _controller.GetHearingsByUsernameForDeletionAsync("does_not_exist@test.com");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("alice.carter2@hearings.reform.hmcts.net");
             var notFoundResult = (NotFoundResult) result.Result;
             notFoundResult.Should().NotBeNull();
         }
         
         [Test]
-        public async Task Should_return_ok_when_bookings_api_returns_not_found_but_account_exist_in_ad()
+        public async Task Should_return_notfound_when_bookings_api_returns_not_found_but_account_exist_in_ad()
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
             _userAccountService.Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>()))
                 .ReturnsAsync(Guid.NewGuid().ToString);
-            var result = await _controller.GetHearingsByUsernameForDeletionAsync("onlyinad@test.com");
-            var okResult = (OkObjectResult) result.Result;
-            okResult.Should().NotBeNull();
-
-            okResult.Value.As<List<HearingsByUsernameForDeletionResponse>>().Should().BeEmpty();
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("onlyinad@hmcts.net");
+            var notFoundResult = (NotFoundResult) result.Result;
+            notFoundResult.Should().NotBeNull();
         }
         
         [Test]
@@ -81,7 +79,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.Unauthorized));
-            var result = await _controller.GetHearingsByUsernameForDeletionAsync("invalid_user@test.com");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("invalid_user@hmcts.net");
             var notFoundResult = (UnauthorizedResult) result.Result;
             notFoundResult.Should().NotBeNull();
         }
@@ -92,13 +90,13 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             Assert.ThrowsAsync<BookingsApiException>(() =>
-                _controller.GetHearingsByUsernameForDeletionAsync("usernamefailed@test.com"));
+                _controller.GetHearingsByUsernameForDeletionAsync("usernamefailed@hmcts.net"));
         }
 
         [Test]
         public async Task should_clean_username_before_removing_account()
         {
-            var username = " Test.Hello@WORLD.COM  ";
+            var username = " Test.Hello@hmcts.net  ";
             var usernameCleaned = username.Trim().ToLower();
 
             await _controller.DeletePersonWithUsernameAsync(username);

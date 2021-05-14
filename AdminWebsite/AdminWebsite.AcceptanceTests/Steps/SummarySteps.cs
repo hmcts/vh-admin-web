@@ -11,7 +11,8 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -22,7 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private const int TIMEOUT = 60;
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly BookingDetailsSteps _bookingDetailsSteps;
         private readonly HearingDetailsSteps _hearingDetailsSteps;
         private readonly HearingScheduleSteps _hearingScheduleSteps;
@@ -34,7 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public SummarySteps(
             TestContext testContext,
-            Dictionary<User, UserBrowser> browsers,
+            Dictionary<UserDto, UserBrowser> browsers,
             BookingDetailsSteps bookingDetailsSteps,
             HearingDetailsSteps hearingDetailsSteps,
             HearingScheduleSteps hearingScheduleSteps,
@@ -67,10 +68,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyNewUsersCreatedInAad();
         }
 
-        public void ClickBook()
+        [Then(@"the user views the information on the summary form")]
+        public void ThenTheUserViewsTheInformationOnTheSummaryForm()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
+            ClickBook();
+            VerifyBookingsCreated();
+            VerifyNewUsersCreatedInAad();
+        }
+
+        private void ClickBook()
+        {
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp);
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
@@ -105,6 +114,61 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
             _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname));
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
+        }
+
+        [When(@"the user edits an Interpreter")]
+        public void WhenTheUserEditsAnInterpreter()
+        { 
+            var user = GetParticipantBy("Interpreter");
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
+            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail,false);
+        }
+
+        [When(@"the user edits a saved Interpreter")]
+        public void WhenTheUserEditsASavedInterpreter()
+        {
+            var user = GetParticipantBy("Interpreter");
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
+            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail);
+        }
+
+
+
+        [When(@"the user removes participant")]
+        public void WhenTheUserRemovesParticipant()
+        {
+            var participant = GetParticipantBy("Litigant in person");
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(participant.Firstname));
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveInterpreterMessage).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveInterpreter);
+            RemoveParticipant(participant);
+            RemoveParticipant(GetParticipantBy("Interpreter"));
+        }
+
+        [When(@"the user removes Interpreter")]
+        public void WhenTheUserRemovesInterpreter()
+        {
+            var role = "Interpreter";
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy(role).Firstname));
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant);
+            RemoveParticipant(GetParticipantBy(role));
+        }
+
+        private void RemoveParticipant(UserAccount user)
+        { 
+            _c.Test.HearingParticipants.Remove(user);
+            ParticipantListContains(user).Should().BeFalse();
+        }
+
+        private bool ParticipantListContains(UserAccount interpreter)
+        {
+            var participantDetails = _addParticipantSteps.GetAllParticipantsDetails();
+            return participantDetails.Any(p => p.Contains(interpreter.Firstname));
+        }
+
+        private UserAccount GetParticipantBy(string role)
+        {
+            return _c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).FirstOrDefault();
         }
 
         [When(@"the user edits an endpoint display name")]
@@ -149,10 +213,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyHearingDetails()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseNumber).Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseName).Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseType).Should().Be(_c.Test.HearingDetails.CaseType.Name);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingType).Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
@@ -160,9 +224,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (!_c.Test.HearingSchedule.MultiDays)
             {
                 var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingDate).ToLower().Should().Be(scheduleDate.ToLower());
                 var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingDuration).Should().Be(listedFor);
             }
             else
             {
@@ -172,29 +236,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var textDateStart = $"{startDate.ToLower()} -";
                 var textDateEnd = $"{endDate.ToLower()}, {startTime.ToLower()}";
 
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingStartDateMultiDays).Text.ToLower().Should().Be(textDateStart);
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingEndDateMultiDays).Text.ToLower().Should().Be(textDateEnd);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingStartDateMultiDays).ToLower().Should().Be(textDateStart);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingEndDateMultiDays).ToLower().Should().Be(textDateEnd);
             }
 
             var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CourtAddress).Should().Be(courtAddress);
         }
 
         private void VerifyAudioRecording(bool audioFlag=true)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(audioFlag ? "Yes":"No");
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.AudioRecording).Should().Be(audioFlag ? "Yes":"No");
         }
 
         private void VerifyOtherInformation()
         {
-            var otherInformation = _c.Test.OtherInformation;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
+            var otherInformation = OtherInformationSteps.GetOtherInfo(_c.Test.TestData.OtherInformationDetails.OtherInformation);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.OtherInformation).Should().Be(otherInformation);
         }
 
         private void VerifyVideoAccessPoints()
         {
             var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.VideoAccessPoints(0)).Should().Be(videoAccessPoints);
         }
 
         private void VerifyBookingsCreated()
@@ -206,10 +270,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
                 AssertHearing.AssertHearingDetails(hearing, _c.Test);
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
-                AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
+                AssertHearing.AssertCreatedBy(hearing.CreatedBy, _c.CurrentUser.Username);
                 var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
-                AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
+                AssertHearing.AssertScheduledDate(day, hearing.ScheduledDateTime, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), _c.PublicHolidays);
+                AssertHearing.AssertTimeSpansMatch(hearing.ScheduledDuration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
             }
         }
 
@@ -222,10 +286,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
                 AssertHearing.AssertHearingDetails(hearing, _c.Test);
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
-                AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
+                AssertHearing.AssertCreatedBy(hearing.CreatedBy, _c.CurrentUser.Username);
                 var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
-                AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
+                AssertHearing.AssertScheduledDate(day, hearing.ScheduledDateTime, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), _c.PublicHolidays);
+                AssertHearing.AssertTimeSpansMatch(hearing.ScheduledDuration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
                 AssertHearing.AssertUpdatedStatus(hearing, _c.CurrentUser.Username, DateTime.Now);
             }
         }
@@ -233,7 +297,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private static int GetDayOfHearing(string caseName)
         {
             if (!caseName.Contains("Day") || !caseName.Contains("of")) return 1;
-            var daysPart = caseName.Substring(caseName.Length - ("x of x").Length);
+            var daysPart = caseName[^("x of x").Length..];
             var day = daysPart.Substring(0, 1);
             return int.Parse(day);
         }
@@ -248,7 +312,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var hearings = PollForAllHearings();
 
                 var pollForHearingUpdated = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
-                if (pollForHearingUpdated.All(x => x.Updated_by != null))
+                if (pollForHearingUpdated.All(x => x.UpdatedBy != null))
                 {
                     return pollForHearingUpdated;
                 }

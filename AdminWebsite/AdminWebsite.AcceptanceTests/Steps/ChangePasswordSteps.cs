@@ -5,7 +5,7 @@ using AcceptanceTests.Common.PageObject.Pages;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -15,13 +15,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class ChangePasswordSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly BrowserSteps _browserSteps;
         private LoginSharedSteps _loginSteps;
 
-        private User _participant;
+        private UserDto _participant;
 
-        public ChangePasswordSteps(TestContext c, Dictionary<User, UserBrowser> browsers, BrowserSteps browserSteps)
+        public ChangePasswordSteps(TestContext c, Dictionary<UserDto, UserBrowser> browsers, BrowserSteps browserSteps)
         {
             _c = c;
             _browsers = browsers;
@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the participant accesses the application using the reset password")]
         public void WhenTheParticipantAccessesTheApplicationUsingTheResetPassword()
         {
-            _browserSteps.GivenANewBrowserIsOpenFor(_participant.Last_name);
+            _browserSteps.GivenANewBrowserIsOpenFor(_participant.LastName);
             _loginSteps = new LoginSharedSteps(_browsers[_c.CurrentUser], _c.CurrentUser.Username, _c.WebConfig.AzureAdConfiguration.TemporaryPassword);
             _loginSteps.ProgressToNextPage();
         }

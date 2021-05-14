@@ -1,10 +1,11 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Security;
+﻿using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
 {

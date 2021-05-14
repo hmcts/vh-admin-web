@@ -1,11 +1,13 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Security;
+﻿using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
 {
@@ -43,7 +45,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult GetBookingsList(string cursor, int limit = 100)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100)
         {
             if (cursor != null)
             {
@@ -64,8 +66,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 var types = caseTypes ?? Enumerable.Empty<string>();
-                var hearingTypesIds = GetHearingTypesId(types);
-                var bookingsResponse = _bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
+                var hearingTypesIds = await GetHearingTypesId(types);
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(hearingTypesIds, cursor, limit);
                 return Ok(bookingsResponse);
             }
             catch (BookingsApiException e)
@@ -79,19 +81,17 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
+        private async Task<List<int>> GetHearingTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
-            var types = _bookingsApiClient.GetCaseTypes();
-            if (types != null && types.Any())
+            var types = await _bookingsApiClient.GetCaseTypesAsync();
+            if (types == null || !types.Any()) return typeIds;
+            foreach (var item in caseTypes)
             {
-                foreach (var item in caseTypes)
+                var caseType = types.FirstOrDefault(s => s.Name == item);
+                if (caseType != null && typeIds.All(s => s != caseType.Id))
                 {
-                    var case_type = types.FirstOrDefault(s => s.Name == item);
-                    if (case_type != null && !typeIds.Any(s => s == case_type.Id))
-                    {
-                        typeIds.Add(case_type.Id);
-                    }
+                    typeIds.Add(caseType.Id);
                 }
             }
 

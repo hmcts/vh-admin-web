@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 
 namespace AdminWebsite
 {
@@ -21,10 +22,12 @@ namespace AdminWebsite
         }
 
         public IConfiguration Configuration { get; }
+        private Settings Settings { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
 
             services.AddSwagger();
@@ -42,14 +45,16 @@ namespace AdminWebsite
 
         private void RegisterSettings(IServiceCollection services)
         {
-            services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd", options));
-            services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices", options));
+            Settings = Configuration.Get<Settings>();
+
+            services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
+            services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
+            services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
+            services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));
+
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
-            services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
-            services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
-            services.Configure<ServiceSettings>(options => Configuration.Bind("KinlyConfiguration", options));
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -70,11 +75,21 @@ namespace AdminWebsite
             }
 
             app.UseRouting();
-            app.UseHttpsRedirection();
+            if (!Settings.DisableHttpsRedirection)
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
+            }
+
+            bool.TryParse(Configuration["ShowPII"], out var showPII);
+            if (showPII)
+            {
+                IdentityModelEventSource.ShowPII = true;
             }
 
             app.UseAuthentication();

@@ -13,11 +13,11 @@ namespace AdminWebsite.UnitTests.Security
     public class UserIdentityTests
     {
         [Test]
-        public void Should_return_the_display_names_of_assigned_case_types()
+        public void Should_return_the_DisplayNames_of_assigned_case_types()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
-                CaseTypes = new List<string> { "Civil Money Claims", "Financial Remedy" }
+                CaseTypes = new List<string> { "Generic", "Financial Remedy" }
             });
 
             var user = new TestPrincipal(administratorRoleClaims.Claims);
@@ -25,16 +25,16 @@ namespace AdminWebsite.UnitTests.Security
 
             caseTypes.Should().NotBeNull();
             caseTypes.Should().HaveCount(caseTypes.Count);
-            caseTypes.Should().Contain("Civil Money Claims");
+            caseTypes.Should().Contain("Generic");
             caseTypes.Should().Contain("Financial Remedy");
         }
 
         [Test]
-        public void Should_return_group_display_names()
+        public void Should_return_group_DisplayNames()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
-                CaseTypes = new List<string> { "Civil Money Claims", "Financial Remedy" }
+                CaseTypes = new List<string> { "Generic", "Financial Remedy" }
             });
 
             var user = new TestPrincipal(administratorRoleClaims.Claims);
@@ -42,7 +42,7 @@ namespace AdminWebsite.UnitTests.Security
 
             caseTypes.Should().NotBeNull();
             caseTypes.Should().HaveCount(caseTypes.Count);
-            caseTypes.Should().Contain("Civil Money Claims");
+            caseTypes.Should().Contain("Generic");
             caseTypes.Should().Contain("Financial Remedy");
         }
 
@@ -85,7 +85,7 @@ namespace AdminWebsite.UnitTests.Security
         [Test]
         public void Should_return_the_username()
         {
-            const string username = "Someone@somewhere.com";
+            const string username = "Someone@hmcts.net";
             var user = new ClaimsPrincipalBuilder().WithUsername(username).Build();
             var userIdentity = new UserIdentity(user);
 
