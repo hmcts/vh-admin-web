@@ -1,0 +1,43 @@
+<form [formGroup]="getCvpAudioFileForm" class="govuk-form-group">
+    <div class="govuk-!-margin-top-9">
+        <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+            <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate"> Date </label>
+            <input id="hearingDate" class="govuk-input govuk-!-width-one-quarter" type="date"
+                formControlName="hearingDate" required placeholder="e.g. 30/08/2020"
+                max="{{ today | date: 'yyyy-MM-dd' }}" />
+            <div *ngIf="hearingDateInvalid" class="alert alert-danger">
+                <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the past </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-!-margin-top-3">
+        <div [ngClass]="cloudroomNameInvalid ? 'govuk-form-group--error' : undefined">
+            <label class="govuk-label govuk-!-width-one-quarter" for="cloudroomName"> Cloudroom number </label>
+            <input id="cloudroomName" class="govuk-input govuk-!-width-one-half" type="text"
+                formControlName="cloudroomName" />
+            <div *ngIf="cloudroomNameInvalid" class="alert alert-danger">
+                <span id="hearingDate-error" class="govuk-error-message"> Enter the number of the cloudroom </span>
+            </div>
+        </div>
+
+        <div class="govuk-!-margin-top-3">
+            <label class="govuk-label govuk-!-width-two-thirds" for="caseReference"> Case reference </label>
+            <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text"
+                formControlName="caseReference" />
+        </div>
+
+        <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button" id="submitCvp"
+            (click)="search()" [disabled]="cvpRequestInvalid">
+            Search
+        </button>
+    </div>
+</form>
+
+<div class="govuk-body" *ngIf="searchResult && searchResult.error">
+    <h1>ERROR</h1>
+</div>
+
+<div class="govuk-body" *ngIf="searchResult && !searchResult.error">
+    <app-cvp-audio-file-search-result [results]="cvpResults"></app-cvp-audio-file-search-result>
+</div>

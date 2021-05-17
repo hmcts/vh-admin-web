@@ -5,6 +5,8 @@ import { HearingSearchDateTimePipe } from '../shared/directives/hearing-search-d
 import { HearingSearchResultsComponent } from './hearing-search-results/hearing-search-results.component';
 import { GetAudioFileComponent } from './get-audio-file.component';
 import { CvpAudioFileSearchResultComponent } from './cvp-audio-file-search-result/cvp-audio-file-search-result.component';
+import { GetAudioFileCvpComponent } from './get-audio-file-cvp/get-audio-file-cvp.component';
+import { GetAudioFileVhComponent } from './get-audio-file-vh/get-audio-file-vh.component';
 
 @NgModule({
     imports: [SharedModule],
@@ -13,7 +15,9 @@ import { CvpAudioFileSearchResultComponent } from './cvp-audio-file-search-resul
         GetAudioLinkButtonComponent,
         HearingSearchDateTimePipe,
         HearingSearchResultsComponent,
-        CvpAudioFileSearchResultComponent
+        CvpAudioFileSearchResultComponent,
+        GetAudioFileCvpComponent,
+        GetAudioFileVhComponent
     ],
     exports: [GetAudioFileComponent, GetAudioLinkButtonComponent, HearingSearchDateTimePipe, HearingSearchResultsComponent]
 })

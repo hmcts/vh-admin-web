@@ -7,9 +7,9 @@ import { Logger } from './logger';
 export const InvalidParametersError = (parameters: { [parameterName: string]: any }) =>
     new Error(`Invlalid parameter combiniation ${JSON.stringify(parameters)}.`);
 
-export interface IAudioRecordingResult {
+export interface ICvpAudioRecordingResult {
     status: number;
-    result: HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[];
+    result: CvpForAudioFileResponse[];
     error: any;
 }
 
@@ -32,7 +32,7 @@ export class AudioLinkService {
         return response.audio_file_links;
     }
 
-    async getCvpAudioRecordings(cloudRoomName: string, date: string, caseReference: string): Promise<IAudioRecordingResult> {
+    async getCvpAudioRecordings(cloudRoomName: string, date: string, caseReference: string): Promise<ICvpAudioRecordingResult> {
         if (cloudRoomName && date && caseReference) {
             return await this.bhClient
                 .getCvpAudioRecordingsAll(cloudRoomName, date, caseReference)
@@ -56,8 +56,8 @@ export class AudioLinkService {
     private toAudioRecordingResult() {
         return function (
             source: Observable<HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[]>
-        ): Observable<IAudioRecordingResult> {
-            return new Observable<IAudioRecordingResult>(subscriber => {
+        ): Observable<ICvpAudioRecordingResult> {
+            return new Observable<ICvpAudioRecordingResult>(subscriber => {
                 return source.subscribe({
                     next(value) {
                         subscriber.next({ status: 200, result: value, error: undefined });

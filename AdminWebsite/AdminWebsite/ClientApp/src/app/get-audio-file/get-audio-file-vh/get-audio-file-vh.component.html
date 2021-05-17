@@ -1,0 +1,23 @@
+<form [formGroup]="getVhAudioFileForm" class="govuk-form-group">
+    <label class="govuk-label govuk-!-width-one-half" for="caseNumber"> Enter a case number </label>
+    <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber"
+        required />
+    <div class="govuk-!-margin-top-3">
+        <div [ngClass]="vhDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+            <label class="govuk-label govuk-!-width-one-quarter" for="vhDate"> Date </label>
+            <input id="vhDate" class="govuk-input govuk-!-width-one-quarter" type="date" formControlName="vhDate"
+                required placeholder="e.g. 30/08/2020" max="{{ today | date: 'yyyy-MM-dd' }}" />
+            <div *ngIf="vhDateInvalid" class="alert alert-danger">
+                <span id="vhDate-error" class="govuk-error-message"> Please enter a date in the past </span>
+            </div>
+        </div>
+    </div>
+    <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button" id="submit" (click)="search()"
+        [disabled]="!vhSearchCriteriaSet">
+        Search
+    </button>
+</form>
+
+<div class="govuk-body" *ngIf="hasSearched">
+    <app-hearing-search-results [results]="results"></app-hearing-search-results>
+</div>
