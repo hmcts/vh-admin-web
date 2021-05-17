@@ -19,7 +19,7 @@ export class GetAudioFileComponent implements OnInit {
         this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
 
         this.form = this.fb.group({
-            searchChoice: ['vhFile'],
+            searchChoice: ['vhFile']
         });
     }
 

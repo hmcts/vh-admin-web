@@ -5,9 +5,9 @@ import { AudioLinkService } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
 
 @Component({
-  selector: 'app-get-audio-file-vh',
-  templateUrl: './get-audio-file-vh.component.html',
-  styleUrls: ['./get-audio-file-vh.component.css']
+    selector: 'app-get-audio-file-vh',
+    templateUrl: './get-audio-file-vh.component.html',
+    styleUrls: ['./get-audio-file-vh.component.css']
 })
 export class GetAudioFileVhComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFile] -';
