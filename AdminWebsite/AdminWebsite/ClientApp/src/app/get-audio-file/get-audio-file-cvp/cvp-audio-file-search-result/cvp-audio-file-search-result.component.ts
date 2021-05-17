@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { CvpAudioSearchModel } from '../../common/model/cvp-audio-search-model';
 import { ClipboardService } from 'ngx-clipboard';
+import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
 import { Logger } from 'src/app/services/logger';
 
 @Component({

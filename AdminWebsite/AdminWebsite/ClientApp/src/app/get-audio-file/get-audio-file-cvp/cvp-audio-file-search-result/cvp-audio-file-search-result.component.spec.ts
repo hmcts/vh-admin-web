@@ -1,8 +1,8 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ClipboardService } from 'ngx-clipboard';
+import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
+import { CvpForAudioFileResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
-import { CvpAudioSearchModel } from '../../common/model/cvp-audio-search-model';
-import { CvpForAudioFileResponse } from '../../services/clients/api-client';
 import { CvpAudioFileSearchResultComponent } from './cvp-audio-file-search-result.component';
 
 describe('CvpAudioFileSearchResultComponent', () => {
