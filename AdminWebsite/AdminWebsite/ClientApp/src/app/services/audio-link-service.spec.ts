@@ -26,7 +26,7 @@ fdescribe('AudioLinkService', () => {
         service = new AudioLinkService(apiClient, new MockLogger());
     });
 
-    it(`should return the correct IAudioRecordingResult when passed cloud room name, date and case reference and a 504 is thrown`, async () => {
+    it('should return the correct IAudioRecordingResult when passed cloud room name, date and case reference and a 504 is thrown', async () => {
         // Arrange
         const cloudRoomName = 'cloud';
         const date = 'date';

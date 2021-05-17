@@ -15,7 +15,7 @@ export class GetAudioFileCvpComponent implements OnInit {
     today = new Date();
 
     searchResult: ICvpAudioRecordingResult = null;
-    get cvpResults() : CvpAudioSearchModel[] {
+    get cvpResults(): CvpAudioSearchModel[] {
         return !this.searchResult?.result ? [] : (this.searchResult?.result).map(x => new CvpAudioSearchModel(x));
     }
 

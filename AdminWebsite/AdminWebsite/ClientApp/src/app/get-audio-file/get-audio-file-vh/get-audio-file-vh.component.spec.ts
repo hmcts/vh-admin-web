@@ -8,7 +8,6 @@ import { GetAudioFileVhComponent } from './get-audio-file-vh.component';
 
 describe('GetAudioFileVhComponent', () => {
     let component: GetAudioFileVhComponent;
-    let fixture: ComponentFixture<GetAudioFileVhComponent>;
 
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;
