@@ -5,7 +5,7 @@ import { CvpForAudioFileResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { GetAudioFileCvpComponent } from './get-audio-file-cvp.component';
 
-fdescribe('GetAudioFileCvpComponent', () => {
+describe('GetAudioFileCvpComponent', () => {
     let component: GetAudioFileCvpComponent;
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;

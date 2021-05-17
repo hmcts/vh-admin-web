@@ -4,7 +4,7 @@ import { AudioLinkService } from '../services/audio-link-service';
 import { Logger } from '../services/logger';
 import { GetAudioFileComponent } from './get-audio-file.component';
 
-fdescribe('GetAudioFileComponent', () => {
+describe('GetAudioFileComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;
     let component: GetAudioFileComponent;

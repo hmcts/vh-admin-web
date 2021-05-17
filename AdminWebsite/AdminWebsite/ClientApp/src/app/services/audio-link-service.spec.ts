@@ -10,7 +10,7 @@ import {
     HearingsForAudioFileSearchResponse
 } from './clients/api-client';
 
-fdescribe('AudioLinkService', () => {
+describe('AudioLinkService', () => {
     let apiClient: jasmine.SpyObj<BHClient>;
     let service: AudioLinkService;
 
