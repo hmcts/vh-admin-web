@@ -107,6 +107,7 @@
           placeholder="e.g. 30/02/2018"
           min="{{ today | date: 'yyyy-MM-dd' }}"
           (blur)="resetPastTimeOnBlur()"
+          (change)="hearingDateChanged($event)"
         />
 
         <div *ngIf="addHearingDateControl.errors?.required" class="alert alert-danger">
