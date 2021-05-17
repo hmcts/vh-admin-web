@@ -41,4 +41,5 @@ export class HearingModel {
     telephone_conference_id?: string | undefined;
     linked_participants?: LinkedParticipantModel[] | undefined;
     hearing_dates?: Date[];
+    isConfirmed?: boolean;
 }

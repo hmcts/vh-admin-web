@@ -9,7 +9,7 @@ export class PipeStringifierService {
     encode<T>(input: T): string {
         let output = '';
         for (const property in input) {
-            if (Object.prototype.hasOwnProperty.call(input, property)) {
+            if (Object.prototype.hasOwnProperty.call(input, property) && !!input[property]) {
                 output += `|${property}|${input[property] ? input[property] : ''}`;
             }
         }

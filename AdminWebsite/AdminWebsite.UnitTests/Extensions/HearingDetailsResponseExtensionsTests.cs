@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
+using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.UnitTests.Extensions
 {
@@ -16,7 +19,8 @@ namespace AdminWebsite.UnitTests.Extensions
         {
             _hearing = new HearingDetailsResponse
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>()
             };
         }
         
@@ -69,7 +73,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_Return_False_If_OtherInformation_Is_Null_When_Comparing_Judge_Emails()
         {
-            _hearing.HasJudgeEmailChanged(new HearingDetailsResponse {Id = Guid.NewGuid()}).Should().BeFalse();
+            _hearing.HasJudgeEmailChanged(new HearingDetailsResponse {Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>()}).Should().BeFalse();
         }
         
         [Test]
@@ -78,7 +82,7 @@ namespace AdminWebsite.UnitTests.Extensions
             var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
             _hearing.OtherInformation = otherInfo.ToOtherInformationString();
 
-            var hearing2 = new HearingDetailsResponse {Id = Guid.NewGuid()};
+            var hearing2 = new HearingDetailsResponse {Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>()};
             var hearing2OtherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
             hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
 
@@ -91,11 +95,85 @@ namespace AdminWebsite.UnitTests.Extensions
             var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
             _hearing.OtherInformation = otherInfo.ToOtherInformationString();
 
-            var hearing2 = new HearingDetailsResponse {Id = Guid.NewGuid()};
+            var hearing2 = new HearingDetailsResponse {Id = Guid.NewGuid(), Participants = new List<ParticipantResponse>()};
             var hearing2OtherInfo = new OtherInformationDetails { JudgeEmail = "judge2@hmcts.net" };
             hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
             
             _hearing.HasJudgeEmailChanged(hearing2).Should().BeTrue();
+        }
+        
+        [Test]
+        public void should_return_true_when_ejud_email_has_been_assigned_from_no_judge()
+        {
+            var judge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judiciaryejud.com")
+                .Build();
+            var newHearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse> {judge}
+            };
+            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
+        }
+        
+        [Test]
+        public void should_return_true_when_ejud_email_has_changed_to_another_ejud()
+        {
+            var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "old@judiciaryejud.com")
+                .Build();
+            _hearing.Participants.Add(existingEJudJudge);
+            
+            var newEJudJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judiciaryejud.com")
+                .Build();
+            var newHearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse> {newEJudJudge}
+            };
+            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
+        }
+        
+        [Test]
+        public void should_return_true_when_ejud_email_has_changed_to_vh_judge()
+        {
+            var otherInfo = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"};
+            _hearing.OtherInformation = otherInfo.ToOtherInformationString();
+
+            var newEJudJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judiciaryejud.com")
+                .Build();
+            var newHearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse> {newEJudJudge}
+            };
+            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
+        }
+        
+        [Test]
+        public void should_return_true_when_vh_judge_has_changed_to_ejud_judge()
+        {
+            var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "old@judiciaryejud.com")
+                .Build();
+            _hearing.Participants.Add(existingEJudJudge);
+            
+        
+            var otherInfo = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"};
+            var newHearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>(),
+                OtherInformation = otherInfo.ToOtherInformationString()
+            };
+            _hearing.HasJudgeEmailChanged(newHearing).Should().BeTrue();
         }
     }
 }

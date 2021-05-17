@@ -82,6 +82,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     errorAlternativeEmail = false;
     errorJohAccountNotFound = false;
     errorJudiciaryAccount = false;
+    errorNotFoundJohEmail = false;
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
     @ViewChild(ParticipantListComponent, { static: true })
@@ -107,20 +108,27 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         super.ngOnInit();
     }
 
-    ngAfterViewInit() {
-        this.$subscriptions.push(
-            this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
-                this.selectedParticipantEmail = participantEmail;
-                this.showDetails = true;
-                setTimeout(() => {
+    onSelectedParticipantChangedWhenEditing(participantEmail: string) {
+        if (this.editMode) {
+            this.selectedParticipantEmail = participantEmail;
+            this.showDetails = true;
+
+            setTimeout(() => {
+                if (this.searchEmail) {
                     this.repopulateParticipantToEdit();
                     this.displayUpdate();
                     this.localEditMode = true;
-                    if (this.searchEmail) {
-                        this.setParticipantEmail();
-                    }
-                }, 500);
-            })
+                    this.setParticipantEmail();
+                }
+            }, 500);
+        }
+    }
+
+    ngAfterViewInit() {
+        this.$subscriptions.push(
+            this.participantsListComponent.selectedParticipant.subscribe(participantEmail =>
+                this.onSelectedParticipantChangedWhenEditing(participantEmail)
+            )
         );
 
         this.$subscriptions.push(
@@ -139,22 +147,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                     self.setupRoles(data);
                     if (self.editMode) {
                         self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+
                         if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
                             // no participants, we need to add one
                             self.showDetails = false;
                             self.displayAdd();
                         } else {
-                            self.showDetails = true;
-                            setTimeout(() => {
-                                if (this.searchEmail && this.participantDetails) {
-                                    this.setParticipantEmail();
-                                }
-                            }, 500);
-
+                            self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
                             self.displayNext();
                         }
-                        self.repopulateParticipantToEdit();
                     }
+
                     self.populateInterpretedForList();
                 })
                 .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
@@ -183,7 +186,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private setParticipantEmail() {
         this.searchEmail.email = this.participantDetails.email;
-        this.searchEmail.searchTerm.next(this.searchEmail.email);
+        this.searchEmail.participantDetails = this.participantDetails;
         this.searchEmail.isValidEmail = true;
         const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
         this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
@@ -259,7 +262,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                         self.party.value === self.constants.PleaseSelect
                     ) {
                         self.displayNext();
-                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail()) {
+                    } else if (
+                        self.showDetails &&
+                        self.form.valid &&
+                        self.searchEmail &&
+                        self.searchEmail.validateEmail() &&
+                        !self.searchEmail.errorNotFoundJohEmail
+                    ) {
                         if (self.localEditMode) {
                             self.displayUpdate();
                         } else {
@@ -277,10 +286,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
             this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
+
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
                 participant: selectedParticipant.id
             });
+
             this.getParticipant(selectedParticipant);
         }
     }
@@ -572,13 +583,21 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.isRoleSelected &&
             this.isPartySelected &&
             this.isTitleSelected &&
-            !this.errorAlternativeEmail
+            !this.errorAlternativeEmail &&
+            !this.errorJohAccountNotFound &&
+            !this.errorJudiciaryAccount
         ) {
             this.isShowErrorSummary = false;
             this.form.markAsUntouched();
             this.form.markAsPristine();
             this.form.updateValueAndValidity();
             const newParticipant = new ParticipantModel();
+
+            if (this.participantDetails) {
+                this.participantDetails.addedDuringHearing =
+                    !this.videoHearingService.isConferenceClosed() && this.videoHearingService.isHearingAboutToStart();
+            }
+
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
                 this.addLinkedParticipant(newParticipant);
@@ -716,6 +735,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         newParticipant.interpreterFor = this.interpreterFor.value === this.constants.PleaseSelect ? null : this.interpreterFor.value;
         newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
+        newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
@@ -981,6 +1001,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.interpreteeList = this.hearing.participants.filter(
             p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
+
         const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,
             first_name: this.constants.PleaseSelect,
@@ -990,8 +1011,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             is_judge: false,
             is_courtroom_account: false
         };
+
         this.interpreteeList.unshift(interpreteeModel);
     }
+
     private setInterpreterForValidation() {
         if (this.isRoleInterpreter(this.role.value)) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);

@@ -11,12 +11,13 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
-using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -100,14 +101,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private string GetJudgeEmail(HearingDetailsResponse hearing)
         {
-            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
-            if (email == string.Empty)
+            if (hearing.IsJudgeEmailEJud())
             {
-                return null;
+                var judge = hearing.Participants.Single(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                return judge.ContactEmail;
             }
-            return email;
+            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
+            return email == string.Empty ? null : email;
         }
-        
+
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try

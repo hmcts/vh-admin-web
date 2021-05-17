@@ -23,7 +23,8 @@ import {
     BookHearingRequest,
     LinkedParticipantRequest,
     LinkedParticipantResponse,
-    LinkedParticipant
+    LinkedParticipant,
+    BookingStatus
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -31,6 +32,7 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
+import * as moment from 'moment';
 
 @Injectable({
     providedIn: 'root'
@@ -48,6 +50,8 @@ export class VideoHearingsService {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
+
+        this.checkForExistingHearing();
     }
 
     private checkForExistingHearing() {
@@ -86,7 +90,6 @@ export class VideoHearingsService {
     }
 
     getCurrentRequest(): HearingModel {
-        this.checkForExistingHearing();
         return this.modelHearing;
     }
 
@@ -118,6 +121,7 @@ export class VideoHearingsService {
     }
 
     cancelRequest() {
+        this.modelHearing = new HearingModel();
         sessionStorage.removeItem(this.newRequestKey);
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }
@@ -272,6 +276,7 @@ export class VideoHearingsService {
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints);
+        hearing.isConfirmed = Boolean(response.confirmed_date);
         return hearing;
     }
 
@@ -400,18 +405,15 @@ export class VideoHearingsService {
         return endpoints;
     }
 
-    mapLinkedParticipants(linkedParticipantModel: LinkedParticipantModel[]): LinkedParticipantRequest[] {
-        const linkedParticipantsRequest: LinkedParticipantRequest[] = [];
-        let linkedParticipantRequest: LinkedParticipantRequest;
-        if (linkedParticipantModel && linkedParticipantModel.length > 0) {
-            linkedParticipantModel.forEach(e => {
-                linkedParticipantRequest = new LinkedParticipantRequest();
-                linkedParticipantRequest.participant_contact_email = e.participantEmail;
-                linkedParticipantRequest.linked_participant_contact_email = e.linkedParticipantEmail;
-                linkedParticipantsRequest.push(linkedParticipantRequest);
-            });
-        }
-        return linkedParticipantsRequest;
+    mapLinkedParticipants(linkedParticipantModels: LinkedParticipantModel[] = []): LinkedParticipantRequest[] {
+        return linkedParticipantModels.reduce((acc: LinkedParticipantRequest[], model: LinkedParticipantModel) => {
+            const request = new LinkedParticipantRequest();
+            request.participant_contact_email = model.participantEmail;
+            request.linked_participant_contact_email = model.linkedParticipantEmail;
+            request.type = model.linkType;
+            acc.push(request);
+            return acc;
+        }, []);
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
@@ -441,7 +443,27 @@ export class VideoHearingsService {
         return this.modelHearing.participants.every(x => x.username.toLowerCase() !== username.toLowerCase());
     }
 
+    canAddJudge(username: string): boolean {
+        return !this.modelHearing.participants.some(
+            x => x.username?.toLowerCase() === username.toLowerCase() && this.judiciaryRoles.includes(x.hearing_role_name)
+        );
+    }
+
     getJudge(): ParticipantModel {
         return this.modelHearing.participants.find(x => x.is_judge);
+    }
+
+    isConferenceClosed(): boolean {
+        return this.modelHearing.status === BookingStatus.Created && this.modelHearing.telephone_conference_id === '';
+    }
+
+    isHearingAboutToStart(): boolean {
+        if (this.modelHearing.scheduled_date_time && this.modelHearing.isConfirmed) {
+            const currentDateTime = new Date().getTime();
+            const difference = moment(this.modelHearing.scheduled_date_time).diff(moment(currentDateTime), 'minutes');
+            return difference < 30;
+        } else {
+            return false;
+        }
     }
 }

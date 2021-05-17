@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
@@ -10,12 +12,12 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
-using VideoApi.Contract.Responses;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
- using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
+using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
 using UpdateEndpointRequest = BookingsApi.Contract.Requests.UpdateEndpointRequest;
 using UpdateParticipantRequest = BookingsApi.Contract.Requests.UpdateParticipantRequest;
@@ -33,7 +35,8 @@ namespace AdminWebsite.Services
         Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict);
 
-        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null);
+        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing,
+            List<ParticipantResponse> participants = null);
 
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
@@ -42,11 +45,13 @@ namespace AdminWebsite.Services
         /// <param name="hearing"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
-        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
+        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing,
+            List<ParticipantResponse> participants = null);
+
         Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
 
         Task SendHearingReminderEmail(HearingDetailsResponse hearing);
-        
+
         Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
@@ -64,9 +69,10 @@ namespace AdminWebsite.Services
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
+        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse);
 
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
+        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
     }
 
     public class HearingsService : IHearingsService
@@ -74,22 +80,27 @@ namespace AdminWebsite.Services
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IUserAccountService _userAccountService;
         private readonly INotificationApiClient _notificationApiClient;
-        private readonly IVideoApiClient _videoApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
+#pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
+            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
             _notificationApiClient = notificationApiClient;
-            _videoApiClient = videoApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _conferenceDetailsService = conferenceDetailsService;
+            _kinlyConfiguration = kinlyOptions.Value;
         }
-
-        public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
+#pragma warning restore S107
+        public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+            Dictionary<string, User> newUsernameAdIdDict)
         {
             var participantGroup = newUsernameAdIdDict.Select(pair => new
             {
@@ -99,17 +110,21 @@ namespace AdminWebsite.Services
 
             if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
             {
-                _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
+                _logger.LogDebug(
+                    $"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
                 return;
             }
 
-            var tasks = participantGroup.Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName, hearing.Id))
+            var tasks = participantGroup.Select(t =>
+                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName,
+                        hearing.Id))
                 .ToList();
 
             await Task.WhenAll(tasks);
         }
 
-        public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
+        public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
+            IReadOnlyCollection<ParticipantRequest> participants)
         {
             // update the username of defence advocate 
             foreach (var endpoint in endpointsWithDa)
@@ -123,6 +138,56 @@ namespace AdminWebsite.Services
             }
         }
 
+        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            var originalParticipants = hearingDetailsResponse.Participants
+                .Select(EditParticipantRequestMapper.MapFrom).ToList();
+            var requestParticipants = editHearingRequest.Participants;
+            var hearingCase = hearingDetailsResponse.Cases.First();
+            var originalEndpoints = hearingDetailsResponse.Endpoints == null
+                ? new List<EditEndpointRequest>()
+                : hearingDetailsResponse.Endpoints
+                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
+            var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
+
+            return addedParticipant.Any() &&
+                   editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
+                   editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName &&
+                   editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
+                   editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
+                   editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
+                   editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
+                   hearingCase.Name == editHearingRequest.Case.Name &&
+                   hearingCase.Number == editHearingRequest.Case.Number &&
+                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
+        }
+
+        public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
+            List<EditEndpointRequest> requestEndpoints)
+        {
+            return originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0 && requestEndpoints
+                .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+                .ToList()
+                .Count == 0;
+        }
+        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants,
+            List<EditParticipantRequest> requestParticipants)
+        {
+            return originalParticipants
+                .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                .ToList()
+                .Count == 0
+                ? requestParticipants
+                    .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                    .ToList()
+                : new List<EditParticipantRequest>();
+        }
+
+
         public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
         {
@@ -134,14 +199,17 @@ namespace AdminWebsite.Services
 
                     if (participant == null) continue;
 
-                    var request = AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant, item.Value.Password);
+                    var request =
+                        AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant,
+                            item.Value.Password);
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
                 }
             }
         }
 
-        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
+        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing,
+            HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
         {
             if (updatedHearing.IsGenericHearing())
             {
@@ -153,7 +221,8 @@ namespace AdminWebsite.Services
             var caseNumber = @case.Number;
 
             var participantsToEmail = participants ?? updatedHearing.Participants;
-            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.ConfirmedDate == null || originalHearing.GroupId != originalHearing.Id)
+            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.ConfirmedDate == null ||
+                originalHearing.GroupId != originalHearing.Id)
             {
                 participantsToEmail = participantsToEmail
                     .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
@@ -172,7 +241,8 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null)
+        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing,
+            List<ParticipantResponse> participants = null)
         {
             if (hearing.IsGenericHearing())
             {
@@ -183,7 +253,8 @@ namespace AdminWebsite.Services
 
             var requests = participantsToEmail
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
 
             foreach (var request in requests)
@@ -201,7 +272,9 @@ namespace AdminWebsite.Services
 
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
+                        days))
                 .ToList();
 
             foreach (var request in requests)
@@ -221,10 +294,11 @@ namespace AdminWebsite.Services
             {
                 await SendJudgeConfirmationEmail(hearing);
             }
-
+            
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
                 .ToList();
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
@@ -248,8 +322,11 @@ namespace AdminWebsite.Services
                 {
                     return;
                 }
-                var judge = firstHearingForGroup.Participants.First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count);
+
+                var judge = firstHearingForGroup.Participants.First(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(
+                    firstHearingForGroup, judge, hearings.Count);
             }
 
             if (request.ContactEmail != null)
@@ -258,44 +335,28 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
+        public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
         {
-            try
-            {
-                var details = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    6, _ => TimeSpan.FromSeconds(8),
-                    retryAttempt =>
-                        _logger.LogWarning(
-                            "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => !videoApiResponseObject.HasValidMeetingRoom(),
-                    () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
-                );
-                return details;
-            }
-            catch (VideoApiException ex)
-            {
-                _logger.LogError(ex, $"{errorMessage}: {ex.Message}");
-            }
+            var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+            if (conferenceDetailsResponse.HasValidMeetingRoom())
+                return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
+                    conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
 
-            return new ConferenceDetailsResponse();
+            throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
-        {
-            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
-        }
-
-        public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
+        public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant,
+            HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList)
         {
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge")
+            // Judge and panel member is manually created in AD, no need to create one
+            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member" || participant.CaseRoleName == "Winger")
             {
-                if (hearing.Participants != null && hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                if (hearing.Participants != null &&
+                    hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
                     return;
@@ -319,31 +380,15 @@ namespace AdminWebsite.Services
             EditParticipantRequest participant)
         {
             var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-            if (existingParticipant != null)
+            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
             {
-                if (existingParticipant.UserRoleName == "Individual" ||
-                    existingParticipant.UserRoleName == "Representative")
-                {
-                    //Update participant
-                    _logger.LogDebug("Updating existing participant {Participant} in hearing {Hearing}",
-                        existingParticipant.Id, hearingId);
-                    var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value,
-                        updateParticipantRequest);
-                }
-                else if (existingParticipant.UserRoleName == "Judge")
-                {
-                    //Update Judge
-                    _logger.LogDebug("Updating judge {Participant} in hearing {Hearing}",
-                        existingParticipant.Id, hearingId);
-                    var updateParticipantRequest = new UpdateParticipantRequest
-                    {
-                        DisplayName = participant.DisplayName
-                    };
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value,
-                        updateParticipantRequest);
-                }
+                return;
             }
+            //Update participant
+            _logger.LogDebug("Updating existing participant {Participant} in hearing {Hearing}",
+                existingParticipant.Id, hearingId);
+            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
+            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
@@ -356,7 +401,6 @@ namespace AdminWebsite.Services
 
             var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
             await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
-
             foreach (var endpoint in request.Endpoints)
             {
                 var epToUpdate = newParticipantList
@@ -378,7 +422,8 @@ namespace AdminWebsite.Services
             }
         }
 
-        private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing, IEnumerable<EndpointResponse> listOfEndpointsToDelete)
+        private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing,
+            IEnumerable<EndpointResponse> listOfEndpointsToDelete)
         {
             foreach (var endpointToDelete in listOfEndpointsToDelete)
             {
@@ -421,16 +466,19 @@ namespace AdminWebsite.Services
                 updateEndpointRequest);
         }
 
-        public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
+        public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request,
+            HearingDetailsResponse hearing)
         {
-            var existingParticipantWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
+            var existingParticipantWithLinks =
+                request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
             foreach (var participantRequest in existingParticipantWithLinks)
             {
                 await UpdateLinksForExistingParticipant(request, hearing, participantRequest);
             }
         }
 
-        private async Task UpdateLinksForExistingParticipant(EditHearingRequest request, HearingDetailsResponse hearing, EditParticipantRequest requestParticipant)
+        private async Task UpdateLinksForExistingParticipant(EditHearingRequest request, HearingDetailsResponse hearing,
+            EditParticipantRequest requestParticipant)
         {
             var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
             var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
@@ -453,22 +501,25 @@ namespace AdminWebsite.Services
                 updateParticipantRequest);
         }
 
-        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(HearingDetailsResponse hearing, ParticipantResponse participant, IList<LinkedParticipant> linkedParticipantsInRequest)
+        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(
+            HearingDetailsResponse hearing, ParticipantResponse participant,
+            IList<LinkedParticipant> linkedParticipantsInRequest)
         {
             var requests = new List<LinkedParticipantRequest>();
 
             var newLinks = GetNewLinkedParticipants(linkedParticipantsInRequest);
-        
+
             requests.AddRange(newLinks);
 
             var existingLinks = GetExistingLinkedParticipants(linkedParticipantsInRequest, hearing, participant);
-            
-            requests.AddRange(existingLinks);   
+
+            requests.AddRange(existingLinks);
 
             return requests;
         }
 
-        private static IEnumerable<LinkedParticipantRequest> GetNewLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
+        private static IEnumerable<LinkedParticipantRequest> GetNewLinkedParticipants(
+            IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
         {
             return linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
                 .Select(lp => new LinkedParticipantRequest
@@ -477,28 +528,34 @@ namespace AdminWebsite.Services
                     LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
                 }).ToList();
         }
-        
-        private static IEnumerable<LinkedParticipantRequest> GetExistingLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing, ParticipantResponse participant)
+
+        private static IEnumerable<LinkedParticipantRequest> GetExistingLinkedParticipants(
+            IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing,
+            ParticipantResponse participant)
         {
-            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant) && LinkedParticipantExists(hearing, x)).ToList();
-            
-            var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest => 
+            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x =>
+                    x.LinkedId != Guid.Empty && !HasExistingLink(x, participant) && LinkedParticipantExists(hearing, x))
+                .ToList();
+
+            var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest =>
                 hearing.Participants.Find(x => x.Id == linkedParticipantInRequest.LinkedId)).ToList();
 
             if (!existingLinks.Any()) return new List<LinkedParticipantRequest>();
-        
+
             return existingLinks.Select(linkedParticipant => new LinkedParticipantRequest
-                {
-                    ParticipantContactEmail = participant.ContactEmail, LinkedParticipantContactEmail = linkedParticipant.ContactEmail
-                }).ToList();
+            {
+                ParticipantContactEmail = participant.ContactEmail,
+                LinkedParticipantContactEmail = linkedParticipant.ContactEmail
+            }).ToList();
         }
 
         private static bool LinkedParticipantExists(HearingDetailsResponse hearing, LinkedParticipant linkedParticipant)
         {
             return hearing.Participants.Any(participant => participant.Id == linkedParticipant.LinkedId);
         }
-        
-        private static bool HasExistingLink(LinkedParticipant linkedParticipantInRequest, ParticipantResponse participant)
+
+        private static bool HasExistingLink(LinkedParticipant linkedParticipantInRequest,
+            ParticipantResponse participant)
         {
             var linkedId = linkedParticipantInRequest.LinkedId;
             var existingLink = false;
@@ -524,24 +581,30 @@ namespace AdminWebsite.Services
             }
         }
 
-        private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName, Guid hearingId)
+        private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName,
+            Guid hearingId)
         {
             await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
             (
                 4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
+                retryAttempt =>
+                    _logger.LogDebug(
+                        $"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
                 result => result.IsFaulted,
                 async () =>
                 {
-                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+                    _logger.LogDebug(
+                        $"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
                     await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
-                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+                    _logger.LogDebug(
+                        $"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
                     return Task.CompletedTask;
                 }
             );
         }
 
-        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
+        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request,
+            HearingDetailsResponse hearing)
         {
             if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
             {
@@ -557,6 +620,7 @@ namespace AdminWebsite.Services
                             LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
                         });
                     }
+
                     var updateParticipantRequest = new UpdateParticipantRequest
                     {
                         LinkedParticipants = requests,
@@ -566,8 +630,10 @@ namespace AdminWebsite.Services
                         TelephoneNumber = requestParticipant.TelephoneNumber,
                         Title = requestParticipant.Title
                     };
-                    var newParticipant = hearing.Participants.First(p => p.ContactEmail == requestParticipant.ContactEmail);
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id, updateParticipantRequest);
+                    var newParticipant =
+                        hearing.Participants.First(p => p.ContactEmail == requestParticipant.ContactEmail);
+                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id,
+                        updateParticipantRequest);
                 }
             }
         }
