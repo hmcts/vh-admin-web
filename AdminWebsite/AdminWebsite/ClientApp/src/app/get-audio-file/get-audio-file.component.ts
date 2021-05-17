@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
-import { AudioLinkService } from '../services/audio-link-service';
+import { AudioLinkService, IAudioRecordingResult } from '../services/audio-link-service';
 import { CvpForAudioFileResponse } from '../services/clients/api-client';
 import { Logger } from '../services/logger';
 
@@ -149,33 +149,33 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getCvpResults(): Promise<CvpAudioSearchModel[]> {
-        let response: CvpForAudioFileResponse[];
+        let response: IAudioRecordingResult;
 
-        if (this.cloudroomName.value && this.hearingDate.value && this.caseReference.value) {
-            this.logger.debug(`${this.loggerPrefix} Getting all CVP audio recordings`, {
-                cloudRoom: this.cloudroomName.value,
-                date: this.hearingDate.value,
-                caseReference: this.caseReference.value
-            });
-            response = await this.audioLinkService.getCvpAudioRecordingsAll(
-                this.cloudroomName.value,
-                this.hearingDate.value,
-                this.caseReference.value
+        this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings`, {
+            cloudRoom: this.cloudroomName.value,
+            date: this.hearingDate.value,
+            caseReference: this.caseReference.value
+        });
+
+        response = await this.audioLinkService.getCvpAudioRecordings(
+            this.cloudroomName.value,
+            this.hearingDate.value,
+            this.caseReference.value
+        );
+
+        if (!response.error) {
+            this.logger.error(
+                `${this.loggerPrefix} Error retrieving cvp audio file link for: ${this.cloudroomName.value}, ${this.hearingDate.value}, ${this.caseReference.value}`,
+                response.error
             );
-        } else if (this.cloudroomName.value && this.hearingDate.value) {
-            this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings by cloud room`, {
-                cloudRoom: this.cloudroomName.value,
-                date: this.hearingDate.value
-            });
-            response = await this.audioLinkService.getCvpAudioRecordingsByCloudRoom(this.cloudroomName.value, this.hearingDate.value);
-        } else {
-            this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings by date and case number`, {
-                date: this.hearingDate.value,
-                caseReference: this.caseReference.value
-            });
-            response = await this.audioLinkService.getCvpAudioRecordingsByDate(this.hearingDate.value, this.caseReference.value);
+
+            if (response.status === 504) {
+                // TODO: show error message
+            }
         }
 
-        return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
+        return response.result === null
+            ? []
+            : (response.result as CvpForAudioFileResponse[]).map((x: CvpForAudioFileResponse) => new CvpAudioSearchModel(x));
     }
 }

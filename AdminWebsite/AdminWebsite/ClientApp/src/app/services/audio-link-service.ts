@@ -1,6 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BHClient, CvpForAudioFileResponse, HearingsForAudioFileSearchResponse } from './clients/api-client';
+import { Observable } from 'rxjs';
+import { map, observeOn, take } from 'rxjs/operators';
+import { BHClient, BookHearingException, CvpForAudioFileResponse, HearingsForAudioFileSearchResponse } from './clients/api-client';
 import { Logger } from './logger';
+
+export const InvalidParametersError = (parameters: { [parameterName: string]: any }) =>
+    new Error(`Invlalid parameter combiniation ${JSON.stringify(parameters)}.`);
+
+export interface IAudioRecordingResult {
+    status: number;
+    result: HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[];
+    error: any;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AudioLinkService {
@@ -21,33 +32,49 @@ export class AudioLinkService {
         return response.audio_file_links;
     }
 
-    async getCvpAudioRecordingsAll(cloudRoomName: string, date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
-        try {
-            return await this.bhClient.getCvpAudioRecordingsAll(cloudRoomName, date, caseReference).toPromise();
-        } catch (error) {
-            this.logger.error(
-                `${this.loggerPrefix} Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}, ${caseReference}`,
-                error
-            );
-            return null;
+    async getCvpAudioRecordings(cloudRoomName: string, date: string, caseReference: string): Promise<IAudioRecordingResult> {
+        if (cloudRoomName && date && caseReference) {
+            return await this.bhClient
+                .getCvpAudioRecordingsAll(cloudRoomName, date, caseReference)
+                .pipe(this.toAudioRecordingResult(), take(1))
+                .toPromise();
+        } else if (cloudRoomName && date) {
+            return await this.bhClient
+                .getCvpAudioRecordingsByCloudRoom(cloudRoomName, date)
+                .pipe(this.toAudioRecordingResult(), take(1))
+                .toPromise();
+        } else if (date) {
+            return await this.bhClient
+                .getCvpAudioRecordingsByDate(date, caseReference)
+                .pipe(this.toAudioRecordingResult(), take(1))
+                .toPromise();
         }
+
+        throw InvalidParametersError({ cloudRoomName: cloudRoomName, date: date, caseReference: caseReference });
     }
 
-    async getCvpAudioRecordingsByCloudRoom(cloudRoomName: string, date: string): Promise<CvpForAudioFileResponse[]> {
-        try {
-            return await this.bhClient.getCvpAudioRecordingsByCloudRoom(cloudRoomName, date).toPromise();
-        } catch (error) {
-            this.logger.error(`${this.loggerPrefix} Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}`, error);
-            return null;
-        }
-    }
+    private toAudioRecordingResult() {
+        return function (
+            source: Observable<HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[]>
+        ): Observable<IAudioRecordingResult> {
+            return new Observable<IAudioRecordingResult>(subscriber => {
+                return source.subscribe({
+                    next(value) {
+                        subscriber.next({ status: 200, result: value, error: undefined });
+                    },
+                    error(err) {
+                        if (BookHearingException.isBookHearingException(err)) {
+                            subscriber.next({ status: (err as BookHearingException).status, result: null, error: err });
+                            return;
+                        }
 
-    async getCvpAudioRecordingsByDate(date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
-        try {
-            return await this.bhClient.getCvpAudioRecordingsByDate(date, caseReference).toPromise();
-        } catch (error) {
-            this.logger.error(`${this.loggerPrefix} Error retrieving cvp audio file link for Date: ${date}, ${caseReference}`, error);
-            return null;
-        }
+                        subscriber.next({ status: undefined, result: undefined, error: err });
+                    },
+                    complete() {
+                        subscriber.complete();
+                    }
+                });
+            });
+        };
     }
 }

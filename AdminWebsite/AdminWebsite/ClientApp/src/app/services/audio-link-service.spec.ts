@@ -1,13 +1,20 @@
-import { of } from 'rxjs';
+import { fakeAsync, flush, flushMicrotasks } from '@angular/core/testing';
+import { Observable, of, throwError } from 'rxjs';
 import { MockLogger } from '../shared/testing/mock-logger';
-import { AudioLinkService } from './audio-link-service';
-import { BHClient, CvpForAudioFileResponse, HearingAudioRecordingResponse, HearingsForAudioFileSearchResponse } from './clients/api-client';
+import { AudioLinkService, InvalidParametersError } from './audio-link-service';
+import {
+    BHClient,
+    BookHearingException,
+    CvpForAudioFileResponse,
+    HearingAudioRecordingResponse,
+    HearingsForAudioFileSearchResponse
+} from './clients/api-client';
 
-describe('AudioLinkService', () => {
+fdescribe('AudioLinkService', () => {
     let apiClient: jasmine.SpyObj<BHClient>;
     let service: AudioLinkService;
 
-    beforeAll(() => {
+    beforeEach(() => {
         apiClient = jasmine.createSpyObj<BHClient>('BHClient', [
             'searchForAudioRecordedHearings',
             'getAudioRecordingLink',
@@ -17,6 +24,86 @@ describe('AudioLinkService', () => {
         ]);
 
         service = new AudioLinkService(apiClient, new MockLogger());
+    });
+
+    it(`should return the correct IAudioRecordingResult when passed cloud room name, date and case reference and a 504 is thrown`, async () => {
+        // Arrange
+        const cloudRoomName = 'cloud';
+        const date = 'date';
+        const caseReference = 'caseReference';
+        const expectedStatus = 504;
+        const expectedError = new BookHearingException('msg', expectedStatus, null, null, null);
+
+        apiClient.getCvpAudioRecordingsAll.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
+
+        // Act
+        const result = await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.status).toBe(expectedStatus);
+        expect(result.error).toEqual(expectedError);
+        expect(result.result).toEqual(null);
+    });
+
+    it(`should return the correct IAudioRecordingResult when passed date and case reference and a 504 is thrown`, async () => {
+        // Arrange
+        const cloudRoomName = undefined;
+        const date = 'date';
+        const caseReference = 'caseReference';
+        const expectedStatus = 504;
+        const expectedError = new BookHearingException('msg', expectedStatus, null, null, null);
+
+        apiClient.getCvpAudioRecordingsByDate.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
+
+        // Act
+        const result = await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.status).toBe(expectedStatus);
+        expect(result.error).toEqual(expectedError);
+        expect(result.result).toEqual(null);
+    });
+
+    it(`should return the correct IAudioRecordingResult when passed cloud room name and date and a 504 is thrown`, async () => {
+        // Arrange
+        const cloudRoomName = 'cloud';
+        const date = 'date';
+        const caseReference = undefined;
+        const expectedStatus = 504;
+        const expectedError = new BookHearingException('msg', expectedStatus, null, null, null);
+
+        apiClient.getCvpAudioRecordingsByCloudRoom.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
+
+        // Act
+        const result = await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.status).toBe(expectedStatus);
+        expect(result.error).toEqual(expectedError);
+        expect(result.result).toEqual(null);
+    });
+
+    it(`should return the correct IAudioRecordingResult when an unknown error occurrs`, async () => {
+        // Arrange
+        const cloudRoomName = 'cloud';
+        const date = 'date';
+        const caseReference = undefined;
+        const expectedStatus = 504;
+        const expectedError = new Error('error');
+
+        apiClient.getCvpAudioRecordingsByCloudRoom.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
+
+        // Act
+        const result = await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.status).toBe(undefined);
+        expect(result.error).toEqual(expectedError);
+        expect(result.result).toEqual(undefined);
     });
 
     it('should get the hearing by case number', async () => {
@@ -55,12 +142,12 @@ describe('AudioLinkService', () => {
         ];
 
         apiClient.getCvpAudioRecordingsAll.and.returnValue(of(responses));
-        const result = await service.getCvpAudioRecordingsAll('cloud', 'date', 'caseReference');
+        const result = await service.getCvpAudioRecordings('cloud', 'date', 'caseReference');
         expect(result).not.toBeNull();
         expect(result).not.toBeUndefined();
-        expect(result.length).toBe(2);
-        expect(result[0].file_name).toBe('file1');
-        expect(result[0].sas_token_uri).toBe('url1');
+        expect((result.result as CvpForAudioFileResponse[]).length).toBe(2);
+        expect((result.result[0] as CvpForAudioFileResponse).file_name).toBe('file1');
+        expect((result.result[0] as CvpForAudioFileResponse).sas_token_uri).toBe('url1');
     });
 
     it('should get the cvp audio link by cloud room', async () => {
@@ -70,12 +157,12 @@ describe('AudioLinkService', () => {
         ];
 
         apiClient.getCvpAudioRecordingsByCloudRoom.and.returnValue(of(responses));
-        const result = await service.getCvpAudioRecordingsByCloudRoom('cloud', 'date');
+        const result = await service.getCvpAudioRecordings('cloud', 'date', null);
         expect(result).not.toBeNull();
         expect(result).not.toBeUndefined();
-        expect(result.length).toBe(2);
-        expect(result[0].file_name).toBe('file1');
-        expect(result[0].sas_token_uri).toBe('url1');
+        expect(result.result.length).toBe(2);
+        expect((result.result[0] as CvpForAudioFileResponse).file_name).toBe('file1');
+        expect((result.result[0] as CvpForAudioFileResponse).sas_token_uri).toBe('url1');
     });
 
     it('should get the cvp audio link by date', async () => {
@@ -85,11 +172,30 @@ describe('AudioLinkService', () => {
         ];
 
         apiClient.getCvpAudioRecordingsByDate.and.returnValue(of(responses));
-        const result = await service.getCvpAudioRecordingsByDate('date', 'caseReference');
+        const result = await service.getCvpAudioRecordings(null, 'date', 'caseReference');
         expect(result).not.toBeNull();
         expect(result).not.toBeUndefined();
-        expect(result.length).toBe(2);
-        expect(result[0].file_name).toBe('file1');
-        expect(result[0].sas_token_uri).toBe('url1');
+        expect(result.result.length).toBe(2);
+        expect((result.result[0] as CvpForAudioFileResponse).file_name).toBe('file1');
+        expect((result.result[0] as CvpForAudioFileResponse).sas_token_uri).toBe('url1');
     });
+
+    it('should throw an invaild parameters error if the date is not truthy', fakeAsync(async () => {
+        // Arrange
+        const cloudRoomName = 'a';
+        const date = null;
+        const caseReference = 'b';
+        const errorParameters = { cloudRoomName: cloudRoomName, date: date, caseReference: caseReference };
+
+        // Act & Assert
+        try {
+            await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
+            flush();
+        } catch (error) {
+            expect(error).toEqual(InvalidParametersError(errorParameters));
+            return;
+        }
+
+        throw Error('Expected exception');
+    }));
 });
