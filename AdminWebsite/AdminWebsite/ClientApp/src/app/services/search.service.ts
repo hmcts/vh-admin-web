@@ -75,7 +75,8 @@ export class SearchService {
         } else {
             let persons$: Observable<Array<PersonResponse>>;
             if (this.judiciaryRoles.includes(role)) {
-                persons$ = this.searchJudiciaryEntries(term);
+                // persons$ = this.searchJudiciaryEntries(term);
+                persons$ = this.searchEntries(term);
             } else {
                 persons$ = this.searchEntries(term);
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -20,13 +21,17 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using VideoApi.Client;
+using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
+using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -49,6 +54,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IUserIdentity> _userIdentity;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
+        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
         private Guid _validId;
         private Mock<IVideoApiClient> _videoApiMock;
@@ -63,11 +71,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
+
+            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = new MeetingRoomResponse
+                    {
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = "expected_conference_phone_id"
+                    }
+                });
+                        
+            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
+            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
+            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
-                _bookingsApiClient.Object, _participantGroupLogger.Object);
+            _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
+            _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -75,6 +102,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
+                _conferencesServiceMock.Object,
                 Mock.Of<IPublicHolidayRetriever>());
 
             _validId = Guid.NewGuid();
@@ -116,7 +144,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
                 Cases = cases,
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
@@ -135,7 +164,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Cases = cases,
                 CaseTypeName = "Unit Test",
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             var participant1 = Guid.NewGuid();
@@ -163,7 +193,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         FirstName = "testuser1", LinkedParticipants = null
                     }
                 },
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
             _existingHearingWithLinkedParticipants = new HearingDetailsResponse
             {
@@ -198,7 +229,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         }
                     }
                 },
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
             };
 
             var guid1 = Guid.NewGuid();
@@ -298,15 +330,46 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_bad_request_if_hearing_starts_in_less_than_thirty_minutes()
+        public async Task
+            Should_return_bad_request_if_edit_confirmed_hearing_except_only_adding_participant_prior_30_minutes_of_it_starting()
         {
             _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(-1);
+            _updatedExistingParticipantHearingOriginal.Status = BookingStatus.Created;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var badRequestResult = (BadRequestObjectResult)result.Result;
-            var errors = (SerializableError)badRequestResult.Value;
-            errors["hearingId"].Should().BeEquivalentTo(new[] { $"You can't edit a hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting" });
+            var badRequestResult = (BadRequestObjectResult) result.Result;
+            var errors = (SerializableError) badRequestResult.Value;
+            errors["hearingId"]
+                .Should()
+                .BeEquivalentTo(new[]
+                {
+                    $"You can't edit a confirmed hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting"
+                });
+        }
+
+        [Test]
+        public async Task
+            Should_allow_edit_confirmed_hearing_up_until_30_minutes_before_starting()
+        {
+            _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(1);
+            _addNewParticipantRequest.ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime;
+            _updatedExistingParticipantHearingOriginal.Status = BookingStatus.Booked;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
+
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(
+                x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()),
+                Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                Times.Once);
         }
         [Test]
         public async Task Should_allow_only_add_participant_if_hearing_starts_in_less_than_thirty_minutes()
@@ -349,7 +412,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Never);
+                Times.Once);
         }
 
         [Test]
@@ -1051,6 +1114,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ContactEmail = "existing@hmcts.net",
                 Username = "existing@hmcts.net",
                 CaseRoleName = "Judge",
+                UserRoleName = "Judge",
+                HearingRoleName = "Judge",
                 Id = existingJudgeId
             });
 
@@ -1058,6 +1123,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
+                HearingRoleName = "Judge",
                 FirstName = "New",
                 LastName = "Judge",
                 ContactEmail = newJudgeEmail
@@ -1074,12 +1140,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             newPats.Add(new ParticipantResponse
             {
-                CaseRoleName = "Judge",
                 FirstName = "New",
                 LastName = "Judge",
                 ContactEmail = newJudgeEmail,
                 Username = newJudgeEmail,
-                UserRoleName = "Judge"
+                UserRoleName = "Judge",
+                CaseRoleName = "Judge",
+                HearingRoleName = "Judge",
             });
             var updatedHearing = new HearingDetailsResponse
             {
@@ -1423,9 +1490,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             }
                         }
                     }
-                }
+                },
+                OtherInformation = ""
             };
-
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(

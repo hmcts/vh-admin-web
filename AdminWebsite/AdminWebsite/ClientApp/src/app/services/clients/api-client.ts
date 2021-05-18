@@ -2866,7 +2866,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     last_edit_date?: Date | undefined;
     confirmed_by?: string | undefined;
     confirmed_date?: Date | undefined;
-    readonly hearing_date?: Date;
+    hearing_date?: Date;
     status?: BookingStatus;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
