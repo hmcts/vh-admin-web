@@ -75,7 +75,7 @@ namespace AdminWebsite.Services
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
 
-        Task ProcessGenericEmail(HearingDetailsResponse hearing);
+        Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
     }
 
     public class HearingsService : IHearingsService
@@ -224,6 +224,7 @@ namespace AdminWebsite.Services
         {
             if (hearing.IsGenericHearing())
             {
+                await ProcessGenericEmail(hearing, participants);
                 return;
             }
 
@@ -261,11 +262,21 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task ProcessGenericEmail(HearingDetailsResponse hearing)
+        public async Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants)
         {
-            if(hearing.Participants == null)
+            var @case = hearing.Cases.First();
+
+            var participantsToEmail = participants ?? hearing.Participants;
+
+            var requests = participantsToEmail
+               .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+               .Select(participant =>
+                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.CaseTypeName))
+               .ToList();
+
+            foreach (var request in requests)
             {
-                return;
+                    await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
 

@@ -139,7 +139,7 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJoh: NotificationType.HearingConfirmationJoh;
+                notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJoh : NotificationType.HearingConfirmationJoh;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
@@ -212,6 +212,33 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingConfirmationLipMultiDay;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing, ParticipantResponse participant, string caseNumber, string testType)
+        {
+            var parameters = new Dictionary<string, string>();
+            NotificationType notificationType = default;
+            if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
+            {
+                notificationType = NotificationType.EJudJohDemoOrTest;
+                parameters.Add("case number", caseNumber);
+                parameters.Add("test type", testType);
+                parameters.Add("date", hearing.ScheduledDateTime.ToEmailDateGbLocale());
+                parameters.Add("time", hearing.ScheduledDateTime.ToEmailTimeGbLocale());
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add("username", participant.Username.ToLower());
             }
 
             return new AddNotificationRequest

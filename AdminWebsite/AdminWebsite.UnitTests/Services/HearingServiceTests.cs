@@ -106,62 +106,14 @@ namespace AdminWebsite.UnitTests.Services
                     Times.Exactly(3));
         }
 
-        [Test]
-        public async Task Should_send_a_generic_email_when_the_case_type_is_generic()
-        {
-            //Arrange
-            var hearing = new HearingDetailsResponse
-            {
-                CaseTypeName = "Generic", 
-                Cases = _cases,
-                Participants = new List<ParticipantResponse>
-                {
-                    new ParticipantResponse
-                    {
-                        ContactEmail = "test@reforms.hmcts.net",
-                        UserRoleName = "Individual"
-                    }
-                }
-            };
-
-            //Act
-            await _service.ProcessGenericEmail(hearing);
-
-            //Assert
-            _mocker.Mock<INotificationApiClient>()
-                .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ContactEmail == hearing.Participants[0].ContactEmail)),
-                    Times.Exactly(1));
-        }
-
-        [Test]
-        public async Task Should_not_call_CreateNewNotificationAsync_when_Nopartipats_in_generic_hearing()
-        {
-            //Arrange
-            var hearing = new HearingDetailsResponse
-            {
-                CaseTypeName = "Generic",
-                Cases = _cases,
-            };
-
-            //Act
-            await _service.ProcessGenericEmail(hearing);
-
-            //Assert
-            _mocker.Mock<INotificationApiClient>()
-                .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Never);
-        }
-
-        [Test]
+       [Test]
         public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(3));
         }
 
         [Test]
