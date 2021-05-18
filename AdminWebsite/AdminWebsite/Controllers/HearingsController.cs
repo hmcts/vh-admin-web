@@ -110,26 +110,7 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-
-                    IList<DateTime> listOfDates;
-                    int totalDays;
-                    
-                    var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-
-                    if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
-                    {
-                        listOfDates = request.MultiHearingDetails.HearingDates;
-                        totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count();
-                    }
-                    else
-                    {
-                        listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                            request.MultiHearingDetails.EndDate, publicHolidays);
-                        totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
-                    }
-                    
-
-                    await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
+                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse);
                 }
                 else
                 {
@@ -152,6 +133,30 @@ namespace AdminWebsite.Controllers
                     e.Message, JsonConvert.SerializeObject(newBookingRequest));
                 throw;
             }
+        }
+
+        private async Task SendMultiDayHearingConfirmationEmail(BookHearingRequest request,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            IList<DateTime> listOfDates;
+            int totalDays;
+
+            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
+
+            if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
+            {
+                listOfDates = request.MultiHearingDetails.HearingDates;
+                totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count();
+            }
+            else
+            {
+                listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
+                    request.MultiHearingDetails.EndDate, publicHolidays);
+                totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
+            }
+
+
+            await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
         }
 
         /// <summary>
