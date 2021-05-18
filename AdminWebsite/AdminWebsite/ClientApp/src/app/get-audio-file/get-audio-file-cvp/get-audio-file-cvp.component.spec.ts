@@ -1,3 +1,4 @@
+import { fakeAsync, flush } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
 import { AudioLinkService } from 'src/app/services/audio-link-service';
@@ -11,7 +12,7 @@ describe('GetAudioFileCvpComponent', () => {
     let formBuilder: FormBuilder;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
-    beforeAll(async () => {
+    beforeEach(async () => {
         audioLinkService = jasmine.createSpyObj<AudioLinkService>('AudioLinkService', [
             'searchForHearingsByCaseNumberOrDate',
             'getCvpAudioRecordings',
@@ -164,4 +165,16 @@ describe('GetAudioFileCvpComponent', () => {
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
+    it('should reset the current search results when a new search is made', fakeAsync(() => {
+        // Arrange
+        component.searchResult = { status: 200, result: null, error: undefined };
+
+        // Act
+        component.search();
+        flush();
+
+        // Assert
+        expect(component.searchResult).toBeNull();
+        expect(component.cvpResults).toEqual([]);
+    }));
 });

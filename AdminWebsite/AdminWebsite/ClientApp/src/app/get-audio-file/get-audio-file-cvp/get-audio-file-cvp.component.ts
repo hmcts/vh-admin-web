@@ -11,7 +11,7 @@ import { Logger } from 'src/app/services/logger';
 })
 export class GetAudioFileCvpComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileCvp] -';
-    getCvpAudioFileForm: FormGroup;
+    cvpAudioFileForm: FormGroup;
     today = new Date();
 
     searchResult: ICvpAudioRecordingResult = null;
@@ -24,10 +24,7 @@ export class GetAudioFileCvpComponent implements OnInit {
     ngOnInit(): void {
         const hearingDateParsed = null;
 
-        this.getCvpAudioFileForm = this.fb.group({
-            caseNumber: [null],
-            vhDate: [null],
-            searchChoice: ['vhFile'],
+        this.cvpAudioFileForm = this.fb.group({
             hearingDate: [hearingDateParsed, Validators.required],
             cloudroomName: ['', [Validators.pattern('^[0-9]*$')]],
             caseReference: ['']
@@ -35,15 +32,15 @@ export class GetAudioFileCvpComponent implements OnInit {
     }
 
     get cloudroomName() {
-        return this.getCvpAudioFileForm.get('cloudroomName');
+        return this.cvpAudioFileForm.get('cloudroomName');
     }
 
     get hearingDate() {
-        return this.getCvpAudioFileForm.get('hearingDate');
+        return this.cvpAudioFileForm.get('hearingDate');
     }
 
     get caseReference() {
-        return this.getCvpAudioFileForm.get('caseReference');
+        return this.cvpAudioFileForm.get('caseReference');
     }
 
     get cvpRequestInvalid() {
@@ -68,6 +65,10 @@ export class GetAudioFileCvpComponent implements OnInit {
     }
 
     async search() {
+        if (this.searchResult)
+            this.searchResult = null;
+
+        this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);
         if (!this.cvpRequestInvalid) {
             this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings`, {
                 cloudRoom: this.cloudroomName.value,
