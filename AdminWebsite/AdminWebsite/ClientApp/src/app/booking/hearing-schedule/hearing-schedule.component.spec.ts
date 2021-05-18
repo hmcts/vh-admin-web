@@ -350,7 +350,9 @@ describe('HearingScheduleComponent first visit', () => {
     it('should add a valid hearing date', () => {
         spyOn(component, 'addValidHearingDate');
         component.addHearingDate();
-        component.addHearingDateControl.setValue(new Date());
+        const value = new Date();
+        component.addHearingDateControl.setValue(value);
+        component.hearingDateChanged({ target: { value } });
         expect(component.addValidHearingDate).toHaveBeenCalled();
     });
 
