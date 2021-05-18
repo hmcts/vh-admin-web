@@ -72,12 +72,7 @@ export class AudioLinkService {
                         subscriber.next({ status: 200, result: value, error: undefined });
                     },
                     error(err) {
-                        if (BookHearingException.isBookHearingException(err)) {
-                            subscriber.next({ status: (err as BookHearingException).status, result: null, error: err });
-                            return;
-                        }
-
-                        subscriber.next({ status: undefined, result: undefined, error: err });
+                        subscriber.next({ status: err?.status, result: undefined, error: err });
                     },
                     complete() {
                         subscriber.complete();
