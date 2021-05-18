@@ -74,6 +74,8 @@ namespace AdminWebsite.Services
 
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
+
+        Task ProcessGenericEmail(HearingDetailsResponse hearing);
     }
 
     public class HearingsService : IHearingsService
@@ -256,6 +258,14 @@ namespace AdminWebsite.Services
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+        }
+
+        public async Task ProcessGenericEmail(HearingDetailsResponse hearing)
+        {
+            if(hearing.Participants == null)
+            {
+                return;
             }
         }
 
