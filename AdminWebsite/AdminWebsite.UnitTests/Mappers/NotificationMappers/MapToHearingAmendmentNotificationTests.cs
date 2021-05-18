@@ -25,55 +25,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_ejud_joh_hearing_amendment_notification()
-        {
-            //Arrange
-            const NotificationType expectedNotificationType = NotificationType.HearingAmendmentEJudJoh;
-            var oldDate = new DateTime(2020, 2, 12, 11, 30, 0, DateTimeKind.Utc);
-            var newDate = new DateTime(2020, 10, 14, 13, 10, 0, DateTimeKind.Utc);
-            const string caseName = "Case Name test";
-            const string caseNumber = "MBFY/17364";
-            var participant = new ParticipantResponse
-            {
-                Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
-                CaseRoleName = "caserolename",
-                ContactEmail = "contact@judiciary.hmcts.net",
-                FirstName = "John",
-                HearingRoleName = "hearingrolename",
-                LastName = "Doe",
-                TelephoneNumber = "0123456789",
-                UserRoleName = "Judicial Office Holder",
-                DisplayName = "Johnny",
-            };
-            _hearing.Participants = new List<ParticipantResponse> { participant };
-
-            var expectedParameters = new Dictionary<string, string>
-            {
-                {"case name", caseName},
-                {"case number", caseNumber},
-                {"judicial office holder", $"{participant.FirstName} {participant.LastName}"},
-                {"Old time", "11:30 AM"},
-                {"New time", "2:10 PM"},
-                {"Old Day Month Year", "12 February 2020"},
-                {"New Day Month Year", "14 October 2020"}
-            };
-
-            //Act
-            var result = AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName, caseNumber, oldDate, newDate);
-
-            //Assert
-            result.Should().NotBeNull();
-            result.HearingId.Should().Be(_hearing.Id);
-            result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.ContactEmail);
-            result.NotificationType.Should().Be(expectedNotificationType);
-            result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
-            result.Parameters.Should().BeEquivalentTo(expectedParameters);
-        }
-
-        [Test]
         public void should_map_to_judge_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentJudge;
@@ -91,44 +42,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"case number", caseNumber},
                 {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username},
-                {"Old time", "11:30 AM"},
-                {"New time", "2:10 PM"},
-                {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"}
-            };
-
-            var result =
-                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
-                    caseNumber, oldDate, newDate);
-
-            result.Should().NotBeNull();
-            result.HearingId.Should().Be(_hearing.Id);
-            result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.ContactEmail);
-            result.NotificationType.Should().Be(expectedNotificationType);
-            result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
-            result.Parameters.Should().BeEquivalentTo(expectedParameters);
-        }
-        
-        [Test]
-        public void should_map_to_ejud_judge_hearing_amendment_notification()
-        {
-            var expectedNotificationType = NotificationType.HearingAmendmentEJudJudge;
-            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0, DateTimeKind.Utc);
-            var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
-            var caseName = "cse test";
-            var caseNumber = "MBFY/17364";
-            var participant = InitParticipant("Judge");
-            participant.ContactEmail = "user@judiciarytest.com";
-            _hearing.Participants = new List<ParticipantResponse> {participant};
-            _hearing.OtherInformation = string.Empty;
-            
-            var expectedParameters = new Dictionary<string, string>
-            {
-                {"case name", caseName},
-                {"case number", caseNumber},
-                {"judge", participant.DisplayName},
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
