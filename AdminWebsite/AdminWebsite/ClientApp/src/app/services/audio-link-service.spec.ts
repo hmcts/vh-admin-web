@@ -26,7 +26,7 @@ describe('AudioLinkService', () => {
         service = new AudioLinkService(apiClient, new MockLogger());
     });
 
-    it('should return the correct IAudioRecordingResult when passed cloud room name, date and case reference and a 504 is thrown', async () => {
+    it('should return the correct IAudioRecordingResult when passed all and a 504 is thrown', async () => {
         // Arrange
         const cloudRoomName = 'cloud';
         const date = 'date';
@@ -117,7 +117,7 @@ describe('AudioLinkService', () => {
         const result = await service.searchForHearingsByCaseNumberOrDate('case number', new Date());
         expect(result).not.toBeNull();
         expect(result).not.toBeUndefined();
-        expect(result.length).toBe(3);
+        expect(result.result.length).toBe(3);
     });
 
     it('should return null when getting the hearing by case number', async () => {

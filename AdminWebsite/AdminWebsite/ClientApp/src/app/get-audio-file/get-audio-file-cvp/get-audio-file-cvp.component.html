@@ -47,12 +47,5 @@
   <app-cvp-audio-file-search-result [results]="cvpResults"></app-cvp-audio-file-search-result>
 </div>
 <div *ngIf="searchResult && searchResult.error && searchResult.status === 504">
-  <div class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      We couldn't show any results. There may be too many to display (please refine your search) or there is a technical problem. Please try
-      again.
-    </strong>
-  </div>
+  <app-get-audio-file-request-timedout-warning></app-get-audio-file-request-timedout-warning>
 </div>

@@ -39,21 +39,21 @@ describe('GetAudioFileVhComponent', () => {
         await component.search();
 
         expect(component.results).toEqual([]);
-        expect(component.hasSearched).toBeFalsy();
     });
 
     it('should keep the results as empty when service returns null', async () => {
-        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(Promise.resolve(null));
+        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(
+            Promise.resolve({ result: null, status: 200, error: undefined })
+        );
 
         component.caseNumber.setValue('123');
         await component.search();
 
         expect(component.results).toEqual([]);
-        expect(component.hasSearched).toBeTruthy();
     });
 
     it('should set the results', async () => {
-        const models = [
+        const result = [
             new HearingAudioSearchModel({
                 init(_data?: any): void {},
                 toJSON(data?: any): any {},
@@ -65,14 +65,15 @@ describe('GetAudioFileVhComponent', () => {
                 id: '363725D0-E3D6-4D4A-8D0A-E8E57575FBC2'
             })
         ];
-        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(Promise.resolve(models));
+        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(
+            Promise.resolve({ result: result, status: 200, error: undefined })
+        );
 
         await component.search();
 
         expect(component.results).not.toBeNull();
         expect(component.results).not.toBeUndefined();
         expect(component.results).not.toEqual([]);
-        expect(component.hasSearched).toBeTruthy();
     });
 
     it('should set date to undefined when not set on search', async () => {

@@ -29,6 +29,9 @@
   </button>
 </form>
 
-<div class="govuk-body" *ngIf="hasSearched">
+<div class="govuk-body" *ngIf="searchResult && !searchResult.error">
   <app-hearing-search-results [results]="results"></app-hearing-search-results>
+</div>
+<div *ngIf="searchResult && searchResult.error && searchResult.status === 504">
+  <app-get-audio-file-request-timedout-warning></app-get-audio-file-request-timedout-warning>
 </div>

@@ -13,23 +13,27 @@ export interface ICvpAudioRecordingResult {
     error: any;
 }
 
+export interface IVhAudioRecordingResult {
+    status: number;
+    result: HearingsForAudioFileSearchResponse[];
+    error: any;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AudioLinkService {
     private readonly loggerPrefix = '[AudioLinkService] -';
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
-    async searchForHearingsByCaseNumberOrDate(caseNumber: string, date?: Date): Promise<HearingsForAudioFileSearchResponse[]> {
+    async searchForHearingsByCaseNumberOrDate(caseNumber: string, date?: Date): Promise<IVhAudioRecordingResult> {
         try {
-            return await this.bhClient.searchForAudioRecordedHearings(caseNumber, date).toPromise();
+            return await this.bhClient
+                .searchForAudioRecordedHearings(caseNumber, date)
+                .pipe(this.toAudioRecordingResult(), take(1))
+                .toPromise();
         } catch (error) {
             this.logger.error(`${this.loggerPrefix} Error retrieving hearing for: ${caseNumber}`, error);
             return null;
         }
-    }
-
-    async getAudioLink(hearingId: string): Promise<string[]> {
-        const response = await this.bhClient.getAudioRecordingLink(hearingId).toPromise();
-        return response.audio_file_links;
     }
 
     async getCvpAudioRecordings(cloudRoomName: string, date: string, caseReference: string): Promise<ICvpAudioRecordingResult> {
@@ -53,11 +57,16 @@ export class AudioLinkService {
         throw InvalidParametersError({ cloudRoomName: cloudRoomName, date: date, caseReference: caseReference });
     }
 
+    async getAudioLink(hearingId: string): Promise<string[]> {
+        const response = await this.bhClient.getAudioRecordingLink(hearingId).toPromise();
+        return response.audio_file_links;
+    }
+
     private toAudioRecordingResult() {
         return function (
             source: Observable<HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[]>
-        ): Observable<ICvpAudioRecordingResult> {
-            return new Observable<ICvpAudioRecordingResult>(subscriber => {
+        ): Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult> {
+            return new Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult>(subscriber => {
                 return source.subscribe({
                     next(value) {
                         subscriber.next({ status: 200, result: value, error: undefined });

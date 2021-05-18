@@ -13,7 +13,7 @@ export class GetAudioFileComponent implements OnInit {
     form: FormGroup;
     today = new Date();
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private fb: FormBuilder, private logger: Logger) {}
 
     async ngOnInit(): Promise<void> {
         this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
