@@ -123,7 +123,7 @@ describe('GetAudioFileVhComponent', () => {
         flush();
 
         // Assert
-        expect(component.vhSearchCriteriaSet)
+        expect(component.vhSearchCriteriaSet);
         expect(component.searchResult).toBeNull();
         expect(component.results).toEqual([]);
     }));

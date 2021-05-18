@@ -69,10 +69,10 @@ export class AudioLinkService {
             return new Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult>(subscriber => {
                 return source.subscribe({
                     next(value) {
-                        subscriber.next({ status: 200, result: value, error: undefined });
+                        subscriber.next({ status: 200, result: value, error: null });
                     },
                     error(err) {
-                        subscriber.next({ status: err?.status, result: undefined, error: err });
+                        subscriber.next({ status: err?.status, result: null, error: err });
                     },
                     complete() {
                         subscriber.complete();

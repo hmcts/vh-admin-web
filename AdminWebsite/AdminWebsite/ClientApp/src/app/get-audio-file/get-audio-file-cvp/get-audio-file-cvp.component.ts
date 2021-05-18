@@ -65,8 +65,9 @@ export class GetAudioFileCvpComponent implements OnInit {
     }
 
     async search() {
-        if (this.searchResult)
+        if (this.searchResult) {
             this.searchResult = null;
+        }
 
         this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);
         if (!this.cvpRequestInvalid) {

@@ -72,7 +72,7 @@ describe('AudioLinkService', () => {
         const date = 'date';
         const caseReference = undefined;
         const expectedStatus = 504;
-        const expectedError = new BookHearingException('msg', expectedStatus, null, null, null);
+        const expectedError = { status: expectedStatus };
 
         apiClient.getCvpAudioRecordingsByCloudRoom.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
 
@@ -84,26 +84,6 @@ describe('AudioLinkService', () => {
         expect(result.status).toBe(expectedStatus);
         expect(result.error).toEqual(expectedError);
         expect(result.result).toEqual(null);
-    });
-
-    it(`should return the correct IAudioRecordingResult when an unknown error occurrs`, async () => {
-        // Arrange
-        const cloudRoomName = 'cloud';
-        const date = 'date';
-        const caseReference = undefined;
-        const expectedStatus = 504;
-        const expectedError = new Error('error');
-
-        apiClient.getCvpAudioRecordingsByCloudRoom.and.returnValue(<Observable<CvpForAudioFileResponse[]>>(<any>throwError(expectedError)));
-
-        // Act
-        const result = await service.getCvpAudioRecordings(cloudRoomName, date, caseReference);
-
-        // Assert
-        expect(result).toBeTruthy();
-        expect(result.status).toBe(undefined);
-        expect(result.error).toEqual(expectedError);
-        expect(result.result).toEqual(undefined);
     });
 
     it('should get the hearing by case number', async () => {
