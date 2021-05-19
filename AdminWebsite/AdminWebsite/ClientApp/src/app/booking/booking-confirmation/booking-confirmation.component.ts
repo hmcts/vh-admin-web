@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HearingDetailsResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
@@ -12,7 +12,7 @@ import { Logger } from '../../services/logger';
     templateUrl: './booking-confirmation.component.html',
     styleUrls: ['./booking-confirmation.component.css']
 })
-export class BookingConfirmationComponent implements OnInit, OnDestroy {
+export class BookingConfirmationComponent implements OnInit {
     protected readonly loggerPrefix: string = '[BookingConfirmation] -';
 
     hearing: Observable<HearingDetailsResponse>;
@@ -20,7 +20,6 @@ export class BookingConfirmationComponent implements OnInit, OnDestroy {
     caseName: string;
     hearingDate: Date;
     private newHearingSessionKey = 'newHearingId';
-    $hearingSubscription: Subscription;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -36,7 +35,7 @@ export class BookingConfirmationComponent implements OnInit, OnDestroy {
     retrieveSavedHearing() {
         const hearingId = sessionStorage.getItem(this.newHearingSessionKey);
         this.logger.debug(`${this.loggerPrefix} Getting hearing.`, { hearing: hearingId });
-        this.$hearingSubscription = this.hearingService.getHearingById(hearingId).subscribe(
+        this.hearingService.getHearingById(hearingId).subscribe(
             (data: HearingDetailsResponse) => {
                 this.caseNumber = data.cases[0].number;
                 this.caseName = data.cases[0].name;
@@ -68,11 +67,5 @@ export class BookingConfirmationComponent implements OnInit, OnDestroy {
 
     clearSessionData(): void {
         this.hearingService.cancelRequest();
-    }
-
-    ngOnDestroy() {
-        if (this.$hearingSubscription) {
-            this.$hearingSubscription.unsubscribe();
-        }
     }
 }
