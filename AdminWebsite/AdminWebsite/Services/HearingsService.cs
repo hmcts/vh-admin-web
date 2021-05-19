@@ -352,8 +352,8 @@ namespace AdminWebsite.Services
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge and panel member is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member" || participant.CaseRoleName == "Winger")
+            // Judge is manually created in AD, no need to create one
+            if (participant.CaseRoleName == "Judge")
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
