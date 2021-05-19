@@ -110,11 +110,7 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-                    var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-                    var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                        request.MultiHearingDetails.EndDate, publicHolidays);
-                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
-                    await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
+                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse);
                 }
                 else
                 {
@@ -139,6 +135,30 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        private async Task SendMultiDayHearingConfirmationEmail(BookHearingRequest request,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            IList<DateTime> listOfDates;
+            int totalDays;
+
+            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
+
+            if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
+            {
+                listOfDates = request.MultiHearingDetails.HearingDates;
+                totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count();
+            }
+            else
+            {
+                listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
+                    request.MultiHearingDetails.EndDate, publicHolidays);
+                totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
+            }
+
+
+            await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
+        }
+
         /// <summary>
         ///     Clone hearings with the details of a given hearing on given dates
         /// </summary>
@@ -153,15 +173,17 @@ namespace AdminWebsite.Controllers
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
             var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-            var listOfDates =
-                DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate, publicHolidays);
-            if (listOfDates.Count == 0)
+
+            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate, publicHolidays);
+
+            if (!hearingDates.Any())
             {
                 _logger.LogWarning("No working dates provided to clone to");
                 return BadRequest();
             }
 
-            var cloneHearingRequest = new CloneHearingRequest {Dates = listOfDates};
+            var cloneHearingRequest = new CloneHearingRequest { Dates = hearingDates };
+            
             try
             {
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");

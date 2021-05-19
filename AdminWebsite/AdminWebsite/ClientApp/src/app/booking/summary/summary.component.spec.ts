@@ -298,7 +298,7 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         component.hearing.multiDays = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         fixture.detectChanges();
 
         await component.bookHearing();
@@ -580,12 +580,12 @@ describe('SummaryComponent  with multi days request', () => {
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
 
         component.ngOnInit();
 
-        expect(new Date(component.hearingDate).getDay()).toEqual(new Date(existingRequest.scheduled_date_time).getDay());
-        expect(new Date(component.endHearingDate).getDay()).toEqual(new Date(existingRequest.end_hearing_date_time).getDay());
+        expect(new Date(component.hearingDate).getDate()).toEqual(new Date(existingRequest.scheduled_date_time).getDate());
+        expect(new Date(component.endHearingDate).getDate()).toEqual(new Date(existingRequest.end_hearing_date_time).getDate());
 
         expect(new Date(component.hearingDate).getMonth()).toEqual(new Date(existingRequest.scheduled_date_time).getMonth());
         expect(new Date(component.endHearingDate).getMonth()).toEqual(new Date(existingRequest.end_hearing_date_time).getMonth());

@@ -136,10 +136,16 @@ export class VideoHearingsService {
 
         if (newRequest.multiDays) {
             bookingRequest.is_multi_day = true;
-            bookingRequest.multi_hearing_details = new MultiHearingRequest({
-                start_date: new Date(newRequest.scheduled_date_time),
-                end_date: new Date(newRequest.end_hearing_date_time)
-            });
+            if (newRequest.hearing_dates.length) {
+                bookingRequest.multi_hearing_details = new MultiHearingRequest({
+                    hearing_dates: newRequest.hearing_dates.map(hearingDate => new Date(hearingDate))
+                });
+            } else {
+                bookingRequest.multi_hearing_details = new MultiHearingRequest({
+                    start_date: new Date(newRequest.scheduled_date_time),
+                    end_date: new Date(newRequest.end_hearing_date_time)
+                });
+            }
         }
 
         return this.bhClient.bookNewHearing(bookingRequest).toPromise();
