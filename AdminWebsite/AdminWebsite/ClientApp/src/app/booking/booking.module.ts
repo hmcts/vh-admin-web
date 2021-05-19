@@ -14,6 +14,7 @@ import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
 import { ParticipantItemComponent, ParticipantListComponent } from './participant';
+import { MultiDayHearingScheduleComponent } from './summary/multi-day-hearing-schedule';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -28,7 +29,8 @@ export const Components: Type<any>[] = [
     SearchEmailComponent,
     ParticipantListComponent,
     ParticipantItemComponent,
-    EndpointsComponent
+    EndpointsComponent,
+    MultiDayHearingScheduleComponent
 ];
 
 @NgModule({

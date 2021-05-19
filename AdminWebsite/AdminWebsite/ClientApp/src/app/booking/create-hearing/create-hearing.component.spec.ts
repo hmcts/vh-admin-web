@@ -358,7 +358,5 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
     it('should unsibscribe subcription on destroy', () => {
         component.ngOnDestroy();
-        expect(component.$subscriptions[0].closed).toBe(true);
-        expect(component.$subscriptions[1].closed).toBe(true);
     });
 });
