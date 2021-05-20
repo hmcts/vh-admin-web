@@ -264,12 +264,19 @@ namespace AdminWebsite.Services
 
         public async Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants)
         {
+            if (string.Equals(hearing.HearingTypeName, "Automated Test", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return;
+            }
+
+            var @case = hearing.Cases.First();
+
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                .Select(participant =>
-                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant))
+                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.CaseTypeName))
                .ToList();
 
             foreach (var request in requests)
