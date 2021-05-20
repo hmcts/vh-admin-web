@@ -13,15 +13,22 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void Should_map_joh_demo_or_test_notification()
         {
             //Arrange
+            const string caseNumber = "MBFY/17364";
             var hearing = new HearingDetailsResponse
             {
                 Id = Guid.NewGuid(),
                 Participants = new List<ParticipantResponse>(),
-                ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc)
+                ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc),
+                Cases = new List<CaseResponse>
+                {
+                    new CaseResponse
+                    {
+                        Number = caseNumber
+                    }
+                }
             };
             const NotificationType expectedNotificationType = NotificationType.EJudJohDemoOrTest;
             const string testType = "Generic";
-            const string caseNumber = "MBFY/17364";
 
             var participant = new ParticipantResponse
             {
@@ -50,7 +57,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             //Act
-            var result = AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, caseNumber, testType);
+            var result = AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, testType);
 
             //Assert
             result.Should().NotBeNull();

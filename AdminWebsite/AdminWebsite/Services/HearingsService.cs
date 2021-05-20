@@ -264,19 +264,17 @@ namespace AdminWebsite.Services
 
         public async Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants)
         {
-            var @case = hearing.Cases.First();
-
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                .Select(participant =>
-                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.CaseTypeName))
+                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant))
                .ToList();
 
             foreach (var request in requests)
             {
-                    await _notificationApiClient.CreateNewNotificationAsync(request);
+                await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
 

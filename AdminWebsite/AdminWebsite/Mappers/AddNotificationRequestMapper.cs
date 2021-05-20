@@ -226,17 +226,14 @@ namespace AdminWebsite.Mappers
             };
         }
 
-        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing, ParticipantResponse participant, string caseNumber, string testType)
+        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing, ParticipantResponse participant)
         {
-            var parameters = new Dictionary<string, string>();
+            var parameters = InitMapToDemoOrTest(hearing);
             NotificationType notificationType = default;
             if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
             {
                 notificationType = NotificationType.EJudJohDemoOrTest;
-                parameters.Add("case number", caseNumber);
-                parameters.Add("test type", testType);
-                parameters.Add("date", hearing.ScheduledDateTime.ToEmailDateGbLocale());
-                parameters.Add("time", hearing.ScheduledDateTime.ToEmailTimeGbLocale());
+
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
                 parameters.Add("username", participant.Username.ToLower());
             }
@@ -299,6 +296,18 @@ namespace AdminWebsite.Mappers
                 {"case number", @case.Number},
                 {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
                 {"day month year", hearing.ScheduledDateTime.ToEmailDateGbLocale()}
+            };
+        }
+
+        private static Dictionary<string, string> InitMapToDemoOrTest(HearingDetailsResponse hearing)
+        {
+            var @case = hearing.Cases.First();
+            return new Dictionary<string, string>
+            {
+                {"case number", @case.Number},
+                {"test type", hearing.CaseTypeName },
+                {"date", hearing.ScheduledDateTime.ToEmailDateGbLocale() },
+                {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()}
             };
         }
     }
