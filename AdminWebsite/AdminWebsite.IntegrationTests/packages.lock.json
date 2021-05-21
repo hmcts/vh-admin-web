@@ -1155,8 +1155,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "1.25.10",
-        "contentHash": "Hwy6X3BG3tsXOtypZ3vjvIdJ3BJS+qf/s5Rz8iQpX5zbuwcVjprrsAC8ZBR0z9KBupaiWC+F2QAUIlItkgQbww==",
+        "resolved": "1.25.11-pullrequest0049-0005",
+        "contentHash": "gNC7dQJDHoQpTeAa/Vnq8/510STetcMFYUqofBy5maIeaKbWUk1bb43hCAL0pmRpX9hWnoBpXEz7GT0aPd2EJw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2594,7 +2594,7 @@
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.10.9",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.0",
           "NWebsec.AspNetCore.Middleware": "3.0.0",
-          "NotificationApi.Client": "1.25.10",
+          "NotificationApi.Client": "1.25.11-pullrequest0049-0005",
           "Polly": "7.2.1",
           "Swashbuckle.AspNetCore": "5.6.3",
           "Swashbuckle.AspNetCore.Annotations": "5.6.3",

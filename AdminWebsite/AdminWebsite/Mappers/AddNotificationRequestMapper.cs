@@ -208,10 +208,11 @@ namespace AdminWebsite.Mappers
             };
         }
 
-        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing, ParticipantResponse participant, string caseNumber, string testType)
+        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant, string caseNumber, string testType)
         {
             var parameters = new Dictionary<string, string>();
-            NotificationType notificationType = default;
+            NotificationType notificationType;
             if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
             {
                 notificationType = NotificationType.EJudJohDemoOrTest;
@@ -220,6 +221,16 @@ namespace AdminWebsite.Mappers
                 parameters.Add("date", hearing.ScheduledDateTime.ToEmailDateGbLocale());
                 parameters.Add("time", hearing.ScheduledDateTime.ToEmailTimeGbLocale());
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add("username", participant.Username.ToLower());
+            }
+            else
+            {
+                notificationType = NotificationType.ParticipantDemoOrTest;
+                parameters.Add("case number", caseNumber);
+                parameters.Add("test type", testType);
+                parameters.Add("date", hearing.ScheduledDateTime.ToEmailDateGbLocale());
+                parameters.Add("time", hearing.ScheduledDateTime.ToEmailTimeGbLocale());
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
                 parameters.Add("username", participant.Username.ToLower());
             }
 
