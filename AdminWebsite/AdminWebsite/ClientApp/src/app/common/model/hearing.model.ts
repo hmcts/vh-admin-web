@@ -10,6 +10,7 @@ export class HearingModel {
         this.scheduled_duration = 0;
         this.endpoints = [];
         this.linked_participants = [];
+        this.hearing_dates = [];
     }
     hearing_id?: string | undefined;
     scheduled_date_time?: Date | undefined;
@@ -39,4 +40,6 @@ export class HearingModel {
     end_hearing_date_time?: Date | undefined;
     telephone_conference_id?: string | undefined;
     linked_participants?: LinkedParticipantModel[] | undefined;
+    hearing_dates?: Date[];
+    isConfirmed?: boolean;
 }

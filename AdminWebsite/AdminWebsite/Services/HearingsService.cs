@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -11,10 +12,10 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
-using VideoApi.Contract.Responses;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
 using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
@@ -68,14 +69,13 @@ namespace AdminWebsite.Services
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
-
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
-
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
 
         Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
+      
+        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
+
     }
 
     public class HearingsService : IHearingsService
@@ -83,22 +83,25 @@ namespace AdminWebsite.Services
         private readonly IPollyRetryService _pollyRetryService;
         private readonly IUserAccountService _userAccountService;
         private readonly INotificationApiClient _notificationApiClient;
-        private readonly IVideoApiClient _videoApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly KinlyConfiguration _kinlyConfiguration;
 
+#pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
-            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
             _notificationApiClient = notificationApiClient;
-            _videoApiClient = videoApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _conferenceDetailsService = conferenceDetailsService;
+            _kinlyConfiguration = kinlyOptions.Value;
         }
-
+#pragma warning restore S107
         public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
         {
@@ -150,21 +153,43 @@ namespace AdminWebsite.Services
                 : hearingDetailsResponse.Endpoints
                     .Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
-            if (originalParticipants.Count == requestParticipants.Count) return false;
-            return editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName && editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName && editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation && editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime && editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration && editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired && editHearingRequest.AudioRecordingRequired == hearingDetailsResponse.AudioRecordingRequired && hearingCase.Name == editHearingRequest.Case.Name && hearingCase.Number == editHearingRequest.Case.Number && originalEndpoints.Count == requestEndpoints.Count && (originalEndpoints
-                .Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
+            var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
+
+            return addedParticipant.Any() &&
+                   editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
+                   editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName &&
+                   editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
+                   editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
+                   editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
+                   editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
+                   hearingCase.Name == editHearingRequest.Case.Name &&
+                   hearingCase.Number == editHearingRequest.Case.Number &&
+                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
+        }
+
+        public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
+            List<EditEndpointRequest> requestEndpoints)
+        {
+            return originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
                 .ToList()
-                .Count == 0) && (requestEndpoints
+                .Count == 0 && requestEndpoints
                 .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
                 .ToList()
-                .Count == 0) && (originalParticipants
+                .Count == 0;
+        }
+        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants,
+            List<EditParticipantRequest> requestParticipants)
+        {
+            return originalParticipants
                 .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
                 .ToList()
-                .Count == 0) && ((originalParticipants.Count != requestParticipants.Count) || (requestParticipants.Except(originalParticipants,
-                    EditParticipantRequest.EditParticipantRequestComparer)
-                .ToList()
-                .Count != 0));
+                .Count == 0
+                ? requestParticipants
+                    .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
+                    .ToList()
+                : new List<EditParticipantRequest>();
         }
+
 
         public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
@@ -296,7 +321,7 @@ namespace AdminWebsite.Services
             {
                 await SendJudgeConfirmationEmail(hearing);
             }
-
+            
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
@@ -337,34 +362,14 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId,
-            string errorMessage)
+        public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
         {
-            try
-            {
-                var details = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    8, _ => TimeSpan.FromSeconds(8),
-                    retryAttempt =>
-                        _logger.LogWarning(
-                            "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}",
-                            hearingId, retryAttempt),
-                    videoApiResponseObject => !videoApiResponseObject.HasValidMeetingRoom(),
-                    () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
-                );
-                return details;
-            }
-            catch (VideoApiException ex)
-            {
-                _logger.LogError(ex, $"{errorMessage}: {ex.Message}");
-            }
+            var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+            if (conferenceDetailsResponse.HasValidMeetingRoom())
+                return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
+                    conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
 
-            return new ConferenceDetailsResponse();
-        }
-
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
-        {
-            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
+            throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
         public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant,
@@ -374,8 +379,8 @@ namespace AdminWebsite.Services
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge and panel member is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member" || participant.CaseRoleName == "Winger")
+            // Judge is manually created in AD, no need to create one
+            if (participant.CaseRoleName == "Judge")
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))

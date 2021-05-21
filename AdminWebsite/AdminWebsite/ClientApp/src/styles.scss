@@ -1,6 +1,10 @@
 @import "../node_modules/govuk-frontend/govuk/all";
 @import "../node_modules/@hmcts/frontend/all";
 
+body {
+    font-family: 'nta', Arial, sans-serif;
+}
+
 .break-all {
     word-break: break-all;
 }

@@ -18,19 +18,16 @@ export class BreadcrumbComponent implements OnInit {
     @Input()
     canNavigate: boolean;
 
-    constructor(private router: Router, private videoHearingService: VideoHearingsService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.breadcrumbItems = BreadcrumbItems.map(s => {
-            return new BreadcrumbItemModel(s.id, s.value, s.name, s.url, s.active);
-        });
+        this.breadcrumbItems = BreadcrumbItems;
         this.initBreadcrumb();
     }
 
     clickBreadcrumbs(step: BreadcrumbItemModel) {
         const nextItem = this.breadcrumbItems.find(s => s.Url === step.Url);
-
         if (!nextItem) {
             return;
         }
@@ -44,7 +41,7 @@ export class BreadcrumbComponent implements OnInit {
             return;
         }
         if (this.canNavigate) {
-            if (this.videoHearingService.validCurrentRequest()) {
+            if (this.videoHearingsService.validCurrentRequest()) {
                 this.router.navigate([nextItem.Url]);
             }
             return;
@@ -56,7 +53,15 @@ export class BreadcrumbComponent implements OnInit {
         if (this.currentItem) {
             for (const item of this.breadcrumbItems) {
                 item.Value = item.Url === this.currentRouter;
-                item.Active = item.Id <= this.currentItem.Id;
+                if (
+                    !this.videoHearingsService.isConferenceClosed() &&
+                    this.videoHearingsService.isHearingAboutToStart() &&
+                    !item.LastMinuteAmendable
+                ) {
+                    item.Active = false;
+                } else {
+                    item.Active = item.Id <= this.currentItem.Id;
+                }
             }
         }
     }

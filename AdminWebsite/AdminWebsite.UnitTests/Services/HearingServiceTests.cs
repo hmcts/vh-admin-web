@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -10,17 +11,18 @@ using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
-using Castle.Core.Internal;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 using NUnit.Framework;
+using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
+using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -29,6 +31,9 @@ namespace AdminWebsite.UnitTests.Services
         private AutoMock _mocker;
         private HearingsService _service;
         private HearingDetailsResponse _hearing;
+        private const string _expectedTeleConferencePhoneNumber = "expected_conference_phone_number";
+        private const string _expectedTeleConferenceId = "expected_conference_phone_id";
+        
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Guid _validId;
         private EditHearingRequest _addNewParticipantRequest;
@@ -38,6 +43,26 @@ namespace AdminWebsite.UnitTests.Services
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
+            _mocker.Mock<IOptions<KinlyConfiguration>>().Setup(opt => opt.Value).Returns(new KinlyConfiguration()
+            {
+                ConferencePhoneNumber = _expectedTeleConferencePhoneNumber
+            });
+
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = new MeetingRoomResponse
+                    {
+                        AdminUri = "AdminUri",
+                        JudgeUri = "JudgeUri",
+                        ParticipantUri = "ParticipantUri",
+                        PexipNode = "PexipNode",
+                        PexipSelfTestNode = "PexipSelfTestNode",
+                        TelephoneConferenceId = _expectedTeleConferenceId
+                    }
+                });
+            
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
             _validId = Guid.NewGuid();
@@ -93,7 +118,7 @@ namespace AdminWebsite.UnitTests.Services
                     .ToList()
             };
         }
-
+        
         [Test]
         public async Task should_send_confirmation_email_to_all_participants_except_judge()
         {
@@ -204,8 +229,9 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
+            
             await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
-
+            
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
@@ -331,15 +357,42 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
+        public async Task should_return_correct_tele_conference_id_and_phone_number()
+        {
+            // Act
+            var teleConferenceDetails = await _service.GetTelephoneConferenceDetails(Guid.NewGuid());
+            
+            // Assert
+            teleConferenceDetails.TeleConferencePhoneNumber.Should().Be(_expectedTeleConferencePhoneNumber);
+            teleConferenceDetails.TeleConferenceId.Should().Be(_expectedTeleConferenceId);
+        }
+        
+        [Test]
+        public void should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
+        {
+            // Arrange
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(new ConferenceDetailsResponse
+                {
+                    MeetingRoom = null
+                });
+            
+            // Act & Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.GetTelephoneConferenceDetails(Guid.NewGuid()));
+        }
+        
+        [Test]
         public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.CaseTypeName = "Generic";
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Never);
         }
 
@@ -350,10 +403,7 @@ namespace AdminWebsite.UnitTests.Services
             var participantId = _hearing.Participants[0].Id;
             var updatedParticipant = new EditParticipantRequest
             {
-                DisplayName = "New Display Name",
-                Id = participantId,
-                TelephoneNumber="12345",
-                Title = "New Title"
+                DisplayName = "New Display Name", Id = participantId, TelephoneNumber = "12345", Title = "New Title"
             };
 
             //Act
@@ -361,12 +411,13 @@ namespace AdminWebsite.UnitTests.Services
 
             //Assert
             _mocker.Mock<IBookingsApiClient>()
-                .Verify(x => x.UpdateParticipantDetailsAsync(
-                    It.Is<Guid>(h => h == _hearing.Id),
-                    It.Is<Guid>(p => p == participantId),
-                    It.Is<UpdateParticipantRequest>(r => r.DisplayName == updatedParticipant.DisplayName
-                        && r.TelephoneNumber == updatedParticipant.TelephoneNumber
-                        && r.Title == updatedParticipant.Title)), Times.Once);
+                .Verify(
+                    x => x.UpdateParticipantDetailsAsync(It.Is<Guid>(h => h == _hearing.Id),
+                        It.Is<Guid>(p => p == participantId),
+                        It.Is<UpdateParticipantRequest>(r =>
+                            r.DisplayName == updatedParticipant.DisplayName &&
+                            r.TelephoneNumber == updatedParticipant.TelephoneNumber &&
+                            r.Title == updatedParticipant.Title)), Times.Once);
         }
 
         [Test]
@@ -412,7 +463,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_QuestionnaireNotRequired_is_changed()
+        public void Should_return_false_when_QuestionnaireNotRequired_is_changed()
         {
             _addNewParticipantRequest.QuestionnaireNotRequired =
                 !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
@@ -423,7 +474,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_count_is_changed()
+        public void Should_return_false_when_endpoint_count_is_changed()
         {
             _addNewParticipantRequest.Endpoints.Add(new EditEndpointRequest
             {
@@ -436,7 +487,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_displayName_is_changed()
+        public void Should_return_false_when_endpoint_displayName_is_changed()
         {
             _addNewParticipantRequest.Endpoints.First().DisplayName = "test1";
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -444,7 +495,20 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_endpoint_defenceAdvocateUsername_is_changed()
+        public void Should_return_false_when_endpoint_removed()
+        {
+            _updatedExistingParticipantHearingOriginal.Endpoints.Add(new EndpointResponse
+            {
+                Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateId = Guid.NewGuid(),
+            });
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+
+            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+                _updatedExistingParticipantHearingOriginal));
+        }
+
+        [Test]
+        public void Should_return_false_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -452,7 +516,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_participant_removed()
+        public void Should_return_false_when_participant_removed()
         {
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse {Id = Guid.NewGuid()});
             Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -460,7 +524,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_participant_added()
+        public void Should_return_true_when_participant_added()
         {
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
             Assert.True(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
@@ -468,10 +532,13 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_if_nothing_changed()
+        public void Should_return_false_when_nothing_changed_in_participants()
         {
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
-                _updatedExistingParticipantHearingOriginal));
+            var participantRequest1 = new EditParticipantRequest {Id = It.IsAny<Guid>(), DisplayName = "Test",};
+            var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
+            var editParticipants2 = new List<EditParticipantRequest> {participantRequest1};
+
+            Assert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
         }
 
         [Test]
@@ -497,15 +564,6 @@ namespace AdminWebsite.UnitTests.Services
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
             Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_addNewParticipantRequest,
-                _updatedExistingParticipantHearingOriginal));
-        }
-
-        [Test]
-        public void Should_return_false_if_AudioRecordingRequired_changed()
-        {
-            _addNewParticipantRequest.AudioRecordingRequired =
-                !_updatedExistingParticipantHearingOriginal.AudioRecordingRequired;
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 

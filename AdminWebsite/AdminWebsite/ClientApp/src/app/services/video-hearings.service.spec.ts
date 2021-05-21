@@ -9,7 +9,8 @@ import {
     MultiHearingRequest,
     ClientSettingsResponse,
     HearingRole,
-    LinkedParticipantResponse
+    LinkedParticipantResponse,
+    BookingStatus
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -17,6 +18,7 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
+import { Component } from '@angular/core';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -430,7 +432,7 @@ describe('Video hearing service', () => {
     it('should get telephone conference Id for hearing', async () => {
         clientApiSpy.getTelephoneConferenceIdById.and.returnValue(of());
 
-        await service.getTelephoneConferenceId('hearingId');
+        service.getTelephoneConferenceId('hearingId');
         expect(clientApiSpy.getTelephoneConferenceIdById).toHaveBeenCalled();
     });
 
@@ -483,5 +485,78 @@ describe('Video hearing service', () => {
         const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
         expect(model[0].linkType).toEqual(linkedParticipant.type);
         expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
+    });
+
+    describe('isConferenceClosed', () => {
+        it('should return false if booking status booked and telephone conference Id is empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Booked;
+            model.telephone_conference_id = '';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return false if booking status created and telephone conference Id is not empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Created;
+            model.telephone_conference_id = '1111';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return false if booking status booked and telephone conference Id is not empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Booked;
+            model.telephone_conference_id = '1111';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(false);
+        });
+        it('should return true if booking status created and telephone conference Id is empty', () => {
+            const model = new HearingModel();
+            model.status = BookingStatus.Created;
+            model.telephone_conference_id = '';
+            service.updateHearingRequest(model);
+            expect(service.isConferenceClosed()).toBe(true);
+        });
+    });
+
+    describe('isHearingAboutToStart', () => {
+        const aboutToStartMinutesThreshold = 30;
+        let model: HearingModel;
+        beforeEach(() => {
+            model = new HearingModel();
+            model.scheduled_date_time = new Date();
+            model.status = BookingStatus.Created;
+        });
+
+        it('should return false if hearing is not about to start', () => {
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold + 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return false if hearing is not about to start & is not confirmed', () => {
+            model.isConfirmed = false;
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return true if hearing is not about to start & is confirmed', () => {
+            model.isConfirmed = true;
+            model.scheduled_date_time.setMinutes(model.scheduled_date_time.getMinutes() + aboutToStartMinutesThreshold - 5);
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(true);
+        });
+
+        it('should return false if there is no scheduled_date_time', () => {
+            model.scheduled_date_time = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
+
+        it('should return false if there is no status', () => {
+            model.status = null;
+            service.updateHearingRequest(model);
+            expect(service.isHearingAboutToStart()).toBe(false);
+        });
     });
 });

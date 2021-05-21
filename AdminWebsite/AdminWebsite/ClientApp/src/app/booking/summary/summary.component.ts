@@ -56,6 +56,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDetailsResponseMulti: HearingDetailsResponse;
     multiDays: boolean;
     endHearingDate: Date;
+    interpreterPresent: boolean;
+
+    groupedHearingDates = {};
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -82,6 +85,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
+        this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
+        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
+        this.retrieveHearingSummary();
+
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
@@ -164,7 +171,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     isLastParticipanRemoved() {
         const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
         if (!filteredParticipants || filteredParticipants.length === 0) {
-            // the last participant was removed, go to 'add participant' screen
             this.router.navigate([PageUrls.AddParticipants]);
         }
     }
@@ -245,13 +251,22 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         caseName: this.hearing.cases[0].name,
                         caseNumber: this.hearing.cases[0].number
                     });
-                    await this.hearingService.cloneMultiHearings(
-                        hearingDetailsResponse.id,
-                        new MultiHearingRequest({
-                            start_date: new Date(this.hearing.scheduled_date_time),
-                            end_date: new Date(this.hearing.end_hearing_date_time)
-                        })
-                    );
+                    if (this.hearing.hearing_dates?.length) {
+                        await this.hearingService.cloneMultiHearings(
+                            hearingDetailsResponse.id,
+                            new MultiHearingRequest({
+                                hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                            })
+                        );
+                    } else {
+                        await this.hearingService.cloneMultiHearings(
+                            hearingDetailsResponse.id,
+                            new MultiHearingRequest({
+                                start_date: new Date(this.hearing.scheduled_date_time),
+                                end_date: new Date(this.hearing.end_hearing_date_time)
+                            })
+                        );
+                    }
                 }
 
                 sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);

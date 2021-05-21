@@ -4,6 +4,7 @@
   </div>
   <div class="govuk-grid-column-one-half">
     <a
+      *ngIf="canEdit"
       [routerLink]="[editLink]"
       class="vhlink remove-header-padding"
       href="javascript:void(0)"

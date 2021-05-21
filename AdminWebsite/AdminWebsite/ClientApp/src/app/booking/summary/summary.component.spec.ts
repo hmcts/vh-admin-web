@@ -89,10 +89,15 @@ function initBadHearingRequest(): HearingModel {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 const stringifier = new PipeStringifierService();
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
+recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+    'switchOffRecording',
+    'mandatoryRecordingForHearingRole'
+]);
 
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
     'getHearingTypes',
@@ -124,7 +129,8 @@ describe('SummaryComponent with valid request', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
                 ],
                 declarations: [
                     SummaryComponent,
@@ -292,7 +298,7 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         component.hearing.multiDays = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         fixture.detectChanges();
 
         await component.bookHearing();
@@ -378,7 +384,8 @@ describe('SummaryComponent  with existing request', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -541,11 +548,13 @@ describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
-    let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
     let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
-    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording']);
+    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
+        'switchOffRecording',
+        'mandatoryRecordingForHearingRole'
+    ]);
     existingRequest = initExistingHearingRequest();
     existingRequest.multiDays = true;
     existingRequest.hearing_id = '12345ty';
@@ -562,10 +571,7 @@ describe('SummaryComponent  with multi days request', () => {
         recordingGuardServiceSpy,
         participantServiceSpy
     );
-    component.participantsListComponent = new ParticipantListComponent(
-        jasmine.createSpyObj<Router>(['navigate']),
-        loggerSpy
-    );
+    component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
     component.removeInterpreterPopupComponent.isLastParticipant = false;
     component.removePopupComponent = new RemovePopupComponent();
@@ -574,12 +580,12 @@ describe('SummaryComponent  with multi days request', () => {
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
 
         component.ngOnInit();
 
-        expect(new Date(component.hearingDate).getDay()).toEqual(new Date(existingRequest.scheduled_date_time).getDay());
-        expect(new Date(component.endHearingDate).getDay()).toEqual(new Date(existingRequest.end_hearing_date_time).getDay());
+        expect(new Date(component.hearingDate).getDate()).toEqual(new Date(existingRequest.scheduled_date_time).getDate());
+        expect(new Date(component.endHearingDate).getDate()).toEqual(new Date(existingRequest.end_hearing_date_time).getDate());
 
         expect(new Date(component.hearingDate).getMonth()).toEqual(new Date(existingRequest.scheduled_date_time).getMonth());
         expect(new Date(component.endHearingDate).getMonth()).toEqual(new Date(existingRequest.end_hearing_date_time).getMonth());

@@ -3396,6 +3396,8 @@ export interface IBookNewHearingRequest {
 export class MultiHearingRequest implements IMultiHearingRequest {
     start_date?: Date;
     end_date?: Date;
+    hearing_dates?: Date[] | undefined;
+    is_individual_dates?: boolean;
 
     constructor(data?: IMultiHearingRequest) {
         if (data) {
@@ -3409,6 +3411,11 @@ export class MultiHearingRequest implements IMultiHearingRequest {
         if (_data) {
             this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
             this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
+            if (Array.isArray(_data['hearing_dates'])) {
+                this.hearing_dates = [] as any;
+                for (let item of _data['hearing_dates']) this.hearing_dates!.push(new Date(item));
+            }
+            this.is_individual_dates = _data['is_individual_dates'];
         }
     }
 
@@ -3423,6 +3430,11 @@ export class MultiHearingRequest implements IMultiHearingRequest {
         data = typeof data === 'object' ? data : {};
         data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
         data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
+        if (Array.isArray(this.hearing_dates)) {
+            data['hearing_dates'] = [];
+            for (let item of this.hearing_dates) data['hearing_dates'].push(item.toISOString());
+        }
+        data['is_individual_dates'] = this.is_individual_dates;
         return data;
     }
 }
@@ -3430,6 +3442,8 @@ export class MultiHearingRequest implements IMultiHearingRequest {
 export interface IMultiHearingRequest {
     start_date?: Date;
     end_date?: Date;
+    hearing_dates?: Date[] | undefined;
+    is_individual_dates?: boolean;
 }
 
 export class BookHearingRequest implements IBookHearingRequest {

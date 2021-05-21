@@ -20,14 +20,22 @@
 
     <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
+      <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
+
       <div id="hearingDate" *ngIf="!multiDays; else multiDaysHearing">
         {{ hearingDate | appLongDatetime }}
       </div>
       <ng-template #multiDaysHearing>
-        <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }}<span *ngIf="multiDays"> -</span></div>
-        <div id="hearingEndDateTime">{{ endHearingDate | date: 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date: 'h:mma' | lowercase }}</div>
+        <ng-container *ngIf="hearing.hearing_dates.length; else dateRange">
+          {{ hearing.hearing_dates[0] | date: 'h:mma' | lowercase }}
+          <app-multi-day-hearing-schedule [hearingDates]="hearing.hearing_dates"></app-multi-day-hearing-schedule>
+        </ng-container>
+        <ng-template #dateRange>
+          <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }} -</div>
+          <div id="hearingEndDateTime">{{ endHearingDate | date: 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date: 'h:mma' | lowercase }}</div>
+        </ng-template>
       </ng-template>
-      <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
+
       <div *ngIf="!multiDays" id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
@@ -106,7 +114,7 @@
   </div>
 
   <div class="govuk-grid-column-one-half">
-    <app-participant-list [hearing]="hearing"></app-participant-list>
+    <app-participant-list [hearing]="hearing" [isSummaryPage]="true" [canEdit]="true"></app-participant-list>
   </div>
 </div>
 
