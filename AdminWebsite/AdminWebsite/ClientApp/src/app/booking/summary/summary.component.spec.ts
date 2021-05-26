@@ -308,6 +308,41 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
     });
+
+    it('should save new booking with multi hearings - sinlge date', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+        component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+    });
+
+    it('should save new booking with multi hearings - mutli date', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+
+        const hearingDate = new Date(component.hearing.scheduled_date_time);
+        const hearingDatePlusOne = (new Date(hearingDate));
+        hearingDatePlusOne.setDate(hearingDatePlusOne.getDate() + 1);
+        component.hearing.hearing_dates = [hearingDate, hearingDatePlusOne];
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
 });
 
 describe('SummaryComponent  with invalid request', () => {
