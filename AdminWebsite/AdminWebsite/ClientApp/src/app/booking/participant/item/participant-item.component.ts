@@ -29,7 +29,7 @@ export class ParticipantItemComponent {
         private logger: Logger,
         private router: Router,
         private videoHearingsService: VideoHearingsService
-        ) {}
+    ) {}
 
     getJudgeUser(participant: ParticipantModel): string {
         return participant.username;

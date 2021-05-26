@@ -16,7 +16,7 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
-fdescribe('ParticipantItemComponent', () => {
+describe('ParticipantItemComponent', () => {
     let component: ParticipantItemComponent;
     let fixture: ComponentFixture<ParticipantItemComponent>;
     let debugElement: DebugElement;
@@ -134,7 +134,7 @@ fdescribe('ParticipantItemComponent', () => {
     it('should not be able to edit judge if canEdit is false', () => {
         component.canEdit = false;
         expect(component.canEditJudge()).toBe(false);
-    }); 
+    });
     it('should not be able to edit judge if canEdit is true and hearing is closed', () => {
         component.canEdit = true;
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
