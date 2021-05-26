@@ -331,7 +331,7 @@ describe('SummaryComponent with valid request', () => {
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
 
         const hearingDate = new Date(component.hearing.scheduled_date_time);
-        const hearingDatePlusOne = (new Date(hearingDate));
+        const hearingDatePlusOne = new Date(hearingDate);
         hearingDatePlusOne.setDate(hearingDatePlusOne.getDate() + 1);
         component.hearing.hearing_dates = [hearingDate, hearingDatePlusOne];
         fixture.detectChanges();
