@@ -20,7 +20,7 @@
       <div class="judge-row__phone" id="judge-phone">{{ getJudgePhone(participant) }}</div>
     </div>
 
-    <div *ngIf="isSummaryPage" class="judge-row__actions">
+    <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
       <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
     </div>
   </div>

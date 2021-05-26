@@ -6,6 +6,7 @@ import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { OtherInformationModel } from '../../../common/model/other-information.model';
 import { HearingModel } from '../../../common/model/hearing.model';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 
 @Component({
     selector: 'app-participant-item',
@@ -23,7 +24,12 @@ export class ParticipantItemComponent {
     @Output() edit = new EventEmitter<ParticipantModel>();
     @Output() remove = new EventEmitter<ParticipantModel>();
 
-    constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
+    constructor(
+        private bookingService: BookingService,
+        private logger: Logger,
+        private router: Router,
+        private videoHearingsService: VideoHearingsService
+        ) {}
 
     getJudgeUser(participant: ParticipantModel): string {
         return participant.username;
@@ -86,5 +92,15 @@ export class ParticipantItemComponent {
 
     get isInterpretee() {
         return this.participant.is_interpretee;
+    }
+
+    canEditJudge(): boolean {
+        if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
+            return false;
+        }
+        if (this.videoHearingsService.isHearingAboutToStart()) {
+            return false;
+        }
+        return true;
     }
 }
