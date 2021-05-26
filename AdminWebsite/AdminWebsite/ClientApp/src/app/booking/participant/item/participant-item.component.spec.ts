@@ -16,7 +16,7 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
-fdescribe('ParticipantItemComponent', () => {
+describe('ParticipantItemComponent', () => {
     let component: ParticipantItemComponent;
     let fixture: ComponentFixture<ParticipantItemComponent>;
     let debugElement: DebugElement;
