@@ -132,7 +132,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
        [Test]
-        public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type()
+        public async Task should_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
             await _service.SendHearingConfirmationEmail(_hearing);
