@@ -114,8 +114,8 @@
           <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date </span>
         </div>
 
-        <div *ngIf="addHearingDateControl.errors?.weekend" class="alert alert-danger">
-          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a day from Monday to Friday </span>
+        <div *ngIf="addHearingDateControl.errors?.weekend || addHearingDateControl.errors?.publicHoliday" class="alert alert-danger">
+          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a working day </span>
         </div>
 
         <div *ngIf="addHearingDateControl.errors?.pastdate" class="alert alert-danger">

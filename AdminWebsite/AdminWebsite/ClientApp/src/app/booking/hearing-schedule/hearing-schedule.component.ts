@@ -167,7 +167,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     addHearingDate() {
-        this.addHearingDateControl = new FormControl(null, [Validators.required, weekendValidator(), pastDateValidator()]);
+        this.addHearingDateControl = new FormControl(null, [
+            Validators.required,
+            weekendValidator(),
+            pastDateValidator(),
+            notPublicHolidayDateValidator(this.publicHolidays)
+        ]);
     }
 
     hearingDateChanged(event: any) {
