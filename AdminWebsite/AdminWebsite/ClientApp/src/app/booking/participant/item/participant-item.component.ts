@@ -95,7 +95,7 @@ export class ParticipantItemComponent {
     }
 
     canEditJudge(): boolean {
-        if ((!this.canEdit || this.videoHearingsService.isConferenceClosed()) && this.videoHearingsService.isHearingAboutToStart()) {
+        if (!this.canEdit || this.videoHearingsService.isConferenceClosed() || this.videoHearingsService.isHearingAboutToStart()) {
             return false;
         }
         return true;
