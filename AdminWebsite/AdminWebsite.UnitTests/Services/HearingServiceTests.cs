@@ -37,8 +37,9 @@ namespace AdminWebsite.UnitTests.Services
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Guid _validId;
         private EditHearingRequest _addNewParticipantRequest;
+        List<CaseResponse> _cases;
 
-        [SetUp]
+       [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
@@ -66,7 +67,7 @@ namespace AdminWebsite.UnitTests.Services
             _hearing = InitHearing();
             _validId = Guid.NewGuid();
 
-            var cases = new List<CaseResponse> {new CaseResponse {Name = "Case", Number = "123"}};
+            _cases = new List<CaseResponse> {new CaseResponse {Name = "Case", Number = "123"}};
 
             _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
@@ -83,7 +84,7 @@ namespace AdminWebsite.UnitTests.Services
                             Username = "old@hmcts.net"
                         }
                     },
-                Cases = cases,
+                Cases = _cases,
                 CaseTypeName = "Unit Test",
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 Endpoints = new List<EndpointResponse>
@@ -130,14 +131,14 @@ namespace AdminWebsite.UnitTests.Services
                     Times.Exactly(3));
         }
 
-        [Test]
-        public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type()
+       [Test]
+        public async Task should_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(3));
         }
 
         [Test]

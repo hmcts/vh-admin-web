@@ -208,6 +208,38 @@ namespace AdminWebsite.Mappers
             };
         }
 
+        public static AddNotificationRequest MapToDemoOrTestNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant, string caseNumber, string testType)
+        {
+            var parameters = new Dictionary<string, string>();
+            NotificationType notificationType = default;
+            if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
+            {
+                notificationType = NotificationType.EJudJohDemoOrTest;
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if(!hearing.IsParticipantAJudicialOfficeHolderOrJudge(participant.Id))
+            {
+                notificationType = NotificationType.ParticipantDemoOrTest;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            }
+            parameters.Add("case number", caseNumber);
+            parameters.Add("test type", testType);
+            parameters.Add("date", hearing.ScheduledDateTime.ToEmailDateGbLocale());
+            parameters.Add("time", hearing.ScheduledDateTime.ToEmailTimeGbLocale());
+            parameters.Add("username", participant.Username.ToLower());
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
