@@ -233,11 +233,17 @@ namespace AdminWebsite.Mappers
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
-                notificationType = hearing.IsJudgeEmailEJud()
-                    ? NotificationType.EJudJudgeDemoOrTest
-                    : NotificationType.JudgeDemoOrTest;
+                if (hearing.IsJudgeEmailEJud())
+                {
+                    notificationType = NotificationType.EJudJudgeDemoOrTest;
+                }
+                else
+                {
+                    notificationType = NotificationType.JudgeDemoOrTest;
+                    parameters.Add("courtroom account username", participant.Username);
+                }
+
                 parameters.Add("judge", participant.DisplayName);
-                parameters.Add("courtroom account username", participant.Username);
                 parameters.Remove("username");
             }
 
