@@ -138,7 +138,18 @@ namespace AdminWebsite.UnitTests.Services
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(3));
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+        }
+
+        [Test]
+        public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type_and_automated_test()
+        {
+            _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Automated Test";
+            await _service.SendHearingConfirmationEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
         }
 
         [Test]

@@ -299,7 +299,6 @@ namespace AdminWebsite.Services
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
-               .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                .Select(participant =>
                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.CaseTypeName))
                .ToList();
