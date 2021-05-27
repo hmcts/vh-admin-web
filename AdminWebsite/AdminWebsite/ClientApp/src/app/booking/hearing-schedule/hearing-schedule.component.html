@@ -94,33 +94,37 @@
         </div>
       </div>
 
-      <div *ngIf="addHearingDateControl"
-           class="govuk-form-group multi-date-selection__input"
-           [class.govuk-form-group--error]="!isAddHearingControlValid()">
-          <input id="hearingDate"
-                 class="govuk-input govuk-!-width-one-quarter"
-                 type="date"
-                 [formControl]="addHearingDateControl"
-                 placeholder="e.g. 30/02/2018"
-                 min="{{ today | date: 'yyyy-MM-dd' }}"
-                 (blur)="resetPastTimeOnBlur()"
-                 (change)="hearingDateChanged($event)" />
+      <div
+        *ngIf="addHearingDateControl"
+        class="govuk-form-group multi-date-selection__input"
+        [class.govuk-form-group--error]="!isAddHearingControlValid()"
+      >
+        <input
+          id="hearingDate"
+          class="govuk-input govuk-!-width-one-quarter"
+          type="date"
+          [formControl]="addHearingDateControl"
+          placeholder="e.g. 30/02/2018"
+          min="{{ today | date: 'yyyy-MM-dd' }}"
+          (blur)="resetPastTimeOnBlur()"
+          (change)="hearingDateChanged($event)"
+        />
 
-          <div *ngIf="addHearingDateControl.errors?.required" class="alert alert-danger">
-              <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date </span>
-          </div>
+        <div *ngIf="addHearingDateControl.errors?.required" class="alert alert-danger">
+          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date </span>
+        </div>
 
-          <div *ngIf="addHearingDateControl.errors?.weekend || addHearingDateControl.errors?.publicHoliday" class="alert alert-danger">
-              <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a working day </span>
-          </div>
+        <div *ngIf="addHearingDateControl.errors?.weekend || addHearingDateControl.errors?.publicHoliday" class="alert alert-danger">
+          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a working day </span>
+        </div>
 
-          <div *ngIf="addHearingDateControl.errors?.pastdate" class="alert alert-danger">
-              <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date in the future </span>
-          </div>
+        <div *ngIf="addHearingDateControl.errors?.pastdate" class="alert alert-danger">
+          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date in the future </span>
+        </div>
 
-          <div *ngIf="isDateAlreadySelected()" class="alert alert-danger">
-              <span id="hearingDateWeekend-error" class="govuk-error-message"> Date already selected </span>
-          </div>
+        <div *ngIf="isDateAlreadySelected()" class="alert alert-danger">
+          <span id="hearingDateWeekend-error" class="govuk-error-message"> Date already selected </span>
+        </div>
       </div>
 
       <div *ngIf="!addHearingDateControl" class="multi-date-selection__add-button">
