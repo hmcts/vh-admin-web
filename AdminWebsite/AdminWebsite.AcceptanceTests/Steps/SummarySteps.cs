@@ -119,9 +119,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user edits an Interpreter")]
         public void WhenTheUserEditsAnInterpreter()
         { 
+            //var user = GetParticipantBy("Interpreter");
+            //_browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
+            //_addParticipantSteps.EditAnInterpreter(user.AlternativeEmail,false);
+
+
             var user = GetParticipantBy("Interpreter");
+
+            var elements = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(AddParticipantsPage.ParticipantsList);
+            var elementsLinks = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(AddParticipantsPage.ParticipantsRowActionsList);
+            var list = elementsLinks.Select(element => element.Text.Trim().Replace("\r\n", " ")).ToList();
+
+            if (elements.Count() == elementsLinks.Count())  
+            {
+                int index = elements.ToList().FindIndex(element => element.Text.Trim().Replace("\r\n", " ").Contains(user.DisplayName));
+                var inQ = elements[index].Text;
+
+                elementsLinks[index].Click();
+            }
+
             _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
-            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail,false);
+            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail, false);
         }
 
         [When(@"the user edits a saved Interpreter")]
