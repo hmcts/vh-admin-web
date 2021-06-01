@@ -33,6 +33,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"selects a booking by case name (.*)")]
         public void SelectsBookingByCaseName(string caseName)
         {
+            NUnit.Framework.TestContext.WriteLine($"Searching for '{caseName}' to select...");
+
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Row(caseName));
 
             for (var i = 0; i < RETRIES; i++)
