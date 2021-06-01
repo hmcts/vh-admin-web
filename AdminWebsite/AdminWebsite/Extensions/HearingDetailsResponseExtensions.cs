@@ -93,6 +93,19 @@ namespace AdminWebsite.Extensions
             return IsEmailEjud(joh?.ContactEmail);
         }
 
+        public static bool IsParticipantAJudicialOfficeHolderOrJudge(this HearingDetailsResponse hearing,
+            Guid participantId)
+        {
+            var joh = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
+                                                                 x.UserRoleName.Contains("Judicial Office Holder",
+                                                                     StringComparison.CurrentCultureIgnoreCase));
+            var judge = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
+                                                                   x.UserRoleName.Contains("Judge",
+                                                                       StringComparison.CurrentCultureIgnoreCase));
+            var result = joh != null || judge != null;
+            return result;
+        }
+
         private static bool IsEmailEjud(string email)
         {
             return !string.IsNullOrEmpty(email)  && email.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);

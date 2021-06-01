@@ -203,11 +203,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user confirms all the hearings")]
         public void WhenTheUserConfirmsAllTheBookings()
         {
+            string caseName = "";
             foreach (var hearing in GetHearings())
             {
+                caseName = hearing.Cases.First().Name;
                 _browsers[_c.CurrentUser].Click(CommonAdminWebPage.BookingsListLink);
-                _bookingsListSteps.SelectsBookingByCaseName(hearing.Cases.First().Name);
+
+                _bookingsListSteps.SelectsBookingByCaseName(caseName);
+
+                NUnit.Framework.TestContext.WriteLine($"Confirming the hearing for '{caseName}'...");
                 WhenTheUserConfirmsTheBooking();
+
+                NUnit.Framework.TestContext.WriteLine($"Hearing confirmed for '{caseName}'.");
             }
         }
         
@@ -367,6 +374,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 throw new DataException($"No hearings were found containing case name '{_c.Test.HearingDetails.CaseName}'");
             }
 
+            for (int i = 0; i < hearings.Count(); i++)
+            {
+                NUnit.Framework.TestContext.WriteLine($"Found the hearing for '{hearings[i].Cases.First().Name}'.");
+            }
+
             return hearings;
         }
 
@@ -379,11 +391,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var hearing = GetHearing(hearingId);
                 if (hearing.Status.Equals(expectedStatus))
                 {
+                    NUnit.Framework.TestContext.WriteLine($"Hearing '{hearing.Cases.First().Name}' is confirmed to have status '{expectedStatus}'.");
                     return true;
                 }
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
 
+            NUnit.Framework.TestContext.WriteLine($"Unable to confirm the hearing status as '{expectedStatus}' after retrying for '{POLL_FOR_HEARING_STATUS_TIMEOUT}' seconds.");
             return false;
         }
 
