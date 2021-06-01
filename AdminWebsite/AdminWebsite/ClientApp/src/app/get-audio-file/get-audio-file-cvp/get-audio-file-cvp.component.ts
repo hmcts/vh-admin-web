@@ -12,6 +12,7 @@ export class GetAudioFileCvpComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileCvp] -';
     cvpAudioFileForm: FormGroup;
     today = new Date();
+    loadingData: boolean;
 
     searchResult: ICvpAudioRecordingResult = null;
     get cvpResults(): CvpAudioSearchModel[] {
@@ -64,6 +65,7 @@ export class GetAudioFileCvpComponent implements OnInit {
     }
 
     async search() {
+        this.loadingData = true;
         if (this.searchResult) {
             this.searchResult = null;
         }
@@ -89,5 +91,6 @@ export class GetAudioFileCvpComponent implements OnInit {
                 );
             }
         }
+        this.loadingData = false;
     }
 }

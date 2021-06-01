@@ -43,6 +43,13 @@
   </div>
 </form>
 
+<div class="govuk-body" *ngIf="loadingData">
+  <div class="vh-loader-small-container">
+    <div class="vh-loader"></div>
+    <label class="loader-label"> Please wait. Retrieving CVP audio files can take a moment </label>
+  </div>
+</div>
+
 <div class="govuk-body" *ngIf="searchResult && !searchResult.error">
   <app-cvp-audio-file-search-result [results]="cvpResults"></app-cvp-audio-file-search-result>
 </div>
