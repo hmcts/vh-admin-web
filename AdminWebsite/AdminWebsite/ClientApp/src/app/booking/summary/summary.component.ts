@@ -377,4 +377,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookingService.removeParticipantEmail();
         this.isLastParticipanRemoved();
     }
+
+    get canEdit() {
+        return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
+    }
 }
