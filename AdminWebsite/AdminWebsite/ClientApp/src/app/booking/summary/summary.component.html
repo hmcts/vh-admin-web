@@ -58,7 +58,7 @@
             <div class="govuk-grid-column-one-half" id="displayName{{ +i }}">
               {{ endpoint.displayName }}
             </div>
-            <div class="govuk-grid-column-one-half">
+            <div *ngIf="canEdit" class="govuk-grid-column-one-half">
               <a class="vhlink" href="javascript:void(0)" [attr.id]="'remove-link' + i" (click)="removeEndpoint(i)">Remove</a>
             </div>
           </div>
