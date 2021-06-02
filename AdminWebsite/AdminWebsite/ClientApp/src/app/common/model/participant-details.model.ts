@@ -21,8 +21,8 @@ export class ParticipantDetailsModel {
         isInterpretee: boolean
     ) {
         this.ParticipantId = participantId;
-        this.FirstName = firstName;
-        this.LastName = lastName;
+        this.FirstName = firstName === null ? '' : firstName;
+        this.LastName = lastName === null ? '' : lastName;
         this.Title = title === null ? '' : title;
         this.UserRoleName = role;
         this.UserName = userName;
