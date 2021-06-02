@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.6, )",
-        "resolved": "1.25.6",
-        "contentHash": "QOFdRtslXSn2/Qi0e0qxiZfFX7eI4PW0c5CUQ4BsDL9D2xlTW0fRFKGqOTLqejf0XlmfDMA/fbSrKfppC1Ki6w==",
+        "requested": "[1.25.8, )",
+        "resolved": "1.25.8",
+        "contentHash": "QwHQtoFZlHoVk2K5KfS87Nktest+1wYiNC4ZYJBAfk5y7f58QMGJ+DJWeyB5cBHWER0zwBjygFXHSn1yH5ZYXA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -14,11 +14,11 @@
       },
       "GovukNotify": {
         "type": "Direct",
-        "requested": "[4.0.0, )",
-        "resolved": "4.0.0",
-        "contentHash": "b53ojVaWEgy6jvEUWrUZKmPUWtHg/gKokPfmFMSWOBYoxGFls7CTsjIueFGiFX4JF2oCi+zjLzIo1odfxvOByA==",
+        "requested": "[4.0.1, )",
+        "resolved": "4.0.1",
+        "contentHash": "aRG2BEC4DgGDzpv1Mb0Lg/eViWYkaZpHqOOneerOZrj00AE26D7CalWYAY9pZU3KcTrmLuLy9C8gmBU5wfqcgQ==",
         "dependencies": {
-          "JWT": "[7.0.0, 8.0.0)",
+          "JWT": "[7.1.0, 8.0.0)",
           "Newtonsoft.Json": "10.0.3",
           "System.Collections.Specialized": "4.3.0",
           "System.Reflection": "4.3.0",
@@ -27,9 +27,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.12, )",
-        "resolved": "1.25.12",
-        "contentHash": "k7T20Ecyau52fhVKmo15OaFQnwPUJgTOxIQPwi0KwkN00NxwRF32KxpWTeHvwAwZESESpeaA7Vkp3jd9SitdYA==",
+        "requested": "[1.25.16, )",
+        "resolved": "1.25.16",
+        "contentHash": "eKSvSqmBRaDWsWp/sQ/F9IXvsmSdJxej5/t6TyHWIXapv2mhm6UTTHam9/vJv8nKYOe0FxokjtYZ9kCMSjfZJg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -50,9 +50,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.30, )",
-        "resolved": "1.21.30",
-        "contentHash": "QUWtqdnasRSEkQYrXUv5bDU2D1Ih/a3E6IqWa+p/fGkGE9k1+XL7pGNVLjkDWhzI4YcAP2F1mAASoS/Jod4ENg==",
+        "requested": "[1.21.34, )",
+        "resolved": "1.21.34",
+        "contentHash": "pk7IubjMR58OIBZOB2d4ve6xbT+ISui5dGadYQPa7uJU+xPx8o1sIs21KguqKk3YTKJuyG1sugFOOjDoncjOPA==",
         "dependencies": {
           "Appium.WebDriver": "4.3.1",
           "Azure.Storage.Blobs": "12.8.0",
@@ -81,7 +81,7 @@
           "Selenium.Firefox.WebDriver": "0.27.0",
           "Selenium.Support": "3.141.0",
           "Selenium.WebDriver": "3.141.0",
-          "Selenium.WebDriver.ChromeDriver": "89.0.4389.2300",
+          "Selenium.WebDriver.ChromeDriver": "91.0.4472.1900",
           "Selenium.WebDriver.IEDriver": "3.150.1.2",
           "Selenium.WebDriver.MicrosoftDriver": "17.17134.0",
           "SpecFlow": "3.6.23",
@@ -1507,8 +1507,8 @@
       },
       "Selenium.WebDriver.ChromeDriver": {
         "type": "Transitive",
-        "resolved": "89.0.4389.2300",
-        "contentHash": "/lnt6U3hogvJtFBP9l9Vm3F7zVBTClCANeVzcyWwyUf/uW686KEgGU+9x6sebstjd02qrmvcP42MKHTID1tq/A=="
+        "resolved": "91.0.4472.1900",
+        "contentHash": "H8N5+WEr6o1pEcQpq8pODJwjMeWqxU3zvMZZLBTPjMBI+rJ51OPDeWHCdOLniXo4YrawrnvkHC7luwfMp64UpA=="
       },
       "Selenium.WebDriver.IEDriver": {
         "type": "Transitive",
