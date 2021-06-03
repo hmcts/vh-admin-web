@@ -278,10 +278,10 @@ stages:
             value: tenantid
             secret: true
           - name: AzureAd:ClientId
-            value: vh-video-web-appid-v2
+            value: vh-admin-web-appid-v2
             secret: true
           - name: AzureAd:ClientSecret
-            value: vh-video-web-key-v2
+            value: vh-admin-web-key-v2
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot: true
