@@ -107,7 +107,9 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'cancelRequest',
     'updateHearing',
     'setBookingHasChanged',
-    'cloneMultiHearings'
+    'cloneMultiHearings',
+    'isConferenceClosed',
+    'isHearingAboutToStart'
 ]);
 
 describe('SummaryComponent with valid request', () => {
@@ -342,6 +344,30 @@ describe('SummaryComponent with valid request', () => {
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
+  
+    it('should be able to edit when conference is not about to start and is open', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        expect(component.canEdit).toBe(true);
+    });
+  
+    it('should not be able to edit when conference is about to start and is open', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        expect(component.canEdit).toBe(false);
+    });
+  
+    it('should not able to edit when conference is not about to start and is closed', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEdit).toBe(false);
+    });
+  
+    it('should not able to edit when conference is about to start and is closed', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEdit).toBe(false);
     });
 });
 
