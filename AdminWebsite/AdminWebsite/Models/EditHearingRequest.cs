@@ -44,6 +44,8 @@ namespace AdminWebsite.Models
         /// </summary>
         public List<EditParticipantRequest> Participants { get; set; }
 
+        public List<EditTelephoneParticipantRequest> TelephoneParticipants { get; set; }
+
         /// <summary>
         ///     Any other information about the hearing
         /// </summary>

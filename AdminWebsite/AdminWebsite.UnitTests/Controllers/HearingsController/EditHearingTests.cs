@@ -121,7 +121,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName"
                     }
-                }
+                }, 
             };
 
             var cases = new List<CaseResponse>
@@ -1451,6 +1451,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             }
                         }
                     }
+                },
+                TelephoneParticipants = new List<EditTelephoneParticipantRequest>
+                {
+
                 },
                 OtherInformation = ""
             };
