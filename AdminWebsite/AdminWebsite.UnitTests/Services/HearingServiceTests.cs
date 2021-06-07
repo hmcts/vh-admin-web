@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
@@ -128,7 +129,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
-                    Times.Exactly(3));
+                    Times.Exactly(4));
         }
 
        [Test]
@@ -240,13 +241,15 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            
+            var expectedTimes = _hearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge") +
+                                _hearing.TelephoneParticipants.Count(p => p.HearingRoleName != "Judge");
+          
             await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
-            
+        
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
-                    Times.Exactly(_hearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge")));
+                    Times.Exactly(expectedTimes));
         }
 
         [Test]
@@ -272,6 +275,54 @@ namespace AdminWebsite.UnitTests.Services
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Exactly(3));
+        }
+
+        [TestCase("Judicial Office Holder")]
+        [TestCase("Litigant In Person")]
+        [TestCase("Representatives")]
+        public async Task Should_send_confirmation_emails_to_telephone_participants_single_day(string hearingRoleName)
+        {
+            var telephoneParticipant = new TelephoneParticipantResponse
+            {
+                HearingRoleName = hearingRoleName,
+                FirstName = "firstname",
+                LastName = "last Name",
+                ContactEmail = "test@test.com",
+                TelephoneNumber = "123456756"
+            };
+
+            _hearing.TelephoneParticipants.Add(telephoneParticipant);
+
+            await _service.SendHearingConfirmationEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                    .Verify(
+                        x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(n => n.NotificationType == NotificationType.TelephoneHearingConfirmation)),
+                        Times.Exactly(_hearing.TelephoneParticipants.Count(t => t.HearingRoleName != "Judge")));
+        }
+
+        [TestCase("Judicial Office Holder")]
+        [TestCase("Litigant In Person")]
+        [TestCase("Representatives")]
+        public async Task Should_send_confirmation_emails_to_telephone_participants_multi_day(string hearingRoleName)
+        {
+            var telephoneParticipant = new TelephoneParticipantResponse
+            {
+                HearingRoleName = hearingRoleName,
+                FirstName = "firstname",
+                LastName = "last Name",
+                ContactEmail = "test@test.com",
+                TelephoneNumber = "123456756"
+            };
+            
+            _hearing.TelephoneParticipants.Add(telephoneParticipant);
+
+            await _service.SendMultiDayHearingConfirmationEmail(_hearing,4);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(n => n.NotificationType == NotificationType.TelephoneHearingConfirmationMultiDay)),
+                    Times.Exactly(_hearing.TelephoneParticipants.Count(t => t.HearingRoleName != "Judge")));
         }
 
         [Test]
@@ -623,8 +674,13 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
                 .Build();
+            var telephoneParticipant = Builder<TelephoneParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .Build();
+
             return Builder<HearingDetailsResponse>.CreateNew()
                 .With(h => h.Participants = new List<ParticipantResponse> {rep, ind, joh, judge})
+                .With(h => h.TelephoneParticipants = new List<TelephoneParticipantResponse> { telephoneParticipant })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();

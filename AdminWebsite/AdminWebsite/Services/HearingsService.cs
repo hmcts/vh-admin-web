@@ -73,7 +73,7 @@ namespace AdminWebsite.Services
             HearingDetailsResponse hearingDetailsResponse);
 
         Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
-      
+
         Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
 
     }
@@ -260,6 +260,16 @@ namespace AdminWebsite.Services
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
+            if (hearing.TelephoneParticipants != null)
+            {
+                var telephoneRequests = hearing.TelephoneParticipants
+                    .Where(x => !x.HearingRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
+                    .ToList();
+
+                requests.AddRange(telephoneRequests);
+            }
 
             foreach (var request in requests)
             {
@@ -280,6 +290,17 @@ namespace AdminWebsite.Services
                     AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
                         days))
                 .ToList();
+
+            if (hearing.TelephoneParticipants != null)
+            {
+                var telephoneRequests = hearing.TelephoneParticipants
+                .Where(x => !x.HearingRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotificationMultiDay(hearing, participant, days))
+                .ToList();
+
+                requests.AddRange(telephoneRequests);
+            }
 
             foreach (var request in requests)
             {
@@ -320,7 +341,7 @@ namespace AdminWebsite.Services
             {
                 await SendJudgeConfirmationEmail(hearing);
             }
-            
+
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>

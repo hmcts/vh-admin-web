@@ -121,7 +121,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName"
                     }
-                }
+                }, 
             };
 
             var cases = new List<CaseResponse>

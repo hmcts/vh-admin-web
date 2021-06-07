@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.8, )",
-        "resolved": "1.25.8",
-        "contentHash": "QwHQtoFZlHoVk2K5KfS87Nktest+1wYiNC4ZYJBAfk5y7f58QMGJ+DJWeyB5cBHWER0zwBjygFXHSn1yH5ZYXA==",
+        "requested": "[1.25.9, )",
+        "resolved": "1.25.9",
+        "contentHash": "VWl9Cz+HPkYSAz2B0VjPjzS5rZVHBHlPtWVcMusyxCWPNuhDpq3UxgYqoa5PzI246UiLUHCaW/GZnEvuHV2a8Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2857,7 +2857,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.25.6",
+          "BookingsApi.Client": "1.25.9",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "MicroElements.Swashbuckle.FluentValidation": "4.1.0",
@@ -2873,7 +2873,7 @@
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.10.9",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.0",
           "NWebsec.AspNetCore.Middleware": "3.0.0",
-          "NotificationApi.Client": "1.25.12",
+          "NotificationApi.Client": "1.25.16",
           "Polly": "7.2.1",
           "Swashbuckle.AspNetCore": "5.6.3",
           "Swashbuckle.AspNetCore.Annotations": "5.6.3",
