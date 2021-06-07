@@ -58,7 +58,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             //Act
-            var result = AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant, numberOfDays);
+            var result = AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotificationMultiDay(hearing, participant, numberOfDays);
 
             //Assert
             result.Should().NotBeNull();

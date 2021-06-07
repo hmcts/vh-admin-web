@@ -296,7 +296,7 @@ namespace AdminWebsite.Services
                 var telephoneRequests = hearing.TelephoneParticipants
                 .Where(x => !x.HearingRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
-                    AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant, days))
+                    AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotificationMultiDay(hearing, participant, days))
                 .ToList();
 
                 requests.AddRange(telephoneRequests);
