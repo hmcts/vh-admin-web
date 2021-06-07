@@ -211,6 +211,12 @@ p {
   margin-top: 15px;
 }
 
+.vh-loader-small-container {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
 .vh-loader {
   margin-top: 15px;
   transform: translate(-50%, -50%);
@@ -228,6 +234,12 @@ p {
   animation: spin 2s linear infinite;
   z-index: 1001;
   box-shadow: 0px 0px 10px #fff;
+}
+
+.loader-label {
+  display: inline-block;
+  margin-bottom: 0;
+  padding: 15px 0 0 15px;
 }
 
 @keyframes spin {
