@@ -56,6 +56,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetCvpAudioRecordingsAll")]
         [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsALlLinkAsync(string cloudroom, string date, string caseReference)
         {
             _logger.LogInformation($"GetCvpAudioRecordingsALlLinkAsync cloudroom: {cloudroom}, date: {date}, case reference: {caseReference}");
@@ -76,6 +77,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetCvpAudioRecordingsByCloudRoom")]
         [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsByCloudRoomAsync(string cloudroom, string date)
         {
             _logger.LogInformation($"GetCvpAudioRecordingsByCloudRoomAsync cloudroom: {cloudroom}, date: {date}");
@@ -96,6 +98,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetCvpAudioRecordingsByDate")]
         [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsByDateAsync(string date, string caseReference)
         {
             _logger.LogInformation($"GetCvpAudioRecordingsByDateAsync Date: {date}, case reference: {caseReference}");
