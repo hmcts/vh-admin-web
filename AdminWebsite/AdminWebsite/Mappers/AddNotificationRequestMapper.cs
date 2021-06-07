@@ -154,39 +154,25 @@ namespace AdminWebsite.Mappers
             };
         }
 
-        public static AddNotificationRequest MapToTelephoneHearingConfirmationNotification(HearingDetailsResponse hearing,
-            TelephoneParticipantResponse participant)
+        public static AddNotificationRequest MapToTelephoneHearingConfirmationNotification(
+            HearingDetailsResponse hearing,
+            TelephoneParticipantResponse participant, int numberOfDays = 1)
         {
             var parameters = InitConfirmReminderParams(hearing);
-
+            NotificationType notificationType = NotificationType.TelephoneHearingConfirmation;
             parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            if (numberOfDays > 1)
+            {
+                notificationType = NotificationType.TelephoneHearingConfirmationMultiDay;
+                parameters.Add("number of days", $"{numberOfDays}");
+            }
 
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
                 ContactEmail = participant.ContactEmail,
-                NotificationType = NotificationType.TelephoneHearingConfirmation,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
-                Parameters = parameters
-            };
-        }
-
-        public static AddNotificationRequest MapToTelephoneHearingConfirmationNotificationMultiDay(HearingDetailsResponse hearing,
-            TelephoneParticipantResponse participant, int numberOfDays)
-        {
-            var parameters = InitConfirmReminderParams(hearing);
-
-            parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
-            parameters.Add("number of days", $"{numberOfDays}");
-
-            return new AddNotificationRequest
-            {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
-                NotificationType = NotificationType.TelephoneHearingConfirmationMultiDay,
+                NotificationType = notificationType,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters

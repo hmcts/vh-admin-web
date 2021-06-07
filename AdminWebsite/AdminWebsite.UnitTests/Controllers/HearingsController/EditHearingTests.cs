@@ -1452,10 +1452,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         }
                     }
                 },
-                TelephoneParticipants = new List<EditTelephoneParticipantRequest>
-                {
-
-                },
                 OtherInformation = ""
             };
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);

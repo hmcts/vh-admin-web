@@ -58,7 +58,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             //Act
-            var result = AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotificationMultiDay(hearing, participant, numberOfDays);
+            var result = AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant, numberOfDays);
 
             //Assert
             result.Should().NotBeNull();
@@ -70,6 +70,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
+
         [Test]
         public void Should_map_a_lip_to_telephone_hearing_confirmation_single_day_notification()
         {
