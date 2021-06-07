@@ -311,21 +311,59 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
     });
 
+    it('should save new booking with multi hearings - sinlge date', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+        component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+    });
+
+    it('should save new booking with multi hearings - mutli date', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+
+        const hearingDate = new Date(component.hearing.scheduled_date_time);
+        const hearingDatePlusOne = new Date(hearingDate);
+        hearingDatePlusOne.setDate(hearingDatePlusOne.getDate() + 1);
+        component.hearing.hearing_dates = [hearingDate, hearingDatePlusOne];
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
+
     it('should be able to edit when conference is not about to start and is open', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         expect(component.canEdit).toBe(true);
     });
+
     it('should not be able to edit when conference is about to start and is open', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         expect(component.canEdit).toBe(false);
     });
+
     it('should not able to edit when conference is not about to start and is closed', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
         expect(component.canEdit).toBe(false);
     });
+
     it('should not able to edit when conference is about to start and is closed', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);

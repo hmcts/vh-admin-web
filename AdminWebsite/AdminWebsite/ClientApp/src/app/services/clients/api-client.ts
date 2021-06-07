@@ -188,6 +188,12 @@ export class BHClient {
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
+        } else if (status === 504) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Server Error', status, _responseText, _headers);
+                })
+            );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
@@ -275,6 +281,12 @@ export class BHClient {
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
+        } else if (status === 504) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Server Error', status, _responseText, _headers);
+                })
+            );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
@@ -360,6 +372,12 @@ export class BHClient {
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
                     return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 504) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Server Error', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {

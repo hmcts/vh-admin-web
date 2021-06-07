@@ -1,5 +1,5 @@
+import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-search-model';
 import { HearingSearchResultsComponent } from './hearing-search-results.component';
-import { HearingAudioSearchModel } from '../../common/model/hearing-audio-search-model';
 
 describe('HearingSearchResultsComponent', () => {
     let component: HearingSearchResultsComponent;

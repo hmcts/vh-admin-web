@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { HearingAudioSearchModel } from '../../common/model/hearing-audio-search-model';
+import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-search-model';
 
 @Component({
     selector: 'app-hearing-search-results',
