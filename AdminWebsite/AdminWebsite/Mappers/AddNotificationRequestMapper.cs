@@ -154,6 +154,45 @@ namespace AdminWebsite.Mappers
             };
         }
 
+        public static AddNotificationRequest MapToTelephoneHearingConfirmationNotification(HearingDetailsResponse hearing,
+            TelephoneParticipantResponse participant)
+        {
+            var parameters = InitConfirmReminderParams(hearing);
+
+            parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = NotificationType.TelephoneHearingConfirmation,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
+        public static AddNotificationRequest MapToTelephoneHearingConfirmationNotificationMultiDay(HearingDetailsResponse hearing,
+            TelephoneParticipantResponse participant, int numberOfDays)
+        {
+            var parameters = InitConfirmReminderParams(hearing);
+
+            parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+            parameters.Add("number of days", $"{numberOfDays}");
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.ContactEmail,
+                NotificationType = NotificationType.TelephoneHearingConfirmationMultiDay,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.TelephoneNumber,
+                Parameters = parameters
+            };
+        }
+
         public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
             HearingDetailsResponse hearing,
             ParticipantResponse participant, int days)

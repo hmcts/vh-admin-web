@@ -33,13 +33,13 @@ import { UpdateUserPopupComponent } from './popups/update-user-popup/update-user
 import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
 import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-button/get-audio-link-button.component';
 import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
-import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
 import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService';
 import { ConfigService } from './services/config.service';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { of } from 'rxjs';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { HearingSearchResultsComponent } from './get-audio-file/get-audio-file-vh/hearing-search-results/hearing-search-results.component';
 
 describe('app routing', () => {
     let location: Location;

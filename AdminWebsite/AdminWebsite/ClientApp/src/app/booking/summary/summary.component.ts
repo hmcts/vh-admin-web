@@ -245,20 +245,35 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     caseNumber: this.hearing.cases[0].number
                 });
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
+
                 if (this.hearing.multiDays) {
-                    this.logger.info(`${this.loggerPrefix} Hearing is a multi-day. Booking remaining days`, {
+                    this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                         hearingId: hearingDetailsResponse.id,
                         caseName: this.hearing.cases[0].name,
                         caseNumber: this.hearing.cases[0].number
                     });
-                    if (this.hearing.hearing_dates?.length) {
+
+                    const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
+                    const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
+
+                    if (isMultipleIndividualHearingDates) {
+                        this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
+                            hearingId: hearingDetailsResponse.id,
+                            caseName: this.hearing.cases[0].name,
+                            caseNumber: this.hearing.cases[0].number
+                        });
                         await this.hearingService.cloneMultiHearings(
                             hearingDetailsResponse.id,
                             new MultiHearingRequest({
                                 hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
                             })
                         );
-                    } else {
+                    } else if (isHearingDateRange) {
+                        this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
+                            hearingId: hearingDetailsResponse.id,
+                            caseName: this.hearing.cases[0].name,
+                            caseNumber: this.hearing.cases[0].number
+                        });
                         await this.hearingService.cloneMultiHearings(
                             hearingDetailsResponse.id,
                             new MultiHearingRequest({
@@ -266,6 +281,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
                                 end_date: new Date(this.hearing.end_hearing_date_time)
                             })
                         );
+                    } else {
+                        this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
+                            hearingId: hearingDetailsResponse.id,
+                            caseName: this.hearing.cases[0].name,
+                            caseNumber: this.hearing.cases[0].number
+                        });
                     }
                 }
 
@@ -376,5 +397,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();
         this.isLastParticipanRemoved();
+    }
+
+    get canEdit() {
+        return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
     }
 }

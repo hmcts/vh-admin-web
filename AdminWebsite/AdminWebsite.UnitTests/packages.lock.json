@@ -24,9 +24,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.6, )",
-        "resolved": "1.25.6",
-        "contentHash": "QOFdRtslXSn2/Qi0e0qxiZfFX7eI4PW0c5CUQ4BsDL9D2xlTW0fRFKGqOTLqejf0XlmfDMA/fbSrKfppC1Ki6w==",
+        "requested": "[1.25.9, )",
+        "resolved": "1.25.9",
+        "contentHash": "VWl9Cz+HPkYSAz2B0VjPjzS5rZVHBHlPtWVcMusyxCWPNuhDpq3UxgYqoa5PzI246UiLUHCaW/GZnEvuHV2a8Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -110,9 +110,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.23.28, )",
-        "resolved": "1.23.28",
-        "contentHash": "oEQhDOimu2wKJp9pGFsxRsyEeRxG7Q+4VHiaaiC0abFGtOk06Xfhh54VyzrnxI9zlG8yrc/nKSB/S66MKcu4QQ==",
+        "requested": "[1.25.12, )",
+        "resolved": "1.25.12",
+        "contentHash": "qtcYVcTJrtc3HVYZqo2Id3jIlxn/x26w0IgXRIq+rlGpd4N04hGDQkuT7JBRo4H5BmO2wSW7ChPnaDpnDZfZbQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -1106,8 +1106,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "1.25.12",
-        "contentHash": "k7T20Ecyau52fhVKmo15OaFQnwPUJgTOxIQPwi0KwkN00NxwRF32KxpWTeHvwAwZESESpeaA7Vkp3jd9SitdYA==",
+        "resolved": "1.25.16",
+        "contentHash": "eKSvSqmBRaDWsWp/sQ/F9IXvsmSdJxej5/t6TyHWIXapv2mhm6UTTHam9/vJv8nKYOe0FxokjtYZ9kCMSjfZJg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2510,7 +2510,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.25.6",
+          "BookingsApi.Client": "1.25.9",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "MicroElements.Swashbuckle.FluentValidation": "4.1.0",
@@ -2526,7 +2526,7 @@
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.10.9",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.0",
           "NWebsec.AspNetCore.Middleware": "3.0.0",
-          "NotificationApi.Client": "1.25.12",
+          "NotificationApi.Client": "1.25.16",
           "Polly": "7.2.1",
           "Swashbuckle.AspNetCore": "5.6.3",
           "Swashbuckle.AspNetCore.Annotations": "5.6.3",
