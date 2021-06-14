@@ -1,21 +1,13 @@
 <div id="saveFailedPopup" class="vh-popup-overlay">
-  <div class="vh-popup vh-popup-xsmall">
-    <h1 class="govuk-heading-m vh-ml70 vh-mr70">Booking confirmation failed</h1>
-    <h1 class="govuk-heading-m vh-ml70 vh-mr70">Please raise a ServiceNow Incident for this issue</h1>
-
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-full">
-        <p>Hearing Id: {{ hearingId }}</p>
-        <p>Time: {{ errorDateTime }}</p>
-      </div>
-    </div>
-
-    <div class="content">
-      <div class="govuk-grid-row">
-        <div class="vh-top">
-          <button id="btnTryAgain" class="govuk-button vh-mr25" data-module="govuk-button" (click)="ok()" alt="Ok">Ok</button>
+    <div class="vh-popup vh-popup-xsmall">
+        <h1 class="govuk-heading-m vh-ml70 vh-mr70">Booking confirmation failed!</h1>
+        <div class="content">
+            <span id='content-text'>Your booking cannot be confirmed. Please try again later.</span>
+            <div class="govuk-grid-row">
+                <div class="vh-top">
+                    <button id="btnTryAgain" class="govuk-button vh-mr25" data-module="govuk-button" (click)="closePopup()" alt="Close">Close</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>

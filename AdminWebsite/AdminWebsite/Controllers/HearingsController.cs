@@ -72,8 +72,8 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
@@ -124,7 +124,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
             catch (Exception e)
@@ -167,8 +167,8 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpPost("{hearingId}/clone")]
         [SwaggerOperation(OperationId = "CloneHearing")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
@@ -183,7 +183,7 @@ namespace AdminWebsite.Controllers
             }
 
             var cloneHearingRequest = new CloneHearingRequest { Dates = hearingDates };
-            
+
             try
             {
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
@@ -196,7 +196,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "There was a problem cloning the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
@@ -209,10 +209,10 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId,
             [FromBody] EditHearingRequest request)
@@ -243,7 +243,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode != (int) HttpStatusCode.NotFound) throw;
+                if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
                 return NotFound($"No hearing with id found [{hearingId}]");
             }
 
@@ -309,7 +309,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
@@ -350,7 +350,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                
+
                 await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
@@ -363,9 +363,9 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearing</returns>
         [HttpGet("{hearingId}")]
         [SwaggerOperation(OperationId = "GetHearingById")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetHearingById(Guid hearingId)
         {
             try
@@ -375,7 +375,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
@@ -388,8 +388,8 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearing</returns>
         [HttpGet("audiorecording/search")]
         [SwaggerOperation(OperationId = "SearchForAudioRecordedHearings")]
-        [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery] string caseNumber,
             [FromQuery] DateTime? date = null)
         {
@@ -401,7 +401,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException ex)
             {
-                if (ex.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(ex.Response);
+                if (ex.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(ex.Response);
                 throw;
             }
         }
@@ -414,72 +414,117 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
-        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
             UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             var errorMessage =
                 $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+
             try
             {
+
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
-                
+
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
-                
+
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
-                
+
                 _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
-               
+
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
 
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
-                    
-                    var conferenceDetailsResponse =
-                        await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
-                    
+
+                    var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
-                    if (conferenceDetailsResponse.HasValidMeetingRoom()) 
+
+                    if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
                         _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+
                         await _hearingsService.SendHearingReminderEmail(hearing);
+
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,
                             TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                         });
                     }
+                    else
+                    {
+                        await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+
+                        return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                    }
+
                 }
                 catch (VideoApiException ex)
                 {
                     _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+
+                    _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
+                    hearingId);
+
+                    // Set the booking status to failed as the video api failed
+
+                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+
+                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There was an unknown error updating status for hearing {Hearing}", hearingId);
+
+                if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
+                {
+                    // Set the booking status to failed as the video api failed
+                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+
+                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
 
-                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
-                    hearingId);
-                // Set the booking status to failed as the video api failed
-                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                    new UpdateBookingStatusRequest
-                    {
-                        Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                        UpdatedBy = "System",
-                        CancelReason = string.Empty
-                    });
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
-            }
-            catch (BookingsApiException e)
-            {
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound(e.Response);
-                _logger.LogError(e, "There was an unknown error updating status for hearing {Hearing}", hearingId);
-                throw;
+                if (ex is BookingsApiException)
+                {
+                    var e = ex as BookingsApiException;
+
+
+                    if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                    if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
+
+                    return BadRequest(e);
+                }
+
+                return BadRequest(ex.Message);
             }
         }
 
@@ -490,9 +535,9 @@ namespace AdminWebsite.Controllers
         /// <returns> The telephone conference Id</returns>
         [HttpGet("{hearingId}/telephoneConferenceId")]
         [SwaggerOperation(OperationId = "GetTelephoneConferenceIdById")]
-        [ProducesResponseType(typeof(PhoneConferenceResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(PhoneConferenceResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetTelephoneConferenceIdById(Guid hearingId)
         {
             try
@@ -508,8 +553,8 @@ namespace AdminWebsite.Controllers
             }
             catch (VideoApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
@@ -536,7 +581,7 @@ namespace AdminWebsite.Controllers
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.ContactEmail, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User {UserName = adUserId};
+                    user = new User { UserName = adUserId };
                 }
 
                 // username's participant will be set by this point
