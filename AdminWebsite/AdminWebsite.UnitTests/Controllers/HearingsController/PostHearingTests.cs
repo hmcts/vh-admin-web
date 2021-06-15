@@ -257,7 +257,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_update_user_details_for_panel_member()
+        public async Task Should_update_user_details_for_panel_member()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
@@ -275,11 +275,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);            
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);            
         }
 
         [Test]
-        public async Task Should_not_update_user_details_for_winger()
+        public async Task Should_update_user_details_for_winger()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
@@ -297,7 +297,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
         }
 
         [Test]
