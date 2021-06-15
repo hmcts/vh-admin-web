@@ -1356,11 +1356,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.participantDetails).not.toBeNull();
         expect(component.participantDetails.username).toBeNull();
     });
-    // it('should return JOH not found when role is Panel Member/Winger', () => {
-    //     role.setValue('Panel Member');
-    //     component.notFoundParticipant();
-    //     expect(component.errorJohAccountNotFound).toBeTruthy();
-    // });
 });
 describe('AddParticipantComponent set representer', () => {
     beforeEach(
