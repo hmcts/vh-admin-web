@@ -756,16 +756,10 @@ describe('AddParticipantComponent', () => {
             const testCases = [
                 { searchJudiciaryEntriesValue: null, role: '', expectError: false },
                 { searchJudiciaryEntriesValue: null, role: 'Other', expectError: false },
-                // { searchJudiciaryEntriesValue: null, role: 'Panel Member', expectError: true },
-                // { searchJudiciaryEntriesValue: null, role: 'Winger', expectError: true },
                 { searchJudiciaryEntriesValue: emptyPersonResponse, role: '', expectError: false },
                 { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Other', expectError: false },
-                // { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Panel Member', expectError: true },
-                // { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Winger', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: '', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Other', expectError: true }
-                // { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Panel Member', expectError: false },
-                // { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Winger', expectError: false }
             ];
 
             beforeEach(
@@ -799,20 +793,6 @@ describe('AddParticipantComponent', () => {
                 component.validateJudiciaryEmailAndRole();
                 expect(component.errorJudiciaryAccount).toBeFalsy();
             });
-
-            // it('should have errorJudiciaryAccount set to true if search service returns null and role is Panel Member', () => {
-            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
-            //     role.setValue('Panel Member'); // TODO fix magic string
-            //     component.validateJudiciaryEmailAndRole();
-            //     expect(component.errorJudiciaryAccount).toBeTruthy();
-            // });
-
-            // it('should have errorJudiciaryAccount set to true if search service returns null and role is Winger', () => {
-            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
-            //     role.setValue('Winger'); // TODO fix magic string
-            //     component.validateJudiciaryEmailAndRole();
-            //     expect(component.errorJudiciaryAccount).toBeTruthy();
-            // });
         });
     });
     describe('validateJudgeAndJohMembers', () => {
