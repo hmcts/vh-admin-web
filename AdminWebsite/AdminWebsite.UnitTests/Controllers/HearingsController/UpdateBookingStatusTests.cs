@@ -51,10 +51,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            
+
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
-        
+
         [Test]
         public async Task UpdateBookingStatus_returns_success_response_when_status_not_cancelled()
         {
@@ -119,10 +119,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 JudgePhone = "12345789",
                 OtherInformation = "info"
             }.ToOtherInformationString();
-            
+
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(hearing);
-            
+
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
@@ -141,7 +141,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IConferenceDetailsService>()
                 .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(expectedConferenceDetailsResponse);
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> { hearing });
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
@@ -155,7 +155,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(
                 x => x.SendHearingReminderEmail(It.Is<HearingDetailsResponse>(x => x == hearing)), Times.AtLeast(1));
         }
-        
+
         [Test]
         public async Task UpdateBookingStatus_returns_false_response_when_video_api_throws()
         {
@@ -282,7 +282,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
 
-            _mocker.Mock<IConferenceDetailsService>() .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
                                     .ThrowsAsync(new VideoApiException("", 0, "", null, null));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
@@ -471,7 +471,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearingId = Guid.NewGuid();
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status != UpdateBookingStatus.Failed))).ThrowsAsync(new Exception("test exception"));
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status != UpdateBookingStatus.Failed)))
+                .ThrowsAsync(new Exception("test exception"));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
@@ -484,7 +485,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception()
+        public async Task UpdateBookingStatus_returns_failed_status_response_when_there_is_argument_exception()
+        {
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
+            var updateCreatedStatus = new UpdateBookingStatusRequest
+            {
+                UpdatedBy = "test",
+                CancelReason = "",
+                Status = UpdateBookingStatus.Cancelled
+            };
+
+            var hearingId = Guid.NewGuid();
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status == UpdateBookingStatus.Cancelled)))
+                .ThrowsAsync(new ArgumentException("test argument exception"));
+
+            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
+
+            var result = (BadRequestObjectResult)response;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        }
+
+        [Test]
+        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_internalerror()
         {
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
@@ -504,6 +528,52 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = (BadRequestObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
             
+        }
+
+        [Test]
+        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_notfound()
+        {
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
+            var request = new UpdateBookingStatusRequest
+            {
+                UpdatedBy = "test",
+                CancelReason = "",
+                Status = UpdateBookingStatus.Cancelled
+            };
+
+            var hearingId = Guid.NewGuid();
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
+                .ThrowsAsync(new BookingsApiException("", StatusCodes.Status404NotFound, "", null, null));
+
+            var response = await _controller.UpdateBookingStatus(hearingId, request);
+
+            var result = (NotFoundObjectResult)response;
+            result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+
+        }
+
+        [Test]
+        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_badrequest()
+        {
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
+            var request = new UpdateBookingStatusRequest
+            {
+                UpdatedBy = "test",
+                CancelReason = "",
+                Status = UpdateBookingStatus.Cancelled
+            };
+
+            var hearingId = Guid.NewGuid();
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
+                .ThrowsAsync(new BookingsApiException("", StatusCodes.Status400BadRequest, "", null, null));
+
+            var response = await _controller.UpdateBookingStatus(hearingId, request);
+
+            var result = (BadRequestObjectResult)response;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
         }
 
         public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_exception()
