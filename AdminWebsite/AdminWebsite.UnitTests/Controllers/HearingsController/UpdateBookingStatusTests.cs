@@ -506,6 +506,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
         }
 
+        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_exception()
+        {
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
+            var request = new UpdateBookingStatusRequest
+            {
+                UpdatedBy = "test",
+                CancelReason = "",
+                Status = UpdateBookingStatus.Cancelled
+            };
+
+            var hearingId = Guid.NewGuid();
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
+                .ThrowsAsync(new Exception("Booking cancellation test exception."));
+
+            var response = await _controller.UpdateBookingStatus(hearingId, request);
+
+            var result = (BadRequestObjectResult)response;
+            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+
+        }
+
         private HearingDetailsResponse InitBookingForResponse(Guid hearingId)
         {
             var hearing = HearingResponseBuilder.Build()
