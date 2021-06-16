@@ -469,35 +469,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant"
-                }
-            };
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new Exception("test exception"));
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status != UpdateBookingStatus.Failed))).ThrowsAsync(new Exception("test exception"));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
