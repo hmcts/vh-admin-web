@@ -424,16 +424,12 @@ namespace AdminWebsite.Controllers
 
             try
             {
-
-                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
-                    updateBookingStatusRequest.Status);
+                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,updateBookingStatusRequest.Status);
 
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
-
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
 
-                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
-                    updateBookingStatusRequest.Status);
+                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
 
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
@@ -441,19 +437,14 @@ namespace AdminWebsite.Controllers
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
-
                     var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
-
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
 
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-
                         _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
-
                         await _hearingsService.SendHearingReminderEmail(hearing);
-
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,
@@ -469,20 +460,16 @@ namespace AdminWebsite.Controllers
                             UpdatedBy = "System",
                             CancelReason = string.Empty
                         });
-
                         return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                     }
-
                 }
                 catch (VideoApiException ex)
                 {
                     _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-
                     _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
 
                     // Set the booking status to failed as the video api failed
-
                     await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
                         new UpdateBookingStatusRequest
                         {
@@ -497,7 +484,6 @@ namespace AdminWebsite.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "There was an unknown error updating status for hearing {Hearing}", hearingId);
-
                 if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                 {
                     // Set the booking status to failed as the video api failed
@@ -511,18 +497,13 @@ namespace AdminWebsite.Controllers
 
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
-
                 if (ex is BookingsApiException)
                 {
                     var e = ex as BookingsApiException;
-
-
                     if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                     if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
-
                     return BadRequest(e);
                 }
-
                 return BadRequest(ex.Message);
             }
         }
