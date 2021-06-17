@@ -458,7 +458,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task UpdateBookingStatus_returns_failed_status_response_when_there_is_exception()
+        public async Task UpdateBookingStatus_for_create_returns_failed_booking_status_in_response_when_there_is_nornal_exception()
         {
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
@@ -531,7 +531,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_notfound()
+        public async Task UpdateBookingStatus_with_cancellation_returns_not_found_when_throws_bookings_api_exception_of_status_code_not_found()
         {
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
