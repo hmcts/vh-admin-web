@@ -166,6 +166,14 @@ export class VideoHearingsService {
         if (booking.cases && booking.cases.length > 0) {
             hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
         }
+        booking.participants.forEach(participant => {
+            participant.linked_participants.forEach(lp => {
+                if (lp.linkedParticipantId === undefined) {
+                    participant.linked_participants = [];
+                    participant.linked_participants = booking.linked_participants;
+                }
+            });
+        });
 
         hearing.hearing_room_name = booking.court_room;
         hearing.hearing_venue_name = booking.court_name;
