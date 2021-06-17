@@ -421,17 +421,15 @@ namespace AdminWebsite.Controllers
         {
             var errorMessage =
                 $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+
             try
             {
-                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
-                    updateBookingStatusRequest.Status);
+                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,updateBookingStatusRequest.Status);
 
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
-
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
 
-                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
-                    updateBookingStatusRequest.Status);
+                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
 
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
@@ -439,11 +437,9 @@ namespace AdminWebsite.Controllers
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
-
-                    var conferenceDetailsResponse =
-                        await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
-
+                    var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
+
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
@@ -455,30 +451,60 @@ namespace AdminWebsite.Controllers
                             TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                         });
                     }
+                    else
+                    {
+                        await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+                        return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                    }
                 }
                 catch (VideoApiException ex)
                 {
                     _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                }
-
-                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
+                    _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
-                // Set the booking status to failed as the video api failed
-                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                    new UpdateBookingStatusRequest
-                    {
-                        Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                        UpdatedBy = "System",
-                        CancelReason = string.Empty
-                    });
-                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+
+                    // Set the booking status to failed as the video api failed
+                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+
+                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                }
             }
-            catch (BookingsApiException e)
+            catch (Exception ex)
             {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
-                _logger.LogError(e, "There was an unknown error updating status for hearing {Hearing}", hearingId);
-                throw;
+                _logger.LogError(ex, "There was an unknown error updating status for hearing {Hearing}", hearingId);
+                if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
+                {
+                    // Set the booking status to failed as the video api failed
+                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                        new UpdateBookingStatusRequest
+                        {
+                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                            UpdatedBy = "System",
+                            CancelReason = string.Empty
+                        });
+
+                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                }
+                if (ex is BookingsApiException)
+                {
+                    var e = ex as BookingsApiException;
+                    if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                    if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
+                    return BadRequest(e);
+                }
+                return BadRequest(ex.Message);
             }
         }
 
