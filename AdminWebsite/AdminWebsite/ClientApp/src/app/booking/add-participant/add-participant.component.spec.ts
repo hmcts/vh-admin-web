@@ -1062,8 +1062,7 @@ describe('AddParticipantComponent edit mode', () => {
 
         // Assert
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
-        expect(component.hearing.participants[1].linked_participants[0].linkedParticipantId)
-            .toBe(component.hearing.participants[3].id);
+        expect(component.hearing.participants[1].linked_participants[0].linkedParticipantId).toBe(component.hearing.participants[3].id);
     });
     it('should before save booking check if all fields available', () => {
         component.actionsBeforeSave();
@@ -1321,13 +1320,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayUpdateButton).toBeFalsy();
     }));
 
-    it('should recognize a participantList',
+    it(
+        'should recognize a participantList',
         waitForAsync(() => {
             component.ngAfterContentInit();
             component.ngAfterViewInit();
             const partList = component.participantsListComponent;
             expect(partList).toBeDefined();
-        }));
+        })
+    );
     it('should show all fields if the participant selected for edit', fakeAsync(() => {
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
@@ -1338,7 +1339,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
-        partList.editParticipant({ email: 'test2@hmcts.net' , is_exist_person: false, is_judge: false });
+        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
         flush();
         expect(component.showDetails).toBeTruthy();
     }));

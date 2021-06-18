@@ -127,13 +127,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     ngAfterViewInit() {
         this.$subscriptions.push(
             this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
-                    const selectedParticipant = this.hearing.participants.find(s => s.email === participantEmail);
-                    if (selectedParticipant !== null && selectedParticipant !== undefined) {
-                        this.editMode = this.participantsListComponent.canEditParticipant(selectedParticipant);
-                        this.onSelectedParticipantChangedWhenEditing(participantEmail);
-                    }
+                const selectedParticipant = this.hearing.participants.find(s => s.email === participantEmail);
+                if (selectedParticipant !== null && selectedParticipant !== undefined) {
+                    this.editMode = this.participantsListComponent.canEditParticipant(selectedParticipant);
+                    this.onSelectedParticipantChangedWhenEditing(participantEmail);
                 }
-            ));
+            })
+        );
 
         this.$subscriptions.push(
             this.participantsListComponent.selectedParticipantToRemove.subscribe(participantEmail => {
