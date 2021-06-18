@@ -773,6 +773,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
             interpretee.linked_participants = [];
             linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
+            linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
+            linkedParticipant.participantEmail = newParticipant.email;
             linkedParticipant.participantId = newParticipant.id;
             return [linkedParticipant];
         } else {

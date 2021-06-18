@@ -19,11 +19,12 @@ import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
 import { ParticipantListComponent } from '../participant';
-import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { BookingModule } from '../booking.module';
 import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
+import { HearingRoles } from '../../common/model/hearing-roles.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -1030,6 +1031,53 @@ describe('AddParticipantComponent edit mode', () => {
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'mock@hmcts.net');
         expect(updatedParticipant.display_name).toBe('Sam Green');
+    });
+    it('should map the lp of the new participant with new participant email and lp email along with ids', () => {
+        // Arrange
+        participant.hearing_role_name = HearingRoles.INTERPRETER;
+        component.isRoleSelected = true;
+        component.form.setValue({
+            party: 'Applicant',
+            role: 'Representative',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+        component.selectedParticipantEmail = component.hearing.participants[3].email;
+        component.showDetails = true;
+        component.editMode = true;
+        component.localEditMode = true;
+        component.errorAlternativeEmail = false;
+        component.participantDetails = participant;
+        component.hearing = initExistHearingRequest();
+        const participantsLPs: LinkedParticipantModel[] = [];
+        const participantLp = new LinkedParticipantModel();
+        participantLp.linkType = LinkedParticipantType.Interpreter;
+        participantLp.linkedParticipantId = component.hearing.participants[3].id; // interpreter
+        participantLp.participantId = component.hearing.participants[4].id; // participant
+        participantsLPs.push(participantLp);
+        const interpreterLPs: LinkedParticipantModel[] = [];
+        const interpreterLp = new LinkedParticipantModel();
+        interpreterLp.linkType = LinkedParticipantType.Interpreter;
+        interpreterLp.linkedParticipantId = component.hearing.participants[1].id; // participant
+        interpreterLp.participantId = component.hearing.participants[3].id; // interpreter
+        interpreterLPs.push(participantLp);
+        component.hearing.participants[1].linked_participants = interpreterLPs;
+        component.hearing.linked_participants = participantsLPs;
+
+        // Act
+        component.updateParticipantAction();
+
+        // Assert
+        expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+        expect(component.hearing.participants[1].linked_participants[0].linkedParticipantId)
+            .toBe(component.hearing.participants[3].id);
     });
     it('should before save booking check if all fields available', () => {
         component.actionsBeforeSave();
