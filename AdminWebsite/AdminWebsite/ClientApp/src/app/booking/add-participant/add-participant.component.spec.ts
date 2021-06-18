@@ -19,10 +19,12 @@ import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
 import { ParticipantListComponent } from '../participant';
-import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { BookingModule } from '../booking.module';
 import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
+import { By } from '@angular/platform-browser';
+import { HearingRoles } from '../../common/model/hearing-roles.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -1208,7 +1210,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
                 'getParticipantRoles',
                 'getCurrentRequest',
-                'setBookingHasChanged'
+                'setBookingHasChanged',
+                'updateHearingRequest',
+                'cancelRequest',
+                'isConferenceClosed',
+                'isHearingAboutToStart'
             ]);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -1217,6 +1223,18 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
+                providers: [
+                    { provide: SearchService, useClass: SearchServiceStub },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: ParticipantService, useValue: participantServiceSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: ConfigService, useValue: configServiceSpy }
+                ]
+            }).compileComponents();
             component = new AddParticipantComponent(
                 jasmine.createSpyObj<SearchService>(['search']),
                 videoHearingsServiceSpy,
@@ -1227,7 +1245,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             );
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-
+            fixture = TestBed.createComponent(AddParticipantComponent);
+            component = fixture.componentInstance;
             component.editMode = true;
             component.ngOnInit();
 
@@ -1265,17 +1284,30 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         })
     );
     it('should show all fields if the participant selected for edit', fakeAsync(() => {
-        component.participantDetails = participant;
+        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        participant.addedDuringHearing = false;
         component.ngAfterContentInit();
         component.ngAfterViewInit();
         tick(600);
+        component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
+        component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
-        partList.selectedParticipant.emit();
-        tick(600);
-
+        flush();
         expect(component.showDetails).toBeTruthy();
     }));
+    it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
+        const debugElement = fixture.debugElement;
+        component.selectedParticipantEmail = 'test2@hmcts.net';
+        fixture.detectChanges();
+        const clearFormBtn = debugElement.query(By.css('#clearFormBtn'));
+        const updateFormBtn = debugElement.query(By.css('#updateParticipantBtn'));
+        tick(600);
+        expect(updateFormBtn).toBeTruthy();
+        expect(clearFormBtn).toBeTruthy();
+    }));
+
     it('should show confirmation to remove participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
@@ -1288,6 +1320,52 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
         expect(component.showConfirmationRemoveParticipant).toBeTruthy();
     }));
+    it('should map the lp of the new participant with new participant email and lp email along with ids', () => {
+        // Arrange
+        participant.hearing_role_name = HearingRoles.INTERPRETER;
+        component.isRoleSelected = true;
+        component.form.setValue({
+            party: 'Applicant',
+            role: 'Representative',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+        component.selectedParticipantEmail = component.hearing.participants[3].email;
+        component.showDetails = true;
+        component.editMode = true;
+        component.localEditMode = true;
+        component.errorAlternativeEmail = false;
+        component.participantDetails = participant;
+        component.hearing = initExistHearingRequest();
+        const participantsLPs: LinkedParticipantModel[] = [];
+        const participantLp = new LinkedParticipantModel();
+        participantLp.linkType = LinkedParticipantType.Interpreter;
+        participantLp.linkedParticipantId = component.hearing.participants[3].id; // interpreter
+        participantLp.participantId = component.hearing.participants[4].id; // participant
+        participantsLPs.push(participantLp);
+        const interpreterLPs: LinkedParticipantModel[] = [];
+        const interpreterLp = new LinkedParticipantModel();
+        interpreterLp.linkType = LinkedParticipantType.Interpreter;
+        interpreterLp.linkedParticipantId = component.hearing.participants[1].id; // participant
+        interpreterLp.participantId = component.hearing.participants[3].id; // interpreter
+        interpreterLPs.push(participantLp);
+        component.hearing.participants[1].linked_participants = interpreterLPs;
+        component.hearing.linked_participants = participantsLPs;
+
+        // Act
+        component.updateParticipantAction();
+
+        // Assert
+        expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+        expect(component.hearing.participants[1].linked_participants[0].linkedParticipantId).toBe(component.hearing.participants[3].id);
+    });
     it('should display add button if participant has no email set', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
