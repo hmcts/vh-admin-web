@@ -7,6 +7,10 @@ import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-sear
     styleUrls: ['./hearing-search-results.component.scss']
 })
 export class HearingSearchResultsComponent {
+    constructor() {
+        console.log('HearingSearchResultsComponent constructed');
+    }
+
     @Input() results: HearingAudioSearchModel[];
 
     get hasResults() {

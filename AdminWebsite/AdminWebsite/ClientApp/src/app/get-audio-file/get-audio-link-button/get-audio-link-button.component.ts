@@ -17,18 +17,26 @@ export class GetAudioLinkButtonComponent {
 
     showErrorMessage = false;
 
-    audioLinks: string[] = [];
+    audioLinks: string[];
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
+    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {
+        console.log('GetAudioLinkButtonComponent constructed');
+    }
+
+    getAudioLinks() {
+        console.log("Get audio links for front end");
+        console.table(this.audioLinks);
+        return this.audioLinks;
+    }
 
     async onGetLinkClick() {
         this.logger.debug(`${this.loggerPrefix} Clicked on get audio link button`, { hearing: this.hearingId });
         try {
             this.setCurrentState(AudioLinkState.loading);
+            this.audioLinks = (await this.audioLinkService.getAudioLink(this.hearingId)).audio_file_links;
 
-            this.audioLinks = await this.audioLinkService.getAudioLink(this.hearingId);
             if (this.audioLinks.length === 0) {
                 this.logger.warn(`${this.loggerPrefix} Hearing has no audio links: ${this.hearingId}`, {
                     hearing: this.hearingId
@@ -39,7 +47,7 @@ export class GetAudioLinkButtonComponent {
                 this.audioLinks.forEach(x => {
                     this.showLinkCopiedMessage.push(false);
                 });
-                setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
+                this.setCurrentState(AudioLinkState.finished);
             }
         } catch (error) {
             this.logger.error(`${this.loggerPrefix} Error retrieving audio link for: ${this.hearingId}`, error, {
@@ -47,6 +55,7 @@ export class GetAudioLinkButtonComponent {
             });
             this.errorToGetLink();
         }
+        console.table(this.audioLinks);
     }
 
     private errorToGetLink() {
@@ -63,11 +72,13 @@ export class GetAudioLinkButtonComponent {
     }
 
     showOnState(audioLinkState: AudioLinkState) {
+        //console.log("new status" + audioLinkState)
         return audioLinkState === this._currentLinkRetrievalState;
     }
 
     setCurrentState(audioLinkState: AudioLinkState) {
-        this.logger.debug(`${this.loggerPrefix} Updating retrieval state`, { hearing: this.hearingId, newState: audioLinkState });
+        this.logger.info(`${this.loggerPrefix} Updating retrieval state`, { hearing: this.hearingId, newState: audioLinkState });
+        console.table(this.audioLinks);
         this._currentLinkRetrievalState = audioLinkState;
     }
 

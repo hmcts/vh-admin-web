@@ -14,8 +14,8 @@
   <label>Please wait...</label>
 </div>
 
-<div class="button-div" *ngIf="showOnState(audioLinkStates.finished)">
-  <div *ngFor="let audioLink of audioLinks; let fileIndex = index">
+<div class="button-div">
+  <div *ngFor="let audioLink of getAudioLinks(); let fileIndex = index">
     <button
       id="{{ fileIndex }}-copyLinkButton"
       class="govuk-button govuk-!-margin-left-2 standard-width-button"

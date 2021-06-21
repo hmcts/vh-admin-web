@@ -12,12 +12,15 @@ export class GetAudioFileVhComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileVh] -';
     vhAudioFileForm: FormGroup;
     searchResult: IVhAudioRecordingResult;
-    get results(): HearingAudioSearchModel[] {
-        return !this.searchResult?.result ? [] : (this.searchResult?.result).map(x => new HearingAudioSearchModel(x));
+    results: HearingAudioSearchModel[];
+    private setResults(searchResult: IVhAudioRecordingResult) {
+        this.results = searchResult?.result?.map(x => new HearingAudioSearchModel(x)) ?? [];
     }
     today = new Date();
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {
+        console.log('GetAudioFileVhComponent constructed');
+    }
 
     async ngOnInit(): Promise<void> {
         this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
@@ -57,6 +60,7 @@ export class GetAudioFileVhComponent implements OnInit {
 
             this.logger.debug(`${this.loggerPrefix} Getting results by case number/date`, { caseNumber, date });
             this.searchResult = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, date);
+            this.setResults(this.searchResult);
 
             if (this.searchResult.error) {
                 this.logger.error(
