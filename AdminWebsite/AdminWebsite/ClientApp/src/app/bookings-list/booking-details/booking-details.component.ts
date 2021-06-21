@@ -225,7 +225,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
         this.persistStatus(status);
         if (status === UpdateBookingStatus.Failed) {
-            this.hearing.Status = status ;
+            this.hearing.Status = status;
             return;
         }
         this.$subscriptions.push(
