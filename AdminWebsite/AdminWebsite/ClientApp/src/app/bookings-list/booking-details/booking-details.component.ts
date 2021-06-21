@@ -223,7 +223,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         if (status === UpdateBookingStatus.Cancelled) {
             this.showCancelBooking = false;
         }
-        this.hearing.Status = UpdateBookingStatus[status];
         this.persistStatus(status);
         if (status === UpdateBookingStatus.Failed) {
             return;
