@@ -1500,6 +1500,106 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.AtLeastOnce);
         }
 
+        [Test]
+        public async Task Should_add_a_new_participant_and_link_to_existing_interpreter_when_editing_a_hearing()
+        {
+            var interpreter =
+                _existingHearingWithLinkedParticipants.Participants.First(p =>
+                    p.HearingRoleName.ToLower() == "interpreter");
+
+            var partipant4 = Guid.NewGuid();
+
+            var _existingHearingWithNewLinkedParticipants = new HearingDetailsResponse
+            {
+                Id = _validId,
+                GroupId = _validId,
+                Cases = _existingHearingWithLinkedParticipants.Cases,
+                CaseTypeName = "case type",
+                HearingTypeName = "hearing type",
+                Participants = new List<ParticipantResponse>
+                {
+                    new ParticipantResponse
+                    {
+                        Id = _existingHearingWithLinkedParticipants.Participants[0].Id, CaseRoleName = "judge", HearingRoleName = "hearingrole",
+                        ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
+                        LinkedParticipants = null
+                    },
+                    new ParticipantResponse
+                    {
+                        Id = _existingHearingWithLinkedParticipants.Participants[1].Id, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
+                        ContactEmail = "individual.user@email.com", UserRoleName = "Individual",
+                        FirstName = "testuser1", LinkedParticipants = null
+                    },
+                    new ParticipantResponse
+                    {
+                        Id = interpreter.Id, CaseRoleName = "caserole", HearingRoleName = "interpreter",
+                        ContactEmail = "interpreter.user@email.com", UserRoleName = "Individual",
+                        FirstName = "testuser1",
+                        LinkedParticipants = new List<LinkedParticipantResponse>
+                        {
+                            new LinkedParticipantResponse
+                                {Type = LinkedParticipantType.Interpreter, LinkedId = partipant4}
+                        }
+                    },
+                    new ParticipantResponse
+                    {
+                        Id = partipant4, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
+                        ContactEmail = "individual4.user@email.com", UserRoleName = "Individual4",
+                        FirstName = "testuser4", LinkedParticipants = null
+                    }
+                },
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
+                OtherInformation = ""
+            };
+
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithLinkedParticipants)
+                .ReturnsAsync(_existingHearingWithNewLinkedParticipants)
+                .ReturnsAsync(_existingHearingWithNewLinkedParticipants);
+
+            
+            var addParticipantLinksToHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest>
+                {
+                    new EditParticipantRequest
+                    {
+                        CaseRoleName = "caserole", HearingRoleName = "litigant in person",
+                        ContactEmail = "individual4.user@email.com", DisplayName = "Individual4", FirstName = "Individual4",
+                        LastName = "Individual4", TelephoneNumber = "000",
+                    },
+                    new EditParticipantRequest
+                    {
+                        Id = interpreter.Id,
+                        CaseRoleName = "caserole", HearingRoleName = "interpreter",
+                        ContactEmail = "interpreter.user@email.com", DisplayName = "newUser", FirstName = "firstName",
+                        LastName = "lastName", TelephoneNumber = "000",
+                        LinkedParticipants = new List<LinkedParticipant>
+                        {
+                            new LinkedParticipant
+                            {
+                                ParticipantContactEmail = "interpreter.user@email.com",
+                                LinkedParticipantContactEmail = "individual4.user@email.com",
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
+                    }
+                },
+                OtherInformation = ""
+            };
+
+            var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+           
+            _bookingsApiClient.Verify(
+                x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+        }
+
         [TestCase(BookingStatus.Booked, 0)]
         [TestCase(BookingStatus.Created, 1)]
         public async Task
