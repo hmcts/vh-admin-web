@@ -298,59 +298,6 @@ namespace AdminWebsite.Mappers
             };
         }
 
-        public static AddNotificationRequest MapToMultiDayDemoOrTestNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant, string caseNumber, string testType, int days)
-        {
-            var @case = hearing.Cases.First();
-            var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
-            var parameters = new Dictionary<string, string>()
-            {
-                {"case number",caseNumber},
-                {"test type",testType},
-                {"date",hearing.ScheduledDateTime.ToEmailDateGbLocale() },
-                {"time",hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
-                {"username",participant.Username.ToLower()}
-            };
-
-            NotificationType notificationType = default;
-            if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
-            {
-                notificationType = NotificationType.EJudJohDemoOrTest;
-                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
-            }
-            else if (!hearing.IsParticipantAJudicialOfficeHolderOrJudge(participant.Id))
-            {
-                notificationType = NotificationType.ParticipantDemoOrTest;
-                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
-            }
-            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (hearing.IsJudgeEmailEJud())
-                {
-                    notificationType = NotificationType.EJudJudgeDemoOrTest;
-                }
-                else
-                {
-                    notificationType = NotificationType.JudgeDemoOrTest;
-                    parameters.Add("courtroom account username", participant.Username);
-                }
-
-                parameters.Add("judge", participant.DisplayName);
-                parameters.Remove("username");
-            }
-
-            return new AddNotificationRequest
-            {
-                HearingId = hearing.Id,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
-                NotificationType = notificationType,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.TelephoneNumber,
-                Parameters = parameters
-            };
-        }
-
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
