@@ -126,9 +126,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     ngAfterViewInit() {
         this.$subscriptions.push(
-            this.participantsListComponent.selectedParticipant.subscribe(participantEmail =>
-                this.onSelectedParticipantChangedWhenEditing(participantEmail)
-            )
+            this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
+                const selectedParticipant = this.hearing.participants.find(s => s.email === participantEmail);
+                if (selectedParticipant !== null && selectedParticipant !== undefined) {
+                    this.editMode = this.participantsListComponent.canEditParticipant(selectedParticipant);
+                    this.onSelectedParticipantChangedWhenEditing(participantEmail);
+                }
+            })
         );
 
         this.$subscriptions.push(
@@ -453,6 +457,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.displayAddButton = false;
         this.displayUpdateButton = false;
     }
+
     get firstNameInvalid() {
         return this.firstName.invalid && (this.firstName.dirty || this.firstName.touched || this.isShowErrorSummary);
     }
@@ -483,15 +488,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     get representeeInvalid() {
         return this.representing.invalid && (this.representing.dirty || this.representing.touched || this.isShowErrorSummary);
     }
+
     get companyInvalid() {
         return this.companyName.invalid && (this.companyName.dirty || this.companyName.touched || this.isShowErrorSummary);
     }
+
     get companyIndividualInvalid() {
         return (
             this.companyNameIndividual.invalid &&
             (this.companyNameIndividual.dirty || this.companyNameIndividual.touched || this.isShowErrorSummary)
         );
     }
+
     partySelected() {
         this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
         this.setupHearingRoles(this.party.value);
@@ -547,7 +555,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     validateJudgeAndJohMembers(): boolean {
         if (this.hearing?.participants.length) {
             const judge = this.hearing.participants.find(x => x.is_judge);
-            return this.searchEmail.email !== judge?.username;
+            return this.searchEmail?.email !== judge?.username;
         }
         return true;
     }
@@ -750,6 +758,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             ? this.updateLinkedParticipantList(newParticipant)
             : [];
     }
+
     private updateLinkedParticipantList(newParticipant: ParticipantModel): LinkedParticipantModel[] {
         if (this.editMode) {
             return this.updateNewParticipantToLinkedParticipant(newParticipant);
@@ -757,18 +766,22 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             return this.addNewParticipantToLinkedParticipant(newParticipant);
         }
     }
+
     private updateNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
         if (this.localEditMode) {
             const linkedParticipant = newParticipant.linked_participants[0];
             const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
             interpretee.linked_participants = [];
             linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
+            linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
+            linkedParticipant.participantEmail = newParticipant.email;
             linkedParticipant.participantId = newParticipant.id;
             return [linkedParticipant];
         } else {
             return this.addNewParticipantToLinkedParticipant(newParticipant);
         }
     }
+
     private addNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
         const linkedParticipant = new LinkedParticipantModel();
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
@@ -776,6 +789,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
         return [linkedParticipant];
     }
+
     private getInterpreteeId(email: string): string {
         const participantList = this.hearing.participants;
         const interpretee = participantList.find(p => p.email === email);
@@ -920,10 +934,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.form.get('lastName').disable();
         this.form.get('firstName').disable();
     }
+
     disableCaseAndHearingRoles() {
         this.form.get('party').disable();
         this.form.get('role').disable();
     }
+
     enableFields() {
         this.emailDisabled = false;
         this.form.get('lastName').enable();
@@ -970,6 +986,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             }
         });
     }
+
     isRoleRepresentative(hearingRole: string, party: string): boolean {
         const partyHearingRoles = this.caseAndHearingRoles.find(
             x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
@@ -988,9 +1005,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.removeInterpreteeAndInterpreter();
         this.populateInterpretedForList();
     }
+
     handleCancelRemoveInterpreter() {
         this.showConfirmRemoveInterpretee = false;
     }
+
     get interpreterForInvalid() {
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
     }
@@ -1027,15 +1046,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.isInterpreter = false;
         }
     }
+
     private isRoleInterpreter(hearingRole: string): boolean {
         return hearingRole.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
     }
+
     private hearingHasAnInterpreter(): boolean {
         const hearingHasInterpreter = this.hearing.participants.some(
             p => p.hearing_role_name?.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
         );
         return hearingHasInterpreter;
     }
+
     private hearingHasInterpretees(): boolean {
         const notAllowedInterpreter = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
         const hearingHasInterpretees = this.hearing.participants.some(
@@ -1043,6 +1065,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         );
         return hearingHasInterpretees;
     }
+
     private updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
@@ -1051,6 +1074,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             }
         }
     }
+
     private removeInterpreteeAndInterpreter() {
         // check if participant details were populated, if yes then clean form.
         if (this.searchEmail && this.searchEmail.email === this.selectedParticipantEmail) {
@@ -1072,6 +1096,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }
+
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
@@ -1083,10 +1108,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.hearing.linked_participants.push(linkedParticipant);
         }
     }
+
     private updateLinkedParticipant(newParticipant: ParticipantModel): void {
         this.hearing.linked_participants = [];
         this.addLinkedParticipant(newParticipant);
     }
+
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
         const interpreterExists = this.hearing.linked_participants.some(p => p.participantEmail === email);
@@ -1095,10 +1122,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.hearing.linked_participants = [];
         }
     }
+
     private getInterpretee(email: string): string {
         const interpretee = this.hearing.participants.find(p => p.email === email);
         return interpretee ? interpretee.email : '';
     }
+
     private setInterpretee(participant: ParticipantModel): string {
         let interpreteeEmail = '';
         if (participant.interpreterFor) {

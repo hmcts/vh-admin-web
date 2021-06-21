@@ -212,7 +212,7 @@
           </span>
         </div>
 
-        <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
+        <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton || editMode">
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
             <a
@@ -227,7 +227,7 @@
           </span>
         </div>
 
-        <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
+        <div class="govuk-grid-column-one-half" *ngIf="displayClearButton || editMode">
           <img src="assets/images/ClearIcon.png" alt="Clear fields icon" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" id="clearFormBtn" class="govuk-link govuk-body" (click)="clearForm()"> Clear details </a>
