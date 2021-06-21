@@ -1,4 +1,4 @@
-import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
+import { discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -376,10 +376,14 @@ describe('BookingDetailsComponent', () => {
         expect(component.showConfirmingFailed).toBeFalsy();
     });
     it('should show pop up if the confirm failed', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
+        component.hearing.Status = '';
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
-        tick();
+        tick(1000);
+        discardPeriodicTasks();
         expect(component.showConfirmingFailed).toBeTruthy();
     }));
     it('should hide pop up if the close confirm failed ok button was clicked', () => {
