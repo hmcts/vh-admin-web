@@ -9,25 +9,8 @@ import { Logger } from 'src/app/services/logger';
     templateUrl: './get-audio-file-vh.component.html'
 })
 export class GetAudioFileVhComponent implements OnInit {
-    private readonly loggerPrefix = '[GetAudioFileVh] -';
-    vhAudioFileForm: FormGroup;
-    searchResult: IVhAudioRecordingResult;
-    results: HearingAudioSearchModel[];
-    private setResults(searchResult: IVhAudioRecordingResult) {
-        this.results = searchResult?.result?.map(x => new HearingAudioSearchModel(x)) ?? [];
-    }
-    today = new Date();
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
-
-    async ngOnInit(): Promise<void> {
-        this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
-
-        this.vhAudioFileForm = this.fb.group({
-            caseNumber: [null],
-            vhDate: [null]
-        });
-    }
 
     get caseNumber() {
         return this.vhAudioFileForm.get('caseNumber');
@@ -44,6 +27,23 @@ export class GetAudioFileVhComponent implements OnInit {
     get vhDateInvalid() {
         const todayDate = new Date(new Date());
         return new Date(this.vhDate.value) > todayDate && (this.vhDate.dirty || this.vhDate.touched);
+    }
+    private readonly loggerPrefix = '[GetAudioFileVh] -';
+    vhAudioFileForm: FormGroup;
+    searchResult: IVhAudioRecordingResult;
+    results: HearingAudioSearchModel[];
+    today = new Date();
+    private setResults(searchResult: IVhAudioRecordingResult) {
+        this.results = searchResult?.result?.map(x => new HearingAudioSearchModel(x)) ?? [];
+    }
+
+    async ngOnInit(): Promise<void> {
+        this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
+
+        this.vhAudioFileForm = this.fb.group({
+            caseNumber: [null],
+            vhDate: [null]
+        });
     }
 
     async search() {
