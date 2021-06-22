@@ -18,9 +18,7 @@ export class GetAudioFileVhComponent implements OnInit {
     }
     today = new Date();
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {
-        console.log('GetAudioFileVhComponent constructed');
-    }
+    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
 
     async ngOnInit(): Promise<void> {
         this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);

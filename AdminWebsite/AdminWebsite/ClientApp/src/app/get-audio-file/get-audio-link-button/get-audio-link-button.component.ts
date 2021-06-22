@@ -21,13 +21,9 @@ export class GetAudioLinkButtonComponent {
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {
-        console.log('GetAudioLinkButtonComponent constructed');
-    }
+    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
 
     getAudioLinks() {
-        console.log("Get audio links for front end");
-        console.table(this.audioLinks);
         return this.audioLinks;
     }
 
@@ -55,7 +51,6 @@ export class GetAudioLinkButtonComponent {
             });
             this.errorToGetLink();
         }
-        console.table(this.audioLinks);
     }
 
     private errorToGetLink() {
@@ -72,13 +67,11 @@ export class GetAudioLinkButtonComponent {
     }
 
     showOnState(audioLinkState: AudioLinkState) {
-        //console.log("new status" + audioLinkState)
         return audioLinkState === this._currentLinkRetrievalState;
     }
 
     setCurrentState(audioLinkState: AudioLinkState) {
         this.logger.info(`${this.loggerPrefix} Updating retrieval state`, { hearing: this.hearingId, newState: audioLinkState });
-        console.table(this.audioLinks);
         this._currentLinkRetrievalState = audioLinkState;
     }
 
