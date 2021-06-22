@@ -224,6 +224,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.showCancelBooking = false;
         }
         this.persistStatus(status);
+        if (status === UpdateBookingStatus.Failed) {
+            this.hearing.Status = status;
+            return;
+        }
         this.$subscriptions.push(
             this.videoHearingService.getHearingById(this.hearingId).subscribe(
                 newData => {
@@ -234,16 +238,18 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 }
             )
         );
+        this.logger.info(`${this.loggerPrefix} updateStatusHandler --> Hearing status changed`, {
+            hearingId: this.hearingId,
+            status: status
+        });
     }
 
     errorHandler(error, status: UpdateBookingStatus) {
         if (status === UpdateBookingStatus.Cancelled) {
             this.showCancelBooking = false;
         }
-
-        this.showConfirming = false;
         this.showConfirmingFailed = true;
-
+        this.showConfirming = false;
         this.logger.error(`${this.loggerPrefix} Error update hearing status`, error);
     }
 
