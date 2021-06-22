@@ -9,7 +9,6 @@ import { Logger } from 'src/app/services/logger';
     templateUrl: './get-audio-file-vh.component.html'
 })
 export class GetAudioFileVhComponent implements OnInit {
-
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
 
     get caseNumber() {
