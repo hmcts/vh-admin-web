@@ -14,7 +14,7 @@ export class GetAudioFileCvpComponent implements OnInit {
     today = new Date();
     loadingData: boolean;
 
-    searchResult: ICvpAudioRecordingResult = null;
+    searchResult: ICvpAudioRecordingResult;
     results: CvpAudioSearchModel[];
 
     private setResults(searchResult: ICvpAudioRecordingResult) {
@@ -70,6 +70,7 @@ export class GetAudioFileCvpComponent implements OnInit {
         this.loadingData = true;
         if (this.searchResult) {
             this.searchResult = null;
+            this.setResults(this.searchResult);
         }
 
         this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);

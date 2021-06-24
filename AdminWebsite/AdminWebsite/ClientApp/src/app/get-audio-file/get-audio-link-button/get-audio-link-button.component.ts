@@ -13,11 +13,11 @@ export class GetAudioLinkButtonComponent {
     private readonly loggerPrefix = '[GetAudioLinkButton] -';
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.initial;
-    public showLinkCopiedMessage: boolean[] = [];
+    public showLinkCopiedMessage?: boolean[] = [];
 
     showErrorMessage = false;
 
-    audioLinks: string[];
+    audioLinks?: string[] = [];
 
     @Input() hearingId: string;
 

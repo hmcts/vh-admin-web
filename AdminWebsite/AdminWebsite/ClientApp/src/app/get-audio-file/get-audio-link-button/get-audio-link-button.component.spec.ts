@@ -4,6 +4,7 @@ import { MockLogger } from '../../shared/testing/mock-logger';
 import { GetAudioLinkButtonComponent } from './get-audio-link-button.component';
 import { AudioLinkState } from '../../services/audio-link-state';
 import { fakeAsync, tick } from '@angular/core/testing';
+import { HearingAudioRecordingResponse } from 'src/app/services/clients/api-client';
 
 describe('GetAudioLinkButtonComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
@@ -19,7 +20,7 @@ describe('GetAudioLinkButtonComponent', () => {
     });
 
     it('should get audio link and set state to finished', fakeAsync(async () => {
-        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(['myLink']));
+        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(new HearingAudioRecordingResponse({ audio_file_links: ['myLink'] })));
 
         await component.onGetLinkClick();
         tick(3001);
@@ -35,18 +36,23 @@ describe('GetAudioLinkButtonComponent', () => {
     }));
 
     it('should copy audio link and copied link message', fakeAsync(async () => {
-        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(['myLink']));
+        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(new HearingAudioRecordingResponse({ audio_file_links: ['myLink'] })));
 
         await component.onGetLinkClick();
         await component.onCopyLinkClick(0);
+
+        expect(component.showLinkCopiedMessage).toBeTruthy();
         expect(component.showLinkCopiedMessage[0]).toBeTruthy();
         tick(3001);
         expect(component.showOnState(AudioLinkState.finished)).toBeTruthy();
+        expect(component.showLinkCopiedMessage).toBeTruthy();
         expect(component.showLinkCopiedMessage[0]).toBeFalsy();
     }));
 
     it('should get audio multi links and set state to finised for selected link', fakeAsync(async () => {
-        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(['myLink1', 'myLink2']));
+        audioLinkService.getAudioLink.and.returnValue(
+            Promise.resolve(new HearingAudioRecordingResponse({ audio_file_links: ['myLink', 'myLink2'] }))
+        );
 
         await component.onGetLinkClick();
         await component.onCopyLinkClick(0);

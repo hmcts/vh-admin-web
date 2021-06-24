@@ -100,7 +100,7 @@ describe('GetAudioFileCvpComponent', () => {
         component.hearingDate.setValue('2020-08-04');
         await component.search();
 
-        expect(component.cvpResults).toEqual([]);
+        expect(component.results).toEqual([]);
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
@@ -113,7 +113,7 @@ describe('GetAudioFileCvpComponent', () => {
         component.hearingDate.setValue('2020-08-04');
         await component.search();
 
-        expect(component.cvpResults).toEqual([]);
+        expect(component.results).toEqual([]);
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
@@ -129,7 +129,7 @@ describe('GetAudioFileCvpComponent', () => {
         component.hearingDate.setValue('2020-08-04');
         await component.search();
 
-        expect(component.cvpResults.length).toBe(2);
+        expect(component.results.length).toBe(2);
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
@@ -145,7 +145,7 @@ describe('GetAudioFileCvpComponent', () => {
         component.hearingDate.setValue('2020-08-04');
         await component.search();
 
-        expect(component.cvpResults.length).toBe(2);
+        expect(component.results.length).toBe(2);
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
@@ -161,7 +161,7 @@ describe('GetAudioFileCvpComponent', () => {
         component.hearingDate.setValue('2020-08-09');
         await component.search();
 
-        expect(component.cvpResults.length).toBe(2);
+        expect(component.results.length).toBe(2);
         expect(component.searchResult).toBeTruthy();
         expect(audioLinkService.getCvpAudioRecordings).toHaveBeenCalled();
     });
@@ -175,6 +175,6 @@ describe('GetAudioFileCvpComponent', () => {
 
         // Assert
         expect(component.searchResult).toBeNull();
-        expect(component.cvpResults).toEqual([]);
+        expect(component.results).toEqual([]);
     }));
 });

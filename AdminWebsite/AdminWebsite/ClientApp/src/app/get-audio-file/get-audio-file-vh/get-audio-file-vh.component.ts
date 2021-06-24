@@ -48,6 +48,7 @@ export class GetAudioFileVhComponent implements OnInit {
     async search() {
         if (this.searchResult) {
             this.searchResult = null;
+            this.setResults(this.searchResult);
         }
 
         this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);

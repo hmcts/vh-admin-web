@@ -22,6 +22,7 @@ describe('GetAudioFileVhComponent', () => {
         ]);
         formBuilder = new FormBuilder();
         component = new GetAudioFileVhComponent(formBuilder, audioLinkService, logger);
+
         await component.ngOnInit();
     });
 
@@ -38,7 +39,7 @@ describe('GetAudioFileVhComponent', () => {
         component.caseNumber.setValue('');
         await component.search();
 
-        expect(component.results).toEqual([]);
+        expect(component.searchResult).toBeUndefined();
     });
 
     it('should keep the results as empty when service returns null', async () => {
