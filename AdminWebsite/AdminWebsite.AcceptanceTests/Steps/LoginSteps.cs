@@ -46,7 +46,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the user should be navigated to sign in screen")]
         public void ThenTheUserShouldBeNavigatedToSignInScreen()
         {
-            _browsers[_c.CurrentUser].Retry(() => _browsers[_c.CurrentUser].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), ReachedThePageRetries);
+            _browsers[_c.CurrentUser].Retry(() => _browsers[_c.CurrentUser].Driver.Title.Trim().Should().Be(LoginPage.SignOutTitle), ReachedThePageRetries);
         }
 
         [Then(@"they should be able to logout")]
