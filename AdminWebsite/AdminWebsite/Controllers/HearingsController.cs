@@ -264,36 +264,68 @@ namespace AdminWebsite.Controllers
                     HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
-                var newParticipantList = new List<ParticipantRequest>();
+                var existingParticipants = new List<UpdateParticipantRequest>();
+                var newParticipants = new List<ParticipantRequest>();
+                var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
 
                 foreach (var participant in request.Participants)
                     if (!participant.Id.HasValue)
                         await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                            usernameAdIdDict, newParticipantList);
+                            usernameAdIdDict, newParticipants);
                     else
-                        await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
+                    {
+                        var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
+                        {
+                            continue;
+                        }
 
-                // Delete existing participants if the request doesn't contain any update information
-                originalHearing.Participants ??= new List<ParticipantResponse>();
-                await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
+                        var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
+                        existingParticipants.Add(updateParticipantRequest);
+                    }
 
-                // Add new participants
-                await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
-                var addedParticipantToHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                await _hearingsService.UpdateParticipantLinks(hearingId, request, addedParticipantToHearing);
+                var linkedParticipants = new List<LinkedParticipantRequest>();
+                var participantsWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any()
+                 && !removedParticipantIds.Contains(x.LinkedParticipants[0].LinkedId) && !removedParticipantIds.Contains(x.LinkedParticipants[0].ParticipantId)).ToList();
+
+                for (int i = 0; i < participantsWithLinks.Count; i++)
+                {
+                    var participantWithLinks = participantsWithLinks[i];
+                    var linkedParticipantRequest = new LinkedParticipantRequest
+                    {
+                        LinkedParticipantContactEmail = participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail,
+                        ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ?? participantWithLinks.ContactEmail,
+                        Type = participantWithLinks.LinkedParticipants[0].Type
+                    };
+
+                    // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
+                    // We also remove the participant this one is linked to, to avoid duplicating entries.
+
+                    if (participantWithLinks.Id.HasValue && existingParticipants.SingleOrDefault(x => x.ParticipantId == participantWithLinks.Id) != null)
+                    {
+                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId);
+                        var secondaryParticipantInLink = participantsWithLinks[secondaryParticipantInLinkIndex];
+                        linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLink.ContactEmail;
+
+                        participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
+                    }
+
+                    linkedParticipants.Add(linkedParticipantRequest);
+                }
+
+                await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
 
                 // endpoints
-                await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
+                await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                await _hearingsService.AddParticipantLinks(hearingId, request, updatedHearing);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
-                var newParticipantEmails = newParticipantList.Select(p => p.ContactEmail).ToList();
-                await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict, newParticipantEmails);
+                var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
+                await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
                 await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
@@ -311,19 +343,6 @@ namespace AdminWebsite.Controllers
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
-            }
-        }
-
-        private async Task RemoveParticipantsFromHearing(Guid hearingId, EditHearingRequest request,
-            HearingDetailsResponse originalHearing)
-        {
-            var deleteParticipantList =
-                originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
-            foreach (var participantToDelete in deleteParticipantList)
-            {
-                _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
-                    participantToDelete.Id, hearingId);
-                await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
             }
         }
 

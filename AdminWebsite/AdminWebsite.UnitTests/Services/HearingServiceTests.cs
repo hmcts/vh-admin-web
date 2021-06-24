@@ -37,7 +37,7 @@ namespace AdminWebsite.UnitTests.Services
         
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Guid _validId;
-        private EditHearingRequest _addNewParticipantRequest;
+        private EditHearingRequest _editHearingRequest;
         List<CaseResponse> _cases;
 
        [SetUp]
@@ -97,7 +97,7 @@ namespace AdminWebsite.UnitTests.Services
                 }
             };
 
-            _addNewParticipantRequest = new EditHearingRequest
+            _editHearingRequest = new EditHearingRequest
             {
                 HearingRoomName = _updatedExistingParticipantHearingOriginal.HearingRoomName,
                 HearingVenueName = _updatedExistingParticipantHearingOriginal.HearingVenueName,
@@ -459,100 +459,76 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_save_updated_panel_menber_details()
-        {
-            //Arrange 
-            var participantId = _hearing.Participants[0].Id;
-            var updatedParticipant = new EditParticipantRequest
-            {
-                DisplayName = "New Display Name", Id = participantId, TelephoneNumber = "12345", Title = "New Title"
-            };
-
-            //Act
-            await _service.ProcessExistingParticipants(_hearing.Id, _hearing, updatedParticipant);
-
-            //Assert
-            _mocker.Mock<IBookingsApiClient>()
-                .Verify(
-                    x => x.UpdateParticipantDetailsAsync(It.Is<Guid>(h => h == _hearing.Id),
-                        It.Is<Guid>(p => p == participantId),
-                        It.Is<UpdateParticipantRequest>(r =>
-                            r.DisplayName == updatedParticipant.DisplayName &&
-                            r.TelephoneNumber == updatedParticipant.TelephoneNumber &&
-                            r.Title == updatedParticipant.Title)), Times.Once);
-        }
-
-        [Test]
         public void Should_return_false_if_HearingRoomName_is_not_changed()
         {
-            _addNewParticipantRequest.HearingRoomName = "Updated HearingRoomName";
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.HearingRoomName = "Updated HearingRoomName";
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_HearingVenueName_is_changed()
         {
-            _addNewParticipantRequest.HearingRoomName = "Updated HearingVenueName";
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.HearingRoomName = "Updated HearingVenueName";
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_OtherInformation_is_changed()
         {
-            _addNewParticipantRequest.OtherInformation = "Updated OtherInformation";
+            _editHearingRequest.OtherInformation = "Updated OtherInformation";
 
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_ScheduledDuration_is_changed()
         {
-            _addNewParticipantRequest.ScheduledDuration =
+            _editHearingRequest.ScheduledDuration =
                 _updatedExistingParticipantHearingOriginal.ScheduledDuration + 1;
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_when_QuestionnaireNotRequired_is_changed()
         {
-            _addNewParticipantRequest.QuestionnaireNotRequired =
+            _editHearingRequest.QuestionnaireNotRequired =
                 !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_when_endpoint_count_is_changed()
         {
-            _addNewParticipantRequest.Endpoints.Add(new EditEndpointRequest
+            _editHearingRequest.Endpoints.Add(new EditEndpointRequest
             {
                 Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateUsername = Guid.NewGuid().ToString(),
             });
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_when_endpoint_displayName_is_changed()
         {
-            _addNewParticipantRequest.Endpoints.First().DisplayName = "test1";
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            _editHearingRequest.Endpoints.First().DisplayName = "test1";
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -563,9 +539,9 @@ namespace AdminWebsite.UnitTests.Services
             {
                 Id = Guid.NewGuid(), DisplayName = "test", DefenceAdvocateId = Guid.NewGuid(),
             });
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -573,7 +549,7 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_false_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -581,15 +557,15 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_false_when_participant_removed()
         {
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse {Id = Guid.NewGuid()});
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_true_when_participant_added()
         {
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
-            Assert.True(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            _editHearingRequest.Participants.Add(new EditParticipantRequest {Id = Guid.NewGuid()});
+            Assert.True(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -606,18 +582,18 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public void Should_return_false_if_participant_displayName_changed()
         {
-            _addNewParticipantRequest.Participants.First().DisplayName = "DisplayName changed";
+            _editHearingRequest.Participants.First().DisplayName = "DisplayName changed";
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_participant_lastName_changed()
         {
-            _addNewParticipantRequest.Participants.First().LastName = "LastName changed";
+            _editHearingRequest.Participants.First().LastName = "LastName changed";
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -625,34 +601,57 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_throws_InvalidOperationException()
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
-            Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_case_name_is_different()
         {
-            _addNewParticipantRequest.Case.Name = "Updated Case Name";
+            _editHearingRequest.Case.Name = "Updated Case Name";
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_case_number_is_different()
         {
-            _addNewParticipantRequest.Case.Number = "Updated Number";
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            _editHearingRequest.Case.Number = "Updated Number";
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
         public void Should_return_false_if_ScheduledDateTime_is_different()
         {
-            _addNewParticipantRequest.ScheduledDateTime = DateTime.Now;
+            _editHearingRequest.ScheduledDateTime = DateTime.Now;
 
-            Assert.False(_service.IsAddingParticipantOnly(_addNewParticipantRequest,
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
+        }
+
+        [Test]
+        public async Task Should_process_participants()
+        {
+            var existingParticipants = new List<UpdateParticipantRequest>();
+            var newParticipants = new List<BookingsApi.Contract.Requests.ParticipantRequest>();
+            var removedParticipantIds = new List<Guid>();
+            var linkedParticipants = new List<LinkedParticipantRequest>();
+
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
+                .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
+            
+            await _service.ProcessParticipants(_hearing.Id, existingParticipants, newParticipants, removedParticipantIds, linkedParticipants);
+
+            _mocker.Mock<IBookingsApiClient>()
+                .Verify(
+                    x => x.UpdateHearingParticipantsAsync(_hearing.Id, It.Is<UpdateHearingParticipantsRequest>(x =>
+                        x.ExistingParticipants == existingParticipants
+                        && x.NewParticipants == newParticipants
+                        && x.RemovedParticipantIds == removedParticipantIds
+                        && x.LinkedParticipants == linkedParticipants)), Times.Once);
         }
 
         private HearingDetailsResponse InitHearing()
