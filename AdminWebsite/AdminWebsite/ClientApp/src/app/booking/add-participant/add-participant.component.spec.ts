@@ -763,7 +763,7 @@ describe('AddParticipantComponent', () => {
                 { searchJudiciaryEntriesValue: emptyPersonResponse, role: '', expectError: false },
                 { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Other', expectError: false },
                 { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Panel Member', expectError: true },
-                { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Winger', expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Winger', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: '', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Other', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Panel Member', expectError: false },
