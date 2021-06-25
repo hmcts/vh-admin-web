@@ -18,7 +18,7 @@
   </div>
   <div class="govuk-grid-column-one-quarter vh-pl0"></div>
   <hr class="margin-bottom-22 clear-both" />
-  <div *ngFor="let result of results; trackby: result" class="govuk-grid-row">
+  <div *ngFor="let result of results" class="govuk-grid-row">
     <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-quarter vh-20 break-all">
       {{ result.caseNumber }}
     </div>

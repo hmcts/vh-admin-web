@@ -9,6 +9,12 @@ import { Logger } from 'src/app/services/logger';
     templateUrl: './get-audio-file-vh.component.html'
 })
 export class GetAudioFileVhComponent implements OnInit {
+    private readonly loggerPrefix = '[GetAudioFileVh] -';
+    vhAudioFileForm: FormGroup;
+    searchResult: IVhAudioRecordingResult;
+    results: HearingAudioSearchModel[];
+    today = new Date();
+
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
 
     get caseNumber() {
@@ -27,11 +33,7 @@ export class GetAudioFileVhComponent implements OnInit {
         const todayDate = new Date(new Date());
         return new Date(this.vhDate.value) > todayDate && (this.vhDate.dirty || this.vhDate.touched);
     }
-    private readonly loggerPrefix = '[GetAudioFileVh] -';
-    vhAudioFileForm: FormGroup;
-    searchResult: IVhAudioRecordingResult;
-    results: HearingAudioSearchModel[];
-    today = new Date();
+
     private setResults(searchResult: IVhAudioRecordingResult) {
         this.results = searchResult?.result?.map(x => new HearingAudioSearchModel(x)) ?? [];
     }
