@@ -82,7 +82,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 var nonJudgeParticipants = newBookingRequest.Participants.Where(p =>
-                        p.CaseRoleName != "Judge")
+                        p.CaseRoleName != "Judge" && p.HearingRoleName != "Panel Member" &&
+                        p.HearingRoleName != "Winger")
                     .ToList();
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
