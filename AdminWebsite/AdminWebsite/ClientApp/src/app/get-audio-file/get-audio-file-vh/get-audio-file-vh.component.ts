@@ -12,21 +12,10 @@ export class GetAudioFileVhComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileVh] -';
     vhAudioFileForm: FormGroup;
     searchResult: IVhAudioRecordingResult;
-    get results(): HearingAudioSearchModel[] {
-        return !this.searchResult?.result ? [] : (this.searchResult?.result).map(x => new HearingAudioSearchModel(x));
-    }
+    results: HearingAudioSearchModel[];
     today = new Date();
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
-
-    async ngOnInit(): Promise<void> {
-        this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
-
-        this.vhAudioFileForm = this.fb.group({
-            caseNumber: [null],
-            vhDate: [null]
-        });
-    }
 
     get caseNumber() {
         return this.vhAudioFileForm.get('caseNumber');
@@ -45,9 +34,23 @@ export class GetAudioFileVhComponent implements OnInit {
         return new Date(this.vhDate.value) > todayDate && (this.vhDate.dirty || this.vhDate.touched);
     }
 
+    private setResults(searchResult: IVhAudioRecordingResult) {
+        this.results = searchResult?.result?.map(x => new HearingAudioSearchModel(x)) ?? [];
+    }
+
+    async ngOnInit(): Promise<void> {
+        this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
+
+        this.vhAudioFileForm = this.fb.group({
+            caseNumber: [null],
+            vhDate: [null]
+        });
+    }
+
     async search() {
         if (this.searchResult) {
             this.searchResult = null;
+            this.setResults(this.searchResult);
         }
 
         this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);
@@ -57,6 +60,7 @@ export class GetAudioFileVhComponent implements OnInit {
 
             this.logger.debug(`${this.loggerPrefix} Getting results by case number/date`, { caseNumber, date });
             this.searchResult = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, date);
+            this.setResults(this.searchResult);
 
             if (this.searchResult.error) {
                 this.logger.error(

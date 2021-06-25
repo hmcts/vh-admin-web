@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, observeOn, take } from 'rxjs/operators';
-import { BHClient, BookHearingException, CvpForAudioFileResponse, HearingsForAudioFileSearchResponse } from './clients/api-client';
+import {
+    BHClient,
+    BookHearingException,
+    CvpForAudioFileResponse,
+    HearingAudioRecordingResponse,
+    HearingsForAudioFileSearchResponse
+} from './clients/api-client';
 import { Logger } from './logger';
 
 export const InvalidParametersError = (parameters: { [parameterName: string]: any }) =>
@@ -57,9 +63,9 @@ export class AudioLinkService {
         throw InvalidParametersError({ cloudRoomName: cloudRoomName, date: date, caseReference: caseReference });
     }
 
-    async getAudioLink(hearingId: string): Promise<string[]> {
+    async getAudioLink(hearingId: string): Promise<HearingAudioRecordingResponse> {
         const response = await this.bhClient.getAudioRecordingLink(hearingId).toPromise();
-        return response.audio_file_links;
+        return response;
     }
 
     private toAudioRecordingResult() {

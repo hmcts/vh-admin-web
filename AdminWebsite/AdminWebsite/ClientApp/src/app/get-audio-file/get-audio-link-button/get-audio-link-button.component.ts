@@ -13,11 +13,11 @@ export class GetAudioLinkButtonComponent {
     private readonly loggerPrefix = '[GetAudioLinkButton] -';
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.initial;
-    public showLinkCopiedMessage: boolean[] = [];
+    public showLinkCopiedMessage?: boolean[] = [];
 
     showErrorMessage = false;
 
-    audioLinks: string[] = [];
+    audioLinks?: string[] = [];
 
     @Input() hearingId: string;
 
@@ -27,8 +27,8 @@ export class GetAudioLinkButtonComponent {
         this.logger.debug(`${this.loggerPrefix} Clicked on get audio link button`, { hearing: this.hearingId });
         try {
             this.setCurrentState(AudioLinkState.loading);
+            this.audioLinks = (await this.audioLinkService.getAudioLink(this.hearingId)).audio_file_links;
 
-            this.audioLinks = await this.audioLinkService.getAudioLink(this.hearingId);
             if (this.audioLinks.length === 0) {
                 this.logger.warn(`${this.loggerPrefix} Hearing has no audio links: ${this.hearingId}`, {
                     hearing: this.hearingId
@@ -39,7 +39,7 @@ export class GetAudioLinkButtonComponent {
                 this.audioLinks.forEach(x => {
                     this.showLinkCopiedMessage.push(false);
                 });
-                setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
+                this.setCurrentState(AudioLinkState.finished);
             }
         } catch (error) {
             this.logger.error(`${this.loggerPrefix} Error retrieving audio link for: ${this.hearingId}`, error, {
@@ -67,7 +67,7 @@ export class GetAudioLinkButtonComponent {
     }
 
     setCurrentState(audioLinkState: AudioLinkState) {
-        this.logger.debug(`${this.loggerPrefix} Updating retrieval state`, { hearing: this.hearingId, newState: audioLinkState });
+        this.logger.info(`${this.loggerPrefix} Updating retrieval state`, { hearing: this.hearingId, newState: audioLinkState });
         this._currentLinkRetrievalState = audioLinkState;
     }
 
