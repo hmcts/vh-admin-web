@@ -286,6 +286,7 @@ namespace AdminWebsite.Services
             }
 
             var requests = hearing.Participants
+                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
                         days))
