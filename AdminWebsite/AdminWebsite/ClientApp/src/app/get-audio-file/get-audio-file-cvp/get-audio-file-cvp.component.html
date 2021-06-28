@@ -51,7 +51,7 @@
 </div>
 
 <div class="govuk-body" *ngIf="searchResult && !searchResult.error">
-  <app-cvp-audio-file-search-result [results]="cvpResults"></app-cvp-audio-file-search-result>
+  <app-cvp-audio-file-search-result [results]="results"></app-cvp-audio-file-search-result>
 </div>
 <div *ngIf="searchResult && searchResult.error && searchResult.status === 504">
   <app-get-audio-file-request-timedout-warning></app-get-audio-file-request-timedout-warning>
