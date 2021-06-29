@@ -54,11 +54,11 @@ namespace AdminWebsite.Services
 
         Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
+        Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
+
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
-
-        Task ProcessExistingParticipants(Guid hearingId, HearingDetailsResponse hearing,
-            EditParticipantRequest participant);
 
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
@@ -393,6 +393,20 @@ namespace AdminWebsite.Services
             throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
+        public async Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants)
+        {
+            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
+            {
+                ExistingParticipants = existingParticipants,
+                NewParticipants = newParticipants,
+                RemovedParticipantIds = removedParticipantIds,
+                LinkedParticipants = linkedParticipants
+            };
+
+            await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
+        }
+
         public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant,
             HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList)
@@ -422,21 +436,6 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.DisplayName, hearingId);
             newParticipantList.Add(newParticipant);
-        }
-
-        public async Task ProcessExistingParticipants(Guid hearingId, HearingDetailsResponse hearing,
-            EditParticipantRequest participant)
-        {
-            var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-            {
-                return;
-            }
-            //Update participant
-            _logger.LogDebug("Updating existing participant {Participant} in hearing {Hearing}",
-                existingParticipant.Id, hearingId);
-            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
