@@ -1,44 +1,38 @@
 {
-    "stryker-config": {
-        "reporters": [
-            "Progress",
-            "ClearText",
-            "Html"
-        ],
-        "log-level": "info",
-        "timeout-ms": 10000,
-        "log-file": true,
-        "project-file": "AdminWebsite.csproj",
-        "max-concurrent-test-runners": 4,
-        "threshold-high": 80,
-        "threshold-low": 70,
-        "threshold-break": 60,
-        "files-to-exclude": [
-        ],
-        "excluded-mutations": [
-        ],
-      "ignore-methods": [
-        "*LogDebug",
-        "*LogTrace",
-        "*LogError",
-        "*LogInformation",
-        "*LogWarning",
-        "*AddModelError",
-        "*HasValidUserRole"
-      ],
-      "mutate": [
-        "!Startup.cs",
-        "!Program.cs",
-        "!Extensions/Configure*Extensions.cs",
-        "!Swagger/AuthResponsesOperationFilter.cs",
-        "!Pages/Error.cshtml.cs",
-        "!Middleware/ExceptionMiddleware.cs",
-        "!Security/*TokenHandler.cs",
-        "!Security/TokenProvider.cs",
-        "!Security/UserServiceException.cs",
-        "!Services/ApplicationLogger.cs",
-        "!Services/UkPublicHolidayRetriever.cs",
-		"!Models/*.cs"
-      ]
-    }
+  "stryker-config": {
+    "reporters": ["Progress", "ClearText", "Html"],
+    "log-level": "info",
+    "timeout-ms": 10000,
+    "log-file": true,
+    "project-file": "AdminWebsite.csproj",
+    "max-concurrent-test-runners": 4,
+    "threshold-high": 80,
+    "threshold-low": 70,
+    "threshold-break": 60,
+    "files-to-exclude": [],
+    "excluded-mutations": ["Linq methods", "Logical operators"],
+    "ignore-methods": [
+      "*LogDebug",
+      "*LogTrace",
+      "*LogError",
+      "*LogInformation",
+      "*LogWarning",
+      "*AddModelError",
+      "*HasValidUserRole"
+    ],
+    "mutate": [
+      "!Startup.cs",
+      "!Program.cs",
+      "!Extensions/Configure*Extensions.cs",
+      "!Swagger/AuthResponsesOperationFilter.cs",
+      "!Pages/Error.cshtml.cs",
+      "!Middleware/ExceptionMiddleware.cs",
+      "!Security/*TokenHandler.cs",
+      "!Security/TokenProvider.cs",
+      "!Security/UserServiceException.cs",
+      "!Services/ApplicationLogger.cs",
+      "!Services/UkPublicHolidayRetriever.cs",
+      "!Models/*.cs"
+    ]
+  }
 }

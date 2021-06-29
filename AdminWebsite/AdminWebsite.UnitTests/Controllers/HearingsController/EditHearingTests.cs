@@ -407,6 +407,60 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             notFoundResult.Value.Should().Be($"No hearing with id found [{_validId}]");
         }
 
+        [Test]
+        public void Should_throw_if_hearing_exception_is_not_of_type_not_found()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<BookingsApiException>(async () => await _controller.EditHearing(_validId, _addNewParticipantRequest));
+        }
+
+
+        [Test]
+        public async Task Should_return_bad_request_if_editing_hearing_fails_with_bad_request_status_code()
+        {
+            //Arrange
+            _addNewParticipantRequest.Participants = new List<EditParticipantRequest>();
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithLinkedParticipants);
+            _bookingsApiClient.Setup(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+
+            //Act
+            var response = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+
+            //Assert
+            response.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public void Should_throw_if_editing_hearing_fails_with_non_bad_request()
+        {
+
+            if (true)
+            {
+                //execute
+            }
+
+            if (false)
+            {
+                //execute
+            }
+
+            //Arrange
+            _addNewParticipantRequest.Participants = new List<EditParticipantRequest>();
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithLinkedParticipants);
+            _bookingsApiClient.Setup(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+
+            //Act/Assert
+            Assert.ThrowsAsync<BookingsApiException>(async () => await _controller.EditHearing(_validId, _addNewParticipantRequest));
+        }
+
         [TestCase("Confirmed By")]
         [TestCase("")]
         public async Task Should_add_panel_members_for_a_hearing(string confirmedBy)
