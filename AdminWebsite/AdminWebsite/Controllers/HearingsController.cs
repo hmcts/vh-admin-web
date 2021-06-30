@@ -473,13 +473,7 @@ namespace AdminWebsite.Controllers
                     }
                     else
                     {
-                        await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                        new UpdateBookingStatusRequest
-                        {
-                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                            UpdatedBy = "System",
-                            CancelReason = string.Empty
-                        });
+                        await UpdateFailedBookingStatus(hearingId);
                         return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                     }
                 }
@@ -490,13 +484,7 @@ namespace AdminWebsite.Controllers
                     hearingId);
 
                     // Set the booking status to failed as the video api failed
-                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                        new UpdateBookingStatusRequest
-                        {
-                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                            UpdatedBy = "System",
-                            CancelReason = string.Empty
-                        });
+                    await UpdateFailedBookingStatus(hearingId);
 
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
@@ -507,13 +495,7 @@ namespace AdminWebsite.Controllers
                 if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                 {
                     // Set the booking status to failed as the video api failed
-                    await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                        new UpdateBookingStatusRequest
-                        {
-                            Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                            UpdatedBy = "System",
-                            CancelReason = string.Empty
-                        });
+                    await UpdateFailedBookingStatus(hearingId);
 
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
@@ -526,6 +508,17 @@ namespace AdminWebsite.Controllers
                 }
                 return BadRequest(ex.Message);
             }
+        }
+
+        private async Task UpdateFailedBookingStatus(Guid hearingId)
+        {
+            await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                    new UpdateBookingStatusRequest
+                    {
+                        Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                        UpdatedBy = "System",
+                        CancelReason = string.Empty
+                    });
         }
 
         /// <summary>
