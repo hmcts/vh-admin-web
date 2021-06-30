@@ -144,8 +144,8 @@ stages:
             value: $(AppUri_Prod)
             env:
              - Prod
-          - name: UpperEnvUri
-            value: $(UpperEnvUri)
+          - name: VanityUrl
+            value: $(Chris)
             env:
               - Prod
               - Preprod
