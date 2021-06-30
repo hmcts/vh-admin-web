@@ -144,6 +144,11 @@ stages:
             value: $(AppUri_Prod)
             env:
              - Prod
+          - name: UpperEnvUri
+            value: $(UpperEnvUri)
+            env:
+              - Prod
+              - Preprod
           - group: govuk-notify-preview
             env:
              - Preview
