@@ -149,7 +149,6 @@ stages:
             env:
               - Prod
               - Preprod
-              - Sandbox
           - group: govuk-notify-preview
             env:
              - Preview
