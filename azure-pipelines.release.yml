@@ -145,7 +145,7 @@ stages:
             env:
              - Prod
           - name: VanityUrl
-            value: $(admin_web_url_prod)
+            value: $(admin_web_domain_prod)
             env:
               - Prod
               - Preprod
