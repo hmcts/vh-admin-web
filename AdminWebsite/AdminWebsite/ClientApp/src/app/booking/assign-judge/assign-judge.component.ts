@@ -208,7 +208,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get displayEmailField(): boolean {
-        return !!this.judge && this.judge.is_courtroom_account;
+        return !!this.judge && !ParticipantModel.IsEmailEjud(this.judge.email) ;
     }
 
     changeDisplayName() {

@@ -46,4 +46,8 @@ export class ParticipantModel {
               }
             : null;
     }
+
+    static IsEmailEjud(email: string): boolean {
+        return email && email.includes('judiciary');
+    }
 }
