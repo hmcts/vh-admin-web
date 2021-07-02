@@ -23,7 +23,7 @@ export const Constants = {
         CompanyErrorMsg: 'Please enter an organisation name',
         ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
-        JudgeEmailErrorMsg: 'Please enter a valid judge email',
+        JudgeUserAccountErrorMsg: 'Please enter a valid judge or courtroom account',
         JudgeDisplayNameErrorMsg: 'Please enter a judge name',
         DisplayNameErrorMsg: 'Please enter a display name',
         CompanyNameErrorMsg: 'Please enter a valid company name',

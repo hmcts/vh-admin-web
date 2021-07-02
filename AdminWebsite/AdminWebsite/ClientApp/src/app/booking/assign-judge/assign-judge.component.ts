@@ -348,7 +348,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private updateWithNewJudge(judge: ParticipantModel) {
-        this.courtAccountJudgeEmail = judge.email;
+        this.courtAccountJudgeEmail = judge.username;
         if (!this.isExistingJudge(judge)) {
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
