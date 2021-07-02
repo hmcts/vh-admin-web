@@ -585,7 +585,7 @@ describe('AssignJudgeComponent', () => {
                     const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
 
                     expect(updatedJudges.length).toBe(1);
-                    expect(component.courtAccountJudgeEmail).toEqual(judge.email);
+                    expect(component.courtAccountJudgeEmail).toEqual(judge.username);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
                     expect(updatedJudges[0]).toBe(judge);
 
