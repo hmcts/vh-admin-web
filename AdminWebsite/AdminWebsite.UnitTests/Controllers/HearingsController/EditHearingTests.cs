@@ -476,7 +476,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
-                CaseRoleName = "Panel Member",
+                HearingRoleName = "Panel Member",
                 ContactEmail = "new@hmcts.net",
                 DisplayName = "new@hmcts.net"
             });
