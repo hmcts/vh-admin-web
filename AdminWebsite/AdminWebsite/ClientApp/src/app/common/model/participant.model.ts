@@ -48,6 +48,6 @@ export class ParticipantModel {
     }
 
     static IsEmailEjud(email: string): boolean {
-        return email && email.includes('judiciary');
+        return email && email.toLowerCase().includes('judiciary');
     }
 }

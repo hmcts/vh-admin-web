@@ -1,4 +1,5 @@
 import { ParticipantDetailsModel } from './participant-details.model';
+import { ParticipantModel } from './participant.model';
 
 describe('participant details model', () => {
     it('should get full Name', () => {
@@ -70,6 +71,48 @@ describe('participant details model', () => {
         expect(model.fullName).toEqual('first_name Judge');
     });
 
+    it('should validate AAD Judge Email ', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'Judge',
+            'first_name',
+            'Judge',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'case_role_name',
+            'hearing_role_name',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'interpretee',
+            false
+        );
+        expect(ParticipantModel.IsEmailEjud(model.Email)).toBeFalsy();
+    });
+    it('should validate E-Judge email ', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'Judge',
+            'first_name',
+            'Judge',
+            'user_role_name',
+            'username',
+            'Judiciaryemail',
+            'case_role_name',
+            'hearing_role_name',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'interpretee',
+            false
+        );
+        expect(ParticipantModel.IsEmailEjud(model.Email)).toBeTruthy();
+    });
     it('should return true when user is representative', () => {
         const model = new ParticipantDetailsModel(
             'id',
