@@ -58,7 +58,18 @@ namespace AdminWebsite.Controllers
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
 
-                var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
+                var excludedEmails = (await _userAccountService.GetJudgeUsers()).Select(x => x.Email).ToList();
+                var persons = await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+                var excludedUsernames = persons.Where(x => x.Username != null).Select(x => x.Username).ToList();
+                var excludedContactEmails = persons.Where(x => x.ContactEmail != null).Select(x => x.ContactEmail).ToList();
+
+                excludedEmails = excludedEmails.Concat(excludedUsernames).Concat(excludedContactEmails).ToList();
+
+                var personsResponse = (await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm))?.Where(x =>
+                    excludedEmails.All(y => !String.Equals(x.Username, y, StringComparison.CurrentCultureIgnoreCase)) &&
+                    excludedEmails.All(
+                        y => !String.Equals(x.ContactEmail, y, StringComparison.CurrentCultureIgnoreCase)));
+                
                 personsResponse = personsResponse?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
 
                 return Ok(personsResponse);
