@@ -74,6 +74,18 @@
   </div>
 </div>
 
+
+<div *ngIf="hearing.isCreated">
+  <h2 class="govuk-heading-s remove-header-padding">Joining by quick link</h2>
+  <div class="vh-section">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full" id="quickLinkDetails">
+        <app-copy-join-link [quickLinkDetails]="hearing?.HearingId"></app-copy-join-link>
+      </div>
+    </div>
+  </div>
+</div>
+
 <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">

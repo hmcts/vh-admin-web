@@ -10,6 +10,7 @@ import { HearingDetailsComponent } from './hearing-details/hearing-details.compo
 import { PopupModule } from '../popups/popup.module';
 import { CopySipComponent } from './copy-sip/copy-sip.component';
 import { CopyConferencePhoneComponent } from './copy-conference-phone/copy-conference-phone.component';
+import { CopyJoinLinkComponent } from './copy-join-link/copy-join-link.component';
 
 @NgModule({
     imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule],
@@ -20,7 +21,8 @@ import { CopyConferencePhoneComponent } from './copy-conference-phone/copy-confe
         BookingParticipantListComponent,
         HearingDetailsComponent,
         CopySipComponent,
-        CopyConferencePhoneComponent
+        CopyConferencePhoneComponent,
+        CopyJoinLinkComponent
     ],
     providers: [],
     exports: [
