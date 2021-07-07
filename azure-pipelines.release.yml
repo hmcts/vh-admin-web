@@ -24,6 +24,11 @@ parameters:
   type: boolean
   default: false
 
+- name: runACTests
+  displayName: Run Smoke Checks
+  type: boolean
+  default: true
+
 - name: prodEnvs
   displayName: Environments Using Prod Subscription
   type: object
@@ -210,6 +215,8 @@ stages:
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
+          - name: runACTests
+            value: ${{ parameters.runACTests }}
 
           # VhServices
           - name: VhServices:BookingsApiResourceId
