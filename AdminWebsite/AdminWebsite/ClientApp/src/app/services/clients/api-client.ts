@@ -3898,6 +3898,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
+    /** The Uri to video web */
+    video_web_url?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -3917,6 +3919,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
+            this.video_web_url = _data['video_web_url'];
         }
     }
 
@@ -3937,6 +3940,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
+        data['video_web_url'] = this.video_web_url;
         return data;
     }
 }

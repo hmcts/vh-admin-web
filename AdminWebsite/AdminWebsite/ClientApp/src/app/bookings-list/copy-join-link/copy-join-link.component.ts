@@ -10,17 +10,16 @@ import { ConfigService } from '../../services/config.service';
     styleUrls: ['./copy-join-link.component.scss']
 })
 export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
-    @Input() set  quickLinkDetails(value: string) {
-        this._detailsToCopy = this.vh_video_uri + [PageUrls.JoinLink] + "/" + value;
+    @Input() set quickLinkDetails(value: string) {
+        this._detailsToCopy = this.vh_video_uri + [PageUrls.JoinLink] + '/' + value;
     }
     @ViewChild('conferenceJoinByLink', { static: false }) conferenceJoinByLink: ElementRef;
 
     private readonly vh_video_uri: string;
 
-    constructor(protected clipboardService: ClipboardService,
-        private configService: ConfigService) {
+    constructor(protected clipboardService: ClipboardService, private configService: ConfigService) {
         super(clipboardService);
-        this.vh_video_uri = this.configService.getConfig().redirect_uri;
+        this.vh_video_uri = this.configService.getConfig().video_web_url;
     }
 
     ngOnInit(): void {

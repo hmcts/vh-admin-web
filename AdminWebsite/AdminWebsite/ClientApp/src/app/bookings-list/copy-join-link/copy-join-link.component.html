@@ -1,16 +1,15 @@
 <div>
-    <div #conferenceJoinByLink class="detailsBox" [hidden]="displayTooltip">
-      {{ tooltip }}
-    </div>
-    <div
-      id="conference_join_by_link_details"
-      class="link govuk-body"
-      (mouseover)="onMouseOver($event)"
-      (mousemove)="onMouseOver($event)"
-      (mouseout)="onMouseOut()"
-      (click)="copyToClipboard(); $event.stopPropagation()"
-    >
-      {{ _detailsToCopy }}
-    </div>
+  <div #conferenceJoinByLink class="detailsBox" [hidden]="displayTooltip">
+    {{ tooltip }}
   </div>
-  
+  <div
+    id="conference_join_by_link_details"
+    class="link govuk-body"
+    (mouseover)="onMouseOver($event)"
+    (mousemove)="onMouseOver($event)"
+    (mouseout)="onMouseOut()"
+    (click)="copyToClipboard(); $event.stopPropagation()"
+  >
+    {{ _detailsToCopy }}
+  </div>
+</div>
