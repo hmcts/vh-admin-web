@@ -284,6 +284,8 @@ stages:
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
+          - name: VhServices:VideoWebUrl
+            value: $(video_web_url)
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
