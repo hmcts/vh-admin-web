@@ -58,16 +58,16 @@ namespace AdminWebsite.Controllers
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
 
-                var excludedEmails = (await _userAccountService.GetJudgeUsers()).Select(x => x.Email.ToLower()).ToList();
+                var excludedEmails = (await _userAccountService.GetJudgeUsers()).Select(x => x.Email.ToLowerInvariant()).ToList();
                 var persons = await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
-                var excludedUsernames = persons.Where(x => x.Username != null).Select(x => x.Username.ToLower()).ToList();
-                var excludedContactEmails = persons.Where(x => x.ContactEmail != null).Select(x => x.ContactEmail.ToLower()).ToList();
+                var excludedUsernames = persons.Where(x => x.Username != null).Select(x => x.Username.ToLowerInvariant()).ToList();
+                var excludedContactEmails = persons.Where(x => x.ContactEmail != null).Select(x => x.ContactEmail.ToLowerInvariant()).ToList();
 
                 excludedEmails = excludedEmails.Concat(excludedUsernames).Concat(excludedContactEmails).ToList();
 
                 var personsResponse = (await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm))?.Where(x =>
-                    !excludedEmails.Contains(x.Username.ToLower()) &&
-                    !excludedEmails.Contains(x.ContactEmail.ToLower()));
+                    !excludedEmails.Contains(x.Username.ToLowerInvariant()) &&
+                    !excludedEmails.Contains(x.ContactEmail.ToLowerInvariant()));
                 
                 personsResponse = personsResponse?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
 

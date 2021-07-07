@@ -72,19 +72,19 @@ namespace AdminWebsite.UnitTests.Controllers
             };
             _response.Add(additionalParticipantToReturn);
             
+            var searchTerm = "ado";
+            
             var expectedResponse = new List<PersonResponse>();
             expectedResponse.Add(_response[0]);
             expectedResponse.Add(additionalParticipantToReturn);
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
 
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(new List<PersonResponse>());
-            
-            var searchTerm = "ado";
 
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
@@ -113,11 +113,13 @@ namespace AdminWebsite.UnitTests.Controllers
                 Username = "jackfilter@hmcts.net"
             };
             _response.Add(participantToFilter);
+
+            var searchTerm = "ado";
             
             var expectedResponse = new List<PersonResponse>();
             expectedResponse.Add(_response[0]);
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new[]
@@ -128,10 +130,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 }
             });
 
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(new List<PersonResponse>());
-
-            var searchTerm = "ado";
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
 
@@ -160,18 +160,18 @@ namespace AdminWebsite.UnitTests.Controllers
             };
             _response.Add(participantToFilter);
             
+            var searchTerm = "ado";
+            
             var expectedResponse = new List<PersonResponse>();
             expectedResponse.Add(_response[0]);
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
 
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(new[] {participantToFilter});
-            
-            var searchTerm = "ado";
 
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
@@ -201,18 +201,18 @@ namespace AdminWebsite.UnitTests.Controllers
             };
             _response.Add(participantToFilter);
             
+            var searchTerm = "ado";
+            
             var expectedResponse = new List<PersonResponse>();
             expectedResponse.Add(_response[0]);
             
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
 
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(new List<PersonResponse>());
-            
-            var searchTerm = "ado";
 
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
