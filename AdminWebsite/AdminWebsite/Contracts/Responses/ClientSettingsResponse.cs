@@ -43,5 +43,10 @@
         ///  The date to switch on option to join by phone 
         /// </summary>
         public string JoinByPhoneFromDate { get; set; }
+
+        /// <summary>
+        /// The Uri to video web url
+        /// </summary>
+        public string VideoWebUrl { get; set; }
     }
 }
