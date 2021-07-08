@@ -57,7 +57,7 @@ resources:
     - repository: templates
       type: github
       name: hmcts/azure-devops-templates
-      ref: islive-task-automated
+      ref: swap-appsettings-deploy
       endpoint: hmcts
   pipelines:
   - pipeline: CI
