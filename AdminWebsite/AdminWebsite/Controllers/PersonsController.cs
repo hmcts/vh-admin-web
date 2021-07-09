@@ -47,11 +47,11 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name = "term" > The email address search term.</param>
         /// <returns> The list of person</returns>
-        [HttpPost]
-        [SwaggerOperation(OperationId = "PostPersonBySearchTerm")]
-        [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> PostPersonBySearchTerm([FromBody] string term)
+        //[HttpPost]
+        //[SwaggerOperation(OperationId = "PostPersonBySearchTerm")]
+        //[ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<IList<PersonResponse>>> PostPersonBySearchTermDepre([FromBody] string term)
         {
             try
             {
@@ -82,6 +82,20 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
+        }
+
+        [HttpPost]
+        [SwaggerOperation(OperationId = "PostPersonBySearchTerm")]
+        [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<IList<PersonResponse>>> PostPersonBySearchTerm([FromBody] string term)
+        {
+            var encodedTerm = _encoder.Encode(term);
+            var judgesFromAd = (await _userAccountService.GetJudgeUsers()).Select(x => x.Email.ToLowerInvariant()).ToList();
+            var searchQueryRequest = new SearchQueryRequest { Term = encodedTerm, JudiciaryUsernamesFromAd = judgesFromAd };
+            var persons = await _bookingsApiClient.GetPersonBySearchQueryAsync(searchQueryRequest);
+            persons = persons?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
+            return Ok(persons);
         }
 
         /// <summary>

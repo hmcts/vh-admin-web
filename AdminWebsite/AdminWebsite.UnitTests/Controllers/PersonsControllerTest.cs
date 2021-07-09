@@ -15,6 +15,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -87,7 +88,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(new List<PersonResponse>());
 
             // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+            var result = await _controller.PostPersonBySearchTermDepre(searchTerm);
 
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
@@ -96,7 +97,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Verify(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
             _userAccountService.Verify(x => x.GetJudgeUsers(), Times.Once);
         }
-        
+
         [Test]
         public async Task Should_filter_judge_participants()
         {
@@ -133,7 +134,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(new List<PersonResponse>());
             // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+            var result = await _controller.PostPersonBySearchTermDepre(searchTerm);
 
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
@@ -174,7 +175,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(new[] {participantToFilter});
 
             // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+            var result = await _controller.PostPersonBySearchTermDepre(searchTerm);
 
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
@@ -215,7 +216,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(new List<PersonResponse>());
 
             // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+            var result = await _controller.PostPersonBySearchTermDepre(searchTerm);
 
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
@@ -236,7 +237,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
-            var response = await _controller.PostPersonBySearchTerm("term");
+            var response = await _controller.PostPersonBySearchTermDepre("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
@@ -250,7 +251,128 @@ namespace AdminWebsite.UnitTests.Controllers
             
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostPersonBySearchTerm("term"));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostPersonBySearchTermDepre("term"));
         }
+
+        [Test]
+        public async Task Should_return_searched_participants_with_new_endpoint()
+        {
+            // Arrange
+            var additionalParticipantToReturn = new PersonResponse
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "jackfilter@hmcts.net",
+                FirstName = "Filter",
+                LastName = "Participant",
+                TelephoneNumber = "111222333",
+                Title = "Mr",
+                MiddleNames = "No",
+                Username = "jackfilter@hmcts.net"
+            };
+            _response.Add(additionalParticipantToReturn);
+
+            var searchTerm = "ado";
+
+            var expectedResponse = new List<PersonResponse>();
+            expectedResponse.Add(_response[0]);
+            expectedResponse.Add(additionalParticipantToReturn);
+
+            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse> { new JudgeResponse { Email = "john.doe@hmcts.net" } });
+
+            _bookingsApiClient.Setup(x => x.GetPersonBySearchQueryAsync(It.Is<SearchQueryRequest>(searchQueryRequest => searchQueryRequest.Term == searchTerm && searchQueryRequest.JudiciaryUsernamesFromAd.Any(x => x.Contains("john.doe@hmcts.net")))))
+                .ReturnsAsync(_response);
+
+            // Act
+            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+
+            // Assert
+            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
+            okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
+            var personsResponse = okObjectResult.Value as List<PersonResponse>;
+            Assert.AreEqual("jackfilter@hmcts.net", personsResponse[1].Username);
+        }
+
+        [Test]
+        public async Task Encodes_Term_Before_Being_Used_In_Service()
+        {
+            var searchTerm = "ado&";
+            var expectedSearchTerm = $"ado\\u0026";
+            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
+
+            _bookingsApiClient.Setup(x => x.GetPersonBySearchQueryAsync(
+                It.Is<SearchQueryRequest>(searchQueryRequest => 
+                searchQueryRequest.Term == expectedSearchTerm)))
+                .ReturnsAsync(_response);
+
+            // Act
+            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+
+            // Assert
+            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
+            okObjectResult.Value.Should().BeEquivalentTo(_response);
+        }
+
+        [Test]
+        public async Task Filters_Test_Usernames()
+        {
+            // Arrange
+            var participantToFilter = new PersonResponse
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "jackfilter@hmcts.net1",
+                FirstName = "Filter",
+                LastName = "Participant",
+                TelephoneNumber = "111222333",
+                Title = "Mr",
+                MiddleNames = "No",
+                Username = "jackfilter@hmcts.net"
+            };
+            _response.Add(participantToFilter);
+
+            var searchTerm = "ado";
+
+            var expectedResponse = new List<PersonResponse>();
+            expectedResponse.Add(_response[0]);
+
+            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse> { new JudgeResponse { Email = "john.doe@hmcts.net" } });
+
+            _bookingsApiClient.Setup(x => x.GetPersonBySearchQueryAsync(It.Is<SearchQueryRequest>(searchQueryRequest => searchQueryRequest.Term == searchTerm && searchQueryRequest.JudiciaryUsernamesFromAd.Any(x => x.Contains("john.doe@hmcts.net")))))
+                .ReturnsAsync(_response);
+
+            // Act
+            var result = await _controller.PostPersonBySearchTerm(searchTerm);
+
+            // Assert
+            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
+            okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
+        }
+
+        //[Test]
+        //public async Task Should_pass_on_bad_request_from_bookings_api()
+        //{
+        //    _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
+
+        //    _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+        //        .ReturnsAsync(new List<PersonResponse>());
+
+        //    _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+        //          .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+
+        //    var response = await _controller.PostPersonBySearchTerm("term");
+        //    response.Result.Should().BeOfType<BadRequestObjectResult>();
+        //}
+
+        //[Test]
+        //public void Should_pass_on_exception_request_from_bookings_api()
+        //{
+        //    _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
+
+        //    _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+        //        .ReturnsAsync(new List<PersonResponse>());
+
+        //    _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+        //          .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+        //    Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostPersonBySearchTerm("term"));
+        //}
     }
 }
