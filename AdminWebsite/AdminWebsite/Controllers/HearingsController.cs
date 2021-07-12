@@ -269,12 +269,21 @@ namespace AdminWebsite.Controllers
                 var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
 
                 foreach (var participant in request.Participants)
+                {
                     if (!participant.Id.HasValue)
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                            usernameAdIdDict, newParticipants);
+                    {
+                        if (await _hearingsService.ProcessNewParticipant(hearingId, participant,
+                            removedParticipantIds,
+                            originalHearing,
+                            usernameAdIdDict) is { } newParticipant)
+                        {
+                            newParticipants.Add(newParticipant);
+                        }
+                    }
                     else
                     {
-                        var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        var existingParticipant =
+                            originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                         if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         {
                             continue;
@@ -283,6 +292,7 @@ namespace AdminWebsite.Controllers
                         var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                         existingParticipants.Add(updateParticipantRequest);
                     }
+                }
 
                 var linkedParticipants = new List<LinkedParticipantRequest>();
                 var participantsWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any()

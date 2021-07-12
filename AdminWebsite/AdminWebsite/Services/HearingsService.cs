@@ -57,8 +57,9 @@ namespace AdminWebsite.Services
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
             List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
 
-        Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
-            Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
+        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+            List<Guid> removedParticipantIds, HearingDetailsResponse hearing,
+            Dictionary<string, User> usernameAdIdDict);
 
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
@@ -407,9 +408,10 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
 
-        public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant,
+        public async Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+            List<Guid> removedParticipantIds,
             HearingDetailsResponse hearing,
-            Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList)
+            Dictionary<string, User> usernameAdIdDict)
         {
             // Add a new participant
             // Map the request except the username
@@ -418,10 +420,10 @@ namespace AdminWebsite.Services
             if (participant.CaseRoleName == "Judge" || participant.HearingRoleName == "Panel Member" || participant.HearingRoleName == "Winger")
             {
                 if (hearing.Participants != null &&
-                    hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                    hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
-                    return;
+                    return null;
                 }
 
                 newParticipant.Username = participant.ContactEmail;
@@ -435,7 +437,7 @@ namespace AdminWebsite.Services
 
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.DisplayName, hearingId);
-            newParticipantList.Add(newParticipant);
+            return newParticipant;
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
