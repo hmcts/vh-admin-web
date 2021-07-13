@@ -307,9 +307,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Username = "",
                 CaseRoleName = "",
-                HearingRoleName = ""
+                HearingRoleName = "",
+                ContactEmail = "contact@email.com"
             };
 
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                {
+                    UserName = participant.ContactEmail,
+                    Password = "password"
+                });
+            
             // setup  response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                             .WithParticipant("");

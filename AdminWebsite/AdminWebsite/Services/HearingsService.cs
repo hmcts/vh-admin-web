@@ -432,6 +432,7 @@ namespace AdminWebsite.Services
             {
                 // Update the request with newly created user details in AD
                 var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
+                newParticipant.Username = user.UserName;
                 usernameAdIdDict.Add(newParticipant.Username, user);
             }
 
