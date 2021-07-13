@@ -262,8 +262,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Returns(new ValidationResult());
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = p.ContactEmail)
-                .ReturnsAsync(new User());
+                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                {
+                    UserName = participant.ContactEmail,
+                    Password = "password"
+                });
         }
 
         [Test]

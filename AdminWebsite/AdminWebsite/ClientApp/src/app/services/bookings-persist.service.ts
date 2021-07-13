@@ -35,6 +35,7 @@ export class BookingPersistService {
                 hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
                 hearingUpdate.StartTime = newStartDate;
                 hearingUpdate.Duration = hearing.scheduled_duration;
+                hearingUpdate.CourtRoomAccount = hearing.participants.find(x => x.is_judge)?.username;
                 hearingUpdate.CourtAddress = hearing.court_name;
                 hearingUpdate.CourtRoom = hearing.court_room;
                 hearingUpdate.CreatedBy = hearing.created_by;

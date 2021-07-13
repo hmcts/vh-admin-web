@@ -117,7 +117,6 @@ namespace AdminWebsite.Services
                             };
             }
 
-            participant.Username = userProfile.UserName;
             return new User
             { 
                 UserName = userProfile.UserId 
