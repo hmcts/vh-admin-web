@@ -1,7 +1,7 @@
 import { ClipboardService } from 'ngx-clipboard';
 
 export abstract class CopyDetailsBase {
-    displayTooltip: boolean;
+    hideTooltip: boolean;
     tooltip: string;
     elem: HTMLDivElement;
     _detailsToCopy: string;
@@ -9,7 +9,7 @@ export abstract class CopyDetailsBase {
     tooltipTextCopy: string;
 
     constructor(protected clipboardService: ClipboardService) {
-        this.displayTooltip = true;
+        this.hideTooltip = true;
     }
 
     mouseOver($event: MouseEvent): void {
@@ -38,6 +38,6 @@ export abstract class CopyDetailsBase {
     }
 
     setTooltipVisibility(visible: boolean) {
-        this.displayTooltip = visible;
+        this.hideTooltip = visible;
     }
 }

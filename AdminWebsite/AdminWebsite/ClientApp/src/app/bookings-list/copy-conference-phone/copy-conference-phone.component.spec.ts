@@ -26,7 +26,7 @@ describe('CopyConferencePhoneComponent', () => {
     });
     it('should hide the tooltip on mouse out event', () => {
         component.onMouseOut();
-        expect(component.displayTooltip).toBe(true);
+        expect(component.hideTooltip).toBe(true);
     });
     it('should show the tooltip on mouse over event', () => {
         component.conferencePhone = new ElementRef<HTMLDivElement>(element);
@@ -37,22 +37,22 @@ describe('CopyConferencePhoneComponent', () => {
         expect(element.style.top).toBe(expectedTop);
         expect(element.style.left).toBe(expectedLeft);
 
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(true);
         expect(component.tooltip).toBe(component.tooltipTextCopy);
     });
     it('should not show tooltip if element if not ready', () => {
         component.elem = null;
-        component.displayTooltip = true;
+        component.hideTooltip = true;
         component.onMouseOver(mouseEvent);
 
-        expect(component.displayTooltip).toBeTruthy();
+        expect(component.hideTooltip).toBeTruthy();
     });
     it('should copy the phone number and phone conference id to the clipboard', () => {
         const phoneDetails = '0000 111 2222 (ID: 1234)';
         component._detailsToCopy = phoneDetails;
         component.copyToClipboard();
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(phoneDetails);
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopied);
     });
 });

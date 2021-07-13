@@ -18,7 +18,7 @@ export class CopyConferencePhoneComponent extends CopyDetailsBase implements OnI
     }
 
     ngOnInit(): void {
-        this.displayTooltip = true;
+        this.hideTooltip = true;
         this.tooltipTextCopy = 'Copy details';
         this.tooltip = this.tooltipTextCopy;
         this.tooltipTextCopied = 'Details copied to clipboard';

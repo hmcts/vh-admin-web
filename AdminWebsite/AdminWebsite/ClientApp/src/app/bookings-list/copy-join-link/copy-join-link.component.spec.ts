@@ -33,7 +33,7 @@ describe('CopyJoinLinkComponent', () => {
     });
     it('should hide the tooltip on mouse out event', () => {
         component.onMouseOut();
-        expect(component.displayTooltip).toBe(true);
+        expect(component.hideTooltip).toBe(true);
     });
     it('should show the tooltip on mouse over event', () => {
         component.conferenceJoinByLink = new ElementRef<HTMLDivElement>(element);
@@ -44,22 +44,22 @@ describe('CopyJoinLinkComponent', () => {
         expect(element.style.top).toBe(expectedTop);
         expect(element.style.left).toBe(expectedLeft);
 
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(true);
         expect(component.tooltip).toBe(component.tooltipTextCopy);
     });
     it('should not show tooltip if element if not ready', () => {
         component.elem = null;
-        component.displayTooltip = true;
+        component.hideTooltip = true;
         component.onMouseOver(mouseEvent);
 
-        expect(component.displayTooltip).toBeTruthy();
+        expect(component.hideTooltip).toBeTruthy();
     });
     it('should copy the join link to the clipboard', () => {
         const joinLinkDetails = 'vh-video-web';
         component._detailsToCopy = joinLinkDetails;
         component.copyToClipboard();
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(joinLinkDetails);
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopied);
     });
 });
