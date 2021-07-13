@@ -79,8 +79,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgeEmailTextField).SendKeys(Judge.AlternativeEmail);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgePhoneTextField).SendKeys(JudgePhone);
-            //set to lose focus on phone field so it gets updated in panel
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgeEmailTextField).SendKeys(Judge.AlternativeEmail);
         }
 
         public void EditAudioRecording()
