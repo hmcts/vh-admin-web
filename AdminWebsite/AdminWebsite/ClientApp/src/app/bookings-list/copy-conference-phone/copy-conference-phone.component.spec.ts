@@ -37,7 +37,7 @@ describe('CopyConferencePhoneComponent', () => {
         expect(element.style.top).toBe(expectedTop);
         expect(element.style.left).toBe(expectedLeft);
 
-        expect(component.hideTooltip).toBe(true);
+        expect(component.hideTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopy);
     });
     it('should not show tooltip if element if not ready', () => {

@@ -38,7 +38,7 @@ describe('CopySipComponent', () => {
         expect(sipAddress.style.top).toBe(expectedTop);
         expect(sipAddress.style.left).toBe(expectedLeft);
 
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(false);
         expect(component.tooltip).toBe('Copy address');
     });
     it('should not show tooltip if element if not ready', () => {
@@ -57,7 +57,7 @@ describe('CopySipComponent', () => {
         component._detailsToCopy = address;
         component.copyToClipboard();
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(address);
-        expect(component.displayTooltip).toBe(false);
+        expect(component.hideTooltip).toBe(false);
         expect(component.tooltip).toBe('Address copied to clipboard');
     });
     it('should set on input details to copy', () => {
