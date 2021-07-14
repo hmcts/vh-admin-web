@@ -269,12 +269,21 @@ namespace AdminWebsite.Controllers
                 var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
 
                 foreach (var participant in request.Participants)
+                {
                     if (!participant.Id.HasValue)
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                            usernameAdIdDict, newParticipants);
+                    {
+                        if (await _hearingsService.ProcessNewParticipant(hearingId, participant,
+                            removedParticipantIds,
+                            originalHearing,
+                            usernameAdIdDict) is { } newParticipant)
+                        {
+                            newParticipants.Add(newParticipant);
+                        }
+                    }
                     else
                     {
-                        var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        var existingParticipant =
+                            originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                         if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         {
                             continue;
@@ -283,6 +292,7 @@ namespace AdminWebsite.Controllers
                         var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                         existingParticipants.Add(updateParticipantRequest);
                     }
+                }
 
                 var linkedParticipants = new List<LinkedParticipantRequest>();
                 var participantsWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any()
@@ -566,6 +576,7 @@ namespace AdminWebsite.Controllers
                         "No username provided in booking for participant {Email}. Checking AD by contact email",
                         participant.ContactEmail);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
+                    participant.Username = user.UserName;
                 }
                 else
                 {
@@ -574,7 +585,7 @@ namespace AdminWebsite.Controllers
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.ContactEmail, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserName = adUserId };
+                    user = new User { UserId = adUserId };
                 }
 
                 // username's participant will be set by this point

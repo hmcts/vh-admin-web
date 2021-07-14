@@ -307,9 +307,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Username = "",
                 CaseRoleName = "",
-                HearingRoleName = ""
+                HearingRoleName = "",
+                ContactEmail = "contact@email.com"
             };
 
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                {
+                    UserName = participant.ContactEmail,
+                    Password = "password"
+                });
+            
             // setup  response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                             .WithParticipant("");
@@ -540,7 +549,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User() { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
@@ -566,7 +575,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
