@@ -120,7 +120,7 @@ namespace AdminWebsite.Services
             }
 
             var tasks = participantGroup.Select(t =>
-                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName,
+                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
                         hearing.Id))
                 .ToList();
 
