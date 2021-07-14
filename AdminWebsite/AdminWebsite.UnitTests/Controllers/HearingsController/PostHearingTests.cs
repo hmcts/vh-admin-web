@@ -549,7 +549,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User() { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
@@ -575,7 +575,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
