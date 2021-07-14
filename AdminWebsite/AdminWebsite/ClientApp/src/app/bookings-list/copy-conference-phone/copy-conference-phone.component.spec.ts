@@ -16,19 +16,15 @@ describe('CopyConferencePhoneComponent', () => {
     clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
     clipboardServiceSpy.copyFromContent.and.returnValue(true);
 
-    beforeEach(
-        async() => {
-           await TestBed.configureTestingModule({
-                imports: [],
-                declarations: [CopyConferencePhoneComponent],
-                providers: [
-                    { provide: ClipboardService, useValue: clipboardServiceSpy }
-                ]
-            }).compileComponents();        
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [],
+            declarations: [CopyConferencePhoneComponent],
+            providers: [{ provide: ClipboardService, useValue: clipboardServiceSpy }]
+        }).compileComponents();
     });
 
     beforeEach(() => {
-
         mouseEvent = document.createEvent('MouseEvent');
         mouseEvent.initMouseEvent('mouseover', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
 
