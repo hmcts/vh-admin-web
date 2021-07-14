@@ -576,7 +576,7 @@ namespace AdminWebsite.Controllers
                         "No username provided in booking for participant {Email}. Checking AD by contact email",
                         participant.ContactEmail);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
-                    participant.Username = user.UserId;
+                    participant.Username = user.UserName;
                 }
                 else
                 {

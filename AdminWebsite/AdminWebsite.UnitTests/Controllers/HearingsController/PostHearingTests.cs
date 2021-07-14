@@ -315,7 +315,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
                 {
-                    UserId = participant.ContactEmail,
+                    UserName = participant.ContactEmail,
                     Password = "password"
                 });
             

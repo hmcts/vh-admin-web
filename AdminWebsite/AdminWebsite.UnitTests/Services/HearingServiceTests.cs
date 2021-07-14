@@ -754,7 +754,7 @@ namespace AdminWebsite.UnitTests.Services
             var password = "password";
             var user = new User()
             {
-                UserId = participant.ContactEmail,
+                UserName = participant.ContactEmail,
                 Password = password
             };
 
