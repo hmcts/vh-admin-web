@@ -27,7 +27,7 @@ export class ErrorService extends ErrorHandler {
         }
     }
 
-    private redirectTo(router: Router, page: string): any {
+    public redirectTo(router: Router, page: string): any {
         // handle error executes outside of the angular zone so we need to force it back in to do the redirection correctly
         this.zone.run(() => router.navigate([page]));
     }
@@ -38,6 +38,6 @@ export class ErrorService extends ErrorHandler {
     }
 
     private isUnauthorized(err) {
-        return err.status && err.status === 401;
+        return err.status && (err.status === 401 || err.status === 403);
     }
 }
