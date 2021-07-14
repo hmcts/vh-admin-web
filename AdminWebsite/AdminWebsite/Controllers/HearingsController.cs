@@ -576,7 +576,7 @@ namespace AdminWebsite.Controllers
                         "No username provided in booking for participant {Email}. Checking AD by contact email",
                         participant.ContactEmail);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
-                    participant.Username = user.UserName;
+                    participant.Username = user.UserId;
                 }
                 else
                 {
@@ -585,7 +585,7 @@ namespace AdminWebsite.Controllers
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.ContactEmail, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserName = adUserId };
+                    user = new User { UserId = adUserId };
                 }
 
                 // username's participant will be set by this point

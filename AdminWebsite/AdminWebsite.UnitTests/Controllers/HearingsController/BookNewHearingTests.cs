@@ -172,7 +172,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             
             _mocker.Mock<IUserAccountService>().Setup(x =>
-                    x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserName = participant.ContactEmail, Password = ""});
+                    x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
             const string expectedUserIdentityName = "created by";
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(expectedUserIdentityName);

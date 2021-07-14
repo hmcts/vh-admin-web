@@ -264,7 +264,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
                 {
-                    UserName = participant.ContactEmail,
+                    UserId = participant.ContactEmail,
                     Password = "password"
                 });
         }
@@ -493,7 +493,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService
                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-               .ReturnsAsync(new User { UserName = userName, Password = "test123" });
+               .ReturnsAsync(new User { UserId = userName, Password = "test123" });
 
             //Act
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -531,7 +531,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserName = userName, Password = "test123" });
+                .ReturnsAsync(new User { UserId = userName, Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -591,13 +591,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateParticipantUsername(
                     It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new@hmcts.net")))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserName = userName, Password = "test123" });
+                .ReturnsAsync(new User { UserId = userName, Password = "test123" });
 
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(
                     It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new2@hmcts.net")))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = "old1@hmcts.net")
-                .ReturnsAsync(new User { UserName = "old1@hmcts.net", Password = "test123" });
+                .ReturnsAsync(new User { UserId = "old1@hmcts.net", Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);

@@ -120,7 +120,7 @@ namespace AdminWebsite.Services
             }
 
             var tasks = participantGroup.Select(t =>
-                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName,
+                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
                         hearing.Id))
                 .ToList();
 
@@ -432,7 +432,7 @@ namespace AdminWebsite.Services
             {
                 // Update the request with newly created user details in AD
                 var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
-                newParticipant.Username = user.UserName;
+                newParticipant.Username = user.UserId;
                 usernameAdIdDict.Add(newParticipant.Username, user);
             }
 

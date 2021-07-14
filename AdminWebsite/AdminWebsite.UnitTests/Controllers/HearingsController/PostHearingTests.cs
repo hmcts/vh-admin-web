@@ -315,7 +315,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
                 {
-                    UserName = participant.ContactEmail,
+                    UserId = participant.ContactEmail,
                     Password = "password"
                 });
             
@@ -549,7 +549,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User() { UserId = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
@@ -575,7 +575,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>()
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
                 .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User { UserId = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
