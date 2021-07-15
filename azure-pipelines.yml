@@ -73,6 +73,8 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
+  - name: VhServices:VideoWebUrl
+    value: $(video_web_url)
 
   # GOV Notify Configuration
   - name: NotifyConfiguration:ApiKey
@@ -187,6 +189,8 @@ parameters:
   - name: VhServices:NotificationApiResourceId
     value: vh-notification-api-identifieruris
     secret: true
+  - name: VhServices:VideoWebUrl
+    value: $(video_web_url)
 
   # GOV Notify Configuration
   - name: NotifyConfiguration:ApiKey

@@ -5,6 +5,5 @@ export class Config {
     postLogoutRedirectUri: string;
     redirectUri: string;
     testUsernameStem: string;
-
     constructor() {}
 }
