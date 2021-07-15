@@ -1,15 +1,15 @@
 <div>
-  <div #conferencePhone class="detailsBox" [hidden]="displayTooltip">
+  <div #conferenceJoinByLink class="detailsBox" [hidden]="displayTooltip">
     {{ tooltip }}
   </div>
   <div
-    id="conference_phone_details"
+    id="conference_join_by_link_details"
     class="link govuk-body"
     (mouseover)="onMouseOver($event)"
     (mousemove)="onMouseOver($event)"
     (mouseout)="onMouseOut()"
     (click)="copyToClipboard(); $event.stopPropagation()"
   >
-    telephone-participant-link
+    video-participant-link
   </div>
 </div>

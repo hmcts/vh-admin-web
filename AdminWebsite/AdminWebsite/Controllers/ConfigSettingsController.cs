@@ -17,17 +17,20 @@ namespace AdminWebsite.Controllers
         private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly TestUserSecrets _testUserSecrets;
+        private readonly ServiceConfiguration _vhServiceConfiguration;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
             IOptions<KinlyConfiguration> kinlyConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
-            IOptions<TestUserSecrets> testSettings)
+            IOptions<TestUserSecrets> testSettings,
+            IOptions<ServiceConfiguration> vhServiceConfiguration)
         {
             _azureAdConfiguration = azureAdConfiguration.Value;
             _kinlyConfiguration = kinlyConfiguration.Value;
             _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
             _testUserSecrets = testSettings.Value;
+            _vhServiceConfiguration = vhServiceConfiguration.Value;
         }
 
         /// <summary>
@@ -49,7 +52,8 @@ namespace AdminWebsite.Controllers
                 InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
-                JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate
+                JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate,
+                VideoWebUrl = _vhServiceConfiguration.VideoWebUrl
             };
 
             return Ok(clientSettings);

@@ -63,12 +63,17 @@
   </div>
 </div>
 
-<div *ngIf="phoneConferenceDetails.length > 0 && isJoinByPhone()">
-  <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
+<div *ngIf="hearing.isCreated">
+  <h2 class="govuk-heading-s remove-header-padding">Joining by phone / quick link</h2>
   <div class="vh-section">
-    <div class="govuk-grid-row">
+    <div *ngIf="phoneConferenceDetails.length > 0 && isJoinByPhone()" class="govuk-grid-row">
       <div class="govuk-grid-column-full" id="conferencePhoneDetails">
         <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full" id="quickLinkDetails">
+        <app-copy-join-link [quickLinkDetails]="hearing?.HearingId"></app-copy-join-link>
       </div>
     </div>
   </div>
