@@ -16,6 +16,5 @@ export let PageUrls = {
     DeleteParticipant: '/delete-participant',
     EditParticipantSearch: '/edit-participant-search',
     EditParticipant: '/edit-participant',
-    Login: '/login',
-    JoinLink: '/quickjoin'
+    Login: '/login'
 };
