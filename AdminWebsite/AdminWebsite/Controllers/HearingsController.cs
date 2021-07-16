@@ -313,7 +313,7 @@ namespace AdminWebsite.Controllers
 
                     if (participantWithLinks.Id.HasValue && existingParticipants.SingleOrDefault(x => x.ParticipantId == participantWithLinks.Id) != null)
                     {
-                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId);
+                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].ParticipantContactEmail);
                         var secondaryParticipantInLink = participantsWithLinks[secondaryParticipantInLinkIndex];
                         linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLink.ContactEmail;
 

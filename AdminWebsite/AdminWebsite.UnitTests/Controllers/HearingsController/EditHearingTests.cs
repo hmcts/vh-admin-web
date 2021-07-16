@@ -1035,7 +1035,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
            
             _bookingsApiClient.Verify(
-                x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.ParticipantContactEmail == interpreter.ContactEmail))), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
