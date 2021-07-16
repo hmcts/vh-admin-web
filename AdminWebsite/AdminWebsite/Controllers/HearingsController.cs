@@ -310,14 +310,25 @@ namespace AdminWebsite.Controllers
 
                     // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
                     // We also remove the participant this one is linked to, to avoid duplicating entries.
-
                     if (participantWithLinks.Id.HasValue && existingParticipants.SingleOrDefault(x => x.ParticipantId == participantWithLinks.Id) != null)
                     {
-                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].ParticipantContactEmail);
-                        var secondaryParticipantInLink = participantsWithLinks[secondaryParticipantInLinkIndex];
-                        linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLink.ContactEmail;
+                        // Is the linked participant an existing participant?
+                        var secondaryParticipantInLinkContactEmail = originalHearing.Participants
+                        .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
+                        .ContactEmail;
 
-                        participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
+                        // If the linked participant isn't an existing participant it will be a newly added participant
+                        if (secondaryParticipantInLinkContactEmail == null)
+                            secondaryParticipantInLinkContactEmail = newParticipants
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
+                            .ContactEmail;
+
+                        linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;
+
+                        // If the linked participant is an already existing user they will be mapped twice, so we remove them here.
+                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail);
+                        if (secondaryParticipantInLinkIndex >= 0)
+                            participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
                     }
 
                     linkedParticipants.Add(linkedParticipantRequest);
