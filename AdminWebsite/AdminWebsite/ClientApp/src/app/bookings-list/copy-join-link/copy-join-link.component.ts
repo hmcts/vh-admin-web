@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
 import { CopyDetailsBase } from '../component/copy-details-base';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 import { ConfigService } from '../../services/config.service';
 
 @Component({
@@ -11,7 +10,7 @@ import { ConfigService } from '../../services/config.service';
 })
 export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
     @Input() set quickLinkDetails(value: string) {
-        this._detailsToCopy = this.vh_video_uri + [PageUrls.JoinLink] + '/' + value;
+        this._detailsToCopy = this.vh_video_uri + value;
     }
     @ViewChild('conferenceJoinByLink', { static: false }) conferenceJoinByLink: ElementRef;
 
