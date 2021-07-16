@@ -1,4 +1,4 @@
-import { fakeAsync, flush, flushMicrotasks } from '@angular/core/testing';
+import { fakeAsync, flush, flushMicrotasks, tick } from '@angular/core/testing';
 import { Observable, of, throwError } from 'rxjs';
 import { MockLogger } from '../shared/testing/mock-logger';
 import { AudioLinkService, InvalidParametersError } from './audio-link-service';
@@ -110,9 +110,8 @@ describe('AudioLinkService', () => {
         const hearingAudioRecordingResponse = new HearingAudioRecordingResponse({ audio_file_links: ['someUrl'] });
         apiClient.getAudioRecordingLink.and.returnValue(of(hearingAudioRecordingResponse));
         const result = await service.getAudioLink('hearingId');
-        expect(result).not.toBeNull();
-        expect(result).not.toBeUndefined();
-        expect(result[0]).toBe(hearingAudioRecordingResponse.audio_file_links[0]);
+        expect(result).toBeTruthy();
+        expect(result.audio_file_links[0]).toBe(hearingAudioRecordingResponse.audio_file_links[0]);
     });
 
     it('should get the cvp audio link for all parameters', async () => {

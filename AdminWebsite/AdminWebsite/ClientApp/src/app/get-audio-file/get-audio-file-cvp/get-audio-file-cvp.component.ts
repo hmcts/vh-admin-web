@@ -14,9 +14,11 @@ export class GetAudioFileCvpComponent implements OnInit {
     today = new Date();
     loadingData: boolean;
 
-    searchResult: ICvpAudioRecordingResult = null;
-    get cvpResults(): CvpAudioSearchModel[] {
-        return !this.searchResult?.result ? [] : (this.searchResult?.result).map(x => new CvpAudioSearchModel(x));
+    searchResult: ICvpAudioRecordingResult;
+    results: CvpAudioSearchModel[];
+
+    private setResults(searchResult: ICvpAudioRecordingResult) {
+        this.results = searchResult?.result?.map(x => new CvpAudioSearchModel(x)) ?? [];
     }
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
@@ -68,6 +70,7 @@ export class GetAudioFileCvpComponent implements OnInit {
         this.loadingData = true;
         if (this.searchResult) {
             this.searchResult = null;
+            this.setResults(this.searchResult);
         }
 
         this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);
@@ -83,6 +86,8 @@ export class GetAudioFileCvpComponent implements OnInit {
                 this.hearingDate.value,
                 this.caseReference.value
             );
+
+            this.setResults(this.searchResult);
 
             if (this.searchResult.error) {
                 this.logger.error(

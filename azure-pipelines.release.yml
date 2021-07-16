@@ -144,6 +144,11 @@ stages:
             value: $(AppUri_Prod)
             env:
              - Prod
+          - name: VanityUrl
+            value: $(admin_web_domain_prod)
+            env:
+              - Prod
+              - Preprod
           - group: govuk-notify-preview
             env:
              - Preview
@@ -229,6 +234,8 @@ stages:
             value: $(notification_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
+          - name: VhServices:VideoWebUrl
+            value: $(video_web_url)
 
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey

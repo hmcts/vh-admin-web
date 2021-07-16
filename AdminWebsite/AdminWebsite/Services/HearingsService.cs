@@ -54,11 +54,12 @@ namespace AdminWebsite.Services
 
         Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
-        Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
-            Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
+        Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
 
-        Task ProcessExistingParticipants(Guid hearingId, HearingDetailsResponse hearing,
-            EditParticipantRequest participant);
+        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+            List<Guid> removedParticipantIds, HearingDetailsResponse hearing,
+            Dictionary<string, User> usernameAdIdDict);
 
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
@@ -119,7 +120,7 @@ namespace AdminWebsite.Services
             }
 
             var tasks = participantGroup.Select(t =>
-                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.UserRoleName,
+                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
                         hearing.Id))
                 .ToList();
 
@@ -281,6 +282,7 @@ namespace AdminWebsite.Services
         {
             if (hearing.IsGenericHearing())
             {
+                await ProcessGenericEmail(hearing, null);
                 return;
             }
 
@@ -392,21 +394,36 @@ namespace AdminWebsite.Services
             throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
-        public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant,
+        public async Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants)
+        {
+            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
+            {
+                ExistingParticipants = existingParticipants,
+                NewParticipants = newParticipants,
+                RemovedParticipantIds = removedParticipantIds,
+                LinkedParticipants = linkedParticipants
+            };
+
+            await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
+        }
+
+        public async Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+            List<Guid> removedParticipantIds,
             HearingDetailsResponse hearing,
-            Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList)
+            Dictionary<string, User> usernameAdIdDict)
         {
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
             // Judge and panel member is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge" || participant.CaseRoleName == "Panel Member" || participant.CaseRoleName == "Winger")
+            if (participant.CaseRoleName == "Judge" || participant.HearingRoleName == "Panel Member" || participant.HearingRoleName == "Winger")
             {
                 if (hearing.Participants != null &&
-                    hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                    hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
-                    return;
+                    return null;
                 }
 
                 newParticipant.Username = participant.ContactEmail;
@@ -415,27 +432,13 @@ namespace AdminWebsite.Services
             {
                 // Update the request with newly created user details in AD
                 var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
+                newParticipant.Username = user.UserName;
                 usernameAdIdDict.Add(newParticipant.Username, user);
             }
 
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.DisplayName, hearingId);
-            newParticipantList.Add(newParticipant);
-        }
-
-        public async Task ProcessExistingParticipants(Guid hearingId, HearingDetailsResponse hearing,
-            EditParticipantRequest participant)
-        {
-            var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-            {
-                return;
-            }
-            //Update participant
-            _logger.LogDebug("Updating existing participant {Participant} in hearing {Hearing}",
-                existingParticipant.Id, hearingId);
-            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
+            return newParticipant;
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,

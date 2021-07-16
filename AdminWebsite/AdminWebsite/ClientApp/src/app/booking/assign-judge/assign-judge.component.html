@@ -26,7 +26,7 @@
       </ng-container>
       <ng-template #nonJudge>
         <li>
-          <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeEmailErrorMsg }}</a>
+          <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeUserAccountErrorMsg }}</a>
         </li>
       </ng-template>
     </ul>
@@ -39,7 +39,7 @@
       <div
         [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
       >
-        <label class="govuk-label" for="judgeName" id="judgeEmail-error"> Judge or courtroom account </label>
+        <label class="govuk-label" for="participantEmail" id="judgeEmail-error"> Judge or courtroom account </label>
         <app-search-email
           [disabled]="false"
           hearingRoleParticipant="Judge"

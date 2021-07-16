@@ -208,7 +208,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get displayEmailField(): boolean {
-        return !!this.judge && this.judge.is_courtroom_account;
+        return !!this.judge && !ParticipantModel.IsEmailEjud(this.judge.email);
     }
 
     changeDisplayName() {
@@ -348,7 +348,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private updateWithNewJudge(judge: ParticipantModel) {
-        this.courtAccountJudgeEmail = judge.email;
+        this.courtAccountJudgeEmail = judge.username;
         if (!this.isExistingJudge(judge)) {
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;

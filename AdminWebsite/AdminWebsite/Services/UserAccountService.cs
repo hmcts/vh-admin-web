@@ -112,15 +112,16 @@ namespace AdminWebsite.Services
                 var newUser = await CreateNewUserInAD(participant);
                 return new User
                 {  
-                                UserName = newUser.UserId,
-                                Password = newUser.OneTimePassword
-                            };
+                    UserId = newUser.UserId,
+                    UserName = newUser.Username,
+                    Password = newUser.OneTimePassword
+                };
             }
 
-            participant.Username = userProfile.UserName;
             return new User
             { 
-                UserName = userProfile.UserId 
+                UserId = userProfile.UserId ,
+                UserName = userProfile.UserName
             };
         }
 

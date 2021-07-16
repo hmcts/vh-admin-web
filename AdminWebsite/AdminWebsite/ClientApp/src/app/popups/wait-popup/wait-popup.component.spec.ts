@@ -29,6 +29,15 @@ describe('WaitPopupComponent', () => {
     });
 
     it('should have heading Confirming bookings can take up to 60 seconds to complete.', () => {
+        component.ConfirmationMode = true;
+        fixture.detectChanges();
+        headingText = de.query(By.css('.govuk-heading-m'));
         expect(headingText.nativeElement.innerText).toEqual('Confirming bookings can take up to 60 seconds to complete.');
+    });
+    it('should have heading Booking a hearing can take up to 60 seconds to complete.', () => {
+        component.ConfirmationMode = false;
+        fixture.detectChanges();
+        headingText = de.query(By.css('.govuk-heading-m'));
+        expect(headingText.nativeElement.innerText).toEqual('Booking a hearing can take up to 60 seconds to complete.');
     });
 });
