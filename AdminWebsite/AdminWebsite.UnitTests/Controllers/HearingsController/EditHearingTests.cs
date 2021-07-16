@@ -944,6 +944,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_add_a_new_participant_and_link_to_existing_interpreter_when_editing_a_hearing()
         {
+            var newUserContactEmail = "newindividual4.user@email.com";
             var interpreter =
                 _existingHearingWithLinkedParticipants.Participants.First(p =>
                     p.HearingRoleName.ToLower() == "interpreter");
@@ -1035,7 +1036,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             new LinkedParticipant
                             {
                                 ParticipantContactEmail = "interpreter.user@email.com",
-                                LinkedParticipantContactEmail = "newindividual4.user@email.com",
+                                LinkedParticipantContactEmail = newUserContactEmail,
                                 Type = LinkedParticipantType.Interpreter
                             }
                         }
@@ -1048,11 +1049,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
 
-            //_bookingsApiClient.Verify(
-            //    x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == interpreter.ContactEmail))), Times.Once);
-
             _bookingsApiClient.Verify(
-                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == "newindividual4.user@email.com"))), Times.Once);
+                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == newUserContactEmail))), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
