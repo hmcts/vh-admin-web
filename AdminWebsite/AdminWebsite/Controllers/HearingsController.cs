@@ -320,7 +320,7 @@ namespace AdminWebsite.Controllers
                         // If the linked participant isn't an existing participant it will be a newly added participant
                         if (secondaryParticipantInLinkContactEmail == null)
                             secondaryParticipantInLinkContactEmail = newParticipants
-                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
                             .ContactEmail;
 
                         linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;

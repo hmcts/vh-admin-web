@@ -1059,7 +1059,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Returns_Valid_When_Linked_Contact_Email_Is_Null_When_Adding_A_New_Participant_To_Existing_Hearing()
         {
-            var newUserContactEmail = "newindividual4.user@email.com";
+            var linkedParticipantEmail = "individual4.user@email.com";
             var interpreter =
                 _existingHearingWithLinkedParticipants.Participants.First(p =>
                     p.HearingRoleName.ToLower() == "interpreter");
@@ -1101,7 +1101,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     new ParticipantResponse
                     {
                         Id = partipant4, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
-                        ContactEmail = "individual4.user@email.com", UserRoleName = "Individual4",
+                        ContactEmail = linkedParticipantEmail, UserRoleName = "Individual4",
                         FirstName = "testuser4", LinkedParticipants = null
                     }
                 },
@@ -1165,7 +1165,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
 
             _bookingsApiClient.Verify(
-                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == "individual4.user@email.com"))), Times.Once);
+                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == linkedParticipantEmail))), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
