@@ -12,6 +12,7 @@ using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;
+using AcceptanceTests.Common.AudioRecordings;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -28,10 +29,41 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Given(@"I have an audio recording for the closed conference")]
-        public async Task GivenIHaveAnAudioRecording()
+        public async Task GivenIHaveAnAudioRecordingForMainHearing()
         {
-            var result = await _c.AzureStorage.VerifyAudioFileExistsInStorage();
+            var result = await _c.AzureStorage.First().VerifyAudioFileExistsInStorage();
             result.Should().BeTrue("Audio file successfully uploaded to Azure Storage");
+            var response = _c.Api.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
+            conference.StartedDateTime.Should().NotBeNull();
+            conference.ClosedDateTime.Should().NotBeNull();
+            _c.Test.ConferenceResponse = conference;
+        }
+
+        [Given(@"I have an audio recording for the closed conference with an Interpreter")]
+        public async Task GivenIHaveAnAudioRecordingForMainHearingAndInterpreter()
+        {
+            var fileName = $"{_c.Test.HearingResponse.Id}_interpreter";
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", fileName);
+
+            var asm = new AzureStorageManager()
+                .SetStorageAccountName(_c.WebConfig.Wowza.StorageAccountName)
+                .SetStorageAccountKey(_c.WebConfig.Wowza.StorageAccountKey)
+                .SetStorageContainerName(_c.WebConfig.Wowza.StorageContainerName)
+                .CreateBlobClient(fileName);
+
+            _c.AzureStorage.Add(asm);
+
+            await asm.UploadAudioFileToStorage(file);
+            FileManager.RemoveLocalAudioFile(file);
+
+            for (int i = 0; i < _c.AzureStorage.Count(); i++)
+            {
+                var result = await _c.AzureStorage[i].VerifyAudioFileExistsInStorage();
+                result.Should().BeTrue("Audio file successfully uploaded to Azure Storage");
+            }
+
             var response = _c.Api.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
@@ -61,11 +93,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Then(@"the link can be retrieved")]
+        [Then(@"the links can be retrieved")]
         public void ThenTheLinkCanBeRetrieved()
         {
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.GetLinkButton);
-            _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton(0));
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage(0)).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.CopyLinkButton(0)).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].ScrollTo(GetAudioFilePage.CopyLinkButton(0));
+
+            for (int i = 0; i < _c.AzureStorage.Count(); i++)
+            {
+                _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton(i));
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage(i)).Displayed.Should().BeTrue();
+            }
         }
     }
 }
