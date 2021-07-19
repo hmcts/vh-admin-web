@@ -314,19 +314,19 @@ namespace AdminWebsite.Controllers
                     {
                         // Is the linked participant an existing participant?
                         var secondaryParticipantInLinkContactEmail = originalHearing.Participants
-                        .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
+                        .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
                         .ContactEmail;
 
                         // If the linked participant isn't an existing participant it will be a newly added participant
                         if (secondaryParticipantInLinkContactEmail == null)
                             secondaryParticipantInLinkContactEmail = newParticipants
-                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
                             .ContactEmail;
 
                         linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;
 
                         // If the linked participant is an already existing user they will be mapped twice, so we remove them here.
-                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail);
+                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == secondaryParticipantInLinkContactEmail);
                         if (secondaryParticipantInLinkIndex >= 0)
                             participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
                     }
