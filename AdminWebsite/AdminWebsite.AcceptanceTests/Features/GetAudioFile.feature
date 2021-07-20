@@ -4,7 +4,7 @@
 	I want to be able to search for audio recordings
 
 @VIH-5331 @Smoketest-Extended @AudioRecording
-Scenario: Get Audio File For Main Hearing
+Scenario: Get Audio File
 	Given I have an audio recording for the closed conference
 	And the Video Hearings Officer user has progressed to the Get Audio File page
 	When I search for the audio recording by case number
