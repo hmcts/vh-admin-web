@@ -17,7 +17,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Responses;
 using HearingTypeResponse = BookingsApi.Contract.Responses.HearingTypeResponse;
 
-namespace AdminWebsite.UnitTests
+namespace AdminWebsite.UnitTests.Controllers
 {
     public class ReferenceDataControllerTests
     {
@@ -47,26 +47,21 @@ namespace AdminWebsite.UnitTests
         }
 
         [Test]
-        public async Task Should_return_hearing_types()
+        public async Task Should_return_all_hearing_types()
         {
-            _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
+            // Arrange
+            _userIdentityMock.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _bookingsApiClientMock.Setup(x =>
+                    x.GetCaseTypesAsync())
+                    .ReturnsAsync(GetCaseTypesList());
 
-            var listTypes = new List<CaseTypeResponse> { new CaseTypeResponse { Id = 1, Name = "type1",
-                HearingTypes = new List<HearingTypeResponse>
-                {
-                   new HearingTypeResponse{Id=1, Name="type1"},
-                } } };
+            // Act
+            var result = await _controller.GetHearingTypes();
 
-            _bookingsApiClientMock.Setup(x => x.GetCaseTypesAsync()).ReturnsAsync(listTypes);
-
-            var response = await _controller.GetHearingTypes();
-            var result = response.Value;
-            result.Should().NotBeNull();
-            result.Count.Should().Be(1);
-            result[0].Group.Should().Be("type1");
-            result[0].Id.Should().Be(1);
-            result[0].Name.Should().Be("type1");
-            result[0].Code.Should().Be(string.Empty);
+            // Assert
+            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
+            okObjectResult.Value.Should().BeEquivalentTo(GetHearingTypes());
+            _bookingsApiClientMock.Verify(x => x.GetCaseTypesAsync(), Times.Once);
         }
 
         [Test]
@@ -132,6 +127,49 @@ namespace AdminWebsite.UnitTests
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);
             _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
+        }
+
+        private List<CaseTypeResponse> GetCaseTypesList()
+        {
+            return new List<CaseTypeResponse>
+            {
+                new CaseTypeResponse
+                {
+                    Id = 1, Name = "type1",
+                    HearingTypes = new List<HearingTypeResponse>()
+                    {
+                        new HearingTypeResponse() {Id = 10, Name = "HType10"},
+                    }
+                },
+                new CaseTypeResponse
+                {
+                    Id = 2, Name = "type2",
+                    HearingTypes = new List<HearingTypeResponse>()
+                    {
+                        new HearingTypeResponse() {Id = 20, Name = "HType20"},
+                    }
+                },
+                new CaseTypeResponse
+                {
+                    Id = 3, Name = "type3",
+                     HearingTypes = new List<HearingTypeResponse>()
+                    {
+                        new HearingTypeResponse() {Id = 25, Name = "HType25"},
+                        new HearingTypeResponse() {Id = 29, Name = "HType29"},
+                    }
+                }
+            };
+        }
+
+        private List<HearingTypeResponse> GetHearingTypes()
+        {
+            return new List<HearingTypeResponse>()
+            {
+                new HearingTypeResponse() {Id = 10, Name = "HType10"},
+                new HearingTypeResponse() {Id = 20, Name = "HType20"},
+                new HearingTypeResponse() {Id = 25, Name = "HType25"},
+                new HearingTypeResponse() {Id = 29, Name = "HType29"}
+            };
         }
     }
 }
