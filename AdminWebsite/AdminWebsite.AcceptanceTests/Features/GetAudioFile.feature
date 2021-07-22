@@ -11,6 +11,7 @@ Scenario: Get Audio File
 	Then the audio recording is retrieved
 	And the link can be retrieved
 
+#VIH-7984
 @Smoketest-Extended @AudioRecording
 Scenario: Get Audio File For Main Hearing Room And Interpreter
 	Given I have an audio recording for the closed conference with an Interpreter
