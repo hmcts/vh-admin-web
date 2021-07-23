@@ -209,6 +209,7 @@ export class VideoHearingsService {
         editParticipant.telephone_number = participant.phone;
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
+        editParticipant.account_type = participant.account_type;
         editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
         return editParticipant;
     }
@@ -326,6 +327,7 @@ export class VideoHearingsService {
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
+                participant.account_type = p.account_type;
                 participants.push(participant);
             });
         }
@@ -366,6 +368,7 @@ export class VideoHearingsService {
                 participant.representee = p.representee;
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === 'Judge';
+                participant.account_type = p.account_type;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);

@@ -24,6 +24,7 @@ export class ParticipantModel {
     user_role_name?: string | undefined;
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
+    account_type?: string | undefined;
 
     static fromPersonResponse(person: PersonResponse): ParticipantModel {
         return person
@@ -32,7 +33,8 @@ export class ParticipantModel {
                   email: person.contact_email ?? person.username,
                   phone: person.telephone_number,
                   representee: '',
-                  company: person.organisation
+                  company: person.organisation,
+                  account_type: ''
               }
             : null;
     }
@@ -42,8 +44,23 @@ export class ParticipantModel {
             ? {
                   ...judge,
                   username: judge.email,
-                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
+                  is_courtroom_account: true,
+                  account_type: JudgeAccountType.Courtroom
               }
+            : null;
+    }
+
+    static fromJudiciaryResponse(person: PersonResponse): ParticipantModel {
+        return person
+            ? {
+                ...person,
+                email: person.contact_email ?? person.username,
+                phone: person.telephone_number,
+                representee: '',
+                is_courtroom_account: false,
+                company: person.organisation,
+                account_type: JudgeAccountType.Judiciary
+            }
             : null;
     }
 

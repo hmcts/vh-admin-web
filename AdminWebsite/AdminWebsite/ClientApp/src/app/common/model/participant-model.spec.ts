@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { ParticipantModel } from './participant.model';
+import { JudgeDataService } from '../../booking/services/judge-data.service';
 
 describe('ParticipantModel', () => {
     let participant: ParticipantModel;
@@ -35,6 +36,7 @@ describe('ParticipantModel', () => {
         expect(participant.phone).toEqual(person.telephone_number);
         expect(participant.username).toEqual(person.username);
         expect(participant.company).toEqual(person.organisation);
+        expect(participant.account_type).toEqual('');
     });
     it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
         const person = null;
@@ -57,6 +59,7 @@ describe('ParticipantModel', () => {
         expect(participant.last_name).toEqual(judge.last_name);
         expect(participant.email).toEqual(judge.email);
         expect(participant.username).toEqual(judge.email);
+        expect(participant.account_type).toEqual(JudgeAccountType[JudgeAccountType.Courtroom]);
     });
 
     it('should map isCourtroom as true if account_type is Courtroom', () => {
@@ -71,6 +74,7 @@ describe('ParticipantModel', () => {
         participant = ParticipantModel.fromJudgeResponse(judge);
 
         expect(participant.is_courtroom_account).toBeTruthy();
+        expect(participant.account_type).toEqual(JudgeAccountType[JudgeAccountType.Courtroom]);
     });
 
     it('should map isCourtroom as false if account_type is not Courtroom', () => {
@@ -82,9 +86,24 @@ describe('ParticipantModel', () => {
             account_type: JudgeAccountType.Judiciary
         });
 
-        participant = ParticipantModel.fromJudgeResponse(judge);
+        participant = ParticipantModel.fromJudiciaryResponse(judge);
 
         expect(participant.is_courtroom_account).toBeFalsy();
+        expect(participant.account_type).toEqual(JudgeAccountType[JudgeAccountType.Judiciary]);
+    });
+
+    it('should map isCourtroom as false if account_type is Judiciary', () => {
+        const judge = new JudgeResponse({
+            display_name: 'JudgeDisplayName',
+            email: 'JudgeEmail',
+            first_name: 'JudgeFirstName',
+            last_name: 'JudgeLastName',
+            account_type: JudgeAccountType.Judiciary
+        });
+
+        participant = ParticipantModel.fromJudiciaryResponse(judge);
+
+        expect(participant.account_type).toEqual(JudgeAccountType[JudgeAccountType.Judiciary]);
     });
 
     it('should mapping return empty ParticipantModel if  JudgeResponse is null', () => {

@@ -744,6 +744,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
         newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
+        newParticipant.account_type = this.participantDetails?.account_type;
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {

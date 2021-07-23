@@ -76,6 +76,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         newParticipant.username = judge.email;
         newParticipant.case_role_name = 'Judge';
         newParticipant.hearing_role_name = 'Judge';
+        newParticipant.account_type = judge.account_type;
         return newParticipant;
     }
 

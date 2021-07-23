@@ -257,6 +257,7 @@ describe('Video hearing service', () => {
         participant.phone = '123123123';
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        participant.account_type = '';
         participants.push(participant);
 
         const model = service.mapParticipants(participants);
@@ -271,6 +272,7 @@ describe('Video hearing service', () => {
         expect(model[0].telephone_number).toEqual(participant.phone);
         expect(model[0].case_role_name).toEqual(participant.case_role_name);
         expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
+        expect(model[0].account_type).toEqual(participant.account_type);
     });
 
     it('should map Existing hearing', () => {

@@ -73,20 +73,23 @@ export class SearchService {
                 })
             );
         } else {
-            let persons$: Observable<Array<PersonResponse>>;
             if (this.judiciaryRoles.includes(role)) {
-                persons$ = this.searchJudiciaryEntries(term);
+                return this.searchJudiciaryEntries(term).pipe(
+                    map(persons => {
+                        return persons.map(person => {
+                            return ParticipantModel.fromJudiciaryResponse(person);
+                        });
+                    })
+                );
             } else {
-                persons$ = this.searchEntries(term);
+                return this.searchEntries(term).pipe(
+                    map(persons => {
+                        return persons.map(person => {
+                            return ParticipantModel.fromPersonResponse(person);
+                        });
+                    })
+                );
             }
-
-            return persons$.pipe(
-                map(persons => {
-                    return persons.map(person => {
-                        return ParticipantModel.fromPersonResponse(person);
-                    });
-                })
-            );
         }
     }
 
