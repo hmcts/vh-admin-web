@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
@@ -223,7 +224,8 @@ namespace AdminWebsite.Services
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DisplayName = x.DisplayName,
-                Email = x.Email
+                Email = x.Email, 
+                AccountType = JudgeAccountType.Courtroom
             }).ToList();
         }
 

@@ -74,6 +74,11 @@ namespace AdminWebsite.Models
         public string OrganisationName { get; set; }
 
         /// <summary>
+        /// Account Type
+        /// </summary>
+        public string AccountType { get; set; }
+
+        /// <summary>
         ///     List of linked participants
         /// </summary>
         public IList<LinkedParticipant> LinkedParticipants { get; set; }
