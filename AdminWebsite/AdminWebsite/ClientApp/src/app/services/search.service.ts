@@ -74,11 +74,7 @@ export class SearchService {
             );
         } else {
             let persons$: Observable<Array<PersonResponse>>;
-            if (this.judiciaryRoles.includes(role)) {
-                persons$ = this.searchJudiciaryEntries(term);
-            } else {
                 persons$ = this.searchEntries(term);
-            }
 
             return persons$.pipe(
                 map(persons => {
