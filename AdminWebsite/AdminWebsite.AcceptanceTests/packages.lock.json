@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.26.4, )",
-        "resolved": "1.26.4",
-        "contentHash": "Jkl7iYd33gRKNviPgCGpbOPPYD891KXRJM6YLh27plCms7OVicZpre4yE2Qi5CUPUDXDlCI8HRdZqz1zCV2fog==",
+        "requested": "[1.26.15, )",
+        "resolved": "1.26.15",
+        "contentHash": "NibfWo89h3siqjxppK91yaiHZeR3PhuSBERdHyYjCgtEzlpDfYMFH3NfjP0lXdCJMgIUOdzgOUpPLteIuTp+pg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -37,22 +37,22 @@
       },
       "TestApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.2, )",
-        "resolved": "1.25.2",
-        "contentHash": "wKSnUyBBmLkaG8SzX0NHteELDzTc6h/b1PYx85AS1BFnVygaf4Ng337p636QcHB8WIfjDSC7bvxI4z5Qigwfwg==",
+        "requested": "[1.26.1, )",
+        "resolved": "1.26.1",
+        "contentHash": "twefon/RB9bkniff2Zax2rG63sEbLdgcNtJ+YsIb6R03oqrknDiDt/HFqcUzHzoukqs5rMJWXBs1DXjNcvudew==",
         "dependencies": {
           "BookingsApi.Client": "1.24.26",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3",
-          "UserApi.Client": "1.24.3",
-          "VideoApi.Client": "1.23.57"
+          "UserApi.Client": "1.25.0",
+          "VideoApi.Client": "1.25.13"
         }
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.37, )",
-        "resolved": "1.21.37",
-        "contentHash": "7HSVbjOL4dkzz2O9i5zmEqZK+tIPzR5irn852mnK45XT04J+6+iZxiCj1ReBof46+9M9LPAQ7lgTtlZdR4oXAw==",
+        "requested": "[1.21.40, )",
+        "resolved": "1.21.40",
+        "contentHash": "lT7++r5XbppYrEIUkRY5kCgPNyxbdJun+zhwzQq+/85TSqs0IX0yRa0+XTDXa9m3g2ZnSIjib4WA6pj6drbM4Q==",
         "dependencies": {
           "Appium.WebDriver": "4.3.1",
           "Azure.Storage.Blobs": "12.8.0",
@@ -2815,8 +2815,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.24.3",
-        "contentHash": "CbbYvdREAv1x4P2FBXJn9DkUOAyPn6yZcfOvWaT19wAjsziabV6qfITbUYiVGOWpwdqdB2H7lyOH/V//AC66fg==",
+        "resolved": "1.25.0",
+        "contentHash": "SqKZ3RkqoxSzp4E4ygdEkUL4At9NGLD2LshKdOKJVBn8TFu++/wNAEKIiBQUi3tOSVi4Y7UIvcKPWTTzCB4mkQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2847,8 +2847,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.23.57",
-        "contentHash": "dH1BLmfXkSPZpsuucK8SagffmDa074gbNTFCXWG5/G8DXMMMvUTT9H0SDIOpnUDXvNtomhuKWsFdsdFFMIFWew==",
+        "resolved": "1.25.13",
+        "contentHash": "lOTy+w/YhgLIs5g9EQThGm9NObkw2h6VSGmA7uJyV8PL6DNBolkM0HzjF3kl70gmuC7OebeQWNYJkEVsaqApgA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
