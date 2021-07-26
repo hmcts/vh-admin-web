@@ -113,6 +113,7 @@ describe('SearchService', () => {
 
         spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
         spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
+        spyOn(ParticipantModel, 'fromJudiciaryResponse').and.returnValue(judiciaryPersonList);
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
@@ -164,9 +165,9 @@ describe('SearchService', () => {
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
+            expect(ParticipantModel.fromJudiciaryResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
             judiciaryPersonList.forEach(person => {
-                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
+                expect(ParticipantModel.fromJudiciaryResponse).toHaveBeenCalledWith(person);
             });
         });
 

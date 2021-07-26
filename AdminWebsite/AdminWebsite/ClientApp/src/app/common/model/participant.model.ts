@@ -53,14 +53,14 @@ export class ParticipantModel {
     static fromJudiciaryResponse(person: PersonResponse): ParticipantModel {
         return person
             ? {
-                ...person,
-                email: person.contact_email ?? person.username,
-                phone: person.telephone_number,
-                representee: '',
-                is_courtroom_account: false,
-                company: person.organisation,
-                account_type: JudgeAccountType.Judiciary
-            }
+                  ...person,
+                  email: person.contact_email ?? person.username,
+                  phone: person.telephone_number,
+                  representee: '',
+                  is_courtroom_account: false,
+                  company: person.organisation,
+                  account_type: JudgeAccountType.Judiciary
+              }
             : null;
     }
 

@@ -3148,6 +3148,7 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_name?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    account_type?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -3171,6 +3172,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_name = _data['hearing_role_name'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.account_type = _data['account_type'];
         }
     }
 
@@ -3195,6 +3197,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data['hearing_role_name'] = this.hearing_role_name;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['account_type'] = this.account_type;
         return data;
     }
 }
@@ -3212,6 +3215,7 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    account_type?: string | undefined;
 }
 
 export class EndpointRequest implements IEndpointRequest {
@@ -3611,6 +3615,7 @@ export class ParticipantResponse implements IParticipantResponse {
     organisation?: string | undefined;
     representee?: string | undefined;
     linked_participants?: LinkedParticipantResponse[] | undefined;
+    account_type?: string | undefined;
 
     constructor(data?: IParticipantResponse) {
         if (data) {
@@ -3640,6 +3645,7 @@ export class ParticipantResponse implements IParticipantResponse {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
             }
+            this.account_type = _data['account_type'];
         }
     }
 
@@ -3670,6 +3676,7 @@ export class ParticipantResponse implements IParticipantResponse {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
         }
+        data['account_type'] = this.account_type;
         return data;
     }
 }
@@ -3688,6 +3695,84 @@ export interface IParticipantResponse {
     telephone_number?: string | undefined;
     username?: string | undefined;
     organisation?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+    account_type?: string | undefined;
+}
+
+export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+
+    constructor(data?: ITelephoneParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.mobile_number = _data['mobile_number'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TelephoneParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new TelephoneParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['mobile_number'] = this.mobile_number;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
     representee?: string | undefined;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 }
@@ -3752,6 +3837,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -3790,6 +3876,11 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(ParticipantResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['telephone_participants'])) {
+                this.telephone_participants = [] as any;
+                for (let item of _data['telephone_participants'])
+                    this.telephone_participants!.push(TelephoneParticipantResponse.fromJS(item));
             }
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
@@ -3834,6 +3925,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.telephone_participants)) {
+            data['telephone_participants'] = [];
+            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
+        }
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
         data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
@@ -3864,6 +3959,7 @@ export interface IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -3898,7 +3994,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
-    /** The Uri to video web */
+    /** The Uri to video web url */
     video_web_url?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
@@ -3963,6 +4059,8 @@ export interface IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
+    /** The Uri to video web url */
+    video_web_url?: string | undefined;
 }
 
 export class HealthCheck implements IHealthCheck {
@@ -4236,6 +4334,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** Account Type */
+    account_type?: string | undefined;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 
@@ -4261,6 +4361,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_name = _data['hearing_role_name'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.account_type = _data['account_type'];
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
@@ -4289,6 +4390,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['hearing_role_name'] = this.hearing_role_name;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['account_type'] = this.account_type;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -4323,7 +4425,108 @@ export interface IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** Account Type */
+    account_type?: string | undefined;
     /** List of linked participants */
+    linked_participants?: LinkedParticipant[] | undefined;
+}
+
+/** Participant request */
+export class EditTelephoneParticipantRequest implements IEditTelephoneParticipantRequest {
+    /** Participant Id */
+    id?: string;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant contact email */
+    contact_email?: string | undefined;
+    /** Participant telephone number */
+    telephone_number?: string | undefined;
+    /** Participant telephone number */
+    mobile_number?: string | undefined;
+    /** Gets or sets the person name that Representative represents. */
+    representee?: string | undefined;
+    /** The participant linked to this participant response */
+    linked_participants?: LinkedParticipant[] | undefined;
+
+    constructor(data?: IEditTelephoneParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.mobile_number = _data['mobile_number'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EditTelephoneParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditTelephoneParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['mobile_number'] = this.mobile_number;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+/** Participant request */
+export interface IEditTelephoneParticipantRequest {
+    /** Participant Id */
+    id?: string;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant contact email */
+    contact_email?: string | undefined;
+    /** Participant telephone number */
+    telephone_number?: string | undefined;
+    /** Participant telephone number */
+    mobile_number?: string | undefined;
+    /** Gets or sets the person name that Representative represents. */
+    representee?: string | undefined;
+    /** The participant linked to this participant response */
     linked_participants?: LinkedParticipant[] | undefined;
 }
 
@@ -4389,6 +4592,7 @@ export class EditHearingRequest implements IEditHearingRequest {
     case?: EditCaseRequest;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
+    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */
@@ -4416,6 +4620,11 @@ export class EditHearingRequest implements IEditHearingRequest {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['telephone_participants'])) {
+                this.telephone_participants = [] as any;
+                for (let item of _data['telephone_participants'])
+                    this.telephone_participants!.push(EditTelephoneParticipantRequest.fromJS(item));
             }
             this.other_information = _data['other_information'];
             this.questionnaire_not_required = _data['questionnaire_not_required'];
@@ -4445,6 +4654,10 @@ export class EditHearingRequest implements IEditHearingRequest {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.telephone_participants)) {
+            data['telephone_participants'] = [];
+            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
+        }
         data['other_information'] = this.other_information;
         data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
@@ -4469,6 +4682,7 @@ export interface IEditHearingRequest {
     case?: EditCaseRequest;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
+    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */
