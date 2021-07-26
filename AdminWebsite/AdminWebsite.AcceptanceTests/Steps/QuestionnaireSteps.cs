@@ -70,7 +70,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var answers = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(QuestionnairePage.AllAnswers);
             var questionsAndAnswers = new Dictionary<string, string>();
 
-            NUnit.Framework.TestContext.WriteLine($"There are '{questions}' questions and '{answers}' answers.");
+            NUnit.Framework.TestContext.WriteLine($"There are '{questions.Count()}' questions and '{answers.Count()}' answers.");
 
             for (var i = 0; i < questions.Count; i++)
             {
