@@ -2857,7 +2857,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.27.1-vih-7978-update-0011",
+          "BookingsApi.Client": "1.27.1-vih-7978-update-0013",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "MicroElements.Swashbuckle.FluentValidation": "4.1.0",

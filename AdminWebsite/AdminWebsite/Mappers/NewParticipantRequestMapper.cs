@@ -20,6 +20,7 @@ namespace AdminWebsite.Mappers
                 TelephoneNumber = participant.TelephoneNumber,
                 Title = participant.Title,
                 OrganisationName = participant.OrganisationName,
+                AccountType = participant.AccountType
             };
             return newParticipant;
         }

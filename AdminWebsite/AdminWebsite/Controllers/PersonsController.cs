@@ -57,7 +57,7 @@ namespace AdminWebsite.Controllers
             {
                 term = _encoder.Encode(term);
 
-                var searchTermRequest = new SearchTermAndAccountTypeRequest() { Term = term };
+                var searchTermRequest = new SearchTermAndAccountTypeRequest(term);
 
                 var personsResponse = await _bookingsApiClient.GetPersonBySearchTermAndAccountTypeAsync(searchTermRequest); 
                 personsResponse = personsResponse?.Where(p => !p.ContactEmail.Contains(_testSettings.TestUsernameStem)).ToList();
