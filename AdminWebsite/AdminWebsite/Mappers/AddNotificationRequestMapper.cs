@@ -283,11 +283,6 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.EJudJohDemoOrTest;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
-            else if (!hearing.IsParticipantAJudicialOfficeHolderOrJudge(participant.Id))
-            {
-                notificationType = NotificationType.ParticipantDemoOrTest;
-                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
-            }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (hearing.IsJudgeEmailEJud())
@@ -302,6 +297,11 @@ namespace AdminWebsite.Mappers
 
                 parameters.Add("judge", participant.DisplayName);
                 parameters.Remove("username");
+            }
+            else
+            {
+                notificationType = NotificationType.ParticipantDemoOrTest;
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest
