@@ -1,0 +1,94 @@
+trigger: none
+
+resources:
+  repositories:
+    - repository: admin-web
+      type: github
+      name: hmcts/vh-admin-web
+      ref: refs/heads/VIH-8045-sds-deployment-pipeline
+      endpoint: hmcts
+    - repository: cnp-azuredevops-libraries
+      type: github
+      name: hmcts/cnp-azuredevops-libraries
+      ref: refs/heads/master
+      endpoint: hmcts
+
+parameters:
+  - name: git_repo_name
+    displayName: Git Repo Name
+    type: string
+    values:
+      - admin-web
+
+steps:
+  - checkout: self
+
+  - bash: |
+    echo "testing"
+    cd $(Build.SourcesDirectory)/vh-${{ parameters.git_repo_name }}
+    git switch -c $(Build.SourceBranchName)
+  displayName: 'Branch Checkout'
+
+  - task: DockerCompose@0
+    displayName: 'Run a Docker Compose Build'
+    inputs:
+      azureSubscription: 'DTS-SHAREDSERVICES-PROD'
+      azureContainerRegistry: '{"loginServer":"sdshmctspublic.azurecr.io", "id" : "/subscriptions/5ca62022-6aa2-4cee-aaa7-e7536c8d566c/resourceGroups/sds-acr-rg/providers/Microsoft.ContainerRegistry/registries/sdshmctspublic"}'
+      projectName: 'sdshmctspublic/vh/${{ parameters.git_repo_name }}'
+      qualifyImageNames: false
+      dockerComposeCommand: build
+
+  - task: AzureCLI@1
+    displayName: 'Docker Tasks'
+    inputs:
+        azureSubscription: 'DTS-SHAREDSERVICES-PROD'
+        addSpnToEnvironment: true
+        scriptLocation: inlineScript
+        failOnStandardError: 'true'
+        inlineScript: |   
+          REPOTRIM="$(echo ${{ parameters.git_repo_name }} | sed 's/-//g')"
+          docker tag $REPOTRIM:latest sdshmctspublic.azurecr.io/vh/${{ parameters.git_repo_name }}:$(Build.BuildNumber)
+          docker tag $REPOTRIM:latest sdshmctspublic.azurecr.io/vh/${{ parameters.git_repo_name }}:latest
+
+          docker images
+          az acr login --name sdshmctspublic
+          docker push sdshmctspublic.azurecr.io/vh/${{ parameters.git_repo_name }}:$(Build.BuildNumber)
+          docker push sdshmctspublic.azurecr.io/vh/${{ parameters.git_repo_name }}:latest
+
+  - task: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - template: steps/charts/validate.yaml@cnp-library
+      parameters:
+        chartName: vh-admin-web
+        chartReleaseName: vh-admin-web
+        chartNamespace: vh
+        helmInstallTimeout: "500"
+        serviceConnection: "DTS-SHAREDSERVICES-PROD"
+        registryServiceConnection: "DTS-SHAREDSERVICES-PROD"
+        aksResourceGroup: "ss-dev-00-rg"
+        aksCluster: "ss-dev-00-aks"
+        acrName: "sdshmctspublic"
+
+
+  - task: Release
+    # Make sure we have a tag to run this job
+    #condition: >
+    #  and(
+    #      succeeded(),
+    #      startsWith(variables['Build.SourceBranch'], 'refs/tags/')
+    #    )
+    dependsOn: Validate
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - template: steps/charts/release.yaml@cnp-library
+      parameters:
+        chartName: vh-admin-web
+        chartReleaseName: vh-admin-web
+        chartNamespace: vh
+        serviceConnection: "DTS-SHAREDSERVICES-PROD"
+        registryServiceConnection: "DTS-SHAREDSERVICES-PROD"
+        aksResourceGroup: "ss-dev-00-rg"
+        aksCluster: "ss-dev-00-aks"
