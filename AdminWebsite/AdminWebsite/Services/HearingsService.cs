@@ -323,7 +323,7 @@ namespace AdminWebsite.Services
 
             var requests = participantsToEmail
                .Select(participant =>
-                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.CaseTypeName))
+                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
                .ToList();
 
             foreach (var request in requests)
