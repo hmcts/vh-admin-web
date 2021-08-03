@@ -141,11 +141,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         this.form = this.fb.group({
-            hearingDate: [hearingDateParsed, [
-                Validators.required,
-                weekendValidator(),
-                pastDateValidator(),
-                notPublicHolidayDateValidator(this.publicHolidays)]],
+            hearingDate: [
+                hearingDateParsed,
+                [Validators.required, weekendValidator(), pastDateValidator(), notPublicHolidayDateValidator(this.publicHolidays)]
+            ],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -568,10 +567,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearingDurationMinuteControl.markAsPristine();
 
             if (this.multiDaysRangeControl.value) {
-                this.endHearingDateControl.setValidators([Validators.required,
-                        weekendValidator(),
-                        pastDateValidator(),
-                        notPublicHolidayDateValidator(this.publicHolidays)]);
+                this.endHearingDateControl.setValidators([
+                    Validators.required,
+                    weekendValidator(),
+                    pastDateValidator(),
+                    notPublicHolidayDateValidator(this.publicHolidays)
+                ]);
                 this.endHearingDateControl.updateValueAndValidity();
                 this.endHearingDateControl.setValue(null);
             } else {

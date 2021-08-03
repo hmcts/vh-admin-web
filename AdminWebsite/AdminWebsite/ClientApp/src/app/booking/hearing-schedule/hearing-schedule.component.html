@@ -74,7 +74,9 @@
           min="{{ today | date: 'yyyy-MM-dd' }}"
         />
         <div *ngIf="endHearingDateInvalid" class="alert alert-danger">
-          <span id="endHearingDate-error" class="govuk-error-message"> Please enter a working day (Monday to Friday) at least 1 day later than the start date </span>
+          <span id="endHearingDate-error" class="govuk-error-message">
+            Please enter a working day (Monday to Friday) at least 1 day later than the start date
+          </span>
         </div>
       </div>
     </div>
