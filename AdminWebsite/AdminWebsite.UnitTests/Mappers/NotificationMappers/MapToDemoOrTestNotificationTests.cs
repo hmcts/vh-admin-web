@@ -26,7 +26,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -132,7 +132,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -168,7 +168,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
-        
+
         [Test]
         public void Should_map_participants_demo_or_test_notification()
         {

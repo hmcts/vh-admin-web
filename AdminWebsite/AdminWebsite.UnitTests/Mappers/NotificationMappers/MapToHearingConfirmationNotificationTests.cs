@@ -53,7 +53,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -96,8 +96,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var hearing = InitHearing();
 
             hearing.OtherInformation = new OtherInformationDetails
-                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
-            
+            { JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789" }.ToOtherInformationString();
+
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", hearing.Cases.First().Name},
@@ -107,9 +107,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username}
             };
-            
+
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
-            
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -119,7 +119,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
-       
+
         [Test]
         public void should_map_to_lip_confirmation_notification()
         {
@@ -135,9 +135,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"day month year", "12 October 2020"},
                 {"name", $"{participant.FirstName} {participant.LastName}"}
             };
-            
+
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
-            
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -147,14 +147,14 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
-        
+
         [Test]
         public void should_map_to_representative_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationRepresentative;
             var participant = InitParticipant("Representative", "Jane Doe");
-            var hearing = InitHearing(); 
-            
+            var hearing = InitHearing();
+
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", hearing.Cases.First().Name},
@@ -217,9 +217,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             return new HearingDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Cases = new List<CaseResponse> {@case},
+                Cases = new List<CaseResponse> { @case },
                 ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc),
-                OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}),
+                OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }),
                 Participants = new List<ParticipantResponse>()
             };
         }
@@ -229,7 +229,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             return new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@hmcts.net",
                 FirstName = "John",
