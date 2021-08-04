@@ -84,6 +84,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                     .WithParticipant("Representative", "username");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
@@ -97,6 +99,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_participant_username_to_aad_email_id()
         {
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = "username@hmcts.net",
@@ -134,6 +138,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_create_a_hearing_with_endpoints()
         {
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             var newHearingRequest = new BookNewHearingRequest
             {
                 Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
@@ -167,7 +173,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 BookingDetails = newHearingRequest
             };
-            
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithEndPoints(2)
@@ -207,6 +215,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             LinkedParticipantContactEmail = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
                     }
             };
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
+
             var bookingRequest = new BookHearingRequest
             {
                 BookingDetails = newHearingRequest
@@ -340,6 +352,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 CaseRoleName = "",
                 HearingRoleName = ""
             };
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             // setup  response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
@@ -595,6 +609,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                          .WithParticipant("Representative", existingUserName);
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
