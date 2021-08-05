@@ -24,9 +24,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.26.4, )",
-        "resolved": "1.26.4",
-        "contentHash": "Jkl7iYd33gRKNviPgCGpbOPPYD891KXRJM6YLh27plCms7OVicZpre4yE2Qi5CUPUDXDlCI8HRdZqz1zCV2fog==",
+        "requested": "[1.27.5, )",
+        "resolved": "1.27.5",
+        "contentHash": "kp2NAsRvWDvqpLrQRmeAHqTUABvs9dx8fzYBbcEgigRNV7EoMynajbv4sD4piSyDmwnq0l2+9DTF7N0ta3WEYw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -110,9 +110,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.25.12, )",
-        "resolved": "1.25.12",
-        "contentHash": "qtcYVcTJrtc3HVYZqo2Id3jIlxn/x26w0IgXRIq+rlGpd4N04hGDQkuT7JBRo4H5BmO2wSW7ChPnaDpnDZfZbQ==",
+        "requested": "[1.27.0, )",
+        "resolved": "1.27.0",
+        "contentHash": "MQOzcP55Kn6kQRZPGqiv/3H6qbcAGPmSFc8/MH3XQlR3h2OaW/SwHy2pY4UqFWBziTK5cR8bi8b3Ztorx3rEQg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2488,8 +2488,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.23.9",
-        "contentHash": "8l/K0DZmr3jXl3T8M6lT1KvyvBFhRcK7OoFJ0dL/Rjp2c5CmJ/IZjoO0zCn0n9ej+hsyfTRW6dUY/JUequbi8g==",
+        "resolved": "1.27.0",
+        "contentHash": "yweSY3MRExJF/WaBMdn4AgpxHtVQzmvku/AkURww8kAJug8bMPqPgXuPcIu5BOs9aSgSX+BmQKusofwtRsGLJA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2510,7 +2510,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.26.4",
+          "BookingsApi.Client": "1.27.5",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "MicroElements.Swashbuckle.FluentValidation": "4.1.0",
@@ -2533,9 +2533,9 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "5.6.3",
           "Swashbuckle.AspNetCore.Swagger": "5.6.3",
           "TimeZoneConverter": "3.4.0",
-          "UserApi.Client": "1.23.9",
+          "UserApi.Client": "1.27.0",
           "VH.Core.Configuration": "0.1.12",
-          "VideoApi.Client": "1.23.28"
+          "VideoApi.Client": "1.27.0"
         }
       },
       "adminwebsite.testing.common": {
