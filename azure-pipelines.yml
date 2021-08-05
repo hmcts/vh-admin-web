@@ -284,7 +284,7 @@ extends:
         sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
     ACTest: ${{ parameters.RunACTests }}
     releaseParameters:
-      environment: Preview
+      environment: AAT
       subscription: $(pr_Subscription)
       secrets_KeyVault: $(pr_Secret_KeyVault)
       secrets_Subscription: $(pr_Secret_Subscription)
