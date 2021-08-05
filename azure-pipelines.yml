@@ -206,7 +206,7 @@ variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
   - group: vh-admin-web
-  - group: vh-preview
+  - group: vh-aat
   - group: vh test users
   - group: Saucelabs
   - group: vh-wowza-dev
