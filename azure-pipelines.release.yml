@@ -179,6 +179,8 @@ stages:
           - group: govuk-notify-prod
             env:
              - Prod
+          - name: runACTests
+            value: ${{ parameters.runACTests }}
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
