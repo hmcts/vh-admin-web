@@ -613,7 +613,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         endDateControl.setValue(endDateValue);
         expect(component.endHearingDateInvalid).toBeFalsy();
     });
-    it('should validate end date to fase if it is matched the start day', () => {
+    it('should validate end date to false if it is matched the start day', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(addDays(Date.now(), 1));
         component.multiDaysControl.setValue(true);
@@ -623,7 +623,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         endDateControl.setValue(endDateValue);
         expect(component.endHearingDateInvalid).toBeTruthy();
     });
-    it('should validate end date to fase if it is less than start day', () => {
+    it('should validate end date to false if it is less than start day', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(Date.now());
 

@@ -137,10 +137,12 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Daily Test";
+
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(4));
         }
 
         [Test]

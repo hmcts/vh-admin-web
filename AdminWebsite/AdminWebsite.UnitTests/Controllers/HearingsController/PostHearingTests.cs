@@ -84,10 +84,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
+            
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                     .WithParticipant("Representative", "username");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
+            
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             await PostWithParticipants(participant);
 
@@ -95,20 +98,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_update_participant_username_to_aad_email_id()
+        public async Task Should_create_participant_username_to_aad_email_id_when_username_is_supplied_but_no_aad_account_exists()
         {
+            const string adUserName = "username@hmcts.net";
+
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                Username = "username@hmcts.net",
+                Username = adUserName,
                 CaseRoleName = "Applicant",
                 HearingRoleName = "Representative",
                 ContactEmail = "username@hmcts.net"
             };
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.Is<string>(x => x == participant.Username))).ReturnsAsync(string.Empty);
+            _mocker.Mock<IUserAccountService>().Setup(x =>
+                   x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = $"{Guid.NewGuid()}", UserName = adUserName, Password = "" });
+
             var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
 
-            const string da = "username@hmcts.net";
-            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = da };
-            var endpointList = new List<EndpointRequest> {endpoints};
+            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = adUserName };
+            var endpointList = new List<EndpointRequest> { endpoints };
 
             var hearing = new BookNewHearingRequest
             {
@@ -132,8 +142,50 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_update_participant_username_to_aad_email_id()
+        {
+            
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "username@hmcts.net",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
+            };
+            
+            var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
+
+            const string da = "username@hmcts.net";
+            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = da };
+            var endpointList = new List<EndpointRequest> {endpoints};
+
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = participantList,
+                Endpoints = endpointList
+            };
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
+
+            // setup response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative", participant.Username);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.Is<string>(x => x == participant.Username))).ReturnsAsync(Guid.NewGuid().ToString());
+
+            await _controller.Post(bookingRequest);
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
+        }
+
+        [Test]
         public async Task Should_create_a_hearing_with_endpoints()
         {
+            
             var newHearingRequest = new BookNewHearingRequest
             {
                 Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
@@ -167,7 +219,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 BookingDetails = newHearingRequest
             };
-            
+                       
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithEndPoints(2)
@@ -175,6 +227,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                         .WithParticipant("Individual", "username2@hmcts.net");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             var result = await _controller.Post(bookingRequest);
 
@@ -207,6 +260,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             LinkedParticipantContactEmail = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
                     }
             };
+            
             var bookingRequest = new BookHearingRequest
             {
                 BookingDetails = newHearingRequest
@@ -228,6 +282,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Participants = new List<ParticipantResponse> { participant1, participant2 }).Build();
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             var result = await _controller.Post(bookingRequest);
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult)result.Result;
@@ -348,6 +404,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                             .WithParticipant("");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             await PostWithParticipants(participant);
 
@@ -597,11 +654,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
+            
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                          .WithParticipant("Representative", existingUserName);
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
-                
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             await PostWithParticipants(participant);
 
             _mocker.Mock<INotificationApiClient>().Verify(

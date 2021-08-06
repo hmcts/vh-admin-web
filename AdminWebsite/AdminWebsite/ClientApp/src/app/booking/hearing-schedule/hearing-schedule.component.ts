@@ -15,6 +15,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { weekendValidator, pastDateValidator } from '../../common';
 import { notPublicHolidayDateValidator } from '../../common/custom-validations/public-holiday-validator';
+
 @Component({
     selector: 'app-hearing-schedule',
     templateUrl: './hearing-schedule.component.html',
@@ -140,7 +141,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         this.form = this.fb.group({
-            hearingDate: [hearingDateParsed, [Validators.required, notPublicHolidayDateValidator(this.publicHolidays)]],
+            hearingDate: [
+                hearingDateParsed,
+                [Validators.required, weekendValidator(), pastDateValidator(), notPublicHolidayDateValidator(this.publicHolidays)]
+            ],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -250,7 +254,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     get hearingDateIsPublicHoliday(): boolean {
         return this.hearingDateControl.errors?.publicHoliday;
     }
-
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
@@ -266,7 +269,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             const startDateNoTime = new Date(new Date(this.hearingDateControl.value).setHours(0, 0, 0));
 
             const compareStartInvalid = endDateNoTime <= startDateNoTime;
-
             return (
                 (this.endHearingDateControl.invalid || compareStartInvalid) &&
                 (this.endHearingDateControl.dirty || this.endHearingDateControl.touched || this.failedSubmission)
@@ -565,7 +567,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearingDurationMinuteControl.markAsPristine();
 
             if (this.multiDaysRangeControl.value) {
-                this.endHearingDateControl.setValidators([Validators.required]);
+                this.endHearingDateControl.setValidators([
+                    Validators.required,
+                    weekendValidator(),
+                    pastDateValidator(),
+                    notPublicHolidayDateValidator(this.publicHolidays)
+                ]);
                 this.endHearingDateControl.updateValueAndValidity();
                 this.endHearingDateControl.setValue(null);
             } else {
