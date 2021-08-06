@@ -1,0 +1,45 @@
+<form class="govuk-form-group" [formGroup]="form" (ngSubmit)="saveStaffMember()">
+  <!-- <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': firstNameInvalid }">
+    <legend id="firstName-error" *ngIf="firstNameInvalid">
+      <span class="govuk-error-message">
+        {{ constants.Error.FirstNameErrorMsg }}
+      </span>
+    </legend>
+    <label class="govuk-label" for="firstName"> First name </label>
+    <input
+      id="firstName"
+      formControlName="firstName"
+      class="govuk-input govuk-input--width-20"
+      type="text"
+      (blur)="firstNameOnBlur()"
+    />
+  </div>
+
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': lastNameInvalid }">
+    <legend id="lastName-error" *ngIf="lastNameInvalid">
+      <span class="govuk-error-message">
+        {{ constants.Error.LastNameErrorMsg }}
+      </span>
+    </legend>
+    <label class="govuk-label" for="lastName"> Last name </label>
+    <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" (blur)="lastNameOnBlur()" />
+  </div> -->
+
+  <div
+    class="govuk-!-margin-bottom-9"
+    [ngClass]="{ 'govuk-form-group--error': isEmailInvalid }"
+  >
+    <legend id="emailControl-error" *ngIf="isEmailInvalid">
+      <span class="govuk-error-message">
+        {{ constants.Error.EmailErrorMsg }}
+      </span>
+    </legend>
+    <label class="govuk-label" for="emailControl">Staff email</label>
+    <input
+      type="text"
+      formControlName="emailControl"
+      id="emailControl"
+      class="govuk-input govuk-input--width-25"
+    />
+  </div>
+</form>
