@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
             var participant = InitParticipant("Judge");
-            participant.ContactEmail = "user@judiciarytest.com";
+            participant.Username = "user@judiciarytest.com";
             var hearing = InitHearing();
             hearing.OtherInformation = string.Empty;
             hearing.Participants = new List<ParticipantResponse> { participant };
