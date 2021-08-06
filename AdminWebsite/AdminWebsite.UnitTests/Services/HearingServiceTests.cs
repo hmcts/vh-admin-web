@@ -658,7 +658,6 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        [Ignore("Ignore for Release 1.27")]
         public async Task Should_process_new_joh_participant()
         {
             // Arrange
@@ -681,7 +680,6 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        [Ignore("Ignore for Release 1.27")]
         public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
         {
             // Arrange

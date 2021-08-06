@@ -313,7 +313,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        [Ignore("Ignore for Release 1.27")]
         public async Task Should_not_update_user_details_for_panel_member()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
@@ -336,7 +335,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        [Ignore("Ignore for Release 1.27")]
         public async Task Should_not_update_user_details_for_winger()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
