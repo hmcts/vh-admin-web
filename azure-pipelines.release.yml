@@ -92,6 +92,7 @@ stages:
         appName: vh-admin-web-$(environment)
         resourceGroup: vh-admin-web-$(environment)
         testCaseFilter: TestCategory=Smoketest
+        runACTests: ${{ parameters.runACTests }}
         dependentApps:
         - name: vh-user-api-$(environment)
           resourceGroup: vh-user-api-$(environment)
@@ -179,8 +180,6 @@ stages:
           - group: govuk-notify-prod
             env:
              - Prod
-          - name: runACTests
-            value: ${{ parameters.runACTests }}
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
