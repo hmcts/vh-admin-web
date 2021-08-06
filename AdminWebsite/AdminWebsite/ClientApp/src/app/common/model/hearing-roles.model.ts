@@ -3,7 +3,6 @@ export enum HearingRoles {
     APP_ADVOCATE = 'app advocate',
     APPELLANT_LIP = 'appellant lip',
     APPLICANT_LIP = 'applicant lip',
-    CLAIMAINT_LIP = 'claimaint lip',
     CLAIMANT_LIP = 'claimant lip',
     DEFENDANT_LIP = 'defendant lip',
     EXPERT = 'expert',

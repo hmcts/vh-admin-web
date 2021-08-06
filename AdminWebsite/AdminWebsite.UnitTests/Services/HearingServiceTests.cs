@@ -8,6 +8,7 @@ using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
+using AdminWebsite.Services.Models;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
@@ -136,10 +137,12 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Daily Test";
+
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(4));
         }
 
         [Test]
@@ -654,6 +657,124 @@ namespace AdminWebsite.UnitTests.Services
                         && x.LinkedParticipants == linkedParticipants)), Times.Once);
         }
 
+        [Test]
+        public async Task Should_process_new_joh_participant()
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                HearingRoleName = "Panel Member",
+                ContactEmail = "contact@email.com"
+            };
+            var removedParticipantIds = new List<Guid>();
+            var usernameAdIdDict = new Dictionary<string, User>();
+            
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
+                usernameAdIdDict);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().Be(participant.ContactEmail);
+        }
+        
+        [Test]
+        public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                HearingRoleName = "Panel Member",
+                ContactEmail = "contact@email.com"
+            };
+            
+            _hearing.Participants.Add(new ParticipantResponse()
+            {
+                Id = participant.Id.Value,
+                Username = participant.ContactEmail,
+                ContactEmail = participant.ContactEmail
+            });
+            
+            var removedParticipantIds = new List<Guid>();
+            var usernameAdIdDict = new Dictionary<string, User>();
+            
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
+                usernameAdIdDict);
+
+            // Assert
+            newParticipant.Should().BeNull();
+        }
+        
+        [Test]
+        public async Task Should_process_new_joh_participant_when_participant_is_in_list_and_is_removed()
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                CaseRoleName = "Judge",
+                ContactEmail = "contact@email.com"
+            };
+            
+            _hearing.Participants.Add(new ParticipantResponse()
+            {
+                Id = participant.Id.Value,
+                Username = participant.ContactEmail,
+                ContactEmail = participant.ContactEmail
+            });
+            
+            var removedParticipantIds = new List<Guid>();
+            removedParticipantIds.Add(participant.Id.Value);
+            
+            var usernameAdIdDict = new Dictionary<string, User>();
+            
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
+                usernameAdIdDict);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().Be(participant.ContactEmail);
+        }
+        
+        [Test]
+        public async Task Should_process_non_joh_participant()
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                CaseRoleName = "NOT JUDGE",
+                ContactEmail = "contact@email.com"
+            };
+            
+            var removedParticipantIds = new List<Guid>();
+            var usernameAdIdDict = new Dictionary<string, User>();
+            var password = "password";
+            var user = new User()
+            {
+                UserName = participant.ContactEmail,
+                Password = password
+            };
+
+            _mocker.Mock<IUserAccountService>().Setup(x =>
+                    x.UpdateParticipantUsername(It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(y => y.ContactEmail == participant.ContactEmail)))
+                .ReturnsAsync(user);
+            
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
+                usernameAdIdDict);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().Be(participant.ContactEmail);
+            usernameAdIdDict.Should().ContainKey(participant.ContactEmail);
+            usernameAdIdDict[participant.ContactEmail].Should().BeEquivalentTo(user);
+        }
+        
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> {new CaseResponse {Name = "Test", Number = "123456"}};

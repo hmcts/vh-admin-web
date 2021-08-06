@@ -242,6 +242,8 @@ stages:
             value: $(notification_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
+          - name: VhServices:VideoWebUrl
+            value: $(video_web_url)
 
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey

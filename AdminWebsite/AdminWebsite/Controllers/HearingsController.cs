@@ -269,12 +269,21 @@ namespace AdminWebsite.Controllers
                 var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
 
                 foreach (var participant in request.Participants)
+                {
                     if (!participant.Id.HasValue)
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
-                            usernameAdIdDict, newParticipants);
+                    {
+                        if (await _hearingsService.ProcessNewParticipant(hearingId, participant,
+                            removedParticipantIds,
+                            originalHearing,
+                            usernameAdIdDict) is { } newParticipant)
+                        {
+                            newParticipants.Add(newParticipant);
+                        }
+                    }
                     else
                     {
-                        var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        var existingParticipant =
+                            originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                         if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         {
                             continue;
@@ -283,6 +292,7 @@ namespace AdminWebsite.Controllers
                         var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                         existingParticipants.Add(updateParticipantRequest);
                     }
+                }
 
                 var linkedParticipants = new List<LinkedParticipantRequest>();
                 var participantsWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any()
@@ -300,14 +310,25 @@ namespace AdminWebsite.Controllers
 
                     // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
                     // We also remove the participant this one is linked to, to avoid duplicating entries.
-
                     if (participantWithLinks.Id.HasValue && existingParticipants.SingleOrDefault(x => x.ParticipantId == participantWithLinks.Id) != null)
                     {
-                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId);
-                        var secondaryParticipantInLink = participantsWithLinks[secondaryParticipantInLinkIndex];
-                        linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLink.ContactEmail;
+                        // Is the linked participant an existing participant?
+                        var secondaryParticipantInLinkContactEmail = originalHearing.Participants
+                        .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
+                        .ContactEmail;
 
-                        participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
+                        // If the linked participant isn't an existing participant it will be a newly added participant                        
+                        if (secondaryParticipantInLinkContactEmail == null)
+                            secondaryParticipantInLinkContactEmail = newParticipants
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
+                            .ContactEmail;
+
+                        linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;
+
+                        // If the linked participant is an already existing user they will be mapped twice, so we remove them here.
+                        var secondaryParticipantInLinkIndex = participantsWithLinks.FindIndex(x => x.ContactEmail == secondaryParticipantInLinkContactEmail);
+                        if (secondaryParticipantInLinkIndex >= 0)
+                            participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
                     }
 
                     linkedParticipants.Add(linkedParticipantRequest);
@@ -444,7 +465,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,updateBookingStatusRequest.Status);
+                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
 
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
@@ -558,25 +579,31 @@ namespace AdminWebsite.Controllers
             _logger.LogDebug("Assigning HMCTS usernames for participants");
             foreach (var participant in participants)
             {
-                // set the participant username according to AD
-                User user;
-                if (string.IsNullOrWhiteSpace(participant.Username))
-                {
-                    _logger.LogDebug(
-                        "No username provided in booking for participant {Email}. Checking AD by contact email",
-                        participant.ContactEmail);
-                    user = await _userAccountService.UpdateParticipantUsername(participant);
-                }
-                else
+                User user = null;
+
+                if (!string.IsNullOrWhiteSpace(participant.Username))
                 {
                     // get user
                     _logger.LogDebug(
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.ContactEmail, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserName = adUserId };
+
+                    if (!string.IsNullOrEmpty(adUserId)) user = new User { UserId = adUserId };
+                    else participant.Username = ""; 
                 }
 
+                // set the participant username according to AD
+                    
+                if (string.IsNullOrWhiteSpace(participant.Username))
+                {
+                    _logger.LogDebug(
+                        "No username provided in booking for participant {Email}. Checking AD by contact email",
+                        participant.ContactEmail);
+                    user = await _userAccountService.UpdateParticipantUsername(participant);
+                    participant.Username = user.UserName;
+                }
+                
                 // username's participant will be set by this point
                 usernameAdIdDict[participant.Username!] = user;
             }

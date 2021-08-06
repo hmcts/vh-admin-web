@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     public class TestContext
     {
         public TestApiManager Api { get; set; }
-        public AzureStorageManager AzureStorage { get; set; }
+        public List<AzureStorageManager> AzureStorage { get; set; }
         public UserDto CurrentUser { get; set; }
         public DriverSetup Driver { get; set; }
         public Page Route { get; set; }

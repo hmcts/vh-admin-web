@@ -37,6 +37,8 @@ namespace AdminWebsite.UnitTests
             httpContext.Request.Host = new HostString("vh-admin-web.com");
             httpContext.Request.PathBase = "";
 
+            var vhServiceConfiguration = new ServiceConfiguration { VideoWebUrl = "https://vh-web/" };
+
             var controllerContext = new ControllerContext {
                 HttpContext = httpContext
             };
@@ -45,7 +47,8 @@ namespace AdminWebsite.UnitTests
                 Options.Create(azureAdConfiguration),
                 Options.Create(kinlyConfiguration),
                 Options.Create(applicationInsightsConfiguration),
-                Options.Create(testSettings)) {
+                Options.Create(testSettings),
+                Options.Create(vhServiceConfiguration)) {
 
                 ControllerContext = controllerContext
             };
