@@ -579,8 +579,22 @@ namespace AdminWebsite.Controllers
             _logger.LogDebug("Assigning HMCTS usernames for participants");
             foreach (var participant in participants)
             {
+                User user = null;
+
+                if (!string.IsNullOrWhiteSpace(participant.Username))
+                {
+                    // get user
+                    _logger.LogDebug(
+                        "Username provided in booking for participant {Email}. Getting id for username {Username}",
+                        participant.ContactEmail, participant.Username);
+                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+
+                    if (!string.IsNullOrEmpty(adUserId)) user = new User { UserId = adUserId };
+                    else participant.Username = ""; 
+                }
+
                 // set the participant username according to AD
-                User user;
+                    
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     _logger.LogDebug(
@@ -589,16 +603,7 @@ namespace AdminWebsite.Controllers
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                     participant.Username = user.UserName;
                 }
-                else
-                {
-                    // get user
-                    _logger.LogDebug(
-                        "Username provided in booking for participant {Email}. Getting id for username {Username}",
-                        participant.ContactEmail, participant.Username);
-                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserId = adUserId };
-                }
-
+                
                 // username's participant will be set by this point
                 usernameAdIdDict[participant.Username!] = user;
             }

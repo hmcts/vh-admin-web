@@ -170,7 +170,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 BookingDetails = bookingDetails
             };
-            
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             _mocker.Mock<IUserAccountService>().Setup(x =>
                     x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
@@ -224,6 +226,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             const string expectedExceptionResponse = "exception";
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
                 .Throws(new BookingsApiException("", (int) HttpStatusCode.BadRequest, expectedExceptionResponse, null, null));
             
@@ -300,6 +305,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         {DisplayName = "displayname2", DefenceAdvocateUsername = "fname2.lname2@hmcts.net"},
                 }
             };
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             foreach (var participant in bookNewHearingRequest.Participants.Where(x =>
                 !string.IsNullOrWhiteSpace(x.Username)))
