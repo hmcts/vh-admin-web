@@ -55,6 +55,7 @@ let party: AbstractControl;
 let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
+let email: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
@@ -277,6 +278,7 @@ describe('AddParticipantComponent', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -323,6 +325,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
+        expect(email.value).toBe('');
         expect(phone.value).toBe('');
         expect(title.value).toBe(Constants.PleaseSelect);
         expect(companyName.value).toBe('');
@@ -397,6 +400,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(participant.case_role_name);
         expect(firstName.value).toBe(participant.first_name);
         expect(lastName.value).toBe(participant.last_name);
+        expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
         expect(displayName.value).toBe(participant.display_name);
@@ -413,6 +417,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
+        expect(email.value).toBe('');
         expect(phone.value).toBe('');
         expect(title.value).toBe(Constants.PleaseSelect);
         expect(displayName.value).toBe('');
@@ -441,11 +446,13 @@ describe('AddParticipantComponent', () => {
         beforeEach(() => {
             component.showDetails = true;
             spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+            component.searchEmail.initialValue = 'mockInitialValue@hmcts.net';
             component.searchEmail.email = 'mock@hmcts.net';
             role.setValue('Litigant in person');
             party.setValue('Applicant');
             firstName.setValue('Sam');
             lastName.setValue('Green');
+            email.setValue('Sam.Green@litigant.com');
             title.setValue('Mrs');
             phone.setValue('12345');
             displayName.setValue('Sam Green');
@@ -937,6 +944,7 @@ describe('AddParticipantComponent edit mode', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -950,6 +958,8 @@ describe('AddParticipantComponent edit mode', () => {
         expect(component.form.controls['firstName'].errors['required']).toBeTruthy();
         expect(component.form.controls['lastName']).toBeTruthy();
         expect(component.form.controls['lastName'].errors['required']).toBeTruthy();
+        expect(component.form.controls['email']).toBeTruthy();
+        expect(component.form.controls['email'].errors['required']).toBeTruthy();
     });
     it('should set title list and get current data from session', () => {
         component.ngOnInit();
@@ -1007,6 +1017,7 @@ describe('AddParticipantComponent edit mode', () => {
         party.setValue('Applicant');
         firstName.setValue('Sam');
         lastName.setValue('Green');
+        email.setValue('Sam.Green@Representative.com');
         title.setValue('Mrs');
         phone.setValue('12345');
         displayName.setValue('Sam Green');
@@ -1042,6 +1053,7 @@ describe('AddParticipantComponent edit mode', () => {
             title: 'Ms',
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1067,6 +1079,7 @@ describe('AddParticipantComponent edit mode', () => {
             title: Constants.PleaseSelect,
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1255,6 +1268,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -1330,6 +1344,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             title: 'Ms',
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1470,6 +1485,7 @@ describe('AddParticipantComponent set representer', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
