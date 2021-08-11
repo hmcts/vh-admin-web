@@ -224,6 +224,42 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
+        
+        [Test]
+        public void Should_map_to_staffmember_hearing_amendment_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingAmendmentStaffMember;
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0, DateTimeKind.Utc);
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
+            var caseName = "cse test";
+            var caseNumber = "MBFY/17364";
+            var participant = InitParticipant("Staff Member");      
+  
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", caseName},
+                {"case number", caseNumber},
+                {"staff member", $"{participant.FirstName} {participant.LastName}"},
+                {"username", participant.Username},
+                {"Old time", "11:30 AM"},
+                {"New time", "2:10 PM"},
+                {"Old Day Month Year", "10 February 2020"},
+                {"New Day Month Year", "12 October 2020"}
+            };
+
+            var result =
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
+                    caseNumber, oldDate, newDate);
+
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(_hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
 
         [Test]
         public void should_map_to_lip_hearing_amendment_notification()
