@@ -29,6 +29,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     otherInformationDetails: OtherInformationModel;
 
+    showAddStaffMemberFld: FormControl;
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
     judgePhoneFld: FormControl;
@@ -110,6 +111,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.initFormFields();
 
         this.form = this.fb.group({
+            showAddStaffMemberFld: this.showAddStaffMemberFld,
             judgeDisplayNameFld: this.judgeDisplayNameFld,
             judgeEmailFld: this.judgeEmailFld,
             judgePhoneFld: this.judgePhoneFld
@@ -119,6 +121,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initFormFields() {
+        this.showAddStaffMemberFld = new FormControl(false);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'

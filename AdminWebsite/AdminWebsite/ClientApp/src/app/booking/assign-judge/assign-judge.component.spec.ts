@@ -24,6 +24,9 @@ import { EmailValidationService } from 'src/app/booking/services/email-validatio
 import { ConfigService } from '../../services/config.service';
 import { isDebuggerStatement } from 'typescript';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.component';
+import { SearchEmailComponent } from '../search-email/search-email.component';
+import { MockComponent } from 'ng-mocks';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -179,6 +182,8 @@ describe('AssignJudgeComponent', () => {
                 ],
                 declarations: [
                     AssignJudgeComponent,
+                    MockComponent(SearchEmailComponent),
+                    MockComponent(AddStaffMemberComponent),
                     BreadcrumbStubComponent,
                     CancelPopupComponent,
                     ParticipantsListStubComponent,
@@ -612,6 +617,22 @@ describe('AssignJudgeComponent', () => {
             expect(component.judgeEmailFld.value).toEqual('');
             expect(component.judgePhoneFld.value).toEqual('');
             expect(component.canNavigate).toBe(false);
+        });
+    });
+
+    describe('add staff member', () => {
+        it('should not show component for adding staff member if add staff member checkbox is unchecked', () => {
+            const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+            expect(addStaffMemberComponent).toBeFalsy();
+        });
+
+        it('should show component for adding staff member if add staff member checkbox is checked', () => {
+            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+            addStaffMemberCheckbox.nativeElement.click();
+            fixture.detectChanges();
+
+            const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+            expect(addStaffMemberComponent).toBeTruthy();
         });
     });
 });
