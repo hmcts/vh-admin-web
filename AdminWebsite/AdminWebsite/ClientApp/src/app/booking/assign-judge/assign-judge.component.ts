@@ -250,7 +250,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judgePhoneFld.setValue(text);
     }
 
-    saveJudge() {
+    saveJudgeAndStaffMember() {
         this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
 
         if (!this.judge || !this.judge.email) {

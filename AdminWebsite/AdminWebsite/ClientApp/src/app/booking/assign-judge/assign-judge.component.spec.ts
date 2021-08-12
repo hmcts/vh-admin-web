@@ -210,7 +210,7 @@ describe('AssignJudgeComponent', () => {
 
         it('should fail validation if a judge is not selected', () => {
             component.cancelAssignJudge();
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.form.valid).toBeFalsy();
         });
         it('should initialize form and create judgeDisplayName control', () => {
@@ -389,7 +389,7 @@ describe('AssignJudgeComponent', () => {
     const otherInformationDetailsJudgeEmail = 'OtherInformationDetailsJudgeEmail';
     const otherInformationDetailsJudgePhone = 'OtherInformationDetailsJudgePhone';
 
-    describe('saveJudge', () => {
+    describe('saveJudgeAndStaffMember', () => {
         let testJudge: ParticipantModel;
         beforeEach(() => {
             testJudge = Object.assign({}, judge);
@@ -402,7 +402,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if judge is null', () => {
             component.judge = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -412,7 +412,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if email is null', () => {
             component.judge.email = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -422,7 +422,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -435,7 +435,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -444,7 +444,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if cannot add judge', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(true);
             expect(component.failedSubmission).toBe(true);
@@ -454,7 +454,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but form is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.form.setErrors({ incorrect: true });
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -464,7 +464,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but email is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.isValidEmail = false;
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -478,7 +478,7 @@ describe('AssignJudgeComponent', () => {
             spyOn(component, 'changeEmail');
             spyOn(component, 'changeTelephone');
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(false);
@@ -504,7 +504,7 @@ describe('AssignJudgeComponent', () => {
             });
 
             afterEach(() => {
-                component.saveJudge();
+                component.saveJudgeAndStaffMember();
                 expect(component.isJudgeParticipantError).toBe(false);
                 expect(component.failedSubmission).toBe(false);
                 expect(component.isJudgeSelected).toBe(true);
