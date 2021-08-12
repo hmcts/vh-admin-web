@@ -1,6 +1,7 @@
 import { DebugElement, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClipboardService } from 'ngx-clipboard';
+import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { CopyJoinLinkComponent } from './copy-join-link.component';
 
@@ -13,12 +14,15 @@ describe('CopyJoinLinkComponent', () => {
     let element: HTMLDivElement;
     let mouseEvent: MouseEvent;
     const vh_video_uri = 'vh-video-web';
+    const clientSettingsResponse = new ClientSettingsResponse();
+    clientSettingsResponse.video_web_url = vh_video_uri;
 
     element = document.createElement('div');
     clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
     clipboardServiceSpy.copyFromContent.and.returnValue(true);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
-    configServiceSpy.getConfig.and.returnValue(vh_video_uri);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', {
+        getConfig: clientSettingsResponse
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -81,7 +85,8 @@ describe('CopyJoinLinkComponent', () => {
     });
 
     it('includes the text quickjoin in the link', () => {
-        component.quickLinkDetails = 'some-id';
-        expect(component._detailsToCopy).toContain('quickjoin');
+        const hearingId = 'hearing-id';
+        component.quickLinkDetails = hearingId;
+        expect(component._detailsToCopy).toBe(`${vh_video_uri}quickjoin/${hearingId}`);
     });
 });
