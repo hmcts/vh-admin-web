@@ -40,6 +40,7 @@ export class BookingParticipantListComponent {
         const panelMembersAndWingers = this.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.HearingRoleName)
         );
+        const staffMember = this.participants.filter(participant => participant.HearingRoleName === 'Staff Member');
         const interpretersAndInterpretees = this.participants.filter(
             participant => participant.HearingRoleName === 'Interpreter' || participant.isInterpretee
         );
@@ -48,9 +49,11 @@ export class BookingParticipantListComponent {
             participant =>
                 !judges.includes(participant) &&
                 !panelMembersAndWingers.includes(participant) &&
+                !staffMember.includes(participant) &&
                 !interpretersAndInterpretees.includes(participant) &&
                 !observers.includes(participant)
         );
-        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...interpretersAndInterpretees, ...observers];
+        this.sortedParticipants = [...judges, ...panelMembersAndWingers,
+            ...staffMember, ...others, ...interpretersAndInterpretees, ...observers];
     }
 }
