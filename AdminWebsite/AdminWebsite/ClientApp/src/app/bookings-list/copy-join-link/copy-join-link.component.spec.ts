@@ -1,9 +1,8 @@
-import { DebugElement } from '@angular/core';
+import { DebugElement, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ElementRef } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
-import { CopyJoinLinkComponent } from './copy-join-link.component';
 import { ConfigService } from '../../services/config.service';
+import { CopyJoinLinkComponent } from './copy-join-link.component';
 
 describe('CopyJoinLinkComponent', () => {
     let component: CopyJoinLinkComponent;
@@ -71,6 +70,7 @@ describe('CopyJoinLinkComponent', () => {
 
         expect(component.displayTooltip).toBe(false);
     });
+
     it('should copy the join link to the clipboard', () => {
         const joinLinkDetails = 'vh-video-web';
         component._detailsToCopy = joinLinkDetails;
@@ -78,5 +78,10 @@ describe('CopyJoinLinkComponent', () => {
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(joinLinkDetails);
         expect(component.displayTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopied);
+    });
+
+    it('includes the text quickjoin in the link', () => {
+        component.quickLinkDetails = 'some-id';
+        expect(component._detailsToCopy).toContain('quickjoin');
     });
 });
