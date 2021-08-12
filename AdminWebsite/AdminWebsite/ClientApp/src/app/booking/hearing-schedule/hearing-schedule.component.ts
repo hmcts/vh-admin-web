@@ -251,15 +251,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('multiDays');
     }
 
-    get hearingDateIsPublicHoliday(): boolean {
-        return this.hearingDateControl.errors?.publicHoliday;
-    }
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
             (this.hearingDateControl.invalid || new Date(this.hearingDateControl.value) < todayDate) &&
-            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission) &&
-            !this.hearingDateIsPublicHoliday
+            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission)
         );
     }
 
