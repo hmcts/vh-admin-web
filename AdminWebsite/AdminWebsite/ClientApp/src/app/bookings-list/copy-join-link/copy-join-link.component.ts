@@ -10,7 +10,7 @@ import { ConfigService } from '../../services/config.service';
 })
 export class CopyJoinLinkComponent extends CopyDetailsBase implements OnInit {
     @Input() set quickLinkDetails(value: string) {
-        this._detailsToCopy = `${this.vh_video_uri}/quickjoin/${value}`;
+        this._detailsToCopy = `${this.vh_video_uri}quickjoin/${value}`;
     }
     @ViewChild('conferenceJoinByLink', { static: false }) conferenceJoinByLink: ElementRef;
 
