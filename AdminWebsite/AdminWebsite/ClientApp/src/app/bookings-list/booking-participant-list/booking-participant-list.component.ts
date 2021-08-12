@@ -53,7 +53,13 @@ export class BookingParticipantListComponent {
                 !interpretersAndInterpretees.includes(participant) &&
                 !observers.includes(participant)
         );
-        this.sortedParticipants = [...judges, ...panelMembersAndWingers,
-            ...staffMember, ...others, ...interpretersAndInterpretees, ...observers];
+        this.sortedParticipants = [
+            ...judges,
+            ...panelMembersAndWingers,
+            ...staffMember,
+            ...others,
+            ...interpretersAndInterpretees,
+            ...observers
+        ];
     }
 }
