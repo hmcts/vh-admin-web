@@ -33,7 +33,7 @@
         (blur)="resetPastTimeOnBlur()"
       />
       <div *ngIf="hearingDateInvalid">
-          <app-date-error-messages [dateCtrl]='hearingDateControl'></app-date-error-messages>
+        <app-date-error-messages [dateCtrl]="hearingDateControl"></app-date-error-messages>
       </div>
     </div>
   </div>
@@ -57,9 +57,9 @@
           min="{{ today | date: 'yyyy-MM-dd' }}"
           (blur)="resetPastTimeOnBlur()"
         />
-          <div *ngIf="hearingDateInvalid">
-             <app-date-error-messages [dateCtrl]='hearingDateControl'></app-date-error-messages>
-          </div>
+        <div *ngIf="hearingDateInvalid">
+          <app-date-error-messages [dateCtrl]="hearingDateControl"></app-date-error-messages>
+        </div>
       </div>
 
       <div [ngClass]="endHearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
@@ -74,7 +74,7 @@
           min="{{ today | date: 'yyyy-MM-dd' }}"
         />
         <div *ngIf="endHearingDateInvalid">
-          <app-date-error-messages [dateCtrl]='endHearingDateControl'></app-date-error-messages>
+          <app-date-error-messages [dateCtrl]="endHearingDateControl"></app-date-error-messages>
           <span *ngIf="endDateEarlierThanStartDate" id="endHearingDatePast-error" class="govuk-error-message alert alert-danger">
             Select a date in the future at least 1 day later than the start date
           </span>
