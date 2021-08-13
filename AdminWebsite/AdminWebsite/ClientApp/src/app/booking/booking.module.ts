@@ -15,9 +15,11 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
 import { EndpointsComponent } from './endpoints/endpoints.component';
 import { ParticipantItemComponent, ParticipantListComponent } from './participant';
 import { MultiDayHearingScheduleComponent } from './summary/multi-day-hearing-schedule';
+import { DateErrorMessagesComponent } from './hearing-schedule/date-error-messages';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
+    DateErrorMessagesComponent,
     HearingScheduleComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
