@@ -267,17 +267,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant",
-                    PexipNode = "pexip"
-                }
-            };
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));

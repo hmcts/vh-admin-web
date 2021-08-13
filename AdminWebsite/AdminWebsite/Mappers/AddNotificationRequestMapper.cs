@@ -21,14 +21,24 @@ namespace AdminWebsite.Mappers
                 {"username", $"{participant.Username}"},
                 {"random password", $"{password}"}
             };
+            NotificationType notificationType;
+
+            if (participant.UserRoleName == "Staff Member")
+            {
+                notificationType = NotificationType.CreateStaffMember;
+            }
+            else
+            {
+                notificationType = participant.UserRoleName.ToUpper() == Individual
+                    ? NotificationType.CreateIndividual
+                    : NotificationType.CreateRepresentative;
+            }
             var addNotificationRequest = new AddNotificationRequest
             {
                 HearingId = hearingId,
                 MessageType = MessageType.Email,
                 ContactEmail = participant.ContactEmail,
-                NotificationType = participant.UserRoleName.ToUpper() == Individual
-                    ? NotificationType.CreateIndividual
-                    : NotificationType.CreateRepresentative,
+                NotificationType = notificationType,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
@@ -75,6 +85,12 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingAmendmentEJudJudge;
                 parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Staff Member", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingAmendmentStaffMember;
+                parameters.Add("staff member", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add("username", participant.Username);
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                      !hearing.IsJudgeEmailEJud())
@@ -126,6 +142,12 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingConfirmationEJudJudge;
                 parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Staff Member", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingConfirmationStaffMember;
+                parameters.Add("staff member", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add("username", participant.Username);
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                      !hearing.IsJudgeEmailEJud())
@@ -226,6 +248,12 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
                 parameters.Add("judge", participant.DisplayName);
             }
+            else if (participant.UserRoleName.Contains("Staff Member", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingConfirmationStaffMemberMultiDay;
+                parameters.Add("staff member", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add("username", participant.Username);
+            }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                      !hearing.IsJudgeEmailEJud())
             {
@@ -282,6 +310,11 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.EJudJohDemoOrTest;
                 parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+            }
+            else if (participant.UserRoleName.Contains("Staff Member", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.StaffMemberDemoOrTest;
+                parameters.Add("staff member", $"{participant.FirstName} {participant.LastName}");
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
