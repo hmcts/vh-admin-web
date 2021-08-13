@@ -30,29 +30,25 @@ describe('Date error message test suite', () => {
     it('should show Select a date error message when no date is selected', () => {
         component.required = true;
         fixture.detectChanges();
-        const requiredMessage = debugElement.query(By.css(requiredErrorId));
-        expect(requiredMessage.nativeElement.innerText).toEqual('Select a date');
+        expect(debugElement.query(By.css(requiredErrorId))).toBeTruthy();
     });
 
     it('should show Please enter a working day (Monday to Friday) error message when weekend date is selected', () => {
         component.weekend = true;
         fixture.detectChanges();
-        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
-        expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
+        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
     });
 
     it('should show Please enter a working day (Monday to Friday) error message when public holiday date is selected', () => {
         component.publicHoliday = true;
         fixture.detectChanges();
-        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
-        expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
+        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
     });
 
     it('should show Select a date in the future error message when past date is selected', () => {
         component.pastDate = true;
         fixture.detectChanges();
-        const pastMessage = debugElement.query(By.css(pastErrorId));
-        expect(pastMessage.nativeElement.innerText).toEqual('Select a date in the future');
+        expect(debugElement.query(By.css(pastErrorId))).toBeTruthy();
     });
 
     it('should not show any error messages when all the properties are false', () => {
@@ -66,9 +62,7 @@ describe('Date error message test suite', () => {
         component.required = component.publicHoliday = false;
         component.pastDate = component.weekend = true;
         fixture.detectChanges();
-        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
-        expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
-        const pastMessage = debugElement.query(By.css(pastErrorId));
-        expect(pastMessage.nativeElement.innerText).toEqual('Select a date in the future');
+        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
+        expect(debugElement.query(By.css(pastErrorId))).toBeTruthy();
     });
 });
