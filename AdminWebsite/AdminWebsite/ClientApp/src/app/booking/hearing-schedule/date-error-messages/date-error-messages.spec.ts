@@ -7,9 +7,10 @@ describe('Date error message test suite', () => {
     let component: DateErrorMessagesComponent;
     let fixture: ComponentFixture<DateErrorMessagesComponent>;
     let debugElement: DebugElement;
-    let requiredMessage: ElementRef;
-    let pastMessage: ElementRef;
-    let weekendHolidayMessage: ElementRef;
+
+    const pastErrorId = '#hearingDate-past-error';
+    const weekendErrorId = '#hearingDate-weekend-error';
+    const requiredErrorId = '#hearingDate-required-error';
 
     beforeEach(
         waitForAsync(() => {
@@ -29,28 +30,45 @@ describe('Date error message test suite', () => {
     it('should show Select a date error message when no date is selected', () => {
         component.required = true;
         fixture.detectChanges();
-        requiredMessage = debugElement.query(By.css('#hearingDate-required-error'));
+        const requiredMessage = debugElement.query(By.css(requiredErrorId));
         expect(requiredMessage.nativeElement.innerText).toEqual('Select a date');
     });
 
     it('should show Please enter a working day (Monday to Friday) error message when weekend date is selected', () => {
         component.weekend = true;
         fixture.detectChanges();
-        weekendHolidayMessage = debugElement.query(By.css('#hearingDate-weekend-error'));
+        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
         expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
     });
 
     it('should show Please enter a working day (Monday to Friday) error message when public holiday date is selected', () => {
         component.publicHoliday = true;
         fixture.detectChanges();
-        weekendHolidayMessage = debugElement.query(By.css('#hearingDate-weekend-error'));
+        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
         expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
     });
 
     it('should show Select a date in the future error message when past date is selected', () => {
         component.pastDate = true;
         fixture.detectChanges();
-        pastMessage = debugElement.query(By.css('#hearingDate-past-error'));
+        const pastMessage = debugElement.query(By.css(pastErrorId));
+        expect(pastMessage.nativeElement.innerText).toEqual('Select a date in the future');
+    });
+
+    it('should not show any error messages when all the properties are false', () => {
+        component.required = component.pastDate = component.weekend = component.publicHoliday = false;
+        expect(debugElement.query(By.css(requiredErrorId))).toBeFalsy();
+        expect(debugElement.query(By.css(weekendErrorId))).toBeFalsy();
+        expect(debugElement.query(By.css(pastErrorId))).toBeFalsy();
+    });
+
+    it('should show both past and weekend messages when the selected date was in weekend of past', () => {
+        component.required = component.publicHoliday = false;
+        component.pastDate = component.weekend = true;
+        fixture.detectChanges();
+        const weekendHolidayMessage = debugElement.query(By.css(weekendErrorId));
+        expect(weekendHolidayMessage.nativeElement.innerText).toEqual('Please enter a working day (Monday to Friday)');
+        const pastMessage = debugElement.query(By.css(pastErrorId));
         expect(pastMessage.nativeElement.innerText).toEqual('Select a date in the future');
     });
 });
