@@ -1,4 +1,4 @@
-<form class="govuk-form-group" [formGroup]="form" (ngSubmit)="saveStaffMember()">
+<form class="govuk-form-group" [formGroup]="form">
   <app-search-email
     [disabled]="emailDisabled"
     (findParticipant)="getParticipant($event)"
