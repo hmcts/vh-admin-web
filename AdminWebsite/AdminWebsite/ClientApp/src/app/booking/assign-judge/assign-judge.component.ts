@@ -30,6 +30,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     otherInformationDetails: OtherInformationModel;
 
     showAddStaffMemberFld: FormControl;
+    isStaffMemberValid = false;
+    staffMember: ParticipantModel;
+
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
     judgePhoneFld: FormControl;
@@ -248,6 +251,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         }
         const text = SanitizeInputText(this.judgePhoneFld.value);
         this.judgePhoneFld.setValue(text);
+    }
+
+    changeIsStaffMemberValid(isValid: boolean) {
+        this.isStaffMemberValid = isValid;
+    }
+
+    changeStaffMember(staffMember: ParticipantModel) {
+        this.staffMember = staffMember;
     }
 
     saveJudgeAndStaffMember() {

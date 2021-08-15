@@ -106,7 +106,7 @@ const configSettings = new ClientSettingsResponse();
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
-describe('AssignJudgeComponent', () => {
+fdescribe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
@@ -633,6 +633,36 @@ describe('AssignJudgeComponent', () => {
 
             const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
             expect(addStaffMemberComponent).toBeTruthy();
+        });
+
+        describe('changeIsStaffMemberValid', () => {
+            it('should subscribe to AddStaffMemberComponent and update if the staff member is valid', () => {
+                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+                addStaffMemberCheckbox.nativeElement.click();
+                fixture.detectChanges();
+                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+
+                addStaffMemberComponent.componentInstance.isStaffMemberValid.emit(true);
+                fixture.detectChanges();
+
+                expect(component.isStaffMemberValid).toBe(true);
+            });
+        });
+        
+        describe('changeStaffMember', () => {
+            it('should subscribe to AddStaffMemberComponent for staff member changes', () => {
+                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+                addStaffMemberCheckbox.nativeElement.click();
+                fixture.detectChanges();
+
+                const staffMember = new ParticipantModel({ display_name: 'Ahoy There' })
+                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+
+                addStaffMemberComponent.componentInstance.staffMember.emit(staffMember);
+                fixture.detectChanges();
+
+                expect(component.staffMember).toBe(staffMember);
+            });
         });
     });
 });
