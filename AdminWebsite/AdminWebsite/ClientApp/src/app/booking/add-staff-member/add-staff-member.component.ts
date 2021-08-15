@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { AddParticipantBaseDirective } from 'src/app/booking/add-participant-base/add-participant-base.component'
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 })
   
 export class AddStaffMemberComponent extends AddParticipantBaseDirective implements OnInit, OnDestroy {
+  @Input() isShowErrorSummary: boolean;
   @Output() staffMember = new EventEmitter<ParticipantModel>();
   @Output() isStaffMemberValid = new EventEmitter<boolean>();
 

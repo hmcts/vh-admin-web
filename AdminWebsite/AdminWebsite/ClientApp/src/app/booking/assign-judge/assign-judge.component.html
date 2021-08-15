@@ -130,7 +130,7 @@
         </div>
       </div>
 
-      <app-add-staff-member (staffMember)="changeStaffMember($event)" (isStaffMemberValid)="changeIsStaffMemberValid($event)" *ngIf="showAddStaffMemberFld.value"></app-add-staff-member>
+      <app-add-staff-member [isShowErrorSummary]="showStaffMemberErrorSummary" (staffMember)="changeStaffMember($event)" (isStaffMemberValid)="changeIsStaffMemberValid($event)" *ngIf="showAddStaffMemberFld.value"></app-add-staff-member>
 
       <div class="sk-top">
         <button

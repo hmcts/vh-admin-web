@@ -208,6 +208,24 @@ fdescribe('AssignJudgeComponent', () => {
             })
         );
 
+        it('should fail validation if there are form errors when adding a staff member', () => {
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = false;
+            
+            component.saveJudgeAndStaffMember();
+
+            expect(component.showStaffMemberErrorSummary).toBe(true);
+        });
+
+        it('should not show validation errors for staff member if there are none', () => {
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+            
+            component.saveJudgeAndStaffMember();
+
+            expect(component.showStaffMemberErrorSummary).toBe(false);
+        });
+
         it('should fail validation if a judge is not selected', () => {
             component.cancelAssignJudge();
             component.saveJudgeAndStaffMember();

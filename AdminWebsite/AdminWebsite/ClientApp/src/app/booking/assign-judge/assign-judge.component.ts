@@ -32,6 +32,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     showAddStaffMemberFld: FormControl;
     isStaffMemberValid = false;
     staffMember: ParticipantModel;
+    showStaffMemberErrorSummary = false;
 
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
@@ -263,6 +264,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     saveJudgeAndStaffMember() {
         this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
+        
+        if (this.showAddStaffMemberFld.value === true && !this.isStaffMemberValid) {
+            this.logger.warn(`${this.loggerPrefix} Validation errors are present when adding a staff member`);
+            this.showStaffMemberErrorSummary = true;
+            return;
+        }
 
         if (!this.judge || !this.judge.email) {
             this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
