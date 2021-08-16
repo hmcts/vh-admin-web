@@ -79,6 +79,11 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
                     y.GroupName == UserAccountService.JudicialOfficeHolder)),
                 Times.Never);
+
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
+                    y.GroupName == UserAccountService.StaffMember)),
+                Times.Never);
         }
 
         [Test]
@@ -108,6 +113,21 @@ namespace AdminWebsite.UnitTests.Services
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
                     It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.JudicialOfficeHolder)),
+                Times.Once);
+        }
+
+        [Test]
+        public async Task Should_add_StaffMember_role_to_Staff_Member_user_group()
+        {
+            await _service.AssignParticipantToGroup("staff@hmcts.net", "Staff Member");
+
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(
+                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.External)),
+                Times.Once);
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(
+                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.StaffMember)),
                 Times.Once);
         }
 

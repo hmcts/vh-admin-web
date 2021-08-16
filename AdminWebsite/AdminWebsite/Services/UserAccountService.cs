@@ -74,6 +74,7 @@ namespace AdminWebsite.Services
         public const string External = "External";
         public const string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
         public const string JudicialOfficeHolder = "JudicialOfficeHolder";
+        public const string StaffMember = "Staff Member";
 
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
@@ -279,6 +280,9 @@ namespace AdminWebsite.Services
                     break;
                 case JohRole:
                     await AddGroup(username, JudicialOfficeHolder);
+                    break;
+                case StaffMember:
+                    await AddGroup(username, StaffMember);
                     break;
             }
         }
