@@ -653,6 +653,51 @@ fdescribe('AssignJudgeComponent', () => {
             expect(addStaffMemberComponent).toBeTruthy();
         });
 
+        it('should add staff member to hearing', () => {
+            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+            
+            const displayName = 'Ello Mate!';
+
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+            component.staffMember = new ParticipantModel({ display_name: displayName })
+            
+            const originalNumberOfParticipant = component.hearing.participants.length;
+
+            component.saveJudgeAndStaffMember();
+            console.log(component.hearing.participants)
+
+            expect(component.hearing.participants.length).toBe(originalNumberOfParticipant + 1);
+        });
+
+        it('should update staff member if one already exists', () => {
+            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+
+            const email = 'email@email.com';
+            const oldDisplayName = 'Ello Mate!';
+            component.hearing.participants.push(new ParticipantModel({
+                display_name: oldDisplayName,
+                email: email
+            }));
+
+            const newDisplayName = 'Bye Mate!';
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+            component.staffMember = new ParticipantModel({
+                display_name: newDisplayName,
+                email: email
+            })
+
+            const originalNumberOfParticipant = component.hearing.participants.length;
+
+            component.saveJudgeAndStaffMember();
+            console.log(component.hearing.participants)
+            const staffMember = component.hearing.participants.find(x => x.email === email);
+
+            expect(component.hearing.participants.length).toBe(originalNumberOfParticipant);
+            expect(staffMember.display_name).toBe(newDisplayName);
+        });
+
         describe('changeIsStaffMemberValid', () => {
             it('should subscribe to AddStaffMemberComponent and update if the staff member is valid', () => {
                 const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));

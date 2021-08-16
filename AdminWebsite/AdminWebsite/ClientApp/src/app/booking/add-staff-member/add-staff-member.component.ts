@@ -20,7 +20,7 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
 
   $subscriptions: Subscription[] = [];
 
-  private readonly staffMemberRole = 'StaffMember';
+  private readonly staffMemberRole = 'Staff Member';
 
   isSubscribedToEmailChanges = false;
 
@@ -88,7 +88,11 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
       first_name: this.firstName.value,
       last_name: this.lastName.value,
       phone: this.phone.value,
-      email: this.email.value
+      email: this.email.value,
+      case_role_name: this.role.value,
+      hearing_role_name: this.party.value,
+      user_role_name: this.role.value,
+      username: this.email.value
     })
   }
 }

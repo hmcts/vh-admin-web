@@ -12,7 +12,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 
 import { AddStaffMemberComponent } from './add-staff-member.component';
 
-describe('AddStaffMemberComponent', () => {
+fdescribe('AddStaffMemberComponent', () => {
   let component: AddStaffMemberComponent;
   let fixture: ComponentFixture<AddStaffMemberComponent>;
 
@@ -21,7 +21,7 @@ describe('AddStaffMemberComponent', () => {
   let routerSpy: jasmine.SpyObj<Router>;
   let loggerSpy: jasmine.SpyObj<Logger>;
 
-  const staffMemberRole = 'StaffMember';
+  const staffMemberRole = 'Staff Member';
   
   beforeEach(
     waitForAsync(() => {
