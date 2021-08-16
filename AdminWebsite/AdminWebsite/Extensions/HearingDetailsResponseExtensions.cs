@@ -26,13 +26,13 @@ namespace AdminWebsite.Extensions
             var isOriginalJudgeEJud = IsJudgeEmailEJud(originalHearing);
             var isNewJudgeVhJudge = hearing.GetJudgeEmail() != null;
             var isOriginalJudgeVhJudge = originalHearing.GetJudgeEmail() != null;
-            
-            
+
+
             if (isNewJudgeEJud && isOriginalJudgeEJud)
             {
                 var judgeA = hearing.Participants.FirstOrDefault(x =>
                     x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                
+
                 var judgeB = originalHearing.Participants.FirstOrDefault(x =>
                     x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
 
@@ -82,7 +82,7 @@ namespace AdminWebsite.Extensions
         {
             var judge = hearing?.Participants.SingleOrDefault(x =>
                 x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-            return IsEmailEjud(judge?.ContactEmail);
+            return IsEmailEjud(judge?.Username);
         }
 
         public static bool IsParticipantAEJudJudicialOfficeHolder(this HearingDetailsResponse hearing, Guid participantId)
@@ -90,7 +90,7 @@ namespace AdminWebsite.Extensions
             var joh = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
                x.UserRoleName.Contains("Judicial Office Holder", StringComparison.CurrentCultureIgnoreCase));
 
-            return IsEmailEjud(joh?.ContactEmail);
+            return IsEmailEjud(joh?.Username);
         }
 
         public static bool IsParticipantAJudicialOfficeHolderOrJudge(this HearingDetailsResponse hearing,
@@ -108,7 +108,7 @@ namespace AdminWebsite.Extensions
 
         private static bool IsEmailEjud(string email)
         {
-            return !string.IsNullOrEmpty(email)  && email.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
+            return !string.IsNullOrEmpty(email) && email.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
         }
 
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
@@ -159,7 +159,7 @@ namespace AdminWebsite.Extensions
             {
                 if (string.IsNullOrWhiteSpace(otherInformation))
                 {
-                    return new OtherInformationDetails {OtherInformation = otherInformation};
+                    return new OtherInformationDetails { OtherInformation = otherInformation };
                 }
 
                 var properties = otherInformation.Split("|");
