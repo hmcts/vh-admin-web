@@ -32,6 +32,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     canNavigate = true;
     selectedCourtName: string;
     isExistinHearing: boolean;
+    endDateEarlierThanStartDate: boolean;
     isStartHoursInPast = false;
     isStartMinutesInPast = false;
     multiDaysHearing = false;
@@ -251,15 +252,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('multiDays');
     }
 
-    get hearingDateIsPublicHoliday(): boolean {
-        return this.hearingDateControl.errors?.publicHoliday;
-    }
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
             (this.hearingDateControl.invalid || new Date(this.hearingDateControl.value) < todayDate) &&
-            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission) &&
-            !this.hearingDateIsPublicHoliday
+            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission)
         );
     }
 
@@ -268,9 +265,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             const endDateNoTime = new Date(new Date(this.endHearingDateControl.value).setHours(0, 0, 0));
             const startDateNoTime = new Date(new Date(this.hearingDateControl.value).setHours(0, 0, 0));
 
-            const compareStartInvalid = endDateNoTime <= startDateNoTime;
+            this.endDateEarlierThanStartDate = endDateNoTime <= startDateNoTime;
             return (
-                (this.endHearingDateControl.invalid || compareStartInvalid) &&
+                (this.endHearingDateControl.invalid || this.endDateEarlierThanStartDate) &&
                 (this.endHearingDateControl.dirty || this.endHearingDateControl.touched || this.failedSubmission)
             );
         }
