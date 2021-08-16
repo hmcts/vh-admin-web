@@ -1,5 +1,9 @@
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.KeyVault;
+using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
@@ -20,10 +24,23 @@ namespace AdminWebsite
             const string vhAdminWeb = "/mnt/secrets/vh-admin-web";
 
             return Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((configBuilder) =>
+                .ConfigureAppConfiguration((context, config) =>
                 {
-                    configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
-                    configBuilder.AddAksKeyVaultSecretProvider(vhAdminWeb);
+                    if (!context.HostingEnvironment.IsDevelopment())
+                    {
+                        config.AddAksKeyVaultSecretProvider(vhInfraCore);
+                        config.AddAksKeyVaultSecretProvider(vhAdminWeb);   
+                    }
+
+                    var builtConfig = config.Build();
+                    var vaultName = builtConfig["KeyVaultName"];
+
+                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                    var keyVaultClient = new KeyVaultClient(
+                        new KeyVaultClient.AuthenticationCallback(
+                            azureServiceTokenProvider.KeyVaultTokenCallback));
+                    config.AddAzureKeyVault(
+                        $"https://{vaultName}.vault.azure.net/", keyVaultClient, new DefaultKeyVaultSecretManager());
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
