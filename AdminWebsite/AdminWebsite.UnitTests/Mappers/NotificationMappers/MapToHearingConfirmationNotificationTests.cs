@@ -121,6 +121,35 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
+        public void Should_map_to_staffmember_confirmation_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingConfirmationStaffMember;
+            var participant = InitParticipant("Staff Member");
+            var hearing = InitHearing();
+
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", hearing.Cases.First().Name},
+                {"case number", hearing.Cases.First().Number},
+                {"time", "2:10 PM"},
+                {"day month year", "12 October 2020"},
+                {"staff member", $"{participant.FirstName} {participant.LastName}"},
+                {"username", participant.Username}
+            };
+
+            var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
+
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
+
+        [Test]
         public void should_map_to_lip_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationLip;

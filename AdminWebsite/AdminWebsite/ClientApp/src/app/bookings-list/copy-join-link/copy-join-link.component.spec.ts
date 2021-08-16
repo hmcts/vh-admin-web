@@ -1,9 +1,9 @@
-import { DebugElement } from '@angular/core';
+import { DebugElement, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ElementRef } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
-import { CopyJoinLinkComponent } from './copy-join-link.component';
+import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
+import { CopyJoinLinkComponent } from './copy-join-link.component';
 
 describe('CopyJoinLinkComponent', () => {
     let component: CopyJoinLinkComponent;
@@ -14,12 +14,15 @@ describe('CopyJoinLinkComponent', () => {
     let element: HTMLDivElement;
     let mouseEvent: MouseEvent;
     const vh_video_uri = 'vh-video-web';
+    const clientSettingsResponse = new ClientSettingsResponse();
+    clientSettingsResponse.video_web_url = vh_video_uri;
 
     element = document.createElement('div');
     clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
     clipboardServiceSpy.copyFromContent.and.returnValue(true);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
-    configServiceSpy.getConfig.and.returnValue(vh_video_uri);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', {
+        getConfig: clientSettingsResponse
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -71,6 +74,7 @@ describe('CopyJoinLinkComponent', () => {
 
         expect(component.displayTooltip).toBe(false);
     });
+
     it('should copy the join link to the clipboard', () => {
         const joinLinkDetails = 'vh-video-web';
         component._detailsToCopy = joinLinkDetails;
@@ -78,5 +82,11 @@ describe('CopyJoinLinkComponent', () => {
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(joinLinkDetails);
         expect(component.displayTooltip).toBe(false);
         expect(component.tooltip).toBe(component.tooltipTextCopied);
+    });
+
+    it('includes the text quickjoin in the link', () => {
+        const hearingId = 'hearing-id';
+        component.quickLinkDetails = hearingId;
+        expect(component._detailsToCopy).toBe(`${vh_video_uri}quickjoin/${hearingId}`);
     });
 });
