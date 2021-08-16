@@ -3,13 +3,12 @@ import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { Constants } from 'src/app/common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { ClientSettingsResponse, JudgeResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -22,7 +21,6 @@ import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { isDebuggerStatement } from 'typescript';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
@@ -66,33 +64,6 @@ function initHearingRequest(): HearingModel {
     return newHearing;
 }
 
-function initHearingWithJOH() {
-    const newHearing = initHearingRequest();
-    const p1 = new ParticipantModel();
-    p1.display_name = 'display name_pm';
-    p1.email = 'testpm@hmcts.net';
-    p1.first_name = 'firstpm';
-    p1.last_name = 'lastpm';
-    p1.is_judge = false;
-    p1.title = 'Mr.';
-    p1.username = 'testpm@hmcts.net';
-    p1.hearing_role_name = 'Panel Member';
-
-    const p2 = new ParticipantModel();
-    p2.display_name = 'display name_w';
-    p2.email = 'testw@hmcts.net';
-    p2.first_name = 'firstw';
-    p2.last_name = 'lastw';
-    p2.is_judge = false;
-    p2.title = 'Mr.';
-    p2.username = 'testw@hmcts.net';
-    p2.hearing_role_name = 'Winger';
-
-    newHearing.participants.push(p1);
-    newHearing.participants.push(p2);
-    return newHearing;
-}
-
 let component: AssignJudgeComponent;
 let fixture: ComponentFixture<AssignJudgeComponent>;
 
@@ -107,7 +78,7 @@ const staffMemberRole = 'Staff Member';
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
-fdescribe('AssignJudgeComponent', () => {
+describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();

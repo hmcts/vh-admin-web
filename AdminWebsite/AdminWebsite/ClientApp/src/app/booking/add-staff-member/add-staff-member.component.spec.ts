@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -16,7 +15,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 
 import { AddStaffMemberComponent } from './add-staff-member.component';
 
-fdescribe('AddStaffMemberComponent', () => {
+describe('AddStaffMemberComponent', () => {
   let component: AddStaffMemberComponent;
   let fixture: ComponentFixture<AddStaffMemberComponent>;
 
