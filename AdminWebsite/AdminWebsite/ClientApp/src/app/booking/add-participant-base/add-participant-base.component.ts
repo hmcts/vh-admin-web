@@ -14,7 +14,6 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
-    protected constants = Constants;
     isShowErrorSummary = false;
     caseAndHearingRoles: PartyModel[] = [];
 
@@ -43,18 +42,20 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
     showDetails = false;
     emailDisabled = false;
-    protected companyName: FormControl;
-    protected companyNameIndividual: FormControl;
-    protected displayName: FormControl;
-    protected email: FormControl;
-    protected firstName: FormControl;
+    companyName: FormControl;
+    companyNameIndividual: FormControl;
+    displayName: FormControl;
+    email: FormControl;
+    firstName: FormControl;
     role: FormControl;
-    protected interpreterFor: FormControl;
-    protected lastName: FormControl;
+    interpreterFor: FormControl;
+    lastName: FormControl;
     party: FormControl;
-    protected phone: FormControl;
-    protected representing: FormControl;
-    protected title: FormControl;
+    phone: FormControl;
+    representing: FormControl;
+    title: FormControl;
+
+    protected constants = Constants;
 
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 

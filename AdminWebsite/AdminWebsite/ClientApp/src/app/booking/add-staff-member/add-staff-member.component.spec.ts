@@ -1,8 +1,12 @@
+import { EventEmitter } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MockComponent } from 'ng-mocks';
 import { Subscription } from 'rxjs';
+import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -26,7 +30,7 @@ fdescribe('AddStaffMemberComponent', () => {
   beforeEach(
     waitForAsync(() => {
       bookingServiceSpy = jasmine.createSpyObj('BookingService', ['']);
-      videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['']);
+      videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getCurrentRequest']);
       routerSpy = jasmine.createSpyObj('Router', ['']);
       loggerSpy = jasmine.createSpyObj('Logger', ['']);
 
@@ -59,6 +63,49 @@ fdescribe('AddStaffMemberComponent', () => {
       expect(component.initialiseForm).toHaveBeenCalledTimes(1);
     });
     
+    it('should retrieve the staff member if it exists and apply details', (done) => {
+      const courtId = 954874;
+      
+      const existingStaffMember = new ParticipantModel({
+        display_name: 'I Exist',
+        first_name: 'I',
+        last_name: 'Exist',
+        phone: '07123456789',
+        email: 'I.Exist@Nihilism.void',
+        username: 'I.Exist@Nihilism.void',
+        user_role_name: staffMemberRole,
+        hearing_role_name: staffMemberRole,
+        case_role_name: staffMemberRole
+      });
+
+      const hearingModel = new HearingModel();
+      hearingModel.court_id = courtId;
+      hearingModel.participants = [existingStaffMember];
+
+      videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
+
+      component.isStaffMemberValid.subscribe(valid => {
+        expect(valid).toBe(true);
+        done();
+      })
+
+      component.staffMember.subscribe(staffMember => {
+        expect(staffMember).toEqual(existingStaffMember);
+        done();
+      })
+
+      component.ngOnInit();
+      fixture.detectChanges();
+      const searchEmailComponent = fixture.debugElement.query(By.directive(SearchEmailComponent));
+
+      expect(component.displayName.value).toBe(existingStaffMember.display_name);
+      expect(component.firstName.value).toBe(existingStaffMember.first_name);
+      expect(component.lastName.value).toBe(existingStaffMember.last_name);
+      expect(component.phone.value).toBe(existingStaffMember.phone);
+      expect(component.email.value).toBe(existingStaffMember.email);
+      expect(searchEmailComponent.componentInstance.initialValue).toBe(existingStaffMember.email);
+    });
+
     it('should setup event emissions', () => {
       component.setupStaffMemberValidityEmissionOnFormValueChange = spyOn(component, 'setupStaffMemberValidityEmissionOnFormValueChange');
       component.setupStaffMemberEmissionWhenValid = spyOn(component, 'setupStaffMemberEmissionWhenValid');

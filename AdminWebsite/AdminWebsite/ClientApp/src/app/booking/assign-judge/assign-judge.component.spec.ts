@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -103,6 +103,7 @@ let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
+const staffMemberRole = 'Staff Member';
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
@@ -236,6 +237,22 @@ fdescribe('AssignJudgeComponent', () => {
             expect(component.judgeDisplayNameFld).toBeTruthy();
             expect(component.judgeDisplayNameFld.updateOn).toBe('blur');
         });
+        
+        it('should initialize form and create judgeDisplayName control', () => {
+            const existingStaffMember = new ParticipantModel({
+              case_role_name: staffMemberRole
+            });
+      
+            let savedHearing = initHearingRequest();
+            savedHearing.participants.push(existingStaffMember);
+      
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(savedHearing);
+
+            component.ngOnInit();
+            
+            expect(component.showAddStaffMemberFld.value).toBe(true);
+        });
+
         it('judge display name field validity required', () => {
             let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('');
@@ -725,6 +742,48 @@ fdescribe('AssignJudgeComponent', () => {
                 fixture.detectChanges();
 
                 expect(component.staffMember).toBe(staffMember);
+            });
+
+            it('should show staff member field if set to false and staff member changes', () => {
+                component.showAddStaffMemberFld.setValue(false);
+
+                component.changeStaffMember(new ParticipantModel());
+
+                expect(component.showAddStaffMemberFld.value).toBe(true);
+            });
+        });
+
+        describe('setFieldSubscription', () => {
+            it('should subscribe to show staff member field changes, and remove staff member from hearing if not shown', fakeAsync(() => {
+                component.$subscriptions.forEach(subcription => {
+                    if (subcription) {
+                        subcription.unsubscribe();
+                    }
+                });
+                component.$subscriptions = [];
+                const removeStaffMemberFromHearingSpy = spyOn(component, 'removeStaffMemberFromHearing');
+
+                component.setFieldSubscription();
+                component.showAddStaffMemberFld.setValue(true);
+                tick();
+                expect(removeStaffMemberFromHearingSpy).not.toHaveBeenCalled();
+
+                component.showAddStaffMemberFld.setValue(false);
+                tick();
+
+                expect(removeStaffMemberFromHearingSpy).toHaveBeenCalledTimes(1);
+            }));
+        });
+        
+        describe('removeStaffMemberFromHearing', () => {
+            it('should remove staff member from hearing', () => {
+                component.hearing.participants = [new ParticipantModel({
+                    case_role_name: staffMemberRole
+                })];
+                
+                component.removeStaffMemberFromHearing();
+
+                expect(component.hearing.participants.length).toBe(0);
             });
         });
     });

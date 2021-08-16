@@ -125,7 +125,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initFormFields() {
-        this.showAddStaffMemberFld = new FormControl(false);
+        const staffMemberExists = this.hearing?.participants.find(x => x.case_role_name === 'Staff Member');
+        
+        this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
@@ -156,8 +158,24 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.setTextFieldValues();
     }
 
+    removeStaffMemberFromHearing() {
+        const staffMemberIndex =
+        this.hearing.participants.findIndex(x => x.case_role_name === 'Staff Member');
+
+        if (staffMemberIndex > -1) {
+            this.hearing.participants.splice(staffMemberIndex);
+            this.hearingService.updateHearingRequest(this.hearing);
+        }
+    }
+
     setFieldSubscription() {
         this.$subscriptions.push(
+            this.showAddStaffMemberFld.valueChanges.subscribe(show => {
+                if (!show) {
+                    console.log('here')
+                    this.removeStaffMemberFromHearing();
+                }
+            }),
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 if (this.judge) {
                     this.judge.display_name = name;
@@ -260,6 +278,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     changeStaffMember(staffMember: ParticipantModel) {
         this.staffMember = staffMember;
+        if (!this.showAddStaffMemberFld.value) {
+            this.showAddStaffMemberFld.setValue(true);
+        }
     }
 
     saveJudgeAndStaffMember() {

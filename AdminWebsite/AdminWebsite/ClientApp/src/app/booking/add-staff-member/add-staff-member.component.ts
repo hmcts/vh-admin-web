@@ -33,6 +33,7 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
   }
 
   ngOnInit(): void {
+    this.checkForExistingRequest();
     this.initialiseForm();
 
     this.setupStaffMemberValidityEmissionOnFormValueChange();
@@ -47,18 +48,36 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
     });
   }
 
+  private checkForExistingRequest() {
+    this.hearing = this.videoHearingService.getCurrentRequest();
+  }
+  
   initialiseForm() {
     super.initialiseForm();
     this.form.removeControl('interpreterFor');
 
     this.role.setValue(this.staffMemberRole);
     this.party.setValue(this.staffMemberRole);
+
+    const existingStaffMember = this.hearing?.participants.find(x => x.case_role_name === this.staffMemberRole);
+      
+    if (existingStaffMember) {
+      this.displayName.setValue(existingStaffMember.display_name);
+      this.firstName.setValue(existingStaffMember.first_name);
+      this.lastName.setValue(existingStaffMember.last_name);
+      this.phone.setValue(existingStaffMember.phone);
+      this.email.setValue(existingStaffMember.email);
+
+      this.isStaffMemberValid.emit(true);
+      this.staffMember.emit(existingStaffMember);
+    }
   }
   
   setupStaffMemberValidityEmissionOnFormValueChange(): void {
     const formValueChangeSubscription = this.form.valueChanges.subscribe(() => {
       if (!this.isSubscribedToEmailChanges && this.searchEmail) {
         this.isSubscribedToEmailChanges = true;
+
         const emailChangeSubscription = this.searchEmail.emailChanged.subscribe(email => this.email.setValue(email));
         
         this.$subscriptions.push(emailChangeSubscription);
