@@ -179,6 +179,27 @@ describe('participant details model', () => {
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
+    it('should return false when case role is staff member', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Staff Member',
+            'Individual',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'staffmember',
+            false
+        );
+        expect(model.showCaseRole()).toBeFalsy();
+    });
     it('should return false when case role is observer', () => {
         const model = new ParticipantDetailsModel(
             'id',
