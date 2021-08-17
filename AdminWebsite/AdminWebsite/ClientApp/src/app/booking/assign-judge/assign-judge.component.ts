@@ -282,7 +282,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     saveJudgeAndStaffMember() {
-        this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
+        this.logger.debug(`${this.loggerPrefix} Attempting to save judge (and staff member if selected).`);
 
         if (this.showAddStaffMemberFld.value === true && !this.isStaffMemberValid) {
             this.logger.warn(`${this.loggerPrefix} Validation errors are present when adding a staff member`);
