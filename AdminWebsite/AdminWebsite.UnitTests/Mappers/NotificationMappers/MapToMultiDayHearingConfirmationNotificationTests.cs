@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
             var participant = InitParticipant("Judge");
-            participant.ContactEmail = "user@judiciarytest.com";
+            participant.Username = "user@judiciarytest.com";
             var hearing = InitHearing();
             hearing.OtherInformation = string.Empty;
             hearing.Participants = new List<ParticipantResponse> { participant };
@@ -55,7 +55,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -268,7 +268,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             return new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@hearing.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@hmcts.net",
                 FirstName = "John",
