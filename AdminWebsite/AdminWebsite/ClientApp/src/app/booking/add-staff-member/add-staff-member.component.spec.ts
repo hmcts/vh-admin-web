@@ -71,7 +71,6 @@ describe('AddStaffMemberComponent', () => {
                 last_name: 'Exist',
                 phone: '07123456789',
                 email: 'I.Exist@Nihilism.void',
-                username: 'I.Exist@Nihilism.void',
                 user_role_name: staffMemberRole,
                 hearing_role_name: staffMemberRole,
                 case_role_name: staffMemberRole
