@@ -110,7 +110,6 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
             case_role_name: this.role.value,
             hearing_role_name: this.role.value,
             user_role_name: this.role.value,
-            username: this.email.value
         });
     }
 }

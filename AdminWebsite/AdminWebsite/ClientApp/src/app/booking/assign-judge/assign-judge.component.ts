@@ -171,7 +171,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.$subscriptions.push(
             this.showAddStaffMemberFld.valueChanges.subscribe(show => {
                 if (!show) {
-                    console.log('here');
                     this.removeStaffMemberFromHearing();
                 }
             }),

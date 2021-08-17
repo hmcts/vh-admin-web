@@ -25,6 +25,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
+import { Constants } from 'src/app/common/constants';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -74,7 +75,7 @@ let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
-const staffMemberRole = 'Staff Member';
+const staffMemberRole = Constants.HearingRoles.StaffMember;
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 

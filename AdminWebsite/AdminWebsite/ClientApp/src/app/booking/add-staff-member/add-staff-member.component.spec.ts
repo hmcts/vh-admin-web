@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { MockComponent } from 'ng-mocks';
 import { Subscription } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
@@ -24,7 +25,7 @@ describe('AddStaffMemberComponent', () => {
     let routerSpy: jasmine.SpyObj<Router>;
     let loggerSpy: jasmine.SpyObj<Logger>;
 
-    const staffMemberRole = 'Staff Member';
+    const staffMemberRole = Constants.HearingRoles.StaffMember;
 
     beforeEach(
         waitForAsync(() => {
