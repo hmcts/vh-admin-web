@@ -1,9 +1,11 @@
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
@@ -29,18 +31,40 @@ namespace AdminWebsite
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
                         config.AddAksKeyVaultSecretProvider(vhInfraCore);
-                        config.AddAksKeyVaultSecretProvider(vhAdminWeb);   
+                        config.AddAksKeyVaultSecretProvider(vhAdminWeb);
+                    }
+                    else
+                    {
+                        var builtConfig = config.Build();
+                        var vaultName = builtConfig["KeyVaultName"];
+                        var notLocalDebug = builtConfig["NotLocalDebug"];
+
+                        if (bool.Parse(notLocalDebug))
+                        {
+                            // initialized -1 just to throuh out of bound exception if the secrets.json file not found in the list for sources
+                            var secretIndex = -1;
+                            foreach (var item in config.Sources.Select((value, i) => new { i, value }))
+                            {
+                                if (item.value is JsonConfigurationSource jsonSource)
+                                {
+                                    if (jsonSource.Path == "secrets.json")
+                                    {
+                                        secretIndex = item.i;
+                                    }
+                                }
+                            }
+
+                            config.Sources.RemoveAt(secretIndex);
+
+                            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                            var keyVaultClient = new KeyVaultClient(
+                                new KeyVaultClient.AuthenticationCallback(
+                                    azureServiceTokenProvider.KeyVaultTokenCallback));
+                            config.AddAzureKeyVault(
+                                $"https://{vaultName}.vault.azure.net/", keyVaultClient, new DefaultKeyVaultSecretManager());
+                        }
                     }
 
-                    var builtConfig = config.Build();
-                    var vaultName = builtConfig["KeyVaultName"];
-
-                    var azureServiceTokenProvider = new AzureServiceTokenProvider();
-                    var keyVaultClient = new KeyVaultClient(
-                        new KeyVaultClient.AuthenticationCallback(
-                            azureServiceTokenProvider.KeyVaultTokenCallback));
-                    config.AddAzureKeyVault(
-                        $"https://{vaultName}.vault.azure.net/", keyVaultClient, new DefaultKeyVaultSecretManager());
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
