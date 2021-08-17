@@ -63,7 +63,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_individual_to_external_user_group_only()
+        public async Task AssignParticipantToGroup_IndividualtoExternalAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Individual");
 
@@ -79,10 +79,15 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
                     y.GroupName == UserAccountService.JudicialOfficeHolder)),
                 Times.Never);
+
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
+                    y.GroupName == UserAccountService.StaffMember)),
+                Times.Never);
         }
 
         [Test]
-        public async Task Should_add_representative_to_professional_user_group()
+        public async Task AssignParticipantToGroup_RepresentativeToProffesionalAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Representative");
 
@@ -97,7 +102,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_JOH_role_to_JOH_user_group()
+        public async Task AssignParticipantToGroup_JOHToJohAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Judicial Office Holder");
 
@@ -108,6 +113,21 @@ namespace AdminWebsite.UnitTests.Services
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
                     It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.JudicialOfficeHolder)),
+                Times.Once);
+        }
+
+        [Test]
+        public async Task AssignParticipantToGroup_StaffMemberToAADMemberUserGroup()
+        {
+            await _service.AssignParticipantToGroup("staff@hmcts.net", "Staff Member");
+
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(
+                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.Internal)),
+                Times.Once);
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(
+                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.StaffMember)),
                 Times.Once);
         }
 
@@ -363,7 +383,7 @@ namespace AdminWebsite.UnitTests.Services
             Assert.ThrowsAsync<UserApiException>(() =>
                 _service.GetAdUserIdForUsername("123"));
         }
-        
+
         [Test]
         public void Should_throw_exception_when_add_user_to_group_has_null_user_name()
         {
@@ -371,9 +391,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserApiException>(() =>
-                _service.AssignParticipantToGroup(null,"Individual"));
+                _service.AssignParticipantToGroup(null, "Individual"));
         }
-        
-        
     }
 }
