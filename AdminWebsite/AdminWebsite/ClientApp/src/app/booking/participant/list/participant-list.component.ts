@@ -55,7 +55,9 @@ export class ParticipantListComponent implements OnInit, OnChanges {
             return;
         }
         const judges = this.hearing.participants.filter(participant => participant.is_judge);
-        const staffMembers = this.hearing.participants.filter(participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember);
+        const staffMembers = this.hearing.participants.filter(
+            participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember
+        );
         const panelMembersAndWingers = this.hearing.participants.filter(participant =>
             Constants.JudiciaryRoles.includes(participant.hearing_role_name)
         );
@@ -68,10 +70,18 @@ export class ParticipantListComponent implements OnInit, OnChanges {
                 !interpretersAndInterpretees.includes(participant)
         );
         const observers = this.hearing.participants.filter(
-            participant => participant.hearing_role_name === Constants.HearingRoles.Observer && !interpretersAndInterpretees.includes(participant)
+            participant =>
+                participant.hearing_role_name === Constants.HearingRoles.Observer && !interpretersAndInterpretees.includes(participant)
         );
 
-        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...staffMembers, ...others, ...interpretersAndInterpretees, ...observers];
+        this.sortedParticipants = [
+            ...judges,
+            ...panelMembersAndWingers,
+            ...staffMembers,
+            ...others,
+            ...interpretersAndInterpretees,
+            ...observers
+        ];
     }
 
     private getInterpreterAndInterpretees(): ParticipantModel[] {

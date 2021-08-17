@@ -11,7 +11,7 @@ import { CaseAndHearingRolesResponse, LinkedParticipantRequest } from '../../ser
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { AddParticipantBaseDirective } from 'src/app/booking/add-participant-base/add-participant-base.component'
+import { AddParticipantBaseDirective } from 'src/app/booking/add-participant-base/add-participant-base.component';
 import { ParticipantService } from '../services/participant.service';
 import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
@@ -160,10 +160,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     initializeForm() {
         this.initialiseForm();
-        this.party.setValidators([
-            Validators.required,
-            Validators.pattern(this.constants.PleaseSelectPattern)
-        ])
+        this.party.setValidators([Validators.required, Validators.pattern(this.constants.PleaseSelectPattern)]);
 
         const self = this;
         this.$subscriptions.push(
@@ -242,7 +239,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         });
     }
 
-
     notFoundParticipant() {
         this.logger.warn(`${this.loggerPrefix} Participant not found.`);
         if (this.judiciaryRoles.includes(this.role.value)) {
@@ -280,7 +276,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.validateJudiciaryEmailAndRole();
     }
 
-
     titleSelected() {
         this.isTitleSelected = this.title.value !== this.constants.PleaseSelect;
     }
@@ -310,7 +305,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     saveParticipant() {
         this.actionsBeforeSave();
-        
+
         if (
             this.form.valid &&
             this.validEmail() &&
@@ -333,7 +328,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             }
 
             this.mapParticipant(newParticipant);
-            
+
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
                 this.addLinkedParticipant(newParticipant);
 
@@ -730,8 +725,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         this.interpreteeList.unshift(interpreteeModel);
     }
-
-
 
     private removeInterpreteeAndInterpreter() {
         // check if participant details were populated, if yes then clean form.

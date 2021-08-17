@@ -35,10 +35,10 @@
     </div>
 
     <div *ngIf="canEdit" class="participant-row__actions">
-      <a class="vhlink" [routerLink]="['/assign-judge']">Edit</a>
-      <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
+      <a class="vhlink" id="edit-staff-member" [routerLink]="['/assign-judge']">Edit</a>
+      <a class="vhlink" id="remove-staff-member" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>
-  </div> 
+  </div>
 
   <div class="participant-row" *ngIf="!isJudge && !isStaffMember">
     <div class="interpreter-icon">

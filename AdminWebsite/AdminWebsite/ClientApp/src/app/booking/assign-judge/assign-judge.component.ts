@@ -126,7 +126,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     private initFormFields() {
         const staffMemberExists = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
-        
+
         this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
@@ -159,8 +159,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     removeStaffMemberFromHearing() {
-        const staffMemberIndex =
-        this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
+        const staffMemberIndex = this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
         if (staffMemberIndex > -1) {
             this.hearing.participants.splice(staffMemberIndex);
@@ -172,7 +171,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.$subscriptions.push(
             this.showAddStaffMemberFld.valueChanges.subscribe(show => {
                 if (!show) {
-                    console.log('here')
+                    console.log('here');
                     this.removeStaffMemberFromHearing();
                 }
             }),
@@ -285,7 +284,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     saveJudgeAndStaffMember() {
         this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
-        
+
         if (this.showAddStaffMemberFld.value === true && !this.isStaffMemberValid) {
             this.logger.warn(`${this.loggerPrefix} Validation errors are present when adding a staff member`);
             this.showStaffMemberErrorSummary = true;
@@ -315,22 +314,21 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.failedSubmission = false;
             this.form.markAsPristine();
             this.hasSaved = true;
-            
+
             this.changeDisplayName();
             this.changeEmail();
             this.changeTelephone();
-            
-            if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid){
-                const staffMemberIndex =
-                    this.hearing.participants.findIndex(x => x.email === this.staffMember.email);
-                
+
+            if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
+                const staffMemberIndex = this.hearing.participants.findIndex(x => x.email === this.staffMember.email);
+
                 if (staffMemberIndex > -1) {
                     this.hearing.participants[staffMemberIndex] = this.staffMember;
                 } else {
                     this.hearing.participants.push(this.staffMember);
                 }
             }
-            
+
             this.hearingService.updateHearingRequest(this.hearing);
 
             this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });

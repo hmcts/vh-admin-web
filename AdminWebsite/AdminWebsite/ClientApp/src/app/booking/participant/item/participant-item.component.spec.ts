@@ -98,7 +98,7 @@ describe('ParticipantItemComponent', () => {
         fixture.detectChanges();
         expect(component.isStaffMember).toBeTruthy();
     });
-    
+
     it('should return false if participant is not a staff member', () => {
         participant.hearing_role_name = Constants.HearingRoles.PanelMember;
         component.participant = participant;

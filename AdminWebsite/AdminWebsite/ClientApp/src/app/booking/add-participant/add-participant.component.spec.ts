@@ -758,7 +758,7 @@ describe('AddParticipantComponent', () => {
         });
 
         describe('with email set', () => {
-            const email = 'email@hmcts.net';
+            const participantEmail = 'email@hmcts.net';
             const emptyPersonResponse = [];
             const populatedPersonResponse = [new PersonResponse()];
 
@@ -779,7 +779,7 @@ describe('AddParticipantComponent', () => {
 
             beforeEach(
                 waitForAsync(() => {
-                    component.searchEmail.email = email;
+                    component.searchEmail.email = participantEmail;
                 })
             );
 
@@ -791,7 +791,7 @@ describe('AddParticipantComponent', () => {
                     role.setValue(testCase.role);
                     component.validateJudiciaryEmailAndRole();
                     expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(participantEmail);
                     expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
                 });
             }
@@ -800,7 +800,7 @@ describe('AddParticipantComponent', () => {
                 searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
                 component.validateJudiciaryEmailAndRole();
                 expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(participantEmail);
             });
 
             it('should have errorJudiciaryAccount as false if search service returns null and role is not Panel Member/Winger', () => {

@@ -1,3 +1,3 @@
 export const provide = (type, value) => {
-  return { provide: type, useValue: value };
+    return { provide: type, useValue: value };
 };
