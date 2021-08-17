@@ -125,7 +125,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initFormFields() {
-        const staffMemberExists = this.hearing?.participants.find(x => x.case_role_name === 'Staff Member');
+        const staffMemberExists = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
         
         this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
@@ -160,7 +160,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     removeStaffMemberFromHearing() {
         const staffMemberIndex =
-        this.hearing.participants.findIndex(x => x.case_role_name === 'Staff Member');
+        this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
         if (staffMemberIndex > -1) {
             this.hearing.participants.splice(staffMemberIndex);

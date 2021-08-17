@@ -130,12 +130,6 @@ describe('AddStaffMemberComponent', () => {
 
       expect(component.role.value).toBe(staffMemberRole);
     });
-    
-    it('should set party value', () => {
-      component.initialiseForm();
-
-      expect(component.party.value).toBe(staffMemberRole);
-    });
   });
       
   describe('setupStaffMemberValidityEmissionOnFormValueChange', () => {

@@ -211,7 +211,7 @@ describe('AssignJudgeComponent', () => {
         
         it('should initialize form and create judgeDisplayName control', () => {
             const existingStaffMember = new ParticipantModel({
-              case_role_name: staffMemberRole
+              hearing_role_name: staffMemberRole
             });
       
             let savedHearing = initHearingRequest();
@@ -749,7 +749,7 @@ describe('AssignJudgeComponent', () => {
         describe('removeStaffMemberFromHearing', () => {
             it('should remove staff member from hearing', () => {
                 component.hearing.participants = [new ParticipantModel({
-                    case_role_name: staffMemberRole
+                    hearing_role_name: staffMemberRole
                 })];
                 
                 component.removeStaffMemberFromHearing();

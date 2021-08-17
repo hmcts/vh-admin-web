@@ -16,6 +16,7 @@ import { ParticipantService } from '../services/participant.service';
 import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
+import { Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-add-participant',
@@ -159,6 +160,11 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     initializeForm() {
         this.initialiseForm();
+        this.party.setValidators([
+            Validators.required,
+            Validators.pattern(this.constants.PleaseSelectPattern)
+        ])
+
         const self = this;
         this.$subscriptions.push(
             this.form.valueChanges.subscribe(result => {

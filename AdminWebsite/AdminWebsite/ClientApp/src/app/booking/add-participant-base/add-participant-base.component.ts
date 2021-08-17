@@ -115,10 +115,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             Validators.required,
             Validators.pattern(this.constants.PleaseSelectPattern)
         ]);
-        this.party = new FormControl(this.constants.PleaseSelect, [
-            Validators.required,
-            Validators.pattern(this.constants.PleaseSelectPattern)
-        ]);
+        this.party = new FormControl(this.constants.PleaseSelect);
         this.title = new FormControl(this.constants.PleaseSelect);
         this.firstName = new FormControl('', [
             Validators.required,

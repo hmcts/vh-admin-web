@@ -6,6 +6,7 @@ import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Subscription } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
   selector: 'app-add-staff-member',
@@ -19,8 +20,6 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
   @Output() isStaffMemberValid = new EventEmitter<boolean>();
 
   $subscriptions: Subscription[] = [];
-
-  private readonly staffMemberRole = 'Staff Member';
 
   isSubscribedToEmailChanges = false;
 
@@ -56,10 +55,9 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
     super.initialiseForm();
     this.form.removeControl('interpreterFor');
 
-    this.role.setValue(this.staffMemberRole);
-    this.party.setValue(this.staffMemberRole);
+    this.role.setValue(Constants.HearingRoles.StaffMember);
 
-    const existingStaffMember = this.hearing?.participants.find(x => x.case_role_name === this.staffMemberRole);
+    const existingStaffMember = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
       
     if (existingStaffMember) {
       this.displayName.setValue(existingStaffMember.display_name);
@@ -109,7 +107,7 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
       phone: this.phone.value,
       email: this.email.value,
       case_role_name: this.role.value,
-      hearing_role_name: this.party.value,
+      hearing_role_name: this.role.value,
       user_role_name: this.role.value,
       username: this.email.value
     })
