@@ -16,7 +16,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
     public class MapToHearingAmendmentNotificationTests
     {
         private HearingDetailsResponse _hearing;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -39,7 +39,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -152,7 +152,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@judiciary.hmcts.net",
                 FirstName = "John",
@@ -195,10 +195,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
-            var participant = InitParticipant("Judge");       
+            var participant = InitParticipant("Judge");
             _hearing.OtherInformation = new OtherInformationDetails
-                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
-  
+            { JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789" }.ToOtherInformationString();
+
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
@@ -390,7 +390,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             return new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hmcts.net",
+                Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
                 ContactEmail = "contact@hmcts.net",
                 FirstName = "John",
