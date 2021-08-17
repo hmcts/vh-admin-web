@@ -63,7 +63,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_individual_to_external_user_group_only()
+        public async Task AssignParticipantToGroup_IndividualtoExternalAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Individual");
 
@@ -87,7 +87,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_representative_to_professional_user_group()
+        public async Task AssignParticipantToGroup_RepresentativeToProffesionalAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Representative");
 
@@ -102,7 +102,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_JOH_role_to_JOH_user_group()
+        public async Task AssignParticipantToGroup_JOHToJohAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Judicial Office Holder");
 
@@ -123,7 +123,7 @@ namespace AdminWebsite.UnitTests.Services
 
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
-                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.External)),
+                    It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.Internal)),
                 Times.Once);
             _userApiClient.Verify(
                 x => x.AddUserToGroupAsync(
