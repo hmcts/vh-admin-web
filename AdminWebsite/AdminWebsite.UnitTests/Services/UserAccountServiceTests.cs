@@ -117,7 +117,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_add_StaffMember_role_to_Staff_Member_user_group()
+        public async Task AssignParticipantToGroup_StaffMemberToAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("staff@hmcts.net", "Staff Member");
 
@@ -383,7 +383,7 @@ namespace AdminWebsite.UnitTests.Services
             Assert.ThrowsAsync<UserApiException>(() =>
                 _service.GetAdUserIdForUsername("123"));
         }
-        
+
         [Test]
         public void Should_throw_exception_when_add_user_to_group_has_null_user_name()
         {
@@ -391,9 +391,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserApiException>(() =>
-                _service.AssignParticipantToGroup(null,"Individual"));
+                _service.AssignParticipantToGroup(null, "Individual"));
         }
-        
-        
     }
 }
