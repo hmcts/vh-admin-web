@@ -63,7 +63,7 @@
     <PackageReference Include="TimeZoneConverter" Version="3.4.0" />
     <PackageReference Include="UserApi.Client" Version="1.23.9" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.12" />
-    <PackageReference Include="VideoApi.Client" Version="1.23.28" />
+    <PackageReference Include="VideoApi.Client" Version="1.27.4" />
   </ItemGroup>
 
   <ItemGroup>
