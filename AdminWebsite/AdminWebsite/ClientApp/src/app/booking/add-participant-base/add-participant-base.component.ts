@@ -167,7 +167,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
         this.errorAlternativeEmail = false;
         this.errorJohAccountNotFound = false;
-        
+
         this.email.setValue(this.searchEmail.email);
 
         if (this.form.valid && this.validEmail()) {
