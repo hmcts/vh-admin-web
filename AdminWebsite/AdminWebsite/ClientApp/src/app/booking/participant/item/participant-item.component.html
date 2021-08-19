@@ -26,12 +26,13 @@
   </div>
 
   <div class="staff-member-row" *ngIf="isStaffMember">
+    <div></div>
     <div class="wrap staff-member-display-name">
       {{ participant.display_name }}
       <div>
         <strong>{{ staffMemberRole }}</strong>
       </div>
-      <div class="staff-member-row__email" id="staff-member-email">{{ participant.email }}</div>
+      <div id="staff-member-email">{{ participant.email }}</div>
     </div>
 
     <div *ngIf="canEdit" class="participant-row__actions">
