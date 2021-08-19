@@ -10,5 +10,6 @@
         public string VideoApiResourceId { get; set; }
         public string NotificationApiUrl { get; set; }
         public string NotificationApiResourceId { get; set; }
+        public string VideoWebUrl { get; set; }
     }
 }

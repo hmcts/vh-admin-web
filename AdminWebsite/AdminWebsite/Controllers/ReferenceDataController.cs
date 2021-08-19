@@ -45,16 +45,16 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
         {
-            var allowedTypes = _identity.GetAdministratorCaseTypes();
             var caseTypes = await _bookingsApiClient.GetCaseTypesAsync();
-            caseTypes = caseTypes.Where(c => allowedTypes.Contains(c.Name)).ToList();
-            return caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
+            var reult = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
                 Code = string.Empty, // not used anymore
                 Id = hearingType.Id,
                 Name = hearingType.Name
             })).ToList();
+
+            return Ok(reult);
         }
 
         /// <summary>

@@ -32,8 +32,13 @@
         min="{{ today | date: 'yyyy-MM-dd' }}"
         (blur)="resetPastTimeOnBlur()"
       />
-      <div *ngIf="hearingDateInvalid" class="alert alert-danger">
-        <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the future </span>
+      <div *ngIf="hearingDateInvalid">
+        <app-date-error-messages
+          [required]="hearingDateControl.errors?.required"
+          [weekend]="hearingDateControl.errors?.weekend"
+          [publicHoliday]="hearingDateControl.errors?.publicHoliday"
+          [pastDate]="hearingDateControl.errors?.pastdate"
+        ></app-date-error-messages>
       </div>
     </div>
   </div>
@@ -57,8 +62,13 @@
           min="{{ today | date: 'yyyy-MM-dd' }}"
           (blur)="resetPastTimeOnBlur()"
         />
-        <div *ngIf="hearingDateInvalid" class="alert alert-danger">
-          <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the future </span>
+        <div *ngIf="hearingDateInvalid">
+          <app-date-error-messages
+            [required]="hearingDateControl.errors?.required"
+            [weekend]="hearingDateControl.errors?.weekend"
+            [publicHoliday]="hearingDateControl.errors?.publicHoliday"
+            [pastDate]="hearingDateControl.errors?.pastdate"
+          ></app-date-error-messages>
         </div>
       </div>
 
@@ -73,8 +83,16 @@
           placeholder="e.g. 30/02/2018"
           min="{{ today | date: 'yyyy-MM-dd' }}"
         />
-        <div *ngIf="endHearingDateInvalid" class="alert alert-danger">
-          <span id="endHearingDate-error" class="govuk-error-message"> Please enter a date at least 1 day later than the start date </span>
+        <div *ngIf="endHearingDateInvalid">
+          <app-date-error-messages
+            [required]="endHearingDateControl.errors?.required"
+            [weekend]="endHearingDateControl.errors?.weekend"
+            [publicHoliday]="endHearingDateControl.errors?.publicHoliday"
+            [pastDate]="endHearingDateControl.errors?.pastdate"
+          ></app-date-error-messages>
+          <span *ngIf="endDateEarlierThanStartDate" id="endHearingDatePast-error" class="govuk-error-message alert alert-danger">
+            Select a date in the future at least 1 day later than the start date
+          </span>
         </div>
       </div>
     </div>
@@ -109,19 +127,12 @@
           (blur)="resetPastTimeOnBlur()"
           (change)="hearingDateChanged($event)"
         />
-
-        <div *ngIf="addHearingDateControl.errors?.required" class="alert alert-danger">
-          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date </span>
-        </div>
-
-        <div *ngIf="addHearingDateControl.errors?.weekend || addHearingDateControl.errors?.publicHoliday" class="alert alert-danger">
-          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a working day </span>
-        </div>
-
-        <div *ngIf="addHearingDateControl.errors?.pastdate" class="alert alert-danger">
-          <span id="hearingDateWeekend-error" class="govuk-error-message"> Select a date in the future </span>
-        </div>
-
+        <app-date-error-messages
+          [required]="addHearingDateControl.errors?.required"
+          [weekend]="addHearingDateControl.errors?.weekend"
+          [publicHoliday]="addHearingDateControl.errors?.publicHoliday"
+          [pastDate]="addHearingDateControl.errors?.pastdate"
+        ></app-date-error-messages>
         <div *ngIf="isDateAlreadySelected()" class="alert alert-danger">
           <span id="hearingDateWeekend-error" class="govuk-error-message"> Date already selected </span>
         </div>

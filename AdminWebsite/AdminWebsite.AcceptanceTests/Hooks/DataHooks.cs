@@ -42,9 +42,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var publicHolidayRetriever =
                 new UkPublicHolidayRetriever(new HttpClient(), new MemoryCache(new MemoryCacheOptions()));
-            _c.PublicHolidays = await  publicHolidayRetriever.RetrieveUpcomingHolidays();
+            _c.PublicHolidays = await publicHolidayRetriever.RetrieveUpcomingHolidays();
         }
-        
+
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
         public void AddExistingUsers(ScenarioContext scenario)
         {
@@ -87,8 +87,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 TestType = TestType.Automated,
                 UserTypes = userTypes
             };
+            NUnit.Framework.TestContext.WriteLine($"AllocateUsersRequest: request.Application {request.Application} request.ExpiryInMinutes {request.ExpiryInMinutes} request.IsProdUser {request.IsProdUser} request.IsEjud {request.IsEjud} request.TestType {request.TestType} request.UserTypes {request.UserTypes}");
 
             var response = _c.Api.AllocateUsers(request);
+            NUnit.Framework.TestContext.WriteLine($"AllocateUsersRequest Response: {response.Content}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Should().NotBeNull();
             var users = RequestHelper.Deserialise<List<UserDetailsResponse>>(response.Content);
@@ -109,13 +111,16 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id.ToString());
 
-            _c.AzureStorage = new AzureStorageManager()
+            _c.AzureStorage = new List<AzureStorageManager>
+            {
+                new AzureStorageManager()
                 .SetStorageAccountName(_c.WebConfig.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_c.WebConfig.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_c.WebConfig.Wowza.StorageContainerName)
-                .CreateBlobClient(_c.Test.HearingResponse.Id.ToString());
+                .CreateBlobClient(_c.Test.HearingResponse.Id.ToString())
+            };
 
-            await _c.AzureStorage.UploadAudioFileToStorage(file);
+            await _c.AzureStorage[0].UploadAudioFileToStorage(file);
             FileManager.RemoveLocalAudioFile(file);
         }
 
@@ -124,8 +129,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var exist = false;
 
             foreach (var response in from user in _c.Users
-                where user.UserType != UserType.CaseAdmin && user.UserType != UserType.VideoHearingsOfficer
-                select _c.Api.GetPersonByUsername(user.Username))
+                                     where user.UserType != UserType.CaseAdmin && user.UserType != UserType.VideoHearingsOfficer
+                                     select _c.Api.GetPersonByUsername(user.Username))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
             }
