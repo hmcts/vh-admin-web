@@ -159,7 +159,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     initialiseForm() {
-        this.initialiseForm();
+        super.initialiseForm();
         this.party.setValidators([Validators.required, Validators.pattern(this.constants.PleaseSelectPattern)]);
 
         const self = this;
