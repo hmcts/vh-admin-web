@@ -953,7 +953,7 @@ describe('AddParticipantComponent edit mode', () => {
         })
     );
     it('should initialize form controls', () => {
-        component.initializeForm();
+        component.initialiseForm();
         expect(component.form.controls['firstName']).toBeTruthy();
         expect(component.form.controls['firstName'].errors['required']).toBeTruthy();
         expect(component.form.controls['lastName']).toBeTruthy();

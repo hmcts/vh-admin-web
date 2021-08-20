@@ -7,7 +7,6 @@
   padding: 1em 0;
 
   .judge-row,
-  .staff-member-row,
   .participant-row {
     display: flex;
     align-items: center;
@@ -39,8 +38,7 @@
     }
   }
 
-  .participant-row,
-  .staff-member-row {
+  .participant-row {
     > div:first-child {
       flex: 0 0 auto;
     }

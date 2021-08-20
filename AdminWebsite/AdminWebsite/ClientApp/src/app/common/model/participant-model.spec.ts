@@ -90,7 +90,6 @@ describe('ParticipantModel', () => {
     it('should mapping return empty ParticipantModel if  JudgeResponse is null', () => {
         const judge = null;
         participant = ParticipantModel.fromJudgeResponse(judge);
-        console.log(participant);
         expect(participant).toBeNull();
     });
 });

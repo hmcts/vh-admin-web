@@ -66,7 +66,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     ngOnInit() {
         this.checkForExistingRequest();
-        this.initializeForm();
+        this.initialiseForm();
         super.ngOnInit();
     }
 
@@ -158,7 +158,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
     }
 
-    initializeForm() {
+    initialiseForm() {
         this.initialiseForm();
         this.party.setValidators([Validators.required, Validators.pattern(this.constants.PleaseSelectPattern)]);
 
