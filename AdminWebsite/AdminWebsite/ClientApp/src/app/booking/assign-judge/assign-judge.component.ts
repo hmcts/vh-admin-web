@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -10,7 +10,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { JudgeAccountType, JudgeResponse } from '../../services/clients/api-client';
+import { JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
@@ -28,6 +28,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     judge: ParticipantModel;
 
     otherInformationDetails: OtherInformationModel;
+
+    showAddStaffMemberFld: FormControl;
+    isStaffMemberValid = false;
+    staffMember: ParticipantModel;
+    showStaffMemberErrorSummary = false;
 
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
@@ -110,6 +115,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.initFormFields();
 
         this.form = this.fb.group({
+            showAddStaffMemberFld: this.showAddStaffMemberFld,
             judgeDisplayNameFld: this.judgeDisplayNameFld,
             judgeEmailFld: this.judgeEmailFld,
             judgePhoneFld: this.judgePhoneFld
@@ -119,6 +125,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initFormFields() {
+        const staffMemberExists = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
+
+        this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
@@ -149,8 +158,22 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.setTextFieldValues();
     }
 
+    removeStaffMemberFromHearing() {
+        const staffMemberIndex = this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
+
+        if (staffMemberIndex > -1) {
+            this.hearing.participants.splice(staffMemberIndex);
+            this.hearingService.updateHearingRequest(this.hearing);
+        }
+    }
+
     setFieldSubscription() {
         this.$subscriptions.push(
+            this.showAddStaffMemberFld.valueChanges.subscribe(show => {
+                if (!show) {
+                    this.removeStaffMemberFromHearing();
+                }
+            }),
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 if (this.judge) {
                     this.judge.display_name = name;
@@ -247,8 +270,25 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judgePhoneFld.setValue(text);
     }
 
-    saveJudge() {
-        this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
+    changeIsStaffMemberValid(isValid: boolean) {
+        this.isStaffMemberValid = isValid;
+    }
+
+    changeStaffMember(staffMember: ParticipantModel) {
+        this.staffMember = staffMember;
+        if (!this.showAddStaffMemberFld.value) {
+            this.showAddStaffMemberFld.setValue(true);
+        }
+    }
+
+    saveJudgeAndStaffMember() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to save judge (and staff member if selected).`);
+
+        if (this.showAddStaffMemberFld.value === true && !this.isStaffMemberValid) {
+            this.logger.warn(`${this.loggerPrefix} Validation errors are present when adding a staff member`);
+            this.showStaffMemberErrorSummary = true;
+            return;
+        }
 
         if (!this.judge || !this.judge.email) {
             this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
@@ -273,10 +313,23 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.failedSubmission = false;
             this.form.markAsPristine();
             this.hasSaved = true;
+
             this.changeDisplayName();
             this.changeEmail();
             this.changeTelephone();
+
+            if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
+                const staffMemberIndex = this.hearing.participants.findIndex(x => x.email === this.staffMember.email);
+
+                if (staffMemberIndex > -1) {
+                    this.hearing.participants[staffMemberIndex] = this.staffMember;
+                } else {
+                    this.hearing.participants.push(this.staffMember);
+                }
+            }
+
             this.hearingService.updateHearingRequest(this.hearing);
+
             this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });
             if (this.editMode) {
                 this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
