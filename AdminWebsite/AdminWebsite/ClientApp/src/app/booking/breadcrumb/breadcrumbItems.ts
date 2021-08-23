@@ -20,7 +20,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
     {
         Id: 3,
         Value: false,
-        Name: 'Judge',
+        Name: 'Judge/Staff',
         Url: '/assign-judge',
         Active: false,
         LastMinuteAmendable: false
