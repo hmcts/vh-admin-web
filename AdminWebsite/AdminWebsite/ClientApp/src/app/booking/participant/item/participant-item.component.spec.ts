@@ -6,6 +6,7 @@ import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantItemComponent } from './participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { Constants } from 'src/app/common/constants';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -89,6 +90,20 @@ describe('ParticipantItemComponent', () => {
         component.participant = participant;
         fixture.detectChanges();
         expect(component.isJudge).toBeTruthy();
+    });
+
+    it('should return true if participant is a staff member', () => {
+        participant.hearing_role_name = Constants.HearingRoles.StaffMember;
+        component.participant = participant;
+        fixture.detectChanges();
+        expect(component.isStaffMember).toBeTruthy();
+    });
+
+    it('should return false if participant is not a staff member', () => {
+        participant.hearing_role_name = Constants.HearingRoles.PanelMember;
+        component.participant = participant;
+        fixture.detectChanges();
+        expect(component.isStaffMember).toBeFalsy();
     });
 
     it('should return false if participant`s case role is None', () => {

@@ -7,6 +7,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { OtherInformationModel } from '../../../common/model/other-information.model';
 import { HearingModel } from '../../../common/model/hearing.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
     selector: 'app-participant-item',
@@ -23,6 +24,8 @@ export class ParticipantItemComponent {
 
     @Output() edit = new EventEmitter<ParticipantModel>();
     @Output() remove = new EventEmitter<ParticipantModel>();
+
+    staffMemberRole = Constants.HearingRoles.StaffMember;
 
     constructor(
         private bookingService: BookingService,
@@ -72,6 +75,10 @@ export class ParticipantItemComponent {
 
     get isJudge() {
         return this.participant?.is_judge;
+    }
+
+    get isStaffMember() {
+        return this.participant?.hearing_role_name === Constants.HearingRoles.StaffMember;
     }
 
     get hasCaseRole() {

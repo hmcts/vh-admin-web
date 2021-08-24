@@ -146,6 +146,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
             { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge2', linked_participant: null },
             { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger1', linked_participant: null },
             { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Staff Member', display_name: 'Staff Member', linked_participant: null },
             { is_judge: false, hearing_role_name: 'Panel Member', display_name: 'Panel Member', linked_participant: null },
             { is_judge: false, hearing_role_name: 'Observer', display_name: 'Observer', linked_participant: null },
             {
@@ -176,10 +177,11 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
         component.ngOnInit();
 
-        expect(component.sortedParticipants.length).toBe(10);
+        expect(component.sortedParticipants.length).toBe(11);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(2);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Staff Member').length).toBe(1);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Observer').length).toBe(1);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);

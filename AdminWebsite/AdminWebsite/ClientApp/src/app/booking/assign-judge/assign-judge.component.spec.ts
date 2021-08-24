@@ -1,15 +1,14 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { Constants } from 'src/app/common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { ClientSettingsResponse, JudgeResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -22,8 +21,11 @@ import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { isDebuggerStatement } from 'typescript';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.component';
+import { SearchEmailComponent } from '../search-email/search-email.component';
+import { MockComponent } from 'ng-mocks';
+import { Constants } from 'src/app/common/constants';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -63,33 +65,6 @@ function initHearingRequest(): HearingModel {
     return newHearing;
 }
 
-function initHearingWithJOH() {
-    const newHearing = initHearingRequest();
-    const p1 = new ParticipantModel();
-    p1.display_name = 'display name_pm';
-    p1.email = 'testpm@hmcts.net';
-    p1.first_name = 'firstpm';
-    p1.last_name = 'lastpm';
-    p1.is_judge = false;
-    p1.title = 'Mr.';
-    p1.username = 'testpm@hmcts.net';
-    p1.hearing_role_name = 'Panel Member';
-
-    const p2 = new ParticipantModel();
-    p2.display_name = 'display name_w';
-    p2.email = 'testw@hmcts.net';
-    p2.first_name = 'firstw';
-    p2.last_name = 'lastw';
-    p2.is_judge = false;
-    p2.title = 'Mr.';
-    p2.username = 'testw@hmcts.net';
-    p2.hearing_role_name = 'Winger';
-
-    newHearing.participants.push(p1);
-    newHearing.participants.push(p2);
-    return newHearing;
-}
-
 let component: AssignJudgeComponent;
 let fixture: ComponentFixture<AssignJudgeComponent>;
 
@@ -100,6 +75,7 @@ let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
+const staffMemberRole = Constants.HearingRoles.StaffMember;
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
@@ -179,6 +155,8 @@ describe('AssignJudgeComponent', () => {
                 ],
                 declarations: [
                     AssignJudgeComponent,
+                    MockComponent(SearchEmailComponent),
+                    MockComponent(AddStaffMemberComponent),
                     BreadcrumbStubComponent,
                     CancelPopupComponent,
                     ParticipantsListStubComponent,
@@ -203,9 +181,27 @@ describe('AssignJudgeComponent', () => {
             })
         );
 
+        it('should fail validation if there are form errors when adding a staff member', () => {
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = false;
+
+            component.saveJudgeAndStaffMember();
+
+            expect(component.showStaffMemberErrorSummary).toBe(true);
+        });
+
+        it('should not show validation errors for staff member if there are none', () => {
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+
+            component.saveJudgeAndStaffMember();
+
+            expect(component.showStaffMemberErrorSummary).toBe(false);
+        });
+
         it('should fail validation if a judge is not selected', () => {
             component.cancelAssignJudge();
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.form.valid).toBeFalsy();
         });
         it('should initialize form and create judgeDisplayName control', () => {
@@ -213,6 +209,22 @@ describe('AssignJudgeComponent', () => {
             expect(component.judgeDisplayNameFld).toBeTruthy();
             expect(component.judgeDisplayNameFld.updateOn).toBe('blur');
         });
+
+        it('should initialize form and create judgeDisplayName control', () => {
+            const existingStaffMember = new ParticipantModel({
+                hearing_role_name: staffMemberRole
+            });
+
+            const savedHearing = initHearingRequest();
+            savedHearing.participants.push(existingStaffMember);
+
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(savedHearing);
+
+            component.ngOnInit();
+
+            expect(component.showAddStaffMemberFld.value).toBe(true);
+        });
+
         it('judge display name field validity required', () => {
             let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('');
@@ -384,7 +396,7 @@ describe('AssignJudgeComponent', () => {
     const otherInformationDetailsJudgeEmail = 'OtherInformationDetailsJudgeEmail';
     const otherInformationDetailsJudgePhone = 'OtherInformationDetailsJudgePhone';
 
-    describe('saveJudge', () => {
+    describe('saveJudgeAndStaffMember', () => {
         let testJudge: ParticipantModel;
         beforeEach(() => {
             testJudge = Object.assign({}, judge);
@@ -397,7 +409,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if judge is null', () => {
             component.judge = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -407,7 +419,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if email is null', () => {
             component.judge.email = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -417,7 +429,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -430,7 +442,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -439,7 +451,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if cannot add judge', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(true);
             expect(component.failedSubmission).toBe(true);
@@ -449,7 +461,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but form is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.form.setErrors({ incorrect: true });
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -459,7 +471,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but email is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.isValidEmail = false;
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -473,7 +485,7 @@ describe('AssignJudgeComponent', () => {
             spyOn(component, 'changeEmail');
             spyOn(component, 'changeTelephone');
 
-            component.saveJudge();
+            component.saveJudgeAndStaffMember();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(false);
@@ -499,7 +511,7 @@ describe('AssignJudgeComponent', () => {
             });
 
             afterEach(() => {
-                component.saveJudge();
+                component.saveJudgeAndStaffMember();
                 expect(component.isJudgeParticipantError).toBe(false);
                 expect(component.failedSubmission).toBe(false);
                 expect(component.isJudgeSelected).toBe(true);
@@ -612,6 +624,143 @@ describe('AssignJudgeComponent', () => {
             expect(component.judgeEmailFld.value).toEqual('');
             expect(component.judgePhoneFld.value).toEqual('');
             expect(component.canNavigate).toBe(false);
+        });
+    });
+
+    describe('add staff member', () => {
+        it('should not show component for adding staff member if add staff member checkbox is unchecked', () => {
+            const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+            expect(addStaffMemberComponent).toBeFalsy();
+        });
+
+        it('should show component for adding staff member if add staff member checkbox is checked', () => {
+            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+            addStaffMemberCheckbox.nativeElement.click();
+            fixture.detectChanges();
+
+            const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+            expect(addStaffMemberComponent).toBeTruthy();
+        });
+
+        it('should add staff member to hearing', () => {
+            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+
+            const displayName = 'Ello Mate!';
+
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+            component.staffMember = new ParticipantModel({ display_name: displayName });
+
+            const originalNumberOfParticipant = component.hearing.participants.length;
+
+            component.saveJudgeAndStaffMember();
+            console.log(component.hearing.participants);
+
+            expect(component.hearing.participants.length).toBe(originalNumberOfParticipant + 1);
+        });
+
+        it('should update staff member if one already exists', () => {
+            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+
+            const email = 'email@email.com';
+            const oldDisplayName = 'Ello Mate!';
+            component.hearing.participants.push(
+                new ParticipantModel({
+                    display_name: oldDisplayName,
+                    email: email
+                })
+            );
+
+            const newDisplayName = 'Bye Mate!';
+            component.showAddStaffMemberFld.setValue(true);
+            component.isStaffMemberValid = true;
+            component.staffMember = new ParticipantModel({
+                display_name: newDisplayName,
+                email: email
+            });
+
+            const originalNumberOfParticipant = component.hearing.participants.length;
+
+            component.saveJudgeAndStaffMember();
+            console.log(component.hearing.participants);
+            const staffMember = component.hearing.participants.find(x => x.email === email);
+
+            expect(component.hearing.participants.length).toBe(originalNumberOfParticipant);
+            expect(staffMember.display_name).toBe(newDisplayName);
+        });
+
+        describe('changeIsStaffMemberValid', () => {
+            it('should subscribe to AddStaffMemberComponent and update if the staff member is valid', () => {
+                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+                addStaffMemberCheckbox.nativeElement.click();
+                fixture.detectChanges();
+                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+
+                addStaffMemberComponent.componentInstance.isStaffMemberValid.emit(true);
+                fixture.detectChanges();
+
+                expect(component.isStaffMemberValid).toBe(true);
+            });
+        });
+
+        describe('changeStaffMember', () => {
+            it('should subscribe to AddStaffMemberComponent for staff member changes', () => {
+                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
+                addStaffMemberCheckbox.nativeElement.click();
+                fixture.detectChanges();
+
+                const staffMember = new ParticipantModel({ display_name: 'Ahoy There' });
+                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
+
+                addStaffMemberComponent.componentInstance.staffMember.emit(staffMember);
+                fixture.detectChanges();
+
+                expect(component.staffMember).toBe(staffMember);
+            });
+
+            it('should show staff member field if set to false and staff member changes', () => {
+                component.showAddStaffMemberFld.setValue(false);
+
+                component.changeStaffMember(new ParticipantModel());
+
+                expect(component.showAddStaffMemberFld.value).toBe(true);
+            });
+        });
+
+        describe('setFieldSubscription', () => {
+            it('should subscribe to show staff member field changes, and remove staff member from hearing if not shown', fakeAsync(() => {
+                component.$subscriptions.forEach(subcription => {
+                    if (subcription) {
+                        subcription.unsubscribe();
+                    }
+                });
+                component.$subscriptions = [];
+                const removeStaffMemberFromHearingSpy = spyOn(component, 'removeStaffMemberFromHearing');
+
+                component.setFieldSubscription();
+                component.showAddStaffMemberFld.setValue(true);
+                tick();
+                expect(removeStaffMemberFromHearingSpy).not.toHaveBeenCalled();
+
+                component.showAddStaffMemberFld.setValue(false);
+                tick();
+
+                expect(removeStaffMemberFromHearingSpy).toHaveBeenCalledTimes(1);
+            }));
+        });
+
+        describe('removeStaffMemberFromHearing', () => {
+            it('should remove staff member from hearing', () => {
+                component.hearing.participants = [
+                    new ParticipantModel({
+                        hearing_role_name: staffMemberRole
+                    })
+                ];
+
+                component.removeStaffMemberFromHearing();
+
+                expect(component.hearing.participants.length).toBe(0);
+            });
         });
     });
 });

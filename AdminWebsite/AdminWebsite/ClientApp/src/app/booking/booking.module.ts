@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { PopupModule } from '../popups/popup.module';
 import { SharedModule } from '../shared/shared.module';
 import { AddParticipantComponent } from './add-participant/add-participant.component';
+import { AddStaffMemberComponent } from './add-staff-member/add-staff-member.component';
 import { AssignJudgeComponent } from './assign-judge/assign-judge.component';
 import { BookingConfirmationComponent } from './booking-confirmation/booking-confirmation.component';
 import { BookingRoutingModule } from './booking-routing.module';
@@ -23,6 +24,7 @@ export const Components: Type<any>[] = [
     HearingScheduleComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
+    AddStaffMemberComponent,
     RemovePopupComponent,
     OtherInformationComponent,
     SummaryComponent,
