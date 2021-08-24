@@ -376,6 +376,13 @@ describe('AddParticipantComponent', () => {
         expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
         expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
     });
+    it('should remove interpreterFor formControl for the staff member', fakeAsync(() => {
+        component.participantDetails.hearing_role_name = Constants.HearingRoles.StaffMember;
+        component.ngAfterViewInit();
+        tick(600);
+
+        expect(component.form.get('interpreterFor')).toBe(null);
+    }));
     it('should reset empty party and role to Please select', () => {
         participant.case_role_name = '';
         participant.hearing_role_name = '';

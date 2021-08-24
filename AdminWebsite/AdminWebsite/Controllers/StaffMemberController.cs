@@ -20,15 +20,13 @@ namespace AdminWebsite.Controllers
     public class StaffMemberController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public StaffMemberController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder)
+        public StaffMemberController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _encoder = encoder;
         }
 
         /// <summary>
@@ -40,7 +38,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetStaffMembersBySearchTerm")]
         [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> GetStaffMembersBySearchTerm([FromBody] string term)
+        public async Task<ActionResult<IList<PersonResponse>>> GetStaffMembersBySearchTerm([FromQuery]string term)
         {
             if(term.Length < 3)
             {
@@ -49,10 +47,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                term = _encoder.Encode(term);
-                var searchTerm = new SearchTermRequest(term);
-
-                var personsResponse = await _bookingsApiClient.GetStaffMemberBySearchTermAsync(searchTerm);
+                var personsResponse = await _bookingsApiClient.GetStaffMemberBySearchTermAsync(term);
                 
                 return Ok(personsResponse.ToList());
             }

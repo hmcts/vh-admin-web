@@ -27,7 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
 
-            _controller = new StaffMemberController(_bookingsApiClient.Object, JavaScriptEncoder.Default);
+            _controller = new StaffMemberController(_bookingsApiClient.Object);
 
             _response = new List<PersonResponse>
             {
@@ -60,7 +60,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 MiddleNames = "No",
                 Username = "jackman@judiciary.net"
             });
-            _bookingsApiClient.Setup(x => x.GetStaffMemberBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.GetStaffMemberBySearchTermAsync(It.IsAny<string>()))
                               .ReturnsAsync(_response);
 
             var searchTerm = "ado";
@@ -76,7 +76,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task GetStaffMembersBySearchTerm_Returns_BadRequest_When_BookingsApiReturns_BadRequest()
         {
-            _bookingsApiClient.Setup(x => x.GetStaffMemberBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient.Setup(x => x.GetStaffMemberBySearchTermAsync(It.IsAny<string>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var response = await _controller.GetStaffMembersBySearchTerm("term");
