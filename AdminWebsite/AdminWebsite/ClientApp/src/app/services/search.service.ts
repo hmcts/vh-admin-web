@@ -57,27 +57,23 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient) {
-    }
+    constructor(private bhClient: BHClient) {}
 
     participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {
         const allResults: ParticipantModel[] = [];
         if (term.length >= this.minimumSearchLength) {
             if (hearingRole === Constants.HearingRoles.Judge) {
-                return this.searchJudgeAccounts(term).pipe(
-                    map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge)))
-                );
+                return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
             } else {
                 let persons$: Observable<Array<PersonResponse>>;
                 if (Constants.JudiciaryRoles.includes(hearingRole)) {
-                    persons$ =  this.searchJudiciaryEntries(term);
+                    persons$ = this.searchJudiciaryEntries(term);
                 } else if (hearingRole === Constants.HearingRoles.StaffMember) {
                     persons$ = this.searchStaffMemberAccounts(term);
                 } else {
                     persons$ = this.searchEntries(term);
                 }
-                return persons$
-                    .pipe(map(persons => persons.map(person => ParticipantModel.fromPersonResponse(person))));
+                return persons$.pipe(map(persons => persons.map(person => ParticipantModel.fromPersonResponse(person))));
             }
         } else {
             return of(allResults);
