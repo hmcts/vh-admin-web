@@ -44,5 +44,12 @@ export const Constants = {
     DefenceAdvocate: 'App Advocate',
     None: 'None',
     RespondentAdvocate: 'Respondent Advocate',
-    JudiciaryRoles: ['Panel Member', 'Winger']
+    JudiciaryRoles: ['Panel Member', 'Winger'],
+    HearingRoles: {
+        StaffMember: 'Staff Member',
+        Winger: 'Winger',
+        PanelMember: 'Panel Member',
+        Observer: 'Observer'
+    },
+    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
 };

@@ -25,7 +25,23 @@
     </div>
   </div>
 
-  <div class="participant-row" *ngIf="!isJudge">
+  <div class="participant-row" *ngIf="isStaffMember">
+    <div></div>
+    <div class="wrap staff-member-display-name">
+      {{ participant.display_name }}
+      <div>
+        <strong>{{ staffMemberRole }}</strong>
+      </div>
+      <div id="staff-member-email">{{ participant.email }}</div>
+    </div>
+
+    <div *ngIf="canEdit" class="participant-row__actions">
+      <a class="vhlink" id="edit-staff-member" [routerLink]="['/assign-judge']">Edit</a>
+      <a class="vhlink" id="remove-staff-member" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
+    </div>
+  </div>
+
+  <div class="participant-row" *ngIf="!isJudge && !isStaffMember">
     <div class="interpreter-icon">
       <img
         *ngIf="isInterpreter || isInterpretee"

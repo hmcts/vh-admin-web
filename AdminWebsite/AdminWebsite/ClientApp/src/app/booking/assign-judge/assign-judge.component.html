@@ -35,7 +35,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
+    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudgeAndStaffMember()">
       <div
         [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
       >
@@ -114,12 +114,35 @@
         />
       </div>
 
+      <div class="govuk-form-group">
+        <div class="govuk-checkboxes__item">
+          <input
+            class="govuk-checkboxes__input"
+            id="showAddStaffMemberFld"
+            formControlName="showAddStaffMemberFld"
+            type="checkbox"
+            data-add-staff-member-checkbox
+          />
+          <label class="govuk-label govuk-checkboxes__label" for="showAddStaffMemberFld">Add a staff member</label>
+          <div [id]="'add-staff-member-checkbox' + '-item-hint'" class="govuk-hint govuk-radios__hint">
+            Add a staff member if this hearing needs a dual host.
+          </div>
+        </div>
+      </div>
+
+      <app-add-staff-member
+        [isShowErrorSummary]="showStaffMemberErrorSummary"
+        (staffMember)="changeStaffMember($event)"
+        (isStaffMemberValid)="changeIsStaffMemberValid($event)"
+        *ngIf="showAddStaffMemberFld.value"
+      ></app-add-staff-member>
+
       <div class="sk-top">
         <button
           id="nextButton"
           class="govuk-button vh-mr25"
           data-module="govuk-button"
-          (click)="saveJudge()"
+          (click)="saveJudgeAndStaffMember()"
           alt="Save judge details and view add participant"
         >
           {{ buttonAction }}

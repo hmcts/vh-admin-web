@@ -25,6 +25,10 @@ export class ParticipantModel {
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
 
+    constructor(init?: Partial<ParticipantModel>) {
+        Object.assign(this, init);
+    }
+
     static fromPersonResponse(person: PersonResponse): ParticipantModel {
         return person
             ? {
