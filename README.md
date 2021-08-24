@@ -26,7 +26,7 @@ If the interface for either the MVC or the Bookings API is updated these can be 
 
 In the `AdmniWebsite/ClientApp` folder:
 ```
-npx nswag run api-ts.nswag
+npx nswag run --/runtime:NetCore31 api-ts.nswag
 ```
 
 # Running accessibility linting
