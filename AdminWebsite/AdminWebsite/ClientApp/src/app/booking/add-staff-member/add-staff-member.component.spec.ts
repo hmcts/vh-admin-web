@@ -36,7 +36,6 @@ describe('AddStaffMemberComponent', () => {
         case_role_name: staffMemberRole
     });
 
-
     beforeEach(
         waitForAsync(() => {
             bookingServiceSpy = jasmine.createSpyObj('BookingService', ['']);
