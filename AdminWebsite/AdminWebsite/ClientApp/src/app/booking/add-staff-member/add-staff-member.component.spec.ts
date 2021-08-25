@@ -131,6 +131,7 @@ describe('AddStaffMemberComponent', () => {
             component.initialiseForm();
 
             expect(component.role.value).toBe(staffMemberRole);
+            expect(component.form.get('interpreterFor')).toBeFalsy();
         });
     });
 
