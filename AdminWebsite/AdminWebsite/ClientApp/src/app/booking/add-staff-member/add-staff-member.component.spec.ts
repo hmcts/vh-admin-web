@@ -138,7 +138,7 @@ describe('AddStaffMemberComponent', () => {
             expect(component.form.get('firstName').value).toBe(existingStaffMember.first_name);
             expect(component.form.get('email').value).toBe(existingStaffMember.email);
             expect(component.form.get('phone').value).toBe(existingStaffMember.phone);
-            expect(component.form.get('party').value).toBe(existingStaffMember.case_role_name);
+            expect(component.form.get('party').value).toBe(Constants.PleaseSelect);
         });
     });
 
