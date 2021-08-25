@@ -132,6 +132,10 @@ describe('AddStaffMemberComponent', () => {
 
             expect(component.role.value).toBe(staffMemberRole);
             expect(component.form.get('interpreterFor')).toBeFalsy();
+            expect(component.form.get('displayName').value).toBe('');
+            expect(component.form.get('title').value).toBe(Constants.PleaseSelect);
+            expect(component.form.get('lastName').value).toBe('');
+            expect(component.form.get('email').value).toBe('');
         });
     });
 
