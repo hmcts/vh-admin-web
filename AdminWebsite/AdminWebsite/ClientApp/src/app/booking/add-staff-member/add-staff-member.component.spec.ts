@@ -24,8 +24,18 @@ describe('AddStaffMemberComponent', () => {
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let routerSpy: jasmine.SpyObj<Router>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-
     const staffMemberRole = Constants.HearingRoles.StaffMember;
+    const existingStaffMember = new ParticipantModel({
+        display_name: 'I Exist',
+        first_name: 'I',
+        last_name: 'Exist',
+        phone: '07123456789',
+        email: 'I.Exist@Nihilism.void',
+        user_role_name: staffMemberRole,
+        hearing_role_name: staffMemberRole,
+        case_role_name: staffMemberRole
+    });
+
 
     beforeEach(
         waitForAsync(() => {
@@ -64,17 +74,6 @@ describe('AddStaffMemberComponent', () => {
 
         it('should retrieve the staff member if it exists and apply details', done => {
             const courtId = 954874;
-
-            const existingStaffMember = new ParticipantModel({
-                display_name: 'I Exist',
-                first_name: 'I',
-                last_name: 'Exist',
-                phone: '07123456789',
-                email: 'I.Exist@Nihilism.void',
-                user_role_name: staffMemberRole,
-                hearing_role_name: staffMemberRole,
-                case_role_name: staffMemberRole
-            });
 
             const hearingModel = new HearingModel();
             hearingModel.court_id = courtId;
@@ -128,14 +127,17 @@ describe('AddStaffMemberComponent', () => {
         });
 
         it('should set role value', () => {
+            const hearingModel = new HearingModel();
+            hearingModel.participants = [existingStaffMember];
+            component.hearing = hearingModel;
             component.initialiseForm();
-
             expect(component.role.value).toBe(staffMemberRole);
             expect(component.form.get('interpreterFor')).toBeFalsy();
-            expect(component.form.get('displayName').value).toBe('');
+            expect(component.form.get('displayName').value).toBe(existingStaffMember.display_name);
             expect(component.form.get('title').value).toBe(Constants.PleaseSelect);
-            expect(component.form.get('lastName').value).toBe('');
-            expect(component.form.get('email').value).toBe('');
+            expect(component.form.get('lastName').value).toBe(existingStaffMember.last_name);
+            expect(component.form.get('firstName').value).toBe(existingStaffMember.first_name);
+            expect(component.form.get('email').value).toBe(existingStaffMember.email);
         });
     });
 
