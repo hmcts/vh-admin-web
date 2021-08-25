@@ -35,6 +35,17 @@ describe('AddStaffMemberComponent', () => {
         hearing_role_name: staffMemberRole,
         case_role_name: staffMemberRole
     });
+    const judgeParticipant = new ParticipantModel({
+        display_name: 'I Judge',
+        first_name: 'IJudge',
+        last_name: 'Exist Judge',
+        phone: '07123456789',
+        email: 'I.Judge@Nihilism.void',
+        user_role_name: Constants.HearingRoles.Judge,
+        hearing_role_name: Constants.HearingRoles.Judge,
+        case_role_name: Constants.HearingRoles.Judge,
+        username: 'username.judge@hmcts'
+    });
 
     beforeEach(
         waitForAsync(() => {
@@ -139,6 +150,14 @@ describe('AddStaffMemberComponent', () => {
             expect(component.form.get('email').value).toBe(existingStaffMember.email);
             expect(component.form.get('phone').value).toBe(existingStaffMember.phone);
             expect(component.form.get('party').value).toBe(Constants.PleaseSelect);
+        });
+        it('should set form interpreterFor is removed for staff member', () => {
+            const hearingModel = new HearingModel();
+            hearingModel.participants = [existingStaffMember, judgeParticipant];
+            component.hearing = hearingModel;
+            component.searchEmail.email = existingStaffMember.email;
+            component.getParticipant(existingStaffMember);
+            expect(component.form.get('interpreterFor')).toBeFalsy();
         });
     });
 
