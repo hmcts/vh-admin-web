@@ -2323,22 +2323,19 @@ export class BHClient {
     }
 
     /**
-     * Find staffmember list by email search term.
-     * @param body (optional) The email address search term.
+     * Find staff member list by email search term.
+     * @param term (optional) The email address search term.
      * @return Success
      */
-    getStaffMembersBySearchTerm(body: string | null | undefined): Observable<PersonResponse[]> {
-        let url_ = this.baseUrl + '/api/staffmember';
+    getStaffMembersBySearchTerm(term: string | null | undefined): Observable<PersonResponse[]> {
+        let url_ = this.baseUrl + '/api/staffmember?';
+        if (term !== undefined && term !== null) url_ += 'term=' + encodeURIComponent('' + term) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
-
         let options_: any = {
-            body: content_,
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
                 Accept: 'application/json'
             })
         };

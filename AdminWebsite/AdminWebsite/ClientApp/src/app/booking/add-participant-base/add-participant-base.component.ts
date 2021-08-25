@@ -217,8 +217,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         // if it's added in the existing hearing participant, then allowed all fields to edit.
         this.resetPartyAndRole();
         this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name, this.party.value);
-
-        this.form.setValue({
+        const formControlsObj = {
             party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
             title: this.participantDetails.title === undefined ? this.constants.PleaseSelect : this.participantDetails.title,
@@ -231,7 +230,11 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             companyNameIndividual: this.participantDetails.company || '',
             representing: this.participantDetails.representee || '',
             interpreterFor: this.setInterpretee(this.participantDetails) || this.constants.PleaseSelect
-        });
+        };
+        if (this.participantDetails.hearing_role_name === Constants.HearingRoles.StaffMember) {
+            delete formControlsObj['interpreterFor'];
+        }
+        this.form.setValue(formControlsObj);
 
         setTimeout(() => {
             this.form.get('role').setValue(this.participantDetails.hearing_role_name);
