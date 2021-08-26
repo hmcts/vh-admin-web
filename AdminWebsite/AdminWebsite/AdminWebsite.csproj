@@ -34,7 +34,7 @@
   </Target>
 
   <ItemGroup>
-	<PackageReference Include="BookingsApi.Client" Version="1.26.4" />
+	<PackageReference Include="BookingsApi.Client" Version="1.27.10" />
 	<PackageReference Include="GovukNotify" Version="4.0.0" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />

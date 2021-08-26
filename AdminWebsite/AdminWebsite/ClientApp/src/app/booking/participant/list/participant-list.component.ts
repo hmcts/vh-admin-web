@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
+import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
@@ -54,22 +55,33 @@ export class ParticipantListComponent implements OnInit, OnChanges {
             return;
         }
         const judges = this.hearing.participants.filter(participant => participant.is_judge);
+        const staffMembers = this.hearing.participants.filter(
+            participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember
+        );
         const panelMembersAndWingers = this.hearing.participants.filter(participant =>
-            ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
+            Constants.JudiciaryRoles.includes(participant.hearing_role_name)
         );
 
         const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
         const others = this.hearing.participants.filter(
             participant =>
                 !participant.is_judge &&
-                !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name) &&
+                !Constants.OtherParticipantRoles.includes(participant.hearing_role_name) &&
                 !interpretersAndInterpretees.includes(participant)
         );
         const observers = this.hearing.participants.filter(
-            participant => participant.hearing_role_name === 'Observer' && !interpretersAndInterpretees.includes(participant)
+            participant =>
+                participant.hearing_role_name === Constants.HearingRoles.Observer && !interpretersAndInterpretees.includes(participant)
         );
 
-        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...interpretersAndInterpretees, ...observers];
+        this.sortedParticipants = [
+            ...judges,
+            ...panelMembersAndWingers,
+            ...staffMembers,
+            ...others,
+            ...interpretersAndInterpretees,
+            ...observers
+        ];
     }
 
     private getInterpreterAndInterpretees(): ParticipantModel[] {
