@@ -291,7 +291,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Exactly(3));
+                    Times.Exactly(4));
             _mocker.Mock<INotificationApiClient>()
                .Verify(
                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingReminderJoh)),
@@ -303,6 +303,10 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingReminderRepresentative)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)),
                     Times.Once);
         }
 

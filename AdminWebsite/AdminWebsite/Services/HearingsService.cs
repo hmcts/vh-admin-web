@@ -353,6 +353,8 @@ namespace AdminWebsite.Services
                     AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
                 .ToList();
 
+            requests.AddRange(hearing.Participants.Where(x => x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase)).Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)).ToList());
+
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
 
@@ -364,7 +366,7 @@ namespace AdminWebsite.Services
             if (hearings.Count == 1)
             {
                 var judge = hearing.Participants
-                    .First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                    .First(x => x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
                 request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
             }
             else
