@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using BookingsApi.Contract.Responses;
 using NotificationApi.Contract;
@@ -137,43 +138,43 @@ namespace AdminWebsite.Mappers
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+            if (participant.UserRoleName.Contains(RoleNames.Judge, StringComparison.InvariantCultureIgnoreCase) &&
                 hearing.IsJudgeEmailEJud())
             {
                 notificationType = NotificationType.HearingConfirmationEJudJudge;
-                parameters.Add("judge", participant.DisplayName);
+                parameters.Add(NotifyParams.Judge, participant.DisplayName);
             }
-            else if (participant.UserRoleName.Contains("Staff Member", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationStaffMember;
-                parameters.Add("staff member", $"{participant.FirstName} {participant.LastName}");
-                parameters.Add("username", participant.Username);
+                parameters.Add(NotifyParams.StaffMember, $"{participant.FirstName} {participant.LastName}");
+                parameters.Add(NotifyParams.UserName, participant.Username);
             }
-            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+            else if (participant.UserRoleName.Contains(RoleNames.Judge, StringComparison.InvariantCultureIgnoreCase) &&
                      !hearing.IsJudgeEmailEJud())
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
-                parameters.Add("judge", participant.DisplayName);
-                parameters.Add("courtroom account username", participant.Username);
+                parameters.Add(NotifyParams.Judge, participant.DisplayName);
+                parameters.Add(NotifyParams.CourtroomAccountUserName, participant.Username);
                 participant.ContactEmail = hearing.GetJudgeEmail();
                 participant.TelephoneNumber = hearing.GetJudgePhone();
             }
-            else if (participant.UserRoleName.Contains("Judicial Office Holder",
+            else if (participant.UserRoleName.Contains(RoleNames.JudicialOfficeHolder,
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id) ? NotificationType.HearingConfirmationEJudJoh : NotificationType.HearingConfirmationJoh;
-                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add(NotifyParams.JudicialOfficeHolder, $"{participant.FirstName} {participant.LastName}");
             }
-            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains(RoleNames.Representative, StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationRepresentative;
-                parameters.Add("client name", participant.Representee);
-                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add(NotifyParams.ClientName, participant.Representee);
+                parameters.Add(NotifyParams.SolicitorName, $"{participant.FirstName} {participant.LastName}");
             }
             else
             {
                 notificationType = NotificationType.HearingConfirmationLip;
-                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
+                parameters.Add(NotifyParams.Name, $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest

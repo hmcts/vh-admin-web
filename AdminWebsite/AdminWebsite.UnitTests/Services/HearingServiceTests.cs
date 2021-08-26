@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -124,12 +125,13 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_confirmation_email_to_all_participants_except_judge()
         {
-            var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
+            var judge = _hearing.Participants.First(x => x.UserRoleName == RoleNames.Judge);
+            var staffMember = _hearing.Participants.First(x => x.UserRoleName == RoleNames.StaffMember);
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id || r.ParticipantId != staffMember.Id)),
                     Times.Exactly(4));
         }
 
@@ -794,12 +796,16 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
                 .Build();
+            var staffMember = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.UserRoleName = "Staff Member")
+                .Build();
             var telephoneParticipant = Builder<TelephoneParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();
 
             return Builder<HearingDetailsResponse>.CreateNew()
-                .With(h => h.Participants = new List<ParticipantResponse> {rep, ind, joh, judge})
+                .With(h => h.Participants = new List<ParticipantResponse> {rep, ind, joh, judge, staffMember })
                 .With(h => h.TelephoneParticipants = new List<TelephoneParticipantResponse> { telephoneParticipant })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
