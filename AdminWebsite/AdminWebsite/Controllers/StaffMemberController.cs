@@ -54,6 +54,9 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
+                }else if(e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return Ok(new List<PersonResponse>());
                 }
 
                 throw;
