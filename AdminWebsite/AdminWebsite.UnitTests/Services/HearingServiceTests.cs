@@ -123,20 +123,33 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task should_send_confirmation_email_to_all_participants_except_judge()
+        public async Task Should_send_confirmation_email_to_all_participants_except_judge_staffmember()
         {
-            var judge = _hearing.Participants.First(x => x.UserRoleName == RoleNames.Judge);
-            var staffMember = _hearing.Participants.First(x => x.UserRoleName == RoleNames.StaffMember);
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id || r.ParticipantId != staffMember.Id)),
-                    Times.Exactly(4));
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJoh)),
+                    Times.Once);          
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationLip)),
+                    Times.Once);           
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationRepresentative)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.TelephoneHearingConfirmation)),
+                    Times.Once);
         }
 
        [Test]
-        public async Task should_send_confirmation_email_when_hearing_is_generic_case_type()
+        public async Task Should_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Daily Test";
@@ -144,11 +157,11 @@ namespace AdminWebsite.UnitTests.Services
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(4));
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(5));
         }
 
         [Test]
-        public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type_and_automated_test()
+        public async Task Should_not_send_confirmation_email_when_hearing_is_generic_case_type_and_automated_test()
         {
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Automated Test";
@@ -159,7 +172,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
+        public async Task Should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
         {
             _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
 
@@ -173,7 +186,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_amendment_email_to_all_participants()
+        public async Task Should_send_amendment_email_to_all_participants()
         {
             var secondHearing = InitHearing();
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
@@ -189,7 +202,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_amendment_email_to_all_participants_except_judge_when_not_the_first_hearing()
+        public async Task Should_send_amendment_email_to_all_participants_except_judge_when_not_the_first_hearing()
         {
             var secondHearing = InitHearing();
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
@@ -210,7 +223,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_confirmation_email_to_new_judge_when_amending_judge_email()
+        public async Task Should_send_confirmation_email_to_new_judge_when_amending_judge_email()
         {
             var secondHearing = InitHearing();
             secondHearing.OtherInformation =
@@ -226,7 +239,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_not_send_confirmation_email_when_hearing_is_not_the_first_hearing_of_a_mdh()
+        public async Task Should_not_send_confirmation_email_when_hearing_is_not_the_first_hearing_of_a_mdh()
         {
             var secondHearing = InitHearing();
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
@@ -243,7 +256,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
+        public async Task Should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             var expectedTimes = _hearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge") +
@@ -258,7 +271,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_not_send_amendment_email_when_hearing_is_generic_case_type()
+        public async Task Should_not_send_amendment_email_when_hearing_is_generic_case_type()
         {
             var secondHearing = InitHearing();
             _hearing.CaseTypeName = "Generic";
@@ -271,15 +284,26 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_reminder_email_to_all_participants_except_a_judge()
+        public async Task Should_send_reminder_email_to_all_participants_except_a_judge()
         {
-            var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(3));
+            _mocker.Mock<INotificationApiClient>()
+               .Verify(
+                   x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingReminderJoh)),
+                   Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingReminderLip)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingReminderRepresentative)),
+                    Times.Once);
         }
 
         [TestCase("Judicial Office Holder")]
@@ -331,7 +355,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants()
+        public async Task Should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
@@ -350,7 +374,7 @@ namespace AdminWebsite.UnitTests.Services
 
         [Test]
         public async Task
-            should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing()
+            Should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
@@ -379,7 +403,7 @@ namespace AdminWebsite.UnitTests.Services
 
         [Test]
         public async Task
-            should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing_and_is_not_the_main_hearing()
+            Should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing_and_is_not_the_main_hearing()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation =
@@ -408,7 +432,7 @@ namespace AdminWebsite.UnitTests.Services
 
         [Test]
         public async Task
-            should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_if_no_judge_email_exists()
+            Should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_if_no_judge_email_exists()
         {
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = null}.ToOtherInformationString();
@@ -424,7 +448,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_return_correct_tele_conference_id_and_phone_number()
+        public async Task Should_return_correct_tele_conference_id_and_phone_number()
         {
             // Act
             var teleConferenceDetails = await _service.GetTelephoneConferenceDetails(Guid.NewGuid());
@@ -435,7 +459,7 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public void should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
+        public void Should_throw_an_invalid_operation_exception_if_the_conference_doesnt_have_a_valid_meeting_room()
         {
             // Arrange
             _mocker.Mock<IConferenceDetailsService>()
@@ -448,9 +472,9 @@ namespace AdminWebsite.UnitTests.Services
             // Act & Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () => await _service.GetTelephoneConferenceDetails(Guid.NewGuid()));
         }
-        
+
         [Test]
-        public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
+        public async Task Should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
             var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
@@ -727,10 +751,12 @@ namespace AdminWebsite.UnitTests.Services
                 Username = participant.ContactEmail,
                 ContactEmail = participant.ContactEmail
             });
-            
-            var removedParticipantIds = new List<Guid>();
-            removedParticipantIds.Add(participant.Id.Value);
-            
+
+            var removedParticipantIds = new List<Guid>
+            {
+                participant.Id.Value
+            };
+
             var usernameAdIdDict = new Dictionary<string, User>();
             
             // Act

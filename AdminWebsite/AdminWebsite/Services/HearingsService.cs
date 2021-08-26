@@ -324,9 +324,9 @@ namespace AdminWebsite.Services
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
-               .Select(participant =>
-                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
-               .ToList();
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
+                .ToList();
 
             foreach (var request in requests)
             {
@@ -347,7 +347,8 @@ namespace AdminWebsite.Services
             }
 
             var requests = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
                 .ToList();

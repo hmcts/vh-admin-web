@@ -14,8 +14,15 @@
         public const string CaseName = "case name";
         public const string CaseNumber = "case number";
         public const string Time = "time";
+        public const string Date = "date";
         public const string StartDayMonthYear = "Start Day Month Year";
         public const string TestType = "test type";
+        public const string RandomPassword = "random password";
+        public const string Password = "password";
         public const string DayMonthYear = "day month year";
+        public const string OldTime = "Old time";
+        public const string NewTime = "New time";
+        public const string OldDayMonthYear = "Old Day Month Year";
+        public const string NewDayMonthYear = "New Day Month Year";
     }
 }
