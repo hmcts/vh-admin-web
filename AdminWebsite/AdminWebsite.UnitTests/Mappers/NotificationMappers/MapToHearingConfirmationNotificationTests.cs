@@ -16,7 +16,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
     public class MapToHearingConfirmationNotificationTests
     {
         [Test]
-        public void should_map_to_ejud_judge_confirmation_notification()
+        public void Should_map_to_ejud_judge_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJudge;
             var participant = InitParticipant("Judge");
@@ -47,7 +47,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_ejud_joh_confirmation_notification()
+        public void Should_map_to_ejud_joh_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJoh;
             var participant = new ParticipantResponse
@@ -89,7 +89,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_judge_confirmation_notification()
+        public void Should_map_to_judge_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationJudge;
             var participant = InitParticipant("Judge");
@@ -150,7 +150,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_lip_confirmation_notification()
+        public void Should_map_to_lip_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationLip;
             var participant = InitParticipant("Individual");
@@ -178,7 +178,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_representative_confirmation_notification()
+        public void Should_map_to_representative_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationRepresentative;
             var participant = InitParticipant("Representative", "Jane Doe");
@@ -207,7 +207,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void should_map_to_joh_confirmation_notification()
+        public void Should_map_to_joh_confirmation_notification()
         {
             var expectedNotificationType = NotificationType.HearingConfirmationJoh;
             var participant = InitParticipant("Judicial Office Holder");

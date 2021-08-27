@@ -108,7 +108,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task should_return_list_of_upcoming_public_holidays()
+        public async Task Should_return_list_of_upcoming_public_holidays()
         {
             var publicHolidays = Builder<PublicHoliday>.CreateListOfSize(10).Build().ToList();
             _mocker.Mock<IPublicHolidayRetriever>().Setup(x => x.RetrieveUpcomingHolidays())

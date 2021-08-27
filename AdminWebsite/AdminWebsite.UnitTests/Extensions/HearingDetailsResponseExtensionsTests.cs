@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.UnitTests.Extensions
@@ -103,7 +103,7 @@ namespace AdminWebsite.UnitTests.Extensions
         }
 
         [Test]
-        public void should_return_true_when_ejud_email_has_been_assigned_from_no_judge()
+        public void Should_return_true_when_ejud_email_has_been_assigned_from_no_judge()
         {
             var judge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.UserRoleName = UserRole.Judge.ToString())
@@ -118,7 +118,7 @@ namespace AdminWebsite.UnitTests.Extensions
         }
 
         [Test]
-        public void should_return_true_when_ejud_email_has_changed_to_another_ejud()
+        public void Should_return_true_when_ejud_email_has_changed_to_another_ejud()
         {
             var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.UserRoleName = UserRole.Judge.ToString())
@@ -139,7 +139,7 @@ namespace AdminWebsite.UnitTests.Extensions
         }
 
         [Test]
-        public void should_return_true_when_ejud_email_has_changed_to_vh_judge()
+        public void Should_return_true_when_ejud_email_has_changed_to_vh_judge()
         {
             var otherInfo = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" };
             _hearing.OtherInformation = otherInfo.ToOtherInformationString();
@@ -157,7 +157,7 @@ namespace AdminWebsite.UnitTests.Extensions
         }
 
         [Test]
-        public void should_return_true_when_vh_judge_has_changed_to_ejud_judge()
+        public void Should_return_true_when_vh_judge_has_changed_to_ejud_judge()
         {
             var existingEJudJudge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.UserRoleName = UserRole.Judge.ToString())
