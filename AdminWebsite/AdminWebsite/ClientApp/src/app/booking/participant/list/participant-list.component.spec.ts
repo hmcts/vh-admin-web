@@ -186,6 +186,113 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
     });
+
+    fit('should detect participant added to hearing.participants', () => {
+        // Arrange
+        const linked_participantList: LinkedParticipantModel[] = [];
+        const linked_participant = new LinkedParticipantModel();
+        linked_participant.linkType = LinkedParticipantType.Interpreter;
+        linked_participant.linkedParticipantId = '7';
+        linked_participantList.push(linked_participant);
+
+        const linked_participantList1: LinkedParticipantModel[] = [];
+        const linked_participant1 = new LinkedParticipantModel();
+        linked_participant1.linkType = LinkedParticipantType.Interpreter;
+        linked_participant1.linkedParticipantId = '9';
+        linked_participantList1.push(linked_participant1);
+
+        const participantsArr = [
+            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge1', linked_participant: null },
+            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger1', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Staff Member', display_name: 'Staff Member', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Panel Member', display_name: 'Panel Member', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Observer', display_name: 'Observer', linked_participant: null },
+            {
+                is_judge: false,
+                hearing_role_name: 'Litigant in Person',
+                display_name: 'Litigant in Person1',
+                linked_participant: linked_participantList1
+            },
+            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person3', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Interpreter', display_name: 'Interpreter1', linked_participant: linked_participantList }
+        ];
+
+        component.hearing.participants = participantsArr;
+
+        component.ngOnInit();
+
+        // Act
+        component.hearing.participants.push({ is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger3' });
+
+        component.ngDoCheck();
+
+        // Assert
+        expect(component.sortedParticipants.length).toBe(12);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(3);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Staff Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Observer').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
+    });
+
+    fit('should detect participant removed from hearing.participants', () => {
+        // Arrange
+        const linked_participantList: LinkedParticipantModel[] = [];
+        const linked_participant = new LinkedParticipantModel();
+        linked_participant.linkType = LinkedParticipantType.Interpreter;
+        linked_participant.linkedParticipantId = '7';
+        linked_participantList.push(linked_participant);
+
+        const linked_participantList1: LinkedParticipantModel[] = [];
+        const linked_participant1 = new LinkedParticipantModel();
+        linked_participant1.linkType = LinkedParticipantType.Interpreter;
+        linked_participant1.linkedParticipantId = '9';
+        linked_participantList1.push(linked_participant1);
+
+        const participantsArr = [
+            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge1', linked_participant: null },
+            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger1', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Staff Member', display_name: 'Staff Member', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Panel Member', display_name: 'Panel Member', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Observer', display_name: 'Observer', linked_participant: null },
+            {
+                is_judge: false,
+                hearing_role_name: 'Litigant in Person',
+                display_name: 'Litigant in Person1',
+                linked_participant: linked_participantList1
+            },
+            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person2', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person3', linked_participant: null },
+            { is_judge: false, hearing_role_name: 'Interpreter', display_name: 'Interpreter1', linked_participant: linked_participantList }
+        ];
+
+        component.hearing.participants = participantsArr;
+
+        component.ngOnInit();
+
+        // Act
+        component.hearing.participants.splice(2, 1);
+
+        component.ngDoCheck();
+
+        // Assert
+        expect(component.sortedParticipants.length).toBe(10);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Staff Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Observer').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
+    });
+
     it('should produce a sorted list with no duplicates for a new interpreter', () => {
         const linked_participantList1: LinkedParticipantModel[] = [];
         const linked_participant1 = new LinkedParticipantModel();

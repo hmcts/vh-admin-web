@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
@@ -11,7 +11,7 @@ import { HearingModel } from '../../../common/model/hearing.model';
     templateUrl: './participant-list.component.html',
     styleUrls: ['./participant-list.component.scss']
 })
-export class ParticipantListComponent implements OnInit, OnChanges {
+export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     @Input() hearing: HearingModel;
     sortedParticipants: ParticipantModel[] = [];
 
@@ -24,6 +24,13 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     isEditMode = false;
 
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
+
+    ngDoCheck(): void {
+        const containsNewParticipants = this.hearing.participants?.some(x => !this.sortedParticipants.every(y => y !== x)) ?? false;
+        const containsRemovedParticipants = this.sortedParticipants?.some(x => !this.hearing.participants.every(y => y !== x)) ?? false;
+
+        if (containsNewParticipants || containsRemovedParticipants) this.sortParticipants();
+    }
 
     ngOnChanges() {
         this.sortParticipants();
