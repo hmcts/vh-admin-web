@@ -749,17 +749,28 @@ describe('AssignJudgeComponent', () => {
             }));
         });
 
-        describe('removeStaffMemberFromHearing', () => {
-            it('should remove staff member from hearing', () => {
+        fdescribe('removeStaffMemberFromHearing', () => {
+            it('should remove ONLY the staff member from hearing', () => {
                 component.hearing.participants = [
                     new ParticipantModel({
                         hearing_role_name: staffMemberRole
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: "judge"
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: "participant"
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: "participant"
                     })
                 ];
+                const initialCount = component.hearing.participants.length;
 
                 component.removeStaffMemberFromHearing();
 
-                expect(component.hearing.participants.length).toBe(0);
+                expect(component.hearing.participants.length).toBe(initialCount - 1);
+                expect(component.hearing.participants.find(x => x.hearing_role_name === staffMemberRole)).toBeFalsy();
             });
         });
     });
