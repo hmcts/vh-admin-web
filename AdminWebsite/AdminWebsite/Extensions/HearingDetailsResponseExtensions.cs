@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using Newtonsoft.Json;
@@ -31,10 +32,11 @@ namespace AdminWebsite.Extensions
             if (isNewJudgeEJud && isOriginalJudgeEJud)
             {
                 var judgeA = hearing.Participants.FirstOrDefault(x =>
-                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                    x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
+
 
                 var judgeB = originalHearing.Participants.FirstOrDefault(x =>
-                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                    x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
                 return judgeA?.ContactEmail != judgeB?.ContactEmail;
             }
@@ -70,7 +72,7 @@ namespace AdminWebsite.Extensions
         {
 
             var email = GetOtherInformationObject(hearing.OtherInformation)?.JudgeEmail;
-            if (email == string.Empty)
+            if (string.IsNullOrEmpty(email))
             {
                 return null;
             }
@@ -81,14 +83,14 @@ namespace AdminWebsite.Extensions
         public static bool IsJudgeEmailEJud(this HearingDetailsResponse hearing)
         {
             var judge = hearing?.Participants.SingleOrDefault(x =>
-                x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
             return IsEmailEjud(judge?.Username);
         }
 
         public static bool IsParticipantAEJudJudicialOfficeHolder(this HearingDetailsResponse hearing, Guid participantId)
         {
             var joh = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
-               x.UserRoleName.Contains("Judicial Office Holder", StringComparison.CurrentCultureIgnoreCase));
+               x.UserRoleName.Contains(RoleNames.JudicialOfficeHolder, StringComparison.CurrentCultureIgnoreCase));
 
             return IsEmailEjud(joh?.Username);
         }
@@ -97,10 +99,10 @@ namespace AdminWebsite.Extensions
             Guid participantId)
         {
             var joh = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
-                                                                 x.UserRoleName.Contains("Judicial Office Holder",
+                                                                 x.UserRoleName.Contains(RoleNames.JudicialOfficeHolder,
                                                                      StringComparison.CurrentCultureIgnoreCase));
             var judge = hearing?.Participants.SingleOrDefault(x => x.Id == participantId &&
-                                                                   x.UserRoleName.Contains("Judge",
+                                                                   x.UserRoleName.Contains(RoleNames.Judge,
                                                                        StringComparison.CurrentCultureIgnoreCase));
             var result = joh != null || judge != null;
             return result;

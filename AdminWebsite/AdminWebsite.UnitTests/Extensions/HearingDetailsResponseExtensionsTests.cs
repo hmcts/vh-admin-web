@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.UnitTests.Extensions
