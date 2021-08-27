@@ -162,9 +162,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const staffMemberIndex = this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
         if (staffMemberIndex < 0) {
-            this.logger.warn(`${this.loggerPrefix} Could NOT remove staff member as a participant with that hearing role name could not be found`, {
-                participants: this.hearing.participants
-            });
+            this.logger.warn(
+                `${this.loggerPrefix} Could NOT remove staff member as a participant with that hearing role name could not be found`,
+                {
+                    participants: this.hearing.participants
+                }
+            );
             return;
         }
 

@@ -756,13 +756,13 @@ describe('AssignJudgeComponent', () => {
                         hearing_role_name: staffMemberRole
                     }),
                     new ParticipantModel({
-                        hearing_role_name: "judge"
+                        hearing_role_name: 'judge'
                     }),
                     new ParticipantModel({
-                        hearing_role_name: "participant"
+                        hearing_role_name: 'participant'
                     }),
                     new ParticipantModel({
-                        hearing_role_name: "participant"
+                        hearing_role_name: 'participant'
                     })
                 ];
                 const initialCount = component.hearing.participants.length;
