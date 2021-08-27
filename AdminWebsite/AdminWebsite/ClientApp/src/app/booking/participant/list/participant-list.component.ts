@@ -29,7 +29,9 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const containsNewParticipants = this.hearing.participants?.some(x => !this.sortedParticipants.every(y => y !== x)) ?? false;
         const containsRemovedParticipants = this.sortedParticipants?.some(x => !this.hearing.participants.every(y => y !== x)) ?? false;
 
-        if (containsNewParticipants || containsRemovedParticipants) this.sortParticipants();
+        if (containsNewParticipants || containsRemovedParticipants) {
+            this.sortParticipants();
+        }
     }
 
     ngOnChanges() {

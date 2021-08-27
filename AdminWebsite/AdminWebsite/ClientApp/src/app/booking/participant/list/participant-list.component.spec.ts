@@ -187,7 +187,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
     });
 
-    fit('should detect participant added to hearing.participants', () => {
+    it('should detect participant added to hearing.participants', () => {
         // Arrange
         const linked_participantList: LinkedParticipantModel[] = [];
         const linked_participant = new LinkedParticipantModel();
@@ -240,7 +240,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
     });
 
-    fit('should detect participant removed from hearing.participants', () => {
+    it('should detect participant removed from hearing.participants', () => {
         // Arrange
         const linked_participantList: LinkedParticipantModel[] = [];
         const linked_participant = new LinkedParticipantModel();
