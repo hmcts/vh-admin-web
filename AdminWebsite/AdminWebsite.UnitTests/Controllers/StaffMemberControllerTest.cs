@@ -84,6 +84,16 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GetStaffMembersBySearchTerm_Returns_Ok_WithEmptyList_When_BookingsApiReturns_NotFound()
+        {
+            _bookingsApiClient.Setup(x => x.GetStaffMemberBySearchTermAsync(It.IsAny<string>()))
+                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
+
+            var response = await _controller.GetStaffMembersBySearchTerm("term");
+            response.Result.Should().BeOfType<OkObjectResult>();
+        }
+
+        [Test]
         public async Task GetStaffMembersBySearchTerm_When_SearchTerm_Lessthan_3_Char_BadRequest()
         {
             var response = await _controller.GetStaffMembersBySearchTerm("te");
