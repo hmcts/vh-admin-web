@@ -749,7 +749,7 @@ describe('AssignJudgeComponent', () => {
             }));
         });
 
-        fdescribe('removeStaffMemberFromHearing', () => {
+        describe('removeStaffMemberFromHearing', () => {
             it('should remove ONLY the staff member from hearing', () => {
                 component.hearing.participants = [
                     new ParticipantModel({
