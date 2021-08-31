@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeResponse, PersonResponse } from './clients/api-client';
 import { ParticipantModel } from '../common/model/participant.model';
+import { Constants } from '../common/constants';
 
 let service: SearchService;
 
@@ -94,8 +95,20 @@ participant2.first_name = 'participant2FirstName';
 participant2.last_name = 'participant2LastName';
 participant2.display_name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
-
 const participantList: ParticipantModel[] = [participant1, participant2];
+
+const staffMember1 = new ParticipantModel();
+staffMember1.first_name = 'StaffMember1FirstName';
+staffMember1.last_name = 'StaffMember1LastName';
+staffMember1.display_name = 'StaffMember1DisplayName';
+staffMember1.email = 'StaffMember1Email';
+const staffMember2 = new ParticipantModel();
+staffMember2.first_name = 'StaffMember2FirstName';
+staffMember2.last_name = 'StaffMember2LastName';
+staffMember2.display_name = 'StaffMember2DisplayName';
+staffMember2.email = 'StaffMember2Email';
+
+const staffMemberList: ParticipantModel[] = [staffMember1, staffMember2, participant1];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 
@@ -104,10 +117,12 @@ describe('SearchService', () => {
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
             'postPersonBySearchTerm',
             'postJudiciaryPersonBySearchTerm',
-            'postJudgesBySearchTerm'
+            'postJudgesBySearchTerm',
+            'getStaffMembersBySearchTerm'
         ]);
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
+        clientApiSpy.getStaffMembersBySearchTerm.and.returnValue(of(staffMemberList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
 
@@ -127,9 +142,11 @@ describe('SearchService', () => {
             clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
                 'postPersonBySearchTerm',
                 'postJudiciaryPersonBySearchTerm',
-                'postJudgesBySearchTerm'
+                'postJudgesBySearchTerm',
+                'getStaffMembersBySearchTerm'
             ]);
 
+            spyOn(service, 'searchStaffMemberAccounts').and.returnValue(of(staffMemberList));
             spyOn(service, 'searchEntries').and.returnValue(of(personList));
             spyOn(service, 'searchJudiciaryEntries').and.returnValue(of(judiciaryPersonList));
             spyOn(service, 'searchJudgeAccounts').and.returnValue(of(judgeList));
@@ -192,7 +209,10 @@ describe('SearchService', () => {
     describe('searchEntries', () => {
         it('should method searchEntries not call api and return empty array when term is invalid', () => {
             const terms = invalidSearchTerms;
-            service.searchEntries(terms).subscribe(x => expect(x.length).toBe(0));
+
+            service.participantSearch(terms, roleRegular).subscribe(participants => {
+                expect(participants.length).toBe(0);
+            });
         });
         it('should method searchEntries call api and return persons response array when term is valid', () => {
             const terms = validSearchTerms;
@@ -201,20 +221,46 @@ describe('SearchService', () => {
     });
 
     describe('searchJudiciaryEntries', () => {
-        it('should method searchEntries not call api and return empty array when term is invalid', () => {
+        it('should method searchJudiciaryEntries not call api and return empty array when term is invalid', () => {
             const terms = invalidSearchTerms;
-            service.searchJudiciaryEntries(terms).subscribe(x => expect(x.length).toBe(0));
+            service.participantSearch(terms, Constants.HearingRoles.PanelMember).subscribe(participants => {
+                expect(participants.length).toBe(0);
+            });
+            service.participantSearch(terms, Constants.HearingRoles.Winger).subscribe(participants => {
+                expect(participants.length).toBe(0);
+            });
         });
-        it('should method searchEntries call api and return persons response array when term is valid', () => {
+        it('should method searchJudiciaryEntries call api and return persons response array when term is valid', () => {
             const terms = validSearchTerms;
             service.searchJudiciaryEntries(terms).subscribe(x => expect(x).toBe(judiciaryPersonList));
         });
     });
 
     describe('searchJudgeAccounts', () => {
-        it('should method searchEntries call api and return persons response array when term is valid', () => {
+        it('should method searchJudgeAccounts not call api and return empty array when term is invalid', () => {
+            const terms = invalidSearchTerms;
+            service.participantSearch(terms, Constants.HearingRoles.Judge).subscribe(participants => {
+                expect(participants.length).toBe(0);
+            });
+        });
+        it('should method searchJudgeAccounts call api and return persons response array when term is valid', () => {
             const terms = validSearchTerms;
             service.searchJudgeAccounts(terms).subscribe(x => expect(x).toBe(judgeList));
+        });
+    });
+
+    describe('searchStaffMemberAccounts', () => {
+        it('should method searchStaffMemberAccounts not call api and return empty array when term is invalid', () => {
+            const terms = invalidSearchTerms;
+            service.participantSearch(terms, Constants.HearingRoles.StaffMember).subscribe(participants => {
+                expect(participants.length).toBe(0);
+            });
+        });
+        it('should method searchStaffMemberAccounts call api and return persons response array when term is valid', () => {
+            const terms = validSearchTerms;
+            service.participantSearch(terms, Constants.HearingRoles.StaffMember).subscribe(participants => {
+                expect(participants.length).toBe(staffMemberList.length);
+            });
         });
     });
 

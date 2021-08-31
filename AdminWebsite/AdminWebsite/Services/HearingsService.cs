@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -257,14 +258,15 @@ namespace AdminWebsite.Services
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
-                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
-                    .Where(x => !x.HearingRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => !x.HearingRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
                     .Select(participant =>
                         AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
                     .ToList();
@@ -322,9 +324,9 @@ namespace AdminWebsite.Services
             var participantsToEmail = participants ?? hearing.Participants;
 
             var requests = participantsToEmail
-               .Select(participant =>
-                   AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
-               .ToList();
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
+                .ToList();
 
             foreach (var request in requests)
             {
@@ -345,10 +347,13 @@ namespace AdminWebsite.Services
             }
 
             var requests = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
                 .ToList();
+
+            requests.AddRange(hearing.Participants.Where(x => x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase)).Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)).ToList());
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
@@ -361,7 +366,7 @@ namespace AdminWebsite.Services
             if (hearings.Count == 1)
             {
                 var judge = hearing.Participants
-                    .First(x => x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                    .First(x => x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
                 request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
             }
             else

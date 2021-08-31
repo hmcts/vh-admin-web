@@ -46,6 +46,7 @@ export const Constants = {
     RespondentAdvocate: 'Respondent Advocate',
     JudiciaryRoles: ['Panel Member', 'Winger'],
     HearingRoles: {
+        Judge: 'Judge',
         StaffMember: 'Staff Member',
         Winger: 'Winger',
         PanelMember: 'Panel Member',
