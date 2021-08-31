@@ -327,8 +327,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.changeTelephone();
 
             if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
-                const staffMemberIndex = this.hearing.participants
-                    .findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
+                const staffMemberIndex = this.hearing.participants.findIndex(
+                    x => x.hearing_role_name === Constants.HearingRoles.StaffMember
+                );
 
                 if (staffMemberIndex > -1) {
                     this.hearing.participants[staffMemberIndex] = this.staffMember;
