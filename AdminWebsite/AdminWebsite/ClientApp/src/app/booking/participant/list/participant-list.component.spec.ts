@@ -187,7 +187,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
     });
 
-    fdescribe('ngDoCheck', () => {
+    describe('ngDoCheck', () => {
         const linked_participantList: LinkedParticipantModel[] = [];
         const linked_participant = new LinkedParticipantModel();
         linked_participant.linkType = LinkedParticipantType.Interpreter;
