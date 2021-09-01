@@ -46,7 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
-        private fb: FormBuilder,
+        private formBuilder: FormBuilder,
         protected router: Router,
         private datePipe: DatePipe,
         protected bookingService: BookingService,
@@ -141,7 +141,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
 
-        this.form = this.fb.group({
+        this.form = this.formBuilder.group({
             hearingDate: [
                 hearingDateParsed,
                 [Validators.required, weekendValidator(), pastDateValidator(), notPublicHolidayDateValidator(this.publicHolidays)]
@@ -406,8 +406,24 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
     }
 
+    get isMultiIndividualDayHearingValid() {
+        return this.form.valid && !this.addHearingDateControl && this.hearingDates.length > 0;
+    }
+
+    get isSingleDayOrMultiDayRangeHearingValid() {
+        return (
+            this.form.valid &&
+            !this.hearingDateInvalid &&
+            !this.isStartHoursInPast &&
+            !this.isStartMinutesInPast &&
+            !this.durationInvalid &&
+            !this.endHearingDateInvalid &&
+            this.finalCheckStartDateTimeInPast()
+        );
+    }
+
     saveMultiIndividualDayHearing() {
-        if (this.form.valid) {
+        if (this.isMultiIndividualDayHearingValid) {
             this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
 
             this.updateHearingRequestForMultiIndividualDays();
@@ -422,15 +438,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     saveSingleDayOrMultiDayRangeHearing() {
-        if (
-            this.form.valid &&
-            !this.hearingDateInvalid &&
-            !this.isStartHoursInPast &&
-            !this.isStartMinutesInPast &&
-            !this.durationInvalid &&
-            !this.endHearingDateInvalid &&
-            this.finalCheckStartDateTimeInPast()
-        ) {
+        if (this.isSingleDayOrMultiDayRangeHearingValid) {
             this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
             this.failedSubmission = false;
             this.updateHearingRequest();
