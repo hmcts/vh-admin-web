@@ -26,8 +26,8 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const containsNewParticipants = this.hearing.participants?.some(hearingParticipant => this.sortedParticipants.includes(hearingParticipant)) ?? false;
-        const containsRemovedParticipants = this.sortedParticipants?.some(sortedParticipant => !this.hearing.participants.includes(sortedParticipant)) ?? false;
+        const containsNewParticipants = !this.hearing?.participants?.every(hearingParticipant => this.sortedParticipants.includes(hearingParticipant)) ?? false;
+        const containsRemovedParticipants = !this.sortedParticipants?.every(sortedParticipant => this.hearing.participants.includes(sortedParticipant)) ?? false;
 
         if (containsNewParticipants || containsRemovedParticipants) {
             this.sortParticipants();
@@ -58,7 +58,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         return this.$selectedForRemove;
     }
 
-    private sortParticipants() {
+    sortParticipants() {
         if (!this.hearing.participants) {
             this.sortedParticipants = [];
             return;
