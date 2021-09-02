@@ -100,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
         
         [Test]
@@ -148,7 +148,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
 
         [Test]
