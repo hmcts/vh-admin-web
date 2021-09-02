@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
-using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
@@ -16,6 +11,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using VideoApi.Client;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
 using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
@@ -50,7 +49,7 @@ namespace AdminWebsite.Services
             List<ParticipantResponse> participants = null);
         
         /// <summary>
-        /// This will notify all participants (excluding the judge) a hearing has been booked.
+        /// This will notify all participants (excluding the judge and staff member) a hearing has been booked.
         /// Not to be confused with the "confirmed process".
         /// </summary>
         /// <param name="hearing"></param>
