@@ -98,7 +98,7 @@ namespace AdminWebsite.Services
         private readonly ILogger<HearingsService> _logger;
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly KinlyConfiguration _kinlyConfiguration;
-
+        private List<AddNotificationRequest> _notificationRequests;
 #pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
@@ -291,11 +291,18 @@ namespace AdminWebsite.Services
                 await ProcessGenericEmail(hearing, participants);
                 return;
             }
-
             var participantsToEmail = participants ?? hearing.Participants;
+            var filteredParticipants = participantsToEmail
+                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
-            var requests = participantsToEmail
-                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+            if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
+            {
+                filteredParticipants = filteredParticipants
+                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
+            }
+
+
+           _notificationRequests = filteredParticipants
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
@@ -307,10 +314,10 @@ namespace AdminWebsite.Services
                         AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
                     .ToList();
 
-                requests.AddRange(telephoneRequests);
+                _notificationRequests.AddRange(telephoneRequests);
             }
 
-            await CreateNotifications(requests);
+            await CreateNotifications(_notificationRequests);
         }
 
         public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
@@ -323,6 +330,7 @@ namespace AdminWebsite.Services
 
             var requests = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
                         days))
