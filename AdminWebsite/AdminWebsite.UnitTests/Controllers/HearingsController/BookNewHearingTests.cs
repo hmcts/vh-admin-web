@@ -70,6 +70,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname2.lname2@hmcts.net")
                 .WithParticipant("Individual", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Staff Member","staff.member@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
                 .ReturnsAsync(hearingDetailsResponse);
@@ -99,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
         
         [Test]
@@ -147,7 +148,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
 
         [Test]

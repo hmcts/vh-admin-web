@@ -73,11 +73,13 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(additionalParticipantToReturn);
             
             var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            expectedResponse.Add(additionalParticipantToReturn);
-            
+
+            var expectedResponse = new List<PersonResponse>
+            {
+                _response[0],
+                additionalParticipantToReturn
+            };
+
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
@@ -112,10 +114,12 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(participantToFilter);
             
             var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            
+
+            var expectedResponse = new List<PersonResponse>
+            {
+                _response[0]
+            };
+
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
                        

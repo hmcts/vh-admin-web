@@ -667,23 +667,26 @@ describe('AssignJudgeComponent', () => {
             component.hearing.participants.push(
                 new ParticipantModel({
                     display_name: oldDisplayName,
-                    email: email
+                    email: email,
+                    hearing_role_name: staffMemberRole
                 })
             );
 
             const newDisplayName = 'Bye Mate!';
+            const newEmail = 'tempmail@mail.com';
             component.showAddStaffMemberFld.setValue(true);
             component.isStaffMemberValid = true;
             component.staffMember = new ParticipantModel({
                 display_name: newDisplayName,
-                email: email
+                email: newEmail,
+                hearing_role_name: staffMemberRole
             });
 
             const originalNumberOfParticipant = component.hearing.participants.length;
 
             component.saveJudgeAndStaffMember();
             console.log(component.hearing.participants);
-            const staffMember = component.hearing.participants.find(x => x.email === email);
+            const staffMember = component.hearing.participants.find(x => x.hearing_role_name === staffMemberRole);
 
             expect(component.hearing.participants.length).toBe(originalNumberOfParticipant);
             expect(staffMember.display_name).toBe(newDisplayName);
@@ -750,16 +753,27 @@ describe('AssignJudgeComponent', () => {
         });
 
         describe('removeStaffMemberFromHearing', () => {
-            it('should remove staff member from hearing', () => {
+            it('should remove ONLY the staff member from hearing', () => {
                 component.hearing.participants = [
                     new ParticipantModel({
                         hearing_role_name: staffMemberRole
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: 'judge'
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: 'participant'
+                    }),
+                    new ParticipantModel({
+                        hearing_role_name: 'participant'
                     })
                 ];
+                const initialCount = component.hearing.participants.length;
 
                 component.removeStaffMemberFromHearing();
 
-                expect(component.hearing.participants.length).toBe(0);
+                expect(component.hearing.participants.length).toBe(initialCount - 1);
+                expect(component.hearing.participants.find(x => x.hearing_role_name === staffMemberRole)).toBeFalsy();
             });
         });
     });

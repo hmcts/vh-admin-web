@@ -161,10 +161,18 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     removeStaffMemberFromHearing() {
         const staffMemberIndex = this.hearing.participants.findIndex(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
-        if (staffMemberIndex > -1) {
-            this.hearing.participants.splice(staffMemberIndex);
-            this.hearingService.updateHearingRequest(this.hearing);
+        if (staffMemberIndex === -1) {
+            this.logger.warn(
+                `${this.loggerPrefix} Could NOT remove staff member as a participant with that hearing role name could not be found`,
+                {
+                    participants: this.hearing.participants
+                }
+            );
+            return;
         }
+
+        this.hearing.participants.splice(staffMemberIndex, 1);
+        this.hearingService.updateHearingRequest(this.hearing);
     }
 
     setFieldSubscription() {
@@ -319,7 +327,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.changeTelephone();
 
             if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
-                const staffMemberIndex = this.hearing.participants.findIndex(x => x.email === this.staffMember.email);
+                const staffMemberIndex = this.hearing.participants.findIndex(
+                    x => x.hearing_role_name === Constants.HearingRoles.StaffMember
+                );
 
                 if (staffMemberIndex > -1) {
                     this.hearing.participants[staffMemberIndex] = this.staffMember;
