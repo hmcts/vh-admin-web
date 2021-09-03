@@ -114,7 +114,7 @@ namespace AdminWebsite.Controllers
                 }
                 else
                 {
-                    await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse);
+                    await _hearingsService.NewHearingSendConfirmation(hearingDetailsResponse);
                 }
 
                 return Created("", hearingDetailsResponse);
@@ -391,7 +391,7 @@ namespace AdminWebsite.Controllers
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
 
-                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
+                await _hearingsService.EditHearingSendConfirmation(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
         }
