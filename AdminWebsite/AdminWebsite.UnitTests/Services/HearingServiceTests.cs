@@ -273,6 +273,32 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
+        public async Task SendHearingReminderEmail_Should_Receive_MultiDay_Confirmation_For_StaffMember()
+        {
+            var hearing2 = InitHearing();
+            _hearing.GroupId = _hearing.Id;
+            hearing2.GroupId = _hearing.GroupId;
+            _hearing.Cases[0].Name = "Day 1 of 2 Confirming a hearing";
+            hearing2.Cases[0].Name = "Day 2 of 2 Confirming a hearing";
+            hearing2.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1);
+            var listOfHearings = new List<HearingDetailsResponse> { _hearing, hearing2 };
+            listOfHearings = listOfHearings.OrderBy(x => x.ScheduledDateTime).ToList();
+
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
+                .ReturnsAsync(listOfHearings);
+
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMemberMultiDay)), Times.Exactly(1));
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)), Times.Never);
+        }
+
+        [Test]
         public async Task Should_send_reminder_email_to_all_participants_and_confirmation_email_to_judge_and_staffmember()
         {
             await _service.SendHearingReminderEmail(_hearing);
