@@ -361,18 +361,29 @@ namespace AdminWebsite.Services
 
             var participantsToEmail = participants ?? hearing.Participants;
 
-            var requests = participantsToEmail
+            var filteredParticipants = participantsToEmail;
+
+            if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
+            {
+                filteredParticipants = filteredParticipants
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                    .ToList();
+            }
+   
+            _notificationRequests = filteredParticipants
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
                 .ToList();
 
-            await CreateNotifications(requests);
+            await CreateNotifications(_notificationRequests);
         }
 
         public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
         {
             if (hearing.IsGenericHearing())
             {
+                await ProcessGenericEmail(hearing, null);
                 return;
             }
 

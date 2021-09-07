@@ -495,15 +495,20 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
-            var expectedConferencePhoneNumber = "phone_number";
-            var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
             _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Demo";
+
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
+                  .Verify(
+                  x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.JudgeDemoOrTest)),
+                  Times.Once);
+            _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
-                    Times.Never);
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.StaffMemberDemoOrTest)),
+                Times.Once);
         }
 
         [Test]
@@ -778,11 +783,11 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.JudgeDemoOrTest)),
-                Times.Once);
+                Times.Never);
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.StaffMemberDemoOrTest)),
-                Times.Once);
+                Times.Never);
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.ParticipantDemoOrTest)),
@@ -794,6 +799,19 @@ namespace AdminWebsite.UnitTests.Services
         {
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Daily Test";
+
+            await _service.NewHearingSendConfirmation(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(3));
+        }
+
+        [Test]
+        public async Task NewHearingSendConfirmation_Should_send_confirmation_email_when_hearing_is_generic_case_type_for_confirmed_hearing()
+        {
+            _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Daily Test";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
 
             await _service.NewHearingSendConfirmation(_hearing);
 
@@ -874,6 +892,28 @@ namespace AdminWebsite.UnitTests.Services
         {
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Demo";
+            await _service.EditHearingSendConfirmation(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.JudgeDemoOrTest)),
+                Times.Never);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.StaffMemberDemoOrTest)),
+                Times.Never);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.ParticipantDemoOrTest)),
+                Times.Exactly(3));
+        }
+        
+        [Test]
+        public async Task EditHearingSendConfirmation_Should_Receive_Call_When_HearingType_Is_DEMO_for_Confirmedhearing()
+        {
+            _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Demo";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
             await _service.EditHearingSendConfirmation(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
