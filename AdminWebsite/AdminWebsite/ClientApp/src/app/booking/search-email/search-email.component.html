@@ -20,12 +20,12 @@
         {{ constants.Error.NotFoundJohEmail }}
       </span>
     </div>
-    <label class="govuk-label" for="{{locator}}" *ngIf="!isJudge"> Email </label>
+    <label class="govuk-label" for="{{ locator }}" *ngIf="!isJudge"> Email </label>
     <input
       #emailInput
       [attr.disabled]="disabled ? true : null"
-      id="{{locator}}"
-      name="{{locator}}"
+      id="{{ locator }}"
+      name="{{ locator }}"
       [(ngModel)]="email"
       (blur)="blurEmail(); populateParticipantInfo($event.target.value)"
       class="govuk-input govuk-input--width-25"

@@ -39,10 +39,10 @@
       <div
         [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
       >
-        <label class="govuk-label" for="{{judgeLocator}}" id="judgeEmail-error"> Judge or courtroom account </label>
+        <label class="govuk-label" for="{{ judgeLocator }}" id="judgeEmail-error"> Judge or courtroom account </label>
         <app-search-email
           [disabled]="false"
-          locator="{{judgeLocator}}"
+          locator="{{ judgeLocator }}"
           hearingRoleParticipant="Judge"
           (findParticipant)="updateJudge($event)"
           [initialValue]="courtAccountJudgeEmail"
@@ -132,7 +132,7 @@
       </div>
 
       <app-add-staff-member
-          staffMemberLocator="{{staffMemberLocator}}"
+        staffMemberLocator="{{ staffMemberLocator }}"
         [isShowErrorSummary]="showStaffMemberErrorSummary"
         (staffMember)="changeStaffMember($event)"
         (isStaffMemberValid)="changeIsStaffMemberValid($event)"
