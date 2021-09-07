@@ -78,13 +78,13 @@ describe('SearchEmailComponent', () => {
         expect(searchField.nativeElement).toBeTruthy();
     });
     it('should have have an email field with locator judgeEmail for judge detail search', () => {
-        component.locator = 'judgeEmail';
+        component.locator = 'judge-email';
         fixture.detectChanges();
         searchField = debugElement.query(By.css(`#${component.locator}`));
         expect(searchField.nativeElement).toBeTruthy();
     });
     it('should have have an email field with locator staffMemberEmail for staff member detail search', () => {
-        component.locator = 'staffMemberEmail';
+        component.locator = 'staff-member-email';
         fixture.detectChanges();
         searchField = debugElement.query(By.css(`#${component.locator}`));
         expect(searchField.nativeElement).toBeTruthy();

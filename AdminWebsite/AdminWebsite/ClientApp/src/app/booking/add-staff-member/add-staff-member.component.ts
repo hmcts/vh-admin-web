@@ -14,7 +14,7 @@ import { Constants } from 'src/app/common/constants';
     styleUrls: ['./add-staff-member.component.css']
 })
 export class AddStaffMemberComponent extends AddParticipantBaseDirective implements OnInit, OnDestroy {
-    @Input() staffMemberLocator: string;
+    staffMemberLocator = 'staff-member-email';
     @Input() isShowErrorSummary: boolean;
     @Output() staffMember = new EventEmitter<ParticipantModel>();
     @Output() isStaffMemberValid = new EventEmitter<boolean>();
