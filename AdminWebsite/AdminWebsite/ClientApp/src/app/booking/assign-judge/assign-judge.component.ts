@@ -23,6 +23,8 @@ import { map } from 'rxjs/operators';
     styleUrls: ['./assign-judge.component.css']
 })
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
+    judgeLocator = 'judgeEmail';
+    staffMemberLocator = 'staffMemberEmail';
     hearing: HearingModel;
     courtAccountJudgeEmail: string;
     judge: ParticipantModel;

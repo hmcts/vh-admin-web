@@ -1,6 +1,7 @@
 <form class="govuk-form-group" [formGroup]="form">
   <app-search-email
     [disabled]="emailDisabled"
+    locator="{{staffMemberLocator}}"
     (findParticipant)="getParticipant($event)"
     (emailChanged)="emailChanged()"
     [hearingRoleParticipant]="role.value"
