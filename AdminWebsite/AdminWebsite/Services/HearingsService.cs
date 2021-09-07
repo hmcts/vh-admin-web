@@ -98,7 +98,6 @@ namespace AdminWebsite.Services
         private readonly ILogger<HearingsService> _logger;
         private readonly IConferenceDetailsService _conferenceDetailsService;
         private readonly KinlyConfiguration _kinlyConfiguration;
-        private List<AddNotificationRequest> _notificationRequests;
 #pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
@@ -301,7 +300,7 @@ namespace AdminWebsite.Services
                 .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
             }
 
-           _notificationRequests = filteredParticipants
+           var notificationRequests = filteredParticipants
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
@@ -313,9 +312,9 @@ namespace AdminWebsite.Services
                         AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
                     .ToList();
 
-                _notificationRequests.AddRange(telephoneRequests);
+                notificationRequests.AddRange(telephoneRequests);
             }
-            await CreateNotifications(_notificationRequests);
+            await CreateNotifications(notificationRequests);
         }
 
         public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
@@ -369,12 +368,12 @@ namespace AdminWebsite.Services
                     .ToList();
             }
    
-            _notificationRequests = filteredParticipants
+            var notificationRequests = filteredParticipants
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
                 .ToList();
 
-            await CreateNotifications(_notificationRequests);
+            await CreateNotifications(notificationRequests);
         }
 
         public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
