@@ -42,6 +42,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() initialValue = '';
 
+    @Input() locator = 'participantEmail';
+
     @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
     @Output() emailChanged = new EventEmitter<string>();
