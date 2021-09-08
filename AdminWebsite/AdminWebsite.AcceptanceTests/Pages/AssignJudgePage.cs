@@ -4,7 +4,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public static class AssignJudgePage
     {
-        public static By JudgeSearchField = By.Id("participantEmail");
+        public static By JudgeSearchField = By.Id("judge-email");
         public static By JudgeDisplayNameTextfield = By.Id("judgeDisplayNameFld");
         public static By JudgeEmailTextField = By.Id("judgeEmailFld");
         public static By JudgePhoneTextField = By.Id("judgePhoneFld");

@@ -8,10 +8,13 @@ import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
+import { DebugElement, ElementRef } from '@angular/core';
 
-describe('SeachEmailComponent', () => {
+describe('SearchEmailComponent', () => {
     let component: SearchEmailComponent;
+    let debugElement: DebugElement;
     let fixture: ComponentFixture<SearchEmailComponent>;
+    let searchField: ElementRef;
 
     const participant1 = new ParticipantModel();
     participant1.first_name = 'FirstName1';
@@ -67,6 +70,24 @@ describe('SeachEmailComponent', () => {
         fixture = TestBed.createComponent(SearchEmailComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+
+        debugElement = fixture.debugElement;
+    });
+    it('should have have an email field with locator participantEmail by default', () => {
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
+    });
+    it('should have have an email field with locator judgeEmail for judge detail search', () => {
+        component.locator = 'judge-email';
+        fixture.detectChanges();
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
+    });
+    it('should have have an email field with locator staffMemberEmail for staff member detail search', () => {
+        component.locator = 'staff-member-email';
+        fixture.detectChanges();
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
     });
     it(
         'should have empty list of participant models',
