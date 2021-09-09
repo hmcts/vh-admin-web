@@ -13,6 +13,13 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By JudgeEmailId = By.Id("judge-email");
         public static By JudgePhoneId = By.Id("judge-phone");
         public static By SearchResults = By.Id("search-results-list");
-        
+
+        public static By AddStaffMember = By.Id("showAddStaffMemberFld");
+        public static By AddStaffEmailTextField = By.Id("staff-member-email");
+        public static By AddStaffFirstNameTextField = By.Id("firstName");
+        public static By AddStaffLastNameTextField = By.Id("lastName");
+        public static By AddStaffPhoneTextField = By.Id("phone");
+        public static By AddStaffDisplayNameTextField = By.Id("displayName");
+
     }
 }
