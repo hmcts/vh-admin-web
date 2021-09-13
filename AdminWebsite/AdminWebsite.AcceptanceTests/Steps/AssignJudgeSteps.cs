@@ -54,6 +54,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 SetJudgeEmailAndPhone();
             }
+
+            if (_c.Test.AssignJudge.AddNewStaff)
+            {
+                SetTheNewStaff();
+            }
             ClickNext();
         }
 
@@ -73,6 +78,32 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgeSearchField).SendKeys(judge.Username);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.SearchResults).FindElements(By.TagName("li")).FirstOrDefault().Click();
             _c.Test.HearingParticipants.Add(judge);
+        }
+
+        private void SetTheNewStaff()
+        {
+            string staffMemberDisplayName = "Auto Staff Member";
+            string staffMemberRole = "Staff Member";
+
+            _browsers[_c.CurrentUser].Click(AssignJudgePage.AddStaffMember);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.AddStaffEmailTextField).SendKeys("man");
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.SearchResults).FindElements(By.TagName("li")).FirstOrDefault().Click();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.AddStaffDisplayNameTextField).SendKeys(staffMemberDisplayName);
+
+            var staffUser = new UserDto()
+            {
+                ContactEmail = "manual.StaffMember_01@hearings.reform.hmcts.net",
+                DisplayName = staffMemberDisplayName,
+                FirstName = "Manual",
+                LastName = "StaffMember_01"
+            };
+
+            var staffMember = UserToUserAccountMapper.Map(staffUser);
+            staffMember.CaseRoleName = staffMemberRole;
+            staffMember.HearingRoleName = staffMemberRole;
+            staffMember.Role = staffMemberRole;
+
+            _c.Test.HearingParticipants.Add(staffMember);
         }
 
         private void SetJudgeEmailAndPhone()

@@ -298,6 +298,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             foreach (var participant in _c.Test.HearingParticipants)
             {
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
+                if (participant.Role.ToLower().Equals("staff member")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
                 var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName} {participant.CaseRoleName}";

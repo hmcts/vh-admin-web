@@ -81,6 +81,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             GivenIAmOnThePage(user, page);
         }
 
+        [Given(@"the (.*) user has progressed to the (.*) page of a hearing with a new staff added")]
+        public void GivenIAmOnThePageOfHearingWithNewStaffAdded(string user, string page)
+        {
+            _c.Test.AssignJudge.AddNewStaff = true;
+            GivenIAmOnThePage(user, page);
+        }
+
         [When(@"progresses from the (.*) page to the (.*) page")]
         public void WhenProgressesFromPageToAnotherPage(string from, string to)
         {

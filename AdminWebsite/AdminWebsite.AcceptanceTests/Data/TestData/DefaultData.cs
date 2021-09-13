@@ -36,6 +36,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
     public class AssignJudge
     {
         public bool AudioRecord { get; set; }
+        public bool AddNewStaff { get; set; }
     }
 
     public class AddParticipant
