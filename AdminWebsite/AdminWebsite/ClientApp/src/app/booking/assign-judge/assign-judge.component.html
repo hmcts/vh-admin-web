@@ -115,30 +115,30 @@
         />
       </div>
 
-        <div *ngIf='showStaffMemberFeature'>
-          <div class="govuk-form-group">
-            <div class="govuk-checkboxes__item">
-              <input
-                class="govuk-checkboxes__input"
-                id="showAddStaffMemberFld"
-                formControlName="showAddStaffMemberFld"
-                type="checkbox"
-                data-add-staff-member-checkbox
-              />
-              <label class="govuk-label govuk-checkboxes__label" for="showAddStaffMemberFld">Add a staff member</label>
-              <div [id]="'add-staff-member-checkbox' + '-item-hint'" class="govuk-hint govuk-radios__hint">
-                Add a staff member if this hearing needs a dual host.
-              </div>
+      <div *ngIf="showStaffMemberFeature">
+        <div class="govuk-form-group">
+          <div class="govuk-checkboxes__item">
+            <input
+              class="govuk-checkboxes__input"
+              id="showAddStaffMemberFld"
+              formControlName="showAddStaffMemberFld"
+              type="checkbox"
+              data-add-staff-member-checkbox
+            />
+            <label class="govuk-label govuk-checkboxes__label" for="showAddStaffMemberFld">Add a staff member</label>
+            <div [id]="'add-staff-member-checkbox' + '-item-hint'" class="govuk-hint govuk-radios__hint">
+              Add a staff member if this hearing needs a dual host.
             </div>
           </div>
-
-          <app-add-staff-member
-            [isShowErrorSummary]="showStaffMemberErrorSummary"
-            (staffMember)="changeStaffMember($event)"
-            (isStaffMemberValid)="changeIsStaffMemberValid($event)"
-            *ngIf="showAddStaffMemberFld.value"
-          ></app-add-staff-member>
         </div>
+
+        <app-add-staff-member
+          [isShowErrorSummary]="showStaffMemberErrorSummary"
+          (staffMember)="changeStaffMember($event)"
+          (isStaffMemberValid)="changeIsStaffMemberValid($event)"
+          *ngIf="showAddStaffMemberFld.value"
+        ></app-add-staff-member>
+      </div>
 
       <div class="sk-top">
         <button
