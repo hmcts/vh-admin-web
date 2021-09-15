@@ -170,6 +170,7 @@ describe('AssignJudgeComponent', () => {
             routerSpy = TestBed.get(Router);
             /* tslint:enable */
             component = fixture.componentInstance;
+            component.showStaffMemberFeature = true;
             fixture.detectChanges();
         })
     );
@@ -180,6 +181,14 @@ describe('AssignJudgeComponent', () => {
                 component.ngOnInit();
             })
         );
+
+        it('should hide functionality of adding staff member to the hearing', () => {
+            component.showStaffMemberFeature = false;
+            fixture.detectChanges();
+
+            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkboxx]'));
+            expect(addStaffMemberCheckbox).toBeFalsy();
+        });
 
         it('should fail validation if there are form errors when adding a staff member', () => {
             component.showAddStaffMemberFld.setValue(true);
