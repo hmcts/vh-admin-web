@@ -186,7 +186,7 @@ describe('AssignJudgeComponent', () => {
             component.showStaffMemberFeature = false;
             fixture.detectChanges();
 
-            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkboxx]'));
+            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
             expect(addStaffMemberCheckbox).toBeFalsy();
         });
 
