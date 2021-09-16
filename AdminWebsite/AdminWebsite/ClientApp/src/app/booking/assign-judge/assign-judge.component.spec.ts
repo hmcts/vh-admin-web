@@ -89,10 +89,7 @@ describe('AssignJudgeComponent', () => {
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureToggles']);
-            featureToggleServiceSpy = jasmine.createSpyObj<FeatureToggleService>('FeatureToggleService', [
-                'getStaffMemberFeatureFlag',
-                'getFeatureToggles'
-            ]);
+            featureToggleServiceSpy = jasmine.createSpyObj<FeatureToggleService>('FeatureToggleService', ['getFeatureToggles']);
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
             configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
