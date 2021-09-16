@@ -11,9 +11,7 @@ const featureConfig = new FeatureToggleConfiguration();
 
 describe('FeatureToggleService', () => {
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
-            'getFeatureToggles'
-        ]);
+        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureToggles']);
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
             providers: [{ provide: BHClient, useValue: clientApiSpy }]
