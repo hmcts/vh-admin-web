@@ -201,9 +201,14 @@ parameters:
     value: $(ConferencePhoneNumber)
   - name: KinlyConfiguration:JoinByPhoneFromDate
     value: $(JoinByPhoneFromDate)
+
+  # Feature Flags
+  - name: FeatureToggle:StaffMember
+    value: $(StaffMemberFeatureFlag)
     
 variables:
   - group: vh-domains-and-urls
+  - group: FeatureFlags_NonProd
   - group: vh-apps-settings-generic
   - group: vh-admin-web
   - group: vh-preview

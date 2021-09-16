@@ -46,6 +46,7 @@ parameters:
 # Set variables once
 variables:
   - group: vh-domains-and-urls
+  - group: FeatureFlags_NonProd
   - group: vh-apps-settings-generic
   - group: vh-admin-web
   - group: vh test users
