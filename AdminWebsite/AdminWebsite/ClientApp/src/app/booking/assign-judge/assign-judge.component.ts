@@ -17,7 +17,7 @@ import { PipeStringifierService } from '../../services/pipe-stringifier.service'
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { map } from 'rxjs/operators';
-import { FeatureService } from '../../services/feature.service';
+import { FeatureToggleService } from '../../services/feature-toggle.service';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -66,7 +66,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
         private configService: ConfigService,
-        private featureService: FeatureService
+        private featureService: FeatureToggleService
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -90,7 +90,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnInit() {
         this.failedSubmission = false;
-        this.featureService.getFeatureToggles().subscribe(t => (this.showStaffMemberFeature = t.staff_member));
+        this.featureService
+            .getFeatureToggles()
+            .subscribe(t => (this.showStaffMemberFeature = t.staff_member));
 
         this.checkForExistingRequest();
         this.initForm();

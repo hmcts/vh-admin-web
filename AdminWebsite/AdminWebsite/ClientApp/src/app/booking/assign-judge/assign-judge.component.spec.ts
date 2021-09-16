@@ -8,7 +8,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { ClientSettingsResponse } from '../../services/clients/api-client';
+import { BHClient, ClientSettingsResponse, FeatureToggleConfiguration } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -26,6 +26,7 @@ import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.co
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
+import { FeatureToggleService } from '../../services/feature-toggle.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -72,17 +73,25 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
+let clientApiSpy: jasmine.SpyObj<BHClient>;
+let featureToggleServiceSpy: jasmine.SpyObj<FeatureToggleService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
 const staffMemberRole = Constants.HearingRoles.StaffMember;
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
+const featureConfig = new FeatureToggleConfiguration();
+featureConfig.staff_member = true;
 
 describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
+            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
+                'getFeatureToggles'
+            ]);
+            featureToggleServiceSpy = jasmine.createSpyObj<FeatureToggleService>('FeatureToggleService', ['getStaffMemberFeatureFlag', 'getFeatureToggles']);
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
             configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
@@ -101,6 +110,7 @@ describe('AssignJudgeComponent', () => {
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
             emailValidationServiceSpy.validateEmail.and.returnValue(true);
             emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
+            featureToggleServiceSpy.getFeatureToggles.and.returnValue(of(featureConfig));
 
             bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -108,6 +118,7 @@ describe('AssignJudgeComponent', () => {
             judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
             configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
             configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+            clientApiSpy.getFeatureToggles.and.returnValue(of(featureConfig));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterTestingModule],
@@ -116,6 +127,8 @@ describe('AssignJudgeComponent', () => {
                     { provide: JudgeDataService, useValue: judgeDataServiceSpy },
                     { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                     { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: FeatureToggleService, useValue: featureToggleServiceSpy },
+                    { provide: BHClient, useValue: clientApiSpy },
                     {
                         provide: Router,
                         useValue: {
