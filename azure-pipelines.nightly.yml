@@ -107,7 +107,6 @@ parameters:
 variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
-  - group: FeatureFlags_NonProd
   - group: vh-admin-web
   - group: vh test users
   - group: Saucelabs

@@ -140,20 +140,6 @@ stages:
           - group: KinlyConfiguration_Prod
             env:
              - Prod
-          - group: FeatureFlags_NonProd
-            env:
-             - Preview
-             - Dev
-             - AAT
-             - Test1
-             - Test2
-             - Sandbox
-          - group: FeatureFlags_PreProd
-            env:
-             - PreProd
-          - group: FeatureFlags_Prod
-            env:
-             - Prod
           - name: AppUri
             value: $(AppUri_Prod)
             env:
@@ -260,9 +246,6 @@ stages:
             value: $(ConferencePhoneNumber)
           - name: KinlyConfiguration:JoinByPhoneFromDate
             value: $(JoinByPhoneFromDate)
-            # Feature Flags
-          - name: FeatureToggle:StaffMember
-            value: $(StaffMemberFeatureFlag)
             
         acceptanceTestSettings:
           # VhServices

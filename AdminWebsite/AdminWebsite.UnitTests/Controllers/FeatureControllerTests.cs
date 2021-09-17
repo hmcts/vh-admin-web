@@ -1,9 +1,10 @@
-﻿using AdminWebsite.Configuration;
-using AdminWebsite.Controllers;
+﻿using AdminWebsite.Controllers;
 using Autofac.Extras.Moq;
+using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -13,18 +14,20 @@ namespace AdminWebsite.UnitTests.Controllers
         private AutoMock _mocker;
 
         [Test]
-        public void GetFeatureToggles_Should_Return_All_Feature_Toggles()
+        public async Task GetFeatureToggles_Should_Return_All_Feature_Toggles()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IOptions<FeatureToggleConfiguration>>().Setup(opt => opt.Value).Returns(new FeatureToggleConfiguration()
+            _mocker.Mock<IBookingsApiClient>().Setup(p => p.GetFeatureTogglesAsync()).Returns(Task.FromResult(new FeatureToggleConfiguration()
             {
-                StaffMember = true
-            });
+                StaffMemberFeature = true,
+                EJudFeature = false
+            }));
 
             var _controller = _mocker.Create<FeatureController>();
-            var result = _controller.GetFeatureToggles();
+            var result = await _controller.GetFeatureToggles();
 
-            result.Value.StaffMember.Should().Be(true);
+            result.Value.StaffMemberFeature.Should().BeTrue();
+            result.Value.EJudFeature.Should().BeFalse();
         }
     }
 }

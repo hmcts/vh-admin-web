@@ -16,7 +16,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { FeatureToggleService } from '../../services/feature-toggle.service';
 @Component({
     selector: 'app-assign-judge',
@@ -90,7 +90,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnInit() {
         this.failedSubmission = false;
-        this.featureService.getFeatureToggles().subscribe(t => (this.showStaffMemberFeature = t.staff_member));
+        this.featureService
+            .getFeatureToggles()
+            .pipe(first())
+            .subscribe(t => (this.showStaffMemberFeature = t.staff_member));
 
         this.checkForExistingRequest();
         this.initForm();

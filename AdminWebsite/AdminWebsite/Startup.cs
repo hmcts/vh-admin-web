@@ -50,7 +50,6 @@ namespace AdminWebsite
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
-            services.Configure<FeatureToggleConfiguration>(options => Configuration.Bind("FeatureToggle", options));
             services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));
 
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));

@@ -1,9 +1,11 @@
-﻿using AdminWebsite.Configuration;
+﻿using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -12,14 +14,14 @@ namespace AdminWebsite.Controllers
     [ApiController]
     public class FeatureController : ControllerBase
     {
-        private readonly FeatureToggleConfiguration _featureToggleOptions;
+        private readonly IBookingsApiClient _bookingsApiClient;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public FeatureController(IOptions<FeatureToggleConfiguration> options)
+        public FeatureController(IBookingsApiClient bookingsApiClient)
         {
-            _featureToggleOptions = options.Value;
+            _bookingsApiClient = bookingsApiClient;
         }
 
         /// <summary>
@@ -30,9 +32,9 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetFeatureToggles")]
         [ProducesResponseType(typeof(FeatureToggleConfiguration), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult<FeatureToggleConfiguration> GetFeatureToggles()
+        public async Task<ActionResult<FeatureToggleConfiguration>> GetFeatureToggles()
         {
-            return _featureToggleOptions;
+            return await _bookingsApiClient.GetFeatureTogglesAsync();
         }
     }
 }
