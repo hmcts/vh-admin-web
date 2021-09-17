@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 
 let service: FeatureFlagService;
 let clientApiSpy: jasmine.SpyObj<BHClient>;
-describe('FeatureToggleService', () => {
+describe('FeatureFlagService', () => {
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureFlag']);
         TestBed.configureTestingModule({
