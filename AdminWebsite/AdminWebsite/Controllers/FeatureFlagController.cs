@@ -12,14 +12,14 @@ namespace AdminWebsite.Controllers
     [Produces("application/json")]
     [Route("api/feature-toggle")]
     [ApiController]
-    public class FeatureController : ControllerBase
+    public class FeatureFlagController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public FeatureController(IBookingsApiClient bookingsApiClient)
+        public FeatureFlagController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
         }
@@ -29,12 +29,12 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [SwaggerOperation(OperationId = "GetFeatureToggles")]
-        [ProducesResponseType(typeof(FeatureToggleConfiguration), (int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "GetFeatureFlag")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<FeatureToggleConfiguration>> GetFeatureToggles()
+        public async Task<ActionResult<bool>> GetFeatureFlag([FromQuery] string featureName)
         {
-            return await _bookingsApiClient.GetFeatureTogglesAsync();
+            return await _bookingsApiClient.GetFeatureFlagAsync(featureName);
         }
     }
 }
