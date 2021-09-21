@@ -655,7 +655,7 @@ export class BHClient {
      * @return Success
      */
     getFeatureFlag(featureName: string | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + '/api/feature-toggle?';
+        let url_ = this.baseUrl + '/api/feature-flag?';
         if (featureName !== undefined && featureName !== null) url_ += 'featureName=' + encodeURIComponent('' + featureName) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
