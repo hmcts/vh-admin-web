@@ -68,9 +68,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         featureFlagService
             .getFeatureFlagByName('EJudFeature')
             .pipe(first())
-            .subscribe(result =>
-                this.judiciaryRoles = result ? Constants.JudiciaryRoles : []
-            );
+            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     ngOnInit() {

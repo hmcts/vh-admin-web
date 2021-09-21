@@ -53,7 +53,6 @@ describe('SearchEmailComponent', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
     let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
-
     beforeEach(() => {
         searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
@@ -63,7 +62,6 @@ describe('SearchEmailComponent', () => {
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
-
         TestBed.configureTestingModule({
             declarations: [SearchEmailComponent],
             imports: [SharedModule],
@@ -71,7 +69,7 @@ describe('SearchEmailComponent', () => {
                 { provide: SearchService, useValue: searchServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy }
             ]
         }).compileComponents();
 
@@ -386,7 +384,6 @@ describe('SearchEmailComponent email validate', () => {
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
     let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-
 
     featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);

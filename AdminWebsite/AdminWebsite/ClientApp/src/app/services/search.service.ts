@@ -59,12 +59,11 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient,
-                private featureFlagService: FeatureFlagService) {
+    constructor(private bhClient: BHClient, private featureFlagService: FeatureFlagService) {
         featureFlagService
             .getFeatureFlagByName('EJudFeature')
             .pipe(first())
-            .subscribe(result => this.judiciaryRoles = result ? Constants.JudiciaryRoles : []);
+            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {

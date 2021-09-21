@@ -273,7 +273,7 @@ describe('AddParticipantComponent', () => {
                 loggerSpy
             );
 
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy,featureFlagServiceSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
 
             component.ngOnInit();

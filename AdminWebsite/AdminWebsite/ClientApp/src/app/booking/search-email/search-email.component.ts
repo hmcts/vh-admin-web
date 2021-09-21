@@ -37,7 +37,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     private judiciaryRoles = this.constants.JudiciaryRoles;
     private cannotAddNewUsersRoles = [this.judgeHearingRole];
 
-
     @Input() disabled = true;
 
     @Input() hearingRoleParticipant = '';
@@ -50,7 +49,12 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger, private featureFlagService: FeatureFlagService) {}
+    constructor(
+        private searchService: SearchService,
+        private configService: ConfigService,
+        private logger: Logger,
+        private featureFlagService: FeatureFlagService
+    ) {}
 
     ngOnInit() {
         this.email = this.initialValue;
