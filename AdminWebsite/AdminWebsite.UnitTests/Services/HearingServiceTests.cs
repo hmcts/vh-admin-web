@@ -12,6 +12,7 @@ using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
@@ -68,6 +69,8 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(c => c.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
 
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
@@ -711,18 +714,54 @@ namespace AdminWebsite.UnitTests.Services
                         && x.LinkedParticipants == linkedParticipants)), Times.Once);
         }
 
-        [Test]
-        public async Task Should_process_new_joh_participant()
+        [TestCase(RoleNames.PanelMember)]
+        [TestCase(RoleNames.Winger)]
+        public async Task Should_process_new_joh_participant_EJudFeature_Is_ON(string hearingRole)
         {
             // Arrange
             var participant = new EditParticipantRequest()
             {
                 Id = Guid.NewGuid(),
-                HearingRoleName = "Panel Member",
+                HearingRoleName = hearingRole,
                 ContactEmail = "contact@email.com"
             };
             var removedParticipantIds = new List<Guid>();
             var usernameAdIdDict = new Dictionary<string, User>();
+
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
+                usernameAdIdDict);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().Be(participant.ContactEmail);
+        }
+
+        [TestCase(RoleNames.PanelMember)]
+        [TestCase(RoleNames.Winger)]
+        public async Task Should_NOT_process_new_joh_participant_EJudFeature_Is_OFF(string hearingRole)
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                HearingRoleName = hearingRole,
+                ContactEmail = "contact@email.com"
+            };
+            var removedParticipantIds = new List<Guid>();
+            var usernameAdIdDict = new Dictionary<string, User>();
+
+            var user = new User()
+            {
+                UserName = participant.ContactEmail,
+                Password = "password"
+            };
+
+            _mocker.Mock<IUserAccountService>().Setup(x =>
+                    x.UpdateParticipantUsername(It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(y => y.ContactEmail == participant.ContactEmail)))
+                .ReturnsAsync(user);
+            _mocker.Mock<IBookingsApiClient>()
+               .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
 
             // Act
             var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,

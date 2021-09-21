@@ -672,7 +672,6 @@ describe('AssignJudgeComponent', () => {
             const originalNumberOfParticipant = component.hearing.participants.length;
 
             component.saveJudgeAndStaffMember();
-            console.log(component.hearing.participants);
 
             expect(component.hearing.participants.length).toBe(originalNumberOfParticipant + 1);
         });
@@ -703,7 +702,6 @@ describe('AssignJudgeComponent', () => {
             const originalNumberOfParticipant = component.hearing.participants.length;
 
             component.saveJudgeAndStaffMember();
-            console.log(component.hearing.participants);
             const staffMember = component.hearing.participants.find(x => x.hearing_role_name === staffMemberRole);
 
             expect(component.hearing.participants.length).toBe(originalNumberOfParticipant);

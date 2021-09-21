@@ -25,6 +25,7 @@ import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -207,9 +208,11 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
+featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
@@ -242,6 +245,7 @@ describe('AddParticipantComponent', () => {
                 'checkDuplication',
                 'removeParticipant'
             ]);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -265,10 +269,11 @@ describe('AddParticipantComponent', () => {
                 participantServiceSpy,
                 routerSpy,
                 bookingServiceSpy,
+                featureFlagServiceSpy,
                 loggerSpy
             );
 
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy,featureFlagServiceSpy);
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
 
             component.ngOnInit();
@@ -911,6 +916,7 @@ describe('AddParticipantComponent edit mode', () => {
                 'isHearingAboutToStart'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -921,6 +927,7 @@ describe('AddParticipantComponent edit mode', () => {
                     { provide: ParticipantService, useValue: participantServiceSpy },
                     { provide: BookingService, useValue: bookingServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
@@ -952,6 +959,25 @@ describe('AddParticipantComponent edit mode', () => {
             interpretee = component.form.controls['interpreterFor'];
         })
     );
+
+    it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
+        component.form.setValue({
+            party: 'Panel Member',
+            role: 'Panel Member',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            email: participant.email,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+        component.notFoundParticipant();
+        expect(component.errorJohAccountNotFound).toBeTruthy();
+    });
     it('should initialize form controls', () => {
         component.initialiseForm();
         expect(component.form.controls['firstName']).toBeTruthy();
@@ -983,7 +1009,7 @@ describe('AddParticipantComponent edit mode', () => {
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
         component.searchEmail.email = 'test3@hmcts.net';
 
         component.ngOnInit();
@@ -1229,12 +1255,14 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 'isConferenceClosed',
                 'isHearingAboutToStart'
             ]);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1245,6 +1273,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                     { provide: ParticipantService, useValue: participantServiceSpy },
                     { provide: BookingService, useValue: bookingServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
@@ -1254,10 +1283,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 participantServiceSpy,
                 jasmine.createSpyObj<Router>(['navigate']),
                 bookingServiceSpy,
+                featureFlagServiceSpy,
                 loggerSpy
             );
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             fixture = TestBed.createComponent(AddParticipantComponent);
             component = fixture.componentInstance;
             component.editMode = true;
@@ -1287,6 +1317,29 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayAddButton).toBeTruthy();
         expect(component.displayUpdateButton).toBeFalsy();
     }));
+
+    it('should set errorJohAccountNotFound to false when no results found when searching EJudFeature flag is OFF', () => {
+        component.ngOnInit();
+        component.form.setValue({
+            party: 'Panel Member',
+            role: 'Panel Member',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            email: participant.email,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+
+        component.notFoundParticipant();
+
+        console.log(component.judiciaryRoles);
+        expect(component.errorJohAccountNotFound).toBeFalsy();
+    });
 
     it(
         'should recognize a participantList',
@@ -1465,6 +1518,7 @@ describe('AddParticipantComponent set representer', () => {
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
             const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
 
@@ -1474,9 +1528,10 @@ describe('AddParticipantComponent set representer', () => {
                 participantServiceSpy,
                 { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
                 bookingServiceSpy,
+                featureFlagServiceSpy,
                 loggerSpy
             );
-            component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
+            component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, featureFlagServiceSpy);
 
             component.ngOnInit();
 
@@ -1521,7 +1576,8 @@ describe('AddParticipantComponent set representer', () => {
         component.searchEmail = new SearchEmailComponent(
             jasmine.createSpyObj<SearchService>(['search']),
             configServiceSpy,
-            loggerSpy
+            loggerSpy,
+            featureFlagServiceSpy
         );
         component.participantDetails = participants[0];
         component.ngAfterContentInit();

@@ -34,6 +34,7 @@ using Microsoft.Extensions.Options;
 using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
+using BookingsApi.Contract.Configuration;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -60,7 +61,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
+
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
         
@@ -109,7 +111,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingRoleName = "Representative",
                 ContactEmail = "username@hmcts.net"
             };
-
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.Is<string>(x => x == participant.Username))).ReturnsAsync(string.Empty);
             _mocker.Mock<IUserAccountService>().Setup(x =>
                    x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
@@ -313,7 +314,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_update_user_details_for_panel_member()
+        public async Task Should_not_update_user_details_for_panel_member_EJudFeature_ON()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
@@ -328,6 +329,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
+
             await PostWithParticipants(participant);
 
             _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
@@ -335,7 +337,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_update_user_details_for_winger()
+        public async Task Should_not_update_user_details_for_winger_EJudFeature_ON()
         {
             var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
@@ -355,6 +357,69 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
             _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
         }
+        
+        [Test]
+        public async Task Should_update_user_details_for_panel_member_EJudFeature_OFF()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "",
+                CaseRoleName = "",
+                HearingRoleName = "Panel Member"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _mocker.Mock<IUserAccountService>()
+                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                 {
+                     UserName = participant.Username,
+                     Password = "password"
+                 });
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+
+            await PostWithParticipants(participant);
+
+            _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_update_user_details_for_winger_EJudFeature_OFF()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "",
+                CaseRoleName = "",
+                HearingRoleName = "Winger"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _mocker.Mock<IUserAccountService>()
+                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                 {
+                     UserName = participant.Username,
+                     Password = "password"
+                 });
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+
 
         [Test]
         public async Task Should_update_user_details_for_other_user_without_username()

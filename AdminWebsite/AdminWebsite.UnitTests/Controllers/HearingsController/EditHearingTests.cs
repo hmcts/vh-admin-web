@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -12,6 +13,7 @@ using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -94,6 +96,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
             _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
             _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
+
+            _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -479,9 +483,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
-                HearingRoleName = "Panel Member",
-                ContactEmail = "new@hmcts.net",
-                DisplayName = "new@hmcts.net"
+                HearingRoleName = RoleNames.PanelMember,
+                ContactEmail = "new.contactactemail@hmcts.net",
+                DisplayName = "new.displayName@hmcts.net",
+                CaseRoleName = RoleNames.PanelMember
             });
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
