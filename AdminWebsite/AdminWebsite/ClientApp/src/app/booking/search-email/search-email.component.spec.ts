@@ -160,7 +160,7 @@ describe('SearchEmailComponent', () => {
         component.ngOnInit();
         fixture.detectChanges();
         component.hearingRoleParticipant = 'Panel Member';
-        expect(component.showCreateNewUserWarning).toBeTruthy();
+        expect(component.showCreateNewUserWarning).toBe(true);
     });
 
     it('should validate email', () => {
