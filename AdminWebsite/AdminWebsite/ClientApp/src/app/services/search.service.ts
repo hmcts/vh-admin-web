@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, zip } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
+import { FeatureFlagService } from './feature-flag.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SearchService {
     private minimumSearchLength = 3;
+    private judiciaryRoles;
 
     TitleList: IDropDownModel[] = [
         {
@@ -57,7 +59,12 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private bhClient: BHClient, private featureFlagService: FeatureFlagService) {
+        featureFlagService
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
+    }
 
     participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {
         const allResults: ParticipantModel[] = [];
@@ -66,7 +73,7 @@ export class SearchService {
                 return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
             } else {
                 let persons$: Observable<Array<PersonResponse>>;
-                if (Constants.JudiciaryRoles.includes(hearingRole)) {
+                if (this.judiciaryRoles.includes(hearingRole)) {
                     persons$ = this.searchJudiciaryEntries(term);
                 } else if (hearingRole === Constants.HearingRoles.StaffMember) {
                     persons$ = this.searchStaffMemberAccounts(term);

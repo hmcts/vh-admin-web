@@ -5,6 +5,7 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
@@ -47,7 +48,7 @@ namespace AdminWebsite.Services
         /// <returns></returns>
         Task EditHearingSendConfirmation(HearingDetailsResponse hearing,
             List<ParticipantResponse> participants = null);
-        
+
         /// <summary>
         /// This will notify all participants (excluding the judge and staff member) a hearing has been booked.
         /// Not to be confused with the "confirmed process".
@@ -267,7 +268,7 @@ namespace AdminWebsite.Services
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
-            
+
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
@@ -300,10 +301,10 @@ namespace AdminWebsite.Services
                 .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
             }
 
-           var notificationRequests = filteredParticipants
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();
+            var notificationRequests = filteredParticipants
+                 .Select(participant =>
+                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                 .ToList();
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
@@ -367,7 +368,7 @@ namespace AdminWebsite.Services
                     .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
-   
+
             var notificationRequests = filteredParticipants
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
@@ -472,7 +473,12 @@ namespace AdminWebsite.Services
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
             // Judge and panel member is manually created in AD, no need to create one
-            if (participant.CaseRoleName == "Judge" || participant.HearingRoleName == "Panel Member" || participant.HearingRoleName == "Winger")
+            var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
+
+            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge
+                || participant.HearingRoleName == RoleNames.PanelMember
+                || participant.HearingRoleName == RoleNames.Winger)) 
+                || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))

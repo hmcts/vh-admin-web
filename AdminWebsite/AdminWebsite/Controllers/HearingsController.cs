@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
@@ -14,6 +15,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -81,10 +83,24 @@ namespace AdminWebsite.Controllers
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-                var nonJudgeParticipants = newBookingRequest.Participants.Where(p =>
-                        p.CaseRoleName != "Judge" && p.HearingRoleName != "Panel Member" &&
-                        p.HearingRoleName != "Winger")
-                    .ToList();
+
+                List<ParticipantRequest> nonJudgeParticipants;
+
+                var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
+
+                // Disable to create AAD accounts for Panel members and wingers when ejudFeature is 'OFF'
+                if (ejudFeatureFlag)
+                {
+                    nonJudgeParticipants = newBookingRequest.Participants
+                        .Where(p => p.HearingRoleName != RoleNames.Judge)
+                        .Where(p => p.HearingRoleName != RoleNames.PanelMember)
+                        .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
+                }else
+                {
+                    nonJudgeParticipants = newBookingRequest.Participants
+                        .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
+                }
+
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
@@ -590,11 +606,11 @@ namespace AdminWebsite.Controllers
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
 
                     if (!string.IsNullOrEmpty(adUserId)) user = new User { UserId = adUserId };
-                    else participant.Username = ""; 
+                    else participant.Username = "";
                 }
 
                 // set the participant username according to AD
-                    
+
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     _logger.LogDebug(
@@ -603,7 +619,7 @@ namespace AdminWebsite.Controllers
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                     participant.Username = user.UserName;
                 }
-                
+
                 // username's participant will be set by this point
                 usernameAdIdDict[participant.Username!] = user;
             }

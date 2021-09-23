@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace AdminWebsite.Controllers
 {
     [Produces("application/json")]
-    [Route("api/feature-toggle")]
+    [Route("api/feature-flag")]
     [ApiController]
     public class FeatureFlagController : ControllerBase
     {

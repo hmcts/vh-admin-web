@@ -118,13 +118,15 @@ describe('SearchService', () => {
             'postPersonBySearchTerm',
             'postJudiciaryPersonBySearchTerm',
             'postJudgesBySearchTerm',
-            'getStaffMembersBySearchTerm'
+            'getStaffMembersBySearchTerm',
+            'getFeatureFlag'
         ]);
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.getStaffMembersBySearchTerm.and.returnValue(of(staffMemberList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
+        clientApiSpy.getFeatureFlag.and.returnValue(of(true));
 
         spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
         spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
@@ -143,7 +145,8 @@ describe('SearchService', () => {
                 'postPersonBySearchTerm',
                 'postJudiciaryPersonBySearchTerm',
                 'postJudgesBySearchTerm',
-                'getStaffMembersBySearchTerm'
+                'getStaffMembersBySearchTerm',
+                'getFeatureFlag'
             ]);
 
             spyOn(service, 'searchStaffMemberAccounts').and.returnValue(of(staffMemberList));
@@ -228,6 +231,27 @@ describe('SearchService', () => {
             });
             service.participantSearch(terms, Constants.HearingRoles.Winger).subscribe(participants => {
                 expect(participants.length).toBe(0);
+            });
+        });
+
+        it('should method searchJudiciaryEntries call api and return person array when EJudFeature flag is OFF', () => {
+            clientApiSpy.getFeatureFlag.and.returnValue(of(false));
+
+            const terms = validSearchTerms;
+            service.participantSearch(terms, Constants.HearingRoles.PanelMember).subscribe(participants => {
+                expect(participants.length).toBe(participantList.length);
+            });
+            service.participantSearch(terms, Constants.HearingRoles.Winger).subscribe(participants => {
+                expect(participants.length).toBe(participantList.length);
+            });
+        });
+
+        it('should method searchJudiciaryEntries call api and return judiciary person array when EJudFeature flag is ON', () => {
+            service.participantSearch(validSearchTerms, Constants.HearingRoles.PanelMember).subscribe(participants => {
+                expect(participants.length).toBe(judiciaryPersonList.length);
+            });
+            service.participantSearch(validSearchTerms, Constants.HearingRoles.Winger).subscribe(participants => {
+                expect(participants.length).toBe(judiciaryPersonList.length);
             });
         });
         it('should method searchJudiciaryEntries call api and return persons response array when term is valid', () => {

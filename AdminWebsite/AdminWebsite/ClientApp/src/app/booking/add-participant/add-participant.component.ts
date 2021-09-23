@@ -17,6 +17,8 @@ import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
+import { FeatureFlagService } from '../../services/feature-flag.service';
+import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-add-participant',
@@ -50,7 +52,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
 
-    private judiciaryRoles = Constants.JudiciaryRoles;
+    public judiciaryRoles = Constants.JudiciaryRoles;
 
     constructor(
         private searchService: SearchService,
@@ -58,10 +60,15 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
+        protected featureFlagService: FeatureFlagService,
         protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
+        featureFlagService
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     ngOnInit() {
