@@ -942,7 +942,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
             configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
             fixture = TestBed.createComponent(AddParticipantComponent);
-            
+
             fixture.detectChanges();
             component = fixture.componentInstance;
             component.editMode = true;
