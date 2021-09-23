@@ -1,4 +1,7 @@
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
@@ -17,9 +20,13 @@ describe('BreadcrumbComponent', () => {
         url: '/hearing-schedule',
         ...jasmine.createSpyObj<Router>(['navigate'])
     } as jasmine.SpyObj<Router>;
+    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
     beforeEach(() => {
-        component = new BreadcrumbComponent(router, videoHearingsServiceSpy);
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+
+        component = new BreadcrumbComponent(router, videoHearingsServiceSpy, featureFlagServiceSpy);
         component.canNavigate = true;
         component.ngOnInit();
     });
@@ -87,6 +94,18 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
+    });
+
+    it('should set the breadcrumb name for assign-judge as Judge/Staff when staff member feature is ON', () => {
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        component.ngOnInit();
+        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge/Staff');
+    });
+
+    it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        component.ngOnInit();
+        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
     });
 
     describe('when other checks fail', () => {

@@ -916,7 +916,7 @@ describe('AddParticipantComponent edit mode', () => {
                 'isHearingAboutToStart'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
-            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -932,6 +932,8 @@ describe('AddParticipantComponent edit mode', () => {
                 ]
             }).compileComponents();
 
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+
             const hearing = initExistHearingRequest();
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -940,6 +942,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
             configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
             fixture = TestBed.createComponent(AddParticipantComponent);
+            
             fixture.detectChanges();
             component = fixture.componentInstance;
             component.editMode = true;

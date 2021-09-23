@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { BreadcrumbItems } from './breadcrumbItems';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { first } from 'rxjs/operators';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
     selector: 'app-breadcrumb',
@@ -18,11 +21,26 @@ export class BreadcrumbComponent implements OnInit {
     @Input()
     canNavigate: boolean;
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
+    constructor(
+        private router: Router,
+        private videoHearingsService: VideoHearingsService,
+        private featureService: FeatureFlagService
+    ) { }
 
     ngOnInit() {
         this.currentRouter = this.router.url;
         this.breadcrumbItems = BreadcrumbItems;
+        console.log('here');
+        this.featureService
+            .getFeatureFlagByName('StaffMemberFeature')
+            .pipe(first())
+            .subscribe(result => {
+                console.log('here 2');
+                const index = this.breadcrumbItems.findIndex(b => b.Url === PageUrls.AssignJudge);
+                if (!result && index !== -1) {
+                    this.breadcrumbItems[index].Name = 'Judge';
+                }
+            });
         this.initBreadcrumb();
     }
 
