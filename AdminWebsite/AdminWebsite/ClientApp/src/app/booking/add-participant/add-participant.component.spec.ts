@@ -1280,19 +1280,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
-            component = new AddParticipantComponent(
-                jasmine.createSpyObj<SearchService>(['search']),
-                videoHearingsServiceSpy,
-                participantServiceSpy,
-                jasmine.createSpyObj<Router>(['navigate']),
-                bookingServiceSpy,
-                featureFlagServiceSpy,
-                loggerSpy
-            );
-            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+
             fixture = TestBed.createComponent(AddParticipantComponent);
             component = fixture.componentInstance;
+            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             component.editMode = true;
             component.ngOnInit();
 
