@@ -26,12 +26,11 @@ export class BreadcrumbComponent implements OnInit {
     ngOnInit() {
         this.currentRouter = this.router.url;
         this.breadcrumbItems = BreadcrumbItems;
-        console.log('here');
+
         this.featureService
             .getFeatureFlagByName('StaffMemberFeature')
             .pipe(first())
             .subscribe(result => {
-                console.log('here 2');
                 const index = this.breadcrumbItems.findIndex(b => b.Url === PageUrls.AssignJudge);
                 if (!result && index !== -1) {
                     this.breadcrumbItems[index].Name = 'Judge';
