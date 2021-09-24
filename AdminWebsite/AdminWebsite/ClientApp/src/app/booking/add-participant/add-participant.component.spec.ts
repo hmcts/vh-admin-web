@@ -1332,7 +1332,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
         component.notFoundParticipant();
 
-        console.log(component.judiciaryRoles);
         expect(component.errorJohAccountNotFound).toBeFalsy();
     });
 
@@ -1360,8 +1359,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.showDetails).toBeTruthy();
     }));
 
-    // Skipped as this test running causes a test in breadcrumb.component.spec.ts to fail which needs further investigation
-    xit('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
+    it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
         const debugElement = fixture.debugElement;
         component.selectedParticipantEmail = 'test2@hmcts.net';
         fixture.detectChanges();
