@@ -1,12 +1,12 @@
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
-import { FeatureFlagService } from 'src/app/services/feature-flag.service';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
-
+import { FeatureFlagService } from '../../services/feature-flag.service';
+import { of } from 'rxjs';
+import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
+import { fakeAsync, flush } from '@angular/core/testing';
 
 describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -14,19 +14,19 @@ describe('BreadcrumbComponent', () => {
         'isConferenceClosed',
         'isHearingAboutToStart'
     ]);
+    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
     let component: BreadcrumbComponent;
     const router = {
         url: '/hearing-schedule',
         ...jasmine.createSpyObj<Router>(['navigate'])
     } as jasmine.SpyObj<Router>;
-    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
     beforeEach(() => {
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
-
         component = new BreadcrumbComponent(router, videoHearingsServiceSpy, featureFlagServiceSpy);
+        component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
         component.ngOnInit();
     });
@@ -90,22 +90,24 @@ describe('BreadcrumbComponent', () => {
         expect(router.navigate).toHaveBeenCalledTimes(0);
     });
 
-    it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
-        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
-        component.clickBreadcrumbs(step);
-        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
-    });
-
-    it('should set the breadcrumb name for assign-judge as Judge/Staff when staff member feature is ON', () => {
+    it('should set the breadcrumb name for assign-judge as Judge/Staff when staff member feature is ON', fakeAsync(() => {
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         component.ngOnInit();
+        flush();
+
         expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge/Staff');
-    });
+    }));
 
     it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
         component.ngOnInit();
         expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
+    });
+
+    it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
+        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
+        component.clickBreadcrumbs(step);
+        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
     });
 
     describe('when other checks fail', () => {

@@ -21,12 +21,12 @@ export class BreadcrumbComponent implements OnInit {
     @Input()
     canNavigate: boolean;
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: FeatureFlagService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: FeatureFlagService) {
+        this.breadcrumbItems = JSON.parse(JSON.stringify(BreadcrumbItems));
+    }
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.breadcrumbItems = BreadcrumbItems;
-
         this.featureService
             .getFeatureFlagByName('StaffMemberFeature')
             .pipe(first())
