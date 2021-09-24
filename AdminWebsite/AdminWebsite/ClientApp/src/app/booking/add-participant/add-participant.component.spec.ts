@@ -1332,7 +1332,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
         component.notFoundParticipant();
 
-        console.log(component.judiciaryRoles);
         expect(component.errorJohAccountNotFound).toBeFalsy();
     });
 
