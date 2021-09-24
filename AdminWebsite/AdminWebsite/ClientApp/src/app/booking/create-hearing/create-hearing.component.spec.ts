@@ -51,7 +51,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
     const newHearing = initHearingRequest();
 
-    beforeEach(async () => {
+    beforeEach(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -64,7 +64,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [SharedModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -75,9 +75,7 @@ describe('CreateHearingComponent with multiple case types', () => {
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(CreateHearingComponent);
         component = fixture.componentInstance;
         component.ngOnInit();
@@ -182,7 +180,7 @@ describe('CreateHearingComponent with single case type', () => {
     let fixture: ComponentFixture<CreateHearingComponent>;
     const newHearing = initHearingRequest();
 
-    beforeEach(async () => {
+    beforeEach(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -195,7 +193,7 @@ describe('CreateHearingComponent with single case type', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
 
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -206,9 +204,7 @@ describe('CreateHearingComponent with single case type', () => {
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(CreateHearingComponent);
         component = fixture.componentInstance;
         component.ngOnInit();
@@ -239,7 +235,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     const existingRequest = initExistingHearingRequest();
     existingRequest.hearing_type_name = 'Automated Test';
 
-    beforeEach(async () => {
+    beforeEach(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -253,7 +249,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -264,9 +260,7 @@ describe('CreateHearingComponent with existing request in session', () => {
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         const existingCase = new CaseModel();
         existingCase.name = 'Captain America Vs. The World';
         existingCase.number = '1234';
