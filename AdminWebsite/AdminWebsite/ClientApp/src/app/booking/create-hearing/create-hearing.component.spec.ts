@@ -4,6 +4,7 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { Logger } from 'src/app/services/logger';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -40,6 +41,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 describe('CreateHearingComponent with multiple case types', () => {
     let component: CreateHearingComponent;
@@ -59,6 +61,8 @@ describe('CreateHearingComponent with multiple case types', () => {
             'setBookingHasChanged'
         ]);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
@@ -68,6 +72,7 @@ describe('CreateHearingComponent with multiple case types', () => {
             imports: [SharedModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -192,11 +197,14 @@ describe('CreateHearingComponent with single case type', () => {
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -248,11 +256,14 @@ describe('CreateHearingComponent with existing request in session', () => {
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
