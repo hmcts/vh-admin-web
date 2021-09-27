@@ -916,7 +916,7 @@ describe('AddParticipantComponent edit mode', () => {
                 'isHearingAboutToStart'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
-            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -932,6 +932,8 @@ describe('AddParticipantComponent edit mode', () => {
                 ]
             }).compileComponents();
 
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+
             const hearing = initExistHearingRequest();
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -940,6 +942,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
             configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
             fixture = TestBed.createComponent(AddParticipantComponent);
+
             fixture.detectChanges();
             component = fixture.componentInstance;
             component.editMode = true;
@@ -1277,19 +1280,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
-            component = new AddParticipantComponent(
-                jasmine.createSpyObj<SearchService>(['search']),
-                videoHearingsServiceSpy,
-                participantServiceSpy,
-                jasmine.createSpyObj<Router>(['navigate']),
-                bookingServiceSpy,
-                featureFlagServiceSpy,
-                loggerSpy
-            );
-            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+
             fixture = TestBed.createComponent(AddParticipantComponent);
             component = fixture.componentInstance;
+            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             component.editMode = true;
             component.ngOnInit();
 
@@ -1337,7 +1332,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
         component.notFoundParticipant();
 
-        console.log(component.judiciaryRoles);
         expect(component.errorJohAccountNotFound).toBeFalsy();
     });
 
@@ -1364,6 +1358,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
+
     it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
         const debugElement = fixture.debugElement;
         component.selectedParticipantEmail = 'test2@hmcts.net';
