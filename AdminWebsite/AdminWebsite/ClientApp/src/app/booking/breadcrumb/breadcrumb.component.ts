@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-
-import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { BreadcrumbItems } from './breadcrumbItems';
+import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-
+import { first } from 'rxjs/operators';
+import { FeatureFlagService } from '../../services/feature-flag.service';
+import { PageUrls } from '../../shared/page-url.constants';
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
@@ -14,24 +15,29 @@ export class BreadcrumbComponent implements OnInit {
     breadcrumbItems: BreadcrumbItemModel[];
     currentRouter: string;
     currentItem: BreadcrumbItemModel;
-
     @Input()
     canNavigate: boolean;
-
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
-
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: FeatureFlagService) {
+        this.breadcrumbItems = JSON.parse(JSON.stringify(BreadcrumbItems));
+    }
     ngOnInit() {
         this.currentRouter = this.router.url;
-        this.breadcrumbItems = BreadcrumbItems;
+        this.featureService
+            .getFeatureFlagByName('StaffMemberFeature')
+            .pipe(first())
+            .subscribe(result => {
+                const index = this.breadcrumbItems.findIndex(b => b.Url === PageUrls.AssignJudge);
+                if (!result && index !== -1) {
+                    this.breadcrumbItems[index].Name = 'Judge';
+                }
+            });
         this.initBreadcrumb();
     }
-
     clickBreadcrumbs(step: BreadcrumbItemModel) {
         const nextItem = this.breadcrumbItems.find(s => s.Url === step.Url);
         if (!nextItem) {
             return;
         }
-
         if (nextItem && nextItem.Id < this.currentItem.Id) {
             this.router.navigate([nextItem.Url]);
             return;
@@ -47,7 +53,6 @@ export class BreadcrumbComponent implements OnInit {
             return;
         }
     }
-
     private initBreadcrumb() {
         this.currentItem = this.breadcrumbItems.find(s => s.Url === this.currentRouter);
         if (this.currentItem) {
