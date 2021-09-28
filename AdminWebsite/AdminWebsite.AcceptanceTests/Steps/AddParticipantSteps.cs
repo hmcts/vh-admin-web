@@ -176,7 +176,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
             var title = _c.Test.TestData.AddParticipant.Participant.Title;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, AddParticipantsPage.TitleDropdown, title);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield, _c.WebConfig.SeleniumElementTimeout).SendKeys(user.Firstname);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
