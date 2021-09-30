@@ -21,7 +21,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class AddParticipantSteps : ISteps
     {
-        private const int TimeoutToRetrieveUserFromAad = 60;
         private const string RepresentingText = "Representative for";
         private const string InterpreterText = "Interpreting for";
         private readonly TestContext _c;
@@ -248,7 +247,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private bool ExistingUserEmailIsSelected(string alternativeEmail)
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(alternativeEmail);
-            var retrievedListOfEmails = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(AddParticipantsPage.ExistingEmailLinks, TimeoutToRetrieveUserFromAad);
+            var retrievedListOfEmails = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(AddParticipantsPage.ExistingEmailLinks, _c.WebConfig.SeleniumElementTimeout);
             retrievedListOfEmails.Count.Should().BeGreaterThan(0);
             foreach (var email in retrievedListOfEmails)
             {
