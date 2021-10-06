@@ -77,7 +77,7 @@ parameters:
     value: $(video_web_url)
 
 
-    
+
   # GOV Notify Configuration
   - name: NotifyConfiguration:ApiKey
     value: $(notify-api-key)
@@ -247,7 +247,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
-    buildConfiguration: Debug
+    buildConfiguration: Release
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
