@@ -76,6 +76,10 @@ parameters:
   - name: VhServices:VideoWebUrl
     value: $(video_web_url)
 
+  # Debug
+  - name: buildConfiguration
+    value: Debug
+
   # GOV Notify Configuration
   - name: NotifyConfiguration:ApiKey
     value: $(notify-api-key)
