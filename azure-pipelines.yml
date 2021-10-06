@@ -229,7 +229,8 @@ resources:
     - repository: templates
       type: github
       name: hmcts/azure-devops-templates
-      ref: refs/heads/master
+      ref: VIH-8168
+      #ref: refs/heads/master
       endpoint: hmcts
   containers:
   - container: dotnetsdk
@@ -244,6 +245,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
+    buildConfiguration: Debug
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
