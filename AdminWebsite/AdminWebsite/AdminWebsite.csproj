@@ -93,7 +93,7 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
 
-	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="$(Configuration)' == 'Release' And  '$(PublishRunWebpack)' == 'true' ">
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition=" '$(Configuration)' == 'Release' And '$(PublishRunWebpack)' == 'true' ">
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
@@ -110,7 +110,7 @@
 		</ItemGroup>
 	</Target>
 
-	<Target Name="DebugPublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="$(Configuration)' == 'Debug' And  '$(PublishRunWebpack)' == 'true' ">
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition=" '$(Configuration)' == 'Debug' And '$(PublishRunWebpack)' == 'true' ">
 		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
 		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- " />
