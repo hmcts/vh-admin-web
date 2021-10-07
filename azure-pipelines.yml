@@ -247,7 +247,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
-    buildConfiguration: debug
+    buildConfiguration: Debug
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
