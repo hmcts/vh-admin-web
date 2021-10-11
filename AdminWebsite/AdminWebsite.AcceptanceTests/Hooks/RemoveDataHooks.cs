@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void ClearClosedConferencesForUser(TestApiManager api)
         {
             var response = api.GetConferencesForTodayJudge(_username);
-            var todaysConferences = RequestHelper.Deserialise<List<ConferenceForJudgeResponse>>(response.Content);
+            var todaysConferences = RequestHelper.Deserialise<List<ConferenceForHostResponse>>(FormatSerializedString(response.Content));
             if (todaysConferences == null) return;
 
             foreach (var conference in todaysConferences)
@@ -68,8 +68,18 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var response = api.GetConferenceByConferenceId(conferenceId);
             if (!response.IsSuccessful) return Guid.Empty;
-            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(FormatSerializedString(response.Content));
             return conference.HearingId;
+        }
+
+        private static string FormatSerializedString(string content)
+        {
+            var formattedContent = content;
+            formattedContent = formattedContent.Replace("\\", "");
+            formattedContent = formattedContent.Replace("\"[", "[");
+            formattedContent = formattedContent.Replace("]\"", "]");
+
+            return formattedContent;
         }
 
         private static bool HearingHasNotBeenDeletedAlready(TestApiManager api, Guid hearingId)
