@@ -64,6 +64,14 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             }
         }
 
+        private static Guid GetTheHearingIdFromTheConference(TestApiManager api, Guid conferenceId)
+        {
+            var response = api.GetConferenceByConferenceId(conferenceId);
+            if (!response.IsSuccessful) return Guid.Empty;
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(FormatSerializedString(response.Content));
+            return conference.HearingId;
+        }
+
         private static string FormatSerializedString(string content)
         {
             var formattedContent = content;
@@ -72,14 +80,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             formattedContent = formattedContent.Replace("]\"", "]");
 
             return formattedContent;
-        }
-
-        private static Guid GetTheHearingIdFromTheConference(TestApiManager api, Guid conferenceId)
-        {
-            var response = api.GetConferenceByConferenceId(conferenceId);
-            if (!response.IsSuccessful) return Guid.Empty;
-            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
-            return conference.HearingId;
         }
 
         private static bool HearingHasNotBeenDeletedAlready(TestApiManager api, Guid hearingId)
