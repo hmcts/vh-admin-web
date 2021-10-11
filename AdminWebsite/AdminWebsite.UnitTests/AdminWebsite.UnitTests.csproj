@@ -32,7 +32,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="VideoApi.Client" Version="1.27.4" />
+    <PackageReference Include="VideoApi.Client" Version="1.27.12" />
   </ItemGroup>
 
   <ItemGroup>
