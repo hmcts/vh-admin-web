@@ -148,12 +148,12 @@ stages:
               - Preview
               - Dev
               - AAT
-              #- Sandbox
+              - Sandbox
               - Test1
               - Test2
           - group: vh-video-web-preprod
             env:
-              - Sandbox
+              - Preprod
           - group: vh-video-web-prod
             env:
               - Prod
