@@ -52,6 +52,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     expanded = false;
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
+    isBookedHearing = false;
 
     invalidPattern: string;
     isValidEmail = true;
@@ -116,6 +117,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     private checkForExistingRequest() {
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`);
         this.hearing = this.hearingService.getCurrentRequest();
+        this.isBookedHearing =
+        this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }
 

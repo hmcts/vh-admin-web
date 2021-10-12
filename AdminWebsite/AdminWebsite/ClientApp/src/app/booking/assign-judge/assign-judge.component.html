@@ -119,6 +119,7 @@
         <div class="govuk-form-group">
           <div class="govuk-checkboxes__item">
             <input
+              [attr.disabled]="isBookedHearing ? '' : null"
               class="govuk-checkboxes__input"
               id="showAddStaffMemberFld"
               formControlName="showAddStaffMemberFld"
