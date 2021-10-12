@@ -147,6 +147,7 @@ stages:
             env:
               - Preview
               - Dev
+              - Demo
               - AAT
               - Sandbox
               - Test1
