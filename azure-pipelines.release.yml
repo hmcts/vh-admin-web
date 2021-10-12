@@ -146,7 +146,7 @@ stages:
           - group: vh-video-web-nonprod
             env:
               - Preview
-              - Prod
+              - Dev
               - AAT
               - Sandbox
               - Test1
@@ -156,7 +156,7 @@ stages:
               - Preprod
           - group: vh-video-web-prod
             env:
-              - Dev
+              - Prod
           - name: VanityUrl
             value: $(admin_web_domain_prod)
             env:
