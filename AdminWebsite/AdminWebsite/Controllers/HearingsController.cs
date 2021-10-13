@@ -266,7 +266,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {startingSoonMinutesThreshold} minutes of it starting";
@@ -330,14 +330,12 @@ namespace AdminWebsite.Controllers
                     {
                         // Is the linked participant an existing participant?
                         var secondaryParticipantInLinkContactEmail = originalHearing.Participants
-                        .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
-                        .ContactEmail;
+                            .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
+                            .ContactEmail ?? newParticipants
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
+                            ?.ContactEmail;
 
                         // If the linked participant isn't an existing participant it will be a newly added participant                        
-                        if (secondaryParticipantInLinkContactEmail == null)
-                            secondaryParticipantInLinkContactEmail = newParticipants
-                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
-                            .ContactEmail;
 
                         linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;
 

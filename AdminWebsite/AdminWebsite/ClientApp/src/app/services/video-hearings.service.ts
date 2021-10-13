@@ -24,7 +24,8 @@ import {
     LinkedParticipantRequest,
     LinkedParticipantResponse,
     LinkedParticipant,
-    BookingStatus
+    BookingStatus,
+    HearingRole
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -33,6 +34,7 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
+import { HearingRoles } from '../common/model/hearing-roles.model';
 
 @Injectable({
     providedIn: 'root'
@@ -365,7 +367,8 @@ export class VideoHearingsService {
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.representee = p.representee;
                 participant.company = p.organisation;
-                participant.is_judge = p.case_role_name === 'Judge';
+                participant.is_judge = p.case_role_name === Constants.HearingRoles.Judge;
+                participant.is_staff_member =  p.case_role_name === Constants.HearingRoles.StaffMember
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);

@@ -22,7 +22,6 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
     $subscriptions: Subscription[] = [];
 
     isSubscribedToEmailChanges = false;
-    isStaffMemberexisting = false;
     isBookedHearing = false;
 
     constructor(
