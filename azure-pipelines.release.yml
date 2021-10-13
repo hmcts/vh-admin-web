@@ -63,7 +63,6 @@ resources:
   - pipeline: CI
     source: hmcts.vh-admin-web
     trigger:
-      enabled: true
       branches:
         - master
         - hotfix/*
@@ -144,6 +143,21 @@ stages:
             value: $(AppUri_Prod)
             env:
              - Prod
+          - group: vh-video-web-nonprod
+            env:
+              - Preview
+              - Dev
+              - Demo
+              - AAT
+              - Sandbox
+              - Test1
+              - Test2
+          - group: vh-video-web-preprod
+            env:
+              - Preprod
+          - group: vh-video-web-prod
+            env:
+              - Prod
           - name: VanityUrl
             value: $(admin_web_domain_prod)
             env:
