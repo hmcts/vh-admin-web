@@ -116,10 +116,10 @@
       </div>
 
       <div *ngIf="showStaffMemberFeature">
-        <div *ngIf="(isBookedHearing && !isStaffMemberexisting) || !isBookedHearing" class="govuk-form-group">
+        <div *ngIf="(isBookedHearing && !isStaffMemberExisting) || !isBookedHearing" class="govuk-form-group">
           <div class="govuk-checkboxes__item">
             <input
-              [attr.disabled]="isBookedHearing && isStaffMemberexisting ? '' : null"
+              [attr.disabled]="isBookedHearing && isStaffMemberExisting ? '' : null"
               class="govuk-checkboxes__input"
               id="showAddStaffMemberFld"
               formControlName="showAddStaffMemberFld"

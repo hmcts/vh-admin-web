@@ -35,7 +35,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isStaffMemberValid = false;
     staffMember: ParticipantModel;
     showStaffMemberErrorSummary = false;
-    isStaffMemberexisting = false;
+    isStaffMemberExisting = false;
 
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
@@ -120,7 +120,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.hearing = this.hearingService.getCurrentRequest();
         this.isBookedHearing =
             this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
-        this.isStaffMemberexisting = !!this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
+        this.isStaffMemberExisting  = !!this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }
 
