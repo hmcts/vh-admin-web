@@ -17,7 +17,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 
 import { AddStaffMemberComponent } from './add-staff-member.component';
 
-fdescribe('AddStaffMemberComponent', () => {
+describe('AddStaffMemberComponent', () => {
     let component: AddStaffMemberComponent;
     let fixture: ComponentFixture<AddStaffMemberComponent>;
 
