@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Client;
+using VideoApi.Contract.Consts;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
 using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
@@ -82,6 +83,8 @@ namespace AdminWebsite.Services
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse);
+        bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
 
         Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
@@ -155,9 +158,9 @@ namespace AdminWebsite.Services
         public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse)
         {
-            var originalParticipants = hearingDetailsResponse.Participants
+            var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
                 .Select(EditParticipantRequestMapper.MapFrom).ToList();
-            var requestParticipants = editHearingRequest.Participants;
+            var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
             var hearingCase = hearingDetailsResponse.Cases.First();
             var originalEndpoints = hearingDetailsResponse.Endpoints == null
                 ? new List<EditEndpointRequest>()
@@ -176,6 +179,18 @@ namespace AdminWebsite.Services
                    hearingCase.Name == editHearingRequest.Case.Name &&
                    hearingCase.Number == editHearingRequest.Case.Number &&
                    HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
+        }
+
+        public bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            var existingStaffMember =
+                hearingDetailsResponse.Participants.FirstOrDefault(
+                    x => x.HearingRoleName == HearingRoleName.StaffMember);
+            var newStaffMember =
+                editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.StaffMember);
+            return (existingStaffMember == null && newStaffMember != null) ||
+                   (existingStaffMember != null && newStaffMember == null);
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,

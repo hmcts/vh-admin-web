@@ -24,6 +24,7 @@ export class ParticipantModel {
     user_role_name?: string | undefined;
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
+    is_staff_member?: boolean;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
