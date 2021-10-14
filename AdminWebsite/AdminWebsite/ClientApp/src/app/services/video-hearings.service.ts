@@ -368,7 +368,7 @@ export class VideoHearingsService {
                 participant.representee = p.representee;
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === Constants.HearingRoles.Judge;
-                participant.is_staff_member =  p.case_role_name === Constants.HearingRoles.StaffMember
+                participant.is_staff_member = p.case_role_name === Constants.HearingRoles.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);
