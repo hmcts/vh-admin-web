@@ -52,7 +52,7 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.isBookedHearing =
-        this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
+            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
     }
 
     initialiseForm() {
