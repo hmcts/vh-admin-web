@@ -2,6 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { MockComponent } from 'ng-mocks';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -16,7 +17,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 
 import { AddStaffMemberComponent } from './add-staff-member.component';
 
-describe('AddStaffMemberComponent', () => {
+fdescribe('AddStaffMemberComponent', () => {
     let component: AddStaffMemberComponent;
     let fixture: ComponentFixture<AddStaffMemberComponent>;
 
@@ -88,6 +89,7 @@ describe('AddStaffMemberComponent', () => {
             const hearingModel = new HearingModel();
             hearingModel.court_id = courtId;
             hearingModel.participants = [existingStaffMember];
+            hearingModel.hearing_id = newGuid();
 
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
@@ -100,7 +102,6 @@ describe('AddStaffMemberComponent', () => {
                 expect(staffMember).toEqual(existingStaffMember);
                 done();
             });
-
             component.ngOnInit();
             fixture.detectChanges();
             const searchEmailComponent = fixture.debugElement.query(By.directive(SearchEmailComponent));
@@ -111,6 +112,7 @@ describe('AddStaffMemberComponent', () => {
             expect(component.phone.value).toBe(existingStaffMember.phone);
             expect(component.email.value).toBe(existingStaffMember.email);
             expect(searchEmailComponent.componentInstance.initialValue).toBe(existingStaffMember.email);
+            expect(component.isBookedHearing).toBe(true);
         });
 
         it('should setup event emissions', () => {
@@ -150,7 +152,21 @@ describe('AddStaffMemberComponent', () => {
             expect(component.form.get('email').value).toBe(existingStaffMember.email);
             expect(component.form.get('phone').value).toBe(existingStaffMember.phone);
             expect(component.form.get('party').value).toBe(Constants.PleaseSelect);
+            expect(component.emailDisabled).toBe(false);
+            expect(component.form.get('lastName').disabled).toBe(false);
+            expect(component.form.get('firstName').disabled).toBe(false);
         });
+        it('should grey out email, firstname and lastname', () => {
+            const hearingModel = new HearingModel();
+            component.isBookedHearing = true;
+            hearingModel.participants = [existingStaffMember];
+            component.hearing = hearingModel;
+            component.initialiseForm();
+            expect(component.emailDisabled).toBe(true);
+            expect(component.form.get('lastName').disabled).toBe(true);
+            expect(component.form.get('firstName').disabled).toBe(true);
+        });
+
         it('should set form interpreterFor is removed for staff member', () => {
             const hearingModel = new HearingModel();
             hearingModel.participants = [existingStaffMember, judgeParticipant];
