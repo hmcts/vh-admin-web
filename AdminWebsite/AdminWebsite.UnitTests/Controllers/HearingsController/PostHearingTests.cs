@@ -499,22 +499,24 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public void Should_throw_BookingsApiException()
+        public void  Should_throw_BookingsApiException()
         {
-            var hearing = new BookNewHearingRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
             };
 
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = hearing
-            };
-            
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(bookingRequest));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
+            
+            Assert.ThrowsAsync<BookingsApiException>(() =>PostWithParticipants(participant));
         }
         
         [Test]
