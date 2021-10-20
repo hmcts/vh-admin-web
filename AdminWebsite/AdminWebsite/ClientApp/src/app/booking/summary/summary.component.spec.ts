@@ -113,7 +113,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'isHearingAboutToStart'
 ]);
 
-fdescribe('SummaryComponent with valid request', () => {
+describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
