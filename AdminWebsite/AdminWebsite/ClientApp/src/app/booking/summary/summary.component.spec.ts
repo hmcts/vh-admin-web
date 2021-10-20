@@ -609,7 +609,7 @@ describe('SummaryComponent  with existing request', () => {
     });
 });
 
-fdescribe('SummaryComponent with multi days request', () => {
+describe('SummaryComponent with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
