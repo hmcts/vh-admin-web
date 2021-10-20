@@ -9,6 +9,7 @@ import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.c
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { CaseModel } from '../../common/model/case.model';
@@ -112,7 +113,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'isHearingAboutToStart'
 ]);
 
-describe('SummaryComponent with valid request', () => {
+fdescribe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
@@ -180,7 +181,9 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.hearing.participants.length).toBe(0);
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+        expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.AddParticipants]);
     });
+
     it('should not remove participant by not existing email', () => {
         component.ngOnInit();
         const pat1 = new ParticipantModel();

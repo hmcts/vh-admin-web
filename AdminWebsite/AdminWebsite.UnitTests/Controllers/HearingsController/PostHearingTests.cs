@@ -479,20 +479,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
-            var hearing = new BookNewHearingRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
-            };
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = hearing
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
             };
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
 
-            var result = await _controller.Post(bookingRequest);
+            var result = await PostWithParticipants(participant);
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
         
@@ -518,6 +520,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_throw_Exception()
         {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
+            };
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(new Exception("Some internal error"));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
+            
+            Assert.ThrowsAsync<Exception>(() => PostWithParticipants(participant));
+        }
+        
+        [Test]
+        public async Task Should_throw_bad_request_when_there_is_no_participant()
+        {
             var hearing = new BookNewHearingRequest
             {
                 Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
@@ -527,16 +550,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 BookingDetails = hearing
             };
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithParticipant("Representative")
+                .WithParticipant("Individual");
+            
+            var response = await _controller.Post(bookingRequest);
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .Throws(new Exception("Some internal error"));
-
-            Assert.ThrowsAsync<Exception>(() => _controller.Post(bookingRequest));
+            response.Result.Should().BeOfType<BadRequestResult>();
         }
 
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
         {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
+            };
+            
+            
             const string CURRENT_USERNAME = "test@hmcts.net";
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
@@ -546,8 +580,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                         .WithParticipant("Individual");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
 
-            var result = await PostNewHearing();
+            var result = await PostWithParticipants(participant);
 
             result.Result.Should().BeOfType<CreatedResult>();
             var createdResult = (CreatedResult)result.Result;
@@ -738,13 +776,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var endDate = new DateTime(2020, 10, 6);
             return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
         }
-
-        private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()
-        {
-            // without supplying participants
-            return PostWithParticipants();
-        }
-
+        
         private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
             params BookingsApi.Contract.Requests.ParticipantRequest[] participants)
         {
