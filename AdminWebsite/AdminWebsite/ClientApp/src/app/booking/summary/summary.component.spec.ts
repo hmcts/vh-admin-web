@@ -1,7 +1,8 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
@@ -608,7 +609,7 @@ describe('SummaryComponent  with existing request', () => {
     });
 });
 
-describe('SummaryComponent  with multi days request', () => {
+fdescribe('SummaryComponent with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
@@ -703,5 +704,86 @@ describe('SummaryComponent  with multi days request', () => {
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmationRemoveParticipant).toBe(true);
+    }));
+
+    it('should return isLastParticipant is false when there are not only hosts in the hearing', fakeAsync(() => {
+        component.ngOnInit();
+
+        const participants: ParticipantModel[] = [];
+        let judge = new ParticipantModel();
+        judge.first_name = 'firstname';
+        judge.last_name = 'lastname';
+        judge.email = ' staff_member_firstname.lastname@email.com';
+        judge.case_role_name = Constants.HearingRoles.StaffMember;
+        judge.hearing_role_name = Constants.HearingRoles.StaffMember;
+        judge.id = '100';
+        judge.is_staff_member = true;
+        participants.push(judge);
+
+        let staffMember = new ParticipantModel();
+        staffMember.first_name = 'firstname1';
+        staffMember.last_name = 'lastname1';
+        staffMember.email = 'judge_firstname1.lastname1@email.com';
+        staffMember.case_role_name = Constants.HearingRoles.Judge;
+        staffMember.hearing_role_name = Constants.HearingRoles.Judge;
+        staffMember.interpreterFor = '';
+        staffMember.id = '200';
+        staffMember.is_judge = true;
+        participants.push(staffMember);
+        component.hearing.participants = participants;
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.linkType = LinkedParticipantType.Interpreter;
+        lp.linkedParticipantId = '300';
+        linkedParticipants.push(lp);
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimant';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participant.linked_participants = linkedParticipants;
+        participants.push(participant);
+
+        const participantList = component.participantsListComponent;
+        participantList.removeParticipant({ email: 'firstname.lastname@email.com', is_exist_person: false, is_judge: false });
+        participantList.selectedParticipant.emit();
+        tick(500);
+        expect(component.removePopupComponent.isLastParticipant).toBe(false);
+    }));
+
+    it('should return isLastParticipant is true when there are only hosts in the hearing', fakeAsync(() => {
+        component.ngOnInit();
+
+        const participants: ParticipantModel[] = [];
+        let judge = new ParticipantModel();
+        judge.first_name = 'firstname';
+        judge.last_name = 'lastname';
+        judge.email = ' staff_member_firstname.lastname@email.com';
+        judge.case_role_name = Constants.HearingRoles.StaffMember;
+        judge.hearing_role_name = Constants.HearingRoles.StaffMember;
+        judge.id = '100';
+        judge.is_staff_member = true;
+        participants.push(judge);
+
+        let staffMember = new ParticipantModel();
+        staffMember.first_name = 'firstname1';
+        staffMember.last_name = 'lastname1';
+        staffMember.email = 'judge_firstname1.lastname1@email.com';
+        staffMember.case_role_name = Constants.HearingRoles.Judge;
+        staffMember.hearing_role_name = Constants.HearingRoles.Judge;
+        staffMember.interpreterFor = '';
+        staffMember.id = '200';
+        staffMember.is_judge = true;
+        participants.push(staffMember);
+        component.hearing.participants = participants;
+
+        const participantList = component.participantsListComponent;
+        participantList.removeParticipant({ email: 'judge_firstname1.lastname1@email.com', is_exist_person: false, is_judge: true });
+        participantList.selectedParticipant.emit();
+        tick(500);
+        expect(component.removePopupComponent.isLastParticipant).toBe(true);
     }));
 });
