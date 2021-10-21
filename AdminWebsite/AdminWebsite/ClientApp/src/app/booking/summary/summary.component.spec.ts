@@ -710,7 +710,7 @@ describe('SummaryComponent with multi days request', () => {
         component.ngOnInit();
 
         const participants: ParticipantModel[] = [];
-        let judge = new ParticipantModel();
+        const judge = new ParticipantModel();
         judge.first_name = 'firstname';
         judge.last_name = 'lastname';
         judge.email = ' staff_member_firstname.lastname@email.com';
@@ -720,7 +720,7 @@ describe('SummaryComponent with multi days request', () => {
         judge.is_staff_member = true;
         participants.push(judge);
 
-        let staffMember = new ParticipantModel();
+        const staffMember = new ParticipantModel();
         staffMember.first_name = 'firstname1';
         staffMember.last_name = 'lastname1';
         staffMember.email = 'judge_firstname1.lastname1@email.com';
@@ -737,7 +737,7 @@ describe('SummaryComponent with multi days request', () => {
         lp.linkType = LinkedParticipantType.Interpreter;
         lp.linkedParticipantId = '300';
         linkedParticipants.push(lp);
-        let participant = new ParticipantModel();
+        const participant = new ParticipantModel();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
@@ -758,7 +758,7 @@ describe('SummaryComponent with multi days request', () => {
         component.ngOnInit();
 
         const participants: ParticipantModel[] = [];
-        let judge = new ParticipantModel();
+        const judge = new ParticipantModel();
         judge.first_name = 'firstname';
         judge.last_name = 'lastname';
         judge.email = ' staff_member_firstname.lastname@email.com';
@@ -768,7 +768,7 @@ describe('SummaryComponent with multi days request', () => {
         judge.is_staff_member = true;
         participants.push(judge);
 
-        let staffMember = new ParticipantModel();
+        const staffMember = new ParticipantModel();
         staffMember.first_name = 'firstname1';
         staffMember.last_name = 'lastname1';
         staffMember.email = 'judge_firstname1.lastname1@email.com';
