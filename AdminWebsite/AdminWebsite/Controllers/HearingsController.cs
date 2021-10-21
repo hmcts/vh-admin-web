@@ -93,20 +93,12 @@ namespace AdminWebsite.Controllers
                 {
                     nonJudgeParticipants = newBookingRequest.Participants
                         .Where(p => p.HearingRoleName != RoleNames.Judge)
-                        .Where(p => p.HearingRoleName != RoleNames.StaffMember)
                         .Where(p => p.HearingRoleName != RoleNames.PanelMember)
                         .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
                 }else
                 {
                     nonJudgeParticipants = newBookingRequest.Participants
-                        .Where(p => p.HearingRoleName != RoleNames.StaffMember)
                         .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
-                }
-
-                if (nonJudgeParticipants?.Count <= 0)
-                {
-                    _logger.LogWarning("Participant is required when book hearing");
-                    return BadRequest();
                 }
 
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
