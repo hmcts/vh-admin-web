@@ -35,6 +35,7 @@ using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
 using BookingsApi.Contract.Configuration;
+using BookingsApiParticipantRequest= BookingsApi.Contract.Requests.ParticipantRequest;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -70,15 +71,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void Setup2()
         {
             _mocker.Mock<IUserAccountService>()
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username ??= p.ContactEmail; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username ??= p.ContactEmail; })
                 .ReturnsAsync(new User());
         }
 
         [Test]
         public async Task Should_update_participant_user_details()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username",
                 CaseRoleName = "Applicant",
@@ -86,7 +87,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                     .WithParticipant("Representative", "username");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
@@ -104,7 +104,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             const string adUserName = "username@hmcts.net";
 
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = adUserName,
                 CaseRoleName = "Applicant",
@@ -113,10 +113,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.Is<string>(x => x == participant.Username))).ReturnsAsync(string.Empty);
             _mocker.Mock<IUserAccountService>().Setup(x =>
-                   x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = $"{Guid.NewGuid()}", UserName = adUserName, Password = "" });
+                   x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .ReturnsAsync((BookingsApiParticipantRequest participantRequest) => new User() { UserId = $"{Guid.NewGuid()}", UserName = adUserName, Password = "" });
 
-            var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
+            var participantList = new List<BookingsApiParticipantRequest> { participant };
 
             var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = adUserName };
             var endpointList = new List<EndpointRequest> { endpoints };
@@ -146,7 +146,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_update_participant_username_to_aad_email_id()
         {
             
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username@hmcts.net",
                 CaseRoleName = "Applicant",
@@ -154,7 +154,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ContactEmail = "username@hmcts.net"
             };
             
-            var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
+            var participantList = new List<BookingsApiParticipantRequest> { participant };
 
             const string da = "username@hmcts.net";
             var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = da };
@@ -189,16 +189,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             var newHearingRequest = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                Participants = new List<BookingsApiParticipantRequest>
                 {
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApiParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name1",
                         FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
                         OrganisationName = "", Representee = "", TelephoneNumber = ""
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApiParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact2@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name2",
@@ -243,12 +243,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // request.
             var newHearingRequest = new BookNewHearingRequest()
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                Participants = new List<BookingsApiParticipantRequest>
                 {
-                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
+                    new BookingsApiParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
                         DisplayName = "firstName1 lastName1", FirstName = "firstName1", HearingRoleName = "Litigant in person", LastName = "lastName1", MiddleNames = "",
                         OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
-                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName2.lastName2@email.com",
+                    new BookingsApiParticipantRequest{ CaseRoleName = "CaseRole", ContactEmail = "firstName2.lastName2@email.com",
                         DisplayName = "firstName2 lastName2", FirstName = "firstName2", HearingRoleName = "Interpreter", LastName = "lastName2", MiddleNames = "",
                         OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
 
@@ -294,7 +294,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username",
                 CaseRoleName = "Judge",
@@ -316,7 +316,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_update_user_details_for_panel_member_EJudFeature_ON()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username",
                 CaseRoleName = "",
@@ -339,7 +339,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_update_user_details_for_winger_EJudFeature_ON()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username",
                 CaseRoleName = "",
@@ -361,7 +361,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_user_details_for_panel_member_EJudFeature_OFF()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "",
                 CaseRoleName = "",
@@ -372,8 +372,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                             .WithParticipant("");
             _mocker.Mock<IUserAccountService>()
-                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                 .ReturnsAsync((BookingsApiParticipantRequest participant) => new User()
                  {
                      UserName = participant.Username,
                      Password = "password"
@@ -392,7 +392,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_user_details_for_winger_EJudFeature_OFF()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "",
                 CaseRoleName = "",
@@ -403,8 +403,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                             .WithParticipant("");
             _mocker.Mock<IUserAccountService>()
-                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                 .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                 .ReturnsAsync((BookingsApiParticipantRequest participant) => new User()
                  {
                      UserName = participant.Username,
                      Password = "password"
@@ -424,7 +424,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_user_details_for_other_user_without_username()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "",
                 CaseRoleName = "",
@@ -433,8 +433,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             _mocker.Mock<IUserAccountService>()
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .ReturnsAsync((BookingsApiParticipantRequest participant) => new User()
                 {
                     UserName = participant.ContactEmail,
                     Password = "password"
@@ -455,7 +455,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_get_user_details_for_other_user_with_username()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = "username",
                 CaseRoleName = "",
@@ -479,48 +479,73 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
-            var hearing = new BookNewHearingRequest
+            var participant = new BookingsApiParticipantRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
-            };
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = hearing
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
             };
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
 
-            var result = await _controller.Post(bookingRequest);
+            var result = await PostWithParticipants(participant);
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
         
         [Test]
-        public void Should_throw_BookingsApiException()
+        public void  Should_throw_BookingsApiException()
         {
-            var hearing = new BookNewHearingRequest
+            var participant = new BookingsApiParticipantRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
             };
 
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = hearing
-            };
-            
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(bookingRequest));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
+            
+            Assert.ThrowsAsync<BookingsApiException>(() =>PostWithParticipants(participant));
         }
         
         [Test]
         public void Should_throw_Exception()
         {
+            var participant = new BookingsApiParticipantRequest
+            {
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
+            };
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(new Exception("Some internal error"));
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
+            
+            Assert.ThrowsAsync<Exception>(() => PostWithParticipants(participant));
+        }
+        
+        [Test]
+        public async Task Should_throw_bad_request_when_there_is_no_participant()
+        {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Participants = new List<BookingsApiParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -528,15 +553,23 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = hearing
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .Throws(new Exception("Some internal error"));
+            var response = await _controller.Post(bookingRequest);
 
-            Assert.ThrowsAsync<Exception>(() => _controller.Post(bookingRequest));
+            response.Result.Should().BeOfType<BadRequestResult>();
         }
 
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
         {
+            var participant = new BookingsApiParticipantRequest
+            {
+                Username = "UserName",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
+            };
+            
+            
             const string CURRENT_USERNAME = "test@hmcts.net";
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
@@ -546,8 +579,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                         .WithParticipant("Individual");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
+            _mocker.Mock<IUserAccountService>()
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = participant.Username; })
+                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = participant.Username, Password = "test123" });
 
-            var result = await PostNewHearing();
+            var result = await PostWithParticipants(participant);
 
             result.Result.Should().BeOfType<CreatedResult>();
             var createdResult = (CreatedResult)result.Result;
@@ -655,7 +692,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_for_new_representative_participant_added()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = string.Empty, // New participant
                 CaseRoleName = "Applicant",
@@ -669,8 +706,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _mocker.Mock<IUserAccountService>()
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = newUserName; })
                 .ReturnsAsync(new User() { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
@@ -681,7 +718,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_for_new_individual_participant_added()
         {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = string.Empty, // New participant
                 CaseRoleName = "Applicant",
@@ -695,8 +732,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _mocker.Mock<IUserAccountService>()
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApiParticipantRequest>()))
+                .Callback<BookingsApiParticipantRequest>(p => { p.Username = newUserName; })
                 .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
@@ -709,7 +746,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_not_send_email_for_existing_participant_added()
         {
             var existingUserName = "some_new_user@hmcts.net";
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            var participant = new BookingsApiParticipantRequest
             {
                 Username = existingUserName,
                 CaseRoleName = "Applicant",
@@ -738,19 +775,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var endDate = new DateTime(2020, 10, 6);
             return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
         }
-
-        private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()
-        {
-            // without supplying participants
-            return PostWithParticipants();
-        }
-
+        
         private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
-            params BookingsApi.Contract.Requests.ParticipantRequest[] participants)
+            params BookingsApiParticipantRequest[] participants)
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>(participants)
+                Participants = new List<BookingsApiParticipantRequest>(participants)
             };
             
             var bookingRequest = new BookHearingRequest
