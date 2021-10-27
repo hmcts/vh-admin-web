@@ -210,15 +210,17 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 }, 500);
             })
         );
-        this.$subscriptions.push(this.addParticipantOnClick$.pipe(debounceTime(200)).subscribe(x => {
-            this.saveParticipant();
-        }));
+        this.$subscriptions.push(
+            this.addParticipantOnClick$.pipe(debounceTime(200)).subscribe(x => {
+                this.saveParticipant();
+            })
+        );
     }
 
     addParticipantOnClick() {
         this.addParticipantOnClick$.next();
     }
-    
+
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
