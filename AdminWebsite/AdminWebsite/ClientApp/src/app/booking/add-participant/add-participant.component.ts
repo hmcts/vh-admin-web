@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
@@ -18,7 +18,7 @@ import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
 import { FeatureFlagService } from '../../services/feature-flag.service';
-import { first } from 'rxjs/operators';
+import { debounceTime, first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-add-participant',
@@ -48,6 +48,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     interpreteeList: ParticipantModel[] = [];
     showConfirmRemoveInterpretee = false;
+    addParticipantOnClick$ = new Subject();
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -209,8 +210,15 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 }, 500);
             })
         );
+        this.$subscriptions.push(this.addParticipantOnClick$.pipe(debounceTime(200)).subscribe(x => {
+            this.saveParticipant();
+        }));
     }
 
+    addParticipantOnClick() {
+        this.addParticipantOnClick$.next();
+    }
+    
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {

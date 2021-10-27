@@ -206,7 +206,7 @@
         <div class="govuk-grid-column-one-half" *ngIf="displayAddButton">
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
-            <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn" class="govuk-link govuk-body">
+            <a href="javascript:void(0)" (click)="saveParticipant($event)" type="submit" id="addParticipantBtn" class="govuk-link govuk-body">
               Add participant
             </a>
           </span>
