@@ -14,11 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BookingsApi.Client" Version="1.27.11" />
+    <PackageReference Include="BookingsApi.Client" Version="1.27.12" />
     <PackageReference Include="GovukNotify" Version="4.0.1" />
     <PackageReference Include="NotificationApi.Client" Version="1.27.1" />
     <PackageReference Include="TestApi.Client" Version="1.27.0" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.54" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.60" />
   </ItemGroup>
 
   <ItemGroup>

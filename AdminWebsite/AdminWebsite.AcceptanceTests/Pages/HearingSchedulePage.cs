@@ -13,7 +13,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CourtRoomTextfield = By.Id("court-room");
         public static By NextButton = By.Id("nextButton");
         public static By CancelButton = By.Id("cancelButton");
-        public static By HearingDateError = By.Id("hearingDate-error");
+        public static By HearingDateError = By.Id("hearingDate-past-error");
         public static By HearingTimeError = By.Id("hearingTime-error");
         public static By HearingEndDateTextField = By.Id("endHearingDate");
         public static By MultiDaysCheckBox = By.Id("multiDaysHearing");

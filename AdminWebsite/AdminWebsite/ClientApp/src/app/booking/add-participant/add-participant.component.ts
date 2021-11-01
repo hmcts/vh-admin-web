@@ -639,7 +639,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private checkParticipants(): boolean {
         let participantsValid = false;
         if (this.hearing.participants && this.hearing.participants.length > 0) {
-            const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
+            const anyParticipants = this.hearing.participants.filter(x => !x.is_judge && !x.is_staff_member);
             participantsValid = anyParticipants && anyParticipants.length > 0;
         }
         return participantsValid;

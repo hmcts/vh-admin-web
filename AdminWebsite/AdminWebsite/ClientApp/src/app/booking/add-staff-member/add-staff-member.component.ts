@@ -22,6 +22,7 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
     $subscriptions: Subscription[] = [];
 
     isSubscribedToEmailChanges = false;
+    isBookedHearing = false;
 
     constructor(
         protected bookingService: BookingService,
@@ -50,6 +51,8 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
 
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
+        this.isBookedHearing =
+            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
     }
 
     initialiseForm() {
@@ -61,12 +64,16 @@ export class AddStaffMemberComponent extends AddParticipantBaseDirective impleme
         const existingStaffMember = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
         if (existingStaffMember) {
+            if (this.isBookedHearing) {
+                this.form.get('lastName').disable();
+                this.form.get('firstName').disable();
+                this.emailDisabled = true;
+            }
             this.displayName.setValue(existingStaffMember.display_name);
             this.firstName.setValue(existingStaffMember.first_name);
             this.lastName.setValue(existingStaffMember.last_name);
             this.phone.setValue(existingStaffMember.phone);
             this.email.setValue(existingStaffMember.email);
-
             this.isStaffMemberValid.emit(true);
             this.staffMember.emit(existingStaffMember);
         }

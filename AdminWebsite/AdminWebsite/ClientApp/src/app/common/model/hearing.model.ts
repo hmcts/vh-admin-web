@@ -11,6 +11,7 @@ export class HearingModel {
         this.endpoints = [];
         this.linked_participants = [];
         this.hearing_dates = [];
+        this.hearing_id = '';
     }
     hearing_id?: string | undefined;
     scheduled_date_time?: Date | undefined;
