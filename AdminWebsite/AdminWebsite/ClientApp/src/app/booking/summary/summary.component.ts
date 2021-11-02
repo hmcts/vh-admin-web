@@ -123,17 +123,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.showConfirmationRemoveParticipant = true;
         }
-        setTimeout(() => {
-            if (isInterpretee) {
-                if (this.removeInterpreterPopupComponent) {
-                    this.removeInterpreterPopupComponent.isLastParticipant = !isNotLast;
-                }
-            } else {
-                if (this.removePopupComponent) {
-                    this.removePopupComponent.isLastParticipant = !isNotLast;
-                }
-            }
-        }, 500);
     }
 
     handleContinueRemove() {
@@ -165,13 +154,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearingService.updateHearingRequest(this.hearing);
             this.hearingService.setBookingHasChanged(true);
             this.bookingService.removeParticipantEmail();
-            this.isLastParticipanRemoved();
-        }
-    }
-    isLastParticipanRemoved() {
-        const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
-        if (!filteredParticipants || filteredParticipants.length === 0) {
-            this.router.navigate([PageUrls.AddParticipants]);
         }
     }
 
@@ -396,7 +378,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();
-        this.isLastParticipanRemoved();
     }
 
     get canEdit() {
