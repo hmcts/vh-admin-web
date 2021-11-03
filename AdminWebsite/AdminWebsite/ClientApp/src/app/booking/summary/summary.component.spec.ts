@@ -634,9 +634,7 @@ describe('SummaryComponent  with multi days request', () => {
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
-    component.removeInterpreterPopupComponent.isLastParticipant = false;
     component.removePopupComponent = new RemovePopupComponent();
-    component.removePopupComponent.isLastParticipant = false;
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
