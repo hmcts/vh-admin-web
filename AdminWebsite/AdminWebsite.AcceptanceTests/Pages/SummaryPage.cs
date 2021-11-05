@@ -19,6 +19,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By RemoveInterpreter = By.Id("btnConfirmRemoveInterpreter");
         public static By CancelRemoveParticipant = By.Id("btn-cancel");
         public static By RemoveInterpreterMessage = CommonLocators.ElementContainingText("Removing this participant will also remove their interpreter.");
+        public static By RemoveParticipantMessage(string displayName) => CommonLocators.ElementContainingText($"Are you sure you want to remove {displayName} from the hearing booking?");
         public static By ParticipantConfirmationMessage = By.XPath("//h1[contains(text(),'hearing booking')]");
         public static By ParticipantsLink = By.XPath("//a[contains(text(),'Participants')]");
         public static By BookButton = By.Id("bookButton");
