@@ -30,6 +30,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 : CommonAdminWebPage.BookingsListLink);
         }
 
+        [When(@"the user views the booking details after seeing the successful booking message")]
+        public void TheUserViewsTheBookingDetails()
+        {
+            VerifyBookingWasSuccessful();
+            _browsers[_c.CurrentUser].ClickLink(BookingConfirmationPage.ViewThisBookingLink);
+        }
+
         [When(@"the user views the booking confirmation form")]
         public void VerifyBookingWasSuccessful()
         {
