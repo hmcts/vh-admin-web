@@ -92,11 +92,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnInit() {
         this.failedSubmission = false;
-        // this.featureService
-        //     .getFeatureFlagByName('StaffMemberFeature')
-        //     .pipe(first())
-        //     .subscribe(result => (this.showStaffMemberFeature = result));
-
         this.checkForExistingRequest();
         this.initForm();
 
