@@ -651,15 +651,6 @@ describe('AssignJudgeComponent', () => {
             expect(addStaffMemberComponent).toBeFalsy();
         });
 
-        it('should show component for adding staff member if add staff member checkbox is checked', () => {
-            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
-            addStaffMemberCheckbox.nativeElement.click();
-            fixture.detectChanges();
-
-            const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
-            expect(addStaffMemberComponent).toBeTruthy();
-        });
-
         it('should add staff member to hearing', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
 
@@ -707,45 +698,6 @@ describe('AssignJudgeComponent', () => {
             expect(component.hearing.participants.length).toBe(originalNumberOfParticipant);
             expect(staffMember.display_name).toBe(newDisplayName);
         });
-
-        describe('changeIsStaffMemberValid', () => {
-            it('should subscribe to AddStaffMemberComponent and update if the staff member is valid', () => {
-                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
-                addStaffMemberCheckbox.nativeElement.click();
-                fixture.detectChanges();
-                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
-
-                addStaffMemberComponent.componentInstance.isStaffMemberValid.emit(true);
-                fixture.detectChanges();
-
-                expect(component.isStaffMemberValid).toBe(true);
-            });
-        });
-
-        describe('changeStaffMember', () => {
-            it('should subscribe to AddStaffMemberComponent for staff member changes', () => {
-                const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
-                addStaffMemberCheckbox.nativeElement.click();
-                fixture.detectChanges();
-
-                const staffMember = new ParticipantModel({ display_name: 'Ahoy There' });
-                const addStaffMemberComponent = fixture.debugElement.query(By.directive(AddStaffMemberComponent));
-
-                addStaffMemberComponent.componentInstance.staffMember.emit(staffMember);
-                fixture.detectChanges();
-
-                expect(component.staffMember).toBe(staffMember);
-            });
-
-            it('should show staff member field if set to false and staff member changes', () => {
-                component.showAddStaffMemberFld.setValue(false);
-
-                component.changeStaffMember(new ParticipantModel());
-
-                expect(component.showAddStaffMemberFld.value).toBe(true);
-            });
-        });
-
         describe('setFieldSubscription', () => {
             it('should subscribe to show staff member field changes, and remove staff member from hearing if not shown', fakeAsync(() => {
                 component.$subscriptions.forEach(subcription => {
