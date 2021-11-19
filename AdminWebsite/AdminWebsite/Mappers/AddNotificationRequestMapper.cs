@@ -316,21 +316,24 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.StaffMemberDemoOrTest;
                 parameters.Add(NotifyParams.StaffMember, $"{participant.FirstName} {participant.LastName}");
-            }
+            }            
             else if (participant.UserRoleName.Contains(RoleNames.Judge, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (hearing.IsJudgeEmailEJud())
-                {
-                    notificationType = NotificationType.EJudJudgeDemoOrTest;
-                }
-                else
-                {
-                    notificationType = NotificationType.JudgeDemoOrTest;
-                    parameters.Add(NotifyParams.CourtroomAccountUserName, participant.Username);
-                }
+                var judgeEmail = hearing.GetJudgeEmail();
+                if (string.IsNullOrEmpty(judgeEmail)) return null;
+                    if (hearing.IsJudgeEmailEJud())
+                    {
+                        notificationType = NotificationType.EJudJudgeDemoOrTest;
+                    }
+                    else
+                    {
+                        notificationType = NotificationType.JudgeDemoOrTest;
+                        parameters.Add(NotifyParams.CourtroomAccountUserName, participant.Username);
+                    }
 
-                parameters.Add(NotifyParams.Judge, participant.DisplayName);
-                parameters.Remove(NotifyParams.UserName);
+                    parameters.Add(NotifyParams.Judge, participant.DisplayName);
+                    parameters.Remove(NotifyParams.UserName);
+                    participant.ContactEmail = judgeEmail;                   
             }
             else
             {

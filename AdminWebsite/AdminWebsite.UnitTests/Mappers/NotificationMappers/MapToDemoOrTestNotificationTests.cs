@@ -1,4 +1,6 @@
-﻿using AdminWebsite.Mappers;
+﻿using AdminWebsite.Extensions;
+using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using NotificationApi.Contract;
@@ -17,7 +19,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Participants = new List<ParticipantResponse>(),
-                ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc)
+                ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc),
+                OtherInformation = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789" }.ToOtherInformationString()
             };
             const NotificationType expectedNotificationType = NotificationType.EJudJudgeDemoOrTest;
             const string testType = "Generic";
@@ -63,7 +66,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void Should_map_judge_demo_or_test_notification()
+        public void Should_not_map_judge_demo_or_test_notification()
         {
             //Arrange
             var hearing = new HearingDetailsResponse
@@ -71,6 +74,43 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Participants = new List<ParticipantResponse>(),
                 ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc)
+        };
+            const string testType = "Generic";
+            const string caseNumber = "MBFY/17364";
+
+            var participant = new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                Username = "testusername@hmcts.net",
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact@hearings.reform.hmcts.net",
+                FirstName = "John",
+                HearingRoleName = "hearingrolename",
+                LastName = "Doe",
+                TelephoneNumber = "0123456789",
+                UserRoleName = "Judge",
+                DisplayName = "Johnny",
+            };
+
+            hearing.Participants.Add(participant);
+
+            //Act
+            var result = AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, caseNumber, testType);
+
+            //Assert
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void Should_map_judge_demo_or_test_notification_with_judge_email()
+        {
+            //Arrange
+            var hearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>(),
+                ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc),
+                OtherInformation = new OtherInformationDetails { JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789" }.ToOtherInformationString()
             };
             const NotificationType expectedNotificationType = NotificationType.JudgeDemoOrTest;
             const string testType = "Generic";
@@ -114,8 +154,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.MessageType.Should().Be(MessageType.Email);
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
-        }        
-        
+        }
+
         [Test]
         public void Should_map_staffmember_demo_or_test_notification()
         {
