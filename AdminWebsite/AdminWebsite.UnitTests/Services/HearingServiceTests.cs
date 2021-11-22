@@ -965,7 +965,7 @@ namespace AdminWebsite.UnitTests.Services
         
         [Test]
         public async Task EditHearingSendConfirmation_Should_Receive_Call_When_HearingType_Is_DEMO_for_Confirmedhearing()
-        { // chris
+        { 
 
             _hearing.OtherInformation =
                 new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
@@ -991,7 +991,7 @@ namespace AdminWebsite.UnitTests.Services
 
         [Test]
         public async Task EditHearingSendConfirmation_Judge_Should_not_Receive_Call_Without_judge_email_address_when_HearingType_Is_DEMO_for_Confirmedhearing()
-        { // chris         
+        {          
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Demo";
             _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
@@ -1010,7 +1010,7 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.ParticipantDemoOrTest)),
                 Times.Exactly(3));
         }
-
+        
         [Test]
         public async Task EditHearingSendConfirmation_Should_NOT_Receive_Call_When_HearingType_Is_AUTOMATEDTEST()
         {
@@ -1041,6 +1041,18 @@ namespace AdminWebsite.UnitTests.Services
                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(n => n.NotificationType == NotificationType.HearingConfirmationStaffMember)), Times.Once);
         }
 
+        [Test]
+        public async Task CreateNotifcations_Should_Not_Receive_Call_When_There_Are_No_Requests()
+        {
+            _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Demo";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
+            _hearing.Participants.Clear();
+            await _service.EditHearingSendConfirmation(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                 .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never());
+        }
 
         [Test]
         public async Task Should_process_new_joh_participant_when_participant_is_in_list_and_is_removed()

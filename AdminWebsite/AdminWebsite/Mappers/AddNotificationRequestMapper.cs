@@ -320,7 +320,10 @@ namespace AdminWebsite.Mappers
             else if (participant.UserRoleName.Contains(RoleNames.Judge, StringComparison.InvariantCultureIgnoreCase))
             {
                 var judgeEmail = hearing.GetJudgeEmail();
-                if (string.IsNullOrEmpty(judgeEmail)) return null;
+                    if (string.IsNullOrEmpty(judgeEmail))
+                    {
+                        return null;
+                    }
                     if (hearing.IsJudgeEmailEJud())
                     {
                         notificationType = NotificationType.EJudJudgeDemoOrTest;

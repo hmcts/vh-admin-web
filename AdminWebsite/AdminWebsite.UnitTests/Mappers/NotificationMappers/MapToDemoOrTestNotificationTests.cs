@@ -25,6 +25,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             const NotificationType expectedNotificationType = NotificationType.EJudJudgeDemoOrTest;
             const string testType = "Generic";
             const string caseNumber = "MBFY/17364";
+            const string expectedJudgeEmail = "judge@hmcts.net";
 
             var participant = new ParticipantResponse
             {
@@ -58,7 +59,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.ContactEmail.Should().Be(expectedJudgeEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);
@@ -66,7 +67,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         }
 
         [Test]
-        public void Should_not_map_judge_demo_or_test_notification()
+        public void Should_return_null_and_not_map_judge_demo_or_test_notification()
         {
             //Arrange
             var hearing = new HearingDetailsResponse
