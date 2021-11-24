@@ -77,12 +77,7 @@ describe('BreadcrumbComponent', () => {
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledTimes(0);
     });
-    it('should set the breadcrumb name for assign-judge as Judge/Staff when staff member feature is ON', fakeAsync(() => {
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
-        component.ngOnInit();
-        flush();
-        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge/Staff');
-    }));
+
     it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
         component.ngOnInit();
