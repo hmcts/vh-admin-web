@@ -859,6 +859,21 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(4));
         }
+
+        [Test]
+        public async Task NewHearingSendConfirmation_Should_send_confirmation_email_when_hearing_is_generic_case_type_for_confirmed_hearing_and_include_ejud()
+        {
+            var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
+            judge.Username = "judge@judiciary.com";
+            _hearing.CaseTypeName = "Generic";
+            _hearing.HearingTypeName = "Daily Test";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
+
+            await _service.NewHearingSendConfirmation(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["test type"] == _hearing.HearingTypeName)), Times.Exactly(5));
+        }
         [Test]
         public async Task NewHearingSendConfirmation_Should_send_confirmation_email_when_hearing_is_generic_case_type_for_confirmed_hearing_and_include_judge()
         {
