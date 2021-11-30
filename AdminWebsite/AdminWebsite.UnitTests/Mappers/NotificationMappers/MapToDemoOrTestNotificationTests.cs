@@ -15,13 +15,12 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void Should_map_ejud_judge_demo_or_test_notification()
         {
             //Arrange
-            const string expectedJudgeEmail = "judge@judiciary.hmcts.net";
             var hearing = new HearingDetailsResponse
             {
                 Id = Guid.NewGuid(),
                 Participants = new List<ParticipantResponse>(),
                 ScheduledDateTime = new DateTime(2020, 2, 10, 12, 15, 0, DateTimeKind.Utc),
-                OtherInformation = new OtherInformationDetails { JudgeEmail = expectedJudgeEmail, JudgePhone = "123456789" }.ToOtherInformationString()
+                OtherInformation = new OtherInformationDetails { JudgePhone = "123456789" }.ToOtherInformationString()
             };
             const NotificationType expectedNotificationType = NotificationType.EJudJudgeDemoOrTest;
             const string testType = "Generic";
@@ -32,6 +31,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Username = "contact@judiciary.hmcts.net",
                 CaseRoleName = "caserolename",
+                ContactEmail = "judge@judiciary.hmcts.net",
                 FirstName = "John",
                 HearingRoleName = "hearingrolename",
                 LastName = "Doe",
@@ -58,7 +58,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(expectedJudgeEmail);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
             result.PhoneNumber.Should().Be(participant.TelephoneNumber);

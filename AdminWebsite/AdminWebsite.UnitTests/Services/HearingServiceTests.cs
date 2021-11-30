@@ -979,7 +979,7 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task EditHearingSendConfirmation_Should_Receive_Call_When_HearingType_Is_DEMO_for_Confirmedhearing()
+        public async Task EditHearingSendConfirmation_Should_Create_Notifications_When_HearingType_Is_DEMO_for_Confirmedhearing()
         { 
 
             _hearing.OtherInformation =
@@ -1005,7 +1005,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task EditHearingSendConfirmation_Judge_Should_not_Receive_Call_Without_judge_email_address_when_HearingType_Is_DEMO_for_Confirmedhearing()
+        public async Task EditHearingSendConfirmation_Should_not_Create_Notification_For_Judge_Without_judge_email_address_when_HearingType_Is_DEMO_for_Confirmedhearing()
         {          
             _hearing.CaseTypeName = "Generic";
             _hearing.HearingTypeName = "Demo";

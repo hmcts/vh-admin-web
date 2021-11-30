@@ -326,18 +326,18 @@ namespace AdminWebsite.Mappers
                 {
                     return null;
                 }
-                    if (isEmailEjud)
-                    {
-                        notificationType = NotificationType.EJudJudgeDemoOrTest;
-                    }
-                    else
-                    {
-                        notificationType = NotificationType.JudgeDemoOrTest;
-                        parameters.Add(NotifyParams.CourtroomAccountUserName, participant.Username);
-                    }
+                if (isEmailEjud)
+                {
+                    notificationType = NotificationType.EJudJudgeDemoOrTest;
+                }
+                else
+                {
+                    notificationType = NotificationType.JudgeDemoOrTest;
+                    parameters.Add(NotifyParams.CourtroomAccountUserName, participant.Username);
+                }
 
-                    parameters.Add(NotifyParams.Judge, participant.DisplayName);
-                    parameters.Remove(NotifyParams.UserName);              
+                parameters.Add(NotifyParams.Judge, participant.DisplayName);
+                parameters.Remove(NotifyParams.UserName);              
             }
             else
             {
