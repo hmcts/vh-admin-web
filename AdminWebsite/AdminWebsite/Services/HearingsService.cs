@@ -378,17 +378,18 @@ namespace AdminWebsite.Services
 
             if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
             {
-                filteredParticipants = filteredParticipants
+                filteredParticipants = filteredParticipants 
                     .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
                     .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
 
             var notificationRequests = filteredParticipants
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName))
+                .Select(participant => 
+                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName)).Where(x => x != null)
                 .ToList();
 
+            if (notificationRequests.Count < 1) return;
             await CreateNotifications(notificationRequests);
         }
 

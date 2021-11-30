@@ -307,6 +307,7 @@ namespace AdminWebsite.Mappers
             };
 
             NotificationType notificationType;
+            string judgeEmail = null;
             if (hearing.IsParticipantAEJudJudicialOfficeHolder(participant.Id))
             {
                 notificationType = NotificationType.EJudJohDemoOrTest;
@@ -316,10 +317,16 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.StaffMemberDemoOrTest;
                 parameters.Add(NotifyParams.StaffMember, $"{participant.FirstName} {participant.LastName}");
-            }
+            }            
             else if (participant.UserRoleName.Contains(RoleNames.Judge, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (hearing.IsJudgeEmailEJud())
+                bool isEmailEjud = hearing.IsJudgeEmailEJud();
+                judgeEmail = hearing.GetJudgeEmail();
+                if (string.IsNullOrEmpty(judgeEmail) && !isEmailEjud)
+                {
+                    return null;
+                }
+                if (isEmailEjud)
                 {
                     notificationType = NotificationType.EJudJudgeDemoOrTest;
                 }
@@ -330,7 +337,7 @@ namespace AdminWebsite.Mappers
                 }
 
                 parameters.Add(NotifyParams.Judge, participant.DisplayName);
-                parameters.Remove(NotifyParams.UserName);
+                parameters.Remove(NotifyParams.UserName);              
             }
             else
             {
@@ -342,7 +349,7 @@ namespace AdminWebsite.Mappers
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.ContactEmail,
+                ContactEmail = judgeEmail ?? participant.ContactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.TelephoneNumber,
