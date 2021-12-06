@@ -126,7 +126,7 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse);
+                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse); 
                 }
                 else
                 {
@@ -362,7 +362,11 @@ namespace AdminWebsite.Controllers
                 var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
                 await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
+                if (!updatedHearing.HasGenericHearingJudgeChanged(originalHearing)) 
+                {
+                    await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
+                }
+
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
 
                 var participantsForAmendment = updatedHearing.Participants
@@ -384,7 +388,10 @@ namespace AdminWebsite.Controllers
         private async Task SendJudgeEmailIfNeeded(HearingDetailsResponse updatedHearing,
             HearingDetailsResponse originalHearing)
         {
-            if (updatedHearing.HasJudgeEmailChanged(originalHearing) && updatedHearing.Status == BookingStatus.Created)
+            if (updatedHearing.IsGenericHearing())
+                await _hearingsService.ProcessGenericEmail(updatedHearing, updatedHearing.Participants);
+
+            else if (updatedHearing.HasJudgeEmailChanged(originalHearing) && updatedHearing.Status == BookingStatus.Created)
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
         }
 

@@ -180,6 +180,63 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
+        public async Task Should_send_generic_confirmation_email_to_judge_when_amending_judge_email_for_generic_case()
+        {
+            // Arrange
+            _hearing.Participants.Clear();
+            _hearing.CaseTypeName = "Generic";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "contact@email.com"
+            };
+           
+            _hearing.Participants.Add(new ParticipantResponse()
+            {
+                Id = participant.Id.Value,
+                Username = participant.ContactEmail,
+                UserRoleName = "Judge",
+                ContactEmail = participant.ContactEmail
+        });
+           
+            _hearing.OtherInformation =
+                new OtherInformationDetails { JudgeEmail = "judge@hmcts.net" }.ToOtherInformationString();
+          
+            await _service.ProcessGenericEmail(_hearing, null);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task Should_send_generic_confirmation_email_to_ejud_for_generic_case()
+        {
+            // Arrange
+            _hearing.Participants.Clear();
+            _hearing.CaseTypeName = "Generic";
+            _hearing.Status = BookingsApi.Contract.Enums.BookingStatus.Created;
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "judge@judiciary.com"
+            };
+
+            _hearing.Participants.Add(new ParticipantResponse()
+            {
+                Id = participant.Id.Value,
+                Username = participant.ContactEmail,
+                UserRoleName = "Judge",
+                ContactEmail = participant.ContactEmail
+            });
+
+            await _service.ProcessGenericEmail(_hearing, null);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(1));
+        }
+
+        [Test]
         public async Task Should_send_confirmation_email_to_new_judge_when_amending_judge_email()
         {
             var secondHearing = InitHearing();
