@@ -389,10 +389,14 @@ namespace AdminWebsite.Controllers
             HearingDetailsResponse originalHearing)
         {
             if (updatedHearing.IsGenericHearing())
+            {
                 await _hearingsService.ProcessGenericEmail(updatedHearing, updatedHearing.Participants);
-
+            }
+                
             else if (updatedHearing.HasJudgeEmailChanged(originalHearing) && updatedHearing.Status == BookingStatus.Created)
+            {
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+            }                
         }
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)

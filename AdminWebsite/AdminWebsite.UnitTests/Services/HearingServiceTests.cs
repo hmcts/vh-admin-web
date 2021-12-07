@@ -206,7 +206,7 @@ namespace AdminWebsite.UnitTests.Services
             await _service.ProcessGenericEmail(_hearing, null);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(1));
+              .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(n => n.NotificationType == NotificationType.JudgeDemoOrTest)), Times.Exactly(1));
         }
 
         [Test]
@@ -233,7 +233,7 @@ namespace AdminWebsite.UnitTests.Services
             await _service.ProcessGenericEmail(_hearing, null);
 
             _mocker.Mock<INotificationApiClient>()
-                .Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(1));
+                .Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(n => n.NotificationType == NotificationType.EJudJudgeDemoOrTest)), Times.Exactly(1));
         }
 
         [Test]
