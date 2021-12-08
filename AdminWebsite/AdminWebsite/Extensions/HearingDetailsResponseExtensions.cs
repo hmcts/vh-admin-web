@@ -19,17 +19,20 @@ namespace AdminWebsite.Extensions
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
-        public static bool HasGenericHearingJudgeChanged(this HearingDetailsResponse hearing,
-            HearingDetailsResponse originalHearing)
+        public static bool JudgeHasNotChangedForGenericHearing(this HearingDetailsResponse newHearingJudge,
+            HearingDetailsResponse originalHearingJudge)
         {
-            var judgeA = hearing.Participants.FirstOrDefault(x =>
-                   x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
+            var judgeFromUpdatedHearing = newHearingJudge.GetJudgeById();
+            var judgeFromOriginalHearing = originalHearingJudge.GetJudgeById();
 
-            var judgeB = originalHearing.Participants.FirstOrDefault(x =>
-                x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
-
-            if((judgeA?.Id != judgeB?.Id) && hearing.IsGenericHearing()) return true;
-            return false;
+            if((judgeFromUpdatedHearing != judgeFromOriginalHearing) && newHearingJudge.IsGenericHearing()) return false;
+            return true;
+        }
+        private static Guid? GetJudgeById(this HearingDetailsResponse hearing)
+        {
+            var judgeId = hearing?.Participants.SingleOrDefault(x =>
+                x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))?.Id;
+            return judgeId;
         }
 
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,

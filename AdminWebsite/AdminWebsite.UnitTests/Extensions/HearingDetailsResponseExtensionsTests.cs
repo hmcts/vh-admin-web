@@ -100,9 +100,9 @@ namespace AdminWebsite.UnitTests.Extensions
             hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
 
             _hearing.HasJudgeEmailChanged(hearing2).Should().BeTrue();
-        }
+        }        
         [Test]
-        public void Should_Return_True_If_Judge_Has_Changed_When_Comparing_Generic_Hearing_Judges()
+        public void Should_Return_False_If_Judge_Has_Changed_When_Comparing_Generic_Hearing_Judges()
         {
             _hearing.CaseTypeName = "Generic";
             var existingJudge = Builder<ParticipantResponse>.CreateNew()
@@ -123,10 +123,10 @@ namespace AdminWebsite.UnitTests.Extensions
                 Participants = new List<ParticipantResponse> { newJudge }
             };
 
-            _hearing.HasGenericHearingJudgeChanged(updatedHearing).Should().BeTrue();
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeFalse();
         }
         [Test]
-        public void Should_Return_False_If_Judge_Has_Changed_When_Comparing_Non_Generic_Hearing_Judges()
+        public void Should_Return_True_If_Judge_Has_Changed_When_Comparing_Non_Generic_Hearing_Judges()
         {
             _hearing.CaseTypeName = "Unit Test";
             var existingJudge = Builder<ParticipantResponse>.CreateNew()
@@ -147,10 +147,10 @@ namespace AdminWebsite.UnitTests.Extensions
                 Participants = new List<ParticipantResponse> { newJudge }
             };
 
-            _hearing.HasGenericHearingJudgeChanged(updatedHearing).Should().BeFalse();
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
         }
         [Test]
-        public void Should_Return_False_If_Judge_Has_Not_Changed_When_Comparing_Generic_Hearing_Judges()
+        public void Should_Return_True_If_Judge_Has_Not_Changed_When_Comparing_Generic_Hearing_Judges()
         {
             _hearing.CaseTypeName = "Generic";
             var existingJudge = Builder<ParticipantResponse>.CreateNew()
@@ -171,7 +171,7 @@ namespace AdminWebsite.UnitTests.Extensions
                 Participants = new List<ParticipantResponse> { newJudge }
             };
 
-            _hearing.HasGenericHearingJudgeChanged(updatedHearing).Should().BeFalse();
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
         }
 
         [Test]

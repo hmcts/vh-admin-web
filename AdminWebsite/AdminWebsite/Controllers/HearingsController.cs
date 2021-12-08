@@ -362,7 +362,7 @@ namespace AdminWebsite.Controllers
                 var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
                 await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                if (!updatedHearing.HasGenericHearingJudgeChanged(originalHearing)) 
+                if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing))
                 {
                     await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 }
