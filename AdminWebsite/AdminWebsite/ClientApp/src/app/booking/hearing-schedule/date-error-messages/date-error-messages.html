@@ -1,0 +1,9 @@
+<div *ngIf="required" class="alert alert-danger">
+  <span id="hearingDate-required-error" class="govuk-error-message"> Select a date </span>
+</div>
+<div *ngIf="weekend || publicHoliday" class="alert alert-danger">
+  <span id="hearingDate-weekend-error" class="govuk-error-message">Please enter a working day (Monday to Friday) </span>
+</div>
+<div *ngIf="pastDate" class="alert alert-danger">
+  <span id="hearingDate-past-error" class="govuk-error-message"> Select a date in the future </span>
+</div>

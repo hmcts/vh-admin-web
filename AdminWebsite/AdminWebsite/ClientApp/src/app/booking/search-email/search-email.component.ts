@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, combineLatest, NEVER, Observable, of, Subject, Subscription } from 'rxjs';
+import { NEVER, Subject, Subscription } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
     selector: 'app-search-email',
@@ -34,7 +35,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
-    private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles];
+    private cannotAddNewUsersRoles = [this.judgeHearingRole];
 
     @Input() disabled = true;
 
@@ -42,14 +43,28 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() initialValue = '';
 
+    @Input() locator = 'participantEmail';
+
     @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
+    constructor(
+        private searchService: SearchService,
+        private configService: ConfigService,
+        private logger: Logger,
+        private featureFlagService: FeatureFlagService
+    ) {}
 
     ngOnInit() {
         this.email = this.initialValue;
+        this.featureFlagService
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
+                this.judiciaryRoles = result ? Constants.JudiciaryRoles : [];
+                this.cannotAddNewUsersRoles.push(...this.judiciaryRoles);
+            });
 
         this.$subscriptions.push(
             this.searchTerm

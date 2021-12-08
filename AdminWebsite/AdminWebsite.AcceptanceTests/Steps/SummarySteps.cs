@@ -133,6 +133,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
 
+        [When(@"the user removes Individual")]
+        public void WhenTheUserRemovesIndividual()
+        {
+            var participant = GetParticipantBy("Litigant in person");
+            string nameOnDisplay = $"Mrs {participant.DisplayName}";
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(participant.Firstname));
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveParticipantMessage(nameOnDisplay)).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant); 
+            RemoveParticipant(participant, isParticipantListExpectedToExist: false);
+        }
 
         [When(@"the user removes participant")]
         public void WhenTheUserRemovesParticipant()
@@ -154,10 +164,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             RemoveParticipant(GetParticipantBy(role));
         }
 
-        private void RemoveParticipant(UserAccount user)
+        private void RemoveParticipant(UserAccount user, bool isParticipantListExpectedToExist = true)
         { 
             _c.Test.HearingParticipants.Remove(user);
-            ParticipantListContains(user).Should().BeFalse();
+
+            if (isParticipantListExpectedToExist)
+                ParticipantListContains(user).Should().BeFalse();
         }
 
         private bool ParticipantListContains(UserAccount interpreter)

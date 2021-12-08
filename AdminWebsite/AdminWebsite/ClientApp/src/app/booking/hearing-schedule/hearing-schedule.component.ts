@@ -15,6 +15,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { weekendValidator, pastDateValidator } from '../../common';
 import { notPublicHolidayDateValidator } from '../../common/custom-validations/public-holiday-validator';
+
 @Component({
     selector: 'app-hearing-schedule',
     templateUrl: './hearing-schedule.component.html',
@@ -31,6 +32,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     canNavigate = true;
     selectedCourtName: string;
     isExistinHearing: boolean;
+    endDateEarlierThanStartDate: boolean;
     isStartHoursInPast = false;
     isStartMinutesInPast = false;
     multiDaysHearing = false;
@@ -44,7 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
-        private fb: FormBuilder,
+        private formBuilder: FormBuilder,
         protected router: Router,
         private datePipe: DatePipe,
         protected bookingService: BookingService,
@@ -139,8 +141,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
 
-        this.form = this.fb.group({
-            hearingDate: [hearingDateParsed, [Validators.required, notPublicHolidayDateValidator(this.publicHolidays)]],
+        this.form = this.formBuilder.group({
+            hearingDate: [
+                hearingDateParsed,
+                [Validators.required, weekendValidator(), pastDateValidator(), notPublicHolidayDateValidator(this.publicHolidays)]
+            ],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -247,16 +252,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('multiDays');
     }
 
-    get hearingDateIsPublicHoliday(): boolean {
-        return this.hearingDateControl.errors?.publicHoliday;
-    }
-
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
             (this.hearingDateControl.invalid || new Date(this.hearingDateControl.value) < todayDate) &&
-            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission) &&
-            !this.hearingDateIsPublicHoliday
+            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission)
         );
     }
 
@@ -265,10 +265,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             const endDateNoTime = new Date(new Date(this.endHearingDateControl.value).setHours(0, 0, 0));
             const startDateNoTime = new Date(new Date(this.hearingDateControl.value).setHours(0, 0, 0));
 
-            const compareStartInvalid = endDateNoTime <= startDateNoTime;
-
+            this.endDateEarlierThanStartDate = endDateNoTime <= startDateNoTime;
             return (
-                (this.endHearingDateControl.invalid || compareStartInvalid) &&
+                (this.endHearingDateControl.invalid || this.endDateEarlierThanStartDate) &&
                 (this.endHearingDateControl.dirty || this.endHearingDateControl.touched || this.failedSubmission)
             );
         }
@@ -407,8 +406,24 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
     }
 
+    get isMultiIndividualDayHearingValid() {
+        return this.form.valid && !this.addHearingDateControl && this.hearingDates.length > 0;
+    }
+
+    get isSingleDayOrMultiDayRangeHearingValid() {
+        return (
+            this.form.valid &&
+            !this.hearingDateInvalid &&
+            !this.isStartHoursInPast &&
+            !this.isStartMinutesInPast &&
+            !this.durationInvalid &&
+            !this.endHearingDateInvalid &&
+            this.finalCheckStartDateTimeInPast()
+        );
+    }
+
     saveMultiIndividualDayHearing() {
-        if (this.form.valid) {
+        if (this.isMultiIndividualDayHearingValid) {
             this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
 
             this.updateHearingRequestForMultiIndividualDays();
@@ -423,15 +438,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     saveSingleDayOrMultiDayRangeHearing() {
-        if (
-            this.form.valid &&
-            !this.hearingDateInvalid &&
-            !this.isStartHoursInPast &&
-            !this.isStartMinutesInPast &&
-            !this.durationInvalid &&
-            !this.endHearingDateInvalid &&
-            this.finalCheckStartDateTimeInPast()
-        ) {
+        if (this.isSingleDayOrMultiDayRangeHearingValid) {
             this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
             this.failedSubmission = false;
             this.updateHearingRequest();
@@ -565,7 +572,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearingDurationMinuteControl.markAsPristine();
 
             if (this.multiDaysRangeControl.value) {
-                this.endHearingDateControl.setValidators([Validators.required]);
+                this.endHearingDateControl.setValidators([
+                    Validators.required,
+                    weekendValidator(),
+                    pastDateValidator(),
+                    notPublicHolidayDateValidator(this.publicHolidays)
+                ]);
                 this.endHearingDateControl.updateValueAndValidity();
                 this.endHearingDateControl.setValue(null);
             } else {

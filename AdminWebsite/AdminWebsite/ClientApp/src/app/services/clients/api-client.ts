@@ -650,6 +650,89 @@ export class BHClient {
     }
 
     /**
+     * returns the FeatureToggles
+     * @param featureName (optional)
+     * @return Success
+     */
+    getFeatureFlag(featureName: string | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + '/api/feature-flag?';
+        if (featureName !== undefined && featureName !== null) url_ += 'featureName=' + encodeURIComponent('' + featureName) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetFeatureFlag(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetFeatureFlag(<any>response_);
+                        } catch (e) {
+                            return <Observable<boolean>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<boolean>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetFeatureFlag(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = resultData200 !== undefined ? resultData200 : <any>null;
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<boolean>(<any>null);
+    }
+
+    /**
      * Check Service Health
      * @return Success
      */
@@ -2323,6 +2406,92 @@ export class BHClient {
     }
 
     /**
+     * Find staff member list by email search term.
+     * @param term (optional) The email address search term.
+     * @return Success
+     */
+    getStaffMembersBySearchTerm(term: string | null | undefined): Observable<PersonResponse[]> {
+        let url_ = this.baseUrl + '/api/staffmember?';
+        if (term !== undefined && term !== null) url_ += 'term=' + encodeURIComponent('' + term) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetStaffMembersBySearchTerm(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetStaffMembersBySearchTerm(<any>response_);
+                        } catch (e) {
+                            return <Observable<PersonResponse[]>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<PersonResponse[]>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetStaffMembersBySearchTerm(response: HttpResponseBase): Observable<PersonResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(PersonResponse.fromJS(item));
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<PersonResponse[]>(<any>null);
+    }
+
+    /**
      * Gets the all latest participants suitability answers for a VH officer.
      * @param cursor (optional) The unique sequential value of participant ID.
      * @param limit (optional) The max number of participants with suitability answers to be returned.
@@ -3692,6 +3861,83 @@ export interface IParticipantResponse {
     linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
+export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+
+    constructor(data?: ITelephoneParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.mobile_number = _data['mobile_number'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TelephoneParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new TelephoneParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['mobile_number'] = this.mobile_number;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+}
+
 export class EndpointResponse implements IEndpointResponse {
     id?: string;
     display_name?: string | undefined;
@@ -3752,6 +3998,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -3790,6 +4037,11 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(ParticipantResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['telephone_participants'])) {
+                this.telephone_participants = [] as any;
+                for (let item of _data['telephone_participants'])
+                    this.telephone_participants!.push(TelephoneParticipantResponse.fromJS(item));
             }
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
@@ -3834,6 +4086,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.telephone_participants)) {
+            data['telephone_participants'] = [];
+            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
+        }
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
         data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
@@ -3864,6 +4120,7 @@ export interface IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -3898,7 +4155,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
-    /** The Uri to video web */
+    /** The Uri to video web url */
     video_web_url?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
@@ -3963,6 +4220,8 @@ export interface IClientSettingsResponse {
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
+    /** The Uri to video web url */
+    video_web_url?: string | undefined;
 }
 
 export class HealthCheck implements IHealthCheck {
@@ -4327,6 +4586,105 @@ export interface IEditParticipantRequest {
     linked_participants?: LinkedParticipant[] | undefined;
 }
 
+/** Participant request */
+export class EditTelephoneParticipantRequest implements IEditTelephoneParticipantRequest {
+    /** Participant Id */
+    id?: string;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant contact email */
+    contact_email?: string | undefined;
+    /** Participant telephone number */
+    telephone_number?: string | undefined;
+    /** Participant telephone number */
+    mobile_number?: string | undefined;
+    /** Gets or sets the person name that Representative represents. */
+    representee?: string | undefined;
+    /** The participant linked to this participant response */
+    linked_participants?: LinkedParticipant[] | undefined;
+
+    constructor(data?: IEditTelephoneParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.mobile_number = _data['mobile_number'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): EditTelephoneParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditTelephoneParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['mobile_number'] = this.mobile_number;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+/** Participant request */
+export interface IEditTelephoneParticipantRequest {
+    /** Participant Id */
+    id?: string;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant contact email */
+    contact_email?: string | undefined;
+    /** Participant telephone number */
+    telephone_number?: string | undefined;
+    /** Participant telephone number */
+    mobile_number?: string | undefined;
+    /** Gets or sets the person name that Representative represents. */
+    representee?: string | undefined;
+    /** The participant linked to this participant response */
+    linked_participants?: LinkedParticipant[] | undefined;
+}
+
 export class EditEndpointRequest implements IEditEndpointRequest {
     /** Endpoint Id. */
     id?: string | undefined;
@@ -4389,6 +4747,7 @@ export class EditHearingRequest implements IEditHearingRequest {
     case?: EditCaseRequest;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
+    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */
@@ -4416,6 +4775,11 @@ export class EditHearingRequest implements IEditHearingRequest {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['telephone_participants'])) {
+                this.telephone_participants = [] as any;
+                for (let item of _data['telephone_participants'])
+                    this.telephone_participants!.push(EditTelephoneParticipantRequest.fromJS(item));
             }
             this.other_information = _data['other_information'];
             this.questionnaire_not_required = _data['questionnaire_not_required'];
@@ -4445,6 +4809,10 @@ export class EditHearingRequest implements IEditHearingRequest {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.telephone_participants)) {
+            data['telephone_participants'] = [];
+            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
+        }
         data['other_information'] = this.other_information;
         data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
@@ -4469,6 +4837,7 @@ export interface IEditHearingRequest {
     case?: EditCaseRequest;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
+    telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */

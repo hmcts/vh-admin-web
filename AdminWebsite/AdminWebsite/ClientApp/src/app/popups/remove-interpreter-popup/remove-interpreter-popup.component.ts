@@ -8,9 +8,6 @@ export class RemoveInterpreterPopupComponent {
     @Output() continueRemove: EventEmitter<any> = new EventEmitter<any>();
     @Output() cancelRemove: EventEmitter<any> = new EventEmitter<any>();
 
-    @Input()
-    isLastParticipant: boolean;
-
     continueRemoveInterpreter() {
         this.continueRemove.emit();
     }

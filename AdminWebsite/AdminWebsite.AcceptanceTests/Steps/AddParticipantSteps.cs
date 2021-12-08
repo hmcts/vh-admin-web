@@ -30,7 +30,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly CommonSharedSteps _commonSharedSteps;
         private readonly BookingDetailsSteps _bookingDetailsSteps;
 
-        public AddParticipantSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, 
+        public AddParticipantSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers,
             CommonSharedSteps commonSharedSteps, BookingDetailsSteps bookingDetailsSteps)
         {
             _c = testContext;
@@ -48,6 +48,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddNewDefendantRep();
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
+        }
+
+        [When(@"the user adds an Individual")]
+        public void TheUserAddsAnIndividual()
+        {
+            AddExistingClaimantIndividual();
+            VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
+        }
+
+        [When(@"the user does not add participants and is on the (.*) page")]
+        public void TheUserCompletesTheAddParticipantsFormwithOnlyTheJudge(string page)
+        {
+            ClickNext(); 
+            _browsers[_c.CurrentUser].PageUrl(Page.FromString(page).Url);
         }
 
         [When(@"the user completes the add participants form with an Interpreter And Litigant In Person")]
@@ -176,7 +191,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
             var title = _c.Test.TestData.AddParticipant.Participant.Title;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, AddParticipantsPage.TitleDropdown, title);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield, _c.WebConfig.SeleniumElementTimeout).SendKeys(user.Firstname);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
@@ -298,6 +313,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             foreach (var participant in _c.Test.HearingParticipants)
             {
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
+                if (participant.Role.ToLower().Equals("staff member")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
                 var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName} {participant.CaseRoleName}";
@@ -335,7 +351,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void EditAnInterpreter(string alternativeEmail,bool saved = true)
         {
             var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
-            
+
             var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
                 AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
@@ -345,10 +361,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.UpdateParticipantLink);
                 _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.UpdateParticipantLink);
                 _browsers[_c.CurrentUser].Click(AddParticipantsPage.UpdateParticipantLink);
-            } 
-            
+            }
+
             ClickNext();
-            
+
         }
 
         private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
@@ -384,11 +400,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var enabled = option != "disabled";
             if (!enabled)
             {
-               _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
             }
 
             _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Selected.Should().BeTrue();
-            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().Be(enabled); 
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().Be(enabled);
         }
 
 

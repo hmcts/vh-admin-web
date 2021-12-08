@@ -24,6 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"the user completes the other information form")]
+        [Then(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));

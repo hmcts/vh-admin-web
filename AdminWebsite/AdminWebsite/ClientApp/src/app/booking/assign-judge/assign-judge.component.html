@@ -35,13 +35,14 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
+    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudgeAndStaffMember()">
       <div
         [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
       >
-        <label class="govuk-label" for="participantEmail" id="judgeEmail-error"> Judge or courtroom account </label>
+        <label class="govuk-label" for="{{ judgeLocator }}" id="judgeEmail-error"> Judge or courtroom account </label>
         <app-search-email
           [disabled]="false"
+          [locator]="judgeLocator"
           hearingRoleParticipant="Judge"
           (findParticipant)="updateJudge($event)"
           [initialValue]="courtAccountJudgeEmail"
@@ -119,7 +120,7 @@
           id="nextButton"
           class="govuk-button vh-mr25"
           data-module="govuk-button"
-          (click)="saveJudge()"
+          (click)="saveJudgeAndStaffMember()"
           alt="Save judge details and view add participant"
         >
           {{ buttonAction }}

@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
@@ -14,6 +15,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -81,10 +83,24 @@ namespace AdminWebsite.Controllers
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-                var nonJudgeParticipants = newBookingRequest.Participants.Where(p =>
-                        p.CaseRoleName != "Judge" && p.HearingRoleName != "Panel Member" &&
-                        p.HearingRoleName != "Winger")
-                    .ToList();
+
+                List<ParticipantRequest> nonJudgeParticipants;
+
+                var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
+
+                // Disable to create AAD accounts for Panel members and wingers when ejudFeature is 'OFF'
+                if (ejudFeatureFlag)
+                {
+                    nonJudgeParticipants = newBookingRequest.Participants
+                        .Where(p => p.HearingRoleName != RoleNames.Judge)
+                        .Where(p => p.HearingRoleName != RoleNames.PanelMember)
+                        .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
+                }else
+                {
+                    nonJudgeParticipants = newBookingRequest.Participants
+                        .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
+                }
+
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
@@ -114,7 +130,7 @@ namespace AdminWebsite.Controllers
                 }
                 else
                 {
-                    await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse);
+                    await _hearingsService.NewHearingSendConfirmation(hearingDetailsResponse);
                 }
 
                 return Created("", hearingDetailsResponse);
@@ -250,7 +266,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {startingSoonMinutesThreshold} minutes of it starting";
@@ -314,14 +330,12 @@ namespace AdminWebsite.Controllers
                     {
                         // Is the linked participant an existing participant?
                         var secondaryParticipantInLinkContactEmail = originalHearing.Participants
-                        .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
-                        .ContactEmail;
+                            .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
+                            .ContactEmail ?? newParticipants
+                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
+                            ?.ContactEmail;
 
                         // If the linked participant isn't an existing participant it will be a newly added participant                        
-                        if (secondaryParticipantInLinkContactEmail == null)
-                            secondaryParticipantInLinkContactEmail = newParticipants
-                            .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)
-                            .ContactEmail;
 
                         linkedParticipantRequest.LinkedParticipantContactEmail = secondaryParticipantInLinkContactEmail;
 
@@ -391,7 +405,7 @@ namespace AdminWebsite.Controllers
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
 
-                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
+                await _hearingsService.EditHearingSendConfirmation(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
         }
@@ -579,8 +593,22 @@ namespace AdminWebsite.Controllers
             _logger.LogDebug("Assigning HMCTS usernames for participants");
             foreach (var participant in participants)
             {
+                User user = null;
+
+                if (!string.IsNullOrWhiteSpace(participant.Username))
+                {
+                    // get user
+                    _logger.LogDebug(
+                        "Username provided in booking for participant {Email}. Getting id for username {Username}",
+                        participant.ContactEmail, participant.Username);
+                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+
+                    if (!string.IsNullOrEmpty(adUserId)) user = new User { UserId = adUserId };
+                    else participant.Username = "";
+                }
+
                 // set the participant username according to AD
-                User user;
+
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     _logger.LogDebug(
@@ -588,15 +616,6 @@ namespace AdminWebsite.Controllers
                         participant.ContactEmail);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                     participant.Username = user.UserName;
-                }
-                else
-                {
-                    // get user
-                    _logger.LogDebug(
-                        "Username provided in booking for participant {Email}. Getting id for username {Username}",
-                        participant.ContactEmail, participant.Username);
-                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserId = adUserId };
                 }
 
                 // username's participant will be set by this point

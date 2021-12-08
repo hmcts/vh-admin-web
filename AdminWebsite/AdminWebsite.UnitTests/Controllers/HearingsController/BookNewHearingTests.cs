@@ -70,6 +70,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname2.lname2@hmcts.net")
                 .WithParticipant("Individual", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Staff Member","staff.member@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
                 .ReturnsAsync(hearingDetailsResponse);
@@ -99,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
         
         [Test]
@@ -147,7 +148,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.SendHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
 
         [Test]
@@ -170,7 +171,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 BookingDetails = bookingDetails
             };
-            
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             _mocker.Mock<IUserAccountService>().Setup(x =>
                     x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
@@ -224,6 +227,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             const string expectedExceptionResponse = "exception";
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
                 .Throws(new BookingsApiException("", (int) HttpStatusCode.BadRequest, expectedExceptionResponse, null, null));
             
@@ -300,6 +306,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         {DisplayName = "displayname2", DefenceAdvocateUsername = "fname2.lname2@hmcts.net"},
                 }
             };
+
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
             foreach (var participant in bookNewHearingRequest.Participants.Where(x =>
                 !string.IsNullOrWhiteSpace(x.Username)))

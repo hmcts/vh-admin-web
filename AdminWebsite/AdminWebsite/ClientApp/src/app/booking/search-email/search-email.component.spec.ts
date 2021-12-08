@@ -8,10 +8,14 @@ import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
+import { DebugElement, ElementRef } from '@angular/core';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
-describe('SeachEmailComponent', () => {
+describe('SearchEmailComponent', () => {
     let component: SearchEmailComponent;
+    let debugElement: DebugElement;
     let fixture: ComponentFixture<SearchEmailComponent>;
+    let searchField: ElementRef;
 
     const participant1 = new ParticipantModel();
     participant1.first_name = 'FirstName1';
@@ -47,12 +51,16 @@ describe('SeachEmailComponent', () => {
     let searchServiceSpy: jasmine.SpyObj<SearchService>;
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
+    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
     beforeEach(() => {
         searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             declarations: [SearchEmailComponent],
@@ -60,13 +68,32 @@ describe('SeachEmailComponent', () => {
             providers: [
                 { provide: SearchService, useValue: searchServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy }
             ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(SearchEmailComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+
+        debugElement = fixture.debugElement;
+    });
+    it('should have have an email field with locator participantEmail by default', () => {
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
+    });
+    it('should have have an email field with locator judgeEmail for judge detail search', () => {
+        component.locator = 'judge-email';
+        fixture.detectChanges();
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
+    });
+    it('should have have an email field with locator staffMemberEmail for staff member detail search', () => {
+        component.locator = 'staff-member-email';
+        fixture.detectChanges();
+        searchField = debugElement.query(By.css(`#${component.locator}`));
+        expect(searchField.nativeElement).toBeTruthy();
     });
     it(
         'should have empty list of participant models',
@@ -111,6 +138,31 @@ describe('SeachEmailComponent', () => {
         expect(component.results).toBeTruthy();
         expect(component.results.length).toEqual(0);
     });
+
+    it('should set errorNotFoundJohEmail to true when EJudFeature flag is ON and no results found from search service', () => {
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        component.ngOnInit();
+        component.hearingRoleParticipant = 'Panel Member';
+        component.noDataFound();
+        expect(component.errorNotFoundJohEmail).toBeTruthy();
+    });
+
+    it('should set errorNotFoundJohEmail to false  when EJudFeature flag is OFF and no results found from search service', () => {
+        component.ngOnInit();
+        component.hearingRoleParticipant = 'Panel Member';
+        component.noDataFound();
+        expect(component.errorNotFoundJohEmail).toBeFalsy();
+    });
+
+    it('should show showCreateNewUserWarning when EJudFeature flag is OFF and no results found from search service', () => {
+        component.notFoundParticipant = true;
+
+        component.ngOnInit();
+        fixture.detectChanges();
+        component.hearingRoleParticipant = 'Panel Member';
+        expect(component.showCreateNewUserWarning).toBe(true);
+    });
+
     it('should validate email', () => {
         component.invalidPattern = 'courtroom.net';
         component.email = 'email@hmcts.net';
@@ -331,13 +383,17 @@ describe('SearchEmailComponent email validate', () => {
     let searchServiceSpy: jasmine.SpyObj<SearchService>;
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
+    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
+    featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
-    component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy);
+    component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, featureFlagServiceSpy);
     it('should config service return email pattern for validation', fakeAsync(() => {
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         component.getEmailPattern();

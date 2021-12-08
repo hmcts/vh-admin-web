@@ -11,9 +11,6 @@ export class RemovePopupComponent implements OnInit {
 
     @Input() fullName: string;
 
-    @Input()
-    isLastParticipant: boolean;
-
     constructor() {}
 
     ngOnInit() {}

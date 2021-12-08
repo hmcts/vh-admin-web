@@ -11,10 +11,13 @@ import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { of } from 'rxjs';
 
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const interpreter: ParticipantModel = {
@@ -41,12 +44,15 @@ describe('OtherInformationComponent', () => {
     beforeEach(
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
             TestBed.configureTestingModule({
                 imports: [RouterTestingModule, SharedModule],
                 providers: [
                     { provide: Router, useValue: routerSpy },
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [

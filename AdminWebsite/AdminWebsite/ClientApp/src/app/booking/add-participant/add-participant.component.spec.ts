@@ -25,6 +25,7 @@ import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -55,6 +56,7 @@ let party: AbstractControl;
 let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
+let email: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
@@ -206,9 +208,11 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
+featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
@@ -241,6 +245,7 @@ describe('AddParticipantComponent', () => {
                 'checkDuplication',
                 'removeParticipant'
             ]);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -264,10 +269,11 @@ describe('AddParticipantComponent', () => {
                 participantServiceSpy,
                 routerSpy,
                 bookingServiceSpy,
+                featureFlagServiceSpy,
                 loggerSpy
             );
 
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
 
             component.ngOnInit();
@@ -277,6 +283,7 @@ describe('AddParticipantComponent', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -323,6 +330,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
+        expect(email.value).toBe('');
         expect(phone.value).toBe('');
         expect(title.value).toBe(Constants.PleaseSelect);
         expect(companyName.value).toBe('');
@@ -397,6 +405,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(participant.case_role_name);
         expect(firstName.value).toBe(participant.first_name);
         expect(lastName.value).toBe(participant.last_name);
+        expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
         expect(displayName.value).toBe(participant.display_name);
@@ -413,6 +422,7 @@ describe('AddParticipantComponent', () => {
         expect(party.value).toBe(Constants.PleaseSelect);
         expect(firstName.value).toBe('');
         expect(lastName.value).toBe('');
+        expect(email.value).toBe('');
         expect(phone.value).toBe('');
         expect(title.value).toBe(Constants.PleaseSelect);
         expect(displayName.value).toBe('');
@@ -441,11 +451,13 @@ describe('AddParticipantComponent', () => {
         beforeEach(() => {
             component.showDetails = true;
             spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+            component.searchEmail.initialValue = 'mockInitialValue@hmcts.net';
             component.searchEmail.email = 'mock@hmcts.net';
             role.setValue('Litigant in person');
             party.setValue('Applicant');
             firstName.setValue('Sam');
             lastName.setValue('Green');
+            email.setValue('Sam.Green@litigant.com');
             title.setValue('Mrs');
             phone.setValue('12345');
             displayName.setValue('Sam Green');
@@ -751,7 +763,7 @@ describe('AddParticipantComponent', () => {
         });
 
         describe('with email set', () => {
-            const email = 'email@hmcts.net';
+            const participantEmail = 'email@hmcts.net';
             const emptyPersonResponse = [];
             const populatedPersonResponse = [new PersonResponse()];
 
@@ -772,7 +784,7 @@ describe('AddParticipantComponent', () => {
 
             beforeEach(
                 waitForAsync(() => {
-                    component.searchEmail.email = email;
+                    component.searchEmail.email = participantEmail;
                 })
             );
 
@@ -784,7 +796,7 @@ describe('AddParticipantComponent', () => {
                     role.setValue(testCase.role);
                     component.validateJudiciaryEmailAndRole();
                     expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(participantEmail);
                     expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
                 });
             }
@@ -793,7 +805,7 @@ describe('AddParticipantComponent', () => {
                 searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
                 component.validateJudiciaryEmailAndRole();
                 expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(participantEmail);
             });
 
             it('should have errorJudiciaryAccount as false if search service returns null and role is not Panel Member/Winger', () => {
@@ -904,6 +916,7 @@ describe('AddParticipantComponent edit mode', () => {
                 'isHearingAboutToStart'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -914,9 +927,12 @@ describe('AddParticipantComponent edit mode', () => {
                     { provide: ParticipantService, useValue: participantServiceSpy },
                     { provide: BookingService, useValue: bookingServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
+
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
             const hearing = initExistHearingRequest();
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -926,6 +942,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
             configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
             fixture = TestBed.createComponent(AddParticipantComponent);
+
             fixture.detectChanges();
             component = fixture.componentInstance;
             component.editMode = true;
@@ -937,6 +954,7 @@ describe('AddParticipantComponent edit mode', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -944,12 +962,33 @@ describe('AddParticipantComponent edit mode', () => {
             interpretee = component.form.controls['interpreterFor'];
         })
     );
+
+    it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
+        component.form.setValue({
+            party: 'Panel Member',
+            role: 'Panel Member',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            email: participant.email,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+        component.notFoundParticipant();
+        expect(component.errorJohAccountNotFound).toBeTruthy();
+    });
     it('should initialize form controls', () => {
-        component.initializeForm();
+        component.initialiseForm();
         expect(component.form.controls['firstName']).toBeTruthy();
         expect(component.form.controls['firstName'].errors['required']).toBeTruthy();
         expect(component.form.controls['lastName']).toBeTruthy();
         expect(component.form.controls['lastName'].errors['required']).toBeTruthy();
+        expect(component.form.controls['email']).toBeTruthy();
+        expect(component.form.controls['email'].errors['required']).toBeTruthy();
     });
     it('should set title list and get current data from session', () => {
         component.ngOnInit();
@@ -973,7 +1012,7 @@ describe('AddParticipantComponent edit mode', () => {
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
         component.searchEmail.email = 'test3@hmcts.net';
 
         component.ngOnInit();
@@ -1007,6 +1046,7 @@ describe('AddParticipantComponent edit mode', () => {
         party.setValue('Applicant');
         firstName.setValue('Sam');
         lastName.setValue('Green');
+        email.setValue('Sam.Green@Representative.com');
         title.setValue('Mrs');
         phone.setValue('12345');
         displayName.setValue('Sam Green');
@@ -1042,6 +1082,7 @@ describe('AddParticipantComponent edit mode', () => {
             title: 'Ms',
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1067,6 +1108,7 @@ describe('AddParticipantComponent edit mode', () => {
             title: Constants.PleaseSelect,
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1216,12 +1258,14 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 'isConferenceClosed',
                 'isHearingAboutToStart'
             ]);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1232,21 +1276,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                     { provide: ParticipantService, useValue: participantServiceSpy },
                     { provide: BookingService, useValue: bookingServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     { provide: ConfigService, useValue: configServiceSpy }
                 ]
             }).compileComponents();
-            component = new AddParticipantComponent(
-                jasmine.createSpyObj<SearchService>(['search']),
-                videoHearingsServiceSpy,
-                participantServiceSpy,
-                jasmine.createSpyObj<Router>(['navigate']),
-                bookingServiceSpy,
-                loggerSpy
-            );
-            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+
             fixture = TestBed.createComponent(AddParticipantComponent);
             component = fixture.componentInstance;
+            component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
             component.editMode = true;
             component.ngOnInit();
 
@@ -1255,6 +1293,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -1273,6 +1312,28 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayAddButton).toBeTruthy();
         expect(component.displayUpdateButton).toBeFalsy();
     }));
+
+    it('should set errorJohAccountNotFound to false when no results found when searching EJudFeature flag is OFF', () => {
+        component.ngOnInit();
+        component.form.setValue({
+            party: 'Panel Member',
+            role: 'Panel Member',
+            title: 'Ms',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            email: participant.email,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+
+        component.notFoundParticipant();
+
+        expect(component.errorJohAccountNotFound).toBeFalsy();
+    });
 
     it(
         'should recognize a participantList',
@@ -1297,6 +1358,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
+
     it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
         const debugElement = fixture.debugElement;
         component.selectedParticipantEmail = 'test2@hmcts.net';
@@ -1330,6 +1392,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             title: 'Ms',
             firstName: participant.first_name,
             lastName: participant.last_name,
+            email: participant.email,
             phone: participant.phone,
             displayName: participant.display_name,
             companyName: participant.company,
@@ -1450,6 +1513,7 @@ describe('AddParticipantComponent set representer', () => {
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
             const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
 
@@ -1459,9 +1523,10 @@ describe('AddParticipantComponent set representer', () => {
                 participantServiceSpy,
                 { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
                 bookingServiceSpy,
+                featureFlagServiceSpy,
                 loggerSpy
             );
-            component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
+            component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, featureFlagServiceSpy);
 
             component.ngOnInit();
 
@@ -1470,6 +1535,7 @@ describe('AddParticipantComponent set representer', () => {
             title = component.form.controls['title'];
             firstName = component.form.controls['firstName'];
             lastName = component.form.controls['lastName'];
+            email = component.form.controls['email'];
             phone = component.form.controls['phone'];
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
@@ -1505,7 +1571,8 @@ describe('AddParticipantComponent set representer', () => {
         component.searchEmail = new SearchEmailComponent(
             jasmine.createSpyObj<SearchService>(['search']),
             configServiceSpy,
-            loggerSpy
+            loggerSpy,
+            featureFlagServiceSpy
         );
         component.participantDetails = participants[0];
         component.ngAfterContentInit();

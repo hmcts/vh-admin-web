@@ -73,19 +73,17 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(additionalParticipantToReturn);
             
             var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            expectedResponse.Add(additionalParticipantToReturn);
-            
+
+            var expectedResponse = new List<PersonResponse>
+            {
+                _response[0],
+                additionalParticipantToReturn
+            };
+
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
 
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
-
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(new List<PersonResponse>());
-
+            
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
 
@@ -93,96 +91,10 @@ namespace AdminWebsite.UnitTests.Controllers
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
             _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _bookingsApiClient.Verify(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _userAccountService.Verify(x => x.GetJudgeUsers(), Times.Once);
+            
         }
         
-        [Test]
-        public async Task Should_filter_judge_participants()
-        {
-            // Arrange
-            var participantToFilter = new PersonResponse
-            {
-                Id = Guid.NewGuid(),
-                ContactEmail = "jackfilter@hmcts.net",
-                FirstName = "Filter",
-                LastName = "Participant",
-                TelephoneNumber = "111222333",
-                Title = "Mr",
-                MiddleNames = "No",
-                Username = "jackfilter@hmcts.net"
-            };
-            _response.Add(participantToFilter);
-
-            var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(_response);
-
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new[]
-            {
-                new JudgeResponse()
-                {
-                    Email = participantToFilter.ContactEmail
-                }
-            });
-
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(new List<PersonResponse>());
-            // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
-
-            // Assert
-            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
-            okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
-            _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _bookingsApiClient.Verify(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _userAccountService.Verify(x => x.GetJudgeUsers(), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_filter_judiciary_participants()
-        {
-            // Arrange
-            var participantToFilter = new PersonResponse
-            {
-                Id = Guid.NewGuid(),
-                ContactEmail = "jackfilter@hmcts.net",
-                FirstName = "Filter",
-                LastName = "Participant",
-                TelephoneNumber = "111222333",
-                Title = "Mr",
-                MiddleNames = "No",
-                Username = "jackfilter@hmcts.net"
-            };
-            _response.Add(participantToFilter);
-            
-            var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            
-            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(_response);
-
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
-
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(new[] {participantToFilter});
-
-            // Act
-            var result = await _controller.PostPersonBySearchTerm(searchTerm);
-
-            // Assert
-            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
-            okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
-            _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _bookingsApiClient.Verify(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _userAccountService.Verify(x => x.GetJudgeUsers(), Times.Once);
-        }
+        
         
         [Test]
         public async Task Should_filter_TestUsernameStem()
@@ -202,18 +114,15 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(participantToFilter);
             
             var searchTerm = "ado";
-            
-            var expectedResponse = new List<PersonResponse>();
-            expectedResponse.Add(_response[0]);
-            
+
+            var expectedResponse = new List<PersonResponse>
+            {
+                _response[0]
+            };
+
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
                 .ReturnsAsync(_response);
-
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
-
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(searchTermRequest => searchTermRequest.Term == searchTerm)))
-                .ReturnsAsync(new List<PersonResponse>());
-
+                       
             // Act
             var result = await _controller.PostPersonBySearchTerm(searchTerm);
 
@@ -221,8 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
             _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _bookingsApiClient.Verify(x => x.PostJudiciaryPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
-            _userAccountService.Verify(x => x.GetJudgeUsers(), Times.Once);
+            
         }
         
         [Test]

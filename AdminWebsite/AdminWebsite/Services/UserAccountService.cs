@@ -72,8 +72,10 @@ namespace AdminWebsite.Services
         public const string RepresentativeRole = "Representative";
         public const string JohRole = "Judicial Office Holder";
         public const string External = "External";
+        public const string Internal = "Internal";
         public const string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
         public const string JudicialOfficeHolder = "JudicialOfficeHolder";
+        public const string StaffMember = "Staff Member";
 
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
@@ -269,16 +271,23 @@ namespace AdminWebsite.Services
         }
 
         public async Task AssignParticipantToGroup(string username, string userRole)
-        {
-            await AddGroup(username, External);
-            
+        {   
             switch (userRole)
             {
                 case RepresentativeRole:
+                    await AddGroup(username, External);
                     await AddGroup(username, VirtualRoomProfessionalUser);
                     break;
                 case JohRole:
+                    await AddGroup(username, External);
                     await AddGroup(username, JudicialOfficeHolder);
+                    break;
+                case StaffMember:
+                    await AddGroup(username, Internal);
+                    await AddGroup(username, StaffMember);
+                    break;
+                default:
+                    await AddGroup(username, External);
                     break;
             }
         }

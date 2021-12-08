@@ -87,8 +87,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 TestType = TestType.Automated,
                 UserTypes = userTypes
             };
+            NUnit.Framework.TestContext.WriteLine($"AllocateUsersRequest: request.Application {request.Application} request.ExpiryInMinutes {request.ExpiryInMinutes} request.IsProdUser {request.IsProdUser} request.IsEjud {request.IsEjud} request.TestType {request.TestType} request.UserTypes {request.UserTypes}");
 
             var response = _c.Api.AllocateUsers(request);
+            NUnit.Framework.TestContext.WriteLine($"AllocateUsersRequest Response: {response.Content}");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Should().NotBeNull();
             var users = RequestHelper.Deserialise<List<UserDetailsResponse>>(response.Content);

@@ -42,6 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterHearingServices(context);
             RegisterIsLive(context);
             RegisterUsingEjud(context);
+            RegisterSeleniumElementTimeout(context);
             RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
             RegisterKinlySettings(context);
@@ -103,6 +104,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterUsingEjud(TestContext context)
         {
             context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
+        }
+
+        private void RegisterSeleniumElementTimeout(TestContext context)
+        {
+            context.WebConfig.SeleniumElementTimeout = _configRoot.GetValue<int>("SeleniumElementTimeout");
         }
 
         private void RegisterWowzaSettings(TestContext context)

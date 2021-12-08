@@ -7,7 +7,4 @@ export class RemovePopupStubComponent {
     @Output() cancelRemove: EventEmitter<any> = new EventEmitter<any>();
 
     @Input() fullName: string;
-
-    @Input()
-    isLastParticipant: boolean;
 }
