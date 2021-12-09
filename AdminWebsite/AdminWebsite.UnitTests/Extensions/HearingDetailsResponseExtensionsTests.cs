@@ -100,6 +100,78 @@ namespace AdminWebsite.UnitTests.Extensions
             hearing2.OtherInformation = hearing2OtherInfo.ToOtherInformationString();
 
             _hearing.HasJudgeEmailChanged(hearing2).Should().BeTrue();
+        }        
+        [Test]
+        public void Should_Return_False_If_Judge_Has_Changed_When_Comparing_Generic_Hearing_Judges()
+        {
+            _hearing.CaseTypeName = "Generic";
+            var existingJudge = Builder<ParticipantResponse>.CreateNew()
+               .With(x => x.UserRoleName = UserRole.Judge.ToString())
+               .With(x => x.Username = "old@judge.com")
+               .Build();
+            _hearing.Participants.Add(existingJudge);
+
+            var newJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judge.com")
+                .Build();
+
+            var updatedHearing = new HearingDetailsResponse
+            {
+                Id = _hearing.Id,
+                Participants = new List<ParticipantResponse> { newJudge }
+            };
+
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeFalse();
+        }
+        [Test]
+        public void Should_Return_True_If_Judge_Has_Changed_When_Comparing_Non_Generic_Hearing_Judges()
+        {
+            _hearing.CaseTypeName = "Unit Test";
+            var existingJudge = Builder<ParticipantResponse>.CreateNew()
+               .With(x => x.UserRoleName = UserRole.Judge.ToString())
+               .With(x => x.Username = "old@judge.com")
+               .Build();
+            _hearing.Participants.Add(existingJudge);
+
+            var newJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judge.com")
+                .Build();
+
+            var updatedHearing = new HearingDetailsResponse
+            {
+                Id = _hearing.Id,
+                Participants = new List<ParticipantResponse> { newJudge }
+            };
+
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
+        }
+        [Test]
+        public void Should_Return_True_If_Judge_Has_Not_Changed_When_Comparing_Generic_Hearing_Judges()
+        {
+            _hearing.CaseTypeName = "Generic";
+            var existingJudge = Builder<ParticipantResponse>.CreateNew()
+               .With(x => x.UserRoleName = UserRole.Judge.ToString())
+               .With(x => x.Username = "old@judge.com")
+               .Build();
+            _hearing.Participants.Add(existingJudge);
+
+            var newJudge = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = existingJudge.Id)
+                .With(x => x.UserRoleName = UserRole.Judge.ToString())
+                .With(x => x.ContactEmail = "new@judge.com")
+                .Build();
+
+            var updatedHearing = new HearingDetailsResponse
+            {
+                Id = _hearing.Id,
+                Participants = new List<ParticipantResponse> { newJudge }
+            };
+
+            _hearing.JudgeHasNotChangedForGenericHearing(updatedHearing).Should().BeTrue();
         }
 
         [Test]

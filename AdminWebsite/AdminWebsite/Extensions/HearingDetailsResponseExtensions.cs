@@ -19,6 +19,21 @@ namespace AdminWebsite.Extensions
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
+        public static bool JudgeHasNotChangedForGenericHearing(this HearingDetailsResponse newHearingJudge,
+            HearingDetailsResponse originalHearingJudge)
+        {
+            var judgeFromUpdatedHearing = newHearingJudge.GetJudgeById();
+            var judgeFromOriginalHearing = originalHearingJudge.GetJudgeById();
+
+            if((judgeFromUpdatedHearing != judgeFromOriginalHearing) && newHearingJudge.IsGenericHearing()) return false;
+            return true;
+        }
+        private static Guid? GetJudgeById(this HearingDetailsResponse hearing)
+        {
+            var judgeId = hearing?.Participants.SingleOrDefault(x =>
+                x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))?.Id;
+            return judgeId;
+        }
 
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,
             HearingDetailsResponse originalHearing)
