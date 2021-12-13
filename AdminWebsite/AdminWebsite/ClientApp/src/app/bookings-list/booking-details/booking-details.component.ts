@@ -45,6 +45,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     $subscriptions: Subscription[] = [];
     cancelReason: string;
     conferencePhoneNumber: string;
+    conferencePhoneNumberWelsh: string;
     telephoneConferenceId: string;
     previousUrl: string = null;
     phoneDetails = '';
@@ -196,6 +197,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             if (updateBookingStatusResponse.success) {
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
                 this.updateStatusHandler(status);
                 this.booking.isConfirmed = true;
             } else {
@@ -290,6 +292,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                             this.conferencePhoneNumber = conferencePhoneNumber;
                             this.updateWithConferencePhoneDetails();
                         });
+                        this.videoHearingService.getConferencePhoneNumber(true).then(conferencePhoneNumberWelsh => {
+                            this.conferencePhoneNumberWelsh = conferencePhoneNumberWelsh;
+                            this.updateWithConferencePhoneDetails();
+                        });
                     });
             } catch (error) {
                 this.logger.warn(
@@ -305,7 +311,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         if (this.telephoneConferenceId && this.conferencePhoneNumber) {
             this.booking.telephone_conference_id = this.telephoneConferenceId;
             this.hearing.TelephoneConferenceId = this.telephoneConferenceId;
-            this.phoneDetails = `${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})`;
+            this.phoneDetails = `ENG: ${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})
+CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
         }
     }
 }
