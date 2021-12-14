@@ -43,6 +43,7 @@ export class VideoHearingsService {
     private readonly newRequestKey: string;
     private readonly bookingHasChangesKey: string;
     private readonly conferencePhoneNumberKey: string;
+    private readonly conferencePhoneNumberWelshKey: string;
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
@@ -52,6 +53,7 @@ export class VideoHearingsService {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
+        this.conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
 
         this.checkForExistingHearing();
     }
@@ -427,11 +429,13 @@ export class VideoHearingsService {
         return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
     }
 
-    async getConferencePhoneNumber() {
-        const savedConferencePhoneNumber = sessionStorage.getItem(this.conferencePhoneNumberKey);
+    async getConferencePhoneNumber(isWelsh = false) {
+        const conferencePhoneNumberKey = isWelsh ? this.conferencePhoneNumberWelshKey : this.conferencePhoneNumberKey;
+
+        const savedConferencePhoneNumber = sessionStorage.getItem(conferencePhoneNumberKey);
         if (savedConferencePhoneNumber === null) {
             const response = await this.bhClient.getConfigSettings().toPromise();
-            sessionStorage.setItem(this.conferencePhoneNumberKey, response.conference_phone_number);
+            sessionStorage.setItem(conferencePhoneNumberKey, response.conference_phone_number);
             return response.conference_phone_number;
         } else {
             return savedConferencePhoneNumber;

@@ -4153,6 +4153,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     test_username_stem?: string | undefined;
     /** To join the conference phone number */
     conference_phone_number?: string | undefined;
+    /** To join the conference phone number - welsh */
+    conference_phone_number_welsh?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */
@@ -4175,6 +4177,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.instrumentation_key = _data['instrumentation_key'];
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
+            this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
         }
@@ -4196,6 +4199,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['instrumentation_key'] = this.instrumentation_key;
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
+        data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
         return data;
@@ -4218,6 +4222,8 @@ export interface IClientSettingsResponse {
     test_username_stem?: string | undefined;
     /** To join the conference phone number */
     conference_phone_number?: string | undefined;
+    /** To join the conference phone number - welsh */
+    conference_phone_number_welsh?: string | undefined;
     /** The date to switch on option to join by phone */
     join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */

@@ -106,6 +106,8 @@ parameters:
     # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
+  - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+    value: $(ConferencePhoneNumberWelsh)
   - name: KinlyConfiguration:JoinByPhoneFromDate
     value: $(JoinByPhoneFromDate)
     
@@ -199,6 +201,8 @@ parameters:
   # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
+  - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+    value: $(ConferencePhoneNumberWelsh)
   - name: KinlyConfiguration:JoinByPhoneFromDate
     value: $(JoinByPhoneFromDate)
     

@@ -25,6 +25,7 @@ describe('Video hearing service', () => {
     let clientApiSpy: jasmine.SpyObj<BHClient>;
     const newRequestKey = 'bh-newRequest';
     const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
+    const conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>([
             'getHearingTypes',
@@ -444,6 +445,17 @@ describe('Video hearing service', () => {
         const phone = await service.getConferencePhoneNumber();
         expect(phone).toBe('12345');
     });
+
+    it('should get welsh conference phone number from session storage', async () => {
+        const expected = '54321';
+        sessionStorage.setItem(conferencePhoneNumberWelshKey, expected);
+        const cachedRequest = sessionStorage.getItem(conferencePhoneNumberWelshKey);
+        expect(cachedRequest).toBeDefined();
+
+        const phone = await service.getConferencePhoneNumber(true);
+        expect(phone).toBe(expected);
+    });
+
     it('should persist conference phone number and get it from api', async () => {
         sessionStorage.removeItem(conferencePhoneNumberKey);
         clientApiSpy.getConfigSettings.and.returnValue(
@@ -457,6 +469,21 @@ describe('Video hearing service', () => {
 
         expect(cachedRequest).toBeDefined();
     });
+
+    it('should persist welsh conference phone number and get it from api', async () => {
+        sessionStorage.removeItem(conferencePhoneNumberWelshKey);
+        clientApiSpy.getConfigSettings.and.returnValue(
+            of(new ClientSettingsResponse({ conference_phone_number_welsh: '54321', client_id: '6' }))
+        );
+
+        const phone = await service.getConferencePhoneNumber(true);
+        expect(clientApiSpy.getConfigSettings).toHaveBeenCalled();
+
+        const cachedRequest = sessionStorage.getItem(conferencePhoneNumberWelshKey);
+
+        expect(cachedRequest).toBeDefined();
+    });
+
     it('should map LinkedParticipantModel to LinkedParticipantRequest', () => {
         const linkedParticipantModelList: LinkedParticipantModel[] = [];
         let linkedParticipantModel = new LinkedParticipantModel();
