@@ -52,6 +52,7 @@ namespace AdminWebsite.Controllers
                 InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
+                ConferencePhoneNumberWelsh = _kinlyConfiguration.ConferencePhoneNumberWelsh,
                 JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate,
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl
             };
