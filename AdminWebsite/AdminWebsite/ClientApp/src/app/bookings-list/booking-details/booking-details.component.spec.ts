@@ -401,10 +401,12 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         component.telephoneConferenceId = '7777';
         component.conferencePhoneNumber = '12345';
+        component.conferencePhoneNumberWelsh = '54321';
 
         component.updateWithConferencePhoneDetails();
 
-        expect(component.phoneDetails).toBe('12345 (ID: 7777)');
+        expect(component.phoneDetails).toBe(`ENG: 12345 (ID: 7777)
+CY: 54321 (ID: 7777)`);
         expect(component.booking.telephone_conference_id).toBe('7777');
         expect(component.hearing.TelephoneConferenceId).toBe('7777');
         discardPeriodicTasks();
