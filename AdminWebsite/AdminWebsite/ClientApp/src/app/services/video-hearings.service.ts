@@ -436,7 +436,7 @@ export class VideoHearingsService {
         if (savedConferencePhoneNumber === null) {
             const response = await this.bhClient.getConfigSettings().toPromise();
             sessionStorage.setItem(conferencePhoneNumberKey, response.conference_phone_number);
-            return response.conference_phone_number;
+            return isWelsh ? response.conference_phone_number_welsh : response.conference_phone_number;
         } else {
             return savedConferencePhoneNumber;
         }
