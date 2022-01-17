@@ -71,17 +71,17 @@ namespace AdminWebsite.AcceptanceTests.Data
                 {
                     conferenceParticipant.ContactEmail.Should().Be(hearingParticipant.ContactEmail);
                 }
-                conferenceParticipant.ContactTelephone.Should().Be(hearingParticipant.TelephoneNumber);
+                conferenceParticipant.ContactTelephone.Trim().Should().Be(hearingParticipant.TelephoneNumber.Trim());
                 conferenceParticipant.CurrentStatus.Should().Be(ParticipantState.NotSignedIn);
-                conferenceParticipant.DisplayName.Should().Be(hearingParticipant.DisplayName);
-                conferenceParticipant.FirstName.Should().Be(hearingParticipant.FirstName);
-                conferenceParticipant.HearingRole.Should().Be(hearingParticipant.HearingRoleName);
+                conferenceParticipant.DisplayName.Trim().Should().Be(hearingParticipant.DisplayName.Trim());
+                conferenceParticipant.FirstName.Trim().Should().Be(hearingParticipant.FirstName.Trim());
+                conferenceParticipant.HearingRole.Trim().Should().Be(hearingParticipant.HearingRoleName.Trim());
                 conferenceParticipant.Id.Should().NotBeEmpty();
-                conferenceParticipant.LastName.Should().Be(hearingParticipant.LastName);
-                conferenceParticipant.Name.Should().Be($"{hearingParticipant.Title} {hearingParticipant.FirstName} {hearingParticipant.LastName}");
+                conferenceParticipant.LastName.Trim().Should().Be(hearingParticipant.LastName.Trim());
+                conferenceParticipant.Name.Trim().Should().Be($"{hearingParticipant.Title} {hearingParticipant.FirstName.Trim()} {hearingParticipant.LastName.Trim()}");
                 conferenceParticipant.RefId.Should().Be(hearingParticipant.Id);
-                conferenceParticipant.UserRole.ToString().Should().Be(hearingParticipant.UserRoleName);
-                conferenceParticipant.Username.Should().Be(hearingParticipant.Username);
+                conferenceParticipant.UserRole.ToString().Should().Be(hearingParticipant.UserRoleName.Trim());
+                conferenceParticipant.Username.Trim().Should().Be(hearingParticipant.Username.Trim());
             }
         }
     }
