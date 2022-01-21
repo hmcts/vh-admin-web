@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.28.4, )",
-        "resolved": "1.28.4",
-        "contentHash": "hO+WgggUXmnhwG3iXvkTSnvGwoLbYyIgRvWQuTnf9dvU1WkfWN7V7WcQ2TPRDwX2Mv4HKcchUKy4FkswQJB/dg==",
+        "requested": "[1.29.1, )",
+        "resolved": "1.29.1",
+        "contentHash": "SD5vDl2Hcb0lZGAl0b4rVJpBWX085/4WW1goy+PT+XjDhlcAZipWGVHj12znRdHAgLLqyFrPiB5VeIwNZIz45Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -35,6 +35,15 @@
           "Newtonsoft.Json": "12.0.3"
         }
       },
+      "NUnit": {
+        "type": "Direct",
+        "requested": "[3.13.2, )",
+        "resolved": "3.13.2",
+        "contentHash": "u+fz/lXyR4vlamySNAEMrXvh+GhAQiB6/aVZtU5WjivR5zF26Ui0tfteDtWqT90k9D8y6g8rFKYQC97Z7d195w==",
+        "dependencies": {
+          "NETStandard.Library": "2.0.0"
+        }
+      },
       "TestApi.Client": {
         "type": "Direct",
         "requested": "[1.27.1, )",
@@ -50,9 +59,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.63, )",
-        "resolved": "1.21.63",
-        "contentHash": "Y8LjGHaytemUX8i6q7IcJnhCngI0G5tC6MC74ybxrG6tplLY4NjKwkWGrkA0q4g4wTCKX+7xyITN4BrMjj5WsQ==",
+        "requested": "[1.21.64, )",
+        "resolved": "1.21.64",
+        "contentHash": "Nr4an9YakJsaYyHTeqpRS05XHvMqmTN+KkMKbWxtuCpUtH1Q5H8Esq41huD2nQBnyJec/hBakWFb8+5thUtOFA==",
         "dependencies": {
           "Appium.WebDriver": "4.3.1",
           "Azure.Storage.Blobs": "12.8.0",
@@ -81,15 +90,25 @@
           "Selenium.Firefox.WebDriver": "0.27.0",
           "Selenium.Support": "3.141.0",
           "Selenium.WebDriver": "3.141.0",
-          "Selenium.WebDriver.ChromeDriver": "96.0.4664.4500",
+          "Selenium.WebDriver.ChromeDriver": "97.0.4692.7100",
           "Selenium.WebDriver.IEDriver": "3.150.1.2",
           "Selenium.WebDriver.MicrosoftDriver": "17.17134.0",
-          "SpecFlow": "3.6.23",
-          "SpecFlow.NUnit": "3.6.23",
-          "SpecFlow.Tools.MsBuild.Generation": "3.6.23",
+          "SpecFlow": "3.9.40",
+          "SpecFlow.NUnit": "3.9.40",
+          "SpecFlow.Tools.MsBuild.Generation": "3.9.40",
           "System.Collections": "4.3.0",
           "System.Configuration.ConfigurationManager": "5.0.0",
           "TimeZoneConverter": "3.4.0"
+        }
+      },
+      "VideoApi.Client": {
+        "type": "Direct",
+        "requested": "[1.28.11, )",
+        "resolved": "1.28.11",
+        "contentHash": "owbVxsKbUvNag1u86TkkkeFxK3orXCzIDSwzkLb/y6pUJxXpYSHQ4PELK9k0U63tmJDJcTy3vzQ4p56Oe1Ov0g==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "12.0.3"
         }
       },
       "Appium.WebDriver": {
@@ -138,8 +157,8 @@
       },
       "BoDi": {
         "type": "Transitive",
-        "resolved": "1.4.1",
-        "contentHash": "x1D7r5VDm7zog+3DlyOo1fXas1RhYmw9e/wIemdjcTeHV4fp4OoGb0Jz4i2E9RShPoOItUfFklm3nxTLcLLwSg=="
+        "resolved": "1.5.0",
+        "contentHash": "CzIPzdIAFSd2zuLxI+0K9s48Qv3HQDbWiApn9h96j284rHs2bSPrn/PMca3mi4q3xLSEqOp+GUJ6+mXDD9prKg=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -156,14 +175,6 @@
           "System.Reflection.Emit": "4.3.0",
           "System.Reflection.TypeExtensions": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
-        }
-      },
-      "Cucumber.Messages": {
-        "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "R/2XAU6Zwdnlgga/YLYxwbKf4ai0JYyeX25l85t0nNgagR2aP8hnqrLtJjgswuXVa2WlQdjXUfJqUX8YTjzlXw==",
-        "dependencies": {
-          "Google.Protobuf": "3.7.0"
         }
       },
       "DotNetSeleniumExtras.PageObjects": {
@@ -223,19 +234,8 @@
       },
       "Gherkin": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "7QYZLuX3/unF+onuTVOry6hksN1UEx8niuh7XqZmqKK/ZSihl5yv1YBEHFQ78CMJjeEYB0FLomNds70wWsn+rw==",
-        "dependencies": {
-          "Utf8Json": "1.3.7"
-        }
-      },
-      "Google.Protobuf": {
-        "type": "Transitive",
-        "resolved": "3.7.0",
-        "contentHash": "OvssyqQTrpJgdH4fjztsCV9AhUo9jgGpDbZ5XAAqC+X6MIUsifHk8Woeom1HXlHdqo/XebiEMpYySE9AxybJ9g==",
-        "dependencies": {
-          "NETStandard.Library": "1.6.1"
-        }
+        "resolved": "19.0.3",
+        "contentHash": "kq9feqMojMj9aABrHb/ABEPaH2Y4dSclseSahAru6qxCeqVQNLLTgw/6vZMauzI1yBUL2fz03ub5yEd5btLfvg=="
       },
       "HtmlAgilityPack": {
         "type": "Transitive",
@@ -1321,14 +1321,6 @@
         "resolved": "5.0.0",
         "contentHash": "c5JVjuVAm4f7E9Vj+v09Z9s2ZsqFDjBpcsyS3M9xRo0bEdm/LVZSzLxxNvfvAwRiiE8nwe1h2G4OwiwlzFKXlA=="
       },
-      "NUnit": {
-        "type": "Transitive",
-        "resolved": "3.13.1",
-        "contentHash": "vWBvrSelmTYwqHWvO3dA63z7cOpaFR/3nJ9MMVLBkWeaWa7oiglPPm5g1h96B4i2XXqjFexxhR5MyMjmIJYPfg==",
-        "dependencies": {
-          "NETStandard.Library": "2.0.0"
-        }
-      },
       "NUnit3TestAdapter": {
         "type": "Transitive",
         "resolved": "3.17.0",
@@ -1507,8 +1499,8 @@
       },
       "Selenium.WebDriver.ChromeDriver": {
         "type": "Transitive",
-        "resolved": "96.0.4664.4500",
-        "contentHash": "7bH+2/bX4IqPXxnMsbD820pCb1DFLeESIbjpUL/Zgq5wfKJHTxtknrQ1wnlMJmWtbpoNcj6Zck7OfoIVstl3zQ=="
+        "resolved": "97.0.4692.7100",
+        "contentHash": "/5wf4Rv9vTmab2qWo3enuYLoumOyVb6+rO0f2hbym+MQzDGYb7GpadhWk/jgNtUf6eFvsqL90TyzXrcCfOhCyQ=="
       },
       "Selenium.WebDriver.IEDriver": {
         "type": "Transitive",
@@ -1522,34 +1514,39 @@
       },
       "SpecFlow": {
         "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "gJJnagVXe+P5Ysx3ndfxuar4x5edR9OSogR+LSfzJvGYH03ujWTEyfFq2vLQaqpc8uabfFrvc2bQfw/ukGm3mA==",
+        "resolved": "3.9.40",
+        "contentHash": "ru7twstJSKrTv3XfcxyttzrdZ/FvXOF5cYN/x/2js755wVk1zpSPUPa/ml3lSZmPNkS5OAOuSt1JLEa5hhDhdw==",
         "dependencies": {
-          "BoDi": "1.4.1",
-          "Cucumber.Messages": "[6.0.1, 7.0.0)",
-          "Gherkin": "6.0.0",
+          "BoDi": "1.5.0",
+          "Gherkin": "19.0.3",
+          "Microsoft.Extensions.DependencyModel": "1.0.3",
+          "SpecFlow.Internal.Json": "1.0.8",
           "System.Configuration.ConfigurationManager": "4.5.0",
           "System.Net.Http": "4.3.4",
-          "System.ValueTuple": "4.4.0",
-          "Utf8Json": "1.3.7"
+          "System.Runtime.Loader": "4.3.0"
         }
+      },
+      "SpecFlow.Internal.Json": {
+        "type": "Transitive",
+        "resolved": "1.0.8",
+        "contentHash": "lVCC/Rie7N5rFoc7YxPS0nneLfsWSTIMMlkndwxhaD8MxBp3Bsv1HeiVjVwXCjWaQeoqZcvIy52fF5Xit00ZLw=="
       },
       "SpecFlow.NUnit": {
         "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "R0hHReaOhVHq1vqBBivLQPndiYLwbWq0tWsCzdhI6L2D4rYELeazq6NK8VGdtzpf+b5mahtFvC2xFhbe/uIRjg==",
+        "resolved": "3.9.40",
+        "contentHash": "+brbJAe0LLzmXh2L78kOJc2fa5EH/7cugmbnfZQdBeWCzL6iFDWFl3MHZ0xx/2BQyu6N/xokqw53Rl30LIo7lw==",
         "dependencies": {
-          "NUnit": "3.11.0",
-          "SpecFlow": "[3.6.23]",
-          "SpecFlow.Tools.MsBuild.Generation": "[3.6.23]"
+          "NUnit": "3.13.1",
+          "SpecFlow": "[3.9.40]",
+          "SpecFlow.Tools.MsBuild.Generation": "[3.9.40]"
         }
       },
       "SpecFlow.Tools.MsBuild.Generation": {
         "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "MPmeTco83xRx+JpFmSCtpTD32+38vEh4jgi/fYy0B3luGxcwUB6LO0WcdFf853dWiaa5x9un+n/DKcNK7AFAoQ==",
+        "resolved": "3.9.40",
+        "contentHash": "DFClKzQH0ijUBiZNpas8sQ66EdGwVSS18UtC1hVIM7PiT0F+xzKs4VX5hsz+ZY/RKyQEfY9HELUAC8AoZicxSg==",
         "dependencies": {
-          "SpecFlow": "[3.6.23]"
+          "SpecFlow": "[3.9.40]"
         }
       },
       "Swashbuckle.AspNetCore": {
@@ -2375,6 +2372,16 @@
           "runtime.native.System": "4.3.0"
         }
       },
+      "System.Runtime.Loader": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "DHMaRn8D8YCK2GG2pw+UzNxn/OHVfaWx7OTLBD/hPegHZZgcZh3H6seWegrC4BYwsfuGrywIuT+MQs+rPqRLTQ==",
+        "dependencies": {
+          "System.IO": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
       "System.Runtime.Numerics": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -2682,8 +2689,13 @@
       },
       "System.ValueTuple": {
         "type": "Transitive",
-        "resolved": "4.4.0",
-        "contentHash": "BahUww/+mdP4ARCAh2RQhQTg13wYLVrBb9SYVgW8ZlrwjraGCXHGjo0oIiUfZ34LUZkMMR+RAzR7dEY4S1HeQQ=="
+        "resolved": "4.3.0",
+        "contentHash": "cNLEvBX3d6MMQRZe3SMFNukVbitDAEpVZO17qa0/2FHxZ7Y7PpFRpr6m2615XYM/tYYYf0B+WyHNujqIw8Luwg==",
+        "dependencies": {
+          "System.Collections": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
       },
       "System.Windows.Extensions": {
         "type": "Transitive",
@@ -2822,17 +2834,6 @@
           "Newtonsoft.Json": "12.0.3"
         }
       },
-      "Utf8Json": {
-        "type": "Transitive",
-        "resolved": "1.3.7",
-        "contentHash": "lMTNZWp6a6KGkgMc3rW41D3b0REb03fQycfb/2bNBpiUtsbGYYI/LrAhnX52vrHRe4ze7JxbtpWF1Y5ohdpipQ==",
-        "dependencies": {
-          "System.Reflection.Emit": "4.3.0",
-          "System.Reflection.Emit.Lightweight": "4.3.0",
-          "System.Threading.Tasks.Extensions": "4.4.0",
-          "System.ValueTuple": "4.4.0"
-        }
-      },
       "VH.Core.Configuration": {
         "type": "Transitive",
         "resolved": "0.1.12",
@@ -2843,15 +2844,6 @@
           "Microsoft.Extensions.Configuration.KeyPerFile": "3.1.11",
           "Microsoft.Extensions.DependencyModel": "3.1.6",
           "SonarAnalyzer.CSharp": "8.2.0.14119"
-        }
-      },
-      "VideoApi.Client": {
-        "type": "Transitive",
-        "resolved": "1.28.0",
-        "contentHash": "xTFugTvOffBJ96vy2kbiaMO894YQGSV5sniKtW5+B1oL8OSCuhzT+xGMkZV5s8euWmtx6SydvzzxkwQ7Sortfg==",
-        "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Newtonsoft.Json": "12.0.3"
         }
       },
       "adminwebsite": {

@@ -86,6 +86,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var hearing = _c.Test.HearingResponse;
             var caseDetails = hearing.Cases.First();
             var date = _c.TimeZone.Adjust(hearing.ScheduledDateTime).Date.ToString(DateFormats.AudioScheduledDate);
+
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseNumber(hearing.Id));
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsScheduledTime(hearing.Id));
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseName(hearing.Id));
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id));
+
             _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsCaseNumber(hearing.Id)).Should().Be(caseDetails.Number);
             _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Should().Be(date);
             _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsCaseName(hearing.Id)).Should().Be(caseDetails.Name);
