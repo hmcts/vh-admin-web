@@ -41,6 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the user can see a list of answers including the (.*) specific answer")]
         public void ThenTheUserCanSeeAListOfAnswers(string role)
         {
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(QuestionnairePage.QuestionnaireLink(_participantResponse.LastName));
             _browsers[_c.CurrentUser].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.LastName));
             var allQuestionsAndAnswers = GetQuestionsAndAnswers();
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion1, "Yes", allQuestionsAndAnswers);
