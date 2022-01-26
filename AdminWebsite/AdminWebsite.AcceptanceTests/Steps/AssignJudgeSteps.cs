@@ -65,6 +65,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the email and phone details are updated")]
         public void ThenTheEmailAndPhoneDetailsAreUpdated()
         {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgeEmailId);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgePhoneId);
             _browsers[_c.CurrentUser].TextOf(AssignJudgePage.JudgeEmailId).Should().Be(Judge.AlternativeEmail);
             _browsers[_c.CurrentUser].TextOf(AssignJudgePage.JudgePhoneId).Should().Be(JudgePhone);
         }
