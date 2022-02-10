@@ -141,7 +141,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IConferenceDetailsService>()
                 .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(expectedConferenceDetailsResponse);
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> { hearing });
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
@@ -151,9 +150,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
-
-            _mocker.Mock<IHearingsService>().Verify(
-                x => x.SendHearingReminderEmail(It.Is<HearingDetailsResponse>(x => x == hearing)), Times.AtLeast(1));
         }
 
         [Test]
