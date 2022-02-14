@@ -31,10 +31,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     {
         private AutoMock _mocker;
         private AdminWebsite.Controllers.HearingsController _controller;
-        
+        private string _expectedUserIdentityName;
+
         [SetUp]
         public void Setup()
         {
+            _expectedUserIdentityName = "created by";
+
             _mocker = AutoMock.GetLoose();
             _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse
@@ -51,6 +54,54 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 });
             
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
+        }
+
+        [Test]
+        public async Task Should_send_confirmation_email_to_judge_for_new_hearing() 
+        {
+            // Arrange
+            var bookingDetails = InitHearingForTest();
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = bookingDetails
+            };
+
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithEndPoints(2)
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Staff Member", "staff.member@hmcts.net")
+                .WithParticipant("Judge", "judge.fudge@hmcts.net");
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+                .ReturnsAsync(hearingDetailsResponse);
+
+
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
+
+            // Act
+            var result = await _controller.Post(bookingRequest);
+
+            // Assert
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult)result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+            createdObjectResult.Value.Should().Be(hearingDetailsResponse);
+
+            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+
+            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
+
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_send_confirmation_email_to_judge_for_new_hearing_multi_day() 
+        {
+
         }
 
         [Test]
@@ -76,8 +127,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(hearingDetailsResponse);
 
             
-            const string expectedUserIdentityName = "created by";
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(expectedUserIdentityName);
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
             
             // Act
             var result = await _controller.Post(bookingRequest);
@@ -90,7 +140,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 
-            bookingDetails.CreatedBy.Should().Be(expectedUserIdentityName);
+            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
@@ -125,8 +175,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
                 .ReturnsAsync(hearingDetailsResponse);
             
-            const string expectedUserIdentityName = "created by";
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(expectedUserIdentityName);
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
 
             // Act
             var result = await _controller.Post(bookingRequest);
@@ -137,7 +186,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             createdObjectResult.StatusCode.Should().Be(201);
             createdObjectResult.Value.Should().Be(hearingDetailsResponse);
             
-            bookingDetails.CreatedBy.Should().Be(expectedUserIdentityName);
+            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
@@ -177,8 +226,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>().Setup(x =>
                     x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
-            const string expectedUserIdentityName = "created by";
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(expectedUserIdentityName);
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
 
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
@@ -201,7 +249,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             createdObjectResult.StatusCode.Should().Be(201);
             createdObjectResult.Value.Should().Be(hearingDetailsResponse);
             
-            bookingDetails.CreatedBy.Should().Be(expectedUserIdentityName);
+            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
