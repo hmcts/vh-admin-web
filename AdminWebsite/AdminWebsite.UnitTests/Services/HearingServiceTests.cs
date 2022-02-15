@@ -953,7 +953,7 @@ namespace AdminWebsite.UnitTests.Services
 
             _mocker.Mock<INotificationApiClient>()
                          .Verify(
-                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(5));
+                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJoh)),
