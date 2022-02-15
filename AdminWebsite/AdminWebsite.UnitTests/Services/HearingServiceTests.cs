@@ -973,7 +973,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJudge)),
-                    Times.Once);
+                    Times.Never);
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)),
@@ -1213,7 +1213,7 @@ namespace AdminWebsite.UnitTests.Services
             var judge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
-                .With(x => x.ContactEmail = "Judge{@court.com")
+                .With(x => x.ContactEmail = "Judge@court.com")
                 .Build();
             var staffMember = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
