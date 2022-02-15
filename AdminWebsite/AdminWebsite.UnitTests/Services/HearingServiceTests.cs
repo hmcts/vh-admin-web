@@ -947,7 +947,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task NewHearingSendConfirmation_Should_Receive_Call_For_JUDGE_And_STAFFMEMBER()
+        public async Task NewHearingSendConfirmation_Should_Receive_Call_For_JUDGE_And_NOT_STAFFMEMBER()
         {
             await _service.NewHearingSendConfirmation(_hearing);
 
@@ -1213,6 +1213,7 @@ namespace AdminWebsite.UnitTests.Services
             var judge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
+                .With(x => x.ContactEmail = "Judge{@court.com")
                 .Build();
             var staffMember = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
