@@ -947,13 +947,13 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task NewHearingSendConfirmation_Should_NOT_Receive_Call_For_JUDGE_And_STAFFMEMBER()
+        public async Task NewHearingSendConfirmation_Should_Receive_Call_For_JUDGE_And_STAFFMEMBER()
         {
             await _service.NewHearingSendConfirmation(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                          .Verify(
-                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(5));
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJoh)),
@@ -973,7 +973,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJudge)),
-                    Times.Never);
+                    Times.Once);
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)),
