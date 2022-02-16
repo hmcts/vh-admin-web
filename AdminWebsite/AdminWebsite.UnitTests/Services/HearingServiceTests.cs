@@ -947,13 +947,13 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task NewHearingSendConfirmation_Should_Receive_Call_For_JUDGE_And_STAFFMEMBER()
+        public async Task NewHearingSendConfirmation_Should_Receive_Call_For_JUDGE_And_NOT_STAFFMEMBER()
         {
             await _service.NewHearingSendConfirmation(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                          .Verify(
-                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(5));
+                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJoh)),
@@ -973,7 +973,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJudge)),
-                    Times.Once);
+                    Times.Never);
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)),
@@ -1213,6 +1213,7 @@ namespace AdminWebsite.UnitTests.Services
             var judge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
+                .With(x => x.ContactEmail = "Judge@court.com")
                 .Build();
             var staffMember = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
