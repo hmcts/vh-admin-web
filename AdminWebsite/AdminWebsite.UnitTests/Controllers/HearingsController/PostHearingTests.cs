@@ -613,6 +613,20 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_clone_hearing()
         {
             var request = GetMultiHearingRequest();
+            var groupedHearings = new List<HearingDetailsResponse>
+            {
+                new HearingDetailsResponse
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                }
+            };
+
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
                 .Verifiable();
