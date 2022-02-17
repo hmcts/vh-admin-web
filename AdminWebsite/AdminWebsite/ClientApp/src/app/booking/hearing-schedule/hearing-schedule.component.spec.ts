@@ -73,11 +73,9 @@ describe('HearingScheduleComponent first visit', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts',
-                'getPublicHolidays'
+                'getCourts'
             ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -407,11 +405,9 @@ describe('HearingScheduleComponent returning to page', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts',
-                'getPublicHolidays'
+                'getCourts'
             ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -550,11 +546,9 @@ describe('HearingScheduleComponent multi days hearing', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts',
-                'getPublicHolidays'
+                'getCourts'
             ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',

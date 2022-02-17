@@ -9,7 +9,6 @@ import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { ReferenceDataService } from './services/reference-data.service';
 
 @Component({
     selector: 'app-root',
@@ -44,8 +43,7 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        connection: ConnectionService,
-        private refDataService: ReferenceDataService
+        connection: ConnectionService
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
@@ -68,7 +66,6 @@ export class AppComponent implements OnInit {
                     return;
                 }
 
-                this.refDataService.fetchPublicHolidays();
                 this.headerComponent.confirmLogout.subscribe(() => {
                     this.showConfirmation();
                 });

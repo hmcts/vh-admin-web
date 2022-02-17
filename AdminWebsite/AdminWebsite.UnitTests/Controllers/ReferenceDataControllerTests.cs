@@ -1,18 +1,15 @@
-﻿using AdminWebsite.Controllers;
-using AdminWebsite.Models;
-using AdminWebsite.Security;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Services;
-using AdminWebsite.Services.Models;
-using Autofac.Extras.Moq;
+using AdminWebsite.Controllers;
+using AdminWebsite.Models;
+using AdminWebsite.Security;
 using BookingsApi.Client;
 using BookingsApi.Contract.Responses;
 using HearingTypeResponse = BookingsApi.Contract.Responses.HearingTypeResponse;
@@ -107,19 +104,6 @@ namespace AdminWebsite.UnitTests.Controllers
             caseRoles.Count.Should().Be(0);
         }
 
-        [Test]
-        public async Task Should_return_list_of_upcoming_public_holidays()
-        {
-            var publicHolidays = Builder<PublicHoliday>.CreateListOfSize(10).Build().ToList();
-            _mocker.Mock<IPublicHolidayRetriever>().Setup(x => x.RetrieveUpcomingHolidays())
-                .ReturnsAsync(publicHolidays);
-
-            var response = await _controller.PublicHolidays();
-            response.Result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeOfType<List<PublicHolidayResponse>>();
-            var responseHolidays = response.Result.As<OkObjectResult>().Value.As<List<PublicHolidayResponse>>();
-            responseHolidays.Should().HaveCount(publicHolidays.Count);
-        }
-        
         private void SetTestCase(List<CaseRoleResponse> listTypes)
         {
             var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", UserRole = "role1"} };

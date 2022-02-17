@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
@@ -22,11 +21,9 @@ using BookingsApi.Contract.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
-using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.Controllers
 {
@@ -45,7 +42,6 @@ namespace AdminWebsite.Controllers
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
-        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
         private static readonly int startingSoonMinutesThreshold = 30;
 
         /// <summary>
@@ -55,7 +51,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
+            IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -64,7 +60,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
-            _publicHolidayRetriever = publicHolidayRetriever;
         }
 #pragma warning restore S107
         /// <summary>
@@ -157,8 +152,6 @@ namespace AdminWebsite.Controllers
             IList<DateTime> listOfDates;
             int totalDays;
 
-            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-
             if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
             {
                 listOfDates = request.MultiHearingDetails.HearingDates;
@@ -167,7 +160,7 @@ namespace AdminWebsite.Controllers
             else
             {
                 listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                    request.MultiHearingDetails.EndDate, publicHolidays);
+                    request.MultiHearingDetails.EndDate);
                 totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
             }
 
@@ -188,9 +181,8 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
-            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
 
-            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate, publicHolidays);
+            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
 
             if (!hearingDates.Any())
             {

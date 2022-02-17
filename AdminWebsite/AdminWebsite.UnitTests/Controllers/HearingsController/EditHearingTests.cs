@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
+using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Moq;
+using NUnit.Framework;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
@@ -17,18 +26,9 @@ using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
-using Castle.Core.Internal;
-using FluentAssertions;
-using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Moq;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
-using NUnit.Framework;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
@@ -105,8 +105,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object,
-                Mock.Of<IPublicHolidayRetriever>());
+                _conferencesServiceMock.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest
