@@ -139,10 +139,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         this.form = this.formBuilder.group({
-            hearingDate: [
-                hearingDateParsed,
-                [Validators.required, weekendValidator(), pastDateValidator()]
-            ],
+            hearingDate: [hearingDateParsed, [Validators.required, weekendValidator(), pastDateValidator()]],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -169,11 +166,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     addHearingDate() {
-        this.addHearingDateControl = new FormControl(null, [
-            Validators.required,
-            weekendValidator(),
-            pastDateValidator()
-        ]);
+        this.addHearingDateControl = new FormControl(null, [Validators.required, weekendValidator(), pastDateValidator()]);
     }
 
     hearingDateChanged(event: any) {
@@ -568,11 +561,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearingDurationMinuteControl.markAsPristine();
 
             if (this.multiDaysRangeControl.value) {
-                this.endHearingDateControl.setValidators([
-                    Validators.required,
-                    weekendValidator(),
-                    pastDateValidator()
-                ]);
+                this.endHearingDateControl.setValidators([Validators.required, weekendValidator(), pastDateValidator()]);
                 this.endHearingDateControl.updateValueAndValidity();
                 this.endHearingDateControl.setValue(null);
             } else {

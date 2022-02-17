@@ -72,9 +72,7 @@ describe('HearingScheduleComponent first visit', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts'
-            ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
@@ -404,9 +402,7 @@ describe('HearingScheduleComponent returning to page', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts'
-            ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
@@ -545,9 +541,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
-                'getCourts'
-            ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
