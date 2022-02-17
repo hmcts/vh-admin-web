@@ -20,7 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         private static void AssertConferenceDetails(HearingDetailsResponse hearing, ConferenceDetailsResponse conference)
         {
             conference.AudioRecordingRequired.Should().Be(hearing.AudioRecordingRequired);
-            conference.CaseName.Should().Be(hearing.Cases.First().Name);
+            hearing.Cases.First().Name.Should().StartWith(conference.CaseName);
             conference.CaseNumber.Should().Be(hearing.Cases.First().Number);
             conference.CaseType.Should().Be(hearing.CaseTypeName);
             conference.ClosedDateTime.Should().BeNull();
