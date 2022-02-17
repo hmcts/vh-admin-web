@@ -765,6 +765,7 @@ namespace AdminWebsite.Services
 
         private async Task CreateNotifications(List<AddNotificationRequest> notificationRequests)
         {
+            notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
             await Task.WhenAll(notificationRequests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
     }
