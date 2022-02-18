@@ -32,7 +32,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             !this.sortedParticipants?.every(sortedParticipant => this.hearing.participants.includes(sortedParticipant)) ?? false;
 
         if (containsNewParticipants || containsRemovedParticipants) {
-            this.sortParticipants();
+            this.sortedParticipants = this.sortParticipants();
         }
     }
 
@@ -61,64 +61,79 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     sortParticipants() {
+        const compareByPartyThenByFirstName = () => (a, b) => {
+            const partyA = (a.case_role_name === Constants.None) ? a.hearing_role_name : a.case_role_name;
+            const partyB = (b.case_role_name === Constants.None) ? b.hearing_role_name : b.case_role_name;
+            if(partyA === partyB){
+                return (a.first_name < b.first_name) ? -1 : (a > b) ? 1 : 0;
+            }
+            return (partyA < partyB) ? -1 : (a > b) ? 1 : 0;
+        }
+
         if (!this.hearing.participants) {
-            this.sortedParticipants = [];
             return;
         }
         const judges = this.hearing.participants.filter(participant => participant.is_judge);
+
         const staffMembers = this.hearing.participants.filter(
             participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember
         );
-        const panelMembersAndWingers = this.hearing.participants.filter(participant =>
-            Constants.JudiciaryRoles.includes(participant.hearing_role_name)
-        );
+        const panelMembers = this.hearing.participants.filter(participant =>
+            Constants.JudiciaryRoles.includes((participant.case_role_name === Constants.None)
+                ? participant.hearing_role_name
+                : participant.case_role_name)
+        ).sort(compareByPartyThenByFirstName());
 
-        const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
+        const observers = this.hearing.participants.filter(
+            participant =>
+                Constants.HearingRoles.Observer === ((participant.case_role_name === Constants.None)
+                    ? participant.hearing_role_name
+                    : participant.case_role_name)
+        ).sort(compareByPartyThenByFirstName());
+
         const others = this.hearing.participants.filter(
             participant =>
                 !participant.is_judge &&
-                !Constants.OtherParticipantRoles.includes(participant.hearing_role_name) &&
-                !interpretersAndInterpretees.includes(participant)
-        );
-        const observers = this.hearing.participants.filter(
-            participant =>
-                participant.hearing_role_name === Constants.HearingRoles.Observer && !interpretersAndInterpretees.includes(participant)
-        );
+                !staffMembers.includes(participant) &&
+                !panelMembers.includes(participant) &&
+                !observers.includes(participant) &&
+                participant.hearing_role_name !== Constants.HearingRoles.Interpreter
+        ).sort(compareByPartyThenByFirstName());
 
-        this.sortedParticipants = [
+        const sortedList = [
             ...judges,
-            ...panelMembersAndWingers,
+            ...panelMembers,
             ...staffMembers,
             ...others,
-            ...interpretersAndInterpretees,
             ...observers
         ];
+        this.injectInterpreters(sortedList);
+
+        return sortedList;
     }
 
-    private getInterpreterAndInterpretees(): ParticipantModel[] {
-        const interpreterInterpreteeList: ParticipantModel[] = [];
-        // get the interpreter and the corresponding interpretee names.
+    private injectInterpreters(sortedList: ParticipantModel[]) {
         this.clearInterpreteeList();
-        const interpreter = this.hearing.participants.filter(participant => participant.hearing_role_name === 'Interpreter');
-        interpreter.forEach(interpreterParticipant => {
+        const interpreters = this.hearing.participants.filter(participant =>
+            participant.hearing_role_name === Constants.HearingRoles.Interpreter);
+        interpreters.forEach(interpreterParticipant => {
             let interpretee: ParticipantModel;
             if (interpreterParticipant.interpreterFor) {
                 interpretee = this.hearing.participants.find(p => p.email === interpreterParticipant.interpreterFor);
             } else if (interpreterParticipant.linked_participants) {
                 const linkedParticipants = interpreterParticipant.linked_participants;
                 interpretee = this.hearing.participants.find(p =>
-                    linkedParticipants.some(lp => lp.linkedParticipantId === p.id && lp.linkType === LinkedParticipantType.Interpreter)
+                    linkedParticipants.some(lp => lp.linkedParticipantId === p.id &&
+                        lp.linkType === LinkedParticipantType.Interpreter)
                 );
             }
-            interpreterParticipant.interpretee_name = interpretee?.display_name;
-            interpreterInterpreteeList.push(interpreterParticipant);
-
             if (interpretee) {
                 interpretee.is_interpretee = true;
-                interpreterInterpreteeList.push(interpretee);
             }
+            const insertIndex: number = sortedList.findIndex((e) => e.email === interpretee.email) + 1;
+            interpreterParticipant.interpretee_name = interpretee?.display_name;
+            sortedList.splice(insertIndex, 0, interpreterParticipant);
         });
-        return interpreterInterpreteeList;
     }
 
     private clearInterpreteeList(): void {
@@ -128,13 +143,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         });
     }
 
-    canEditParticipant(particpant: ParticipantModel): boolean {
+    canEditParticipant(participant: ParticipantModel): boolean {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }
-        if (this.videoHearingsService.isHearingAboutToStart() && !particpant.addedDuringHearing) {
-            return false;
-        }
-        return true;
+        return !(this.videoHearingsService.isHearingAboutToStart() && !participant.addedDuringHearing);
     }
 }
