@@ -90,7 +90,8 @@ namespace AdminWebsite.Controllers
                         .Where(p => p.HearingRoleName != RoleNames.Judge)
                         .Where(p => p.HearingRoleName != RoleNames.PanelMember)
                         .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
-                }else
+                }
+                else
                 {
                     nonJudgeParticipants = newBookingRequest.Participants
                         .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
@@ -111,6 +112,9 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
+
+                await ConfirmHearing(hearingDetailsResponse.Id);
+
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogInformation("BookNewHearing - Successfully sent emails to participants- {Hearing}",
@@ -121,7 +125,7 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse); 
+                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse);
                 }
                 else
                 {
@@ -143,6 +147,29 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
                     e.Message, JsonConvert.SerializeObject(newBookingRequest));
                 throw;
+            }
+        }
+
+        private async Task ConfirmHearing(Guid hearingIdOrGroupId, bool clonedRequest = false)
+        {
+            var updateBookingStatusRequest = new UpdateBookingStatusRequest
+            {
+                Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created,
+            };
+
+            if (clonedRequest)
+            {
+                var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
+                var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
+
+                foreach (var hearing in unConfirmedHearingsList)
+                {
+                    await UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
+                }
+            }
+            else
+            {
+                await UpdateBookingStatus(hearingIdOrGroupId, updateBookingStatusRequest);
             }
         }
 
@@ -197,6 +224,9 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
+
+                await ConfirmHearing(hearingId, true);
+
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -384,11 +414,11 @@ namespace AdminWebsite.Controllers
             {
                 await _hearingsService.ProcessGenericEmail(updatedHearing, updatedHearing.Participants);
             }
-                
+
             else if (updatedHearing.HasJudgeEmailChanged(originalHearing) && updatedHearing.Status == BookingStatus.Created)
             {
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
-            }                
+            }
         }
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
