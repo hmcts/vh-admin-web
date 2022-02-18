@@ -1,8 +1,8 @@
 using System;
-using AdminWebsite.Mappers;
-using AdminWebsite.Services.Models;
 using FluentAssertions;
 using NUnit.Framework;
+using AdminWebsite.Mappers;
+using AdminWebsite.Services.Models;
 
 namespace AdminWebsite.UnitTests.Mappers
 {

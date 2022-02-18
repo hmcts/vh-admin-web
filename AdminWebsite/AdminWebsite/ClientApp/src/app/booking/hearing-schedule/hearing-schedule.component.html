@@ -36,7 +36,6 @@
         <app-date-error-messages
           [required]="hearingDateControl.errors?.required"
           [weekend]="hearingDateControl.errors?.weekend"
-          [publicHoliday]="hearingDateControl.errors?.publicHoliday"
           [pastDate]="hearingDateControl.errors?.pastdate"
         ></app-date-error-messages>
       </div>
@@ -66,7 +65,6 @@
           <app-date-error-messages
             [required]="hearingDateControl.errors?.required"
             [weekend]="hearingDateControl.errors?.weekend"
-            [publicHoliday]="hearingDateControl.errors?.publicHoliday"
             [pastDate]="hearingDateControl.errors?.pastdate"
           ></app-date-error-messages>
         </div>
@@ -87,7 +85,6 @@
           <app-date-error-messages
             [required]="endHearingDateControl.errors?.required"
             [weekend]="endHearingDateControl.errors?.weekend"
-            [publicHoliday]="endHearingDateControl.errors?.publicHoliday"
             [pastDate]="endHearingDateControl.errors?.pastdate"
           ></app-date-error-messages>
           <span *ngIf="endDateEarlierThanStartDate" id="endHearingDatePast-error" class="govuk-error-message alert alert-danger">
@@ -130,7 +127,6 @@
         <app-date-error-messages
           [required]="addHearingDateControl.errors?.required"
           [weekend]="addHearingDateControl.errors?.weekend"
-          [publicHoliday]="addHearingDateControl.errors?.publicHoliday"
           [pastDate]="addHearingDateControl.errors?.pastdate"
         ></app-date-error-messages>
         <div *ngIf="isDateAlreadySelected()" class="alert alert-danger">

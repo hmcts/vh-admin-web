@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Steps;
-using AdminWebsite.Services.Models;
 using BookingsApi.Contract.Responses;
-using FluentAssertions;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -54,11 +53,11 @@ namespace AdminWebsite.AcceptanceTests.Data
         }
 
         public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isMultiDayHearing,
-            bool isRunningOnSauceLabs, List<PublicHoliday> publicHolidays)
+            bool isRunningOnSauceLabs)
         {
             if (isMultiDayHearing)
             {
-                var newDate = DateHelper.GetNextWorkingDay(expected, publicHolidays, day - 1);
+                var newDate = DateHelper.GetNextWorkingDay(expected, day - 1);
                 expected = newDate;
             }
 
