@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
@@ -22,11 +21,9 @@ using BookingsApi.Contract.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
-using VideoApi.Contract.Enums;
 
 namespace AdminWebsite.Controllers
 {
@@ -45,7 +42,6 @@ namespace AdminWebsite.Controllers
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
-        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
         private static readonly int startingSoonMinutesThreshold = 30;
 
         /// <summary>
@@ -55,7 +51,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService, IPublicHolidayRetriever publicHolidayRetriever)
+            IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -64,7 +60,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
-            _publicHolidayRetriever = publicHolidayRetriever;
         }
 #pragma warning restore S107
         /// <summary>
@@ -95,7 +90,8 @@ namespace AdminWebsite.Controllers
                         .Where(p => p.HearingRoleName != RoleNames.Judge)
                         .Where(p => p.HearingRoleName != RoleNames.PanelMember)
                         .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
-                }else
+                }
+                else
                 {
                     nonJudgeParticipants = newBookingRequest.Participants
                         .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
@@ -116,6 +112,9 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
+
+                await ConfirmHearing(hearingDetailsResponse.Id);
+
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogInformation("BookNewHearing - Successfully sent emails to participants- {Hearing}",
@@ -126,7 +125,7 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse); 
+                    await SendMultiDayHearingConfirmationEmail(request, hearingDetailsResponse);
                 }
                 else
                 {
@@ -151,13 +150,34 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        private async Task ConfirmHearing(Guid hearingIdOrGroupId, bool clonedRequest = false)
+        {
+            var updateBookingStatusRequest = new UpdateBookingStatusRequest
+            {
+                Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created,
+            };
+
+            if (clonedRequest)
+            {
+                var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
+                var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
+
+                foreach (var hearing in unConfirmedHearingsList)
+                {
+                    await UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
+                }
+            }
+            else
+            {
+                await UpdateBookingStatus(hearingIdOrGroupId, updateBookingStatusRequest);
+            }
+        }
+
         private async Task SendMultiDayHearingConfirmationEmail(BookHearingRequest request,
             HearingDetailsResponse hearingDetailsResponse)
         {
             IList<DateTime> listOfDates;
             int totalDays;
-
-            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
 
             if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
             {
@@ -167,7 +187,7 @@ namespace AdminWebsite.Controllers
             else
             {
                 listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                    request.MultiHearingDetails.EndDate, publicHolidays);
+                    request.MultiHearingDetails.EndDate);
                 totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
             }
 
@@ -188,9 +208,8 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
-            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
 
-            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate, publicHolidays);
+            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
 
             if (!hearingDates.Any())
             {
@@ -205,6 +224,9 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
+
+                await ConfirmHearing(hearingId, true);
+
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -392,11 +414,11 @@ namespace AdminWebsite.Controllers
             {
                 await _hearingsService.ProcessGenericEmail(updatedHearing, updatedHearing.Participants);
             }
-                
+
             else if (updatedHearing.HasJudgeEmailChanged(originalHearing) && updatedHearing.Status == BookingStatus.Created)
             {
                 await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
-            }                
+            }
         }
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)

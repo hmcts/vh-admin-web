@@ -25,6 +25,5 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public List<UserDto> Users { get; set; }
         public AdminWebConfig WebConfig { get; set; }
         public IAsyncNotificationClient NotifyClient { get; set; }
-        public List<PublicHoliday> PublicHolidays { get; set; }
     }
 }

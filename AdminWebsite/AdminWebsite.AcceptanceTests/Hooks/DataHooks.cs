@@ -38,14 +38,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
-        public async Task RetrievePublicHolidays()
-        {
-            var publicHolidayRetriever =
-                new UkPublicHolidayRetriever(new HttpClient(), new MemoryCache(new MemoryCacheOptions()));
-            _c.PublicHolidays = await publicHolidayRetriever.RetrieveUpcomingHolidays();
-        }
-
-        [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
         public void AddExistingUsers(ScenarioContext scenario)
         {
             AllocateUsers();
