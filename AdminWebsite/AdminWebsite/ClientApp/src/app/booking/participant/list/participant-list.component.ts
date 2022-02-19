@@ -32,7 +32,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             !this.sortedParticipants?.every(sortedParticipant => this.hearing.participants.includes(sortedParticipant)) ?? false;
 
         if (containsNewParticipants || containsRemovedParticipants) {
-            this.sortedParticipants = this.sortParticipants();
+            this.sortParticipants();
         }
     }
 
@@ -78,6 +78,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const staffMembers = this.hearing.participants.filter(
             participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember
         );
+
         const panelMembers = this.hearing.participants.filter(participant =>
             Constants.JudiciaryRoles.includes((participant.case_role_name === Constants.None)
                 ? participant.hearing_role_name
@@ -107,9 +108,9 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             ...others,
             ...observers
         ];
-        this.injectInterpreters(sortedList);
 
-        return sortedList;
+        this.injectInterpreters(sortedList);
+        this.sortedParticipants = sortedList;
     }
 
     private injectInterpreters(sortedList: ParticipantModel[]) {
@@ -125,28 +126,28 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 interpretee = this.hearing.participants.find(p =>
                     linkedParticipants.some(lp => lp.linkedParticipantId === p.id &&
                         lp.linkType === LinkedParticipantType.Interpreter)
-                );
+                )
             }
             if (interpretee) {
                 interpretee.is_interpretee = true;
+                const insertIndex: number = sortedList.findIndex((pm) => pm.email === interpretee.email) + 1;
+                interpreterParticipant.interpretee_name = interpretee?.display_name;
+                sortedList.splice(insertIndex, 0, interpreterParticipant);
             }
-            const insertIndex: number = sortedList.findIndex((e) => e.email === interpretee.email) + 1;
-            interpreterParticipant.interpretee_name = interpretee?.display_name;
-            sortedList.splice(insertIndex, 0, interpreterParticipant);
         });
     }
 
     private clearInterpreteeList(): void {
-        const interpreteeList: ParticipantModel[] = this.hearing.participants.filter(participant => participant.is_interpretee);
-        interpreteeList.forEach(i => {
-            i.is_interpretee = false;
-        });
+        this.hearing.participants.filter(participant => participant.is_interpretee).forEach(i => i.is_interpretee = false);
     }
 
-    canEditParticipant(participant: ParticipantModel): boolean {
+    canEditParticipant(particpant: ParticipantModel): boolean {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }
-        return !(this.videoHearingsService.isHearingAboutToStart() && !participant.addedDuringHearing);
+        if (this.videoHearingsService.isHearingAboutToStart() && !particpant.addedDuringHearing) {
+            return false;
+        }
+        return true;
     }
 }
