@@ -79,7 +79,8 @@ export class BookingDetailsTestData {
             'Respondent',
             '12345678',
             'interpretee',
-            false
+            false,
+            null
         );
         const p2 = new ParticipantDetailsModel(
             '2',
@@ -97,7 +98,8 @@ export class BookingDetailsTestData {
             'Respondent',
             '12345678',
             'interpretee',
-            false
+            false,
+            null
         );
         const p3 = new ParticipantDetailsModel(
             '2',
@@ -115,7 +117,8 @@ export class BookingDetailsTestData {
             'Respondent',
             '12345678',
             'interpretee',
-            false
+            false,
+            null
         );
         participants.push(p2);
         participants.push(p3);

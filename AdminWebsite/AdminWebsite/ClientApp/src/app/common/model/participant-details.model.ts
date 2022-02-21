@@ -1,5 +1,6 @@
-import { CaseRoles } from '../model/case-roles';
+import { CaseRoles } from './case-roles';
 import { HearingRoles } from './hearing-roles.model';
+import {LinkedParticipant} from "../../services/clients/api-client";
 
 export class ParticipantDetailsModel {
     constructor(
@@ -18,7 +19,8 @@ export class ParticipantDetailsModel {
         representee: string,
         phone: string,
         interpretee: string,
-        isInterpretee: boolean
+        isInterpretee: boolean,
+        linkedParticipants: LinkedParticipant[]
     ) {
         this.ParticipantId = participantId;
         this.FirstName = firstName == null ? '' : firstName;
@@ -37,6 +39,7 @@ export class ParticipantDetailsModel {
         this.Phone = phone;
         this.Interpretee = interpretee;
         this.IsInterpretee = isInterpretee;
+        this.linkedParticipants = linkedParticipants;
     }
 
     ParticipantId: string;
@@ -55,7 +58,7 @@ export class ParticipantDetailsModel {
     Phone: string;
     Interpretee: string;
     IsInterpretee: boolean;
-
+    linkedParticipants: LinkedParticipant[]
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;
 
@@ -75,12 +78,10 @@ export class ParticipantDetailsModel {
     }
 
     showCaseRole(): boolean {
-        return this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
+        return !(this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
             this.CaseRoleName.toLowerCase() === CaseRoles.OBSERVER.toLowerCase() ||
             this.CaseRoleName.toLowerCase() === CaseRoles.PANEL_MEMBER.toLowerCase() ||
-            this.CaseRoleName.toLowerCase() === CaseRoles.STAFF_MEMBER.toLowerCase()
-            ? false
-            : true;
+            this.CaseRoleName.toLowerCase() === CaseRoles.STAFF_MEMBER.toLowerCase());
     }
 
     get isInterpreter(): boolean {
