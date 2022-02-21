@@ -1,6 +1,6 @@
 import { CaseRoles } from './case-roles';
 import { HearingRoles } from './hearing-roles.model';
-import {LinkedParticipant} from '../../services/clients/api-client';
+import { LinkedParticipant } from '../../services/clients/api-client';
 
 export class ParticipantDetailsModel {
     constructor(
@@ -78,10 +78,12 @@ export class ParticipantDetailsModel {
     }
 
     showCaseRole(): boolean {
-        return !(this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
+        return !(
+            this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
             this.CaseRoleName.toLowerCase() === CaseRoles.OBSERVER.toLowerCase() ||
             this.CaseRoleName.toLowerCase() === CaseRoles.PANEL_MEMBER.toLowerCase() ||
-            this.CaseRoleName.toLowerCase() === CaseRoles.STAFF_MEMBER.toLowerCase());
+            this.CaseRoleName.toLowerCase() === CaseRoles.STAFF_MEMBER.toLowerCase()
+        );
     }
 
     get isInterpreter(): boolean {
