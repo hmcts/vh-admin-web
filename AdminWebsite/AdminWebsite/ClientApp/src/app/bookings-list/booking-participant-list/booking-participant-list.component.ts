@@ -37,7 +37,7 @@ export class BookingParticipantListComponent {
 
     private sortParticipants() {
         const compareByPartyThenByFirstName = () => (a, b) => {
-            const swapIndices = a > b ? 1 : 0
+            const swapIndices = a > b ? 1 : 0;
             const partyA = a.CaseRoleName === Constants.None ? a.HearingRoleName : a.CaseRoleName;
             const partyB = b.CaseRoleName === Constants.None ? b.HearingRoleName : b.CaseRoleName;
             if (partyA === partyB) {
