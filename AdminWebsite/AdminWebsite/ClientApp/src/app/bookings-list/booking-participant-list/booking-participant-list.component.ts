@@ -37,12 +37,13 @@ export class BookingParticipantListComponent {
 
     private sortParticipants() {
         const compareByPartyThenByFirstName = () => (a, b) => {
+            const swapIndices = a > b ? 1 : 0
             const partyA = a.CaseRoleName === Constants.None ? a.HearingRoleName : a.CaseRoleName;
             const partyB = b.CaseRoleName === Constants.None ? b.HearingRoleName : b.CaseRoleName;
             if (partyA === partyB) {
-                return a.FirstName < b.FirstName ? -1 : a > b ? 1 : 0;
+                return a.FirstName < b.FirstName ? -1 : swapIndices;
             }
-            return partyA < partyB ? -1 : a > b ? 1 : 0;
+            return partyA < partyB ? -1 : swapIndices;
         };
         const judges = this.participants.filter(participant => participant.HearingRoleName === Constants.Judge);
         const staffMember = this.participants.filter(participant => participant.HearingRoleName === Constants.HearingRoles.StaffMember);

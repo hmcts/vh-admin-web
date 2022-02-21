@@ -62,12 +62,13 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
 
     sortParticipants() {
         const compareByPartyThenByFirstName = () => (a, b) => {
+            const swapIndices = a > b ? 1 : 0
             const partyA = a.case_role_name === Constants.None ? a.hearing_role_name : a.case_role_name;
             const partyB = b.case_role_name === Constants.None ? b.hearing_role_name : b.case_role_name;
             if (partyA === partyB) {
-                return a.first_name < b.first_name ? -1 : a > b ? 1 : 0;
+                return a.first_name < b.first_name ? -1 : swapIndices;
             }
-            return partyA < partyB ? -1 : a > b ? 1 : 0;
+            return partyA < partyB ? -1 : swapIndices;
         };
 
         if (!this.hearing.participants) {
