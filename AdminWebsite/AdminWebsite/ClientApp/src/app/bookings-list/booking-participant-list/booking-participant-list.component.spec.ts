@@ -4,8 +4,8 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
-import {HearingRoles} from "../../common/model/hearing-roles.model";
-import {LinkedParticipant} from "../../services/clients/api-client";
+import {HearingRoles} from '../../common/model/hearing-roles.model';
+import {LinkedParticipant} from '../../services/clients/api-client';
 
 @Component({
     selector: 'app-booking-participant-details',
@@ -114,7 +114,7 @@ describe('BookingParticipantListComponent', () => {
     });
 
     it('should produce a sorted list with specific hierarchy and grouping', done => {
-            //setup
+            // setup
             function parseTestInput(inputParticipants) {
                 const participantsArray: ParticipantDetailsModel[] = [];
                 inputParticipants.forEach((p, i) => {
@@ -125,22 +125,22 @@ describe('BookingParticipantListComponent', () => {
                         CaseRoleName: p.CaseRoleName,
                         LinkedParticipants: p.LinkedParticipants ?? null,
                         ParticipantId: `${i + 1}`,
-                        Company: "",
-                        DisplayName: "",
-                        Email: "",
+                        Company: '',
+                        DisplayName: '',
+                        Email: '',
                         Flag: false,
                         IndexInList: 0,
                         IsInterpretee: false,
                         Interpretee: p.Interpretee,
-                        LastName: "",
-                        MiddleNames: "",
-                        Phone: "",
-                        Representee: "",
-                        Title: "",
-                        UserName: "",
-                        UserRoleName: "",
+                        LastName: '',
+                        MiddleNames: '',
+                        Phone: '',
+                        Representee: '',
+                        Title: '',
+                        UserName: '',
+                        UserRoleName: '',
                         get fullName(): string {
-                            return "";
+                            return '';
                         },
                         get isInterpretee(): boolean {
                             return false;
@@ -159,9 +159,9 @@ describe('BookingParticipantListComponent', () => {
                         }
                     });
                 });
-                return participantsArray
+                return participantsArray;
             }
-            //input
+            // input
             const linked_participantList1: LinkedParticipant[] = [];
             const linked_interpretee = new LinkedParticipant();
             linked_interpretee.linked_id = '2';
@@ -173,8 +173,10 @@ describe('BookingParticipantListComponent', () => {
             linked_participantList2.push(linked_interpreter);
 
             const participantsInputArray = [
-                {CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'C', LinkedParticipants: linked_participantList1, Interpretee: 'interpretee'},
-                {CaseRoleName: 'None', HearingRoleName: 'Interpreter', FirstName: 'A', LinkedParticipants: linked_participantList2},
+                {CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'C',
+                    LinkedParticipants: linked_participantList1, Interpretee: 'interpretee'},
+                {CaseRoleName: 'None', HearingRoleName: 'Interpreter', FirstName: 'A',
+                    LinkedParticipants: linked_participantList2},
                 {isJudge: true, CaseRoleName: null, HearingRoleName: 'Judge', FirstName: 'L'},
                 {CaseRoleName: 'Winger', HearingRoleName: 'None', FirstName: 'K'},
                 {CaseRoleName: 'None', HearingRoleName: 'Winger', FirstName: 'J'},
@@ -189,23 +191,23 @@ describe('BookingParticipantListComponent', () => {
                 {CaseRoleName: 'Observer', HearingRoleName: 'new observer type', FirstName: 'M'}
             ];
             component.participants = parseTestInput(participantsInputArray);
-            //expected output
-            const expectedOutput=[
+            // expected output
+            const expectedOutput = [
                 { CaseRoleName: null, HearingRoleName: 'Judge', FirstName: 'L'},
-                { CaseRoleName:'None', HearingRoleName: 'Panel Member', FirstName: 'H'},
-                { CaseRoleName:'None', HearingRoleName: 'Winger', FirstName: 'J'},
-                { CaseRoleName:'Winger', HearingRoleName: 'None', FirstName: 'K'},
+                { CaseRoleName: 'None', HearingRoleName: 'Panel Member', FirstName: 'H'},
+                { CaseRoleName: 'None', HearingRoleName: 'Winger', FirstName: 'J'},
+                { CaseRoleName: 'Winger', HearingRoleName: 'None', FirstName: 'K'},
                 { CaseRoleName: null, HearingRoleName: 'Staff Member', FirstName: 'I'},
-                { CaseRoleName:'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'A'},
-                { CaseRoleName:'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'C'},
-                { CaseRoleName:'None', HearingRoleName: 'Interpreter', FirstName: 'A'},
-                { CaseRoleName:'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'D',},
-                { CaseRoleName:'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'F',},
-                { CaseRoleName:'None', HearingRoleName: 'Litigant in Person', FirstName: 'B'},
-                { CaseRoleName:'None', HearingRoleName: 'Litigant in Person', FirstName: 'E'},
-                { CaseRoleName:'None', HearingRoleName: 'Observer', FirstName: 'G'},
-                { CaseRoleName:'Observer', HearingRoleName: 'new observer type', FirstName: 'M'}
-            ]
+                { CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'A'},
+                { CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'C'},
+                { CaseRoleName: 'None', HearingRoleName: 'Interpreter', FirstName: 'A'},
+                { CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'D', },
+                { CaseRoleName: 'Appellant', HearingRoleName: 'Litigant in Person', FirstName: 'F', },
+                { CaseRoleName: 'None', HearingRoleName: 'Litigant in Person', FirstName: 'B'},
+                { CaseRoleName: 'None', HearingRoleName: 'Litigant in Person', FirstName: 'E'},
+                { CaseRoleName: 'None', HearingRoleName: 'Observer', FirstName: 'G'},
+                { CaseRoleName: 'Observer', HearingRoleName: 'new observer type', FirstName: 'M'}
+            ];
 
             for (let i = 0; i < expectedOutput.length; i++) {
                 expect(component.sortedParticipants[i].FirstName).toEqual(expectedOutput[i].FirstName);

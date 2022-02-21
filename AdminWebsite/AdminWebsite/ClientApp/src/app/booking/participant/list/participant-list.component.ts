@@ -64,11 +64,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const compareByPartyThenByFirstName = () => (a, b) => {
             const partyA = (a.case_role_name === Constants.None) ? a.hearing_role_name : a.case_role_name;
             const partyB = (b.case_role_name === Constants.None) ? b.hearing_role_name : b.case_role_name;
-            if(partyA === partyB){
+            if (partyA === partyB) {
                 return (a.first_name < b.first_name) ? -1 : (a > b) ? 1 : 0;
             }
             return (partyA < partyB) ? -1 : (a > b) ? 1 : 0;
-        }
+        };
 
         if (!this.hearing.participants) {
             return;
@@ -126,16 +126,15 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 interpretee = this.hearing.participants.find(p =>
                     linkedParticipants.some(lp => lp.linkedParticipantId === p.id &&
                         lp.linkType === LinkedParticipantType.Interpreter)
-                )
+                );
             }
             if (interpretee) {
                 interpretee.is_interpretee = true;
                 const insertIndex: number = sortedList.findIndex((pm) => pm.email === interpretee.email) + 1;
                 interpreterParticipant.interpretee_name = interpretee?.display_name;
                 sortedList.splice(insertIndex, 0, interpreterParticipant);
-            }
-            else {
-                sortedList.push(interpreterParticipant)
+            } else {
+                sortedList.push(interpreterParticipant);
             }
         });
     }

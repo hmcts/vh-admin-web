@@ -176,60 +176,182 @@ describe('ParticipantListComponent-SortParticipants', () => {
         });
     });
 
-    it('should produce a sorted list with specific hierarchy and grouping', () => {
-        const participantsArr = [
-            { is_judge: true,  case_role_name:null, hearing_role_name: 'Judge', first_name: 'L' },
-            { is_judge: false, case_role_name:'Winger', hearing_role_name: 'None', first_name: 'K' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Winger', first_name: 'J' },
-            { is_judge: false, case_role_name:null, hearing_role_name: 'Staff Member', first_name: 'I' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Panel Member', first_name: 'H' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Observer', first_name: 'G' },
-            { is_judge: false, case_role_name:'Appellant', hearing_role_name: 'Litigant in Person', first_name: 'F' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Litigant in Person', first_name: 'E' },
-            { is_judge: false, case_role_name:'Appellant', hearing_role_name: 'Litigant in Person', first_name: 'D' },
-            { is_judge: false, case_role_name:'Appellant', email:'interpretees@email.co.uk', hearing_role_name: 'Litigant in Person', first_name: 'C' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Litigant in Person', first_name: 'B' },
-            { is_judge: false, case_role_name:'Appellant', hearing_role_name: 'Litigant in Person', first_name: 'A' },
-            { is_judge: false, case_role_name:'None', hearing_role_name: 'Interpreter', first_name: 'A', interpreterFor: 'interpretees@email.co.uk'},
-            { is_judge: false, case_role_name:'Observer', hearing_role_name: 'new observer type', first_name: 'M' }
-        ];
+    it('should produce a sorted list with specific hierarchy and grouping',
+        () => {
+            const participantsArr = [
+                {is_judge: true, case_role_name: null, hearing_role_name: 'Judge', first_name: 'L'},
+                {is_judge: false, case_role_name: 'Winger', hearing_role_name: 'None', first_name: 'K'},
+                {is_judge: false, case_role_name: 'None', hearing_role_name: 'Winger', first_name: 'J'},
+                {is_judge: false, case_role_name: null, hearing_role_name: 'Staff Member', first_name: 'I'},
+                {is_judge: false, case_role_name: 'None', hearing_role_name: 'Panel Member', first_name: 'H'},
+                {is_judge: false, case_role_name: 'None', hearing_role_name: 'Observer', first_name: 'G'},
+                {
+                    is_judge: false,
+                    case_role_name: 'Appellant',
+                    hearing_role_name: 'Litigant in Person',
+                    first_name: 'F'
+                },
+                {is_judge: false, case_role_name: 'None', hearing_role_name: 'Litigant in Person', first_name: 'E'},
+                {
+                    is_judge: false,
+                    case_role_name: 'Appellant',
+                    hearing_role_name: 'Litigant in Person',
+                    first_name: 'D'
+                },
+                {
+                    is_judge: false, case_role_name: 'Appellant', email: 'interpretees@email.co.uk',
+                    hearing_role_name: 'Litigant in Person', first_name: 'C'
+                },
+                {is_judge: false, case_role_name: 'None', hearing_role_name: 'Litigant in Person', first_name: 'B'},
+                {
+                    is_judge: false,
+                    case_role_name: 'Appellant',
+                    hearing_role_name: 'Litigant in Person',
+                    first_name: 'A'
+                },
+                {
+                    is_judge: false, case_role_name: 'None', hearing_role_name: 'Interpreter', first_name: 'A',
+                    interpreterFor: 'interpretees@email.co.uk'
+                },
+                {is_judge: false, case_role_name: 'Observer', hearing_role_name: 'new observer type', first_name: 'M'}
+            ];
 
-        if (!component.hearing.participants) {
-            component.hearing.participants = [];
-        }
-        participantsArr.forEach((p, i) => {
-            component.hearing.participants.push({
-                is_judge: p.is_judge,
-                hearing_role_name: p.hearing_role_name,
-                first_name: p.first_name,
-                case_role_name: p.case_role_name,
-                email: p.email,
-                interpreterFor: p.interpreterFor
+            if (!component.hearing.participants) {
+                component.hearing.participants = [];
+            }
+            participantsArr.forEach((p, i) => {
+                component.hearing.participants.push({
+                    is_judge: p.is_judge,
+                    hearing_role_name: p.hearing_role_name,
+                    first_name: p.first_name,
+                    case_role_name: p.case_role_name,
+                    email: p.email,
+                    interpreterFor: p.interpreterFor
+                });
             });
+
+            component.ngOnInit();
+
+            const expectedResult: ParticipantModel[] = [];
+            expectedResult.push({
+                is_judge: true,
+                case_role_name: null,
+                email: undefined,
+                hearing_role_name: 'Judge',
+                first_name: 'L',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Panel Member',
+                first_name: 'H',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Winger',
+                first_name: 'J',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Winger',
+                email: undefined,
+                hearing_role_name: 'None',
+                first_name: 'K',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: null,
+                email: undefined,
+                hearing_role_name: 'Staff Member',
+                first_name: 'I',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Appellant',
+                email: undefined,
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'A',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Appellant',
+                email: 'interpretees@email.co.uk',
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'C',
+                is_interpretee: true,
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Interpreter',
+                first_name: 'A',
+                interpreterFor: 'interpretees@email.co.uk',
+                interpretee_name: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Appellant',
+                email: undefined,
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'D',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Appellant',
+                email: undefined,
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'F',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'B',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Litigant in Person',
+                first_name: 'E',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'None',
+                email: undefined,
+                hearing_role_name: 'Observer',
+                first_name: 'G',
+                interpreterFor: undefined
+            });
+            expectedResult.push({
+                is_judge: false,
+                case_role_name: 'Observer',
+                email: undefined,
+                hearing_role_name: 'new observer type',
+                first_name: 'M',
+                interpreterFor: undefined
+            });
+
+            for (let i = 0; i < expectedResult.length; i++) {
+                expect(component.sortedParticipants[i]).toEqual(expectedResult[i]);
+            }
         });
-
-        component.ngOnInit();
-
-        const expectedResult: ParticipantModel[] = [];
-        expectedResult.push({ is_judge: true,  case_role_name: null, email:undefined, hearing_role_name: 'Judge', first_name: 'L', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Panel Member', first_name: 'H', interpreterFor: undefined});
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Winger', first_name: 'J', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'Winger', email:undefined, hearing_role_name: 'None', first_name: 'K', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name: null, email:undefined, hearing_role_name: 'Staff Member', first_name: 'I', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'Appellant', email:undefined, hearing_role_name: 'Litigant in Person', first_name: 'A', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'Appellant', email:'interpretees@email.co.uk', hearing_role_name: 'Litigant in Person', first_name: 'C',  is_interpretee: true, interpreterFor: undefined});
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Interpreter', first_name: 'A', interpreterFor:'interpretees@email.co.uk', interpretee_name: undefined});
-        expectedResult.push({ is_judge: false, case_role_name:'Appellant', email:undefined, hearing_role_name: 'Litigant in Person', first_name: 'D', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'Appellant', email:undefined, hearing_role_name: 'Litigant in Person', first_name: 'F', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Litigant in Person', first_name: 'B', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Litigant in Person', first_name: 'E', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'None', email:undefined, hearing_role_name: 'Observer', first_name: 'G', interpreterFor: undefined });
-        expectedResult.push({ is_judge: false, case_role_name:'Observer', email:undefined, hearing_role_name: 'new observer type', first_name: 'M', interpreterFor: undefined });
-
-        for (let i = 0; i < expectedResult.length; i++) {
-            expect(component.sortedParticipants[i]).toEqual(expectedResult[i]);
-        }
-    });
 
     describe('ngDoCheck', () => {
         const linked_participantList: LinkedParticipantModel[] = [];
@@ -261,7 +383,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             },
             { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person2', linked_participants: null },
             { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person3', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Interpreter', display_name: 'Interpreter1', linked_participants: linked_participantList, id: '9'}
+            { is_judge: false, hearing_role_name: 'Interpreter', display_name: 'Interpreter1',
+                linked_participants: linked_participantList, id: '9'}
         ];
 
         beforeEach(() => {
