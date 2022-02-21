@@ -73,11 +73,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         if (!this.hearing.participants) {
             return;
         }
-        const judges = this.hearing.participants.filter(participant => participant.is_judge);
+        const judges = this.hearing.participants.filter(participant => participant.is_judge).sort(compareByPartyThenByFirstName());
 
         const staffMembers = this.hearing.participants.filter(
             participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember
-        );
+        ).sort(compareByPartyThenByFirstName());
 
         const panelMembers = this.hearing.participants.filter(participant =>
             Constants.JudiciaryRoles.includes((participant.case_role_name === Constants.None)
@@ -109,11 +109,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             ...observers
         ];
 
-        this.injectInterpreters(sortedList);
+        this.insertInterpreters(sortedList);
         this.sortedParticipants = sortedList;
     }
 
-    private injectInterpreters(sortedList: ParticipantModel[]) {
+    private insertInterpreters(sortedList: ParticipantModel[]) {
         this.clearInterpreteeList();
         const interpreters = this.hearing.participants.filter(participant =>
             participant.hearing_role_name === Constants.HearingRoles.Interpreter);
@@ -134,6 +134,9 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 interpreterParticipant.interpretee_name = interpretee?.display_name;
                 sortedList.splice(insertIndex, 0, interpreterParticipant);
             }
+            else {
+                sortedList.push(interpreterParticipant)
+            }
         });
     }
 
@@ -141,13 +144,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         this.hearing.participants.filter(participant => participant.is_interpretee).forEach(i => i.is_interpretee = false);
     }
 
-    canEditParticipant(particpant: ParticipantModel): boolean {
+    canEditParticipant(participant: ParticipantModel): boolean {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }
-        if (this.videoHearingsService.isHearingAboutToStart() && !particpant.addedDuringHearing) {
-            return false;
-        }
-        return true;
+        return !(this.videoHearingsService.isHearingAboutToStart() && !participant.addedDuringHearing);
     }
 }
