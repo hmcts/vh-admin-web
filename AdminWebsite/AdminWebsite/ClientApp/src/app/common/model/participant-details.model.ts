@@ -39,7 +39,7 @@ export class ParticipantDetailsModel {
         this.Phone = phone;
         this.Interpretee = interpretee;
         this.IsInterpretee = isInterpretee;
-        this.linkedParticipants = linkedParticipants;
+        this.LinkedParticipants = linkedParticipants;
     }
 
     ParticipantId: string;
@@ -58,7 +58,7 @@ export class ParticipantDetailsModel {
     Phone: string;
     Interpretee: string;
     IsInterpretee: boolean;
-    linkedParticipants: LinkedParticipant[]
+    LinkedParticipants: LinkedParticipant[]
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;
 
