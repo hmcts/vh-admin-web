@@ -19,7 +19,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
 
         expect(model.fullName).toEqual('title first_name last_name');
@@ -42,7 +43,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
 
         expect(model.fullName).toEqual('Judge last_name');
@@ -65,7 +67,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
 
         expect(model.fullName).toEqual('first_name Judge');
@@ -88,7 +91,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(ParticipantModel.IsEmailEjud(model.Email)).toBeFalsy();
     });
@@ -109,7 +113,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(ParticipantModel.IsEmailEjud(model.Email)).toBeTruthy();
     });
@@ -130,7 +135,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
 
         expect(model.isRepresenting).toBeTruthy();
@@ -153,7 +159,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
 
         expect(model.isRepresenting).toBeFalsy();
@@ -175,7 +182,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
@@ -196,7 +204,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'staffmember',
-            false
+            false,
+            null
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
@@ -217,7 +226,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(model.showCaseRole()).toBeFalsy();
     });
@@ -238,7 +248,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(model.showCaseRole()).toBeTruthy();
     });
@@ -259,7 +270,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(model.isInterpreter).toBeTruthy();
     });
@@ -280,7 +292,8 @@ describe('participant details model', () => {
             'representee',
             '007867678678',
             'interpretee',
-            false
+            false,
+            null
         );
         expect(model.isRepOrInterpreter).toBeTruthy();
     });

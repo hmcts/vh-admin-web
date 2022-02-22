@@ -62,7 +62,8 @@ export class BookingDetailsService {
                     p.representee,
                     p.telephone_number,
                     this.getInterpretee(hearingResponse, p),
-                    this.isInterpretee(p)
+                    this.isInterpretee(p),
+                    p.linked_participants
                 );
                 // model.Interpretee = this.getInterpretee(hearingResponse, p);
                 if (p.user_role_name === this.JUDGE) {

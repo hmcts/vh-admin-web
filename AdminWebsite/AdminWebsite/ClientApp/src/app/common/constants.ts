@@ -50,7 +50,8 @@ export const Constants = {
         StaffMember: 'Staff Member',
         Winger: 'Winger',
         PanelMember: 'Panel Member',
-        Observer: 'Observer'
+        Observer: 'Observer',
+        Interpreter: 'Interpreter'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
 };
