@@ -7,7 +7,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, HearingRole, LinkedParticipantRequest } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
