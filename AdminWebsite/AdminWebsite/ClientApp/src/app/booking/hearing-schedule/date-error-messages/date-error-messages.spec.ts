@@ -39,12 +39,6 @@ describe('Date error message test suite', () => {
         expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
     });
 
-    it('should show Please enter a working day (Monday to Friday) error message when public holiday date is selected', () => {
-        component.publicHoliday = true;
-        fixture.detectChanges();
-        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
-    });
-
     it('should show Select a date in the future error message when past date is selected', () => {
         component.pastDate = true;
         fixture.detectChanges();
@@ -52,14 +46,14 @@ describe('Date error message test suite', () => {
     });
 
     it('should not show any error messages when all the properties are false', () => {
-        component.required = component.pastDate = component.weekend = component.publicHoliday = false;
+        component.required = component.pastDate = component.weekend = false;
         expect(debugElement.query(By.css(requiredErrorId))).toBeFalsy();
         expect(debugElement.query(By.css(weekendErrorId))).toBeFalsy();
         expect(debugElement.query(By.css(pastErrorId))).toBeFalsy();
     });
 
     it('should show both past and weekend messages when the selected date was in weekend of past', () => {
-        component.required = component.publicHoliday = false;
+        component.required = false;
         component.pastDate = component.weekend = true;
         fixture.detectChanges();
         expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();

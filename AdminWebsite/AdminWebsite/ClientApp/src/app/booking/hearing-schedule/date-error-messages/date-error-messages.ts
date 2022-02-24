@@ -7,6 +7,5 @@ import { Component, Input } from '@angular/core';
 export class DateErrorMessagesComponent {
     @Input() required: boolean;
     @Input() weekend: boolean;
-    @Input() publicHoliday: boolean;
     @Input() pastDate: boolean;
 }

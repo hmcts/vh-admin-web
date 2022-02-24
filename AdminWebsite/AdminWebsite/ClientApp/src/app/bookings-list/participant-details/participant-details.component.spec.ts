@@ -69,7 +69,8 @@ describe('ParticipantDetailsComponent', () => {
             'Respondent',
             '12345678',
             'interpretee',
-            false
+            false,
+            null
         );
         pr.IndexInList = 0;
         component.participant = pr;
@@ -113,7 +114,8 @@ describe('ParticipantDetailsComponent', () => {
             'Judge',
             '12345678',
             'N/A',
-            false
+            false,
+            null
         );
         pr.HearingRoleName = HearingRoles.JUDGE;
 

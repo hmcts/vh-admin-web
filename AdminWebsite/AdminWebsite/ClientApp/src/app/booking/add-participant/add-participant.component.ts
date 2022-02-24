@@ -7,7 +7,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, LinkedParticipantRequest } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -709,10 +709,13 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private populateInterpretedForList() {
-        const NotAllowedInterpreter: string[] = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
+        const notAnObserver = participant =>
+            participant.case_role_name === Constants.None
+                ? participant.hearing_role_name !== Constants.HearingRoles.Observer
+                : participant.case_role_name !== Constants.HearingRoles.Observer;
 
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && notAnObserver(p)
         );
 
         const interpreteeModel: ParticipantModel = {
