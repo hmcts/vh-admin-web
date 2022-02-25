@@ -324,7 +324,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
     private hearingHasInterpretees(): boolean {
         return this.hearing.participants.some(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && this.isNotAnObserver(p)
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
     }
 
@@ -398,9 +398,9 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
     }
 
-    protected isNotAnObserver(participant): boolean {
+    protected isAnObserver(participant): boolean {
         return participant.case_role_name === Constants.None
-            ? participant.hearing_role_name !== Constants.HearingRoles.Observer
-            : participant.case_role_name !== Constants.HearingRoles.Observer;
+            ? participant.hearing_role_name === Constants.HearingRoles.Observer
+            : participant.case_role_name === Constants.HearingRoles.Observer;
     }
 }
