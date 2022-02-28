@@ -756,9 +756,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
+            newParticipant.interpretee_name = interpretee.display_name;
             const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
-                linkedParticipantEmail: interpretee,
+                linkedParticipantEmail: interpretee.email,
                 linkType: LinkedParticipantType.Interpreter
             };
             this.hearing.linked_participants.push(linkedParticipant);
@@ -779,8 +780,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private getInterpretee(email: string): string {
+    private getInterpretee(email: string): ParticipantModel {
         const interpretee = this.hearing.participants.find(p => p.email === email);
-        return interpretee ? interpretee.email : '';
+        return interpretee;
     }
 }
