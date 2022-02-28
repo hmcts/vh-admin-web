@@ -101,11 +101,12 @@ namespace AdminWebsite.Services
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
         private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly IFeatureToggles _featureToggles;
         private readonly KinlyConfiguration _kinlyConfiguration;
 #pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
-            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
+            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions, IFeatureToggles featureToggles)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
@@ -113,6 +114,7 @@ namespace AdminWebsite.Services
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
             _conferenceDetailsService = conferenceDetailsService;
+            _featureToggles = featureToggles;
             _kinlyConfiguration = kinlyOptions.Value;
         }
 #pragma warning restore S107
@@ -277,11 +279,27 @@ namespace AdminWebsite.Services
 
             var participantsToEmail = participants ?? hearing.Participants;
 
-            var requests = participantsToEmail
-                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();
+            List<AddNotificationRequest> requests;
+            if (_featureToggles.BookAndConfirmToggle())
+            {
+                //The toggle switched on removes the where userRole != Judge LINQ clause
+                requests = participantsToEmail
+                    .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember,
+                        StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                    .ToList();
+            }
+            else
+            {
+                //previous implementation to switch back to
+                requests = participantsToEmail
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)) 
+                    .ToList();
+            }
 
             if (hearing.TelephoneParticipants != null)
             {
@@ -765,7 +783,9 @@ namespace AdminWebsite.Services
 
         private async Task CreateNotifications(List<AddNotificationRequest> notificationRequests)
         {
-            notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
+            if(_featureToggles.BookAndConfirmToggle())
+                notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
+            
             await Task.WhenAll(notificationRequests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
     }
