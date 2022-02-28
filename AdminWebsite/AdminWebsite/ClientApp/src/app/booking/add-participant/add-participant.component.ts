@@ -709,13 +709,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private populateInterpretedForList() {
-        const notAnObserver = participant =>
-            participant.case_role_name === Constants.None
-                ? participant.hearing_role_name !== Constants.HearingRoles.Observer
-                : participant.case_role_name !== Constants.HearingRoles.Observer;
-
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && notAnObserver(p)
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
 
         const interpreteeModel: ParticipantModel = {

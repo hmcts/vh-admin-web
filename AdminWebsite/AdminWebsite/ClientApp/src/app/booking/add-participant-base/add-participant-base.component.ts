@@ -323,11 +323,9 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     private hearingHasInterpretees(): boolean {
-        const notAllowedInterpreter = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
-        const hearingHasInterpretees = this.hearing.participants.some(
-            p => p.user_role_name === 'Individual' && !notAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
+        return this.hearing.participants.some(
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
-        return hearingHasInterpretees;
     }
 
     private hearingHasAnInterpreter(): boolean {
@@ -386,6 +384,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     private isRoleInterpreter(hearingRole: string): boolean {
         return hearingRole.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
     }
+
     private setInterpreterForValidation() {
         if (this.isRoleInterpreter(this.role.value)) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);
@@ -397,5 +396,11 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             this.interpreterFor.setValue(Constants.PleaseSelect);
             this.isInterpreter = false;
         }
+    }
+
+    protected isAnObserver(participant): boolean {
+        return participant.case_role_name === Constants.None
+            ? participant.hearing_role_name === Constants.HearingRoles.Observer
+            : participant.case_role_name === Constants.HearingRoles.Observer;
     }
 }
