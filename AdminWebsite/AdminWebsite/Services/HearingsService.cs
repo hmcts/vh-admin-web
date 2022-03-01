@@ -358,12 +358,28 @@ namespace AdminWebsite.Services
                 return;
             }
 
-            var requests = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
-                        days))
-                .ToList();
+            List<AddNotificationRequest> requests;
+            if (_featureToggles.BookAndConfirmToggle())
+            {
+                //The toggle switched on removes the where userRole != Judge LINQ clause
+                requests = hearing.Participants
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
+                            days))
+                    .ToList();
+            }
+            else
+            {
+                //previous implementation to switch back to
+                requests = hearing.Participants
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
+                            days))
+                    .ToList();
+            }
 
             if (hearing.TelephoneParticipants != null)
             {

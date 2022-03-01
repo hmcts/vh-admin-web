@@ -70,7 +70,8 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
-
+            _mocker.Mock<IFeatureToggles>()
+                .Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
             _validId = Guid.NewGuid();

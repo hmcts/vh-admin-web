@@ -535,6 +535,13 @@ namespace AdminWebsite.Controllers
 
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
+                        //if toggle off - send Hearing Reminder Email
+                        if (!_featureToggles.BookAndConfirmToggle())
+                        {
+                            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+                            await _hearingsService.SendHearingReminderEmail(hearing);
+                        }
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,
