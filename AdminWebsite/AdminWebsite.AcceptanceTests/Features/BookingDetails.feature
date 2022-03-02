@@ -15,7 +15,6 @@ Scenario: Bookings Details for single day hearing
 Scenario: Bookings Details for multi days hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page of a multi days hearing
 	When the user views the booking details
-	And the user confirms the hearing
 	Then the hearings are available in video web
 	And the conference details match the hearing
 

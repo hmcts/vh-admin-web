@@ -282,8 +282,8 @@ namespace AdminWebsite.Services
             var requestsQuery = participantsToEmail
                 .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
 
-            //if the toggle switched off add where userRole != Judge LINQ clause
-            if (!_featureToggles.BookAndConfirmToggle())
+            //if the toggle switched off include where userRole != Judge LINQ clause to requests
+            if (_featureToggles.BookAndConfirmToggle() == false)
                 requestsQuery = requestsQuery.Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
             var requests = requestsQuery.Select(participant =>
@@ -349,8 +349,8 @@ namespace AdminWebsite.Services
             var requestsQuery = hearing.Participants
                 .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
 
-            //if the toggle switched off add where userRole != Judge LINQ clause
-            if (!_featureToggles.BookAndConfirmToggle())
+            //if the toggle switched off include where userRole != Judge LINQ clause to requests
+            if (_featureToggles.BookAndConfirmToggle() == false)
                 requestsQuery = requestsQuery.Where(x =>
                     !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
