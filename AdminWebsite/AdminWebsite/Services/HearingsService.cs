@@ -279,28 +279,16 @@ namespace AdminWebsite.Services
 
             var participantsToEmail = participants ?? hearing.Participants;
 
-            List<AddNotificationRequest> requests;
-            if (_featureToggles.BookAndConfirmToggle())
-            {
-                //The toggle switched on removes the where userRole != Judge LINQ clause
-                requests = participantsToEmail
-                    .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember,
-                        StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                    .ToList();
-            }
-            else
-            {
-                //previous implementation to switch back to
-                requests = participantsToEmail
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                    .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)) 
-                    .ToList();
-            }
+            var requestsQuery = participantsToEmail
+                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
 
+            //if the toggle switched off add where userRole != Judge LINQ clause
+            if (!_featureToggles.BookAndConfirmToggle())
+                requestsQuery = requestsQuery.Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
+
+            var requests = requestsQuery.Select(participant =>
+                AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)).ToList();
+            
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
@@ -358,28 +346,17 @@ namespace AdminWebsite.Services
                 return;
             }
 
-            List<AddNotificationRequest> requests;
-            if (_featureToggles.BookAndConfirmToggle())
-            {
-                //The toggle switched on removes the where userRole != Judge LINQ clause
-                requests = hearing.Participants
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
-                            days))
-                    .ToList();
-            }
-            else
-            {
-                //previous implementation to switch back to
-                requests = hearing.Participants
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
-                            days))
-                    .ToList();
-            }
+            var requestsQuery = hearing.Participants
+                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
+
+            //if the toggle switched off add where userRole != Judge LINQ clause
+            if (!_featureToggles.BookAndConfirmToggle())
+                requestsQuery = requestsQuery.Where(x =>
+                    !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
+
+            var requests = requestsQuery.Select(participant =>
+                    AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                .ToList();
 
             if (hearing.TelephoneParticipants != null)
             {
