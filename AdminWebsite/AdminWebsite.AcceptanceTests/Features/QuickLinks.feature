@@ -18,6 +18,7 @@ Scenario: VHO Confirms Booking Without Any Participants Except The Judge
 	And the user completes the other information form
 	And the user views the information on the summary form
 	And the user views the booking details after seeing the successful booking message
+	And the user confirms the hearing
 	Then the hearing is available in video web
 	And the conference details match the hearing	
 
