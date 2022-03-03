@@ -197,6 +197,11 @@ stages:
             secret: true
           - name: IsLive
             value: $(IsLive)
+          
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
 
           # AzureAd
           - name: AzureAd:ClientId
