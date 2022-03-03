@@ -11,6 +11,9 @@
     "threshold-break": 60,
     "files-to-exclude": [],
     "excluded-mutations": ["Linq methods", "Logical operators"],
+    "ignore-mutations": [
+      "string"
+    ],
     "ignore-methods": [
       "*LogDebug",
       "*LogTrace",
@@ -23,7 +26,7 @@
     "mutate": [
       "!Startup.cs",
       "!Program.cs",
-      "!Extensions/Configure*Extensions.cs",
+      "!Extensions/*Extensions.cs",
       "!Swagger/AuthResponsesOperationFilter.cs",
       "!Pages/Error.cshtml.cs",
       "!Middleware/ExceptionMiddleware.cs",
@@ -34,7 +37,7 @@
       "!Services/UkPublicHolidayRetriever.cs",
       "!Models/*.cs",
 	  "!Contracts/Enums/RoleNames.cs",
-	  "!Contracts/Enums/NotifyParams.cs",
+	  "!Contracts/Enums/NotifyParams.cs"
     ]
   }
 }
