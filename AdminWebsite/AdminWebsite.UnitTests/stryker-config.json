@@ -11,9 +11,6 @@
     "threshold-break": 60,
     "files-to-exclude": [],
     "excluded-mutations": ["Linq methods", "Logical operators"],
-    "ignore-mutations": [
-      "string"
-    ],
     "ignore-methods": [
       "*LogDebug",
       "*LogTrace",
