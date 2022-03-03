@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Helper;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
@@ -278,17 +279,15 @@ namespace AdminWebsite.Services
             }
 
             var participantsToEmail = participants ?? hearing.Participants;
-
-            var requestsQuery = participantsToEmail
-                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
-
-            //if the toggle switched off include where userRole != Judge LINQ clause to requests
-            if (_featureToggles.BookAndConfirmToggle() == false)
-                requestsQuery = requestsQuery.Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
-
-            var requests = requestsQuery.Select(participant =>
-                AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)).ToList();
             
+            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
+            var requests = participantsToEmail
+                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
+                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                .ToList();
+
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
@@ -345,19 +344,15 @@ namespace AdminWebsite.Services
                 await ProcessGenericEmail(hearing, null);
                 return;
             }
-
-            var requestsQuery = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
-
-            //if the toggle switched off include where userRole != Judge LINQ clause to requests
-            if (_featureToggles.BookAndConfirmToggle() == false)
-                requestsQuery = requestsQuery.Where(x =>
-                    !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
-
-            var requests = requestsQuery.Select(participant =>
-                    AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+            
+            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
+            var requests = hearing.Participants
+                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
+                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
                 .ToList();
-
+            
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
