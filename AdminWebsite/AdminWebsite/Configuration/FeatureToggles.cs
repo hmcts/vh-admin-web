@@ -1,3 +1,4 @@
+using System;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -10,7 +11,7 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle();
     }
     
-    internal class FeatureToggles : IFeatureToggles
+    public class FeatureToggles : IFeatureToggles
     {
         private readonly ILdClient _ldClient;
         private readonly User _user;

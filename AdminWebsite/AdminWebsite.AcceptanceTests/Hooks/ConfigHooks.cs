@@ -49,6 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterNotifySettings(context);
             RunningAdminWebLocally(context);
             await GenerateBearerTokens(context);
+            RegisterUsingBookingAndConfirmToggle(context);
         }
 
         private void RegisterAzureSecrets(TestContext context)
@@ -106,6 +107,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
         }
 
+        private void RegisterUsingBookingAndConfirmToggle(TestContext context)
+        {
+            context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
+        }
+        
         private void RegisterSeleniumElementTimeout(TestContext context)
         {
             context.WebConfig.SeleniumElementTimeout = _configRoot.GetValue<int>("SeleniumElementTimeout");
@@ -161,6 +167,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var tokenProvider = new TokenProvider(Options.Create(context.WebConfig.AzureAdConfiguration));
             context.Token = await tokenProvider.GetClientAccessToken(context.WebConfig.AzureAdConfiguration.ClientId, context.WebConfig.AzureAdConfiguration.ClientSecret, context.WebConfig.VhServices.TestApiResourceId);
             context.Token.Should().NotBeNullOrEmpty();
+        }
+
+        private void SetBookingConfirmToggleStatus(TestContext context)
+        {
+            var featureToggle = new FeatureToggles(_configRoot.GetSection("FeatureToggle"));
+            context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
     }
 }

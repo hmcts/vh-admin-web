@@ -192,6 +192,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user confirms the hearing")]
         public void WhenTheUserConfirmsTheBooking()
         {
+            if (_c.WebConfig.BookingConfirmToggle) return;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmButton);
             _browsers[_c.CurrentUser].ScrollTo(BookingDetailsPage.ConfirmButton);
             _browsers[_c.CurrentUser].Click(BookingDetailsPage.ConfirmButton);
@@ -203,6 +204,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user confirms all the hearings")]
         public void WhenTheUserConfirmsAllTheBookings()
         {
+            if (_c.WebConfig.BookingConfirmToggle) return;
             string caseName = "";
             foreach (var hearing in GetHearings())
             {
@@ -400,7 +402,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             NUnit.Framework.TestContext.WriteLine($"Unable to confirm the hearing status as '{expectedStatus}' after retrying for '{POLL_FOR_HEARING_STATUS_TIMEOUT}' seconds.");
             return false;
         }
-
+        
         public void ClickEdit()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.EditButton);

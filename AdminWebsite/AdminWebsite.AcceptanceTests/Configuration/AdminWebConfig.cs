@@ -11,10 +11,10 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public AdminWebVhServiceConfig VhServices { get; set; }
         public SauceLabsSettingsConfig SauceLabsConfiguration { get; set; }
         public WowzaConfiguration Wowza { get; set; }
-
         public KinlyConfiguration KinlyConfiguration { get; set; }
         public NotifyConfiguration NotifyConfiguration { get; set; }
         public bool UsingEjud { get; set; }
         public int SeleniumElementTimeout { get; set; }
+        public bool BookingConfirmToggle { get; set; }
     }
 }
