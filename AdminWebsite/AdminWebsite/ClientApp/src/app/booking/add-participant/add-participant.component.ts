@@ -709,13 +709,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private populateInterpretedForList() {
-        const notAnObserver = participant =>
-            participant.case_role_name === Constants.None
-                ? participant.hearing_role_name !== Constants.HearingRoles.Observer
-                : participant.case_role_name !== Constants.HearingRoles.Observer;
-
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && notAnObserver(p)
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
 
         const interpreteeModel: ParticipantModel = {
@@ -756,9 +751,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
+            newParticipant.interpretee_name = interpretee.display_name;
             const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
-                linkedParticipantEmail: interpretee,
+                linkedParticipantEmail: interpretee.email,
                 linkType: LinkedParticipantType.Interpreter
             };
             this.hearing.linked_participants.push(linkedParticipant);
@@ -779,8 +775,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private getInterpretee(email: string): string {
+    private getInterpretee(email: string): ParticipantModel {
         const interpretee = this.hearing.participants.find(p => p.email === email);
-        return interpretee ? interpretee.email : '';
+        return interpretee;
     }
 }

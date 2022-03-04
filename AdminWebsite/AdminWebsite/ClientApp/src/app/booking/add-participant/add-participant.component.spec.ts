@@ -651,6 +651,31 @@ describe('AddParticipantComponent', () => {
         tick(600);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
+    it('should not show the interpreter option in hearings role if observer/appraiser participant is added.', fakeAsync(() => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(600);
+        component.hearing.participants = [];
+        expect(component.hearingRoleList).toContain('Interpreter');
+        component.setupHearingRoles('Observer');
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+        let participant01 = new ParticipantModel();
+        participant01.first_name = 'firstName';
+        participant01.last_name = 'lastName';
+        participant01.hearing_role_name = 'Observer';
+        participant01.case_role_name = 'Observer';
+        participant01.user_role_name = 'Individual';
+        component.hearing.participants.push(participant01);
+        participant01 = new ParticipantModel();
+        participant01.first_name = 'firstName';
+        participant01.last_name = 'lastName';
+        participant01.hearing_role_name = 'Appraiser';
+        participant01.case_role_name = 'Observer';
+        participant01.user_role_name = 'Individual';
+        component.hearing.participants.push(participant01);
+        tick(600);
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+    }));
     it('should validate the interpreter drop down', () => {
         component.ngOnInit();
         component.ngAfterViewInit();
