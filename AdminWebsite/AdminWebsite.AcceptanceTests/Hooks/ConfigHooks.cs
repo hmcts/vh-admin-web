@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterNotifySettings(context);
             RunningAdminWebLocally(context);
             await GenerateBearerTokens(context);
-            RegisterUsingBookingAndConfirmToggle(context);
+            SetBookingConfirmToggleStatus(context);
         }
 
         private void RegisterAzureSecrets(TestContext context)
@@ -103,11 +103,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         private void RegisterUsingEjud(TestContext context)
-        {
-            context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
-        }
-
-        private void RegisterUsingBookingAndConfirmToggle(TestContext context)
         {
             context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
         }
