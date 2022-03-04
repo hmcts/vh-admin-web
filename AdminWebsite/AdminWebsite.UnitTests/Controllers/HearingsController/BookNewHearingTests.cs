@@ -4,20 +4,18 @@ using AdminWebsite.UnitTests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
-using NotificationApi.Contract;
-using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -52,7 +50,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
 
@@ -97,13 +95,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
-
-        [Test]
-        public async Task Should_send_confirmation_email_to_judge_for_new_hearing_multi_day() 
-        {
-
-        }
-
+        
         [Test]
         public async Task Should_book_hearing_for_single_day()
         {
