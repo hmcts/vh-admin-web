@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Configuration;
 using AcceptanceTests.Common.Configuration.Users;
@@ -165,7 +166,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         private void SetBookingConfirmToggleStatus(TestContext context)
-        {
+        { 
+            Console.WriteLine("config section:"+_configRoot["FeatureToggle:SDK-Key"]);
             var featureToggle = new FeatureToggles(_configRoot.GetSection("FeatureToggle"));
             context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
