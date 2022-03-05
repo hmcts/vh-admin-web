@@ -1,3 +1,4 @@
+using System;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Interfaces;
@@ -19,6 +20,7 @@ namespace AdminWebsite.Configuration
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         public FeatureToggles(IConfiguration config)
         {
+            Console.WriteLine("config value:"+config[SDKConfigKey]);
             _ldClient = new LdClient(config[SDKConfigKey]);
             _user = LaunchDarkly.Sdk.User.WithKey(LdUser);
         }
