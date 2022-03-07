@@ -166,10 +166,15 @@ namespace AdminWebsite.Controllers
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
                 var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
 
+                var updateBookingStatusTasks = new List<Task<IActionResult>>();
+
                 foreach (var hearing in unConfirmedHearingsList)
                 {
-                    await UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
+                    var task = UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
+                    updateBookingStatusTasks.Add(task);
                 }
+                
+                await Task.WhenAll(updateBookingStatusTasks);
             }
             else
             {
