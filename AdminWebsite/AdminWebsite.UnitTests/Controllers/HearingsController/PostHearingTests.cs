@@ -637,6 +637,52 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_clone_and_confirm_hearing_with_large_batch()
+        {
+            var request = GetMultiHearingRequest();
+            var status = BookingsApi.Contract.Enums.BookingStatus.Booked;
+            var hearingGroupId = Guid.NewGuid();
+            var groupedHearings = new List<HearingDetailsResponse>();
+            var batchSize = 30;
+            for (var i = 1; i <= batchSize; i++)
+            {
+                groupedHearings.Add(new HearingDetailsResponse
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = hearingGroupId,
+                    Id = Guid.NewGuid()
+                });
+            }
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Verifiable();
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Verifiable();
+            
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+            
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
+                Times.Exactly(1));
+
+            foreach (var hearing in groupedHearings)
+            {
+                _mocker.Mock<IBookingsApiClient>().Verify(
+                    x => x.UpdateBookingStatusAsync(hearing.Id, It.Is<UpdateBookingStatusRequest>(r => r.Status == UpdateBookingStatus.Created)),
+                    Times.Exactly(1));
+            }
+        }
+
+        [Test]
         public async Task Should_return_bad_request_status_if_no_items_in_the_date_list()
         {
             var startDate = new DateTime(2020, 10, 1);

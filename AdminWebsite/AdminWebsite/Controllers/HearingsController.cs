@@ -116,7 +116,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
                 
-                if(_featureToggles.BookAndConfirmToggle())
+                //if(_featureToggles.BookAndConfirmToggle())
                     await ConfirmHearing(hearingDetailsResponse.Id);
 
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
@@ -165,20 +165,28 @@ namespace AdminWebsite.Controllers
             {
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
                 var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
-
-                var updateBookingStatusTasks = new List<Task<IActionResult>>();
-
-                foreach (var hearing in unConfirmedHearingsList)
-                {
-                    var task = UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
-                    updateBookingStatusTasks.Add(task);
-                }
+                var unConfirmedHearingIds = unConfirmedHearingsList.Select(h => h.Id).ToList();
                 
-                await Task.WhenAll(updateBookingStatusTasks);
+                await UpdateMultipleBookingStatuses(unConfirmedHearingIds, updateBookingStatusRequest);
             }
             else
             {
                 await UpdateBookingStatus(hearingIdOrGroupId, updateBookingStatusRequest);
+            }
+        }
+        
+        private async Task UpdateMultipleBookingStatuses(IReadOnlyCollection<Guid> hearingIds, UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            var batchSize = 20;
+            var batchCount = (int)Math.Ceiling((double)hearingIds.Count() / batchSize);
+                
+            for (int i = 0; i < batchCount; i++)
+            {
+                var hearingIdsToUpdate = hearingIds.Skip(i * batchSize).Take(batchSize);
+
+                var updateBookingStatusTasks = hearingIdsToUpdate.Select(hearingId => UpdateBookingStatus(hearingId, updateBookingStatusRequest)).ToList();
+
+                await Task.WhenAll(updateBookingStatusTasks);
             }
         }
 
@@ -234,7 +242,7 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
 
-                if(_featureToggles.BookAndConfirmToggle())
+                //if(_featureToggles.BookAndConfirmToggle())
                     await ConfirmHearing(hearingId, true);
 
                 return NoContent();
@@ -541,12 +549,12 @@ namespace AdminWebsite.Controllers
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         //if toggle off - send Hearing Reminder Email
-                        if (!_featureToggles.BookAndConfirmToggle())
-                        {
-                            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
-                            await _hearingsService.SendHearingReminderEmail(hearing);
-                        }
+                        // if (!_featureToggles.BookAndConfirmToggle())
+                        // {
+                        //     var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                        //     _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+                        //     await _hearingsService.SendHearingReminderEmail(hearing);
+                        // }
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,
