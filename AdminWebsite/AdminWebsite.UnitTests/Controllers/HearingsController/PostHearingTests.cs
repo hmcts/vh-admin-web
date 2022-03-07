@@ -674,6 +674,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
                 Times.Exactly(1));
 
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.Is<UpdateBookingStatusRequest>(r => r.Status == UpdateBookingStatus.Created)),
+                Times.Exactly(batchSize));
+            
             foreach (var hearing in groupedHearings)
             {
                 _mocker.Mock<IBookingsApiClient>().Verify(

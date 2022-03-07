@@ -178,7 +178,7 @@ namespace AdminWebsite.Controllers
         private async Task UpdateMultipleBookingStatuses(IReadOnlyCollection<Guid> hearingIds, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             var batchSize = 20;
-            var batchCount = (int)Math.Ceiling((double)hearingIds.Count() / batchSize);
+            var batchCount = (int)Math.Ceiling((double)hearingIds.Count / batchSize);
                 
             for (int i = 0; i < batchCount; i++)
             {
