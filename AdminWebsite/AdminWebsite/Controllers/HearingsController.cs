@@ -116,7 +116,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
                 
-                //if(_featureToggles.BookAndConfirmToggle())
+                if(_featureToggles.BookAndConfirmToggle())
                     await ConfirmHearing(hearingDetailsResponse.Id);
 
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
@@ -242,7 +242,7 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
 
-                //if(_featureToggles.BookAndConfirmToggle())
+                if(_featureToggles.BookAndConfirmToggle())
                     await ConfirmHearing(hearingId, true);
 
                 return NoContent();
@@ -549,12 +549,12 @@ namespace AdminWebsite.Controllers
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         //if toggle off - send Hearing Reminder Email
-                        // if (!_featureToggles.BookAndConfirmToggle())
-                        // {
-                        //     var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                        //     _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
-                        //     await _hearingsService.SendHearingReminderEmail(hearing);
-                        // }
+                        if (!_featureToggles.BookAndConfirmToggle())
+                        {
+                            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+                            await _hearingsService.SendHearingReminderEmail(hearing);
+                        }
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,
