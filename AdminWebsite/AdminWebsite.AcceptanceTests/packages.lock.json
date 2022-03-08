@@ -44,6 +44,12 @@
           "NETStandard.Library": "2.0.0"
         }
       },
+      "Selenium.WebDriver.ChromeDriver": {
+        "type": "Direct",
+        "requested": "[99.0.4844.5100, )",
+        "resolved": "99.0.4844.5100",
+        "contentHash": "021uEuHHgaZ9X2oSCaClBun+azybXg5lw/Pq79fc3D98X0oEpHPuXRTRthxzmqTwH6CGnRNfTvHMZ9xdvHDLzQ=="
+      },
       "TestApi.Client": {
         "type": "Direct",
         "requested": "[1.30.0, )",
@@ -1555,11 +1561,6 @@
         "dependencies": {
           "Newtonsoft.Json": "10.0.3"
         }
-      },
-      "Selenium.WebDriver.ChromeDriver": {
-        "type": "Transitive",
-        "resolved": "97.0.4692.7100",
-        "contentHash": "/5wf4Rv9vTmab2qWo3enuYLoumOyVb6+rO0f2hbym+MQzDGYb7GpadhWk/jgNtUf6eFvsqL90TyzXrcCfOhCyQ=="
       },
       "Selenium.WebDriver.IEDriver": {
         "type": "Transitive",

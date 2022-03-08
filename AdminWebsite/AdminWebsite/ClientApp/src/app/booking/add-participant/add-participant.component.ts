@@ -399,6 +399,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
+                this.hearing = Object.assign({}, this.hearing);
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
