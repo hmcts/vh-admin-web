@@ -61,6 +61,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private Guid _validId;
         private Mock<IVideoApiClient> _videoApiMock;
+        private Mock<IFeatureToggles> _featureToggle;
 
         [SetUp]
         public void Setup()
@@ -73,7 +74,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
-
+            _featureToggle = new Mock<IFeatureToggles>();
+            _featureToggle.Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
@@ -95,7 +97,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
             _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
-            _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, _kinlyOptionsMock.Object);
+            _bookingsApiClient.Object, _participantGroupLogger.Object, _conferencesServiceMock.Object, 
+            _kinlyOptionsMock.Object, _featureToggle.Object);
 
             _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
 
@@ -105,7 +108,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object);
+                _conferencesServiceMock.Object,
+                _featureToggle.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest
