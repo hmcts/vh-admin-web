@@ -43,7 +43,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (_rowId == null || _rowId.Equals(string.Empty)) continue;
                 break;
             }
-            
+
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.RowWithId(_rowId));
             _browsers[_c.CurrentUser].Click(BookingsListPage.RowWithId(_rowId));
         }
 
