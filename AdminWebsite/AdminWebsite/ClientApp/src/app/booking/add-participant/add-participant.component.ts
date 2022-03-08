@@ -777,7 +777,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getInterpretee(email: string): ParticipantModel {
-        const interpretee = this.hearing.participants.find(p => p.email === email);
-        return interpretee;
+        return this.hearing.participants.find(p => p.email === email);
     }
 }
