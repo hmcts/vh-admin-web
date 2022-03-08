@@ -44,12 +44,6 @@
           "NETStandard.Library": "2.0.0"
         }
       },
-      "Selenium.WebDriver.ChromeDriver": {
-        "type": "Direct",
-        "requested": "[99.0.4844.5100, )",
-        "resolved": "99.0.4844.5100",
-        "contentHash": "021uEuHHgaZ9X2oSCaClBun+azybXg5lw/Pq79fc3D98X0oEpHPuXRTRthxzmqTwH6CGnRNfTvHMZ9xdvHDLzQ=="
-      },
       "TestApi.Client": {
         "type": "Direct",
         "requested": "[1.30.1, )",
