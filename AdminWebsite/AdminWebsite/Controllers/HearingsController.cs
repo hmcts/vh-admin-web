@@ -165,15 +165,28 @@ namespace AdminWebsite.Controllers
             {
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
                 var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
-
-                foreach (var hearing in unConfirmedHearingsList)
-                {
-                    await UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
-                }
+                var unConfirmedHearingIds = unConfirmedHearingsList.Select(h => h.Id).ToList();
+                
+                await UpdateMultipleBookingStatuses(unConfirmedHearingIds, updateBookingStatusRequest);
             }
             else
             {
                 await UpdateBookingStatus(hearingIdOrGroupId, updateBookingStatusRequest);
+            }
+        }
+        
+        private async Task UpdateMultipleBookingStatuses(IReadOnlyCollection<Guid> hearingIds, UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            var batchSize = 20;
+            var batchCount = (int)Math.Ceiling((double)hearingIds.Count / batchSize);
+                
+            for (int i = 0; i < batchCount; i++)
+            {
+                var hearingIdsToUpdate = hearingIds.Skip(i * batchSize).Take(batchSize);
+
+                var updateBookingStatusTasks = hearingIdsToUpdate.Select(hearingId => UpdateBookingStatus(hearingId, updateBookingStatusRequest)).ToList();
+
+                await Task.WhenAll(updateBookingStatusTasks);
             }
         }
 
