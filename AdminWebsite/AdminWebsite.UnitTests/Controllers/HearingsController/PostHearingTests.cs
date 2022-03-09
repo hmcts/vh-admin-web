@@ -637,10 +637,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_clone_and_confirm_hearing_with_large_batch()
+        public async Task Should_clone_and_confirm_hearing_for_large_booking()
         {
             var request = GetMultiHearingRequest();
-            var status = BookingsApi.Contract.Enums.BookingStatus.Booked;
             var hearingGroupId = Guid.NewGuid();
             var groupedHearings = new List<HearingDetailsResponse>();
             var batchSize = 30;
