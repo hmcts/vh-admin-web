@@ -230,6 +230,11 @@ stages:
           - name: VhServices:VideoWebUrl
             value: $(video_web_url)
 
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
+
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
             value: $(notify-api-key)
@@ -288,6 +293,11 @@ stages:
             value: $(ConferencePhoneNumberWelsh)
           - name: KinlyConfiguration:JoinByPhoneFromDate
             value: $(JoinByPhoneFromDate)
+
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
             
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey

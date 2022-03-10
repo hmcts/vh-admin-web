@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Helper;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
@@ -101,11 +102,12 @@ namespace AdminWebsite.Services
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
         private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly IFeatureToggles _featureToggles;
         private readonly KinlyConfiguration _kinlyConfiguration;
 #pragma warning disable S107
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
             INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
-            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions)
+            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions, IFeatureToggles featureToggles)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
@@ -113,6 +115,7 @@ namespace AdminWebsite.Services
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
             _conferenceDetailsService = conferenceDetailsService;
+            _featureToggles = featureToggles;
             _kinlyConfiguration = kinlyOptions.Value;
         }
 #pragma warning restore S107
@@ -276,11 +279,13 @@ namespace AdminWebsite.Services
             }
 
             var participantsToEmail = participants ?? hearing.Participants;
-
+            
+            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
             var requests = participantsToEmail
                 .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
+                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
 
             if (hearing.TelephoneParticipants != null)
@@ -339,14 +344,15 @@ namespace AdminWebsite.Services
                 await ProcessGenericEmail(hearing, null);
                 return;
             }
-
+            
+            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
             var requests = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant,
-                        days))
+                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
+                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
+                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
                 .ToList();
-
+            
             if (hearing.TelephoneParticipants != null)
             {
                 var telephoneRequests = hearing.TelephoneParticipants
@@ -765,7 +771,9 @@ namespace AdminWebsite.Services
 
         private async Task CreateNotifications(List<AddNotificationRequest> notificationRequests)
         {
-            notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
+            if(_featureToggles.BookAndConfirmToggle())
+                notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
+            
             await Task.WhenAll(notificationRequests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
     }

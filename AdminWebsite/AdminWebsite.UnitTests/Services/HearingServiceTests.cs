@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
-using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
@@ -71,7 +70,8 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
-
+            _mocker.Mock<IFeatureToggles>()
+                .Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
             _validId = Guid.NewGuid();
@@ -980,6 +980,41 @@ namespace AdminWebsite.UnitTests.Services
                     Times.Never);
         }
         
+        [Test(Description = "Test for old functionality when BookAndConfirmToggle == off")]
+        public async Task NewHearingSendConfirmation_Should_NOT_Receive_Call_For_JUDGE_And_STAFFMEMBER()
+        {
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.BookAndConfirmToggle()).Returns(false);
+            await _service.NewHearingSendConfirmation(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                         .Verify(
+                             x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Exactly(4));
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJoh)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationLip)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationRepresentative)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.TelephoneHearingConfirmation)),
+                    Times.Once);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJudge)),
+                    Times.Never);
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationStaffMember)),
+                    Times.Never);
+        }
+
         [Test]
         public async Task EditHearingSendConfirmation_Should_NOT_Receive_Call_For_JUDGE_UnConfirmed()
         {

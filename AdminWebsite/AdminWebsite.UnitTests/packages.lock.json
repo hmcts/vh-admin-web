@@ -181,6 +181,65 @@
           "System.Security.Cryptography.Csp": "4.3.0"
         }
       },
+      "LaunchDarkly.Cache": {
+        "type": "Transitive",
+        "resolved": "1.0.2",
+        "contentHash": "0bEnUVFVeW1TTDXb/bW6kS3FLQTLeGtw7Xh8yt6WNO56utVmtgcrMLvcnF6yeTn+N4FXrKfW09KkLNmK8YYQvw=="
+      },
+      "LaunchDarkly.CommonSdk": {
+        "type": "Transitive",
+        "resolved": "5.5.0",
+        "contentHash": "FXr09X++bZu66k8O/aMKlSntSZiuaeKXd0Op6LTpJ6P/l2QvfyJbM7OlhKi/KLJr1CO5TlOKvZjD7ud9EgCNsg==",
+        "dependencies": {
+          "LaunchDarkly.JsonStream": "[1.0.3, 2.0.0)",
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
+      "LaunchDarkly.EventSource": {
+        "type": "Transitive",
+        "resolved": "4.1.3",
+        "contentHash": "qMb0NI+BrhjkmyVm0y/SrrDSOn+Hnm5h/bzafNryLcJ4pTjCUtFVuwYqfrmLbmC1LvUDKmK5Ae5F0/X4gFIi8A==",
+        "dependencies": {
+          "LaunchDarkly.Logging": "[1.0.1, 2.0.0)"
+        }
+      },
+      "LaunchDarkly.InternalSdk": {
+        "type": "Transitive",
+        "resolved": "2.3.2",
+        "contentHash": "OuOBThDVuvM0xkYup8YD/4Sz4oixDnSVBp6Qda0WwPKE/c9vE3gD+VdG0PU32VgrLRzv5PUldkMikCGWKzPpNg==",
+        "dependencies": {
+          "LaunchDarkly.CommonSdk": "[5.5.0, 6.0.0)",
+          "LaunchDarkly.Logging": "[1.0.1, 2.0.0)",
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
+      "LaunchDarkly.JsonStream": {
+        "type": "Transitive",
+        "resolved": "1.0.3",
+        "contentHash": "WZxC5jQoYTqKrlrWmqV16PlNKCfDp5mQ0IuQEOOSTyVJPUPamm0IIHsyDRbDmNidNKedgFqjn8WaKBNVkakLyA=="
+      },
+      "LaunchDarkly.Logging": {
+        "type": "Transitive",
+        "resolved": "1.0.1",
+        "contentHash": "rWgD2CIB3rvhdgN4WkwIT9JQTK1SayubtmR4efhJis/fmlhi5J4roXtkvBs07C1mU/06farZWCXdF+KnCjdfjg==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "3.1.9"
+        }
+      },
+      "LaunchDarkly.ServerSdk": {
+        "type": "Transitive",
+        "resolved": "6.3.2",
+        "contentHash": "IBHoKWgSN4O11/DVm7pF0cWb6uwLcmUsrf8KeTOHnJ+WNrlSQ+S6RFRI4IXbGOeT2D5o+OpaDoQmWBwMiO/vYQ==",
+        "dependencies": {
+          "LaunchDarkly.Cache": "1.0.2",
+          "LaunchDarkly.CommonSdk": "5.5.0",
+          "LaunchDarkly.EventSource": "4.1.3",
+          "LaunchDarkly.InternalSdk": "2.3.2",
+          "LaunchDarkly.JsonStream": "1.0.3",
+          "LaunchDarkly.Logging": "1.0.1",
+          "System.Collections.Immutable": "1.7.1"
+        }
+      },
       "MicroElements.Swashbuckle.FluentValidation": {
         "type": "Transitive",
         "resolved": "4.1.0",
@@ -789,8 +848,8 @@
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "4/1BLjd9Zvc87xlhfkIsAlHOgMnGJBQFIEmO3CUKLrf38nIFp3W7X+JoFiRmn20WAi5+l2sgUWS4ixaIuB3S0g=="
+        "resolved": "3.1.9",
+        "contentHash": "W5fbF8qVR9SMVVJqDQLIR7meWbev6Pu/lbrm7LDNr4Sp7HOotr4k2UULTdFSXOi5aoDdkQZpWnq0ZSpjrR3tjg=="
       },
       "Microsoft.Extensions.Logging.ApplicationInsights": {
         "type": "Transitive",
@@ -1325,8 +1384,8 @@
       },
       "System.Collections.Immutable": {
         "type": "Transitive",
-        "resolved": "1.5.0",
-        "contentHash": "EXKiDFsChZW0RjrZ4FYHu9aW6+P4MCgEDCklsVseRfhoO0F+dXeMSsMRAlVXIo06kGJ/zv+2w1a2uc2+kxxSaQ=="
+        "resolved": "1.7.1",
+        "contentHash": "B43Zsz5EfMwyEbnObwRxW5u85fzJma3lrDeGcSAV1qkhSRTNY5uXAByTn9h9ddNdhM+4/YoLc/CI43umjwIl9Q=="
       },
       "System.Collections.NonGeneric": {
         "type": "Transitive",
@@ -2513,6 +2572,7 @@
           "BookingsApi.Client": "1.30.22",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
+          "LaunchDarkly.ServerSdk": "6.3.2",
           "MicroElements.Swashbuckle.FluentValidation": "4.1.0",
           "Microsoft.ApplicationInsights": "2.16.0",
           "Microsoft.ApplicationInsights.AspNetCore": "2.16.0",

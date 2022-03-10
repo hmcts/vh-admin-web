@@ -1,6 +1,5 @@
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
-using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -29,7 +28,8 @@ namespace AdminWebsite
         {
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration.GetSection("FeatureToggle")));
+            
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);

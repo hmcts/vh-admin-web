@@ -7,7 +7,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, LinkedParticipantRequest } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -399,6 +399,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
+                this.hearing = Object.assign({}, this.hearing);
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -709,10 +710,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private populateInterpretedForList() {
-        const NotAllowedInterpreter: string[] = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
-
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
+            p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
 
         const interpreteeModel: ParticipantModel = {
@@ -753,9 +752,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
+            newParticipant.interpretee_name = interpretee.display_name;
             const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
-                linkedParticipantEmail: interpretee,
+                linkedParticipantEmail: interpretee.email,
                 linkType: LinkedParticipantType.Interpreter
             };
             this.hearing.linked_participants.push(linkedParticipant);
@@ -776,8 +776,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
     }
 
-    private getInterpretee(email: string): string {
-        const interpretee = this.hearing.participants.find(p => p.email === email);
-        return interpretee ? interpretee.email : '';
+    private getInterpretee(email: string): ParticipantModel {
+        return this.hearing.participants.find(p => p.email === email);
     }
 }

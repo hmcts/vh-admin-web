@@ -61,7 +61,23 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     sortParticipants() {
-        const compareByPartyThenByFirstName = () => (a, b) => {
+        if (!this.hearing.participants) {
+            return;
+        }
+        const judges = this.getJudges();
+        const staffMembers = this.getStaffMembers();
+        const panelMembers = this.getPanelMembers();
+        const observers = this.getObservers();
+        const others = this.getOthers(staffMembers, panelMembers, observers);
+
+        const sortedList = [...judges, ...panelMembers, ...staffMembers, ...others, ...observers];
+
+        this.insertInterpreters(sortedList);
+        this.sortedParticipants = sortedList;
+    }
+
+    private compareByPartyThenByFirstName() {
+        return (a, b) => {
             const swapIndices = a > b ? 1 : 0;
             const partyA = a.case_role_name === Constants.None ? a.hearing_role_name : a.case_role_name;
             const partyB = b.case_role_name === Constants.None ? b.hearing_role_name : b.case_role_name;
@@ -70,33 +86,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             }
             return partyA < partyB ? -1 : swapIndices;
         };
+    }
 
-        if (!this.hearing.participants) {
-            return;
-        }
-        const judges = this.hearing.participants.filter(participant => participant.is_judge).sort(compareByPartyThenByFirstName());
-
-        const staffMembers = this.hearing.participants
-            .filter(participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember)
-            .sort(compareByPartyThenByFirstName());
-
-        const panelMembers = this.hearing.participants
-            .filter(participant =>
-                Constants.JudiciaryRoles.includes(
-                    participant.case_role_name === Constants.None ? participant.hearing_role_name : participant.case_role_name
-                )
-            )
-            .sort(compareByPartyThenByFirstName());
-
-        const observers = this.hearing.participants
-            .filter(
-                participant =>
-                    Constants.HearingRoles.Observer ===
-                    (participant.case_role_name === Constants.None ? participant.hearing_role_name : participant.case_role_name)
-            )
-            .sort(compareByPartyThenByFirstName());
-
-        const others = this.hearing.participants
+    private getOthers(staffMembers: ParticipantModel[], panelMembers: ParticipantModel[], observers: ParticipantModel[]) {
+        return this.hearing.participants
             .filter(
                 participant =>
                     !participant.is_judge &&
@@ -105,12 +98,37 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                     !observers.includes(participant) &&
                     participant.hearing_role_name !== Constants.HearingRoles.Interpreter
             )
-            .sort(compareByPartyThenByFirstName());
+            .sort(this.compareByPartyThenByFirstName());
+    }
 
-        const sortedList = [...judges, ...panelMembers, ...staffMembers, ...others, ...observers];
+    private getObservers() {
+        return this.hearing.participants
+            .filter(
+                participant =>
+                    Constants.HearingRoles.Observer ===
+                    (participant.case_role_name === Constants.None ? participant.hearing_role_name : participant.case_role_name)
+            )
+            .sort(this.compareByPartyThenByFirstName());
+    }
 
-        this.insertInterpreters(sortedList);
-        this.sortedParticipants = sortedList;
+    private getPanelMembers() {
+        return this.hearing.participants
+            .filter(participant =>
+                Constants.JudiciaryRoles.includes(
+                    participant.case_role_name === Constants.None ? participant.hearing_role_name : participant.case_role_name
+                )
+            )
+            .sort(this.compareByPartyThenByFirstName());
+    }
+
+    private getStaffMembers() {
+        return this.hearing.participants
+            .filter(participant => participant.hearing_role_name === Constants.HearingRoles.StaffMember)
+            .sort(this.compareByPartyThenByFirstName());
+    }
+
+    private getJudges() {
+        return this.hearing.participants.filter(participant => participant.is_judge).sort(this.compareByPartyThenByFirstName());
     }
 
     private insertInterpreters(sortedList: ParticipantModel[]) {

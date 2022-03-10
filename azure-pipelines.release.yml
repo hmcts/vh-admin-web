@@ -197,6 +197,11 @@ stages:
             secret: true
           - name: IsLive
             value: $(IsLive)
+          
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
 
           # AzureAd
           - name: AzureAd:ClientId
@@ -302,6 +307,11 @@ stages:
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
+
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
 
           # AzureAd
           - name: AzureAd:TenantId

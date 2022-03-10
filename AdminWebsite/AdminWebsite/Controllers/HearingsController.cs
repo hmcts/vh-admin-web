@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
@@ -39,6 +40,7 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
@@ -51,7 +53,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService)
+            IConferenceDetailsService conferenceDetailsService, IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -60,6 +62,7 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
+            _featureToggles = featureToggles;
         }
 #pragma warning restore S107
         /// <summary>
@@ -112,8 +115,9 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
-
-                await ConfirmHearing(hearingDetailsResponse.Id);
+                
+                if(_featureToggles.BookAndConfirmToggle())
+                    await ConfirmHearing(hearingDetailsResponse.Id);
 
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
@@ -161,15 +165,28 @@ namespace AdminWebsite.Controllers
             {
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingIdOrGroupId);
                 var unConfirmedHearingsList = groupedHearings.Where(b => b.Status != BookingStatus.Created);
-
-                foreach (var hearing in unConfirmedHearingsList)
-                {
-                    await UpdateBookingStatus(hearing.Id, updateBookingStatusRequest);
-                }
+                var unConfirmedHearingIds = unConfirmedHearingsList.Select(h => h.Id).ToList();
+                
+                await UpdateMultipleBookingStatuses(unConfirmedHearingIds, updateBookingStatusRequest);
             }
             else
             {
                 await UpdateBookingStatus(hearingIdOrGroupId, updateBookingStatusRequest);
+            }
+        }
+        
+        private async Task UpdateMultipleBookingStatuses(IReadOnlyCollection<Guid> hearingIds, UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            var batchSize = 20;
+            var batchCount = (int)Math.Ceiling((double)hearingIds.Count / batchSize);
+                
+            for (int i = 0; i < batchCount; i++)
+            {
+                var hearingIdsToUpdate = hearingIds.Skip(i * batchSize).Take(batchSize);
+
+                var updateBookingStatusTasks = hearingIdsToUpdate.Select(hearingId => UpdateBookingStatus(hearingId, updateBookingStatusRequest)).ToList();
+
+                await Task.WhenAll(updateBookingStatusTasks);
             }
         }
 
@@ -225,7 +242,8 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
 
-                await ConfirmHearing(hearingId, true);
+                if(_featureToggles.BookAndConfirmToggle())
+                    await ConfirmHearing(hearingId, true);
 
                 return NoContent();
             }
@@ -530,6 +548,13 @@ namespace AdminWebsite.Controllers
 
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
+                        //if toggle off - send Hearing Reminder Email
+                        if (!_featureToggles.BookAndConfirmToggle())
+                        {
+                            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+                            await _hearingsService.SendHearingReminderEmail(hearing);
+                        }
                         return Ok(new UpdateBookingStatusResponse
                         {
                             Success = true,

@@ -296,6 +296,11 @@ stages:
             value: $(ConferencePhoneNumberWelsh)
           - name: KinlyConfiguration:JoinByPhoneFromDate
             value: $(JoinByPhoneFromDate)
+
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
             
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
@@ -363,6 +368,11 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
+
+          # Feature Toggle
+          - name: FeatureToggle:SDK-Key
+            value: vh-admin-web-Feature-Toggle
+            secret: true
             
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey

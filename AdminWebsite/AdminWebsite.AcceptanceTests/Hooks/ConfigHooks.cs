@@ -48,7 +48,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterKinlySettings(context);
             RegisterNotifySettings(context);
             RunningAdminWebLocally(context);
-            await GenerateBearerTokens(context);
+            await GenerateBearerTokens(context);            
+            SetBookingConfirmToggleStatus(context);
         }
 
         private void RegisterAzureSecrets(TestContext context)
@@ -161,6 +162,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var tokenProvider = new TokenProvider(Options.Create(context.WebConfig.AzureAdConfiguration));
             context.Token = await tokenProvider.GetClientAccessToken(context.WebConfig.AzureAdConfiguration.ClientId, context.WebConfig.AzureAdConfiguration.ClientSecret, context.WebConfig.VhServices.TestApiResourceId);
             context.Token.Should().NotBeNullOrEmpty();
+        }
+        
+        private void SetBookingConfirmToggleStatus(TestContext context)
+        { 
+            var featureToggle = new FeatureToggles(_configRoot.GetSection("FeatureToggle"));
+            context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
     }
 }
