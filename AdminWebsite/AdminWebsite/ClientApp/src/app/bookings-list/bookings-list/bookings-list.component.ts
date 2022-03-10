@@ -1,7 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -9,6 +10,7 @@ import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingsResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
 
 @Component({
@@ -25,24 +27,38 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     limit = 100;
     endOfData = false;
     recordsLoaded = false;
-
     selectedItemIndex = -1;
     selectedGroupIndex = -1;
     selectedElement: HTMLElement;
     selectedHearingId = '';
     bookingResponse: BookingsModel;
     $subcription: Subscription;
+    $ldSubcription: Subscription;
+    searchForm: FormGroup;
+    enableSearchFeature: boolean;
+    displayMessage: string;
 
     constructor(
         private bookingsListService: BookingsListService,
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
+        private formBuilder: FormBuilder,
+        private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
         @Inject(DOCUMENT) document
-    ) {}
+    ) {
+        this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
+            if (value) {
+                this.enableSearchFeature = value[FeatureFlags.adminSearch];
+                console.log('Feature toggle is', this.enableSearchFeature);
+            }
+        });
+    }
 
     async ngOnInit() {
+        this.searchForm = this.initializeForm();
+
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
             this.cursor = this.bookingPersistService.nextCursor;
@@ -67,6 +83,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
             this.bookingPersistService.resetAll();
             this.resetBookingIndex(updatedBooking);
+            this.showMessage();
 
             this.closeHearingDetails();
         } else {
@@ -105,13 +122,67 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 cursor: this.cursor,
                 limit: this.limit
             });
-            const self = this;
-            this.loaded = false;
-            this.error = false;
-            this.$subcription = this.bookingsListService.getBookingsList(this.cursor, this.limit).subscribe(
-                book => self.loadData(book),
-                err => self.handleError(err)
-            );
+            this.loadBookingsList();
+        }
+    }
+
+    private initializeForm(): FormGroup {
+        return this.formBuilder.group({
+            caseNumber: [this.bookingPersistService.searchTerm || null, [Validators.required]]
+        });
+    }
+
+    private loadBookingsList(): void {
+        const self = this;
+        this.loaded = this.error = false;
+        const searchTerm = this.bookingPersistService.searchTerm || '';
+        let bookingsList$: Observable<BookingsResponse>;
+
+        if (this.enableSearchFeature) {
+            // new feature
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm);
+        } else {
+            // previous implementation
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
+        }
+
+        this.$subcription = bookingsList$.subscribe(
+            book => {
+                self.loadData(book);
+                self.showMessage();
+            },
+            err => self.handleError(err)
+        );
+    }
+
+    onSearch(): void {
+        if (this.searchForm.valid) {
+            const caseNumber = this.searchForm.value['caseNumber'];
+            this.bookingPersistService.searchTerm = caseNumber;
+            this.cursor = undefined;
+            this.bookings = [];
+            this.loadBookingsList();
+        }
+    }
+
+    onClear(): void {
+        this.searchForm.reset();
+        if (this.bookingPersistService.searchTerm) {
+            this.bookings = [];
+            this.cursor = undefined;
+            this.bookingPersistService.searchTerm = '';
+            this.bookingPersistService.resetAll();
+            this.loadBookingsList();
+        }
+    }
+
+    showMessage(): void {
+        if (this.enableSearchFeature) {
+            const searchTerm = this.bookingPersistService.searchTerm;
+            this.displayMessage = '';
+            if (searchTerm && this.bookings) {
+                this.displayMessage = `Showing results for ${searchTerm}`;
+            }
         }
     }
 
@@ -207,8 +278,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.$subcription) {
-            this.$subcription.unsubscribe();
-        }
+        this.$subcription?.unsubscribe();
+        this.$ldSubcription?.unsubscribe();
     }
 }

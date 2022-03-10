@@ -38,6 +38,7 @@
     "classlist.js": "^1.1.20150312",
     "core-js": "^3.10.1",
     "govuk-frontend": "^3.11.0",
+    "launchdarkly-js-client-sdk": "^2.20.2",
     "moment": "^2.29.1",
     "ngx-clipboard": "^14.0.1",
     "ngx-device-detector": "^2.0.6",

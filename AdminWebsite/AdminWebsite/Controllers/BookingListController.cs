@@ -39,13 +39,14 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name="cursor">The unique sequential value of hearing ID.</param>
         /// <param name="limit">The max number of hearings to be returned.</param>
+        /// <param name="caseNumber"></param>
         /// <returns> The hearings list</returns>
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "")
         {
             if (cursor != null)
             {
@@ -66,8 +67,20 @@ namespace AdminWebsite.Controllers
             try
             {
                 var types = caseTypes ?? Enumerable.Empty<string>();
+
                 var hearingTypesIds = await GetHearingTypesId(types);
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(hearingTypesIds, cursor, limit);
+                
+                BookingsResponse bookingsResponse;
+
+                if (string.IsNullOrWhiteSpace(caseNumber))
+                {
+                    bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(hearingTypesIds, cursor, limit, null, string.Empty);  
+                }
+                else
+                {
+                    bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(hearingTypesIds, cursor, limit, null, caseNumber); 
+                }
+
                 return Ok(bookingsResponse);
             }
             catch (BookingsApiException e)

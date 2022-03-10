@@ -54,5 +54,10 @@
         /// The Uri to video web url
         /// </summary>
         public string VideoWebUrl { get; set; }
+
+        /// <summary>
+        /// The LaunchDarkly Client ID
+        /// </summary>
+        public string LaunchDarklyClientId { get; internal set; }
     }
 }

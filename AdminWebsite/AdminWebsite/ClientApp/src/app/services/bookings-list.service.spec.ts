@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { BookingsListService } from './bookings-list.service';
 import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from './clients/api-client';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
 
@@ -478,5 +478,13 @@ describe('Booking list service functionality', () => {
         expect(bookingsList.length).toBe(3);
         expect(bookingsList[0].BookingsDetails.length).toBe(2);
         expect(bookingsList[1].BookingsDetails.length).toBe(3);
+    });
+
+    it('should return the bookings list for search term', () => {
+        const limit = 100;
+        const searchTerm = 'CASE_NUMBER';
+        const bookings = service.getBookingsList('cursor', limit, searchTerm);
+        expect(bhClientSpy.getBookingsList).toHaveBeenCalledTimes(1);
+        expect(bookings).toEqual(jasmine.any(Observable));
     });
 });
