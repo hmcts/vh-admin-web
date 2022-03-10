@@ -33,7 +33,6 @@ describe('BookingsListRouting', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
     const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
     configServiceSpy.getConfig.and.returnValue({ launch_darkly_client_id: 'client_id' });
-    
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule.withRoutes(routes), MomentModule, ReactiveFormsModule],
