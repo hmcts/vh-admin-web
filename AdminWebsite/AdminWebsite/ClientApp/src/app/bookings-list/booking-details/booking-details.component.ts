@@ -152,7 +152,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         } else {
             this.logger.debug(`${this.loggerPrefix} navigating back to booking list`);
             await this.router.navigateByUrl(PageUrls.BookingsList);
-            // this.router.navigate([PageUrls.BookingsList]);
         }
     }
 
