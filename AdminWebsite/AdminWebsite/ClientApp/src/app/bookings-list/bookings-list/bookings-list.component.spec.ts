@@ -1,9 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MomentModule } from 'ngx-moment';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { ConfigService } from 'src/app/services/config.service';
+import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
@@ -21,6 +24,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
 
 let component: BookingsListComponent;
+let bookingPersistService: BookingPersistService;
 let fixture: ComponentFixture<BookingsListComponent>;
 let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
 bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
@@ -436,6 +440,7 @@ export class BookingPersistServiceSpy {
     private _nextCuror = '12345';
     private _selectedGroupIndex = 0;
     private _selectedItemIndex = 0;
+    private _searchTerm = 'SEARCH_VALUE';
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -465,6 +470,14 @@ export class BookingPersistServiceSpy {
     }
     set selectedItemIndex(value) {
         this._selectedItemIndex = value;
+    }
+
+    get searchTerm(): string {
+        return this._searchTerm;
+    }
+
+    set searchTerm(value) {
+        this._searchTerm = value;
     }
     updateBooking(hearing: HearingModel) {
         const booking = new BookingsDetailsModel(
@@ -498,6 +511,7 @@ export class BookingPersistServiceSpy {
 }
 
 let routerSpy: jasmine.SpyObj<Router>;
+const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
 
 describe('BookingsListComponent', () => {
@@ -514,35 +528,82 @@ describe('BookingsListComponent', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
+            configServiceSpy.getConfig.and.returnValue({});
+            const ldService = new LaunchDarklyService(configServiceSpy);
+            ldService.flagChange = new BehaviorSubject(null);
+
             TestBed.configureTestingModule({
                 declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
-                imports: [HttpClientModule, MomentModule],
+                imports: [HttpClientModule, MomentModule, ReactiveFormsModule],
                 providers: [
+                    FormBuilder,
+                    ConfigService,
                     { provide: BookingsListService, useValue: bookingsListServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: LaunchDarklyService, useValue: ldService }
                 ]
             }).compileComponents();
 
             fixture = TestBed.createComponent(BookingsListComponent);
             component = fixture.componentInstance;
+            bookingPersistService = TestBed.inject(BookingPersistService);
             fixture.detectChanges();
         })
     );
+
+    function setFormValue() {
+        component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+    }
 
     it('should create bookings list component', () => {
         expect(component).toBeTruthy();
     });
 
     it('should show bookings list records', () => {
+        setFormValue();
         component.ngOnInit();
         expect(component.endOfData).toBeFalsy();
         expect(component.error).toBeFalsy();
         expect(component.recordsLoaded).toBeTruthy();
         expect(component.bookings.length).toBe(1);
         expect(component.loaded).toBeTruthy();
+    });
+
+    it('should show text message displayed for search term', () => {
+        const searchTerm = 'CASE_NUMBER';
+        bookingPersistService.searchTerm = searchTerm;
+        component.enableSearchFeature = true;
+        component.showMessage();
+        expect(component.displayMessage).toEqual(`Showing results for ${searchTerm}`);
+    });
+
+    it('should onSearch (admin_search flag off)', () => {
+        setFormValue();
+        component.onSearch();
+        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(component.bookings.length).toBeGreaterThan(0);
+    });
+
+    it('should onSearch (admin_search flag on)', () => {
+        setFormValue();
+        component.enableSearchFeature = false;
+        component.onSearch();
+        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(component.bookings.length).toBeGreaterThan(0);
+    });
+
+    it('should onClear', () => {
+        const searchFormSpy = component.searchForm;
+        spyOn(searchFormSpy, 'reset');
+        spyOn(bookingPersistService, 'resetAll');
+        component.onClear();
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingPersistService.searchTerm).toEqual('');
+        expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
+        expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });
 
     it(

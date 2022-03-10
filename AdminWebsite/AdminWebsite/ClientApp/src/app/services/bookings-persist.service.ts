@@ -9,6 +9,7 @@ export class BookingPersistService {
     private _nextCursor: string;
     private _selectedGroupIndex: number;
     private _selectedItemIndex: number;
+    private _searchTerm: string;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -82,6 +83,14 @@ export class BookingPersistService {
 
     get nextCursor(): string {
         return this._nextCursor;
+    }
+
+    get searchTerm(): string {
+        return this._searchTerm;
+    }
+
+    set searchTerm(value) {
+        this._searchTerm = value;
     }
 
     set selectedGroupIndex(value: number) {

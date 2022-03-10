@@ -73,6 +73,9 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
+  - name: VhServices:LaunchDarklyClientId
+    value: vh-launchdarkly-client-id
+    secret: true
   - name: VhServices:VideoWebUrl
     value: $(video_web_url)
 
@@ -196,6 +199,9 @@ parameters:
   - name: VhServices:NotificationApiResourceId
     value: vh-notification-api-identifieruris
     secret: true
+  - name: VhServices:LaunchDarklyClientId
+    value: vh-launchdarkly-client-id
+    secret: true    
   - name: VhServices:VideoWebUrl
     value: $(video_web_url)
 

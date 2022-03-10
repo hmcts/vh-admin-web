@@ -12,6 +12,7 @@ import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-fa
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { AdminGuard } from '../security/admin.guard';
 import { AuthGuard } from '../security/auth.guard';
+import { ConfigService } from '../services/config.service';
 import { Logger } from '../services/logger';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
@@ -30,7 +31,8 @@ describe('BookingsListRouting', () => {
     let oidcSecurityService;
     let bookingGuard;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
-
+    const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
+    configServiceSpy.getConfig.and.returnValue({ launch_darkly_client_id: 'client_id' });
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule.withRoutes(routes), MomentModule, ReactiveFormsModule],
@@ -51,7 +53,8 @@ describe('BookingsListRouting', () => {
                 { provide: OidcSecurityService, useClass: MockOidcSecurityService },
                 HttpClient,
                 HttpHandler,
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: ConfigService, useValue: configServiceSpy }
             ]
         }).compileComponents();
 

@@ -400,13 +400,19 @@ export class BHClient {
      * Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
      * @param cursor (optional) The unique sequential value of hearing ID.
      * @param limit (optional) The max number of hearings to be returned.
+     * @param caseNumber (optional)
      * @return Success
      */
-    getBookingsList(cursor: string | null | undefined, limit: number | undefined): Observable<BookingsResponse> {
+    getBookingsList(
+        cursor: string | null | undefined,
+        limit: number | undefined,
+        caseNumber: string | null | undefined
+    ): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings?';
         if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
         if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
         else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
+        if (caseNumber !== undefined && caseNumber !== null) url_ += 'caseNumber=' + encodeURIComponent('' + caseNumber) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -4159,6 +4165,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */
     video_web_url?: string | undefined;
+    /** The LaunchDarkly Client ID */
+    launch_darkly_client_id?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -4180,6 +4188,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
+            this.launch_darkly_client_id = _data['launch_darkly_client_id'];
         }
     }
 
@@ -4202,6 +4211,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
+        data['launch_darkly_client_id'] = this.launch_darkly_client_id;
         return data;
     }
 }
@@ -4228,6 +4238,8 @@ export interface IClientSettingsResponse {
     join_by_phone_from_date?: string | undefined;
     /** The Uri to video web url */
     video_web_url?: string | undefined;
+    /** The LaunchDarkly Client ID */
+    launch_darkly_client_id?: string | undefined;
 }
 
 export class HealthCheck implements IHealthCheck {

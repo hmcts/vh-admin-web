@@ -54,7 +54,8 @@ namespace AdminWebsite.Controllers
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
                 ConferencePhoneNumberWelsh = _kinlyConfiguration.ConferencePhoneNumberWelsh,
                 JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate,
-                VideoWebUrl = _vhServiceConfiguration.VideoWebUrl
+                VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
+                LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
 
             return Ok(clientSettings);
