@@ -1,14 +1,14 @@
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-half">
+  <div class="govuk-grid-column-one-third">
     <h1 class="govuk-heading-l">Video hearings</h1>
   </div>
 
-  <div *ngIf="enableSearchFeature" class="govuk-grid-column-one-half">
+  <div *ngIf="enableSearchFeature" class="govuk-grid-column-two-thirds">
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="govuk-form-group">
       <div class="govuk-form-group">
         <input
           id="caseNumber"
-          placeholder="Enter Case Number"
+          placeholder="Please enter a case number"
           class="govuk-input govuk-!-width-one-half govuk-!-margin-bottom-2 govuk-!-margin-right-2"
           type="text"
           formControlName="caseNumber"
