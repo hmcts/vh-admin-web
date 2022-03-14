@@ -717,6 +717,7 @@ describe('AddParticipantComponent', () => {
         observer03.user_role_name = 'Individual';
         component.hearing.participants.push(observer03);
         const observer04 = new ParticipantModel();
+        observer04.id = 'None Observer';
         observer04.first_name = 'firstName';
         observer04.last_name = 'lastName';
         observer04.hearing_role_name = 'Observer';
