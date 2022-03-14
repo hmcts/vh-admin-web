@@ -678,6 +678,13 @@ describe('AddParticipantComponent', () => {
         participant01.case_role_name = 'Vets UK';
         participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
+        participant01 = new ParticipantModel();
+        participant01.first_name = 'firstName';
+        participant01.last_name = 'lastName';
+        participant01.hearing_role_name = 'Observer';
+        participant01.case_role_name = Constants.None;
+        participant01.user_role_name = 'Individual';
+        component.hearing.participants.push(participant01);
         component.setupHearingRoles('Applicant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
@@ -709,10 +716,18 @@ describe('AddParticipantComponent', () => {
         observer03.case_role_name = 'Vets UK';
         observer03.user_role_name = 'Individual';
         component.hearing.participants.push(observer03);
+        const observer04 = new ParticipantModel();
+        observer04.first_name = 'firstName';
+        observer04.last_name = 'lastName';
+        observer04.hearing_role_name = 'Observer';
+        observer04.case_role_name = Constants.None;
+        observer04.user_role_name = 'Individual';
+        component.hearing.participants.push(observer04);
         component.populateInterpretedForList();
         expect(component.interpreteeList.find(i => i.id === observer01.id)).toBeUndefined();
         expect(component.interpreteeList.find(i => i.id === observer02.id)).toBeUndefined();
         expect(component.interpreteeList.find(i => i.id === observer03.id)).toBeUndefined();
+        expect(component.interpreteeList.find(i => i.id === observer04.id)).toBeUndefined();
     }));
     it('should validate the interpreter drop down', () => {
         component.ngOnInit();
