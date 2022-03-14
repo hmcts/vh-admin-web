@@ -709,7 +709,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
     }
 
-    private populateInterpretedForList() {
+    populateInterpretedForList() {
         this.interpreteeList = this.hearing.participants.filter(
             p => p.user_role_name === 'Individual' && p.hearing_role_name !== Constants.HearingRoles.Interpreter && !this.isAnObserver(p)
         );
