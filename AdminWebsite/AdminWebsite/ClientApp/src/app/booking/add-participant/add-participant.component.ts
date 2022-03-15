@@ -399,6 +399,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
+                this.hearing = Object.assign({}, this.hearing);
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -776,7 +777,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getInterpretee(email: string): ParticipantModel {
-        const interpretee = this.hearing.participants.find(p => p.email === email);
-        return interpretee;
+        return this.hearing.participants.find(p => p.email === email);
     }
 }
