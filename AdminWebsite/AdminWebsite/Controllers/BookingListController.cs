@@ -47,7 +47,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", List<int> venueIds = null)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null)
         {
             if (cursor != null)
             {
