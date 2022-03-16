@@ -483,8 +483,8 @@ describe('Booking list service functionality', () => {
     it('should return the bookings list for search criteria', () => {
         const limit = 100;
         const searchTerm = 'CASE_NUMBER';
-        const venueId = 1;
-        const bookings = service.getBookingsList('cursor', limit, searchTerm, venueId);
+        const selectedVenueIds = [1, 2];
+        const bookings = service.getBookingsList('cursor', limit, searchTerm, selectedVenueIds);
         expect(bhClientSpy.getBookingsList).toHaveBeenCalledTimes(1);
         expect(bookings).toEqual(jasmine.any(Observable));
     });

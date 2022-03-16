@@ -39,6 +39,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     enableSearchFeature = true;
     displayMessage: string;
     venues: HearingVenueResponse[];
+    selectedVenueIds: [];
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -134,7 +135,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         // TODO need to reinstate validation here - one item from this group should be required for the search button to be enabled
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.searchTerm || null],
-            venueId: [this.bookingPersistService.venueId || null]
+            selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
         });
     }
 
@@ -142,12 +143,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const self = this;
         this.loaded = this.error = false;
         const searchTerm = this.bookingPersistService.searchTerm || '';
-        const venueId = this.bookingPersistService.venueId;
+        const venueIds = this.bookingPersistService.selectedVenueIds;
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
             // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueId);
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds);
         } else {
             // previous implementation
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
@@ -165,9 +166,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onSearch(): void {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
-            const venueId = this.searchForm.value['venueId'];
+            const venueIds = this.searchForm.value['selectedVenueIds'];
             this.bookingPersistService.searchTerm = caseNumber;
-            this.bookingPersistService.venueId = venueId;
+            this.bookingPersistService.selectedVenueIds = venueIds;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -176,12 +177,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     onClear(): void {
         this.searchForm.reset();
-        const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.venueId;
+        const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.selectedVenueIds.length > 0; // TODO update this to check whether it is not null or empty
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.searchTerm = '';
-            this.bookingPersistService.venueId = null;
+            this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
         }
@@ -190,18 +191,20 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     showMessage(): void {
         if (this.enableSearchFeature) {
             const searchTerm = this.bookingPersistService.searchTerm;
-            const venueId = this.bookingPersistService.venueId;
+            const selectedVenueIds = this.bookingPersistService.selectedVenueIds;
             this.displayMessage = '';
-            if ((searchTerm || venueId) && this.bookings) {
+            if ((searchTerm || (selectedVenueIds && selectedVenueIds.length > 0)) && this.bookings) {
                 let searchCriteria = '';
                 if (searchTerm) {
                     searchCriteria += `${searchTerm}`;
                 }
-                if (venueId) {
-                    if (searchCriteria) {
-                        searchCriteria += ', ';
-                    }
-                    searchCriteria += `${venueId}`;
+                if (selectedVenueIds.length > 0) {
+                    selectedVenueIds.forEach(venueId => {
+                        if (searchCriteria) {
+                            searchCriteria += ', ';
+                        }
+                        searchCriteria += `${venueId}`;
+                    });
                 }
                 this.displayMessage = `Showing results for ${searchCriteria}`;
             }

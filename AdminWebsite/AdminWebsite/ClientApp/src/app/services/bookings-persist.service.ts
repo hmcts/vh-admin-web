@@ -11,6 +11,7 @@ export class BookingPersistService {
     private _selectedItemIndex: number;
     private _searchTerm: string;
     private _venueId: number;
+    private _selectedVenueIds: number[];
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -100,6 +101,14 @@ export class BookingPersistService {
 
     set venueId(value) {
         this._venueId = value;
+    }
+
+    get selectedVenueIds(): number[] {
+        return this._selectedVenueIds;
+    }
+
+    set selectedVenueIds(value) {
+        this._selectedVenueIds = value;
     }
 
     set selectedGroupIndex(value: number) {

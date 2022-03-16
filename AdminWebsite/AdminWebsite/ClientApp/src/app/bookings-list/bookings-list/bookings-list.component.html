@@ -1,3 +1,9 @@
+<!-- <ng-select [items]="venues" bindLabel="name" bindValue="id" [(ngModel)]="selectedVenues" [placeholder]="'Select venues'" [multiple]="true">
+  <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+    <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> {{ item.name }}
+  </ng-template>
+</ng-select> -->
+
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third">
     <h1 class="govuk-heading-l">Video hearings</h1>
@@ -13,7 +19,18 @@
           type="text"
           formControlName="caseNumber"
         />
-        <ng-select [items]="venues" bindLabel="name" bindValue="id" formControlName="venueId" [placeholder]="'Select venues'"> </ng-select>
+        <ng-select
+          [items]="venues"
+          bindLabel="name"
+          bindValue="id"
+          formControlName="selectedVenueIds"
+          [placeholder]="'Select venues'"
+          [multiple]="true"
+        >
+          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+            <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" /> {{ item.name }}
+          </ng-template>
+        </ng-select>
         <button
           id="searchButton"
           data-module="govuk-button"
