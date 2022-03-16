@@ -10,16 +10,15 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle();
     }
     
-    internal class FeatureToggles : IFeatureToggles
+    public class FeatureToggles : IFeatureToggles
     {
         private readonly ILdClient _ldClient;
         private readonly User _user;
         private const string LdUser = "vh-admin-web";
-        private const string SDKConfigKey = "SDK-Key";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         public FeatureToggles(IConfiguration config)
         {
-            _ldClient = new LdClient(config[SDKConfigKey]);
+            _ldClient = new LdClient(config["SDK-Key"]);
             _user = LaunchDarkly.Sdk.User.WithKey(LdUser);
         }
 

@@ -1,4 +1,47 @@
-<h1 class="govuk-heading-l">Video hearings</h1>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-third">
+    <h1 class="govuk-heading-l">Video hearings</h1>
+  </div>
+
+  <div *ngIf="enableSearchFeature" class="govuk-grid-column-two-thirds">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="govuk-form-group">
+      <div class="govuk-form-group">
+        <input
+          id="caseNumber"
+          placeholder="Please enter a case number"
+          class="govuk-input govuk-!-width-one-half govuk-!-margin-bottom-2 govuk-!-margin-right-2"
+          type="text"
+          formControlName="caseNumber"
+        />
+        <button
+          id="searchButton"
+          data-module="govuk-button"
+          type="submit"
+          class="govuk-button govuk-!-margin-right-2"
+          alt="search booking list"
+          [disabled]="searchForm.invalid"
+        >
+          Search
+        </button>
+        <button
+          id="cancelButton"
+          data-module="govuk-button"
+          type="button"
+          (click)="onClear()"
+          alt="clear and reload existing booking list"
+          class="govuk-button hmcts-button--secondary"
+        >
+          Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="displayMessage && enableSearchFeature" class="govuk-grid-column-full">
+    <p class="govuk-body govuk-!-margin-bottom-8">{{ displayMessage }}</p>
+  </div>
+</div>
+
 <div *ngIf="recordsLoaded">
   <div id="vh-table" class="vh-table" appScrollTrigger (scrolledPast)="scrollHandler()">
     <div *ngFor="let booking of bookings; index as b">

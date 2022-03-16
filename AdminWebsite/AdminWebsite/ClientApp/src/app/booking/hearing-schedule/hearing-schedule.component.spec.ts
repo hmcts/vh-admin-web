@@ -344,12 +344,11 @@ describe('HearingScheduleComponent first visit', () => {
     });
 
     it('should add a valid hearing date', () => {
-        spyOn(component, 'addValidHearingDate');
         component.addHearingDate();
         const value = new Date();
         component.addHearingDateControl.setValue(value);
         component.hearingDateChanged({ target: { value } });
-        expect(component.addValidHearingDate).toHaveBeenCalled();
+        expect(component.hearingDates).toBeDefined();
     });
 
     it('should remove hearing date', () => {

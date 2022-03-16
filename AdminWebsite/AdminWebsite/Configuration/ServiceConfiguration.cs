@@ -11,5 +11,6 @@
         public string NotificationApiUrl { get; set; }
         public string NotificationApiResourceId { get; set; }
         public string VideoWebUrl { get; set; }
+        public string LaunchDarklyClientId { get; set; }
     }
 }

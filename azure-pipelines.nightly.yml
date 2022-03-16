@@ -286,7 +286,10 @@ stages:
             value: $(notification_api_url)
           - name: VhServices:VideoWebUrl
             value: $(video_web_url)
-          # Kinly
+          - name: VhServices:LaunchDarklyClientId
+            value: vh-launchdarkly-client-id
+            secret: true
+            # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
           - name: KinlyConfiguration:ConferencePhoneNumberWelsh
@@ -336,6 +339,9 @@ stages:
             secret: true
           - name: VhServices:NotificationApiResourceId
             value: vh-notification-api-identifieruris
+            secret: true
+          - name: VhServices:LaunchDarklyClientId
+            value: vh-launchdarkly-client-id
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)

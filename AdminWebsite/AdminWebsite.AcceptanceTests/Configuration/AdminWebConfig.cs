@@ -16,5 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public NotifyConfiguration NotifyConfiguration { get; set; }
         public bool UsingEjud { get; set; }
         public int SeleniumElementTimeout { get; set; }
+        public bool BookingConfirmToggle { get; set; }
     }
 }

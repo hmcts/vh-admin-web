@@ -399,8 +399,9 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     protected isAnObserver(participant): boolean {
-        return participant.case_role_name === Constants.None
-            ? participant.hearing_role_name === Constants.HearingRoles.Observer
-            : participant.case_role_name === Constants.HearingRoles.Observer;
+        return (
+            participant.hearing_role_name === Constants.HearingRoles.Observer ||
+            participant.case_role_name === Constants.HearingRoles.Observer
+        );
     }
 }

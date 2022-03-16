@@ -255,6 +255,10 @@ stages:
             value: $(reformemail)
           - name: VhServices:VideoWebUrl
             value: $(video_web_url)
+          - name: VhServices:LaunchDarklyClientId
+            value: vh-launchdarkly-client-id
+            secret: true
+            
 
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
@@ -297,6 +301,9 @@ stages:
             secret: true
           - name: VhServices:NotificationApiResourceId
             value: vh-notification-api-identifieruris
+            secret: true
+          - name: VhServices:LaunchDarklyClientId
+            value: vh-launchdarkly-client-id
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
