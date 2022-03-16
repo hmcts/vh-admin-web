@@ -13,9 +13,7 @@
           type="text"
           formControlName="caseNumber"
         />
-        <select class="govuk-select govuk-!-width-one-half" id="venueId" formControlName="venueId">
-          <option *ngFor="let venue of venues" [ngValue]="venue.id">{{ venue.name }}</option>
-        </select>
+        <ng-select [items]="venues" bindLabel="name" bindValue="id" formControlName="venueId" [placeholder]="'Select venues'"> </ng-select>
         <button
           id="searchButton"
           data-module="govuk-button"

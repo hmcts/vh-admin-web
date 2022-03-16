@@ -3,6 +3,7 @@ import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MomentModule } from 'ngx-moment';
 import { BehaviorSubject, of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
@@ -534,7 +535,7 @@ describe('BookingsListComponent', () => {
 
             TestBed.configureTestingModule({
                 declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
-                imports: [HttpClientModule, MomentModule, ReactiveFormsModule],
+                imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
                     FormBuilder,
                     ConfigService,
@@ -631,7 +632,7 @@ describe('BookingsListComponent', () => {
         component.onClear();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingPersistService.searchTerm).toEqual('');
-        expect(bookingPersistService.venueId).toEqual(-1);
+        expect(bookingPersistService.venueId).toEqual(null);
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });

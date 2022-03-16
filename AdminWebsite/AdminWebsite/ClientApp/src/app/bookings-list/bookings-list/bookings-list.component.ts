@@ -21,7 +21,6 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 })
 export class BookingsListComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingsList] -';
-    private readonly defaultSelectedVenueIndex = -1;
     bookings: Array<BookingsListModel> = [];
     loaded = false;
     error = false;
@@ -135,7 +134,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         // TODO need to reinstate validation here - one item from this group should be required for the search button to be enabled
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.searchTerm || null],
-            venueId: [this.bookingPersistService.venueId || this.defaultSelectedVenueIndex]
+            venueId: [this.bookingPersistService.venueId || null]
         });
     }
 
@@ -143,7 +142,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const self = this;
         this.loaded = this.error = false;
         const searchTerm = this.bookingPersistService.searchTerm || '';
-        const venueId = this.bookingPersistService.venueId === this.defaultSelectedVenueIndex ? null : this.bookingPersistService.venueId;
+        const venueId = this.bookingPersistService.venueId;
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
@@ -166,10 +165,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onSearch(): void {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
-            let venueId = this.searchForm.value['venueId'];
-            if (venueId === this.defaultSelectedVenueIndex) {
-                venueId = null;
-            }
+            const venueId = this.searchForm.value['venueId'];
             this.bookingPersistService.searchTerm = caseNumber;
             this.bookingPersistService.venueId = venueId;
             this.cursor = undefined;
@@ -179,28 +175,22 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     onClear(): void {
-        this.resetSearchForm();
+        this.searchForm.reset();
         const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.venueId;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.searchTerm = '';
-            this.bookingPersistService.venueId = this.defaultSelectedVenueIndex;
+            this.bookingPersistService.venueId = null;
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
         }
     }
 
-    resetSearchForm() {
-        this.searchForm.reset();
-        this.searchForm.controls['venueId'].setValue(this.defaultSelectedVenueIndex);
-    }
-
     showMessage(): void {
         if (this.enableSearchFeature) {
             const searchTerm = this.bookingPersistService.searchTerm;
-            const venueId =
-                this.bookingPersistService.venueId === this.defaultSelectedVenueIndex ? null : this.bookingPersistService.venueId;
+            const venueId = this.bookingPersistService.venueId;
             this.displayMessage = '';
             if ((searchTerm || venueId) && this.bookings) {
                 let searchCriteria = '';
@@ -321,10 +311,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             (data: HearingVenueResponse[]) => {
                 this.venues = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
-                const selectVenues = new HearingVenueResponse();
-                selectVenues.name = 'Select venues';
-                selectVenues.id = this.defaultSelectedVenueIndex;
-                this.venues.unshift(selectVenues);
             },
             error => self.handleLoadVenuesListError(error)
         );

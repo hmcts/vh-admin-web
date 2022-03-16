@@ -11,9 +11,10 @@ import { PopupModule } from '../popups/popup.module';
 import { CopySipComponent } from './copy-sip/copy-sip.component';
 import { CopyConferencePhoneComponent } from './copy-conference-phone/copy-conference-phone.component';
 import { CopyJoinLinkComponent } from './copy-join-link/copy-join-link.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
-    imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule],
+    imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule, NgSelectModule],
     declarations: [
         BookingsListComponent,
         BookingDetailsComponent,

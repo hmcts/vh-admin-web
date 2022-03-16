@@ -1,10 +1,11 @@
-@import "../node_modules/govuk-frontend/govuk/all";
-@import "../node_modules/@hmcts/frontend/all";
+@import '../node_modules/govuk-frontend/govuk/all';
+@import '../node_modules/@hmcts/frontend/all';
+@import '~@ng-select/ng-select/themes/default.theme.css';
 
 body {
-    font-family: 'nta', Arial, sans-serif;
+  font-family: 'nta', Arial, sans-serif;
 }
 
 .break-all {
-    word-break: break-all;
+  word-break: break-all;
 }
