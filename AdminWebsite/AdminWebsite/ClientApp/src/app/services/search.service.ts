@@ -31,7 +31,7 @@ export class SearchService {
             value: 'Ms'
         },
         {
-            value: 'MX'
+            value: 'Mx'
         },
         {
             value: 'Rev'
