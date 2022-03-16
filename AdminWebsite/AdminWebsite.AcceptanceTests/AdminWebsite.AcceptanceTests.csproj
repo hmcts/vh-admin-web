@@ -20,7 +20,7 @@
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="TestApi.Client" Version="1.30.1" />
     <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.65" />
-    <PackageReference Include="VideoApi.Client" Version="1.29.11" />
+    <PackageReference Include="VideoApi.Client" Version="1.30.7" />
   </ItemGroup>
 
   <ItemGroup>
