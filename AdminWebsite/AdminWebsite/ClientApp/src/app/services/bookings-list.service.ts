@@ -12,11 +12,8 @@ export class BookingsListService {
 
     constructor(private bhClient: BHClient) {}
 
-    getBookingsList(cursor: string, limit: number, searchTerm?: string): Observable<BookingsResponse> {
-        if (searchTerm) {
-            return this.bhClient.getBookingsList(cursor, limit, searchTerm);
-        }
-        return this.bhClient.getBookingsList(cursor, limit, '');
+    getBookingsList(cursor: string, limit: number, searchTerm?: string, venueId?: number): Observable<BookingsResponse> {
+        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueId ? [venueId] : null);
     }
 
     mapBookingsResponse(bookingsResponse: BookingsResponse): BookingsModel {

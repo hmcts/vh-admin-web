@@ -556,6 +556,12 @@ describe('BookingsListComponent', () => {
 
     function setFormValue() {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+        component.searchForm.controls['venueId'].setValue(1);
+    }
+
+    function clearSearch() {
+        bookingPersistService.searchTerm = '';
+        bookingPersistService.venueId = null;
     }
 
     it('should create bookings list component', () => {
@@ -573,6 +579,7 @@ describe('BookingsListComponent', () => {
     });
 
     it('should show text message displayed for search term', () => {
+        clearSearch();
         const searchTerm = 'CASE_NUMBER';
         bookingPersistService.searchTerm = searchTerm;
         component.enableSearchFeature = true;
@@ -580,10 +587,31 @@ describe('BookingsListComponent', () => {
         expect(component.displayMessage).toEqual(`Showing results for ${searchTerm}`);
     });
 
+    it('should show text message displayed for venueId', () => {
+        clearSearch();
+        const venueId = 1;
+        bookingPersistService.venueId = venueId;
+        component.enableSearchFeature = true;
+        component.showMessage();
+        expect(component.displayMessage).toEqual(`Showing results for ${venueId}`);
+    });
+
+    it('should show text message displayed for multiple search criteria', () => {
+        clearSearch();
+        const searchTerm = 'CASE_NUMBER';
+        const venueId = 1;
+        bookingPersistService.searchTerm = searchTerm;
+        bookingPersistService.venueId = venueId;
+        component.enableSearchFeature = true;
+        component.showMessage();
+        expect(component.displayMessage).toEqual(`Showing results for ${searchTerm}, ${venueId}`);
+    });
+
     it('should onSearch (admin_search flag off)', () => {
         setFormValue();
         component.onSearch();
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.venueId).toMatch('1');
         expect(component.bookings.length).toBeGreaterThan(0);
     });
 
@@ -592,6 +620,7 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = false;
         component.onSearch();
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.venueId).toMatch('1');
         expect(component.bookings.length).toBeGreaterThan(0);
     });
 
@@ -602,6 +631,7 @@ describe('BookingsListComponent', () => {
         component.onClear();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingPersistService.searchTerm).toEqual('');
+        expect(bookingPersistService.venueId).toEqual(-1);
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });

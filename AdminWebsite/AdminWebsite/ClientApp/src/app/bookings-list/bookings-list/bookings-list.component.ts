@@ -8,10 +8,11 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse } from '../../services/clients/api-client';
+import { BookingsResponse, HearingVenueResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 
 @Component({
     selector: 'app-bookings-list',
@@ -20,6 +21,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 })
 export class BookingsListComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingsList] -';
+    private readonly defaultSelectedVenueIndex = -1;
     bookings: Array<BookingsListModel> = [];
     loaded = false;
     error = false;
@@ -35,8 +37,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     $subcription: Subscription;
     $ldSubcription: Subscription;
     searchForm: FormGroup;
-    enableSearchFeature: boolean;
+    enableSearchFeature = true;
     displayMessage: string;
+    venues: HearingVenueResponse[];
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -46,6 +49,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
+        private refDataService: ReferenceDataService,
         @Inject(DOCUMENT) document
     ) {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
@@ -88,6 +92,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.closeHearingDetails();
         } else {
             this.getList();
+            this.loadVenuesList();
         }
     }
 
@@ -127,8 +132,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     private initializeForm(): FormGroup {
+        // TODO need to reinstate validation here - one item from this group should be required for the search button to be enabled
         return this.formBuilder.group({
-            caseNumber: [this.bookingPersistService.searchTerm || null, [Validators.required]]
+            caseNumber: [this.bookingPersistService.searchTerm || null],
+            venueId: [this.bookingPersistService.venueId || this.defaultSelectedVenueIndex]
         });
     }
 
@@ -136,11 +143,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const self = this;
         this.loaded = this.error = false;
         const searchTerm = this.bookingPersistService.searchTerm || '';
+        const venueId = this.bookingPersistService.venueId === this.defaultSelectedVenueIndex ? null : this.bookingPersistService.venueId;
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
             // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm);
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueId);
         } else {
             // previous implementation
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
@@ -151,14 +159,19 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 self.loadData(book);
                 self.showMessage();
             },
-            err => self.handleError(err)
+            err => self.handleLoadBookingsListError(err)
         );
     }
 
     onSearch(): void {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
+            let venueId = this.searchForm.value['venueId'];
+            if (venueId === this.defaultSelectedVenueIndex) {
+                venueId = null;
+            }
             this.bookingPersistService.searchTerm = caseNumber;
+            this.bookingPersistService.venueId = venueId;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -166,28 +179,52 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     onClear(): void {
-        this.searchForm.reset();
-        if (this.bookingPersistService.searchTerm) {
+        this.resetSearchForm();
+        const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.venueId;
+        if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.searchTerm = '';
+            this.bookingPersistService.venueId = this.defaultSelectedVenueIndex;
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
         }
     }
 
+    resetSearchForm() {
+        this.searchForm.reset();
+        this.searchForm.controls['venueId'].setValue(this.defaultSelectedVenueIndex);
+    }
+
     showMessage(): void {
         if (this.enableSearchFeature) {
             const searchTerm = this.bookingPersistService.searchTerm;
+            const venueId =
+                this.bookingPersistService.venueId === this.defaultSelectedVenueIndex ? null : this.bookingPersistService.venueId;
             this.displayMessage = '';
-            if (searchTerm && this.bookings) {
-                this.displayMessage = `Showing results for ${searchTerm}`;
+            if ((searchTerm || venueId) && this.bookings) {
+                let searchCriteria = '';
+                if (searchTerm) {
+                    searchCriteria += `${searchTerm}`;
+                }
+                if (venueId) {
+                    if (searchCriteria) {
+                        searchCriteria += ', ';
+                    }
+                    searchCriteria += `${venueId}`;
+                }
+                this.displayMessage = `Showing results for ${searchCriteria}`;
             }
         }
     }
 
-    private handleError(err) {
+    private handleLoadBookingsListError(err) {
         this.logger.error(`${this.loggerPrefix} Error getting booking list`, err);
+        this.error = true;
+    }
+
+    private handleLoadVenuesListError(err) {
+        this.logger.error(`${this.loggerPrefix} Error getting venue list`, err);
         this.error = true;
     }
 
@@ -275,6 +312,22 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.selectedElement.scrollIntoView(false);
             }
         }, 500);
+    }
+
+    private loadVenuesList(): void {
+        const self = this;
+
+        this.refDataService.getCourts().subscribe(
+            (data: HearingVenueResponse[]) => {
+                this.venues = data;
+                this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
+                const selectVenues = new HearingVenueResponse();
+                selectVenues.name = 'Select venues';
+                selectVenues.id = this.defaultSelectedVenueIndex;
+                this.venues.unshift(selectVenues);
+            },
+            error => self.handleLoadVenuesListError(error)
+        );
     }
 
     ngOnDestroy() {
