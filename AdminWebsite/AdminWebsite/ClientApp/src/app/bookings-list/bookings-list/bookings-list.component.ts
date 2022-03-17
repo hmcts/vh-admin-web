@@ -299,6 +299,17 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         );
     }
 
+    isSearchFormValid() {
+        const caseNumber = this.searchForm.controls.caseNumber.value as String;
+        const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
+
+        if (caseNumber || (venueIds && venueIds.length > 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
     ngOnDestroy() {
         this.$subcription?.unsubscribe();
         this.$ldSubcription?.unsubscribe();

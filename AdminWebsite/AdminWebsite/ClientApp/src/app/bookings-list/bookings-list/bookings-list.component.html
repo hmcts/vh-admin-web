@@ -42,7 +42,7 @@
               type="submit"
               class="govuk-button govuk-!-margin-right-2"
               alt="search booking list"
-              [disabled]="searchForm.invalid"
+              [disabled]="!isSearchFormValid()"
             >
               Search
             </button>

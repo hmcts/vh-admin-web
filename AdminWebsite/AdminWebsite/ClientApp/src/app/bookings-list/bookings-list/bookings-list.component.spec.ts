@@ -560,6 +560,11 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
     }
 
+    function clearSearch() {
+        component.searchForm.controls['caseNumber'].setValue('');
+        component.searchForm.controls['selectedVenueIds'].setValue([]);
+    }
+
     it('should create bookings list component', () => {
         expect(component).toBeTruthy();
     });
@@ -621,6 +626,32 @@ describe('BookingsListComponent', () => {
         expect(component.title).toEqual('Search results');
         component.onClear();
         expect(component.title).toEqual('Booking List');
+    });
+
+    it('should disable search button if all fields are empty', () => {
+        clearSearch();
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(true);
+    });
+
+    it('should enable search button if caseNumber field is valid', () => {
+        clearSearch();
+        component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should enable search button if selectedVenueIds field is valid', () => {
+        clearSearch();
+        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
     });
 
     it(
