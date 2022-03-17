@@ -1,59 +1,69 @@
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-third">
-    <h1 class="govuk-heading-l">Booking list</h1>
+<div *ngIf="enableSearchFeature" class="hmcts-filter">
+  <div class="hmcts-filter__header">
+    <div class="hmcts-filter__header-title">
+      <h2 class="govuk-heading-m">Search bookings</h2>
+    </div>
   </div>
-
-  <div *ngIf="enableSearchFeature" class="govuk-grid-column-two-thirds">
+  <div class="hmcts-filter__content">
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="govuk-form-group">
       <div class="govuk-form-group">
-        <input
-          id="caseNumber"
-          placeholder="Please enter a case number"
-          class="govuk-input govuk-!-width-one-half govuk-!-margin-bottom-2 govuk-!-margin-right-2"
-          type="text"
-          formControlName="caseNumber"
-        />
-        <ng-select
-          [items]="venues"
-          bindLabel="name"
-          bindValue="id"
-          formControlName="selectedVenueIds"
-          [placeholder]="'Select venues'"
-          [multiple]="true"
-          [attr.aria-label]="'Venue list'"
-          [closeOnSelect]="false"
-          [clearSearchOnAdd]="true"
-          [selectOnTab]="true"
-        >
-          <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-            <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
-            {{ item.name }}
-          </ng-template>
-        </ng-select>
-        <button
-          id="searchButton"
-          data-module="govuk-button"
-          type="submit"
-          class="govuk-button govuk-!-margin-right-2"
-          alt="search booking list"
-          [disabled]="searchForm.invalid"
-        >
-          Search
-        </button>
-        <button
-          id="cancelButton"
-          data-module="govuk-button"
-          type="button"
-          (click)="onClear()"
-          alt="clear and reload existing booking list"
-          class="govuk-button hmcts-button--secondary"
-        >
-          Clear
-        </button>
+        <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6">
+          <div class="govuk-grid-column-one-half">
+            <label class="govuk-label" for="caseNumber">Case number</label>
+            <input id="caseNumber" placeholder="Please enter a case number" class="govuk-input" type="text" formControlName="caseNumber" />
+          </div>
+          <div class="govuk-grid-column-one-half">
+            <label class="govuk-label" for="venues">Venues</label>
+            <ng-select
+              labelForId="venues"
+              [items]="venues"
+              bindLabel="name"
+              bindValue="id"
+              formControlName="selectedVenueIds"
+              [placeholder]="'Select venues'"
+              [multiple]="true"
+              [attr.aria-label]="'Venue list'"
+              [closeOnSelect]="false"
+              [clearSearchOnAdd]="true"
+              [selectOnTab]="true"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
+                {{ item.name }}
+              </ng-template>
+            </ng-select>
+          </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6">
+          <div class="govuk-grid-column-one-half">
+            <button
+              id="searchButton"
+              data-module="govuk-button"
+              type="submit"
+              class="govuk-button govuk-!-margin-right-2"
+              alt="search booking list"
+              [disabled]="searchForm.invalid"
+            >
+              Search
+            </button>
+            <button
+              id="cancelButton"
+              data-module="govuk-button"
+              type="button"
+              (click)="onClear()"
+              alt="clear and reload existing booking list"
+              class="govuk-button hmcts-button--secondary"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
       </div>
     </form>
   </div>
 </div>
+
+<h2 class="govuk-heading-l">Booking List</h2>
 
 <div *ngIf="recordsLoaded">
   <div id="vh-table" class="vh-table" appScrollTrigger (scrolledPast)="scrollHandler()">
