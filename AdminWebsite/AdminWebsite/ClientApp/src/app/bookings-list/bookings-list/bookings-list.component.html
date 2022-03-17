@@ -20,9 +20,14 @@
           formControlName="selectedVenueIds"
           [placeholder]="'Select venues'"
           [multiple]="true"
+          [attr.aria-label]="'Venue list'"
+          [closeOnSelect]="false"
+          [clearSearchOnAdd]="true"
+          [selectOnTab]="true"
         >
           <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-            <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" /> {{ item.name }}
+            <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
+            {{ item.name }}
           </ng-template>
         </ng-select>
         <button
