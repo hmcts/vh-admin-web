@@ -560,11 +560,6 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
     }
 
-    function clearSearch() {
-        bookingPersistService.searchTerm = '';
-        bookingPersistService.selectedVenueIds = [];
-    }
-
     it('should create bookings list component', () => {
         expect(component).toBeTruthy();
     });
@@ -606,6 +601,26 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.selectedVenueIds).toEqual([]);
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
+    });
+
+    it('should display correct title upon inital load', () => {
+        component.ngOnInit();
+        expect(component.title).toEqual('Booking List');
+    });
+
+    it('should update title after search', () => {
+        setFormValue();
+        component.onSearch();
+        expect(component.title).toEqual('Search results');
+    });
+
+    it('should reset title after search is cleared', () => {
+        setFormValue();
+        component.enableSearchFeature = true;
+        component.onSearch();
+        expect(component.title).toEqual('Search results');
+        component.onClear();
+        expect(component.title).toEqual('Booking List');
     });
 
     it(

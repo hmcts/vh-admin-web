@@ -21,6 +21,7 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 })
 export class BookingsListComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingsList] -';
+    private readonly initialTitle = 'Booking List';
     bookings: Array<BookingsListModel> = [];
     loaded = false;
     error = false;
@@ -37,7 +38,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     $ldSubcription: Subscription;
     searchForm: FormGroup;
     enableSearchFeature = true;
-    displayMessage: string;
+    title = this.initialTitle;
     venues: HearingVenueResponse[];
     selectedVenueIds: [];
 
@@ -170,6 +171,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
+            this.title = 'Search results';
         }
     }
 
@@ -183,6 +185,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
+            this.title = this.initialTitle;
         }
     }
 
