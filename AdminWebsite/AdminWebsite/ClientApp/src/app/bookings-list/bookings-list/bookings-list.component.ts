@@ -87,7 +87,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
             this.bookingPersistService.resetAll();
             this.resetBookingIndex(updatedBooking);
-            this.showMessage();
 
             this.closeHearingDetails();
         } else {
@@ -157,7 +156,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.$subcription = bookingsList$.subscribe(
             book => {
                 self.loadData(book);
-                self.showMessage();
             },
             err => self.handleLoadBookingsListError(err)
         );
@@ -185,29 +183,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
-        }
-    }
-
-    showMessage(): void {
-        if (this.enableSearchFeature) {
-            const searchTerm = this.bookingPersistService.searchTerm;
-            const selectedVenueIds = this.bookingPersistService.selectedVenueIds;
-            this.displayMessage = '';
-            if ((searchTerm || (selectedVenueIds && selectedVenueIds.length > 0)) && this.bookings) {
-                let searchCriteria = '';
-                if (searchTerm) {
-                    searchCriteria += `${searchTerm}`;
-                }
-                if (selectedVenueIds.length > 0) {
-                    selectedVenueIds.forEach(venueId => {
-                        if (searchCriteria) {
-                            searchCriteria += ', ';
-                        }
-                        searchCriteria += `${venueId}`;
-                    });
-                }
-                this.displayMessage = `Showing results for ${searchCriteria}`;
-            }
         }
     }
 

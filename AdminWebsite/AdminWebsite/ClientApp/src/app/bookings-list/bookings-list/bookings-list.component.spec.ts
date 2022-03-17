@@ -579,35 +579,6 @@ describe('BookingsListComponent', () => {
         expect(component.loaded).toBeTruthy();
     });
 
-    it('should show text message displayed for search term', () => {
-        clearSearch();
-        const searchTerm = 'CASE_NUMBER';
-        bookingPersistService.searchTerm = searchTerm;
-        component.enableSearchFeature = true;
-        component.showMessage();
-        expect(component.displayMessage).toEqual(`Showing results for ${searchTerm}`);
-    });
-
-    it('should show text message displayed for selectedVenueIds', () => {
-        clearSearch();
-        const selectedVenueIds = [1, 2];
-        bookingPersistService.selectedVenueIds = selectedVenueIds;
-        component.enableSearchFeature = true;
-        component.showMessage();
-        expect(component.displayMessage).toEqual(`Showing results for 1, 2`);
-    });
-
-    it('should show text message displayed for multiple search criteria', () => {
-        clearSearch();
-        const searchTerm = 'CASE_NUMBER';
-        const selectedVenueIds = [1, 2];
-        bookingPersistService.searchTerm = searchTerm;
-        bookingPersistService.selectedVenueIds = selectedVenueIds;
-        component.enableSearchFeature = true;
-        component.showMessage();
-        expect(component.displayMessage).toEqual(`Showing results for ${searchTerm}, 1, 2`);
-    });
-
     it('should onSearch (admin_search flag off)', () => {
         setFormValue();
         component.onSearch();
