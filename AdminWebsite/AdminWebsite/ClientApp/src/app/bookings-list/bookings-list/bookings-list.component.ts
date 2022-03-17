@@ -175,7 +175,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     onClear(): void {
         this.searchForm.reset();
-        const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.selectedVenueIds.length > 0; // TODO update this to check whether it is not null or empty
+        const searchCriteriaEntered = this.bookingPersistService.searchTerm || this.bookingPersistService.selectedVenueIds.length > 0;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;

@@ -11,7 +11,7 @@ export class BookingPersistService {
     private _selectedItemIndex: number;
     private _searchTerm: string;
     private _venueId: number;
-    private _selectedVenueIds: number[];
+    private _selectedVenueIds: number[] = [];
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
