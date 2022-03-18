@@ -45,6 +45,8 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
 ]);
 let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
+launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
@@ -534,8 +536,7 @@ describe('BookingsListComponent', () => {
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             configServiceSpy.getConfig.and.returnValue({});
-            const ldService = new LaunchDarklyService(configServiceSpy);
-            ldService.flagChange = new BehaviorSubject(null);
+            launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
 
             TestBed.configureTestingModule({
@@ -549,7 +550,7 @@ describe('BookingsListComponent', () => {
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: LaunchDarklyService, useValue: ldService },
+                    { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                     { provide: ReferenceDataService, useValue: referenceDataServiceSpy }
                 ]
             }).compileComponents();
@@ -680,8 +681,8 @@ describe('BookingsListComponent', () => {
 
     it('should not load venues when search feature is disabled', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
-        component.enableSearchFeature = false;
-        component.ngOnInit();
+        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
+        fixture.detectChanges();
         expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
     });
 
