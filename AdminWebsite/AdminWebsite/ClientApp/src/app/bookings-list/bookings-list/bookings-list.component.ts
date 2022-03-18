@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
@@ -302,7 +302,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     isSearchFormValid() {
-        const caseNumber = this.searchForm.controls.caseNumber.value as String;
+        const caseNumber = this.searchForm.controls.caseNumber.value as string;
         const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
 
         if (caseNumber || (venueIds && venueIds.length > 0)) {
