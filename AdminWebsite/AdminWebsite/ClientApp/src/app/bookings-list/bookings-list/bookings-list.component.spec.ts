@@ -686,6 +686,13 @@ describe('BookingsListComponent', () => {
         expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
     });
 
+    it('should load venues when search feature is enabled', () => {
+        referenceDataServiceSpy.getCourts.calls.reset();
+        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+        fixture.detectChanges();
+        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(1);
+    });
+
     it('should hide the search panel on initial load when search feature enabled', () => {
         launchDarklyServiceSpy.flagChange.next({ admin_search: true });
         component.ngOnInit();
