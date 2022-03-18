@@ -686,6 +686,20 @@ describe('BookingsListComponent', () => {
         expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
     });
 
+    it('should hide the search panel on initial load when search feature enabled', () => {
+        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.showSearch).toBe(false);
+    });
+
+    it('should hide the search panel on initial load when search feature disabled', () => {
+        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.showSearch).toBe(false);
+    });
+
     it(
         'should add bookings list records on the next scroll and delete duplicated hearings',
         waitForAsync(() => {

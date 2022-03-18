@@ -41,7 +41,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     title = this.initialTitle;
     venues: HearingVenueResponse[];
     selectedVenueIds: [];
-    showSearch: boolean;
+    showSearch = false;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -58,8 +58,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             if (value) {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
                 console.log('Feature toggle is', this.enableSearchFeature);
-                this.showSearch = this.enableSearchFeature;
-                if (this.showSearch) {
+                if (this.enableSearchFeature) {
                     this.loadVenuesList();
                 }
             }
