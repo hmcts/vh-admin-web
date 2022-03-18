@@ -9,6 +9,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
+import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -19,7 +20,8 @@ import {
     BookingsByDateResponse,
     BookingsHearingResponse,
     BookingsResponse,
-    HearingDetailsResponse
+    HearingDetailsResponse,
+    HearingVenueResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -41,6 +43,8 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getHearingById',
     'mapHearingDetailsResponseToHearingModel'
 ]);
+let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
@@ -532,6 +536,7 @@ describe('BookingsListComponent', () => {
             configServiceSpy.getConfig.and.returnValue({});
             const ldService = new LaunchDarklyService(configServiceSpy);
             ldService.flagChange = new BehaviorSubject(null);
+            referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
 
             TestBed.configureTestingModule({
                 declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
@@ -544,7 +549,8 @@ describe('BookingsListComponent', () => {
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: LaunchDarklyService, useValue: ldService }
+                    { provide: LaunchDarklyService, useValue: ldService },
+                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy }
                 ]
             }).compileComponents();
 
@@ -670,6 +676,13 @@ describe('BookingsListComponent', () => {
         const openSearchPanelButton = document.getElementById('openSearchPanelButton') as HTMLDivElement;
         expect(openSearchPanelButton).not.toBeNull();
         expect(component.showSearch).toBe(false);
+    });
+
+    it('should not load venues when search feature is disabled', () => {
+        referenceDataServiceSpy.getCourts.calls.reset();
+        component.enableSearchFeature = false;
+        component.ngOnInit();
+        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
     });
 
     it(

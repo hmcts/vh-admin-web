@@ -65,6 +65,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.searchForm = this.initializeForm();
+        if (this.enableSearchFeature) {
+            this.loadVenuesList();
+        }
 
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
@@ -94,7 +97,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.closeHearingDetails();
         } else {
             this.getList();
-            this.loadVenuesList();
         }
     }
 
