@@ -17,7 +17,7 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 @Component({
     selector: 'app-bookings-list',
     templateUrl: './bookings-list.component.html',
-    styleUrls: ['./bookings-list.component.css']
+    styleUrls: ['./bookings-list.component.scss']
 })
 export class BookingsListComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingsList] -';
