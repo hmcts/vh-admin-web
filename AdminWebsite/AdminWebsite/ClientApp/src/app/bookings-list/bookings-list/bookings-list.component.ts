@@ -37,10 +37,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     $subcription: Subscription;
     $ldSubcription: Subscription;
     searchForm: FormGroup;
-    enableSearchFeature = true;
+    enableSearchFeature = true; // temporary
     title = this.initialTitle;
     venues: HearingVenueResponse[];
     selectedVenueIds: [];
+    showSearch = this.enableSearchFeature; // temporary // showSearch: boolean;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -57,6 +58,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             if (value) {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
                 console.log('Feature toggle is', this.enableSearchFeature);
+                this.showSearch = this.enableSearchFeature;
             }
         });
     }
@@ -308,6 +310,15 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
 
         return false;
+    }
+
+    openSearchPanel() {
+        this.showSearch = true;
+    }
+
+    closeSearchPanel() {
+        this.showSearch = false;
+        this.onClear();
     }
 
     ngOnDestroy() {

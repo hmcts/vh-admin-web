@@ -97,3 +97,20 @@ p {
 .vh-font-black {
     color: #0b0c0c;
 }
+
+.vh-right-align {
+    float: right;
+}
+
+.vh-btnpanel {
+    margin-bottom: 0px !important;
+    font-size: 14px !important;
+    background-color: #0b0c0c !important;
+    padding: 6px 10px !important;
+    box-shadow: none;
+}
+
+.vh-searchicon {
+    height: 12px;
+    margin-right: 6px;
+}

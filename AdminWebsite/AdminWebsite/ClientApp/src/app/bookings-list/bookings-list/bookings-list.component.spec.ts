@@ -629,6 +629,7 @@ describe('BookingsListComponent', () => {
     });
 
     it('should disable search button if all fields are empty', () => {
+        component.openSearchPanel();
         clearSearch();
         component.enableSearchFeature = true;
         fixture.detectChanges();
@@ -637,6 +638,7 @@ describe('BookingsListComponent', () => {
     });
 
     it('should enable search button if caseNumber field is valid', () => {
+        component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.enableSearchFeature = true;
@@ -646,12 +648,28 @@ describe('BookingsListComponent', () => {
     });
 
     it('should enable search button if selectedVenueIds field is valid', () => {
+        component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
         expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should close search panel when close search button clicked', () => {
+        component.openSearchPanel();
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
+        expect(searchPanel).not.toBeNull();
+        component.closeSearchPanel();
+        fixture.detectChanges();
+        searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
+        expect(searchPanel).toBeNull();
+        const openSearchPanelButton = document.getElementById('openSearchPanelButton') as HTMLDivElement;
+        expect(openSearchPanelButton).not.toBeNull();
+        expect(component.showSearch).toBe(false);
     });
 
     it(

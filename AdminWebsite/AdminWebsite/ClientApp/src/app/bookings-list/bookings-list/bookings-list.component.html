@@ -1,7 +1,10 @@
-<div *ngIf="enableSearchFeature" class="hmcts-filter">
+<div *ngIf="showSearch" id="searchPanel" class="hmcts-filter">
   <div class="hmcts-filter__header">
     <div class="hmcts-filter__header-title">
       <h2 class="govuk-heading-m">Search bookings</h2>
+    </div>
+    <div class="vh-right-align">
+      <button class="govuk-button vh-btnpanel" (click)="closeSearchPanel()">Close</button>
     </div>
   </div>
   <div class="hmcts-filter__content">
@@ -63,7 +66,21 @@
   </div>
 </div>
 
-<h2 class="govuk-heading-l">{{ title }}</h2>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <h1 class="govuk-heading-l">{{ title }}</h1>
+  </div>
+  <div class="govuk-grid-column-one-half">
+    <button
+      *ngIf="!showSearch && enableSearchFeature"
+      id="openSearchPanelButton"
+      class="govuk-button vh-btnpanel vh-right-align"
+      (click)="openSearchPanel()"
+    >
+      <img src="assets/images/searchicon.png" alt="search" class="vh-searchicon" />Search
+    </button>
+  </div>
+</div>
 
 <div *ngIf="recordsLoaded">
   <div id="vh-table" class="vh-table" appScrollTrigger (scrolledPast)="scrollHandler()">
