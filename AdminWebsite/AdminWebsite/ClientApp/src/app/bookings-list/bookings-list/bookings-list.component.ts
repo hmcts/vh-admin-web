@@ -135,7 +135,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     private initializeForm(): FormGroup {
-        // TODO need to reinstate validation here - one item from this group should be required for the search button to be enabled
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.searchTerm || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
