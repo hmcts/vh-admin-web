@@ -401,18 +401,25 @@ export class BHClient {
      * @param cursor (optional) The unique sequential value of hearing ID.
      * @param limit (optional) The max number of hearings to be returned.
      * @param caseNumber (optional)
+     * @param venueIds (optional)
      * @return Success
      */
     getBookingsList(
         cursor: string | null | undefined,
         limit: number | undefined,
-        caseNumber: string | null | undefined
+        caseNumber: string | null | undefined,
+        venueIds: number[] | null | undefined
     ): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings?';
         if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
         if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
         else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
         if (caseNumber !== undefined && caseNumber !== null) url_ += 'caseNumber=' + encodeURIComponent('' + caseNumber) + '&';
+        if (venueIds !== undefined && venueIds !== null)
+            venueIds &&
+                venueIds.forEach(item => {
+                    url_ += 'venueIds=' + encodeURIComponent('' + item) + '&';
+                });
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -4166,7 +4173,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     /** The Uri to video web url */
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
-    launch_darkly_client_id?: string | undefined;
+    readonly launch_darkly_client_id?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -4188,7 +4195,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
-            this.launch_darkly_client_id = _data['launch_darkly_client_id'];
+            (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
         }
     }
 

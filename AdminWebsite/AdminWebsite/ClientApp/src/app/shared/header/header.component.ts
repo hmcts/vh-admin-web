@@ -28,7 +28,7 @@ export class HeaderComponent {
         },
         {
             url: '/bookings-list',
-            name: 'Bookings list',
+            name: 'Booking list',
             active: false
         }
     ];
