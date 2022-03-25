@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new BookingsResponse());
 
             var result = await _controller.GetBookingsList(null, 100);
@@ -48,7 +48,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new BookingsResponse());
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
 
@@ -64,7 +64,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(false);
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new BookingsResponse());
 
             var result = await _controller.GetBookingsList("cursor", 100);
@@ -78,7 +78,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>(), null))
                 .Throws(new BookingsApiException("Error", 400, "response", null, null));
 
             var badResult = await _controller.GetBookingsList("cursor", 100) as BadRequestObjectResult;
@@ -145,7 +145,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>(), null))
                 .ReturnsAsync(new BookingsResponse());
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
@@ -158,7 +158,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
             _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(), Times.Once);
-            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(hearingTypesIds, "cursor", 100, null, It.IsAny<string>(), It.IsAny<List<int>>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(hearingTypesIds, "cursor", 100, null, It.IsAny<string>(), It.IsAny<List<int>>(), null), Times.Once);
         }
 
         [Test]
@@ -169,7 +169,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
-                  x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>()))
+                  x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>(), null))
                 .ReturnsAsync(() => new BookingsResponse());
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2", "type2" });
@@ -183,7 +183,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
             _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(), Times.Once);
             _bookingsApiClient.Verify(
-                x => x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>()), Times.Once);
+                x => x.GetHearingsByTypesAsync(hearingTypesIds, It.IsAny<string>(), It.IsAny<int>(), null, It.IsAny<string>(), It.IsAny<List<int>>(), null), Times.Once);
         }
 
         [Test]
@@ -229,6 +229,74 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Should_return_bookings_list_when_admin_search_by_start_date()
+        {
+            SetupTestCase();
+
+            var startDate = new DateTime(2022, 3, 25);
+
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+
+            var result = await _controller.GetBookingsList("cursor", 100, startDate: startDate);
+
+            var okResult = (OkObjectResult)result;
+
+            okResult.StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), "cursor", 100, startDate, It.IsAny<string>(), It.IsAny<List<int>>(), null), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_bookings_list_when_admin_search_by_end_date()
+        {
+            SetupTestCase();
+
+            var endDate = new DateTime(2022, 3, 25);
+
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+
+            var result = await _controller.GetBookingsList("cursor", 100, endDate: endDate);
+
+            var okResult = (OkObjectResult)result;
+
+            okResult.StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), "cursor", 100, null, It.IsAny<string>(), It.IsAny<List<int>>(), endDate), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_bookings_list_when_admin_search_by_start_and_end_date()
+        {
+            SetupTestCase();
+
+            var startDate = new DateTime(2022, 3, 24);
+            var endDate = new DateTime(2022, 3, 25);
+
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+
+            var result = await _controller.GetBookingsList("cursor", 100, startDate: startDate, endDate: endDate);
+
+            var okResult = (OkObjectResult)result;
+
+            okResult.StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), "cursor", 100, startDate, It.IsAny<string>(), It.IsAny<List<int>>(), endDate), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_return_bad_request_when_admin_search_with_start_date_after_end_date()
+        {
+            SetupTestCase();
+
+            var startDate = new DateTime(2022, 3, 25);
+            var endDate = new DateTime(2022, 3, 24);
+
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+
+            var result = await _controller.GetBookingsList("cursor", 100, startDate: startDate, endDate: endDate);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+            _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), "cursor", 100, startDate, It.IsAny<string>(), It.IsAny<List<int>>(), endDate), Times.Never);
+        }
+        
+        [Test]
         public async Task Should_return_booking_list_when_admin_search_by_multiple_criteria()
         {
             SetupTestCase();
@@ -266,7 +334,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClient.Setup(x =>
-                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>()))
+                    x.GetHearingsByTypesAsync(It.IsAny<List<int>>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<List<int>>(), It.IsAny<DateTime>()))
                 .ReturnsAsync(new BookingsResponse());
         }
 
