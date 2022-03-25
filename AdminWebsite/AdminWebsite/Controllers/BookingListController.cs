@@ -41,13 +41,14 @@ namespace AdminWebsite.Controllers
         /// <param name="limit">The max number of hearings to be returned.</param>
         /// <param name="caseNumber"></param>
         /// <param name="venueIds"></param>
+        /// <param name="caseTypeIds"></param>
         /// <returns> The hearings list</returns>
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<int> caseTypeIds = null)
         {
             if (cursor != null)
             {
@@ -64,16 +65,11 @@ namespace AdminWebsite.Controllers
             {
                 return Unauthorized();
             }
-
             try
             {
-                var types = caseTypes ?? Enumerable.Empty<string>();
-
-                var hearingTypesIds = await GetHearingTypesId(types);
-                
+                var CaseTypesIdsList = await GetCaseTypesId(caseTypes ?? Enumerable.Empty<string>(), caseTypeIds ?? new List<int>());
                 caseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber;
-                
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(hearingTypesIds, cursor, limit, null, caseNumber, venueIds);
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(CaseTypesIdsList, cursor, limit, null, caseNumber, venueIds);
 
                 return Ok(bookingsResponse);
             }
@@ -88,21 +84,20 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task<List<int>> GetHearingTypesId(IEnumerable<string> caseTypes)
+        private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes, List<int>caseTypeIdsFromQuery)
         {
             var typeIds = new List<int>();
             var types = await _bookingsApiClient.GetCaseTypesAsync();
-            if (types == null || !types.Any()) return typeIds;
-            foreach (var item in caseTypes)
-            {
-                var caseType = types.FirstOrDefault(s => s.Name == item);
-                if (caseType != null && typeIds.All(s => s != caseType.Id))
+            if (types != null && types.Any())
+                foreach (var item in caseTypes)
                 {
-                    typeIds.Add(caseType.Id);
+                    var caseType = types.FirstOrDefault(s => s.Name == item);
+                    if (caseType != null && typeIds.All(s => s != caseType.Id))
+                    {
+                        typeIds.Add(caseType.Id);
+                    }
                 }
-            }
-
-            return typeIds;
+            return typeIds.Any() ? caseTypeIdsFromQuery.Union(typeIds).ToList() : caseTypeIdsFromQuery;
         }
     }
 }
