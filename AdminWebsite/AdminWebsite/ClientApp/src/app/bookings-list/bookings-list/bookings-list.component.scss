@@ -130,3 +130,7 @@ p {
 .ng-select.custom ::ng-deep .ng-placeholder {
   color: govuk-colour('black');
 }
+
+.vh-no-left-padding {
+  padding-left: 0px;
+}

@@ -13,6 +13,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-bookings-list',
@@ -141,7 +142,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.searchTerm || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
-            selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
+            selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
+            startDate: [this.bookingPersistService.startDate || null],
+            endDate: [this.bookingPersistService.endDate || null]
         });
     }
 
@@ -151,11 +154,33 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const searchTerm = this.bookingPersistService.searchTerm || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
         const caseTypes = this.bookingPersistService.selectedCaseTypes;
+        let startDate = this.bookingPersistService.startDate;
+        let endDate = this.bookingPersistService.endDate;
+        if (startDate) {
+            startDate = moment(startDate).startOf('day').toDate();
+        }
+        if (endDate) {
+            endDate = moment(endDate).endOf('day').toDate();
+        }
+        if (startDate && !endDate) {
+            endDate = moment(startDate).endOf('day').toDate();
+        }
+        if (endDate && !startDate) {
+            startDate = moment(endDate).startOf('day').toDate();
+        }
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
             // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds, caseTypes);
+            bookingsList$ = this.bookingsListService.getBookingsList(
+                this.cursor,
+                this.limit,
+                searchTerm,
+                venueIds,
+                caseTypes,
+                startDate,
+                endDate
+            );
         } else {
             // previous implementation
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
@@ -174,9 +199,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.searchForm.value['selectedVenueIds'];
             const caseTypes = this.searchForm.value['selectedCaseTypes'];
+            const startDate = this.searchForm.value['startDate'];
+            const endDate = this.searchForm.value['endDate'];
             this.bookingPersistService.searchTerm = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
             this.bookingPersistService.selectedCaseTypes = caseTypes;
+            this.bookingPersistService.startDate = startDate;
+            this.bookingPersistService.endDate = endDate;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -189,13 +218,17 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const searchCriteriaEntered =
             this.bookingPersistService.searchTerm ||
             (this.bookingPersistService.selectedVenueIds && this.bookingPersistService.selectedVenueIds.length > 0) ||
-            (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0);
+            (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0) ||
+            this.bookingPersistService.startDate ||
+            this.bookingPersistService.endDate;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.searchTerm = '';
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.selectedCaseTypes = [];
+            this.bookingPersistService.startDate = null;
+            this.bookingPersistService.endDate = null;
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
@@ -321,8 +354,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const caseNumber = this.searchForm.controls.caseNumber.value as string;
         const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
         const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
+        const startDate = this.searchForm.controls.startDate.value as Date;
+        const endDate = this.searchForm.controls.endDate.value as Date;
 
-        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0)) {
+        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate) {
             return true;
         }
 
