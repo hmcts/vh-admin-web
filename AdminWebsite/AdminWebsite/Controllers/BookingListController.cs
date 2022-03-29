@@ -41,25 +41,23 @@ namespace AdminWebsite.Controllers
         /// <param name="limit">The max number of hearings to be returned.</param>
         /// <param name="caseNumber"></param>
         /// <param name="venueIds"></param>
-        /// <param name="caseTypeIds"></param>
+        /// <param name="caseTypes"></param>
         /// <returns> The hearings list</returns>
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<int> caseTypeIds = null)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null)
         {
             if (cursor != null)
             {
                 cursor = _encoder.Encode(cursor);
             }
-
-            IEnumerable<string> caseTypes;
-
             if (_userIdentity.IsAdministratorRole())
             {
-                caseTypes = _userIdentity.GetGroupDisplayNames();
+                caseTypes ??= new List<string>();
+                caseTypes.AddRange(_userIdentity.GetGroupDisplayNames());
             }
             else
             {
@@ -67,9 +65,9 @@ namespace AdminWebsite.Controllers
             }
             try
             {
-                var CaseTypesIdsList = await GetCaseTypesId(caseTypes ?? Enumerable.Empty<string>(), caseTypeIds ?? new List<int>());
+                var caseTypesIds = await GetCaseTypesId(caseTypes);
                 caseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber;
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(CaseTypesIdsList, cursor, limit, null, caseNumber, venueIds);
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(caseTypesIds, cursor, limit, null, caseNumber, venueIds);
 
                 return Ok(bookingsResponse);
             }
@@ -84,7 +82,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes, List<int>caseTypeIdsFromQuery)
+        private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
             var types = await _bookingsApiClient.GetCaseTypesAsync();
@@ -97,7 +95,7 @@ namespace AdminWebsite.Controllers
                         typeIds.Add(caseType.Id);
                     }
                 }
-            return typeIds.Any() ? caseTypeIdsFromQuery.Union(typeIds).ToList() : caseTypeIdsFromQuery;
+            return typeIds;
         }
     }
 }

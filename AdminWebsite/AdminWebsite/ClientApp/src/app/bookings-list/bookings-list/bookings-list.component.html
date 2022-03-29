@@ -38,6 +38,29 @@
               </ng-template>
             </ng-select>
           </div>
+          <div class="govuk-grid-column-one-half">
+            <label class="govuk-label" for="caseTypes">Case types</label>
+            <ng-select
+              id="case-type-list"
+              class="custom"
+              labelForId="caseTypes"
+              [items]="caseTypes"
+              bindLabel="item"
+              bindValue="item"
+              formControlName="selectedCaseTypes"
+              [placeholder]="'Select case types'"
+              [multiple]="true"
+              [attr.aria-label]="'Case type list'"
+              [closeOnSelect]="false"
+              [clearSearchOnAdd]="true"
+              [selectOnTab]="true"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Case type ' + item" />
+                {{ item }}
+              </ng-template>
+            </ng-select>
+          </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6">
           <div class="govuk-grid-column-one-half">

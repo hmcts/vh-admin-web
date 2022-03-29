@@ -221,7 +221,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
 
-            var result = await _controller.GetBookingsList("cursor", 100, caseTypeIds: new List<int>{ 6, 7 });
+            var result = await _controller.GetBookingsList("cursor", 100, caseTypes: new List<string>{ "Tribunal", "Mental Health" });
 
             var okResult = (OkObjectResult)result;
 
@@ -235,7 +235,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
 
-            var result = await _controller.GetBookingsList("cursor", 100, caseNumber: "AA102993", venueIds: new List<int>{ 1, 2 }, caseTypeIds: new List<int>{ 6, 7 });
+            var result = await _controller.GetBookingsList("cursor", 100, caseNumber: "AA102993", venueIds: new List<int>{ 1, 2 }, caseTypes: new List<string>{ "Tribunal", "Mental Health" });
 
             var okResult = (OkObjectResult)result;
 

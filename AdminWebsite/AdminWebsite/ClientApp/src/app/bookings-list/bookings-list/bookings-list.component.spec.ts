@@ -21,7 +21,8 @@ import {
     BookingsHearingResponse,
     BookingsResponse,
     HearingDetailsResponse,
-    HearingVenueResponse
+    HearingVenueResponse,
+    HearingTypeResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -41,7 +42,8 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getCurrentRequest',
     'cancelRequest',
     'getHearingById',
-    'mapHearingDetailsResponseToHearingModel'
+    'mapHearingDetailsResponseToHearingModel',
+    'getHearingTypes'
 ]);
 let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
@@ -535,6 +537,7 @@ describe('BookingsListComponent', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
+            videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
@@ -561,152 +564,157 @@ describe('BookingsListComponent', () => {
             fixture.detectChanges();
         })
     );
+    describe('search form controls', () => {
+        function setFormValue() {
+            component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+            component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+            component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
+        }
 
-    function setFormValue() {
-        component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-    }
+        function clearSearch() {
+            component.searchForm.controls['caseNumber'].setValue('');
+            component.searchForm.controls['selectedVenueIds'].setValue([]);
+            component.searchForm.controls['selectedCaseTypes'].setValue([]);
+        }
 
-    function clearSearch() {
-        component.searchForm.controls['caseNumber'].setValue('');
-        component.searchForm.controls['selectedVenueIds'].setValue([]);
-    }
+        it('should create bookings list component', () => {
+            expect(component).toBeTruthy();
+        });
 
-    it('should create bookings list component', () => {
-        expect(component).toBeTruthy();
+        it('should show bookings list records', () => {
+            setFormValue();
+            component.ngOnInit();
+            expect(component.endOfData).toBeFalsy();
+            expect(component.error).toBeFalsy();
+            expect(component.recordsLoaded).toBeTruthy();
+            expect(component.bookings.length).toBe(1);
+            expect(component.loaded).toBeTruthy();
+        });
+
+        it('should onSearch (admin_search flag off)', () => {
+            setFormValue();
+            component.onSearch();
+            expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+            expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+            expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+            expect(component.bookings.length).toBeGreaterThan(0);
+        });
+
+        it('should onSearch (admin_search flag on)', () => {
+            setFormValue();
+            component.enableSearchFeature = false;
+            component.onSearch();
+            expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+            expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+            expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+            expect(component.bookings.length).toBeGreaterThan(0);
+        });
+
+        it('should onClear', () => {
+            const searchFormSpy = component.searchForm;
+            spyOn(searchFormSpy, 'reset');
+            spyOn(bookingPersistService, 'resetAll');
+            component.onClear();
+            expect(component.bookings.length).toBeGreaterThan(0);
+            expect(bookingPersistService.searchTerm).toEqual('');
+            expect(bookingPersistService.selectedVenueIds).toEqual([]);
+            expect(bookingPersistService.selectedCaseTypes).toEqual([]);
+            expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
+            expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
+        });
+
+        it('should display correct title upon inital load', () => {
+            component.ngOnInit();
+            expect(component.title).toEqual('Booking List');
+        });
+
+        it('should update title after search', () => {
+            setFormValue();
+            component.onSearch();
+            expect(component.title).toEqual('Search results');
+        });
+
+        it('should reset title after search is cleared', () => {
+            setFormValue();
+            component.enableSearchFeature = true;
+            component.onSearch();
+            expect(component.title).toEqual('Search results');
+            component.onClear();
+            expect(component.title).toEqual('Booking List');
+        });
+
+        it('should disable search button if all fields are empty', () => {
+            component.openSearchPanel();
+            clearSearch();
+            component.enableSearchFeature = true;
+            fixture.detectChanges();
+            const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+            expect(searchButton.disabled).toBe(true);
+        });
+
+        it('should enable search button if caseNumber field is valid', () => {
+            component.openSearchPanel();
+            clearSearch();
+            component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+            component.enableSearchFeature = true;
+            fixture.detectChanges();
+            const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+            expect(searchButton.disabled).toBe(false);
+        });
+
+        it('should enable search button if selectedVenueIds field is valid', () => {
+            component.openSearchPanel();
+            clearSearch();
+            component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+            component.enableSearchFeature = true;
+            fixture.detectChanges();
+            const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+            expect(searchButton.disabled).toBe(false);
+        });
+
+        it('should close search panel when close search button clicked', () => {
+            component.openSearchPanel();
+            component.enableSearchFeature = true;
+            fixture.detectChanges();
+            let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
+            expect(searchPanel).not.toBeNull();
+            component.closeSearchPanel();
+            fixture.detectChanges();
+            searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
+            expect(searchPanel).toBeNull();
+            const openSearchPanelButton = document.getElementById('openSearchPanelButton') as HTMLDivElement;
+            expect(openSearchPanelButton).not.toBeNull();
+            expect(component.showSearch).toBe(false);
+        });
+
+        it('should not load venues when search feature is disabled', () => {
+            referenceDataServiceSpy.getCourts.calls.reset();
+            launchDarklyServiceSpy.flagChange.next({ admin_search: false });
+            fixture.detectChanges();
+            expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
+        });
+
+        it('should load venues when search feature is enabled', () => {
+            referenceDataServiceSpy.getCourts.calls.reset();
+            launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+            fixture.detectChanges();
+            expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(1);
+        });
+
+        it('should hide the search panel on initial load when search feature enabled', () => {
+            launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+            component.ngOnInit();
+            fixture.detectChanges();
+            expect(component.showSearch).toBe(false);
+        });
+
+        it('should hide the search panel on initial load when search feature disabled', () => {
+            launchDarklyServiceSpy.flagChange.next({ admin_search: false });
+            component.ngOnInit();
+            fixture.detectChanges();
+            expect(component.showSearch).toBe(false);
+        });
     });
-
-    it('should show bookings list records', () => {
-        setFormValue();
-        component.ngOnInit();
-        expect(component.endOfData).toBeFalsy();
-        expect(component.error).toBeFalsy();
-        expect(component.recordsLoaded).toBeTruthy();
-        expect(component.bookings.length).toBe(1);
-        expect(component.loaded).toBeTruthy();
-    });
-
-    it('should onSearch (admin_search flag off)', () => {
-        setFormValue();
-        component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(component.bookings.length).toBeGreaterThan(0);
-    });
-
-    it('should onSearch (admin_search flag on)', () => {
-        setFormValue();
-        component.enableSearchFeature = false;
-        component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(component.bookings.length).toBeGreaterThan(0);
-    });
-
-    it('should onClear', () => {
-        const searchFormSpy = component.searchForm;
-        spyOn(searchFormSpy, 'reset');
-        spyOn(bookingPersistService, 'resetAll');
-        component.onClear();
-        expect(component.bookings.length).toBeGreaterThan(0);
-        expect(bookingPersistService.searchTerm).toEqual('');
-        expect(bookingPersistService.selectedVenueIds).toEqual([]);
-        expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
-        expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
-    });
-
-    it('should display correct title upon inital load', () => {
-        component.ngOnInit();
-        expect(component.title).toEqual('Booking List');
-    });
-
-    it('should update title after search', () => {
-        setFormValue();
-        component.onSearch();
-        expect(component.title).toEqual('Search results');
-    });
-
-    it('should reset title after search is cleared', () => {
-        setFormValue();
-        component.enableSearchFeature = true;
-        component.onSearch();
-        expect(component.title).toEqual('Search results');
-        component.onClear();
-        expect(component.title).toEqual('Booking List');
-    });
-
-    it('should disable search button if all fields are empty', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(true);
-    });
-
-    it('should enable search button if caseNumber field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
-
-    it('should enable search button if selectedVenueIds field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
-
-    it('should close search panel when close search button clicked', () => {
-        component.openSearchPanel();
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
-        expect(searchPanel).not.toBeNull();
-        component.closeSearchPanel();
-        fixture.detectChanges();
-        searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
-        expect(searchPanel).toBeNull();
-        const openSearchPanelButton = document.getElementById('openSearchPanelButton') as HTMLDivElement;
-        expect(openSearchPanelButton).not.toBeNull();
-        expect(component.showSearch).toBe(false);
-    });
-
-    it('should not load venues when search feature is disabled', () => {
-        referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
-        fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
-    });
-
-    it('should load venues when search feature is enabled', () => {
-        referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
-        fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(1);
-    });
-
-    it('should hide the search panel on initial load when search feature enabled', () => {
-        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
-        component.ngOnInit();
-        fixture.detectChanges();
-        expect(component.showSearch).toBe(false);
-    });
-
-    it('should hide the search panel on initial load when search feature disabled', () => {
-        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
-        component.ngOnInit();
-        fixture.detectChanges();
-        expect(component.showSearch).toBe(false);
-    });
-
     it(
         'should add bookings list records on the next scroll and delete duplicated hearings',
         waitForAsync(() => {

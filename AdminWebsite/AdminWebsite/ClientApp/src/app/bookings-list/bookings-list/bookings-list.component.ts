@@ -8,7 +8,7 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, HearingVenueResponse } from '../../services/clients/api-client';
+import { BookingsResponse, HearingTypeResponse, HearingVenueResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -40,7 +40,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     enableSearchFeature: boolean;
     title = this.initialTitle;
     venues: HearingVenueResponse[];
+    caseTypes: string[];
     selectedVenueIds: [];
+    selectedCaseTypes: [];
     showSearch = false;
 
     constructor(
@@ -60,6 +62,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 console.log('Feature toggle is', this.enableSearchFeature);
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
+                    this.loadCaseTypeList();
                 }
             }
         });
@@ -137,7 +140,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     private initializeForm(): FormGroup {
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.searchTerm || null],
-            selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
+            selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
+            selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
         });
     }
 
@@ -146,11 +150,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.loaded = this.error = false;
         const searchTerm = this.bookingPersistService.searchTerm || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
+        const CaseTypes = this.bookingPersistService.selectedCaseTypes;
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
             // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds);
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds, CaseTypes);
         } else {
             // previous implementation
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
@@ -160,7 +165,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             book => {
                 self.loadData(book);
             },
-            err => self.handleLoadBookingsListError(err)
+            err => self.handleListError(err, 'booking')
         );
     }
 
@@ -168,8 +173,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.searchForm.value['selectedVenueIds'];
+            const CaseTypes = this.searchForm.value['selectedCaseTypes'];
             this.bookingPersistService.searchTerm = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
+            this.bookingPersistService.selectedCaseTypes = CaseTypes;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -181,25 +188,22 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.searchForm.reset();
         const searchCriteriaEntered =
             this.bookingPersistService.searchTerm ||
-            (this.bookingPersistService.selectedVenueIds && this.bookingPersistService.selectedVenueIds.length > 0);
+            (this.bookingPersistService.selectedVenueIds && this.bookingPersistService.selectedVenueIds.length > 0) ||
+            (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0);
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.searchTerm = '';
             this.bookingPersistService.selectedVenueIds = [];
+            this.bookingPersistService.selectedCaseTypes = [];
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
         }
     }
 
-    private handleLoadBookingsListError(err) {
-        this.logger.error(`${this.loggerPrefix} Error getting booking list`, err);
-        this.error = true;
-    }
-
-    private handleLoadVenuesListError(err) {
-        this.logger.error(`${this.loggerPrefix} Error getting venue list`, err);
+    private handleListError(err, type) {
+        this.logger.error(`${this.loggerPrefix} Error getting ${type} list`, err, type);
         this.error = true;
     }
 
@@ -297,15 +301,28 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.venues = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
             },
-            error => self.handleLoadVenuesListError(error)
+            error => self.handleListError(error, 'venues')
+        );
+    }
+
+    private loadCaseTypeList(): void {
+        const self = this;
+        const distinct = (value, index, array) => array.indexOf(value) === index;
+        this.videoHearingService.getHearingTypes().subscribe(
+            (data: HearingTypeResponse[]) => {
+                this.caseTypes = [...Array.from(data.map(item => item.group).filter(distinct))];
+                this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
+            },
+            error => self.handleListError(error, 'case types')
         );
     }
 
     isSearchFormValid() {
         const caseNumber = this.searchForm.controls.caseNumber.value as string;
         const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
+        const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
 
-        if (caseNumber || (venueIds && venueIds.length > 0)) {
+        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0)) {
             return true;
         }
 
