@@ -564,33 +564,33 @@ describe('BookingsListComponent', () => {
             fixture.detectChanges();
         })
     );
+    function setFormValue() {
+        component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+        component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
+    }
+
+    function clearSearch() {
+        component.searchForm.controls['caseNumber'].setValue('');
+        component.searchForm.controls['selectedVenueIds'].setValue([]);
+        component.searchForm.controls['selectedCaseTypes'].setValue([]);
+    }
+
+    it('should create bookings list component', () => {
+        expect(component).toBeTruthy();
+    });
+
+    it('should show bookings list records', () => {
+        setFormValue();
+        component.ngOnInit();
+        expect(component.endOfData).toBeFalsy();
+        expect(component.error).toBeFalsy();
+        expect(component.recordsLoaded).toBeTruthy();
+        expect(component.bookings.length).toBe(1);
+        expect(component.loaded).toBeTruthy();
+    });
+
     describe('search form controls', () => {
-        function setFormValue() {
-            component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-            component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-            component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
-        }
-
-        function clearSearch() {
-            component.searchForm.controls['caseNumber'].setValue('');
-            component.searchForm.controls['selectedVenueIds'].setValue([]);
-            component.searchForm.controls['selectedCaseTypes'].setValue([]);
-        }
-
-        it('should create bookings list component', () => {
-            expect(component).toBeTruthy();
-        });
-
-        it('should show bookings list records', () => {
-            setFormValue();
-            component.ngOnInit();
-            expect(component.endOfData).toBeFalsy();
-            expect(component.error).toBeFalsy();
-            expect(component.recordsLoaded).toBeTruthy();
-            expect(component.bookings.length).toBe(1);
-            expect(component.loaded).toBeTruthy();
-        });
-
         it('should onSearch (admin_search flag off)', () => {
             setFormValue();
             component.onSearch();
@@ -672,6 +672,16 @@ describe('BookingsListComponent', () => {
             expect(searchButton.disabled).toBe(false);
         });
 
+        it('should enable search button if selectedCaseTypes field is valid', () => {
+            component.openSearchPanel();
+            clearSearch();
+            component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
+            component.enableSearchFeature = true;
+            fixture.detectChanges();
+            const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+            expect(searchButton.disabled).toBe(false);
+        });
+
         it('should close search panel when close search button clicked', () => {
             component.openSearchPanel();
             component.enableSearchFeature = true;
@@ -715,6 +725,7 @@ describe('BookingsListComponent', () => {
             expect(component.showSearch).toBe(false);
         });
     });
+
     it(
         'should add bookings list records on the next scroll and delete duplicated hearings',
         waitForAsync(() => {
