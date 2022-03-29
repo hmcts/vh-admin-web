@@ -150,12 +150,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.loaded = this.error = false;
         const searchTerm = this.bookingPersistService.searchTerm || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
-        const CaseTypes = this.bookingPersistService.selectedCaseTypes;
+        const caseTypes = this.bookingPersistService.selectedCaseTypes;
         let bookingsList$: Observable<BookingsResponse>;
 
         if (this.enableSearchFeature) {
             // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds, CaseTypes);
+            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit, searchTerm, venueIds, caseTypes);
         } else {
             // previous implementation
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
@@ -173,10 +173,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.searchForm.value['selectedVenueIds'];
-            const CaseTypes = this.searchForm.value['selectedCaseTypes'];
+            const caseTypes = this.searchForm.value['selectedCaseTypes'];
             this.bookingPersistService.searchTerm = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
-            this.bookingPersistService.selectedCaseTypes = CaseTypes;
+            this.bookingPersistService.selectedCaseTypes = caseTypes;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
