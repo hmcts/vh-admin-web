@@ -111,4 +111,28 @@ describe('BookingsPersistService', () => {
             expect(service.bookingList.length).toBe(0);
         });
     });
+
+    describe('#startDate', () => {
+        it('should set startDate for date value', () => {
+            service.startDate = new Date(2022, 3, 30);
+            expect(service.startDate).toEqual(new Date(2022, 3, 30));
+        });
+
+        it('should handle null startDate', () => {
+            service.startDate = null;
+            expect(service.startDate).toBeNull();
+        });
+    });
+
+    describe('#endDate', () => {
+        it('should set endDate for date value', () => {
+            service.endDate = new Date(2022, 3, 30);
+            expect(service.endDate).toEqual(new Date(2022, 3, 30));
+        });
+
+        it('should handle null endDate', () => {
+            service.endDate = null;
+            expect(service.endDate).toBeNull();
+        });
+    });
 });
