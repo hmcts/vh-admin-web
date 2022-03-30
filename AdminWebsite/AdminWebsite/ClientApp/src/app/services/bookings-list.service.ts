@@ -12,8 +12,14 @@ export class BookingsListService {
 
     constructor(private bhClient: BHClient) {}
 
-    getBookingsList(cursor: string, limit: number, searchTerm?: string, venueIds?: number[]): Observable<BookingsResponse> {
-        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueIds);
+    getBookingsList(
+        cursor: string,
+        limit: number,
+        searchTerm?: string,
+        venueIds?: number[],
+        caseTypes?: string[]
+    ): Observable<BookingsResponse> {
+        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueIds, caseTypes);
     }
 
     mapBookingsResponse(bookingsResponse: BookingsResponse): BookingsModel {

@@ -402,13 +402,15 @@ export class BHClient {
      * @param limit (optional) The max number of hearings to be returned.
      * @param caseNumber (optional)
      * @param venueIds (optional)
+     * @param caseTypes (optional)
      * @return Success
      */
     getBookingsList(
         cursor: string | null | undefined,
         limit: number | undefined,
         caseNumber: string | null | undefined,
-        venueIds: number[] | null | undefined
+        venueIds: number[] | null | undefined,
+        caseTypes: string[] | null | undefined
     ): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings?';
         if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
@@ -419,6 +421,11 @@ export class BHClient {
             venueIds &&
                 venueIds.forEach(item => {
                     url_ += 'venueIds=' + encodeURIComponent('' + item) + '&';
+                });
+        if (caseTypes !== undefined && caseTypes !== null)
+            caseTypes &&
+                caseTypes.forEach(item => {
+                    url_ += 'caseTypes=' + encodeURIComponent('' + item) + '&';
                 });
         url_ = url_.replace(/[?&]$/, '');
 

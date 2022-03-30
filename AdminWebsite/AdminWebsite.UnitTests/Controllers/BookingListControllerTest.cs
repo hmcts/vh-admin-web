@@ -213,7 +213,21 @@ namespace AdminWebsite.UnitTests.Controllers
 
             okResult.StatusCode.Should().Be(200);
         }
-        
+
+        [Test]
+        public async Task Should_return_booking_list_when_admin_search_by_case_types()
+        {
+            SetupTestCase();
+
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+
+            var result = await _controller.GetBookingsList("cursor", 100, caseTypes: new List<string>{ "Tribunal", "Mental Health" });
+
+            var okResult = (OkObjectResult)result;
+
+            okResult.StatusCode.Should().Be(200);
+        }
+
         [Test]
         public async Task Should_return_booking_list_when_admin_search_by_multiple_criteria()
         {
@@ -221,7 +235,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
 
-            var result = await _controller.GetBookingsList("cursor", 100, caseNumber: "AA102993", venueIds: new List<int>{ 1, 2 });
+            var result = await _controller.GetBookingsList("cursor", 100, caseNumber: "AA102993", venueIds: new List<int>{ 1, 2 }, caseTypes: new List<string>{ "Tribunal", "Mental Health" });
 
             var okResult = (OkObjectResult)result;
 

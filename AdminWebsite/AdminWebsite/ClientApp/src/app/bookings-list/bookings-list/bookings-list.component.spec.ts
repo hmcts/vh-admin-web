@@ -21,7 +21,8 @@ import {
     BookingsHearingResponse,
     BookingsResponse,
     HearingDetailsResponse,
-    HearingVenueResponse
+    HearingVenueResponse,
+    HearingTypeResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -41,7 +42,8 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getCurrentRequest',
     'cancelRequest',
     'getHearingById',
-    'mapHearingDetailsResponseToHearingModel'
+    'mapHearingDetailsResponseToHearingModel',
+    'getHearingTypes'
 ]);
 let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
@@ -535,6 +537,7 @@ describe('BookingsListComponent', () => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
+            videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
@@ -561,15 +564,16 @@ describe('BookingsListComponent', () => {
             fixture.detectChanges();
         })
     );
-
     function setFormValue() {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+        component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
     }
 
     function clearSearch() {
         component.searchForm.controls['caseNumber'].setValue('');
         component.searchForm.controls['selectedVenueIds'].setValue([]);
+        component.searchForm.controls['selectedCaseTypes'].setValue([]);
     }
 
     it('should create bookings list component', () => {
@@ -591,6 +595,7 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(component.bookings.length).toBeGreaterThan(0);
     });
 
@@ -600,6 +605,7 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(component.bookings.length).toBeGreaterThan(0);
     });
 
@@ -611,6 +617,7 @@ describe('BookingsListComponent', () => {
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingPersistService.searchTerm).toEqual('');
         expect(bookingPersistService.selectedVenueIds).toEqual([]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual([]);
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });
@@ -658,6 +665,16 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should enable search button if selectedCaseTypes field is valid', () => {
+        component.openSearchPanel();
+        clearSearch();
+        component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
