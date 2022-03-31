@@ -1,4 +1,5 @@
-﻿using AdminWebsite.Security;
+﻿using System;
+using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -42,14 +43,21 @@ namespace AdminWebsite.Controllers
         /// <param name="caseNumber"></param>
         /// <param name="venueIds"></param>
         /// <param name="caseTypes"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
         /// <returns> The hearings list</returns>
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null, [FromQuery]DateTime? startDate = null, [FromQuery]DateTime? endDate = null)
         {
+            if (startDate > endDate)
+            {
+                return BadRequest("startDate must be less than or equal to endDate");
+            }
+            
             if (cursor != null)
             {
                 cursor = _encoder.Encode(cursor);
@@ -67,7 +75,7 @@ namespace AdminWebsite.Controllers
             {
                 var caseTypesIds = await GetCaseTypesId(caseTypes);
                 caseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber;
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(caseTypesIds, cursor, limit, null, caseNumber, venueIds);
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(caseTypesIds, cursor, limit, startDate, caseNumber, venueIds, endDate);
 
                 return Ok(bookingsResponse);
             }

@@ -4,6 +4,7 @@ import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
+import * as moment from 'moment';
 import { MomentModule } from 'ngx-moment';
 import { BehaviorSubject, of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
@@ -568,12 +569,16 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
         component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
+        component.searchForm.controls['startDate'].setValue(new Date(2022, 3, 25));
+        component.searchForm.controls['endDate'].setValue(new Date(2022, 3, 26));
     }
 
     function clearSearch() {
         component.searchForm.controls['caseNumber'].setValue('');
         component.searchForm.controls['selectedVenueIds'].setValue([]);
         component.searchForm.controls['selectedCaseTypes'].setValue([]);
+        component.searchForm.controls['startDate'].setValue(null);
+        component.searchForm.controls['endDate'].setValue(null);
     }
 
     it('should create bookings list component', () => {
@@ -591,22 +596,85 @@ describe('BookingsListComponent', () => {
     });
 
     it('should onSearch (admin_search flag off)', () => {
-        setFormValue();
-        component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(component.bookings.length).toBeGreaterThan(0);
-    });
-
-    it('should onSearch (admin_search flag on)', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
         setFormValue();
         component.enableSearchFeature = false;
         component.onSearch();
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
+        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
         expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(undefined, component.limit);
+    });
+
+    it('should onSearch (admin_search flag on)', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue();
+        component.enableSearchFeature = true;
+        component.onSearch();
+        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
+        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.searchTerm,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.endDate).endOf('day').toDate()
+        );
+    });
+
+    it('should onSearch (admin_search flag on) with populated endDate and empty startDate', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue();
+        component.enableSearchFeature = true;
+        component.searchForm.controls['startDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+        expect(bookingPersistService.startDate).toBeNull();
+        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.searchTerm,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            moment(bookingPersistService.endDate).startOf('day').toDate(),
+            moment(bookingPersistService.endDate).endOf('day').toDate()
+        );
+    });
+
+    it('should onSearch (admin_search flag on) with populated startDate and empty endDate', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue();
+        component.enableSearchFeature = true;
+        component.searchForm.controls['endDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
+        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
+        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
+        expect(bookingPersistService.endDate).toBeNull();
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.searchTerm,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate()
+        );
     });
 
     it('should onClear', () => {
@@ -618,6 +686,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toEqual('');
         expect(bookingPersistService.selectedVenueIds).toEqual([]);
         expect(bookingPersistService.selectedCaseTypes).toEqual([]);
+        expect(bookingPersistService.startDate).toEqual(null);
+        expect(bookingPersistService.endDate).toEqual(null);
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });
@@ -675,6 +745,26 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should enable search button if start date is valid', () => {
+        component.openSearchPanel();
+        clearSearch();
+        component.searchForm.controls['startDate'].setValue(new Date(2022, 3, 25));
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should enable search button if end date is valid', () => {
+        component.openSearchPanel();
+        clearSearch();
+        component.searchForm.controls['endDate'].setValue(new Date(2022, 3, 25));
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;

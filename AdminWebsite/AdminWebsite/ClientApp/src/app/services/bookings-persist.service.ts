@@ -12,6 +12,8 @@ export class BookingPersistService {
     private _searchTerm: string;
     private _selectedVenueIds: number[] = [];
     private _selectedCaseTypes: string[] = [];
+    private _startDate: Date;
+    private _endDate: Date;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -109,6 +111,22 @@ export class BookingPersistService {
 
     set selectedCaseTypes(value) {
         this._selectedCaseTypes = value;
+    }
+
+    get startDate(): Date {
+        return this._startDate;
+    }
+
+    set startDate(value) {
+        this._startDate = value ? new Date(value) : null;
+    }
+
+    get endDate(): Date {
+        return this._endDate;
+    }
+
+    set endDate(value) {
+        this._endDate = value ? new Date(value) : null;
     }
 
     set selectedGroupIndex(value: number) {

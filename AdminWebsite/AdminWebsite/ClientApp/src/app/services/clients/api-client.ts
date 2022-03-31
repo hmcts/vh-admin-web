@@ -403,6 +403,8 @@ export class BHClient {
      * @param caseNumber (optional)
      * @param venueIds (optional)
      * @param caseTypes (optional)
+     * @param startDate (optional)
+     * @param endDate (optional)
      * @return Success
      */
     getBookingsList(
@@ -410,7 +412,9 @@ export class BHClient {
         limit: number | undefined,
         caseNumber: string | null | undefined,
         venueIds: number[] | null | undefined,
-        caseTypes: string[] | null | undefined
+        caseTypes: string[] | null | undefined,
+        startDate: Date | null | undefined,
+        endDate: Date | null | undefined
     ): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings?';
         if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
@@ -427,6 +431,9 @@ export class BHClient {
                 caseTypes.forEach(item => {
                     url_ += 'caseTypes=' + encodeURIComponent('' + item) + '&';
                 });
+        if (startDate !== undefined && startDate !== null)
+            url_ += 'startDate=' + encodeURIComponent(startDate ? '' + startDate.toJSON() : '') + '&';
+        if (endDate !== undefined && endDate !== null) url_ += 'endDate=' + encodeURIComponent(endDate ? '' + endDate.toJSON() : '') + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {

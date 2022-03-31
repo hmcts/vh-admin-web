@@ -484,7 +484,10 @@ describe('Booking list service functionality', () => {
         const limit = 100;
         const searchTerm = 'CASE_NUMBER';
         const selectedVenueIds = [1, 2];
-        const bookings = service.getBookingsList('cursor', limit, searchTerm, selectedVenueIds);
+        const selectedCaseTypes = ['Tribunal', 'Mental Health'];
+        const startDate = new Date(2022, 3, 25);
+        const endDate = new Date(2022, 3, 26);
+        const bookings = service.getBookingsList('cursor', limit, searchTerm, selectedVenueIds, selectedCaseTypes, startDate, endDate);
         expect(bhClientSpy.getBookingsList).toHaveBeenCalledTimes(1);
         expect(bookings).toEqual(jasmine.any(Observable));
     });
