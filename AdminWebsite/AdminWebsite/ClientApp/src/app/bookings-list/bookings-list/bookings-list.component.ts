@@ -373,6 +373,31 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.onClear();
     }
 
+    onStartDateBlur() {
+        if (this.isStartDateAfterEndDate()) {
+            this.searchForm.controls['startDate'].setValue(null);
+        }
+    }
+
+    onEndDateBlur() {
+        if (this.isStartDateAfterEndDate()) {
+            this.searchForm.controls['endDate'].setValue(null);
+        }
+    }
+
+    isStartDateAfterEndDate() {
+        const startDate = this.searchForm.value.startDate ? new Date(this.searchForm.value.startDate) : null;
+        const endDate = this.searchForm.value.endDate ? new Date(this.searchForm.value.endDate) : null;
+
+        if (startDate && endDate) {
+            if (startDate > endDate) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     ngOnDestroy() {
         this.$subcription?.unsubscribe();
         this.$ldSubcription?.unsubscribe();

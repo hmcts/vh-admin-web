@@ -1,7 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as moment from 'moment';
@@ -675,6 +676,90 @@ describe('BookingsListComponent', () => {
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.startDate).endOf('day').toDate()
         );
+    });
+
+    describe('startDateOnBlur', () => {
+        let startDateControl: AbstractControl;
+        let endDateControl: AbstractControl;
+        let startDateElement: HTMLInputElement;
+
+        beforeEach(() => {
+            component.enableSearchFeature = true;
+            component.openSearchPanel();
+            fixture.detectChanges();
+            startDateControl = component.searchForm.controls['startDate'];
+            endDateControl = component.searchForm.controls['endDate'];
+            startDateElement = fixture.debugElement.query(By.css('#startDate')).nativeElement;
+        });
+
+        it('should clear startDate if after endDate', () => {
+            startDateControl.setValue(new Date(2022, 3, 25));
+            endDateControl.setValue(new Date(2022, 2, 25));
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+            expect(endDateControl.value).toEqual(new Date(2022, 2, 25));
+        });
+
+        it('should not clear startDate if startDate is valid and endDate is null', () => {
+            startDateControl.setValue(new Date(2022, 3, 25));
+            endDateControl.setValue(null);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should not clear startDate if startDate and endDate are valid', () => {
+            startDateControl.setValue(new Date(2022, 2, 25));
+            endDateControl.setValue(new Date(2022, 3, 25));
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(new Date(2022, 2, 25));
+            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+        });
+    });
+
+    describe('endDateOnBlur', () => {
+        let startDateControl: AbstractControl;
+        let endDateControl: AbstractControl;
+        let endDateElement: HTMLInputElement;
+
+        beforeEach(() => {
+            component.enableSearchFeature = true;
+            component.openSearchPanel();
+            fixture.detectChanges();
+            startDateControl = component.searchForm.controls['startDate'];
+            endDateControl = component.searchForm.controls['endDate'];
+            endDateElement = fixture.debugElement.query(By.css('#endDate')).nativeElement;
+        });
+
+        it('should clear endDate if before startDate', () => {
+            startDateControl.setValue(new Date(2022, 3, 25));
+            endDateControl.setValue(new Date(2022, 2, 25));
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should not clear endDate if endDate is valid and startDate is null', () => {
+            startDateControl.setValue(null);
+            endDateControl.setValue(new Date(2022, 3, 25));
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+        });
+
+        it('should not clear endDate if startDate and endDate are valid', () => {
+            startDateControl.setValue(new Date(2022, 2, 25));
+            endDateControl.setValue(new Date(2022, 3, 25));
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(new Date(2022, 2, 25));
+            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+        });
     });
 
     it('should onClear', () => {
