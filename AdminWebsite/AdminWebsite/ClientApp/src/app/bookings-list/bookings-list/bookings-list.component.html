@@ -63,11 +63,26 @@
           </div>
           <div class="govuk-grid-column-one-quarter">
             <label class="govuk-label" for="startDate">Single/Start date</label>
-            <input id="startDate" class="govuk-input" type="date" formControlName="startDate" max="{{ searchForm.value.endDate }}" />
+            <input
+              id="startDate"
+              class="govuk-input"
+              type="date"
+              formControlName="startDate"
+              min="{{ today | date: 'yyyy-MM-dd' }}"
+              max="{{ searchForm.value.endDate }}"
+              (blur)="onStartDateBlur()"
+            />
           </div>
           <div class="govuk-grid-column-one-quarter">
             <label class="govuk-label" for="endDate">End date</label>
-            <input id="endDate" class="govuk-input" type="date" formControlName="endDate" min="{{ searchForm.value.startDate }}" />
+            <input
+              id="endDate"
+              class="govuk-input"
+              type="date"
+              formControlName="endDate"
+              min="{{ searchForm.value.startDate || today | date: 'yyyy-MM-dd' }}"
+              (blur)="onEndDateBlur()"
+            />
           </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6">
