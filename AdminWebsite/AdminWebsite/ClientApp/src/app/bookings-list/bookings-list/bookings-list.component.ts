@@ -344,7 +344,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const distinct = (value, index, array) => array.indexOf(value) === index;
         this.videoHearingService.getHearingTypes().subscribe(
             (data: HearingTypeResponse[]) => {
-                this.caseTypes = [...Array.from(data.map(item => item.group).filter(distinct))];
+                this.caseTypes = [
+                    ...Array.from(
+                        data
+                            .map(item => item.group)
+                            .filter(distinct)
+                            .sort()
+                    )
+                ];
                 this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
             },
             error => self.handleListError(error, 'case types')
