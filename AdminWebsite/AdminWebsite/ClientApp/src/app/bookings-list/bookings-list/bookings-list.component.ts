@@ -45,6 +45,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedVenueIds: [];
     selectedCaseTypes: [];
     showSearch = false;
+    today = new Date();
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -374,25 +375,59 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     onStartDateBlur() {
-        if (this.isStartDateAfterEndDate()) {
+        if (this.isStartDateAfterEndDate() || this.isStartDateInPast()) {
             this.searchForm.controls['startDate'].setValue(null);
         }
     }
 
     onEndDateBlur() {
-        if (this.isStartDateAfterEndDate()) {
+        if (this.isStartDateAfterEndDate() || this.isEndDateInPast()) {
             this.searchForm.controls['endDate'].setValue(null);
         }
     }
 
     isStartDateAfterEndDate() {
-        const startDate = this.searchForm.value.startDate ? new Date(this.searchForm.value.startDate) : null;
-        const endDate = this.searchForm.value.endDate ? new Date(this.searchForm.value.endDate) : null;
+        const startDate = this.searchForm.value.startDate ? moment(this.searchForm.value.startDate).startOf('day').toDate() : null;
+        const endDate = this.searchForm.value.endDate ? moment(this.searchForm.value.endDate).startOf('day').toDate() : null;
 
-        if (startDate && endDate) {
-            if (startDate > endDate) {
-                return true;
-            }
+        if (!startDate || !endDate) {
+            return false;
+        }
+
+        if (startDate > endDate) {
+            return true;
+        }
+
+        return false;
+    }
+
+    isStartDateInPast() {
+        const startDate = this.searchForm.value.startDate ? moment(this.searchForm.value.startDate).startOf('day').toDate() : null;
+
+        if (!startDate) {
+            return false;
+        }
+
+        const todayDate = moment().startOf('day').toDate();
+
+        if (startDate < todayDate) {
+            return true;
+        }
+
+        return false;
+    }
+
+    isEndDateInPast() {
+        const endDate = this.searchForm.value.endDate ? moment(this.searchForm.value.endDate).startOf('day').toDate() : null;
+
+        if (!endDate) {
+            return false;
+        }
+
+        const todayDate = moment().startOf('day').toDate();
+
+        if (endDate < todayDate) {
+            return true;
         }
 
         return false;

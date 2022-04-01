@@ -570,8 +570,8 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
         component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
-        component.searchForm.controls['startDate'].setValue(new Date(2022, 3, 25));
-        component.searchForm.controls['endDate'].setValue(new Date(2022, 3, 26));
+        component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
+        component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
     }
 
     function clearSearch() {
@@ -604,8 +604,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(undefined, component.limit);
     });
@@ -618,8 +618,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
@@ -642,7 +642,7 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toBeNull();
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
@@ -664,7 +664,7 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
@@ -693,30 +693,48 @@ describe('BookingsListComponent', () => {
         });
 
         it('should clear startDate if after endDate', () => {
-            startDateControl.setValue(new Date(2022, 3, 25));
-            endDateControl.setValue(new Date(2022, 2, 25));
+            const startDate = moment().startOf('day').add(2, 'days').toDate();
+            const endDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
             startDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
             expect(startDateControl.value).toBeNull();
-            expect(endDateControl.value).toEqual(new Date(2022, 2, 25));
+        });
+
+        it('should clear startDate if in past', () => {
+            const startDate = moment().startOf('day').add(-1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+        });
+
+        it('should handle nulls', () => {
+            const startDate = null;
+            startDateControl.setValue(startDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
         });
 
         it('should not clear startDate if startDate is valid and endDate is null', () => {
-            startDateControl.setValue(new Date(2022, 3, 25));
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
             endDateControl.setValue(null);
             startDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
-            expect(startDateControl.value).toEqual(new Date(2022, 3, 25));
-            expect(endDateControl.value).toBeNull();
+            expect(startDateControl.value).toEqual(startDate);
         });
 
         it('should not clear startDate if startDate and endDate are valid', () => {
-            startDateControl.setValue(new Date(2022, 2, 25));
-            endDateControl.setValue(new Date(2022, 3, 25));
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
             startDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
-            expect(startDateControl.value).toEqual(new Date(2022, 2, 25));
-            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(startDateControl.value).toEqual(startDate);
         });
     });
 
@@ -735,30 +753,48 @@ describe('BookingsListComponent', () => {
         });
 
         it('should clear endDate if before startDate', () => {
-            startDateControl.setValue(new Date(2022, 3, 25));
-            endDateControl.setValue(new Date(2022, 2, 25));
+            const startDate = moment().startOf('day').add(2, 'days').toDate();
+            const endDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
             endDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
-            expect(startDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should clear endDate if in past', () => {
+            const endDate = moment().startOf('day').add(-1, 'days').toDate();
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should handle nulls', () => {
+            const endDate = null;
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
             expect(endDateControl.value).toBeNull();
         });
 
         it('should not clear endDate if endDate is valid and startDate is null', () => {
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
             startDateControl.setValue(null);
-            endDateControl.setValue(new Date(2022, 3, 25));
+            endDateControl.setValue(endDate);
             endDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
-            expect(startDateControl.value).toBeNull();
-            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(endDateControl.value).toEqual(endDate);
         });
 
         it('should not clear endDate if startDate and endDate are valid', () => {
-            startDateControl.setValue(new Date(2022, 2, 25));
-            endDateControl.setValue(new Date(2022, 3, 25));
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
             endDateElement.dispatchEvent(new Event('blur'));
             fixture.detectChanges();
-            expect(startDateControl.value).toEqual(new Date(2022, 2, 25));
-            expect(endDateControl.value).toEqual(new Date(2022, 3, 25));
+            expect(endDateControl.value).toEqual(endDate);
         });
     });
 

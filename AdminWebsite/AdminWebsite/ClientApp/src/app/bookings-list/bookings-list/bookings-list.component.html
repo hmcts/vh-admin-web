@@ -68,6 +68,7 @@
               class="govuk-input"
               type="date"
               formControlName="startDate"
+              min="{{ today | date: 'yyyy-MM-dd' }}"
               max="{{ searchForm.value.endDate }}"
               (blur)="onStartDateBlur()"
             />
@@ -79,7 +80,7 @@
               class="govuk-input"
               type="date"
               formControlName="endDate"
-              min="{{ searchForm.value.startDate }}"
+              min="{{ searchForm.value.startDate || today | date: 'yyyy-MM-dd' }}"
               (blur)="onEndDateBlur()"
             />
           </div>
