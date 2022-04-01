@@ -1,7 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as moment from 'moment';
@@ -569,8 +570,8 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
         component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
-        component.searchForm.controls['startDate'].setValue(new Date(2022, 3, 25));
-        component.searchForm.controls['endDate'].setValue(new Date(2022, 3, 26));
+        component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
+        component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
     }
 
     function clearSearch() {
@@ -603,8 +604,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(undefined, component.limit);
     });
@@ -617,8 +618,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
@@ -641,7 +642,7 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toBeNull();
-        expect(bookingPersistService.endDate).toEqual(new Date(2022, 3, 26));
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
@@ -663,7 +664,7 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(new Date(2022, 3, 25));
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
@@ -675,6 +676,126 @@ describe('BookingsListComponent', () => {
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.startDate).endOf('day').toDate()
         );
+    });
+
+    describe('startDateOnBlur', () => {
+        let startDateControl: AbstractControl;
+        let endDateControl: AbstractControl;
+        let startDateElement: HTMLInputElement;
+
+        beforeEach(() => {
+            component.enableSearchFeature = true;
+            component.openSearchPanel();
+            fixture.detectChanges();
+            startDateControl = component.searchForm.controls['startDate'];
+            endDateControl = component.searchForm.controls['endDate'];
+            startDateElement = fixture.debugElement.query(By.css('#startDate')).nativeElement;
+        });
+
+        it('should clear startDate if after endDate', () => {
+            const startDate = moment().startOf('day').add(2, 'days').toDate();
+            const endDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+        });
+
+        it('should clear startDate if in past', () => {
+            const startDate = moment().startOf('day').add(-1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+        });
+
+        it('should handle nulls', () => {
+            const startDate = null;
+            startDateControl.setValue(startDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toBeNull();
+        });
+
+        it('should not clear startDate if startDate is valid and endDate is null', () => {
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(null);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(startDate);
+        });
+
+        it('should not clear startDate if startDate and endDate are valid', () => {
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
+            startDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(startDateControl.value).toEqual(startDate);
+        });
+    });
+
+    describe('endDateOnBlur', () => {
+        let startDateControl: AbstractControl;
+        let endDateControl: AbstractControl;
+        let endDateElement: HTMLInputElement;
+
+        beforeEach(() => {
+            component.enableSearchFeature = true;
+            component.openSearchPanel();
+            fixture.detectChanges();
+            startDateControl = component.searchForm.controls['startDate'];
+            endDateControl = component.searchForm.controls['endDate'];
+            endDateElement = fixture.debugElement.query(By.css('#endDate')).nativeElement;
+        });
+
+        it('should clear endDate if before startDate', () => {
+            const startDate = moment().startOf('day').add(2, 'days').toDate();
+            const endDate = moment().startOf('day').add(1, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should clear endDate if in past', () => {
+            const endDate = moment().startOf('day').add(-1, 'days').toDate();
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should handle nulls', () => {
+            const endDate = null;
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toBeNull();
+        });
+
+        it('should not clear endDate if endDate is valid and startDate is null', () => {
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
+            startDateControl.setValue(null);
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toEqual(endDate);
+        });
+
+        it('should not clear endDate if startDate and endDate are valid', () => {
+            const startDate = moment().startOf('day').add(1, 'days').toDate();
+            const endDate = moment().startOf('day').add(2, 'days').toDate();
+            startDateControl.setValue(startDate);
+            endDateControl.setValue(endDate);
+            endDateElement.dispatchEvent(new Event('blur'));
+            fixture.detectChanges();
+            expect(endDateControl.value).toEqual(endDate);
+        });
     });
 
     it('should onClear', () => {
