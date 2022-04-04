@@ -145,7 +145,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
             startDate: [this.bookingPersistService.startDate || null],
-            endDate: [this.bookingPersistService.endDate || null]
+            endDate: [this.bookingPersistService.endDate || null],
+            lastName: [this.bookingPersistService.searchLastName || null],
         });
     }
 
@@ -155,6 +156,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const searchTerm = this.bookingPersistService.searchTerm || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
         const caseTypes = this.bookingPersistService.selectedCaseTypes;
+        const searchLastName = this.bookingPersistService.searchLastName || '';
         let startDate = this.bookingPersistService.startDate;
         let endDate = this.bookingPersistService.endDate;
         if (startDate) {
@@ -180,7 +182,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 venueIds,
                 caseTypes,
                 startDate,
-                endDate
+                endDate,
+                searchLastName
             );
         } else {
             // previous implementation
@@ -202,11 +205,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const caseTypes = this.searchForm.value['selectedCaseTypes'];
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
+            const lastName = this.searchForm.value['lastName'];
             this.bookingPersistService.searchTerm = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
             this.bookingPersistService.selectedCaseTypes = caseTypes;
             this.bookingPersistService.startDate = startDate;
             this.bookingPersistService.endDate = endDate;
+            this.bookingPersistService.searchLastName = lastName;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -364,8 +369,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
         const startDate = this.searchForm.controls.startDate.value as Date;
         const endDate = this.searchForm.controls.endDate.value as Date;
+        const lastName = this.searchForm.controls.lastName.value as string;
 
-        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate) {
+        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate || lastName) {
             return true;
         }
 

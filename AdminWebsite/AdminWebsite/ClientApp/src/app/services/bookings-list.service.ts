@@ -19,9 +19,10 @@ export class BookingsListService {
         venueIds?: number[],
         caseTypes?: string[],
         startDate?: Date,
-        endDate?: Date
+        endDate?: Date,
+        searchLastName?: string
     ): Observable<BookingsResponse> {
-        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueIds, caseTypes, startDate, endDate);
+        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueIds, caseTypes, startDate, endDate, searchLastName);
     }
 
     mapBookingsResponse(bookingsResponse: BookingsResponse): BookingsModel {

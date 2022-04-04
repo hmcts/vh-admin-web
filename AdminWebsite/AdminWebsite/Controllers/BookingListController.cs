@@ -45,13 +45,14 @@ namespace AdminWebsite.Controllers
         /// <param name="caseTypes"></param>
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
+        /// <param name="lastName"></param>
         /// <returns> The hearings list</returns>
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null, [FromQuery]DateTime? startDate = null, [FromQuery]DateTime? endDate = null)
+        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null, [FromQuery]DateTime? startDate = null, [FromQuery]DateTime? endDate = null, string lastName = "")
         {
             if (startDate > endDate)
             {
@@ -74,8 +75,16 @@ namespace AdminWebsite.Controllers
             try
             {
                 var caseTypesIds = await GetCaseTypesId(caseTypes);
-                caseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber;
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(caseTypesIds, cursor, limit, startDate, caseNumber, venueIds, endDate);
+                var apiRequest = new BookingsApi.Contract.Requests.SearchHearingRequest
+                {
+                    Types = caseTypesIds,
+                    Cursor = cursor,
+                    Limit = limit,
+                    CaseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber,
+                    VenueIds = venueIds,
+                    LastName = string.IsNullOrWhiteSpace(lastName) ? string.Empty : lastName
+                };
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(apiRequest);
 
                 return Ok(bookingsResponse);
             }

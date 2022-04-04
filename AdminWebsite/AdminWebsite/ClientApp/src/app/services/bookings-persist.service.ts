@@ -14,6 +14,7 @@ export class BookingPersistService {
     private _selectedCaseTypes: string[] = [];
     private _startDate: Date;
     private _endDate: Date;
+    private _searchLastName: string;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -151,5 +152,13 @@ export class BookingPersistService {
 
     get selectedHearingId() {
         return sessionStorage.getItem(this.SelectedHearingIdKey);
+    }
+
+    get searchLastName(): string {
+        return this._searchLastName;
+    }
+
+    set searchLastName(value) {
+        this._searchLastName = value;
     }
 }
