@@ -22,6 +22,7 @@ import { routes } from './bookings-list-routing.module';
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
+import { DatePipe } from '@angular/common';
 
 describe('BookingsListRouting', () => {
     let location: Location;
@@ -54,7 +55,8 @@ describe('BookingsListRouting', () => {
                 HttpClient,
                 HttpHandler,
                 { provide: Logger, useValue: loggerSpy },
-                { provide: ConfigService, useValue: configServiceSpy }
+                { provide: ConfigService, useValue: configServiceSpy },
+                DatePipe
             ]
         }).compileComponents();
 

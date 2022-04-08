@@ -76,6 +76,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.searchForm = this.initializeForm();
+        this.showSearch = this.bookingPersistService.showSearch;
 
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
@@ -327,6 +328,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         // hearing id is stored in session storage
         this.bookingPersistService.selectedHearingId = this.selectedHearingId;
         this.returnUrlService.setUrl(`${PageUrls.BookingsList}`);
+        this.bookingPersistService.showSearch = this.showSearch;
     }
 
     closeHearingDetails() {

@@ -30,6 +30,7 @@ import {
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
+import { DatePipe } from '@angular/common';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -559,7 +560,8 @@ describe('BookingsListComponent', () => {
                     { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
                     { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy }
+                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
+                    DatePipe
                 ]
             }).compileComponents();
 
@@ -1072,9 +1074,11 @@ describe('BookingsListComponent', () => {
         expect(component.selectedItemIndex).toBe(-1);
     });
     it('should persist information after row selected', () => {
+        component.openSearchPanel();
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         component.rowSelected(1, 0);
         expect(returnUrlService.popUrl()).toEqual(PageUrls.BookingsList);
+        expect(bookingPersistService.showSearch).toEqual(component.showSearch);
     });
     it('should get booking details by Id from data store', fakeAsync(async () => {
         await component.getEditedBookingFromStorage();

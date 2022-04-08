@@ -15,6 +15,7 @@ export class BookingPersistService {
     private _startDate: Date;
     private _endDate: Date;
     private _participantLastName: string;
+    private _showSearch: boolean;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -160,5 +161,13 @@ export class BookingPersistService {
 
     get selectedHearingId() {
         return sessionStorage.getItem(this.SelectedHearingIdKey);
+    }
+
+    get showSearch(): boolean {
+        return this._showSearch;
+    }
+
+    set showSearch(value) {
+        this._showSearch = value;
     }
 }
