@@ -15,6 +15,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-bookings-list',
@@ -57,6 +58,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private router: Router,
         private logger: Logger,
         private refDataService: ReferenceDataService,
+        private datePipe: DatePipe,
         private returnUrlService: ReturnUrlService,
         @Inject(DOCUMENT) document
     ) {
@@ -146,8 +148,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
-            startDate: [this.bookingPersistService.startDate || null],
-            endDate: [this.bookingPersistService.endDate || null],
+            startDate: [this.formatDateToIsoString(this.bookingPersistService.startDate)],
+            endDate: [this.formatDateToIsoString(this.bookingPersistService.endDate)],
             participantLastName: [this.bookingPersistService.participantLastName || null]
         });
     }
@@ -452,6 +454,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
 
         return false;
+    }
+
+    formatDateToIsoString(date?: Date) {
+        if (!date) {
+            return null;
+        }
+
+        return this.datePipe.transform(date, 'yyyy-MM-dd');
     }
 
     ngOnDestroy() {
