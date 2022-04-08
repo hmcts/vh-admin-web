@@ -12,6 +12,8 @@ import { ConfigService } from 'src/app/services/config.service';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -51,6 +53,7 @@ let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+let returnUrlService: ReturnUrlService;
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
@@ -563,6 +566,7 @@ describe('BookingsListComponent', () => {
             fixture = TestBed.createComponent(BookingsListComponent);
             component = fixture.componentInstance;
             bookingPersistService = TestBed.inject(BookingPersistService);
+            returnUrlService = TestBed.inject(ReturnUrlService);
             fixture.detectChanges();
         })
     );
@@ -1066,6 +1070,11 @@ describe('BookingsListComponent', () => {
         component.resetBookingIndex(booking);
         expect(component.selectedGroupIndex).toBe(-1);
         expect(component.selectedItemIndex).toBe(-1);
+    });
+    it('should persist information after row selected', () => {
+        component.bookings = new ArrayBookingslistModelTestData().getTestData();
+        component.rowSelected(1, 0);
+        expect(returnUrlService.popUrl()).toEqual(PageUrls.BookingsList);
     });
     it('should get booking details by Id from data store', fakeAsync(async () => {
         await component.getEditedBookingFromStorage();

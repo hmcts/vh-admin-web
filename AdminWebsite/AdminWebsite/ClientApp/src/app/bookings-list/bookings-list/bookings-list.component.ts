@@ -14,6 +14,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.
 import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 
 @Component({
     selector: 'app-bookings-list',
@@ -56,6 +57,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private router: Router,
         private logger: Logger,
         private refDataService: ReferenceDataService,
+        private returnUrlService: ReturnUrlService,
         @Inject(DOCUMENT) document
     ) {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
@@ -322,6 +324,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.bookingPersistService.selectedItemIndex = this.selectedItemIndex;
         // hearing id is stored in session storage
         this.bookingPersistService.selectedHearingId = this.selectedHearingId;
+        this.returnUrlService.setUrl(`${PageUrls.BookingsList}`);
     }
 
     closeHearingDetails() {
