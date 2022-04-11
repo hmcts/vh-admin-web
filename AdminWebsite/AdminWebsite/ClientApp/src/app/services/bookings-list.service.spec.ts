@@ -325,10 +325,10 @@ describe('bookings list service', () => {
             imports: [HttpClientModule],
             providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }]
         });
-        bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getBookingsList']);
+        bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
         bookingsResponse = new ResponseTestData().getTestData();
 
-        bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
+        bhClientSpy.bookingsList.and.returnValue(of(bookingsResponse));
         service = TestBed.inject(BookingsListService);
     });
 
@@ -379,10 +379,10 @@ describe('bookings list service', () => {
 
 describe('Booking list service functionality', () => {
     let bhClientSpy: jasmine.SpyObj<BHClient>;
-    bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getBookingsList']);
+    bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
     const bookingsResponse = new ResponseTestData().getTestData();
 
-    bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
+    bhClientSpy.bookingsList.and.returnValue(of(bookingsResponse));
     const service = new BookingsListService(bhClientSpy);
 
     it('should append new date group with 1 record to list and remove duplicated record', () => {
@@ -488,7 +488,7 @@ describe('Booking list service functionality', () => {
         const startDate = new Date(2022, 3, 25);
         const endDate = new Date(2022, 3, 26);
         const bookings = service.getBookingsList('cursor', limit, searchTerm, selectedVenueIds, selectedCaseTypes, startDate, endDate);
-        expect(bhClientSpy.getBookingsList).toHaveBeenCalledTimes(1);
+        expect(bhClientSpy.bookingsList).toHaveBeenCalledTimes(1);
         expect(bookings).toEqual(jasmine.any(Observable));
     });
 });

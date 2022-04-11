@@ -398,64 +398,37 @@ export class BHClient {
 
     /**
      * Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
-     * @param cursor (optional) The unique sequential value of hearing ID.
-     * @param limit (optional) The max number of hearings to be returned.
-     * @param caseNumber (optional)
-     * @param venueIds (optional)
-     * @param caseTypes (optional)
-     * @param startDate (optional)
-     * @param endDate (optional)
+     * @param body (optional)
      * @return Success
      */
-    getBookingsList(
-        cursor: string | null | undefined,
-        limit: number | undefined,
-        caseNumber: string | null | undefined,
-        venueIds: number[] | null | undefined,
-        caseTypes: string[] | null | undefined,
-        startDate: Date | null | undefined,
-        endDate: Date | null | undefined
-    ): Observable<BookingsResponse> {
-        let url_ = this.baseUrl + '/api/hearings?';
-        if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
-        if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
-        else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
-        if (caseNumber !== undefined && caseNumber !== null) url_ += 'caseNumber=' + encodeURIComponent('' + caseNumber) + '&';
-        if (venueIds !== undefined && venueIds !== null)
-            venueIds &&
-                venueIds.forEach(item => {
-                    url_ += 'venueIds=' + encodeURIComponent('' + item) + '&';
-                });
-        if (caseTypes !== undefined && caseTypes !== null)
-            caseTypes &&
-                caseTypes.forEach(item => {
-                    url_ += 'caseTypes=' + encodeURIComponent('' + item) + '&';
-                });
-        if (startDate !== undefined && startDate !== null)
-            url_ += 'startDate=' + encodeURIComponent(startDate ? '' + startDate.toJSON() : '') + '&';
-        if (endDate !== undefined && endDate !== null) url_ += 'endDate=' + encodeURIComponent(endDate ? '' + endDate.toJSON() : '') + '&';
+    bookingsList(body: BookingSearchRequest | undefined): Observable<BookingsResponse> {
+        let url_ = this.baseUrl + '/api/hearings/bookingsList';
         url_ = url_.replace(/[?&]$/, '');
 
+        const content_ = JSON.stringify(body);
+
         let options_: any = {
+            body: content_,
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
                 Accept: 'application/json'
             })
         };
 
         return this.http
-            .request('get', url_, options_)
+            .request('post', url_, options_)
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processGetBookingsList(response_);
+                    return this.processBookingsList(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processGetBookingsList(<any>response_);
+                            return this.processBookingsList(<any>response_);
                         } catch (e) {
                             return <Observable<BookingsResponse>>(<any>_observableThrow(e));
                         }
@@ -464,7 +437,7 @@ export class BHClient {
             );
     }
 
-    protected processGetBookingsList(response: HttpResponseBase): Observable<BookingsResponse> {
+    protected processBookingsList(response: HttpResponseBase): Observable<BookingsResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
@@ -516,92 +489,6 @@ export class BHClient {
             );
         }
         return _observableOf<BookingsResponse>(<any>null);
-    }
-
-    /**
-     * Create a hearing
-     * @param body (optional) Hearing Request object
-     * @return Success
-     */
-    bookNewHearing(body: BookHearingRequest | undefined): Observable<HearingDetailsResponse> {
-        let url_ = this.baseUrl + '/api/hearings';
-        url_ = url_.replace(/[?&]$/, '');
-
-        const content_ = JSON.stringify(body);
-
-        let options_: any = {
-            body: content_,
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
-                Accept: 'application/json'
-            })
-        };
-
-        return this.http
-            .request('post', url_, options_)
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processBookNewHearing(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processBookNewHearing(<any>response_);
-                        } catch (e) {
-                            return <Observable<HearingDetailsResponse>>(<any>_observableThrow(e));
-                        }
-                    } else return <Observable<HearingDetailsResponse>>(<any>_observableThrow(response_));
-                })
-            );
-    }
-
-    protected processBookNewHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 201) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result201: any = null;
-                    let resultData201 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result201 = HearingDetailsResponse.fromJS(resultData201);
-                    return _observableOf(result201);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf<HearingDetailsResponse>(<any>null);
     }
 
     /**
@@ -919,6 +806,92 @@ export class BHClient {
             );
         }
         return _observableOf<HealthCheckResponse>(<any>null);
+    }
+
+    /**
+     * Create a hearing
+     * @param body (optional) Hearing Request object
+     * @return Success
+     */
+    bookNewHearing(body: BookHearingRequest | undefined): Observable<HearingDetailsResponse> {
+        let url_ = this.baseUrl + '/api/hearings';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('post', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processBookNewHearing(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processBookNewHearing(<any>response_);
+                        } catch (e) {
+                            return <Observable<HearingDetailsResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<HearingDetailsResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processBookNewHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 201) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result201: any = null;
+                    let resultData201 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result201 = HearingDetailsResponse.fromJS(resultData201);
+                    return _observableOf(result201);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<HearingDetailsResponse>(<any>null);
     }
 
     /**
@@ -3056,6 +3029,81 @@ export interface ICvpForAudioFileResponse {
     sas_token_uri?: string | undefined;
 }
 
+export class BookingSearchRequest implements IBookingSearchRequest {
+    cursor?: string | undefined;
+    limit?: number;
+    caseNumber?: string | undefined;
+    venueIds?: number[] | undefined;
+    caseTypes?: string[] | undefined;
+    startDate?: Date | undefined;
+    endDate?: Date | undefined;
+    lastName?: string | undefined;
+
+    constructor(data?: IBookingSearchRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.cursor = _data['cursor'];
+            this.limit = _data['limit'];
+            this.caseNumber = _data['caseNumber'];
+            if (Array.isArray(_data['venueIds'])) {
+                this.venueIds = [] as any;
+                for (let item of _data['venueIds']) this.venueIds!.push(item);
+            }
+            if (Array.isArray(_data['caseTypes'])) {
+                this.caseTypes = [] as any;
+                for (let item of _data['caseTypes']) this.caseTypes!.push(item);
+            }
+            this.startDate = _data['startDate'] ? new Date(_data['startDate'].toString()) : <any>undefined;
+            this.endDate = _data['endDate'] ? new Date(_data['endDate'].toString()) : <any>undefined;
+            this.lastName = _data['lastName'];
+        }
+    }
+
+    static fromJS(data: any): BookingSearchRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingSearchRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['cursor'] = this.cursor;
+        data['limit'] = this.limit;
+        data['caseNumber'] = this.caseNumber;
+        if (Array.isArray(this.venueIds)) {
+            data['venueIds'] = [];
+            for (let item of this.venueIds) data['venueIds'].push(item);
+        }
+        if (Array.isArray(this.caseTypes)) {
+            data['caseTypes'] = [];
+            for (let item of this.caseTypes) data['caseTypes'].push(item);
+        }
+        data['startDate'] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data['endDate'] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data['lastName'] = this.lastName;
+        return data;
+    }
+}
+
+export interface IBookingSearchRequest {
+    cursor?: string | undefined;
+    limit?: number;
+    caseNumber?: string | undefined;
+    venueIds?: number[] | undefined;
+    caseTypes?: string[] | undefined;
+    startDate?: Date | undefined;
+    endDate?: Date | undefined;
+    lastName?: string | undefined;
+}
+
 export enum BookingStatus {
     Booked = 'Booked',
     Created = 'Created',
@@ -3286,6 +3334,250 @@ export interface IBookingsResponse {
     limit?: number;
     prev_page_url?: string | undefined;
     next_page_url?: string | undefined;
+}
+
+/** Configuration to initialise the UI application */
+export class ClientSettingsResponse implements IClientSettingsResponse {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
+    /** The Application Insight Instrumentation Key */
+    instrumentation_key?: string | undefined;
+    /** The reform email */
+    test_username_stem?: string | undefined;
+    /** To join the conference phone number */
+    conference_phone_number?: string | undefined;
+    /** To join the conference phone number - welsh */
+    conference_phone_number_welsh?: string | undefined;
+    /** The date to switch on option to join by phone */
+    join_by_phone_from_date?: string | undefined;
+    /** The Uri to video web url */
+    video_web_url?: string | undefined;
+    /** The LaunchDarkly Client ID */
+    readonly launch_darkly_client_id?: string | undefined;
+
+    constructor(data?: IClientSettingsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenant_id = _data['tenant_id'];
+            this.client_id = _data['client_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
+            this.instrumentation_key = _data['instrumentation_key'];
+            this.test_username_stem = _data['test_username_stem'];
+            this.conference_phone_number = _data['conference_phone_number'];
+            this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
+            this.join_by_phone_from_date = _data['join_by_phone_from_date'];
+            this.video_web_url = _data['video_web_url'];
+            (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
+        }
+    }
+
+    static fromJS(data: any): ClientSettingsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ClientSettingsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['tenant_id'] = this.tenant_id;
+        data['client_id'] = this.client_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
+        data['instrumentation_key'] = this.instrumentation_key;
+        data['test_username_stem'] = this.test_username_stem;
+        data['conference_phone_number'] = this.conference_phone_number;
+        data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
+        data['join_by_phone_from_date'] = this.join_by_phone_from_date;
+        data['video_web_url'] = this.video_web_url;
+        data['launch_darkly_client_id'] = this.launch_darkly_client_id;
+        return data;
+    }
+}
+
+/** Configuration to initialise the UI application */
+export interface IClientSettingsResponse {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
+    /** The Application Insight Instrumentation Key */
+    instrumentation_key?: string | undefined;
+    /** The reform email */
+    test_username_stem?: string | undefined;
+    /** To join the conference phone number */
+    conference_phone_number?: string | undefined;
+    /** To join the conference phone number - welsh */
+    conference_phone_number_welsh?: string | undefined;
+    /** The date to switch on option to join by phone */
+    join_by_phone_from_date?: string | undefined;
+    /** The Uri to video web url */
+    video_web_url?: string | undefined;
+    /** The LaunchDarkly Client ID */
+    launch_darkly_client_id?: string | undefined;
+}
+
+export class HealthCheck implements IHealthCheck {
+    successful?: boolean;
+    error_message?: string | undefined;
+    data?: { [key: string]: any } | undefined;
+
+    constructor(data?: IHealthCheck) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.successful = _data['successful'];
+            this.error_message = _data['error_message'];
+            if (_data['data']) {
+                this.data = {} as any;
+                for (let key in _data['data']) {
+                    if (_data['data'].hasOwnProperty(key)) this.data![key] = _data['data'][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): HealthCheck {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealthCheck();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['successful'] = this.successful;
+        data['error_message'] = this.error_message;
+        if (this.data) {
+            data['data'] = {};
+            for (let key in this.data) {
+                if (this.data.hasOwnProperty(key)) data['data'][key] = this.data[key];
+            }
+        }
+        return data;
+    }
+}
+
+export interface IHealthCheck {
+    successful?: boolean;
+    error_message?: string | undefined;
+    data?: { [key: string]: any } | undefined;
+}
+
+export class ApplicationVersion implements IApplicationVersion {
+    file_version?: string | undefined;
+    information_version?: string | undefined;
+
+    constructor(data?: IApplicationVersion) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.file_version = _data['file_version'];
+            this.information_version = _data['information_version'];
+        }
+    }
+
+    static fromJS(data: any): ApplicationVersion {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplicationVersion();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['file_version'] = this.file_version;
+        data['information_version'] = this.information_version;
+        return data;
+    }
+}
+
+export interface IApplicationVersion {
+    file_version?: string | undefined;
+    information_version?: string | undefined;
+}
+
+export class HealthCheckResponse implements IHealthCheckResponse {
+    bookings_api_health?: HealthCheck;
+    user_api_health?: HealthCheck;
+    video_api_health?: HealthCheck;
+    notification_api_health?: HealthCheck;
+    app_version?: ApplicationVersion;
+
+    constructor(data?: IHealthCheckResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.bookings_api_health = _data['bookings_api_health'] ? HealthCheck.fromJS(_data['bookings_api_health']) : <any>undefined;
+            this.user_api_health = _data['user_api_health'] ? HealthCheck.fromJS(_data['user_api_health']) : <any>undefined;
+            this.video_api_health = _data['video_api_health'] ? HealthCheck.fromJS(_data['video_api_health']) : <any>undefined;
+            this.notification_api_health = _data['notification_api_health']
+                ? HealthCheck.fromJS(_data['notification_api_health'])
+                : <any>undefined;
+            this.app_version = _data['app_version'] ? ApplicationVersion.fromJS(_data['app_version']) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): HealthCheckResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealthCheckResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['bookings_api_health'] = this.bookings_api_health ? this.bookings_api_health.toJSON() : <any>undefined;
+        data['user_api_health'] = this.user_api_health ? this.user_api_health.toJSON() : <any>undefined;
+        data['video_api_health'] = this.video_api_health ? this.video_api_health.toJSON() : <any>undefined;
+        data['notification_api_health'] = this.notification_api_health ? this.notification_api_health.toJSON() : <any>undefined;
+        data['app_version'] = this.app_version ? this.app_version.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IHealthCheckResponse {
+    bookings_api_health?: HealthCheck;
+    user_api_health?: HealthCheck;
+    video_api_health?: HealthCheck;
+    notification_api_health?: HealthCheck;
+    app_version?: ApplicationVersion;
 }
 
 export class CaseRequest implements ICaseRequest {
@@ -4162,250 +4454,6 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
-}
-
-/** Configuration to initialise the UI application */
-export class ClientSettingsResponse implements IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
-    /** The Application Insight Instrumentation Key */
-    instrumentation_key?: string | undefined;
-    /** The reform email */
-    test_username_stem?: string | undefined;
-    /** To join the conference phone number */
-    conference_phone_number?: string | undefined;
-    /** To join the conference phone number - welsh */
-    conference_phone_number_welsh?: string | undefined;
-    /** The date to switch on option to join by phone */
-    join_by_phone_from_date?: string | undefined;
-    /** The Uri to video web url */
-    video_web_url?: string | undefined;
-    /** The LaunchDarkly Client ID */
-    readonly launch_darkly_client_id?: string | undefined;
-
-    constructor(data?: IClientSettingsResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.tenant_id = _data['tenant_id'];
-            this.client_id = _data['client_id'];
-            this.redirect_uri = _data['redirect_uri'];
-            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
-            this.instrumentation_key = _data['instrumentation_key'];
-            this.test_username_stem = _data['test_username_stem'];
-            this.conference_phone_number = _data['conference_phone_number'];
-            this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
-            this.join_by_phone_from_date = _data['join_by_phone_from_date'];
-            this.video_web_url = _data['video_web_url'];
-            (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
-        }
-    }
-
-    static fromJS(data: any): ClientSettingsResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ClientSettingsResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['tenant_id'] = this.tenant_id;
-        data['client_id'] = this.client_id;
-        data['redirect_uri'] = this.redirect_uri;
-        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
-        data['instrumentation_key'] = this.instrumentation_key;
-        data['test_username_stem'] = this.test_username_stem;
-        data['conference_phone_number'] = this.conference_phone_number;
-        data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
-        data['join_by_phone_from_date'] = this.join_by_phone_from_date;
-        data['video_web_url'] = this.video_web_url;
-        data['launch_darkly_client_id'] = this.launch_darkly_client_id;
-        return data;
-    }
-}
-
-/** Configuration to initialise the UI application */
-export interface IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
-    /** The Application Insight Instrumentation Key */
-    instrumentation_key?: string | undefined;
-    /** The reform email */
-    test_username_stem?: string | undefined;
-    /** To join the conference phone number */
-    conference_phone_number?: string | undefined;
-    /** To join the conference phone number - welsh */
-    conference_phone_number_welsh?: string | undefined;
-    /** The date to switch on option to join by phone */
-    join_by_phone_from_date?: string | undefined;
-    /** The Uri to video web url */
-    video_web_url?: string | undefined;
-    /** The LaunchDarkly Client ID */
-    launch_darkly_client_id?: string | undefined;
-}
-
-export class HealthCheck implements IHealthCheck {
-    successful?: boolean;
-    error_message?: string | undefined;
-    data?: { [key: string]: any } | undefined;
-
-    constructor(data?: IHealthCheck) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.successful = _data['successful'];
-            this.error_message = _data['error_message'];
-            if (_data['data']) {
-                this.data = {} as any;
-                for (let key in _data['data']) {
-                    if (_data['data'].hasOwnProperty(key)) this.data![key] = _data['data'][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): HealthCheck {
-        data = typeof data === 'object' ? data : {};
-        let result = new HealthCheck();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['successful'] = this.successful;
-        data['error_message'] = this.error_message;
-        if (this.data) {
-            data['data'] = {};
-            for (let key in this.data) {
-                if (this.data.hasOwnProperty(key)) data['data'][key] = this.data[key];
-            }
-        }
-        return data;
-    }
-}
-
-export interface IHealthCheck {
-    successful?: boolean;
-    error_message?: string | undefined;
-    data?: { [key: string]: any } | undefined;
-}
-
-export class ApplicationVersion implements IApplicationVersion {
-    file_version?: string | undefined;
-    information_version?: string | undefined;
-
-    constructor(data?: IApplicationVersion) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.file_version = _data['file_version'];
-            this.information_version = _data['information_version'];
-        }
-    }
-
-    static fromJS(data: any): ApplicationVersion {
-        data = typeof data === 'object' ? data : {};
-        let result = new ApplicationVersion();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['file_version'] = this.file_version;
-        data['information_version'] = this.information_version;
-        return data;
-    }
-}
-
-export interface IApplicationVersion {
-    file_version?: string | undefined;
-    information_version?: string | undefined;
-}
-
-export class HealthCheckResponse implements IHealthCheckResponse {
-    bookings_api_health?: HealthCheck;
-    user_api_health?: HealthCheck;
-    video_api_health?: HealthCheck;
-    notification_api_health?: HealthCheck;
-    app_version?: ApplicationVersion;
-
-    constructor(data?: IHealthCheckResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.bookings_api_health = _data['bookings_api_health'] ? HealthCheck.fromJS(_data['bookings_api_health']) : <any>undefined;
-            this.user_api_health = _data['user_api_health'] ? HealthCheck.fromJS(_data['user_api_health']) : <any>undefined;
-            this.video_api_health = _data['video_api_health'] ? HealthCheck.fromJS(_data['video_api_health']) : <any>undefined;
-            this.notification_api_health = _data['notification_api_health']
-                ? HealthCheck.fromJS(_data['notification_api_health'])
-                : <any>undefined;
-            this.app_version = _data['app_version'] ? ApplicationVersion.fromJS(_data['app_version']) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): HealthCheckResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HealthCheckResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['bookings_api_health'] = this.bookings_api_health ? this.bookings_api_health.toJSON() : <any>undefined;
-        data['user_api_health'] = this.user_api_health ? this.user_api_health.toJSON() : <any>undefined;
-        data['video_api_health'] = this.video_api_health ? this.video_api_health.toJSON() : <any>undefined;
-        data['notification_api_health'] = this.notification_api_health ? this.notification_api_health.toJSON() : <any>undefined;
-        data['app_version'] = this.app_version ? this.app_version.toJSON() : <any>undefined;
-        return data;
-    }
-}
-
-export interface IHealthCheckResponse {
-    bookings_api_health?: HealthCheck;
-    user_api_health?: HealthCheck;
-    video_api_health?: HealthCheck;
-    notification_api_health?: HealthCheck;
-    app_version?: ApplicationVersion;
 }
 
 /** Case request */

@@ -141,22 +141,24 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     private initializeForm(): FormGroup {
         return this.formBuilder.group({
-            caseNumber: [this.bookingPersistService.searchTerm || null],
+            caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
             startDate: [this.bookingPersistService.startDate || null],
-            endDate: [this.bookingPersistService.endDate || null]
+            endDate: [this.bookingPersistService.endDate || null],
+            participantLastName: [this.bookingPersistService.participantLastName || null]
         });
     }
 
     private loadBookingsList(): void {
         const self = this;
         this.loaded = this.error = false;
-        const searchTerm = this.bookingPersistService.searchTerm || '';
+        const caseNumber = this.bookingPersistService.caseNumber || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
         const caseTypes = this.bookingPersistService.selectedCaseTypes;
         let startDate = this.bookingPersistService.startDate;
         let endDate = this.bookingPersistService.endDate;
+        const lastName = this.bookingPersistService.participantLastName;
         if (startDate) {
             startDate = moment(startDate).startOf('day').toDate();
         }
@@ -176,11 +178,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             bookingsList$ = this.bookingsListService.getBookingsList(
                 this.cursor,
                 this.limit,
-                searchTerm,
+                caseNumber,
                 venueIds,
                 caseTypes,
                 startDate,
-                endDate
+                endDate,
+                lastName
             );
         } else {
             // previous implementation
@@ -202,11 +205,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const caseTypes = this.searchForm.value['selectedCaseTypes'];
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
-            this.bookingPersistService.searchTerm = caseNumber;
+            const lastName = this.searchForm.value['participantLastName'];
+            this.bookingPersistService.caseNumber = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
             this.bookingPersistService.selectedCaseTypes = caseTypes;
             this.bookingPersistService.startDate = startDate;
             this.bookingPersistService.endDate = endDate;
+            this.bookingPersistService.participantLastName = lastName;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -217,19 +222,21 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onClear(): void {
         this.searchForm.reset();
         const searchCriteriaEntered =
-            this.bookingPersistService.searchTerm ||
+            this.bookingPersistService.caseNumber ||
             (this.bookingPersistService.selectedVenueIds && this.bookingPersistService.selectedVenueIds.length > 0) ||
             (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0) ||
             this.bookingPersistService.startDate ||
-            this.bookingPersistService.endDate;
+            this.bookingPersistService.endDate ||
+            this.bookingPersistService.participantLastName;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
-            this.bookingPersistService.searchTerm = '';
+            this.bookingPersistService.caseNumber = '';
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.selectedCaseTypes = [];
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
+            this.bookingPersistService.participantLastName = '';
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
@@ -364,8 +371,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
         const startDate = this.searchForm.controls.startDate.value as Date;
         const endDate = this.searchForm.controls.endDate.value as Date;
+        const lastName = this.searchForm.controls.participantLastName.value as string;
 
-        if (caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate) {
+        const formFieldsValid =
+            caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate || lastName;
+
+        if (formFieldsValid) {
             return true;
         }
 

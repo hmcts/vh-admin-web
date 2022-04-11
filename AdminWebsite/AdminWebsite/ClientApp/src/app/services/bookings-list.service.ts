@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BHClient, BookingsResponse, BookingsHearingResponse, BookingsByDateResponse } from './clients/api-client';
+import {
+    BHClient,
+    BookingsResponse,
+    BookingsHearingResponse,
+    BookingsByDateResponse,
+    BookingSearchRequest,
+    IBookingSearchRequest
+} from './clients/api-client';
 import { Observable } from 'rxjs';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
@@ -15,13 +22,25 @@ export class BookingsListService {
     getBookingsList(
         cursor: string,
         limit: number,
-        searchTerm?: string,
+        caseNumber?: string,
         venueIds?: number[],
         caseTypes?: string[],
         startDate?: Date,
-        endDate?: Date
+        endDate?: Date,
+        lastName?: string
     ): Observable<BookingsResponse> {
-        return this.bhClient.getBookingsList(cursor, limit, searchTerm, venueIds, caseTypes, startDate, endDate);
+        const searchRequest = {
+            cursor,
+            limit,
+            caseNumber,
+            venueIds,
+            caseTypes,
+            startDate,
+            endDate,
+            lastName
+        } as IBookingSearchRequest;
+        const model = new BookingSearchRequest(searchRequest);
+        return this.bhClient.bookingsList(model);
     }
 
     mapBookingsResponse(bookingsResponse: BookingsResponse): BookingsModel {
