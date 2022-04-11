@@ -1,5 +1,8 @@
-﻿using System;
+﻿using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -7,8 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
 {
@@ -18,7 +19,7 @@ namespace AdminWebsite.Controllers
     [Produces("application/json")]
     [Route("api/hearings")]
     [ApiController]
-    public class BookingListController:ControllerBase
+    public class BookingListController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
@@ -38,34 +39,28 @@ namespace AdminWebsite.Controllers
         /// <summary>
         /// Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
         /// </summary>
-        /// <param name="cursor">The unique sequential value of hearing ID.</param>
-        /// <param name="limit">The max number of hearings to be returned.</param>
-        /// <param name="caseNumber"></param>
-        /// <param name="venueIds"></param>
-        /// <param name="caseTypes"></param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
+        /// <param name="request"></param>
         /// <returns> The hearings list</returns>
-        [HttpGet]
-        [SwaggerOperation(OperationId = "GetBookingsList")]
+        [HttpPost("bookingsList")]
+        [SwaggerOperation(OperationId = "BookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetBookingsList(string cursor, int limit = 100, string caseNumber = "", [FromQuery]List<int> venueIds = null, [FromQuery]List<string> caseTypes = null, [FromQuery]DateTime? startDate = null, [FromQuery]DateTime? endDate = null)
+        public async Task<ActionResult> GetBookingsList([FromBody]BookingSearchRequest request)
         {
-            if (startDate > endDate)
+            if (request.StartDate > request.EndDate)
             {
                 return BadRequest("startDate must be less than or equal to endDate");
             }
-            
-            if (cursor != null)
+
+            if (request.Cursor != null)
             {
-                cursor = _encoder.Encode(cursor);
+                request.Cursor = _encoder.Encode(request.Cursor);
             }
             if (_userIdentity.IsAdministratorRole())
             {
-                caseTypes ??= new List<string>();
-                caseTypes.AddRange(_userIdentity.GetGroupDisplayNames());
+                request.CaseTypes ??= new List<string>();
+                request.CaseTypes.AddRange(_userIdentity.GetGroupDisplayNames());
             }
             else
             {
@@ -73,9 +68,22 @@ namespace AdminWebsite.Controllers
             }
             try
             {
-                var caseTypesIds = await GetCaseTypesId(caseTypes);
-                caseNumber = string.IsNullOrWhiteSpace(caseNumber) ? string.Empty : caseNumber;
-                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(caseTypesIds, cursor, limit, startDate, caseNumber, venueIds, endDate);
+                var caseTypesIds = await GetCaseTypesId(request.CaseTypes);
+                request.CaseNumber = string.IsNullOrWhiteSpace(request.CaseNumber) ? string.Empty : request.CaseNumber;
+                request.LastName = string.IsNullOrWhiteSpace(request.LastName) ? string.Empty : request.LastName;
+
+                var bookingsResponse = await _bookingsApiClient.GetHearingsByTypesAsync(
+                    new GetHearingRequest
+                    {
+                        Limit = request.Limit,
+                        Cursor = request.Cursor,
+                        FromDate = request.StartDate,
+                        EndDate = request.EndDate,
+                        Types = caseTypesIds,
+                        CaseNumber = request.CaseNumber,
+                        VenueIds = request.VenueIds,
+                        LastName = request.LastName
+                    });
 
                 return Ok(bookingsResponse);
             }

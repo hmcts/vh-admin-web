@@ -9,11 +9,12 @@ export class BookingPersistService {
     private _nextCursor: string;
     private _selectedGroupIndex: number;
     private _selectedItemIndex: number;
-    private _searchTerm: string;
+    private _caseNumber: string;
     private _selectedVenueIds: number[] = [];
     private _selectedCaseTypes: string[] = [];
     private _startDate: Date;
     private _endDate: Date;
+    private _participantLastName: string;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {
@@ -89,12 +90,20 @@ export class BookingPersistService {
         return this._nextCursor;
     }
 
-    get searchTerm(): string {
-        return this._searchTerm;
+    get caseNumber(): string {
+        return this._caseNumber;
     }
 
-    set searchTerm(value) {
-        this._searchTerm = value;
+    set caseNumber(value) {
+        this._caseNumber = value;
+    }
+
+    get participantLastName(): string {
+        return this._participantLastName;
+    }
+
+    set participantLastName(value) {
+        this._participantLastName = value;
     }
 
     get selectedVenueIds(): number[] {

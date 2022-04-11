@@ -451,7 +451,7 @@ export class BookingPersistServiceSpy {
     private _nextCuror = '12345';
     private _selectedGroupIndex = 0;
     private _selectedItemIndex = 0;
-    private _searchTerm = 'SEARCH_VALUE';
+    private _caseNumber = 'CASE_NUMBER';
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -483,12 +483,12 @@ export class BookingPersistServiceSpy {
         this._selectedItemIndex = value;
     }
 
-    get searchTerm(): string {
-        return this._searchTerm;
+    get caseNumber(): string {
+        return this._caseNumber;
     }
 
-    set searchTerm(value) {
-        this._searchTerm = value;
+    set caseNumber(value) {
+        this._caseNumber = value;
     }
     updateBooking(hearing: HearingModel) {
         const booking = new BookingsDetailsModel(
@@ -572,6 +572,7 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
         component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
         component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
+        component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
     }
 
     function clearSearch() {
@@ -580,6 +581,7 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['selectedCaseTypes'].setValue([]);
         component.searchForm.controls['startDate'].setValue(null);
         component.searchForm.controls['endDate'].setValue(null);
+        component.searchForm.controls['participantLastName'].setValue('');
     }
 
     it('should create bookings list component', () => {
@@ -601,7 +603,7 @@ describe('BookingsListComponent', () => {
         setFormValue();
         component.enableSearchFeature = false;
         component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
@@ -615,7 +617,8 @@ describe('BookingsListComponent', () => {
         setFormValue();
         component.enableSearchFeature = true;
         component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
@@ -624,11 +627,12 @@ describe('BookingsListComponent', () => {
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
             component.limit,
-            bookingPersistService.searchTerm,
+            bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
-            moment(bookingPersistService.endDate).endOf('day').toDate()
+            moment(bookingPersistService.endDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName
         );
     });
 
@@ -638,7 +642,8 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = true;
         component.searchForm.controls['startDate'].setValue(null);
         component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toBeNull();
@@ -647,11 +652,12 @@ describe('BookingsListComponent', () => {
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
             component.limit,
-            bookingPersistService.searchTerm,
+            bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.endDate).startOf('day').toDate(),
-            moment(bookingPersistService.endDate).endOf('day').toDate()
+            moment(bookingPersistService.endDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName
         );
     });
 
@@ -661,7 +667,8 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = true;
         component.searchForm.controls['endDate'].setValue(null);
         component.onSearch();
-        expect(bookingPersistService.searchTerm).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
         expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
         expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
@@ -670,11 +677,12 @@ describe('BookingsListComponent', () => {
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
             undefined,
             component.limit,
-            bookingPersistService.searchTerm,
+            bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
-            moment(bookingPersistService.startDate).endOf('day').toDate()
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName
         );
     });
 
@@ -804,7 +812,7 @@ describe('BookingsListComponent', () => {
         spyOn(bookingPersistService, 'resetAll');
         component.onClear();
         expect(component.bookings.length).toBeGreaterThan(0);
-        expect(bookingPersistService.searchTerm).toEqual('');
+        expect(bookingPersistService.caseNumber).toEqual('');
         expect(bookingPersistService.selectedVenueIds).toEqual([]);
         expect(bookingPersistService.selectedCaseTypes).toEqual([]);
         expect(bookingPersistService.startDate).toEqual(null);
@@ -846,6 +854,16 @@ describe('BookingsListComponent', () => {
         component.openSearchPanel();
         clearSearch();
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
+        expect(searchButton.disabled).toBe(false);
+    });
+
+    it('should enable search button if participant lastName field is valid', () => {
+        component.openSearchPanel();
+        clearSearch();
+        component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
