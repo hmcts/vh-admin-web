@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, DatePipe } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.
 import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 
 @Component({
     selector: 'app-bookings-list',
@@ -56,6 +57,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private router: Router,
         private logger: Logger,
         private refDataService: ReferenceDataService,
+        private datePipe: DatePipe,
+        private returnUrlService: ReturnUrlService,
         @Inject(DOCUMENT) document
     ) {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
@@ -72,6 +75,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.searchForm = this.initializeForm();
+        this.showSearch = this.bookingPersistService.showSearch;
 
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
@@ -144,8 +148,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
-            startDate: [this.bookingPersistService.startDate || null],
-            endDate: [this.bookingPersistService.endDate || null],
+            startDate: [this.formatDateToIsoString(this.bookingPersistService.startDate)],
+            endDate: [this.formatDateToIsoString(this.bookingPersistService.endDate)],
             participantLastName: [this.bookingPersistService.participantLastName || null]
         });
     }
@@ -322,6 +326,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.bookingPersistService.selectedItemIndex = this.selectedItemIndex;
         // hearing id is stored in session storage
         this.bookingPersistService.selectedHearingId = this.selectedHearingId;
+        this.returnUrlService.setUrl(`${PageUrls.BookingsList}`);
+        this.bookingPersistService.showSearch = this.showSearch;
     }
 
     closeHearingDetails() {
@@ -449,6 +455,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
 
         return false;
+    }
+
+    formatDateToIsoString(date?: Date) {
+        if (!date) {
+            return null;
+        }
+
+        return this.datePipe.transform(date, 'yyyy-MM-dd');
     }
 
     ngOnDestroy() {

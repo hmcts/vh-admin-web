@@ -12,6 +12,8 @@ import { ConfigService } from 'src/app/services/config.service';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -28,6 +30,7 @@ import {
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
+import { DatePipe } from '@angular/common';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -51,6 +54,7 @@ let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+let returnUrlService: ReturnUrlService;
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
@@ -452,6 +456,8 @@ export class BookingPersistServiceSpy {
     private _selectedGroupIndex = 0;
     private _selectedItemIndex = 0;
     private _caseNumber = 'CASE_NUMBER';
+    private _searchTerm = 'SEARCH_VALUE';
+    private _showSearch = false;
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -490,6 +496,14 @@ export class BookingPersistServiceSpy {
     set caseNumber(value) {
         this._caseNumber = value;
     }
+    get showSearch(): boolean {
+        return this._showSearch;
+    }
+
+    set showSearch(value) {
+        this._showSearch = value;
+    }
+
     updateBooking(hearing: HearingModel) {
         const booking = new BookingsDetailsModel(
             '1',
@@ -556,13 +570,15 @@ describe('BookingsListComponent', () => {
                     { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
                     { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy }
+                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
+                    DatePipe
                 ]
             }).compileComponents();
 
             fixture = TestBed.createComponent(BookingsListComponent);
             component = fixture.componentInstance;
             bookingPersistService = TestBed.inject(BookingPersistService);
+            returnUrlService = TestBed.inject(ReturnUrlService);
             fixture.detectChanges();
         })
     );
@@ -1067,6 +1083,13 @@ describe('BookingsListComponent', () => {
         expect(component.selectedGroupIndex).toBe(-1);
         expect(component.selectedItemIndex).toBe(-1);
     });
+    it('should persist information after row selected', () => {
+        component.openSearchPanel();
+        component.bookings = new ArrayBookingslistModelTestData().getTestData();
+        component.rowSelected(1, 0);
+        expect(returnUrlService.popUrl()).toEqual(PageUrls.BookingsList);
+        expect(bookingPersistService.showSearch).toBe(true);
+    });
     it('should get booking details by Id from data store', fakeAsync(async () => {
         await component.getEditedBookingFromStorage();
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
@@ -1076,5 +1099,20 @@ describe('BookingsListComponent', () => {
         component.getList();
         component.ngOnDestroy();
         expect(component.$subcription.closed).toBeTruthy();
+    });
+
+    describe('ngOnInit', () => {
+        it('should load persisted information', () => {
+            const showSearch = true;
+            const startDate = new Date(2022, 3, 11);
+            const endDate = new Date(2022, 3, 12);
+            bookingPersistService.showSearch = showSearch;
+            bookingPersistService.startDate = startDate;
+            bookingPersistService.endDate = endDate;
+            component.ngOnInit();
+            expect(component.showSearch).toBe(showSearch);
+            expect(component.searchForm.controls.startDate.value).toEqual('2022-04-11');
+            expect(component.searchForm.controls.endDate.value).toEqual('2022-04-12');
+        });
     });
 });

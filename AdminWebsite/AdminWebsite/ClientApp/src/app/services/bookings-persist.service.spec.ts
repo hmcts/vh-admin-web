@@ -135,4 +135,18 @@ describe('BookingsPersistService', () => {
             expect(service.endDate).toBeNull();
         });
     });
+
+    describe('#showSearch', () => {
+        it('should set showSearch when false', () => {
+            const showSearch = false;
+            service.showSearch = showSearch;
+            expect(service.showSearch).toBe(showSearch);
+        });
+
+        it('should set showSearch when true', () => {
+            const showSearch = true;
+            service.showSearch = showSearch;
+            expect(service.showSearch).toBe(showSearch);
+        });
+    });
 });
