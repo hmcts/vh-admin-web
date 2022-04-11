@@ -456,6 +456,8 @@ export class BookingPersistServiceSpy {
     private _selectedGroupIndex = 0;
     private _selectedItemIndex = 0;
     private _caseNumber = 'CASE_NUMBER';
+    private _searchTerm = 'SEARCH_VALUE';
+    private _showSearch: boolean = false;
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -494,6 +496,14 @@ export class BookingPersistServiceSpy {
     set caseNumber(value) {
         this._caseNumber = value;
     }
+    get showSearch(): boolean {
+        return this._showSearch;
+    }
+
+    set showSearch(value) {
+        this._showSearch = value;
+    }
+
     updateBooking(hearing: HearingModel) {
         const booking = new BookingsDetailsModel(
             '1',
@@ -1078,7 +1088,7 @@ describe('BookingsListComponent', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         component.rowSelected(1, 0);
         expect(returnUrlService.popUrl()).toEqual(PageUrls.BookingsList);
-        expect(bookingPersistService.showSearch).toEqual(component.showSearch);
+        expect(bookingPersistService.showSearch).toBe(true);
     });
     it('should get booking details by Id from data store', fakeAsync(async () => {
         await component.getEditedBookingFromStorage();
