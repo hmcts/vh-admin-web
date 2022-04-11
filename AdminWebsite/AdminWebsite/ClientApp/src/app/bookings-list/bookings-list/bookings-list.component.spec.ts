@@ -1100,4 +1100,19 @@ describe('BookingsListComponent', () => {
         component.ngOnDestroy();
         expect(component.$subcription.closed).toBeTruthy();
     });
+
+    describe('ngOnInit', () => {
+        it('should load persisted information', () => {
+            const showSearch = true;
+            const startDate = new Date(2022, 3, 11);
+            const endDate = new Date(2022, 3, 12);
+            bookingPersistService.showSearch = showSearch;
+            bookingPersistService.startDate = startDate;
+            bookingPersistService.endDate = endDate;
+            component.ngOnInit();
+            expect(component.showSearch).toBe(showSearch);
+            expect(component.searchForm.controls.startDate.value).toEqual('2022-04-11');
+            expect(component.searchForm.controls.endDate.value).toEqual('2022-04-12');
+        });
+    });
 });
