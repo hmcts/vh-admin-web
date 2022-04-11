@@ -15,7 +15,7 @@ export class BookingPersistService {
     private _startDate: Date;
     private _endDate: Date;
     private _participantLastName: string;
-    private _showSearch: boolean = false;
+    private _showSearch = false;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
     resetAll() {

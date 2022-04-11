@@ -457,7 +457,7 @@ export class BookingPersistServiceSpy {
     private _selectedItemIndex = 0;
     private _caseNumber = 'CASE_NUMBER';
     private _searchTerm = 'SEARCH_VALUE';
-    private _showSearch: boolean = false;
+    private _showSearch = false;
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
