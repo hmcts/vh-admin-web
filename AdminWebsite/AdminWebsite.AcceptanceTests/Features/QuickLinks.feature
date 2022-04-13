@@ -4,13 +4,11 @@
 	So that I can reduce the chances of mistakes on the booking
 
 	
-@Smoketest @Smoketest-Extended
 Scenario: VHO Books Hearing Without Any Participants Except The Judge
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user does not add participants and is on the Video Access Points page
 	Then the user is on the Video Access Points page
 	
-@Smoketest @Smoketest-Extended
 Scenario: VHO Confirms Booking Without Any Participants Except The Judge
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user does not add participants and is on the Video Access Points page

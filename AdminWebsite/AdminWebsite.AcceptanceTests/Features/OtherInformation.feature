@@ -8,7 +8,7 @@ Scenario: Other Information
 	When the user completes the other information form
 	Then the user is on the Summary page
 
-@Smoketest-Extended
+
 Scenario: Edit Other Information
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits the other information
