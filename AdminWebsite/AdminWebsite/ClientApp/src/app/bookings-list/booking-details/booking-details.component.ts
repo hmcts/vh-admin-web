@@ -315,4 +315,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
         }
     }
+
+    get judgeExists(): boolean{
+        return this.judges.length > 0;
+    }
+
 }
