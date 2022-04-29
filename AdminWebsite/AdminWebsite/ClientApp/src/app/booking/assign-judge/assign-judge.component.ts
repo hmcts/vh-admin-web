@@ -307,58 +307,58 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             return;
         }
 
-        if (!this.judge || !this.judge.email) {
-            this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
-            this.failedSubmission = true;
-            return;
-        }
-        if (!this.judge.display_name) {
-            this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
-            this.failedSubmission = true;
-            return;
-        }
+        if (this.judge && this.judge.email) {
+            if (!this.judge.display_name) {
+                this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
+                this.failedSubmission = true;
+                return;
+            }
 
-        if (!this.hearingService.canAddJudge(this.judge.display_name)) {
-            this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
-            this.isJudgeParticipantError = true;
-            this.failedSubmission = true;
-            return;
-        }
+            if (!this.hearingService.canAddJudge(this.judge.display_name)) {
+                this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
+                this.isJudgeParticipantError = true;
+                this.failedSubmission = true;
+                return;
+            }
+            if (this.form.valid && this.isValidEmail) {
+                this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
+                this.failedSubmission = false;
+                this.form.markAsPristine();
+                this.hasSaved = true;
 
-        if (this.form.valid && this.isValidEmail) {
-            this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
-            this.failedSubmission = false;
-            this.form.markAsPristine();
-            this.hasSaved = true;
+                this.changeDisplayName();
+                this.changeEmail();
+                this.changeTelephone();
 
-            this.changeDisplayName();
-            this.changeEmail();
-            this.changeTelephone();
+                if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
+                    const staffMemberIndex = this.hearing.participants.findIndex(
+                        x => x.hearing_role_name === Constants.HearingRoles.StaffMember
+                    );
 
-            if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
-                const staffMemberIndex = this.hearing.participants.findIndex(
-                    x => x.hearing_role_name === Constants.HearingRoles.StaffMember
-                );
-
-                if (staffMemberIndex > -1) {
-                    this.hearing.participants[staffMemberIndex] = this.staffMember;
-                } else {
-                    this.hearing.participants.push(this.staffMember);
+                    if (staffMemberIndex > -1) {
+                        this.hearing.participants[staffMemberIndex] = this.staffMember;
+                    } else {
+                        this.hearing.participants.push(this.staffMember);
+                    }
                 }
-            }
 
-            this.hearingService.updateHearingRequest(this.hearing);
+                this.hearingService.updateHearingRequest(this.hearing);
 
-            this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });
-            if (this.editMode) {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
-                this.router.navigate([PageUrls.Summary]);
+                this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });
+                if (this.editMode) {
+                    this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
+                    this.router.navigate([PageUrls.Summary]);
+                } else {
+                    this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
+                    this.router.navigate([PageUrls.AddParticipants]);
+                }
             } else {
-                this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
-                this.router.navigate([PageUrls.AddParticipants]);
+                this.failedSubmission = true;
             }
-        } else {
-            this.failedSubmission = true;
+        }
+        else {
+            this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
+            this.router.navigate([PageUrls.AddParticipants]);
         }
     }
 
