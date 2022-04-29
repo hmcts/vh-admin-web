@@ -34,6 +34,7 @@
     "@angular/router": "^11.0.5",
     "@hmcts/frontend": "^0.0.41-alpha",
     "@microsoft/applicationinsights-web": "^2.6.1",
+    "@ministryofjustice/frontend": "^1.4.0",
     "@ng-select/ng-select": "^6.1.0",
     "angular-auth-oidc-client": "^11.6.4",
     "classlist.js": "^1.1.20150312",
