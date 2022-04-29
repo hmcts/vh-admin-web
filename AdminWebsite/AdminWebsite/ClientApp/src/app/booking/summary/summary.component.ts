@@ -18,6 +18,8 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import {first} from "rxjs/operators";
+import {FeatureFlagService} from "../../services/feature-flag.service";
 
 @Component({
     selector: 'app-summary',
@@ -67,6 +69,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     private judgeAssigned: boolean;
+    private ejudFeatureFlag: boolean;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -74,7 +77,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private bookingService: BookingService,
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
-        private participantService: ParticipantService
+        private participantService: ParticipantService,
+        private featureService: FeatureFlagService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
@@ -99,6 +103,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
             );
         }
         this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
+        this.featureService.getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
+                this.ejudFeatureFlag = result
+            });
     }
 
     private checkForExistingRequest() {
@@ -223,6 +232,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
+                if(this.judgeExists == false && this.ejudFeatureFlag == false)
+                    throw new Error('Ejud Feature flag must be true, to book without a judge')
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number

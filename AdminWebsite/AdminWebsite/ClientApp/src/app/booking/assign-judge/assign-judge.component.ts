@@ -58,6 +58,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     invalidPattern: string;
     isValidEmail = true;
     showStaffMemberFeature: boolean;
+    ejudFeatureFlag: boolean;
 
     constructor(
         private fb: FormBuilder,
@@ -71,6 +72,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         private featureService: FeatureFlagService
     ) {
         super(bookingService, router, hearingService, logger);
+        featureService.getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
+                this.ejudFeatureFlag = result
+            });
     }
 
     static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
@@ -357,8 +363,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             }
         }
         else {
-            this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
-            this.router.navigate([PageUrls.AddParticipants]);
+            if(this.ejudFeatureFlag){
+                this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
+                this.router.navigate([PageUrls.AddParticipants]);
+            }
+            this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
+            this.failedSubmission = true;
+            return;
         }
     }
 
