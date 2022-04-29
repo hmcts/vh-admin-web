@@ -146,6 +146,54 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
+        public async Task Should_book_hearing_without_judge()
+        {
+            // Arrange
+            var bookingDetails = InitHearingForTest();
+            //remove judge
+            bookingDetails.Participants.Remove(bookingDetails.Participants.Find(e => e.HearingRoleName == "Judge"));
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = bookingDetails
+            };
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithEndPoints(2)
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Staff Member", "staff.member@hmcts.net");
+            
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+                .ReturnsAsync(hearingDetailsResponse);
+            
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
+            
+            // Act
+            var result = await _controller.Post(bookingRequest);
+
+            // Assert
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult) result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+            createdObjectResult.Value.Should().Be(hearingDetailsResponse);
+            
+            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+
+            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
+            
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+
+            _mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
+            
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
+            
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
+        }
+        
+        [Test]
         public async Task Should_book_hearing_for_single_day_without_endpoints()
         {
             // Arrange

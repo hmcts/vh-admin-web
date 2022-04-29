@@ -81,11 +81,9 @@ namespace AdminWebsite.Controllers
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-
                 List<ParticipantRequest> nonJudgeParticipants;
-
                 var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
-
+                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
                 // Disable to create AAD accounts for Panel members and wingers when ejudFeature is 'OFF'
                 if (ejudFeatureFlag)
                 {
@@ -116,7 +114,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
                 
-                if(_featureToggles.BookAndConfirmToggle())
+                if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingDetailsResponse.Id);
 
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
@@ -241,8 +239,10 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
-
-                if(_featureToggles.BookAndConfirmToggle())
+                
+                var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                var judgeExists =  hearing.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
+                if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingId, true);
 
                 return NoContent();
@@ -527,9 +527,13 @@ namespace AdminWebsite.Controllers
         {
             var errorMessage =
                 $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
-
             try
             {
+                var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                var judgeExists = hearing.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
+                if (!judgeExists)
+                    return BadRequest("This hearing has no judge");
+                
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
 
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
@@ -551,7 +555,6 @@ namespace AdminWebsite.Controllers
                         //if toggle off - send Hearing Reminder Email
                         if (!_featureToggles.BookAndConfirmToggle())
                         {
-                            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                             _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
                             await _hearingsService.SendHearingReminderEmail(hearing);
                         }
