@@ -72,10 +72,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         private featureService: FeatureFlagService
     ) {
         super(bookingService, router, hearingService, logger);
-        featureService.getFeatureFlagByName('EJudFeature')
+        featureService
+            .getFeatureFlagByName('EJudFeature')
             .pipe(first())
             .subscribe(result => {
-                this.ejudFeatureFlag = result
+                this.ejudFeatureFlag = result;
             });
     }
 
@@ -361,15 +362,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             } else {
                 this.failedSubmission = true;
             }
-        }
-        else {
-            if(this.ejudFeatureFlag){
+        } else {
+            if (this.ejudFeatureFlag) {
                 this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
                 this.router.navigate([PageUrls.AddParticipants]);
+            } else {
+                this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
+                this.failedSubmission = true;
             }
-            this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
-            this.failedSubmission = true;
-            return;
         }
     }
 

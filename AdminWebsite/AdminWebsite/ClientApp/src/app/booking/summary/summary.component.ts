@@ -18,8 +18,8 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import {first} from "rxjs/operators";
-import {FeatureFlagService} from "../../services/feature-flag.service";
+import { first } from 'rxjs/operators';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
     selector: 'app-summary',
@@ -103,10 +103,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
             );
         }
         this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
-        this.featureService.getFeatureFlagByName('EJudFeature')
+        this.featureService
+            .getFeatureFlagByName('EJudFeature')
             .pipe(first())
             .subscribe(result => {
-                this.ejudFeatureFlag = result
+                this.ejudFeatureFlag = result;
             });
     }
 
@@ -232,8 +233,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
-                if(this.judgeExists == false && this.ejudFeatureFlag == false)
-                    throw new Error('Ejud Feature flag must be true, to book without a judge')
+                if (!this.judgeExists && !this.ejudFeatureFlag) {
+                    throw new Error('Ejud Feature flag must be true, to book without a judge');
+                }
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number
@@ -396,7 +398,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
     }
 
-    get judgeExists(): boolean{
+    get judgeExists(): boolean {
         return this.judgeAssigned;
     }
 }
