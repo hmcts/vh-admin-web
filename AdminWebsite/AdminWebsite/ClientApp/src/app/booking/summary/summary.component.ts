@@ -66,6 +66,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
+    private judgeAssigned: boolean;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -88,7 +89,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
         this.retrieveHearingSummary();
-
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
@@ -98,6 +98,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
+        this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
     }
 
     private checkForExistingRequest() {
@@ -382,5 +383,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     get canEdit() {
         return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
+    }
+
+    get judgeExists(): boolean{
+        return this.judgeAssigned;
     }
 }

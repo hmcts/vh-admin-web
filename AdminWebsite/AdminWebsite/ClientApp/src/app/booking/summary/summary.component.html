@@ -4,15 +4,22 @@
     <h1 class="govuk-heading-l">{{ isExistingBooking ? caseNumber : constants.BookHearingTitle }}</h1>
   </div>
 </div>
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
+      <div *ngIf="!judgeExists" class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" style="border-color:#d4351c;">
+          <div class="govuk-notification-banner__header" style="background:#d4351c;">
+              <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Important</h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+              <p class="govuk-notification-banner_heading">This hearing has no judge and booking is incomplete. Once a judge is added the booking will be completed. <a class="govuk-notification-banner_link" [routerLink]="['/assign-judge']" href="#"> Add a judge</a></p>
+          </div>
+      </div>
     <h2 class="govuk-heading-m" id="hearingSummary">
       {{ isExistingBooking ? 'Booking details' : 'Hearing summary' }}
     </h2>
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>
+      <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>`
       <div id="caseName" class="vh-text-break">{{ caseName }}</div>
       <div id="caseType">{{ caseType }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
