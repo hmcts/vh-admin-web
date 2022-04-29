@@ -241,7 +241,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
                 
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists =  hearing.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
+                var judgeExists =  hearing.Participants.Any(x => x.HearingRoleName == "Judge");
                 if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingId, true);
 
@@ -315,6 +315,15 @@ namespace AdminWebsite.Controllers
                     return BadRequest(ModelState);
                 }
 
+                var judgeExistsInRequest = request.Participants.Any(p => p.HearingRoleName == "Judge");
+                if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
+                {
+                    var errorMessage =
+                        $"You can't edit a confirmed hearing [{hearingId}] if the update removes the judge";
+                    _logger.LogWarning(errorMessage);
+                    ModelState.AddModelError(nameof(hearingId), errorMessage);
+                    return BadRequest(ModelState);
+                }
                 //Save hearing details
                 var updateHearingRequest =
                     HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
@@ -530,7 +539,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists = hearing.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
+                var judgeExists = hearing.Participants.Any(p => p.HearingRoleName == "Judge");
                 if (!judgeExists)
                     return BadRequest("This hearing has no judge");
                 
