@@ -1222,6 +1222,25 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Exactly(timeSent));
         }
 
+        [Test]
+        public async Task Should_not_be_able_to_remove_judge_from_confirmed_hearing()
+        {
+            // arrange
+            var hearingId = _updatedExistingParticipantHearingOriginal.Id;
+            var updatedHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
+            updatedHearing.Status = BookingStatus.Created;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(hearingId))
+                .ReturnsAsync(updatedHearing);
+            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(updatedHearing.GroupId.Value))
+                .ReturnsAsync(new List<HearingDetailsResponse> { updatedHearing });
+            
+            // act
+            var result = await _controller.EditHearing(hearingId, It.IsAny<EditHearingRequest>());
+
+            // assert
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+        
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x =>

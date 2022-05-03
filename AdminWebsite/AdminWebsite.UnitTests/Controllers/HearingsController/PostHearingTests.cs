@@ -57,6 +57,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponse
+                {
+                    Participants = new List<ParticipantResponse>
+                    {
+                        new ParticipantResponse {HearingRoleName = "Judge"}
+                    },
+                    CaseTypeName = "Generic"
+                });
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
@@ -93,6 +102,48 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
+        }
+        
+        [TestCase(false, false, false)] //no judge & bookAndConfirm off
+        [TestCase(true, false, false)] //with judge & bookAndConfirm off
+        [TestCase(false, true, false)] //with no judge & bookAndConfirm on
+        [TestCase(true, true, true)] //with judge & bookAndConfirm on 
+        public async Task Should_update_participant_user_details_and_confirm_booking(bool withJudge, bool bookAndConfirm, bool shouldConfirm)
+        {
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Verifiable();
+            _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(bookAndConfirm);
+            // setup response
+            var particpants = new List<BookingsApi.Contract.Requests.ParticipantRequest>();
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "username",
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative"
+            };
+            if (withJudge)
+                particpants.Add(new BookingsApi.Contract.Requests.ParticipantRequest
+                {
+                    Username = "username",
+                    CaseRoleName = "Judge",
+                    HearingRoleName = "Judge"
+                });
+            
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithParticipant("Representative", "username");
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+            
+            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
+
+            particpants.Add(participant);
+            await PostWithParticipants(particpants.ToArray());
+
+            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()),
+                Times.Exactly(shouldConfirm ? 2 : 0));
         }
 
         [Test]
@@ -562,14 +613,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Verifiable();
 
-            var vhExistingHearing = new HearingDetailsResponse
-            {
-                CaseTypeName = "Generic"
-            };
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(vhExistingHearing);
-
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest{Status = UpdateBookingStatus.Created});
 
             response.Should().BeOfType<OkObjectResult>();
@@ -578,7 +621,23 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()),
                 Times.Exactly(2));
         }
+        
+        [Test]
+        public async Task Should_not_confirm_booking_status_if_no_judge_present()
+        {
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Verifiable();
+            //no judge in hearingDetails mock
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<HearingDetailsResponse>());
 
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(),
+                new UpdateBookingStatusRequest {Status = UpdateBookingStatus.Created});
+            
+            response.Should().BeOfType<BadRequestObjectResult>();
+        }
+        
         [Test]
         public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_bad_result()
         {

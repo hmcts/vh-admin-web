@@ -10,6 +10,7 @@ using Moq;
 using NotificationApi.Client;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
@@ -18,6 +19,7 @@ using VideoApi.Client;
 using Microsoft.Extensions.Options;
 using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
+using BookingsApi.Contract.Responses;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -44,7 +46,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponse
+                {
+                    Participants = new List<ParticipantResponse>
+                    {
+                        new ParticipantResponse {HearingRoleName = "Judge"}
+                    }
+                });
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
 
@@ -62,7 +71,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.UpdateBookingStatus(bookingGuid, updateBookingStatusRequest);
             
             // Assert
-            var result = (OkObjectResult) response;
+            var result = response as OkObjectResult;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             
             result.Value.Should().NotBeNull()

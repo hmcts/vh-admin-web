@@ -83,7 +83,7 @@ namespace AdminWebsite.Controllers
             {
                 List<ParticipantRequest> nonJudgeParticipants;
                 var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
-                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == "Judge") ?? false;
+                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
                 // Disable to create AAD accounts for Panel members and wingers when ejudFeature is 'OFF'
                 if (ejudFeatureFlag)
                 {
@@ -241,7 +241,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
                 
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists =  hearing.Participants.Any(x => x.HearingRoleName == "Judge");
+                var judgeExists =  hearing.Participants.Any(x => x.HearingRoleName == RoleNames.Judge);
                 if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingId, true);
 
@@ -270,8 +270,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
-        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId,
-            [FromBody] EditHearingRequest request)
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
             var usernameAdIdDict = new Dictionary<string, User>();
             if (hearingId == Guid.Empty)
@@ -315,11 +314,10 @@ namespace AdminWebsite.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var judgeExistsInRequest = request.Participants.Any(p => p.HearingRoleName == "Judge");
+                var judgeExistsInRequest = request?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
                 {
-                    var errorMessage =
-                        $"You can't edit a confirmed hearing [{hearingId}] if the update removes the judge";
+                    var errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
                     _logger.LogWarning(errorMessage);
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
@@ -539,8 +537,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists = hearing.Participants.Any(p => p.HearingRoleName == "Judge");
-                if (!judgeExists)
+                var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
+                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
                 
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
