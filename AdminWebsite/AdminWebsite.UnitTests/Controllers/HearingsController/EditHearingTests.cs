@@ -42,7 +42,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     {
         private EditHearingRequest _addEndpointToHearingRequest;
         private EditHearingRequest _addNewParticipantRequest;
-        private EditHearingRequest _updateJudgeRequest;
+        private EditHearingRequest _switchJudgeRequest;
+        private EditHearingRequest _updateJudgeOtherInformationRequest;
         private Mock<IBookingsApiClient> _bookingsApiClient;
 
         private AdminWebsite.Controllers.HearingsController _controller;
@@ -264,7 +265,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3)
             };
             
-            _updateJudgeRequest = new EditHearingRequest
+            _switchJudgeRequest = new EditHearingRequest
             {
                 Case = new EditCaseRequest
                 {
@@ -280,9 +281,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         LastName = "Test_LastName",
                         HearingRoleName = HearingRoleName.Judge
                     }
-                },
+                }
             };
 
+            _updateJudgeOtherInformationRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = "Case",
+                    Number = "123"
+                },
+                Participants = new List<EditParticipantRequest>
+                {
+                    new EditParticipantRequest
+                    {
+                        Id = participant1, CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
+                        ContactEmail = "judge.user@email.com", FirstName = "Judge"
+                    }
+                },
+                OtherInformation = new OtherInformationDetails { JudgeEmail = "judge@gmail.com", JudgePhone = "0845"}.ToOtherInformationString() // "|JudgeEmail|judge@gmail.com|JudgePhone|0845"
+            };
+      
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
 
@@ -360,14 +379,34 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_allow_updating_judge_prior_30_minutes_of_it_starting()
+        public async Task Should_allow_switching_judge_prior_30_minutes_of_hearing_starting()
         {
             _existingHearingWithJudge.ScheduledDateTime = DateTime.UtcNow.AddMinutes(20);
             _existingHearingWithJudge.Status = BookingStatus.Created;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithJudge)
                 .ReturnsAsync(_existingHearingWithJudge);
-            var result = await _controller.EditHearing(_validId, _updateJudgeRequest);
+            var result = await _controller.EditHearing(_validId, _switchJudgeRequest);
+            
+            ((ObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(
+                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()),
+                Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_allow_updating_judge_other_information_prior_30_minutes_of_hearing_starting()
+        {
+            _existingHearingWithJudge.ScheduledDateTime = DateTime.UtcNow.AddMinutes(20);
+            _existingHearingWithJudge.Status = BookingStatus.Created;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithJudge)
+                .ReturnsAsync(_existingHearingWithJudge);
+            var result = await _controller.EditHearing(_validId, _updateJudgeOtherInformationRequest);
             
             ((ObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(
