@@ -88,6 +88,8 @@ namespace AdminWebsite.Services
         bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
 
+        bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
+
         Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
 
         Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
@@ -194,6 +196,18 @@ namespace AdminWebsite.Services
                 editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.StaffMember);
             return (existingStaffMember == null && newStaffMember != null) ||
                    (existingStaffMember != null && newStaffMember == null);
+        }
+
+        public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
+        {
+            var existingJudge =
+                hearingDetailsResponse.Participants.FirstOrDefault(
+                    x => x.HearingRoleName == HearingRoleName.Judge);
+            var newJudge =
+                editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
+            var result = newJudge != null && existingJudge != null && existingJudge.Id != newJudge.Id;
+            return result;
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
