@@ -58,7 +58,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     invalidPattern: string;
     isValidEmail = true;
     showStaffMemberFeature: boolean;
-    ejudFeatureFlag: boolean;
+    ejudFeatureFlag: boolean = false;
 
     constructor(
         private fb: FormBuilder,

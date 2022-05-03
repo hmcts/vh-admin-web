@@ -424,7 +424,19 @@ describe('AssignJudgeComponent', () => {
             component.judge = testJudge;
         });
 
-        it('should set correct validation errors if judge is null', () => {
+        it('should set correct validation errors if judge is null, and Ejud flag on', () => {
+            component.ejudFeatureFlag = true
+            component.judge = null;
+
+            component.saveJudgeAndStaffMember();
+
+            expect(component.isJudgeParticipantError).toBe(false);
+            expect(component.failedSubmission).toBe(false);
+            expect(component.isJudgeSelected).toBe(false);
+        });
+
+        it('should set correct validation errors if judge is null, and Ejud flag off', () => {
+            component.ejudFeatureFlag = false
             component.judge = null;
 
             component.saveJudgeAndStaffMember();
@@ -434,7 +446,19 @@ describe('AssignJudgeComponent', () => {
             expect(component.isJudgeSelected).toBe(false);
         });
 
-        it('should set correct validation errors if email is null', () => {
+        it('should set correct validation errors if email is null, and Ejud flag on', () => {
+            component.ejudFeatureFlag = true
+            component.judge.email = null;
+
+            component.saveJudgeAndStaffMember();
+
+            expect(component.isJudgeParticipantError).toBe(false);
+            expect(component.failedSubmission).toBe(false);
+            expect(component.isJudgeSelected).toBe(false);
+        });
+
+        it('should set correct validation errors if email is null, and Ejud flag off', () => {
+            component.ejudFeatureFlag = false
             component.judge.email = null;
 
             component.saveJudgeAndStaffMember();
