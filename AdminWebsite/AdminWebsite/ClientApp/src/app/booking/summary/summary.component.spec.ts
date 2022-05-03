@@ -27,7 +27,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
-import {FeatureFlagService} from "../../services/feature-flag.service";
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -113,7 +113,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'isConferenceClosed',
     'isHearingAboutToStart'
 ]);
-featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService','getFeatureFlagByName'])
+featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
@@ -136,7 +136,7 @@ describe('SummaryComponent with valid request', () => {
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy },
                     { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 declarations: [
                     SummaryComponent,
@@ -381,7 +381,6 @@ describe('SummaryComponent with valid request', () => {
         component.navToAddJudge();
         expect(routerSpy.navigate).toHaveBeenCalled();
     });
-
 });
 
 describe('SummaryComponent  with invalid request', () => {
@@ -411,7 +410,7 @@ describe('SummaryComponent  with invalid request', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -442,11 +441,10 @@ describe('SummaryComponent  with invalid request', () => {
         expect(component.showWaitSaving).toBeFalsy();
     });
 
-
     it('should not save booking, when no judge assigned and Ejud flag off', async () => {
         component.ngOnInit();
         fixture.detectChanges();
-        component.ejudFeatureFlag = false
+        component.ejudFeatureFlag = false;
         await component.bookHearing();
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalledTimes(0);
         expect(component.showWaitSaving).toBeFalsy();
@@ -472,7 +470,7 @@ describe('SummaryComponent  with existing request', () => {
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy },
                     { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -636,7 +634,7 @@ describe('SummaryComponent  with multi days request', () => {
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
-    let featureFlagSpy: jasmine.SpyObj<FeatureFlagService>;
+    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
@@ -650,8 +648,8 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
-    featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService','getFeatureFlagByName'])
-    featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
+    featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
+    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
     component = new SummaryComponent(
         videoHearingsServiceSpy,
@@ -660,7 +658,7 @@ describe('SummaryComponent  with multi days request', () => {
         loggerSpy,
         recordingGuardServiceSpy,
         participantServiceSpy,
-        featureFlagSpy
+        featureFlagServiceSpy
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();

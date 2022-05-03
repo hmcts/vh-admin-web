@@ -69,7 +69,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     judgeAssigned: boolean;
-    ejudFeatureFlag: boolean = false;
+    ejudFeatureFlag = false;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -83,9 +83,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
         featureService
-           .getFeatureFlagByName('EJudFeature')
-           .pipe(first())
-           .subscribe(result => {
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
                 this.ejudFeatureFlag = result;
             });
     }
@@ -237,7 +237,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     const error = new Error('Ejud Feature flag must be true, to book without a judge');
                     this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error);
                     this.setError(error);
-                    return
+                    return;
                 }
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
@@ -401,7 +401,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
     }
 
-    navToAddJudge(){
+    navToAddJudge() {
         this.router.navigate([PageUrls.AssignJudge]);
     }
 }
