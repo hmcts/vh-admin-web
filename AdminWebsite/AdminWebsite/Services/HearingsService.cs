@@ -206,8 +206,11 @@ namespace AdminWebsite.Services
                     x => x.HearingRoleName == HearingRoleName.Judge);
             var newJudge =
                 editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
-            var result = newJudge != null && existingJudge != null && existingJudge.Id != newJudge.Id;
-            return result;
+            var existingJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(hearingDetailsResponse.OtherInformation);
+            var newJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(editHearingRequest.OtherInformation);
+
+            return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
+                   (newJudgeOtherInformation ?? string.Empty) != (existingJudgeOtherInformation ?? string.Empty);
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
