@@ -68,8 +68,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
-    private judgeAssigned: boolean;
-    private ejudFeatureFlag: boolean;
+    judgeAssigned: boolean;
+    ejudFeatureFlag: boolean = false;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -82,6 +82,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
+        featureService
+           .getFeatureFlagByName('EJudFeature')
+           .pipe(first())
+           .subscribe(result => {
+                this.ejudFeatureFlag = result;
+            });
     }
 
     ngOnInit() {
@@ -103,12 +109,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
             );
         }
         this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
-        this.featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
     }
 
     private checkForExistingRequest() {
@@ -233,8 +233,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
-                if (!this.judgeExists && !this.ejudFeatureFlag) {
-                    throw new Error('Ejud Feature flag must be true, to book without a judge');
+                if (!this.judgeAssigned && !this.ejudFeatureFlag) {
+                    const error = new Error('Ejud Feature flag must be true, to book without a judge');
+                    this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error);
+                    this.setError(error);
+                    return
                 }
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
@@ -398,7 +401,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
     }
 
-    get judgeExists(): boolean {
-        return this.judgeAssigned;
+    navToAddJudge(){
+        this.router.navigate([PageUrls.AssignJudge]);
     }
 }

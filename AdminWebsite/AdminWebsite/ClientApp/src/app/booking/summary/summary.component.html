@@ -7,7 +7,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <div
-      *ngIf="!judgeExists"
+      *ngIf="!judgeAssigned"
       class="govuk-notification-banner"
       role="region"
       aria-labelledby="govuk-notification-banner-title"
@@ -20,7 +20,7 @@
       <div class="govuk-notification-banner__content">
         <p class="govuk-notification-banner_heading">
           This hearing has no judge and booking is incomplete. Once a judge is added the booking will be completed.
-          <a class="govuk-notification-banner_link" [routerLink]="['/assign-judge']" href="#"> Add a judge</a>
+          <a class="vhlink" (click)=navToAddJudge() href="javascript:void(0)" style="margin: 0; float:none;"> Add a judge</a>
         </p>
       </div>
     </div>
@@ -30,7 +30,6 @@
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
       <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>
-      `
       <div id="caseName" class="vh-text-break">{{ caseName }}</div>
       <div id="caseType">{{ caseType }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>

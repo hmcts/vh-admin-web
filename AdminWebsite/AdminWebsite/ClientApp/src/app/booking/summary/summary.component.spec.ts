@@ -27,6 +27,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
+import {FeatureFlagService} from "../../services/feature-flag.service";
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -90,6 +91,7 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
+let featureFlagSpy: jasmine.SpyObj<FeatureFlagService>;
 const stringifier = new PipeStringifierService();
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
@@ -111,7 +113,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'isConferenceClosed',
     'isHearingAboutToStart'
 ]);
-
+featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService','getFeatureFlagByName'])
+featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
@@ -132,7 +135,8 @@ describe('SummaryComponent with valid request', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 declarations: [
                     SummaryComponent,
@@ -209,9 +213,11 @@ describe('SummaryComponent with valid request', () => {
         await component.bookHearing();
         expect(component.bookingsSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
+        expect(featureFlagSpy.getFeatureFlagByName).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
     });
+
     it('should display valid court address when room number is empty', () => {
         component.hearing.court_room = '';
         component.ngOnInit();
@@ -369,6 +375,13 @@ describe('SummaryComponent with valid request', () => {
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
         expect(component.canEdit).toBe(false);
     });
+
+    it('should call navigate "to add a judge page"', async () => {
+        component.ngOnInit();
+        component.navToAddJudge();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+    });
+
 });
 
 describe('SummaryComponent  with invalid request', () => {
@@ -397,7 +410,8 @@ describe('SummaryComponent  with invalid request', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy }
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -427,6 +441,17 @@ describe('SummaryComponent  with invalid request', () => {
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
+
+
+    it('should not save booking, when no judge assigned and Ejud flag off', async () => {
+        component.ngOnInit();
+        fixture.detectChanges();
+        component.ejudFeatureFlag = false
+        await component.bookHearing();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalledTimes(0);
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(component.showErrorSaving).toBeTruthy();
+    });
 });
 
 describe('SummaryComponent  with existing request', () => {
@@ -446,7 +471,8 @@ describe('SummaryComponent  with existing request', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy }
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -610,6 +636,7 @@ describe('SummaryComponent  with multi days request', () => {
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
+    let featureFlagSpy: jasmine.SpyObj<FeatureFlagService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
@@ -623,6 +650,8 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
+    featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService','getFeatureFlagByName'])
+    featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
 
     component = new SummaryComponent(
         videoHearingsServiceSpy,
@@ -630,7 +659,8 @@ describe('SummaryComponent  with multi days request', () => {
         bookingServiceSpy,
         loggerSpy,
         recordingGuardServiceSpy,
-        participantServiceSpy
+        participantServiceSpy,
+        featureFlagSpy
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
@@ -640,7 +670,6 @@ describe('SummaryComponent  with multi days request', () => {
         component.hearing = existingRequest;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
-
         component.ngOnInit();
 
         expect(new Date(component.hearingDate).getDate()).toEqual(new Date(existingRequest.scheduled_date_time).getDate());
