@@ -165,6 +165,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }
+        else if (participant.is_judge && this.videoHearingsService.isHearingAboutToStart())
+        {
+            return true;
+        }
         return !(this.videoHearingsService.isHearingAboutToStart() && !participant.addedDuringHearing);
     }
 }

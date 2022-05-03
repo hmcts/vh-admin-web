@@ -102,7 +102,7 @@ export class ParticipantItemComponent {
     }
 
     canEditJudge(): boolean {
-        if (!this.canEdit || this.videoHearingsService.isConferenceClosed() || this.videoHearingsService.isHearingAboutToStart()) {
+        if (!this.canEdit || this.videoHearingsService.isConferenceClosed()) {
             return false;
         }
         return true;

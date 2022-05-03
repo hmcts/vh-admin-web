@@ -10,11 +10,12 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
     constructor(private videoHearingsService: VideoHearingsService, private router: Router) {}
 
     canActivate(): boolean {
-        if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
-            this.router.navigate(['/summary']);
-            return false;
-        } else {
-            return true;
-        }
+        // if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
+        //     this.router.navigate(['/summary']);
+        //     return false;
+        // } else {
+        //     return true;
+        // }
+        return true;
     }
 }
