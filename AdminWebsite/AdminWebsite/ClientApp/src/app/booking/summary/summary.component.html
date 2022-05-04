@@ -8,19 +8,18 @@
   <div class="govuk-grid-column-one-half">
     <div
       *ngIf="!judgeAssigned"
-      class="govuk-notification-banner"
+      class="govuk-notification-banner red-theme"
       role="region"
       aria-labelledby="govuk-notification-banner-title"
       data-module="govuk-notification-banner"
-      style="border-color: #d4351c"
     >
-      <div class="govuk-notification-banner__header" style="background: #d4351c">
+      <div class="govuk-notification-banner__header red-theme">
         <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Important</h2>
       </div>
       <div class="govuk-notification-banner__content">
         <p class="govuk-notification-banner_heading">
           This hearing has no judge and booking is incomplete. Once a judge is added the booking will be completed.
-          <a class="vhlink" (click)="navToAddJudge()" href="javascript:void(0)" style="margin: 0; float: none"> Add a judge</a>
+          <a class="vhlink add-judge-link" (click)="navToAddJudge()" href="javascript:void(0)"> Add a judge</a>
         </p>
       </div>
     </div>
