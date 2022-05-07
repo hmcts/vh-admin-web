@@ -413,6 +413,8 @@ namespace AdminWebsite.Controllers
                 {
                     await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 }
+                
+                await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
 
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
 
@@ -430,6 +432,13 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private async Task ConfirmBookingWhenJudgeAdded(HearingDetailsResponse orgHearing,  bool judgeExistsInRequest)
+        {
+            var judgeInOriginalHearing = orgHearing.Participants.Any(p => p.HearingRoleName == RoleNames.Judge);
+            if (judgeExistsInRequest && !judgeInOriginalHearing && _featureToggles.BookAndConfirmToggle())
+                await ConfirmHearing(orgHearing.Id);
         }
 
         private async Task SendJudgeEmailIfNeeded(HearingDetailsResponse updatedHearing,
