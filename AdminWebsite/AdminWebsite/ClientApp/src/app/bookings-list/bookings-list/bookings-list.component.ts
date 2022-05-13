@@ -383,21 +383,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     isSearchFormValid() {
-        // const caseNumber = this.searchForm.controls.caseNumber.value as string;
-        // const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
-        // const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
-        // const startDate = this.searchForm.controls.startDate.value as Date;
-        // const endDate = this.searchForm.controls.endDate.value as Date;
-        // const lastName = this.searchForm.controls.participantLastName.value as string;
-
-        // const formFieldsValid =
-        //     caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate || lastName;
-
-        // if (formFieldsValid) {
-        //     return true;
-        // }
-
-        // return false;
         return true;
     }
 
