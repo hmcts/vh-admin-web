@@ -150,25 +150,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
                 Cases = cases,
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3),
-                OtherInformation = ""
-            };
-
-            _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
-            {
-                Id = _validId,
-                GroupId = _validId,
-                Participants = new List<ParticipantResponse>
-                {
-                    new ParticipantResponse
-                    {
-                        Id = Guid.NewGuid(),
-                        UserRoleName = "Individual",
-                        ContactEmail = "old@hmcts.net",
-                        Username = "old@hmcts.net"
-                    }
-                },
-                Cases = cases,
                 CaseTypeName = "Unit Test",
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 OtherInformation = ""
@@ -828,6 +809,43 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.IsAny<UpdateEndpointRequest>()), Times.Exactly(3));
         }
 
+        [Test]
+        public async Task If_Judge_Added_To_Hearing_And_Saved_Should_Auto_confirm_booking()
+        {
+            // arrange - original hearing
+            var hearingId = _updatedExistingParticipantHearingOriginal.Id;
+            var originalHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
+            var updatedHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
+            updatedHearing.Participants.Add(new ParticipantResponse{
+                DisplayName = "newJudge",
+                HearingRoleName = RoleNames.Judge,
+                CaseRoleName = RoleNames.Judge,
+                UserRoleName = RoleNames.Judge,
+                ContactEmail = "judge@moj.gov.uk"
+            });
+            originalHearing.Status = BookingStatus.Booked;
+            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(originalHearing.GroupId.Value))
+                .ReturnsAsync(new List<HearingDetailsResponse> {originalHearing});
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(hearingId))
+                .ReturnsAsync(originalHearing)
+                .ReturnsAsync(updatedHearing);
+            // arrange - request
+            var request = new EditHearingRequest();
+            request.Case = new EditCaseRequest();
+            request.Participants.Add(new EditParticipantRequest
+            {
+                DisplayName = "newJudge",
+                HearingRoleName = RoleNames.Judge,
+                CaseRoleName = RoleNames.Judge,
+                ContactEmail = "judge@moj.gov.uk"
+            });
+            //Act
+            var result = await _controller.EditHearing(hearingId, request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(),It.IsAny<UpdateBookingStatusRequest>()), Times.AtLeastOnce);
+        }
+        
         [Test]
         public async Task Should_not_update_DisplayName_if_no_matching_endpoint_exists_in_list()
         {
