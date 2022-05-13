@@ -18,6 +18,8 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { first } from 'rxjs/operators';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
     selector: 'app-summary',
@@ -66,6 +68,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
+    judgeAssigned: boolean;
+    ejudFeatureFlag = false;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -73,10 +77,17 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private bookingService: BookingService,
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
-        private participantService: ParticipantService
+        private participantService: ParticipantService,
+        private featureService: FeatureFlagService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
+        featureService
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
+                this.ejudFeatureFlag = result;
+            });
     }
 
     ngOnInit() {
@@ -88,7 +99,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
         this.retrieveHearingSummary();
-
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
@@ -98,6 +108,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
+        this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
     }
 
     private checkForExistingRequest() {
@@ -222,6 +233,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
+                if (!this.judgeAssigned && !this.ejudFeatureFlag) {
+                    const error = new Error('Ejud Feature flag must be true, to book without a judge');
+                    this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error);
+                    this.setError(error);
+                    return;
+                }
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number
@@ -382,5 +399,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     get canEdit() {
         return !this.hearingService.isConferenceClosed() && !this.hearingService.isHearingAboutToStart();
+    }
+
+    navToAddJudge() {
+        this.router.navigate([PageUrls.AssignJudge]);
     }
 }

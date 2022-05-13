@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
@@ -43,6 +44,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         PexipNode = "PexipNode",
                         PexipSelfTestNode = "PexipSelfTestNode",
                         TelephoneConferenceId = "expected_conference_phone_id"
+                    }
+                });
+            _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new HearingDetailsResponse
+                {
+                    Participants = new List<ParticipantResponse>
+                    {
+                        new ParticipantResponse {HearingRoleName = "Judge"}
                     }
                 });
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
@@ -136,7 +145,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(expectedConferenceDetailsResponse);
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
-            var result = (OkObjectResult)response;
+            var result = response as OkObjectResult;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
@@ -589,7 +598,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
         }
-
+        
         [Test]
         public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_badrequest()
         {
@@ -613,28 +622,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         }
 
-        public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_exception()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var request = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Cancelled
-            };
-
-            var hearingId = Guid.NewGuid();
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
-                .ThrowsAsync(new Exception("Booking cancellation test exception."));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, request);
-
-            var result = (BadRequestObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-
-        }
-
         private HearingDetailsResponse InitBookingForResponse(Guid hearingId)
         {
             var hearing = HearingResponseBuilder.Build()
@@ -642,6 +629,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname2.lname2@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            hearing.Participants.First(e => e.UserRoleName == "Judge").HearingRoleName = "Judge";
             hearing.Id = hearingId;
             hearing.GroupId = hearingId;
             return hearing;

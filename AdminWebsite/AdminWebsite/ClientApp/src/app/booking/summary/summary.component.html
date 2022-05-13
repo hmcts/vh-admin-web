@@ -4,9 +4,25 @@
     <h1 class="govuk-heading-l">{{ isExistingBooking ? caseNumber : constants.BookHearingTitle }}</h1>
   </div>
 </div>
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
+    <div
+      *ngIf="!judgeAssigned"
+      class="govuk-notification-banner red-theme"
+      role="region"
+      aria-labelledby="govuk-notification-banner-title"
+      data-module="govuk-notification-banner"
+    >
+      <div class="govuk-notification-banner__header red-theme">
+        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Important</h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <p class="govuk-notification-banner_heading">
+          This hearing has no judge and booking is incomplete. Once a judge is added the booking will be completed.
+          <a class="vhlink add-judge-link" (click)="navToAddJudge()" href="javascript:void(0)"> Add a judge</a>
+        </p>
+      </div>
+    </div>
     <h2 class="govuk-heading-m" id="hearingSummary">
       {{ isExistingBooking ? 'Booking details' : 'Hearing summary' }}
     </h2>
