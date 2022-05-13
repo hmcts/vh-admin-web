@@ -382,10 +382,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         );
     }
 
-    isSearchFormValid() {
-        return true;
-    }
-
     openSearchPanel() {
         this.showSearch = true;
     }
