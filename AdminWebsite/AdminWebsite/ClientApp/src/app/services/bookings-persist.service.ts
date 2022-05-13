@@ -15,6 +15,7 @@ export class BookingPersistService {
     private _startDate: Date;
     private _endDate: Date;
     private _participantLastName: string;
+    private _noJudgeInHearings: boolean;
     private _showSearch = false;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
@@ -105,6 +106,14 @@ export class BookingPersistService {
 
     set participantLastName(value) {
         this._participantLastName = value;
+    }
+
+    get noJugdeInHearings(): boolean {
+        return this._noJudgeInHearings;
+    }
+
+    set noJugdeInHearings(value) {
+        this._noJudgeInHearings = value;
     }
 
     get selectedVenueIds(): number[] {

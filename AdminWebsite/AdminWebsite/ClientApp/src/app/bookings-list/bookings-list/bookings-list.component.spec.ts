@@ -456,8 +456,8 @@ export class BookingPersistServiceSpy {
     private _selectedGroupIndex = 0;
     private _selectedItemIndex = 0;
     private _caseNumber = 'CASE_NUMBER';
-    private _searchTerm = 'SEARCH_VALUE';
     private _showSearch = false;
+    private _noJudgeInHearings = false;
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -502,6 +502,14 @@ export class BookingPersistServiceSpy {
 
     set showSearch(value) {
         this._showSearch = value;
+    }
+
+    get noJugdeInHearings(): boolean {
+        return this._noJudgeInHearings;
+    }
+
+    set noJugdeInHearings(value) {
+        this._noJudgeInHearings = value;
     }
 
     updateBooking(hearing: HearingModel) {
@@ -582,13 +590,15 @@ describe('BookingsListComponent', () => {
             fixture.detectChanges();
         })
     );
-    function setFormValue() {
+
+    function setFormValue(noJudge?: boolean) {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
         component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
         component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
         component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
         component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
         component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
+        component.searchForm.controls['noJudge'].setValue(noJudge ?? false);
     }
 
     function clearSearch() {
@@ -598,6 +608,7 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['startDate'].setValue(null);
         component.searchForm.controls['endDate'].setValue(null);
         component.searchForm.controls['participantLastName'].setValue('');
+        component.searchForm.controls['noJudge'].setValue(false);
     }
 
     it('should create bookings list component', () => {
@@ -648,7 +659,8 @@ describe('BookingsListComponent', () => {
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
-            bookingPersistService.participantLastName
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings
         );
     });
 
@@ -673,7 +685,8 @@ describe('BookingsListComponent', () => {
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.endDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
-            bookingPersistService.participantLastName
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings
         );
     });
 
@@ -698,8 +711,43 @@ describe('BookingsListComponent', () => {
             bookingPersistService.selectedCaseTypes,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.startDate).endOf('day').toDate(),
-            bookingPersistService.participantLastName
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings
         );
+    });
+
+    it('should onSearch (admin_search flag on) with no judge option selected', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue(true);
+        component.enableSearchFeature = true;
+        component.searchForm.controls['endDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.noJugdeInHearings).toBeTruthy();
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.caseNumber,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings
+        );
+    });
+
+    describe('noJudgeInHearing', () => {
+        it('no judge option is ON', () => {
+            const optionSelected = true;
+            bookingPersistService.noJugdeInHearings = optionSelected;
+            expect(component.noJugdeInHearings).toBeTruthy();
+        });
+
+        it('no judge option is OFF', () => {
+            const optionSelected = false;
+            bookingPersistService.noJugdeInHearings = optionSelected;
+            expect(component.noJugdeInHearings).toBeFalsy();
+        });
     });
 
     describe('startDateOnBlur', () => {
@@ -833,6 +881,7 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.selectedCaseTypes).toEqual([]);
         expect(bookingPersistService.startDate).toEqual(null);
         expect(bookingPersistService.endDate).toEqual(null);
+        expect(bookingPersistService.noJugdeInHearings).toBeFalsy();
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
     });
@@ -863,7 +912,7 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(true);
+        expect(searchButton.disabled).toBe(false);
     });
 
     it('should enable search button if caseNumber field is valid', () => {

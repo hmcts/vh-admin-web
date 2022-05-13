@@ -3038,6 +3038,7 @@ export class BookingSearchRequest implements IBookingSearchRequest {
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
+    noJudge?: boolean;
 
     constructor(data?: IBookingSearchRequest) {
         if (data) {
@@ -3063,6 +3064,7 @@ export class BookingSearchRequest implements IBookingSearchRequest {
             this.startDate = _data['startDate'] ? new Date(_data['startDate'].toString()) : <any>undefined;
             this.endDate = _data['endDate'] ? new Date(_data['endDate'].toString()) : <any>undefined;
             this.lastName = _data['lastName'];
+            this.noJudge = _data['noJudge'];
         }
     }
 
@@ -3089,6 +3091,7 @@ export class BookingSearchRequest implements IBookingSearchRequest {
         data['startDate'] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data['endDate'] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data['lastName'] = this.lastName;
+        data['noJudge'] = this.noJudge;
         return data;
     }
 }
@@ -3102,6 +3105,7 @@ export interface IBookingSearchRequest {
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
+    noJudge?: boolean;
 }
 
 export enum BookingStatus {
