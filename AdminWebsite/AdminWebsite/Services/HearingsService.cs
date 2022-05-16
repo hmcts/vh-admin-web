@@ -311,7 +311,8 @@ namespace AdminWebsite.Services
                 return;
             }
             var participantsToEmail = participants ?? hearing.Participants;
-            var filteredParticipants = participantsToEmail.AsEnumerable();
+            var filteredParticipants = participantsToEmail
+                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
             if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
             {
