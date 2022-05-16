@@ -19,7 +19,8 @@ export const routes: Routes = [
     {
         path: 'assign-judge',
         component: AssignJudgeComponent,
-        canActivate: [AuthGuard, AdminGuard]
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard],
+        data: { exceptionToRuleCheck: true }
     },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
