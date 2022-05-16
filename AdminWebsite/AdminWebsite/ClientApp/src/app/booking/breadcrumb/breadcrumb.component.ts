@@ -17,12 +17,12 @@ export class BreadcrumbComponent implements OnInit {
     currentItem: BreadcrumbItemModel;
     @Input()
     canNavigate: boolean;
-    ejudFeatureFlag: boolean = false
+    ejudFeatureFlag = false;
     constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: FeatureFlagService) {
         this.breadcrumbItems = JSON.parse(JSON.stringify(BreadcrumbItems));
     }
-    ngOnInit() {
-        this.currentRouter = this.router.url
+    async ngOnInit() {
+        this.currentRouter = this.router.url;
         this.featureService
             .getFeatureFlagByName('StaffMemberFeature')
             .pipe(first())
@@ -32,14 +32,15 @@ export class BreadcrumbComponent implements OnInit {
                     this.breadcrumbItems[index].Name = 'Judge';
                 }
             });
-        this.featureService
+        await this.featureService
             .getFeatureFlagByName('EJudFeature')
             .pipe(first())
             .toPromise()
             .then(result => {
                 this.ejudFeatureFlag = result;
-                this.initBreadcrumb();
             });
+
+        this.initBreadcrumb();
     }
 
     clickBreadcrumbs(step: BreadcrumbItemModel) {
@@ -63,17 +64,16 @@ export class BreadcrumbComponent implements OnInit {
         }
     }
     private initBreadcrumb() {
-        const assignJudgeBehaviourOverride = (item: BreadcrumbItemModel):boolean => {
-            if(item.Id !== 3) //assignJudgeItemModel ID
+        const assignJudgeBehaviourOverride = (item: BreadcrumbItemModel): boolean => {
+            if (item.Name !== 'Judge') {
                 return false;
-            else {
-                return (this.ejudFeatureFlag) ? !item.LastMinuteAmendable : item.LastMinuteAmendable ;
+            } else {
+                return this.ejudFeatureFlag ? !item.LastMinuteAmendable : item.LastMinuteAmendable;
             }
-        }
+        };
         this.currentItem = this.breadcrumbItems.find(s => s.Url === this.currentRouter);
         if (this.currentItem) {
             for (const item of this.breadcrumbItems) {
-
                 item.Value = item.Url === this.currentRouter;
                 if (
                     !this.videoHearingsService.isConferenceClosed() &&

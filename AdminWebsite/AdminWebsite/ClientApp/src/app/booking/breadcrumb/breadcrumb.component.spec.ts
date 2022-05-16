@@ -6,7 +6,6 @@ import { FeatureFlagService } from '../../services/feature-flag.service';
 import { of } from 'rxjs';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
-import { fakeAsync, flush } from '@angular/core/testing';
 describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
         'validCurrentRequest',
@@ -19,13 +18,13 @@ describe('BreadcrumbComponent', () => {
         url: '/hearing-schedule',
         ...jasmine.createSpyObj<Router>(['navigate'])
     } as jasmine.SpyObj<Router>;
-    beforeEach(() => {
+    beforeEach(async () => {
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         component = new BreadcrumbComponent(router, videoHearingsServiceSpy, featureFlagServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
-        component.ngOnInit();
+        await component.ngOnInit();
     });
     it('should create breadcrumb component', () => {
         expect(component).toBeTruthy();
@@ -139,9 +138,9 @@ describe('BreadcrumbComponent', () => {
         );
         const breadCrumbId3 = 3;
         const breadCrumbValue3 = true;
-        const breadCrumbName3 = 'BreadCrumbName3';
-        const breadCrumbUrl3 = 'BreadCrumbUrl3';
-        const breadCrumbLastMinuteAmendable3 = false;
+        const breadCrumbName3 = 'Judge';
+        const breadCrumbUrl3 = '/assign-judge';
+        const breadCrumbLastMinuteAmendable3 = true;
         const breadCrumb3 = new BreadcrumbItemModel(
             breadCrumbId3,
             breadCrumbValue3,
@@ -229,8 +228,8 @@ describe('BreadcrumbComponent', () => {
                     });
                     it('only ids before current router should be active', () => {});
                 });
-                afterEach(() => {
-                    component.ngOnInit();
+                afterEach(async () => {
+                    await component.ngOnInit();
                     for (let i = 0; i < breadCrumbs.length; i++) {
                         expect(breadCrumbs[i].Active).toBe(breadCrumbs[i].Id <= breadCrumbs[activeIndex].Id);
                     }
@@ -241,14 +240,21 @@ describe('BreadcrumbComponent', () => {
                     videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
                     videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
                 });
-                it('only ids before current router and marked as lastMinuteAmendable should be active', () => {
-                    component.ngOnInit();
+                it('only ids before current router and marked as lastMinuteAmendable should be active', async () => {
+                    await component.ngOnInit();
                     for (let i = 0; i < breadCrumbs.length; i++) {
                         const currentBreadCrumb = breadCrumbs[i];
                         expect(currentBreadCrumb.Active).toBe(
                             currentBreadCrumb.Id <= breadCrumbs[activeIndex].Id && currentBreadCrumb.LastMinuteAmendable
                         );
                     }
+                });
+
+                it('when ejud feature flag is off, assign judge should NOT be marked as active', async () => {
+                    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+                    await component.ngOnInit();
+                    const assignJudgeCrumb = breadCrumbs.find(e => e.Url === '/assign-judge');
+                    expect(assignJudgeCrumb.Active).toBe(false);
                 });
             });
         });
