@@ -27,7 +27,8 @@ export class BookingsListService {
         caseTypes?: string[],
         startDate?: Date,
         endDate?: Date,
-        lastName?: string
+        lastName?: string,
+        noJudge?: boolean
     ): Observable<BookingsResponse> {
         const searchRequest = {
             cursor,
@@ -37,7 +38,8 @@ export class BookingsListService {
             caseTypes,
             startDate,
             endDate,
-            lastName
+            lastName,
+            noJudge
         } as IBookingSearchRequest;
         const model = new BookingSearchRequest(searchRequest);
         return this.bhClient.bookingsList(model);

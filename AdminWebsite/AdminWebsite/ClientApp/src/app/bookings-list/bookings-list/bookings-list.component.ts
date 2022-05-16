@@ -143,6 +143,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
     }
 
+    get noJugdeInHearings(): boolean {
+        return this.bookingPersistService.noJugdeInHearings;
+    }
+
     private initializeForm(): FormGroup {
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.caseNumber || null],
@@ -150,7 +154,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
             startDate: [this.formatDateToIsoString(this.bookingPersistService.startDate)],
             endDate: [this.formatDateToIsoString(this.bookingPersistService.endDate)],
-            participantLastName: [this.bookingPersistService.participantLastName || null]
+            participantLastName: [this.bookingPersistService.participantLastName || null],
+            noJudge: [this.bookingPersistService.noJugdeInHearings]
         });
     }
 
@@ -163,6 +168,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         let startDate = this.bookingPersistService.startDate;
         let endDate = this.bookingPersistService.endDate;
         const lastName = this.bookingPersistService.participantLastName;
+        const noJudge = this.bookingPersistService.noJugdeInHearings;
         if (startDate) {
             startDate = moment(startDate).startOf('day').toDate();
         }
@@ -187,7 +193,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 caseTypes,
                 startDate,
                 endDate,
-                lastName
+                lastName,
+                noJudge
             );
         } else {
             // previous implementation
@@ -210,12 +217,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
             const lastName = this.searchForm.value['participantLastName'];
+            const noJudge = this.searchForm.value['noJudge'];
             this.bookingPersistService.caseNumber = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
             this.bookingPersistService.selectedCaseTypes = caseTypes;
             this.bookingPersistService.startDate = startDate;
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
+            this.bookingPersistService.noJugdeInHearings = noJudge;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
@@ -231,7 +240,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0) ||
             this.bookingPersistService.startDate ||
             this.bookingPersistService.endDate ||
-            this.bookingPersistService.participantLastName;
+            this.bookingPersistService.participantLastName ||
+            this.bookingPersistService.noJugdeInHearings;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
@@ -241,6 +251,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
+            this.bookingPersistService.noJugdeInHearings = false;
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
@@ -369,24 +380,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             },
             error => self.handleListError(error, 'case types')
         );
-    }
-
-    isSearchFormValid() {
-        const caseNumber = this.searchForm.controls.caseNumber.value as string;
-        const venueIds = this.searchForm.controls.selectedVenueIds.value as Array<number>;
-        const caseTypes = this.searchForm.controls.selectedCaseTypes.value as Array<string>;
-        const startDate = this.searchForm.controls.startDate.value as Date;
-        const endDate = this.searchForm.controls.endDate.value as Date;
-        const lastName = this.searchForm.controls.participantLastName.value as string;
-
-        const formFieldsValid =
-            caseNumber || (venueIds && venueIds.length > 0) || (caseTypes && caseTypes.length > 0) || startDate || endDate || lastName;
-
-        if (formFieldsValid) {
-            return true;
-        }
-
-        return false;
     }
 
     openSearchPanel() {

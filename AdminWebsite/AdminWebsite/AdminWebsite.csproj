@@ -34,7 +34,7 @@
   </Target>
 
   <ItemGroup>
-	<PackageReference Include="BookingsApi.Client" Version="1.33.3" />
+	<PackageReference Include="BookingsApi.Client" Version="1.34.10" />
 	<PackageReference Include="GovukNotify" Version="4.0.0" />
 	<PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />

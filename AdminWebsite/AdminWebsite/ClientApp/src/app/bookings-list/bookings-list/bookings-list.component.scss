@@ -114,6 +114,12 @@ p {
   box-shadow: none;
 }
 
+.vh-nojudge {
+  background: govuk-colour('red');
+  color: govuk-colour('white');
+  padding: 0px 4px;
+}
+
 .vh-searchicon {
   height: 12px;
   margin-right: 6px;

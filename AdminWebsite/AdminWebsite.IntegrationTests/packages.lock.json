@@ -110,8 +110,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "1.33.3",
-        "contentHash": "utSQBMD7BcsX3Fitrx14c9qSxZ00grWTCWYPODwkgratdTt85fNnKr7iLEuXHLAsG2jTfO9x5byH1hmq7nhayw==",
+        "resolved": "1.34.10",
+        "contentHash": "sIDW+GNKEVickewg6S32LAy3cdafkgaXmSt73bqIo9FcVd87bMCcVPjqqu2N/nZCXkbBf0jSXb2FmUrbH8AaCw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2637,7 +2637,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.33.3",
+          "BookingsApi.Client": "1.34.10",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "LaunchDarkly.ServerSdk": "6.3.2",

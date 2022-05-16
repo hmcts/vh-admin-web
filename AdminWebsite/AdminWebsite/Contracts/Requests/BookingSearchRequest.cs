@@ -31,5 +31,8 @@ namespace AdminWebsite.Contracts.Requests
 
         [JsonProperty("lastName")]
         public string LastName { get; set; } = string.Empty;
+
+        [JsonProperty("noJudge")]
+        public bool Nojudge { get; set; } = false;
     }
 }
