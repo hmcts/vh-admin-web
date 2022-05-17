@@ -59,7 +59,6 @@ let returnUrlService: ReturnUrlService;
 let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
-
 export class ResponseTestData {
     getTestData(): BookingsResponse {
         const fixedDate = new Date('2019-10-22 13:58:40.3730067');
@@ -570,7 +569,6 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
-
 
             TestBed.configureTestingModule({
                 declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
