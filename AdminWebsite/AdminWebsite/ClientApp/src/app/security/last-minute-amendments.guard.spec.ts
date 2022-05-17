@@ -1,10 +1,12 @@
 import { fakeAsync, TestBed } from '@angular/core/testing';
 import { AuthGuard } from './auth.guard';
-import { Router } from '@angular/router';
+import {ActivatedRouteSnapshot, Data, Router, RouterStateSnapshot, UrlSegment} from '@angular/router';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { LastMinuteAmendmentsGuard } from './last-minute-amendments.guard';
 import { VideoHearingsService } from '../services/video-hearings.service';
+import {FeatureFlagService} from "../services/feature-flag.service";
+import {of} from "rxjs";
 
 describe('LastMinuteAmendmentsGuard', () => {
     let guard: LastMinuteAmendmentsGuard;
@@ -15,12 +17,16 @@ describe('LastMinuteAmendmentsGuard', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
 
+    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
                 LastMinuteAmendmentsGuard,
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: router }
+                { provide: Router, useValue: router },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy }
             ]
         }).compileComponents();
         guard = TestBed.inject(LastMinuteAmendmentsGuard);
@@ -30,7 +36,6 @@ describe('LastMinuteAmendmentsGuard', () => {
     });
 
     describe('when can activate', () => {
-        let returned: boolean;
         it('should return true when not about to start', () => {
             videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         });
@@ -45,7 +50,7 @@ describe('LastMinuteAmendmentsGuard', () => {
         });
 
         afterEach(() => {
-            returned = guard.canActivate();
+            const returned = guard.canActivate(new ActivatedRouteSnapshot(), <RouterStateSnapshot>{url: 'testUrl'});
             expect(returned).toBe(true);
             expect(router.navigate).not.toHaveBeenCalled();
         });
@@ -53,10 +58,40 @@ describe('LastMinuteAmendmentsGuard', () => {
 
     describe('when cannot activate', () => {
         it('canActivate should return true', () => {
-            const returned = guard.canActivate();
+            const returned = guard.canActivate(new ActivatedRouteSnapshot(), <RouterStateSnapshot>{url: 'testUrl'});
             expect(returned).toBe(false);
             expect(router.navigate).toHaveBeenCalledWith([redirectPath]);
             expect(router.navigate).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('when accessing assign-judge, last minute', () => {
+
+        it('ejudFeature flag off should override last-minute-amendment-guard and block assign-judge url to be reach', () => {
+            //setup
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+            //setup
+            const url = 'assign-judge';
+            const dataSnapshot = {exceptionToRuleCheck: true} as Data;
+            const urlSegmentArray = [{path: url}] as UrlSegment[];
+            //execute
+            const returned = guard.canActivate(<ActivatedRouteSnapshot>{url:urlSegmentArray, data: dataSnapshot}, <RouterStateSnapshot>{url: url});
+            //assert
+            expect(returned).toBe(false);
+            expect(router.navigate).toHaveBeenCalledWith([redirectPath]);
+            expect(router.navigate).toHaveBeenCalledTimes(1);
+        });
+
+        it('ejudFeature flag on should allow last-minute-amendment-guard and allow assign-judge url to be reached', () => {
+            //setup
+            const url = 'assign-judge';
+            const dataSnapshot = {exceptionToRuleCheck: true} as Data;
+            const urlSegmentArray = [{path: url}] as UrlSegment[];
+            //execute
+            const returned = guard.canActivate(<ActivatedRouteSnapshot>{url:urlSegmentArray, data: dataSnapshot}, <RouterStateSnapshot>{url: url});
+            //assert
+            expect(returned).toBe(false);
+            expect(router.navigate).toHaveBeenCalledTimes(0);
         });
     });
 });
