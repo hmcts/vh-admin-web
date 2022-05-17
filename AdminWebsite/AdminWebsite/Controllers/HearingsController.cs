@@ -406,11 +406,14 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
+                var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
                 var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
                 await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
-
-                if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing))
+                
+                //Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
+                if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
                 {
+                    //send when email changes
                     await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 }
                 
@@ -433,7 +436,7 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
+        
         private async Task ConfirmBookingWhenJudgeAdded(HearingDetailsResponse orgHearing,  bool judgeExistsInRequest)
         {
             var judgeInOriginalHearing = orgHearing.Participants.Any(p => p.HearingRoleName == RoleNames.Judge);
