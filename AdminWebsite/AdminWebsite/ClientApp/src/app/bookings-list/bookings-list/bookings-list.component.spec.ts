@@ -31,6 +31,7 @@ import {
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -55,6 +56,9 @@ referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCour
 let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 let returnUrlService: ReturnUrlService;
+let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
+
 
 export class ResponseTestData {
     getTestData(): BookingsResponse {
@@ -565,6 +569,8 @@ describe('BookingsListComponent', () => {
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+
 
             TestBed.configureTestingModule({
                 declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
@@ -579,6 +585,7 @@ describe('BookingsListComponent', () => {
                     { provide: Logger, useValue: loggerSpy },
                     { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                     { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                     DatePipe
                 ]
             }).compileComponents();
