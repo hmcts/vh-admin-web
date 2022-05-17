@@ -15,6 +15,8 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-bookings-list',
@@ -47,6 +49,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedCaseTypes: [];
     showSearch = false;
     today = new Date();
+    ejudFeatureFlag: boolean;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -59,6 +62,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private refDataService: ReferenceDataService,
         private datePipe: DatePipe,
         private returnUrlService: ReturnUrlService,
+        private featureService: FeatureFlagService,
         @Inject(DOCUMENT) document
     ) {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
@@ -71,6 +75,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 }
             }
         });
+
+        this.featureService
+            .getFeatureFlagByName('EJudFeature')
+            .pipe(first())
+            .subscribe(result => {
+                this.ejudFeatureFlag = result;
+            });
     }
 
     async ngOnInit() {
@@ -224,7 +235,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.startDate = startDate;
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
-            this.bookingPersistService.noJugdeInHearings = noJudge;
+            this.bookingPersistService.noJugdeInHearings = noJudge ?? false;
             this.cursor = undefined;
             this.bookings = [];
             this.loadBookingsList();
