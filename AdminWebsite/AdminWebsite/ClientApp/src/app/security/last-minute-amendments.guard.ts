@@ -17,7 +17,7 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
             });
     }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         const exceptionToRuleCheck = route.data?.exceptionToRuleCheck as boolean;
         if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
             if (exceptionToRuleCheck && this.ejudFeatureFlag) {
