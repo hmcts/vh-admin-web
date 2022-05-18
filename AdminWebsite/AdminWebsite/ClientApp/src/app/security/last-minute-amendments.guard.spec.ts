@@ -64,7 +64,7 @@ describe('LastMinuteAmendmentsGuard', () => {
     describe('when accessing assign-judge; last minute', () => {
         it('ejudFeature flag off should override last-minute-amendment-guard and block assign-judge url to be reach', () => {
             // setup
-            guard.ejudFeatureFlag = false;
+            guard.eJudFeatureFlag = false;
             const url = 'assign-judge';
             const dataSnapshot = { exceptionToRuleCheck: true } as Data;
             const urlSegmentArray = [{ path: url }] as UrlSegment[];
@@ -92,7 +92,7 @@ describe('LastMinuteAmendmentsGuard', () => {
             expect(returned).toBe(true);
         });
         afterEach(() => {
-            guard.ejudFeatureFlag = true;
+            guard.eJudFeatureFlag = true;
         });
     });
 });
