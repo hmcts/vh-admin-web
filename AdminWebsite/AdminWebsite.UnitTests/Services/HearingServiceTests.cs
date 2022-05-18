@@ -1232,7 +1232,7 @@ namespace AdminWebsite.UnitTests.Services
 
         [TestCase(false)]
         [TestCase(true)]
-        public async Task Is_Updating_Judge(bool shouldUpdateJudge)
+        public void IsUpdatingJudge_Should_return_correct_assertion(bool shouldUpdateJudge)
         {
             // Arrange
             var editHearing = _editHearingRequest;
@@ -1252,6 +1252,28 @@ namespace AdminWebsite.UnitTests.Services
             response.Should().Be(shouldUpdateJudge);
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void IsUpdatingJudge_should_be_correct_when_comparing_optional_contact_details(bool shouldUpdateJudge)
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "Judge"
+            });
+            editHearing.OtherInformation = "JudgePhone|loremIpsum";
+            var hearing = InitHearing();
+            hearing.OtherInformation = "JudgePhone|loremIpsum";
+            if(shouldUpdateJudge)
+                hearing.OtherInformation = "JudgePhone|loremIpsum2";
+            //Act
+            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            //Assert
+            response.Should().Be(shouldUpdateJudge);
+        }
+        
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };
