@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { VideoHearingsService } from '../services/video-hearings.service';
-import {Observable} from "rxjs";
-import {FeatureFlagService} from "../services/feature-flag.service";
-import {first} from "rxjs/operators";
+import { Observable } from 'rxjs';
+import { FeatureFlagService } from '../services/feature-flag.service';
+import { first } from 'rxjs/operators';
 
 @Injectable()
 export class LastMinuteAmendmentsGuard implements CanActivate {
-    ejudFeatureFlag: boolean = false;
+    ejudFeatureFlag = false;
     constructor(private videoHearingsService: VideoHearingsService, private router: Router, private featureService: FeatureFlagService) {
         featureService
             .getFeatureFlagByName('EJudFeature')
@@ -17,11 +17,12 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
             });
     }
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : Observable<boolean> | Promise<boolean> | boolean  {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         const exceptionToRuleCheck = route.data?.exceptionToRuleCheck as boolean;
         if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
-            if(exceptionToRuleCheck && this.ejudFeatureFlag)
+            if (exceptionToRuleCheck && this.ejudFeatureFlag) {
                 return true;
+            }
 
             this.router.navigate(['/summary']);
             return false;
