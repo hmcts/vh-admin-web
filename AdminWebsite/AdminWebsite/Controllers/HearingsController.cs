@@ -305,7 +305,9 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && 
+                    !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing) && 
+                    !_hearingsService.IsUpdatingJudge(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {startingSoonMinutesThreshold} minutes of it starting";

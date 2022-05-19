@@ -142,8 +142,7 @@ namespace AdminWebsite.Extensions
         public static string ToOtherInformationString(this OtherInformationDetails otherInformationDetailsObject)
         {
             return
-                $"|JudgeEmail|{otherInformationDetailsObject.JudgeEmail}" +
-                $"|JudgePhone|{otherInformationDetailsObject.JudgePhone}" +
+                otherInformationDetailsObject.ToJudgeOtherInformationString() +
                 $"|OtherInformation|{otherInformationDetailsObject.OtherInformation}";
         }
 
@@ -151,6 +150,18 @@ namespace AdminWebsite.Extensions
         {
             var json = JsonConvert.SerializeObject(hearingDetailsResponse);
             return JsonConvert.DeserializeObject<HearingDetailsResponse>(json);
+        }
+
+        public static string GetJudgeOtherInformationString(string otherInformation)
+        {
+            var otherInformationDetailsObject = GetOtherInformationObject(otherInformation);
+            return otherInformationDetailsObject.ToJudgeOtherInformationString();
+        }
+        
+        private static string ToJudgeOtherInformationString(this OtherInformationDetails otherInformationDetailsObject)
+        {
+            return $"|JudgeEmail|{otherInformationDetailsObject.JudgeEmail}" +
+                   $"|JudgePhone|{otherInformationDetailsObject.JudgePhone}";
         }
 
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
