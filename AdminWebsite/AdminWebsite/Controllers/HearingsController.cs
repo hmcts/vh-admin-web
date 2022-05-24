@@ -113,6 +113,11 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
+
+                if(hearingDetailsResponse.Status == BookingStatus.Failed)
+                {
+                    return Created("", hearingDetailsResponse);
+                }
                 
                 if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingDetailsResponse.Id);
@@ -403,30 +408,38 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
                 _logger.LogDebug("Attempting assign participants to the correct group");
+
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
+
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
-                // Send a notification email to newly created participants
-                var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
-                var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
-                await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
-                
-                //Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
-                if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
+                if (updatedHearing.Status == BookingStatus.Failed)
                 {
-                    //send when email changes
-                    await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
+                    return Ok(updatedHearing);
                 }
-                
-                await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
 
-                if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+                // Send a notification email to newly created participants
+                //var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
+                //var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
+                //await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                var participantsForAmendment = updatedHearing.Participants
-                    .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
-                    participantsForAmendment);
+                ////Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
+                //if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
+                //{
+                //    //send when email changes
+                //    await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
+                //}
+
+                //await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
+
+                //if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+
+                //var participantsForAmendment = updatedHearing.Participants
+                //    .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
+                //await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
+                //    participantsForAmendment);
 
                 return Ok(updatedHearing);
             }

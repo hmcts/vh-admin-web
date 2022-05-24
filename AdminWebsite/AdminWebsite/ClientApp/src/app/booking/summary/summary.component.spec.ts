@@ -17,7 +17,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -317,7 +317,7 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
     });
 
-    it('should save new booking with multi hearings - sinlge date', async () => {
+    it('should save new booking with multi hearings - single date', async () => {
         component.ngOnInit();
         component.hearing.multiDays = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
@@ -351,6 +351,23 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
     });
+
+    it('should set error when booking new hearing request fails', fakeAsync(async () => {
+        const response = {
+            id: 'hearing_id',
+            status: BookingStatus.Failed,
+            created_by: 'test@hmcts.net'
+        } as HearingDetailsResponse;
+
+        videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
+        await component.bookHearing();
+        tick();
+
+        expect(component.errors).toBeDefined();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(component.hearing.hearing_id).toEqual('hearing_id');
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+    }));
 
     it('should be able to edit when conference is not about to start and is open', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
@@ -536,6 +553,21 @@ describe('SummaryComponent  with existing request', () => {
 
         expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
     });
+
+    it('should set error when update booking request fails', () => {
+        const response = {
+            id: 'hearing_id',
+            status: BookingStatus.Failed
+        } as HearingDetailsResponse;
+
+        videoHearingsServiceSpy.updateHearing.and.returnValue(of(response));
+        component.updateHearing();
+
+        expect(component.errors).toBeDefined();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(component.hearing.hearing_id).toEqual('hearing_id');
+    });
+
     it('should remove existing participant', () => {
         component.hearing = initExistingHearingRequest();
         component.hearing.hearing_id = '12345';
