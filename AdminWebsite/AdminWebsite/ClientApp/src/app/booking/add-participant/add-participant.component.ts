@@ -195,8 +195,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                         self.showDetails &&
                         self.form.valid &&
                         self.searchEmail &&
-                        self.searchEmail.validateEmail() &&
-                        !self.searchEmail.errorNotFoundJohEmail
+                        self.searchEmail.validateEmail()
                     ) {
                         if (self.localEditMode) {
                             self.displayUpdate();

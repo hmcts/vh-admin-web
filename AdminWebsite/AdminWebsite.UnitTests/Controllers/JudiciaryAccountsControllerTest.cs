@@ -16,6 +16,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using System.Linq;
+using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -25,7 +26,7 @@ namespace AdminWebsite.UnitTests.Controllers
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserAccountService> _userAccountService;
         private List<PersonResponse> _judiciaryResponse;
-
+        private List<UserResponse> _userResponses;
 
         [SetUp]
         public void Setup()
@@ -54,6 +55,8 @@ namespace AdminWebsite.UnitTests.Controllers
                   Username = "adoman@hmcts.net"
                 }
             };
+            
+            _userResponses = new List<UserResponse>();
         }
 
         [Test]
@@ -81,6 +84,40 @@ namespace AdminWebsite.UnitTests.Controllers
             var personRespList = (List<PersonResponse>)okRequestResult.Value;
             personRespList.Count.Should().Be(1);
             personRespList[0].Username.Should().Be(_judiciaryResponse[1].Username);
+        }
+
+        [Test]
+        public async Task Should_filter_out_judges_found_in_both_aad_and_database()
+        {
+            _judiciaryResponse.Add(new PersonResponse
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "",
+                FirstName = "Jack",
+                LastName = "Mann",
+                TelephoneNumber = "",
+                Title = "Mr",
+                MiddleNames = "No",
+                Username = "jackman@judiciary.net"
+            });
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                              .ReturnsAsync(_judiciaryResponse);
+
+            _userResponses.Add(new UserResponse
+            {
+                ContactEmail = "jackman@judiciary.net",
+            });
+            _userAccountService.Setup(x => x.SearchEjudiciaryJudgesByEmailUserResponse(It.IsAny<string>()))
+                              .ReturnsAsync(_userResponses);
+
+            var searchTerm = "ado";
+            var result = await _controller.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+
+            var okRequestResult = (OkObjectResult)result.Result;
+            okRequestResult.StatusCode.Should().NotBeNull();
+            var personResponses = (List<PersonResponse>)okRequestResult.Value;
+            personResponses.Count.Should().Be(1);
+            personResponses[0].Username.Should().Be(_judiciaryResponse[1].Username);
         }
 
         [Test]
