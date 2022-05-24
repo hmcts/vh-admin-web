@@ -421,25 +421,25 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Send a notification email to newly created participants
-                //var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
-                //var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
-                //await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
+                var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
+                var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
+                await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                ////Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
-                //if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
-                //{
-                //    //send when email changes
-                //    await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
-                //}
+                //Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
+                if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
+                {
+                    //send when email changes
+                    await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
+                }
 
-                //await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
+                await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
 
-                //if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+                if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
 
-                //var participantsForAmendment = updatedHearing.Participants
-                //    .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
-                //await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
-                //    participantsForAmendment);
+                var participantsForAmendment = updatedHearing.Participants
+                    .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
+                    participantsForAmendment);
 
                 return Ok(updatedHearing);
             }
