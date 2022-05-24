@@ -1357,7 +1357,54 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // assert
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
-        
+
+        [Test]
+        public async Task Should_handle_failed_booking_request_on_retry()
+        {
+            _existingHearingWithJudge.ScheduledDateTime = DateTime.UtcNow.AddMinutes(10);
+            _existingHearingWithJudge.Status = BookingStatus.Failed;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithJudge)
+                .ReturnsAsync(_existingHearingWithJudge);
+            
+            var request = FailedHearingRequest();
+
+            var result = await _controller.EditHearing(_validId, request);  
+
+            var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
+
+            response.Status.Should().Be(BookingStatus.Failed);
+
+            ((ObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsAsync(
+                    It.IsAny<Guid>(), 
+                    It.IsAny<UpdateHearingParticipantsRequest>()),
+                Times.Once);
+        }
+
+        private EditHearingRequest FailedHearingRequest()
+        {
+            return  new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = "Case",
+                    Number = "123"
+                },
+                Participants = new List<EditParticipantRequest>
+                {
+                    new EditParticipantRequest
+                    {
+                        ContactEmail = "test@hmcts.net",
+                        FirstName = "FirstName",
+                        LastName = "LastName",
+                        HearingRoleName = HearingRoleName.Judge
+                    }
+                }
+            };
+        }
+
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x =>

@@ -22,6 +22,7 @@ using UserApi.Contract.Responses;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.Responses;
 using VideoApi.Contract.Responses;
+using BookingsApi.Contract.Enums;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -341,7 +342,43 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IHearingsService>().Verify(x => x.SendMultiDayHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), It.IsAny<int>()), Times.Never);
         }
-        
+
+        [Test]
+        public async Task Should_handle_failed_booking_request()
+        {
+            var bookingDetails = InitHearingForTest();
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = bookingDetails
+            };
+
+            var hearingDetailsResponse = 
+                HearingResponseBuilder.Build()
+                .WithParticipant("Judge", "manual.judge@hmcts.net");
+
+            hearingDetailsResponse.Status = BookingStatus.Failed;
+
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
+
+            var result = await _controller.Post(bookingRequest);
+
+            var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
+
+            response.Status.Should().Be(BookingStatus.Failed);
+
+            ((ObjectResult)result.Result).StatusCode.Should().Be(201);
+          
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string, User>>()), Times.Never);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string, User>>()), Times.Never);
+            _mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Never);
+        }
+
+
         private BookNewHearingRequest InitHearingForTest()
         {
             // request with existing person, new user, existing user in AD but not in persons table 
