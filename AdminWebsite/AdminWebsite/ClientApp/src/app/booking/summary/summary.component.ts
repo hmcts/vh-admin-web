@@ -10,7 +10,7 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -245,6 +245,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 });
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
+                if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
+                    this.hearing.hearing_id = hearingDetailsResponse.id;
+                    this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+                    return;
+                }
+
                 if (this.hearing.multiDays) {
                     this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                         hearingId: hearingDetailsResponse.id,
@@ -318,7 +324,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
                         hearingId: hearingDetailsResponse.id
                     });
-                    this.router.navigate([PageUrls.BookingDetails]);
+
+                    if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
+                        this.hearing.hearing_id = hearingDetailsResponse.id;
+                        this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+                        return;
+                    }
+                    this.router.navigate([PageUrls.BookingConfirmation]);
                 },
                 error => {
                     this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {

@@ -102,6 +102,11 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
+
+                if(hearingDetailsResponse.Status == BookingStatus.Failed)
+                {
+                    return Created("", hearingDetailsResponse);
+                }
                 
                 if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingDetailsResponse.Id);
@@ -294,7 +299,9 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && 
+                    !_hearingsService.IsAddingOrRemovingStaffMember(request, originalHearing) && 
+                    !_hearingsService.IsUpdatingJudge(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {startingSoonMinutesThreshold} minutes of it starting";
@@ -390,22 +397,30 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
                 _logger.LogDebug("Attempting assign participants to the correct group");
+
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
+
                 _logger.LogDebug("Successfully assigned participants to the correct group");
+
+                if (updatedHearing.Status == BookingStatus.Failed)
+                {
+                    return Ok(updatedHearing);
+                }
 
                 // Send a notification email to newly created participants
                 var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
                 var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
                 await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
-                
+
                 //Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
                 if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
                 {
                     //send when email changes
                     await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 }
-                
+
                 await ConfirmBookingWhenJudgeAdded(originalHearing, judgeExistsInRequest);
 
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
