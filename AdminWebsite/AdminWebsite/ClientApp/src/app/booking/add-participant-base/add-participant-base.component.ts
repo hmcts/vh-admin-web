@@ -38,7 +38,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     errorAlternativeEmail = false;
     errorJohAccountNotFound = false;
     errorJudiciaryAccount = false;
-    errorNotFoundJohEmail = false;
 
     showDetails = false;
     emailDisabled = false;

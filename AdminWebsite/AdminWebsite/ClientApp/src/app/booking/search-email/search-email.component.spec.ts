@@ -108,7 +108,6 @@ describe('SearchEmailComponent', () => {
             expect(component.isValidEmail).toBeTruthy();
             expect(component.$subscriptions.length).toBeGreaterThan(0);
             expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
-            expect(component.errorNotFoundJohEmail).toBeFalsy();
             expect(component.isJoh).toBeFalsy();
             expect(component.disabled).toBeTruthy();
         })
@@ -137,21 +136,6 @@ describe('SearchEmailComponent', () => {
 
         expect(component.results).toBeTruthy();
         expect(component.results.length).toEqual(0);
-    });
-
-    it('should set errorNotFoundJohEmail to true when EJudFeature flag is ON and no results found from search service', () => {
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
-        component.ngOnInit();
-        component.hearingRoleParticipant = 'Panel Member';
-        component.noDataFound();
-        expect(component.errorNotFoundJohEmail).toBeTruthy();
-    });
-
-    it('should set errorNotFoundJohEmail to false  when EJudFeature flag is OFF and no results found from search service', () => {
-        component.ngOnInit();
-        component.hearingRoleParticipant = 'Panel Member';
-        component.noDataFound();
-        expect(component.errorNotFoundJohEmail).toBeFalsy();
     });
 
     it('should show showCreateNewUserWarning when EJudFeature flag is OFF and no results found from search service', () => {

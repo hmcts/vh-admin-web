@@ -82,22 +82,11 @@ namespace AdminWebsite.Controllers
             try
             {
                 List<ParticipantRequest> nonJudgeParticipants;
-                var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
                 var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
-                // Disable to create AAD accounts for Panel members and wingers when ejudFeature is 'OFF'
-                if (ejudFeatureFlag)
-                {
-                    nonJudgeParticipants = newBookingRequest.Participants
-                        .Where(p => p.HearingRoleName != RoleNames.Judge)
-                        .Where(p => p.HearingRoleName != RoleNames.PanelMember)
-                        .Where(p => p.HearingRoleName != RoleNames.Winger).ToList();
-                }
-                else
-                {
-                    nonJudgeParticipants = newBookingRequest.Participants
-                        .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
-                }
-
+                
+                nonJudgeParticipants = newBookingRequest.Participants
+                    .Where(p => p.HearingRoleName != RoleNames.Judge).ToList();
+                
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
