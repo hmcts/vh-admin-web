@@ -51,15 +51,19 @@ namespace AdminWebsite.Controllers
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
 
-                var courtRoomJudgesTask = _userAccountService.SearchJudgesByEmail(searchTerm.Term);
-                var eJudiciaryJudgesTask = GetEjudiciaryJudgesBySearchTermAsync(searchTerm);
+                var personsResponse =  _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+                var courtRoomsResponse =  _userAccountService.SearchJudgesByEmail(searchTerm.Term);
 
-                await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
+                await Task.WhenAll(personsResponse, courtRoomsResponse);
 
-                var courtRoomJudges = await courtRoomJudgesTask;
-                var eJudiciaryJudges = (await eJudiciaryJudgesTask).Select(x => JudgeResponseMapper.MapTo(x));
+                var persons = await personsResponse;
+                var courtRooms = await courtRoomsResponse;
+
+                var courtRoomJudges = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
+                var eJudiciaryJudges = persons.Select(x => JudgeResponseMapper.MapTo(x));
 
                 var allJudges = courtRoomJudges.Concat(eJudiciaryJudges)
+
                     .OrderBy(x => x.Email).Take(20).ToList();
 
                 return Ok(allJudges);
@@ -92,20 +96,10 @@ namespace AdminWebsite.Controllers
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
 
-                var courtRoomJudgesTask = _userAccountService.SearchEjudiciaryJudgesByEmailUserResponse(searchTerm.Term);
-                var eJudiciaryJudgesTask = GetEjudiciaryJudgesBySearchTermAsync(searchTerm);
+                var personsResponse = await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+                personsResponse = personsResponse?.Where(p => !p.Username.Contains(_testSettings.TestUsernameStem)).ToList();
 
-                await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
-
-                var eJudiciaryJudges = (await eJudiciaryJudgesTask).Where(p => !p.Username.Contains(_testSettings.TestUsernameStem)).ToList();
-                var courtRoomJudges = (await courtRoomJudgesTask)
-                    .Where(x => !eJudiciaryJudges.Select(e => e.Username).Contains(x.ContactEmail))
-                    .Select(x => UserResponseMapper.MapFrom(x));
-                
-                var allJudges = courtRoomJudges.Concat(eJudiciaryJudges)
-                    .OrderBy(x => x.ContactEmail).Take(20).ToList();
-
-                return Ok(allJudges);
+                return Ok(personsResponse);
             }
             catch (BookingsApiException e)
             {
@@ -116,13 +110,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        private async Task<IList<PersonResponse>> GetEjudiciaryJudgesBySearchTermAsync(SearchTermRequest term)
-        {
-            var personsResponse = (await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(term)).ToList();
-
-            return personsResponse;
         }
     }
 }

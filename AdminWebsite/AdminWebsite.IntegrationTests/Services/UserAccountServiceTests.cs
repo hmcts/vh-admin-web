@@ -43,7 +43,7 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public async Task GetJudgeUsers_Should_return_list_of_judges()
+        public async Task Should_return_list_of_judges()
         {
             _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
             var group =await GetService().GetJudgeUsers();
@@ -53,21 +53,12 @@ namespace AdminWebsite.IntegrationTests.Services
         [Test]
         [TestCase("john", 2)]
         [TestCase("john.m", 1)]
-        public async Task SearchJudgesByEmail_Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
+        public async Task Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
         {
             _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
             var group = await GetService().SearchJudgesByEmail(term);
             group.Should().HaveCount(expectedToMatchCount);
         }
 
-        [Test]
-        [TestCase("john", 2)]
-        [TestCase("john.m", 1)]
-        public async Task SearchEjudiciaryJudgesByEmail_Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
-        {
-            _userApiClient.Setup(x => x.GetEjudiciaryJudgesAsync()).ReturnsAsync(judgesList);
-            var group = await GetService().SearchEjudiciaryJudgesByEmailUserResponse(term);
-            group.Should().HaveCount(expectedToMatchCount);
-        }
     }
 }

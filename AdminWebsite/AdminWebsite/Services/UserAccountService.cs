@@ -38,14 +38,6 @@ namespace AdminWebsite.Services
         Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term);
 
         /// <summary>
-        ///     Returns a list of judges filtered by email in the active directory
-        /// </summary>
-        /// <remarks>
-        /// Filters test accounts if configured to run as live environment 
-        /// </remarks>
-        Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term);
-
-        /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
         /// <param name="participant"></param>
@@ -233,16 +225,8 @@ namespace AdminWebsite.Services
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DisplayName = x.DisplayName,
-                Email = x.Email,
+                Email = x.Email
             }).ToList();
-        }
-
-        public async Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term)
-        {
-            _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetEjudiciaryJudgesAsync();
-            var result = judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).ToList();
-            return result;
         }
 
         public async Task ResetParticipantPassword(string userName)
