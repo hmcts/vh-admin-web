@@ -227,20 +227,22 @@ namespace AdminWebsite.Services
         public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetJudgesAsync();
-            return judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).Select(x => new JudgeResponse
+
+            var judgesList = (await _userApiClient.GetJudgesByUsernameAsync(term)).Select(x => new JudgeResponse
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DisplayName = x.DisplayName,
                 Email = x.Email,
             }).ToList();
+
+            return judgesList;
         }
 
         public async Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term)
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetEjudiciaryJudgesAsync();
+            var judgesList = await _userApiClient.GetEjudiciaryJudgesByUsernameAsync(term);
             var result = judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).ToList();
             return result;
         }
