@@ -103,35 +103,71 @@ describe('BookingConfirmationComponent', () => {
         })
     );
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(BookingConfirmationComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    describe('standard', () => {
+        beforeEach(() => {
+            fixture = TestBed.createComponent(BookingConfirmationComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('should create', () => {
+            expect(component).toBeTruthy();
+        });
+
+        it('should display the new hearing information', () => {
+            component.ngOnInit();
+            component.retrieveSavedHearing();
+            expect(component.caseNumber).toEqual(newHearing.cases[0].number);
+            expect(component.caseName).toEqual(newHearing.cases[0].name);
+            expect(component.hearingDate).toEqual(newHearing.scheduled_date_time);
+            expect(component.retrievedHearingResolver).toBeTruthy();
+        });
+        it('should navigate to book another hearing', () => {
+            component.bookAnotherHearing();
+            expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+        });
+        it('should navigate to dashboard', () => {
+            component.returnToDashboard();
+            expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+        });
+        it('should navigate to booking details', () => {
+            component.viewBookingDetails();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+        });
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
-    it('should display the new hearing information', () => {
-        component.ngOnInit();
-        component.retrieveSavedHearing();
-        expect(component.caseNumber).toEqual(newHearing.cases[0].number);
-        expect(component.caseName).toEqual(newHearing.cases[0].name);
-        expect(component.hearingDate).toEqual(newHearing.scheduled_date_time);
-    });
-    it('should navigate to book another hearing', () => {
-        component.bookAnotherHearing();
-        expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-    });
-    it('should navigate to dashboard', () => {
-        component.returnToDashboard();
-        expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-    });
-    it('should navigate to booking details', () => {
-        component.viewBookingDetails();
-        expect(routerSpy.navigate).toHaveBeenCalled();
+    describe('bookingConfirmedSuccessfully', () => {
+        it('should return true, when booking successful', () => {
+            // arrange: set spy to return Failed status hearing
+            newHearing.status = 'Booked';
+            videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
+            TestBed.overrideProvider(VideoHearingsService, { useValue: videoHearingsServiceSpy });
+            TestBed.compileComponents();
+            fixture = TestBed.createComponent(BookingConfirmationComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+            // act
+            component.ngOnInit();
+            component.retrieveSavedHearing();
+            // assert
+            expect(component.bookingConfirmedSuccessfully).toBe(true);
+        });
+        it('should return false, when booking unsuccessful', () => {
+            // arrange: set spy to return Failed status hearing
+            newHearing.status = 'Failed';
+            videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
+            TestBed.overrideProvider(VideoHearingsService, { useValue: videoHearingsServiceSpy });
+            TestBed.compileComponents();
+            fixture = TestBed.createComponent(BookingConfirmationComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+            // act
+            component.ngOnInit();
+            component.retrieveSavedHearing();
+            // assert
+            expect(component.bookingConfirmedSuccessfully).toEqual(false);
+        });
     });
 });
