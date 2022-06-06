@@ -1230,6 +1230,50 @@ namespace AdminWebsite.UnitTests.Services
             usernameAdIdDict[participant.ContactEmail].Should().BeEquivalentTo(user);
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void IsUpdatingJudge_Should_return_correct_assertion(bool shouldUpdateJudge)
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "Judge"
+            });
+            var hearing = InitHearing();
+            if(shouldUpdateJudge)
+                hearing.Participants
+                    .First(x => x.UserRoleName == "Judge")
+                    .ContactEmail = "Different.Judge@court.com";
+            //Act
+            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            //Assert
+            response.Should().Be(shouldUpdateJudge);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void IsUpdatingJudge_should_be_correct_when_comparing_optional_contact_details(bool shouldUpdateJudge)
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "Judge"
+            });
+            editHearing.OtherInformation = "JudgePhone|loremIpsum";
+            var hearing = InitHearing();
+            hearing.OtherInformation = "JudgePhone|loremIpsum";
+            if(shouldUpdateJudge)
+                hearing.OtherInformation = "JudgePhone|loremIpsum2";
+            //Act
+            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            //Assert
+            response.Should().Be(shouldUpdateJudge);
+        }
+        
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };
@@ -1249,6 +1293,7 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Judge")
                 .With(x => x.ContactEmail = "Judge@court.com")
+                .With(x => x.HearingRoleName = "Judge")
                 .Build();
             var staffMember = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())

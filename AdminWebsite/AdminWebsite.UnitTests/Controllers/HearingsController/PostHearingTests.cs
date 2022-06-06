@@ -359,51 +359,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
             _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
         }
-
-        [Test]
-        public async Task Should_not_update_user_details_for_panel_member_EJudFeature_ON()
-        {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
-            {
-                Username = "username",
-                CaseRoleName = "",
-                HearingRoleName = "Panel Member"
-            };
-
-            // setup  response
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                                            .WithParticipant("");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-
-
-            await PostWithParticipants(participant);
-
-            _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);            
-        }
-
-        [Test]
-        public async Task Should_not_update_user_details_for_winger_EJudFeature_ON()
-        {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
-            {
-                Username = "username",
-                CaseRoleName = "",
-                HearingRoleName = "Winger"
-            };
-
-            // setup  response
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                                            .WithParticipant("");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-
-            await PostWithParticipants(participant);
-
-            _mocker.Mock<IUserAccountService>().Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _mocker.Mock<IUserAccountService>().Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
-        }
         
         [Test]
         public async Task Should_update_user_details_for_panel_member_EJudFeature_OFF()
