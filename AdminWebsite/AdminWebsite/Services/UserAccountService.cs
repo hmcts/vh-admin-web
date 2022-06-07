@@ -243,8 +243,7 @@ namespace AdminWebsite.Services
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
             var judgesList = await _userApiClient.GetEjudiciaryJudgesByUsernameAsync(term);
-            var result = judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).ToList();
-            return result;
+            return judgesList;
         }
 
         public async Task ResetParticipantPassword(string userName)

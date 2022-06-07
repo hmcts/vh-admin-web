@@ -18,7 +18,7 @@ namespace AdminWebsite.Configuration
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         public FeatureToggles(IConfiguration config)
         {
-            _ldClient = new LdClient(config["SDK-Key"]);
+            _ldClient = new LdClient("sdk-2651a000-96a5-43ed-a3f4-f12ff202d662");
             _user = LaunchDarkly.Sdk.User.WithKey(LdUser);
         }
 
