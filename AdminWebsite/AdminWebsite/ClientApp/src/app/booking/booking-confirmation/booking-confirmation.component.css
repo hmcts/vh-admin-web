@@ -5,3 +5,7 @@
 .vh-booking-details-link {
     color: white;
 }
+
+.vh-booking-failed {
+    background: #d4351c;
+}

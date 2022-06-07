@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { HearingDetailsResponse } from 'src/app/services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -19,7 +19,9 @@ export class BookingConfirmationComponent implements OnInit {
     caseNumber: string;
     caseName: string;
     hearingDate: Date;
+    retrievedHearingResolver: Promise<boolean>;
     private newHearingSessionKey = 'newHearingId';
+    private status: BookingStatus;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -27,6 +29,10 @@ export class BookingConfirmationComponent implements OnInit {
         private router: Router,
         private logger: Logger
     ) {}
+
+    get bookingConfirmedSuccessfully(): boolean {
+        return this.status === BookingStatus.Booked || this.status === BookingStatus.Created;
+    }
 
     ngOnInit() {
         this.retrieveSavedHearing();
@@ -40,6 +46,8 @@ export class BookingConfirmationComponent implements OnInit {
                 this.caseNumber = data.cases[0].number;
                 this.caseName = data.cases[0].name;
                 this.hearingDate = new Date(data.scheduled_date_time);
+                this.status = data.status;
+                this.retrievedHearingResolver = Promise.resolve(true);
             },
             error => this.logger.error(`${this.loggerPrefix} Cannot get the hearing by Id: ${hearingId}.`, error, { hearing: hearingId })
         );
