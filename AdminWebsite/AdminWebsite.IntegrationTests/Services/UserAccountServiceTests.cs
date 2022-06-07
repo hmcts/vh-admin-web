@@ -66,7 +66,7 @@ namespace AdminWebsite.IntegrationTests.Services
         [TestCase("john.m", 1)]
         public async Task SearchEjudiciaryJudgesByEmail_Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
         {
-            _userApiClient.Setup(x => x.GetEjudiciaryJudgesByUsernameAsync(term)).ReturnsAsync(judgesList);
+            _userApiClient.Setup(x => x.GetEjudiciaryJudgesByUsernameAsync(term)).ReturnsAsync(judgesList.Where(x => x.Email.Contains(term)).ToList());
             var group = await GetService().SearchEjudiciaryJudgesByEmailUserResponse(term);
             group.Should().HaveCount(expectedToMatchCount);
         }
