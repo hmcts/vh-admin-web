@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using UserApi.Client;
 using UserApi.Contract.Responses;
+using System.Linq;
 
 namespace AdminWebsite.IntegrationTests.Services
 {
@@ -46,7 +47,7 @@ namespace AdminWebsite.IntegrationTests.Services
         public async Task GetJudgeUsers_Should_return_list_of_judges()
         {
             _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
-            var group =await GetService().GetJudgeUsers();
+            var group = await GetService().GetJudgeUsers();
             group.Should().NotBeNullOrEmpty();
         }
 
@@ -55,7 +56,7 @@ namespace AdminWebsite.IntegrationTests.Services
         [TestCase("john.m", 1)]
         public async Task SearchJudgesByEmail_Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
         {
-            _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
+            _userApiClient.Setup(x => x.GetJudgesByUsernameAsync(term)).ReturnsAsync(judgesList.Where(x => x.Email.Contains(term)).ToList());
             var group = await GetService().SearchJudgesByEmail(term);
             group.Should().HaveCount(expectedToMatchCount);
         }
@@ -65,7 +66,7 @@ namespace AdminWebsite.IntegrationTests.Services
         [TestCase("john.m", 1)]
         public async Task SearchEjudiciaryJudgesByEmail_Should_return_list_of_judges_by_search_term(string term, int expectedToMatchCount)
         {
-            _userApiClient.Setup(x => x.GetEjudiciaryJudgesAsync()).ReturnsAsync(judgesList);
+            _userApiClient.Setup(x => x.GetEjudiciaryJudgesByUsernameAsync(term)).ReturnsAsync(judgesList.Where(x => x.Email.Contains(term)).ToList());
             var group = await GetService().SearchEjudiciaryJudgesByEmailUserResponse(term);
             group.Should().HaveCount(expectedToMatchCount);
         }

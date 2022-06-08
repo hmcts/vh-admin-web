@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
@@ -15,7 +10,6 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -24,6 +18,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -107,7 +106,7 @@ namespace AdminWebsite.Controllers
                 {
                     return Created("", hearingDetailsResponse);
                 }
-                
+
                 if(_featureToggles.BookAndConfirmToggle() && judgeExists)
                     await ConfirmHearing(hearingDetailsResponse.Id);
 
