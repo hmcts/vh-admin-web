@@ -13,9 +13,10 @@ import { QuestionnaireMapperFactory } from './services/questionnaire-mapper-fact
 export const routes: Routes = [
     {
         path: 'questionnaire',
-        redirectTo: 'dashboard' //component: AnswersListComponent,
+        redirectTo: 'dashboard' // component: AnswersListComponent,
         // canActivate: [VhOfficerAdminGuard] /*no longer in use*/
-    }];
+    }
+];
 
 @NgModule({
     imports: [SharedModule, CommonModule, RouterModule.forRoot(routes)],
