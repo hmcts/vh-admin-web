@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.35.12-pullrequest0442-0003, )",
-        "resolved": "1.35.12-pullrequest0442-0003",
-        "contentHash": "jyDSd5yP0jq96iDou/eA8nhey0qXCfnAinlbYv04/Godf5ajsm/9INDB+fsBstUUZ5/g+96X/6zjxVlrMPfNNw==",
+        "requested": "[1.35.12, )",
+        "resolved": "1.35.12",
+        "contentHash": "GxGhTF2NhyLvipNjx2BTqNJvZk/+OFiXz2pNd5GN+ErClnb8+kiPyBMAlFSwdk5I7xJxHM0xFpBL0A9RABrWEQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2909,7 +2909,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.35.12-pullrequest0442-0003",
+          "BookingsApi.Client": "1.35.12",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "LaunchDarkly.ServerSdk": "6.3.2",
