@@ -10,7 +10,12 @@ import { AnswerListEntryComponent } from './answer-list-entry/answer-list-entry.
 import { ScrollableSuitabilityAnswersService } from './services/scrollable-suitability-answers.service';
 import { QuestionnaireMapperFactory } from './services/questionnaire-mapper-factory.service';
 
-export const routes: Routes = [{ path: 'questionnaire', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] }];
+export const routes: Routes = [
+    {
+        path: 'questionnaire',
+        redirectTo: 'dashboard' //component: AnswersListComponent,
+        // canActivate: [VhOfficerAdminGuard] /*no longer in use*/
+    }];
 
 @NgModule({
     imports: [SharedModule, CommonModule, RouterModule.forRoot(routes)],
