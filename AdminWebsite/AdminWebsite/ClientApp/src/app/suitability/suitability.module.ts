@@ -4,7 +4,7 @@ import { AnswersListComponent } from './answers-list/answers-list.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { SharedModule } from '../shared/shared.module'
+import { SharedModule } from '../shared/shared.module';
 import { AnswerListEntryComponent } from './answer-list-entry/answer-list-entry.component';
 import { ScrollableSuitabilityAnswersService } from './services/scrollable-suitability-answers.service';
 import { QuestionnaireMapperFactory } from './services/questionnaire-mapper-factory.service';
