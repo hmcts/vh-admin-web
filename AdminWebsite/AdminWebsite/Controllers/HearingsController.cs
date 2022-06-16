@@ -78,7 +78,7 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
             var newBookingRequest = request.BookingDetails;
-            
+            newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
             //var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
