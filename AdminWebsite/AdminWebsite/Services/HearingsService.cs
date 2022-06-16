@@ -29,17 +29,17 @@ namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict);
+        //Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+        //    Dictionary<string, User> newUsernameAdIdDict);
 
         void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
             IReadOnlyCollection<ParticipantRequest> participants);
 
-        Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict);
+        //Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
+        //    Dictionary<string, User> newUsernameAdIdDict);
 
-        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing,
-            List<ParticipantResponse> participants = null);
+        //Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing,
+        //    List<ParticipantResponse> participants = null);
 
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
@@ -48,8 +48,8 @@ namespace AdminWebsite.Services
         /// <param name="hearing"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
-        Task EditHearingSendConfirmation(HearingDetailsResponse hearing,
-            List<ParticipantResponse> participants = null);
+        //Task EditHearingSendConfirmation(HearingDetailsResponse hearing,
+        //    List<ParticipantResponse> participants = null);
 
         /// <summary>
         /// This will notify all participants (excluding the judge and staff member) a hearing has been booked.
@@ -58,30 +58,30 @@ namespace AdminWebsite.Services
         /// <param name="hearing"></param>
         /// <param name="participants"></param>
         /// <returns></returns>
-        Task NewHearingSendConfirmation(HearingDetailsResponse hearing,
-            List<ParticipantResponse> participants = null);
+        //Task NewHearingSendConfirmation(HearingDetailsResponse hearing,
+        //    List<ParticipantResponse> participants = null);
 
-        Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
+        //Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
 
-        Task SendHearingReminderEmail(HearingDetailsResponse hearing);
+        //Task SendHearingReminderEmail(HearingDetailsResponse hearing);
 
-        Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
+        //Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
             List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
 
-        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
-            List<Guid> removedParticipantIds, HearingDetailsResponse hearing,
-            Dictionary<string, User> usernameAdIdDict);
+        //Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+        //    List<Guid> removedParticipantIds, HearingDetailsResponse hearing,
+        //    Dictionary<string, User> usernameAdIdDict);
 
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
 
-        Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
+        //Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
-        Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
+        //Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
-        Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
+        //Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
@@ -90,9 +90,9 @@ namespace AdminWebsite.Services
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
-        Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
+        //Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
 
-        Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
+        //Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
 
     }
 
@@ -121,29 +121,29 @@ namespace AdminWebsite.Services
             _kinlyConfiguration = kinlyOptions.Value;
         }
 #pragma warning restore S107
-        public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict)
-        {
-            var participantGroup = newUsernameAdIdDict.Select(pair => new
-            {
-                pair,
-                participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-            });
+        //public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+        //    Dictionary<string, User> newUsernameAdIdDict)
+        //{
+        //    var participantGroup = newUsernameAdIdDict.Select(pair => new
+        //    {
+        //        pair,
+        //        participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+        //    });
 
-            if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
-            {
-                _logger.LogDebug(
-                    $"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
-                return;
-            }
+        //    if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
+        //    {
+        //        _logger.LogDebug(
+        //            $"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
+        //        return;
+        //    }
 
-            var tasks = participantGroup.Select(t =>
-                    AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
-                        hearing.Id))
-                .ToList();
+            //var tasks = participantGroup.Select(t =>
+            //        AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
+            //            hearing.Id))
+            //    .ToList();
 
-            await Task.WhenAll(tasks);
-        }
+            //await Task.WhenAll(tasks);
+        //}
 
         public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
             IReadOnlyCollection<ParticipantRequest> participants)
@@ -237,25 +237,25 @@ namespace AdminWebsite.Services
         }
 
 
-        public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict)
-        {
-            foreach (var item in newUsernameAdIdDict)
-            {
-                if (!string.IsNullOrEmpty(item.Value?.Password))
-                {
-                    var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
+        //public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
+        //    Dictionary<string, User> newUsernameAdIdDict)
+        //{
+        //    foreach (var item in newUsernameAdIdDict)
+        //    {
+        //        if (!string.IsNullOrEmpty(item.Value?.Password))
+        //        {
+        //            var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
 
-                    if (participant == null) continue;
+        //            if (participant == null) continue;
 
-                    var request =
-                        AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant,
-                            item.Value.Password);
-                    // Send a notification only for the newly created users
-                    await _notificationApiClient.CreateNewNotificationAsync(request);
-                }
-            }
-        }
+        //            var request =
+        //                AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant,
+        //                    item.Value.Password);
+        //            // Send a notification only for the newly created users
+        //            await _notificationApiClient.CreateNewNotificationAsync(request);
+        //        }
+        //    }
+        //}
 
         public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing,
             HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
@@ -728,27 +728,27 @@ namespace AdminWebsite.Services
             }
         }
 
-        private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName,
-            Guid hearingId)
-        {
-            await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
-            (
-                4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-                retryAttempt =>
-                    _logger.LogDebug(
-                        $"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
-                result => result.IsFaulted,
-                async () =>
-                {
-                    _logger.LogDebug(
-                        $"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-                    await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
-                    _logger.LogDebug(
-                        $"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-                    return Task.CompletedTask;
-                }
-            );
-        }
+        //private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName,
+        //    Guid hearingId)
+        //{
+        //    await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
+        //    (
+        //        4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+        //        retryAttempt =>
+        //            _logger.LogDebug(
+        //                $"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
+        //        result => result.IsFaulted,
+        //        async () =>
+        //        {
+        //            _logger.LogDebug(
+        //                $"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+        //            await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
+        //            _logger.LogDebug(
+        //                $"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+        //            return Task.CompletedTask;
+        //        }
+        //    );
+        //}
 
         public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request,
             HearingDetailsResponse hearing)
