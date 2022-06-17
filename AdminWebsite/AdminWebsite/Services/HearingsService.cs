@@ -511,10 +511,7 @@ namespace AdminWebsite.Services
             // Judge and panel member is manually created in AD, no need to create one
             var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
 
-            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge
-                || participant.HearingRoleName == RoleNames.PanelMember
-                || participant.HearingRoleName == RoleNames.Winger)) 
-                || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
+            if (participant.CaseRoleName == RoleNames.Judge)
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
