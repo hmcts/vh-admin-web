@@ -564,13 +564,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ConfirmedBy = confirmedBy
             };
 
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
+            _addNewParticipantRequest.Participants = new List<EditParticipantRequest> {new EditParticipantRequest
             {
                 HearingRoleName = RoleNames.PanelMember,
                 ContactEmail = "new.contactactemail@hmcts.net",
                 DisplayName = "new.displayName@hmcts.net",
                 CaseRoleName = RoleNames.PanelMember
-            });
+            } };
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)

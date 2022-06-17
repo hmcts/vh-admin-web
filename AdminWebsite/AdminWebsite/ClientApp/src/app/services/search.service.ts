@@ -69,14 +69,14 @@ export class SearchService {
             .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
-    participantSearch(term: string, hearingRole: string): Observable<Array<ParticipantModel>> {
+    participantSearch(term: string, hearingRole: string, caseRole: string = null): Observable<Array<ParticipantModel>> {
         const allResults: ParticipantModel[] = [];
         if (term.length >= this.minimumSearchLength) {
             if (hearingRole === Constants.HearingRoles.Judge) {
                 return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
             } else {
                 let persons$: Observable<Array<PersonResponse>>;
-                if (this.judiciaryRoles.includes(hearingRole)) {
+                if (this.judiciaryRoles.includes(caseRole) || this.judiciaryRoles.includes(hearingRole)) {
                     persons$ = this.searchJudiciaryEntries(term);
                 } else if (hearingRole === Constants.HearingRoles.StaffMember) {
                     persons$ = this.searchStaffMemberAccounts(term);
