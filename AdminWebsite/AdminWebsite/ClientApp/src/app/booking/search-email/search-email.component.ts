@@ -38,6 +38,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() disabled = true;
 
+    @Input() caseRole = '';
+
     @Input() hearingRoleParticipant = '';
 
     @Input() initialValue = '';
@@ -71,7 +73,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     distinctUntilChanged(),
                     switchMap(term => {
                         if (term.length > 2) {
-                            return this.searchService.participantSearch(term, this.hearingRoleParticipant);
+                            return this.searchService.participantSearch(term, this.hearingRoleParticipant, this.caseRole);
                         } else {
                             this.lessThanThreeLetters();
                             return NEVER;

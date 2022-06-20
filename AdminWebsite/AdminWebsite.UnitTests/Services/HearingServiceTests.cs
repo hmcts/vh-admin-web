@@ -775,29 +775,6 @@ namespace AdminWebsite.UnitTests.Services
 
         [TestCase(RoleNames.PanelMember)]
         [TestCase(RoleNames.Winger)]
-        public async Task Should_process_new_joh_participant_EJudFeature_Is_ON(string hearingRole)
-        {
-            // Arrange
-            var participant = new EditParticipantRequest()
-            {
-                Id = Guid.NewGuid(),
-                HearingRoleName = hearingRole,
-                ContactEmail = "contact@email.com"
-            };
-            var removedParticipantIds = new List<Guid>();
-            var usernameAdIdDict = new Dictionary<string, User>();
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().Be(participant.ContactEmail);
-        }
-
-        [TestCase(RoleNames.PanelMember)]
-        [TestCase(RoleNames.Winger)]
         public async Task Should_NOT_process_new_joh_participant_EJudFeature_Is_OFF(string hearingRole)
         {
             // Arrange
@@ -829,35 +806,6 @@ namespace AdminWebsite.UnitTests.Services
             // Assert
             newParticipant.Should().NotBeNull();
             newParticipant.Username.Should().Be(participant.ContactEmail);
-        }
-
-        [Test]
-        public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
-        {
-            // Arrange
-            var participant = new EditParticipantRequest()
-            {
-                Id = Guid.NewGuid(),
-                HearingRoleName = "Panel Member",
-                ContactEmail = "contact@email.com"
-            };
-
-            _hearing.Participants.Add(new ParticipantResponse()
-            {
-                Id = participant.Id.Value,
-                Username = participant.ContactEmail,
-                ContactEmail = participant.ContactEmail
-            });
-
-            var removedParticipantIds = new List<Guid>();
-            var usernameAdIdDict = new Dictionary<string, User>();
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
-
-            // Assert
-            newParticipant.Should().BeNull();
         }
 
         [Test]
