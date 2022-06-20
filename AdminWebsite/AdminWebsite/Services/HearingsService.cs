@@ -508,8 +508,6 @@ namespace AdminWebsite.Services
             // Add a new participant
             // Map the request except the username
             var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            // Judge and panel member is manually created in AD, no need to create one
-            var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
 
             if (participant.CaseRoleName == RoleNames.Judge)
             {
