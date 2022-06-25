@@ -152,11 +152,11 @@ namespace AdminWebsite.Services
             foreach (var endpoint in endpointsWithDa)
             {
                 _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
-                    endpoint.DefenceAdvocateUsername, endpoint.DisplayName);
+                    endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
                 var defenceAdvocate = participants.Single(x =>
-                    x.Username.Equals(endpoint.DefenceAdvocateUsername,
+                    x.Username.Equals(endpoint.DefenceAdvocateContactEmail,
                         StringComparison.CurrentCultureIgnoreCase));
-                endpoint.DefenceAdvocateUsername = defenceAdvocate.Username;
+                endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
             }
         }
 

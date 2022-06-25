@@ -92,7 +92,7 @@ namespace AdminWebsite.Controllers
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
                     var endpointsWithDa = newBookingRequest.Endpoints
-                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateUsername))
+                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
                         .ToList();
                     _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa,
                         newBookingRequest.Participants.AsReadOnly());
@@ -398,11 +398,11 @@ namespace AdminWebsite.Controllers
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
 
-                _logger.LogDebug("Attempting assign participants to the correct group");
+                //_logger.LogDebug("Attempting assign participants to the correct group");
 
                 //await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
 
-                _logger.LogDebug("Successfully assigned participants to the correct group");
+                //_logger.LogDebug("Successfully assigned participants to the correct group");
 
                 if (updatedHearing.Status == BookingStatus.Failed)
                 {
