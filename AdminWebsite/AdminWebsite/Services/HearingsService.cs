@@ -520,8 +520,8 @@ namespace AdminWebsite.Services
                     //If the judge already exists in the database, there is no need to add again.
                     return null;
                 }
-
-                newParticipant.ContactEmail = participant.ContactEmail;
+                
+                newParticipant.Username = participant.ContactEmail;
             }
 
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
