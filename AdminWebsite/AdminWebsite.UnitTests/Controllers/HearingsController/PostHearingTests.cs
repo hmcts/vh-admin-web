@@ -74,10 +74,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [SetUp]
         public void Setup2()
         {
-            _mocker.Mock<IUserAccountService>()
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username ??= p.ContactEmail; })
-                .ReturnsAsync(new User());
         }
 
         //[Test]
@@ -257,9 +253,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {DisplayName = "displayname1", DefenceAdvocateUsername = "username1@hmcts.net"},
+                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
                     new EndpointRequest
-                        {DisplayName = "displayname2", DefenceAdvocateUsername = "username2@hmcts.net"},
+                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "username2@hmcts.net"},
                 }
             };
             

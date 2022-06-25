@@ -633,7 +633,7 @@ namespace AdminWebsite.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 DisplayName = "test",
-                DefenceAdvocateUsername = Guid.NewGuid().ToString(),
+                DefenceAdvocateContactEmail = Guid.NewGuid().ToString(),
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
@@ -785,11 +785,9 @@ namespace AdminWebsite.UnitTests.Services
                 ContactEmail = "contact@email.com"
             };
             var removedParticipantIds = new List<Guid>();
-            var usernameAdIdDict = new Dictionary<string, User>();
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -808,23 +806,12 @@ namespace AdminWebsite.UnitTests.Services
                 ContactEmail = "contact@email.com"
             };
             var removedParticipantIds = new List<Guid>();
-            var usernameAdIdDict = new Dictionary<string, User>();
 
-            var user = new User()
-            {
-                UserName = participant.ContactEmail,
-                Password = "password"
-            };
-
-            _mocker.Mock<IUserAccountService>().Setup(x =>
-                    x.UpdateParticipantUsername(It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(y => y.ContactEmail == participant.ContactEmail)))
-                .ReturnsAsync(user);
             _mocker.Mock<IBookingsApiClient>()
                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -850,11 +837,9 @@ namespace AdminWebsite.UnitTests.Services
             });
 
             var removedParticipantIds = new List<Guid>();
-            var usernameAdIdDict = new Dictionary<string, User>();
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
 
             // Assert
             newParticipant.Should().BeNull();
@@ -1184,11 +1169,8 @@ namespace AdminWebsite.UnitTests.Services
                 participant.Id.Value
             };
 
-            var usernameAdIdDict = new Dictionary<string, User>();
-
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -1215,13 +1197,8 @@ namespace AdminWebsite.UnitTests.Services
                 Password = password
             };
 
-            _mocker.Mock<IUserAccountService>().Setup(x =>
-                    x.UpdateParticipantUsername(It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(y => y.ContactEmail == participant.ContactEmail)))
-                .ReturnsAsync(user);
-
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing,
-                usernameAdIdDict);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
 
             // Assert
             newParticipant.Should().NotBeNull();

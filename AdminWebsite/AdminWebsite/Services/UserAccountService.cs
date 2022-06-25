@@ -45,13 +45,6 @@ namespace AdminWebsite.Services
         /// </remarks>
         Task<IEnumerable<UserResponse>> SearchEjudiciaryJudgesByEmailUserResponse(string term);
 
-        /// <summary>
-        /// Creates a user based on the participant information or updates the participant username if it already exists
-        /// </summary>
-        /// <param name="participant"></param>
-        /// <returns></returns>
-        Task<User> UpdateParticipantUsername(ParticipantRequest participant);
-
         Task<UserRole> GetUserRoleAsync(string userName);
 
         /// <summary>

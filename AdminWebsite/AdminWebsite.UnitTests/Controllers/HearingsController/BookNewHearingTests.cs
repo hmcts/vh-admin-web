@@ -264,8 +264,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
-            _mocker.Mock<IUserAccountService>().Setup(x =>
-                    x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
+            //_mocker.Mock<IUserAccountService>().Setup(x =>
+            //        x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
 
@@ -426,9 +426,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {DisplayName = "displayname1", DefenceAdvocateUsername = "username1@hmcts.net"},
+                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
                     new EndpointRequest
-                        {DisplayName = "displayname2", DefenceAdvocateUsername = "fname2.lname2@hmcts.net"},
+                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "fname2.lname2@hmcts.net"},
                 }
             };
 

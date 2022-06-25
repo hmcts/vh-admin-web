@@ -215,11 +215,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EditEndpointRequest>
                 {
                     new EditEndpointRequest
-                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateUsername = "username@hmcts.net"},
+                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net"},
                     new EditEndpointRequest
-                        {Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@hmcts.net"},
+                        {Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = "edit-user@hmcts.net"},
                     new EditEndpointRequest {Id = guid2, DisplayName = "data2-edit"},
-                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateUsername = ""}
+                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = ""}
                 }
             };
 
@@ -307,13 +307,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
                 .Returns(new ValidationResult());
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
-                {
-                    UserName = participant.ContactEmail,
-                    Password = "password"
-                });
         }
 
         [Test]
@@ -578,10 +571,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing);
 
             var userName = _addNewParticipantRequest.Participants.Last().ContactEmail;
-            _userAccountService
-               .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-               .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-               .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
 
             //Act
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -616,10 +605,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -675,17 +660,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(
-                    It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new@hmcts.net")))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
-
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(
-                    It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new2@hmcts.net")))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = "old1@hmcts.net")
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = "old1@hmcts.net", Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);

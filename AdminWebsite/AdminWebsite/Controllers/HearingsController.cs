@@ -79,7 +79,6 @@ namespace AdminWebsite.Controllers
         {
             var newBookingRequest = request.BookingDetails;
             newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
-            //var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
                 //List<ParticipantRequest> nonJudgeParticipants;
@@ -234,11 +233,6 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
                 
-                //var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                //var judgeExists =  hearing.Participants.Any(x => x.HearingRoleName == RoleNames.Judge);
-                //if(_featureToggles.BookAndConfirmToggle() && judgeExists)
-                //    await ConfirmHearing(hearingId, true);
-
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -266,7 +260,6 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
-            //var usernameAdIdDict = new Dictionary<string, User>();
             if (hearingId == Guid.Empty)
             {
                 _logger.LogWarning("No hearing id found to edit");
@@ -331,13 +324,12 @@ namespace AdminWebsite.Controllers
                 {
                     if (!participant.Id.HasValue)
                     {
-                        //if (await _hearingsService.ProcessNewParticipant(hearingId, participant,
-                        //    removedParticipantIds,
-                        //    originalHearing,
-                        //    usernameAdIdDict) is { } newParticipant)
-                        //{
-                        //    newParticipants.Add(newParticipant);
-                        //}
+                        if (await _hearingsService.ProcessNewParticipant(hearingId, participant,
+                            removedParticipantIds,
+                            originalHearing) is { } newParticipant)
+                        {
+                            newParticipants.Add(newParticipant);
+                        }
                     }
                     else
                     {
@@ -398,21 +390,10 @@ namespace AdminWebsite.Controllers
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
 
-                //_logger.LogDebug("Attempting assign participants to the correct group");
-
-                //await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
-
-                //_logger.LogDebug("Successfully assigned participants to the correct group");
-
                 if (updatedHearing.Status == BookingStatus.Failed)
                 {
                     return Ok(updatedHearing);
                 }
-
-                // Send a notification email to newly created participants
-                //var newJudgeHasBeenAdded = newParticipants.Any(e => e.HearingRoleName == RoleNames.Judge);
-                //var newParticipantEmails = newParticipants.Select(p => p.ContactEmail).ToList();
-                //await SendEmailsToParticipantsAddedToHearing(newParticipants, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
                 //Does not need to be sent if new judge added - handled in SendEmailsToParticipantsAddedToHearing 
                 //if (updatedHearing.JudgeHasNotChangedForGenericHearing(originalHearing) && !newJudgeHasBeenAdded)
