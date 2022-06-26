@@ -3,7 +3,6 @@ using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
-using AdminWebsite.Services.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
@@ -11,12 +10,10 @@ using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NotificationApi.Client;
-using NotificationApi.Contract.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AdminWebsite.Helper;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
@@ -29,43 +26,8 @@ namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        //Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-        //    Dictionary<string, User> newUsernameAdIdDict);
-
         void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
             IReadOnlyCollection<ParticipantRequest> participants);
-
-        //Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
-        //    Dictionary<string, User> newUsernameAdIdDict);
-
-        //Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing,
-        //    List<ParticipantResponse> participants = null);
-
-        /// <summary>
-        /// This will notify all participants (excluding the judge) a hearing has been booked.
-        /// Not to be confused with the "confirmed process".
-        /// </summary>
-        /// <param name="hearing"></param>
-        /// <param name="participants"></param>
-        /// <returns></returns>
-        //Task EditHearingSendConfirmation(HearingDetailsResponse hearing,
-        //    List<ParticipantResponse> participants = null);
-
-        /// <summary>
-        /// This will notify all participants (excluding the judge and staff member) a hearing has been booked.
-        /// Not to be confused with the "confirmed process".
-        /// </summary>
-        /// <param name="hearing"></param>
-        /// <param name="participants"></param>
-        /// <returns></returns>
-        //Task NewHearingSendConfirmation(HearingDetailsResponse hearing,
-        //    List<ParticipantResponse> participants = null);
-
-        //Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
-
-        //Task SendHearingReminderEmail(HearingDetailsResponse hearing);
-
-        //Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
             List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
@@ -76,22 +38,12 @@ namespace AdminWebsite.Services
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
 
-        //Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
-
-        //Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
-
-        //Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
-
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
         bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
-
-        //Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants);
-
-        //Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId);
 
     }
 
@@ -119,30 +71,6 @@ namespace AdminWebsite.Services
             _featureToggles = featureToggles;
             _kinlyConfiguration = kinlyOptions.Value;
         }
-#pragma warning restore S107
-        //public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-        //    Dictionary<string, User> newUsernameAdIdDict)
-        //{
-        //    var participantGroup = newUsernameAdIdDict.Select(pair => new
-        //    {
-        //        pair,
-        //        participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-        //    });
-
-        //    if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
-        //    {
-        //        _logger.LogDebug(
-        //            $"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
-        //        return;
-        //    }
-
-            //var tasks = participantGroup.Select(t =>
-            //        AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserId, t.participant.UserRoleName,
-            //            hearing.Id))
-            //    .ToList();
-
-            //await Task.WhenAll(tasks);
-        //}
 
         public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
             IReadOnlyCollection<ParticipantRequest> participants)
@@ -233,256 +161,6 @@ namespace AdminWebsite.Services
                     .Except(originalParticipants, EditParticipantRequest.EditParticipantRequestComparer)
                     .ToList()
                 : new List<EditParticipantRequest>();
-        }
-
-
-        //public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
-        //    Dictionary<string, User> newUsernameAdIdDict)
-        //{
-        //    foreach (var item in newUsernameAdIdDict)
-        //    {
-        //        if (!string.IsNullOrEmpty(item.Value?.Password))
-        //        {
-        //            var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
-
-        //            if (participant == null) continue;
-
-        //            var request =
-        //                AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant,
-        //                    item.Value.Password);
-        //            // Send a notification only for the newly created users
-        //            await _notificationApiClient.CreateNewNotificationAsync(request);
-        //        }
-        //    }
-        //}
-
-        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing,
-            HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
-        {
-            if (updatedHearing.IsGenericHearing())
-            {
-                return;
-            }
-
-            var @case = updatedHearing.Cases.First();
-            var caseName = @case.Name;
-            var caseNumber = @case.Number;
-
-            var participantsToEmail = participants ?? updatedHearing.Participants;
-            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.ConfirmedDate == null ||
-                originalHearing.GroupId != originalHearing.Id)
-            {
-                participantsToEmail = participantsToEmail
-                    .Where(x => !x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                    .ToList();
-            }
-
-            var requests = participantsToEmail
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
-                        caseName, caseNumber, originalHearing.ScheduledDateTime, updatedHearing.ScheduledDateTime))
-                .ToList();
-
-            await CreateNotifications(requests);
-        }
-
-        public async Task NewHearingSendConfirmation(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null)
-        {
-            if (hearing.IsGenericHearing())
-            {
-                await ProcessGenericEmail(hearing, participants);
-                return;
-            }
-
-            var participantsToEmail = participants ?? hearing.Participants;
-            
-            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
-            var requests = participantsToEmail
-                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
-                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();
-
-            if (hearing.TelephoneParticipants != null)
-            {
-                var telephoneRequests = hearing.TelephoneParticipants
-                    .Where(x => !x.HearingRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
-                    .ToList();
-
-                requests.AddRange(telephoneRequests);
-            }
-
-            await CreateNotifications(requests);
-        }
-
-        public async Task EditHearingSendConfirmation(HearingDetailsResponse hearing,
-            List<ParticipantResponse> participants = null)
-        {
-            if (hearing.IsGenericHearing())
-            {
-                await ProcessGenericEmail(hearing, participants);
-                return;
-            }
-            var participantsToEmail = participants ?? hearing.Participants;
-            var filteredParticipants = participantsToEmail.AsEnumerable();
-
-            if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
-            {
-                filteredParticipants = filteredParticipants
-                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase));
-            }
-
-            var notificationRequests = filteredParticipants
-                 .Select(participant =>
-                     AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                 .ToList();
-            if (hearing.TelephoneParticipants != null)
-            {
-                var telephoneRequests = hearing.TelephoneParticipants
-                    .Where(x => !x.HearingRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant =>
-                        AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotification(hearing, participant))
-                    .ToList();
-
-                notificationRequests.AddRange(telephoneRequests);
-            }
-            await CreateNotifications(notificationRequests);
-        }
-
-        public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
-        {
-            if (hearing.IsGenericHearing())
-            {
-                await ProcessGenericEmail(hearing, null);
-                return;
-            }
-            
-            //if BookAndConfirm toggle switched off include where userRole != Judge LINQ clause to requests
-            var requests = hearing.Participants
-                .Where(y => !y.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .WhereIf(!_featureToggles.BookAndConfirmToggle(), 
-                    x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                .ToList();
-            
-            if (hearing.TelephoneParticipants != null)
-            {
-                var telephoneRequests = hearing.TelephoneParticipants
-                .Where(x => !x.HearingRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToTelephoneHearingConfirmationNotificationMultiDay(hearing, participant, days))
-                .ToList();
-
-                requests.AddRange(telephoneRequests);
-            }
-
-            await CreateNotifications(requests);
-        }
-
-        public async Task ProcessGenericEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants)
-        {
-            if (string.Equals(hearing.HearingTypeName, "Automated Test", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return;
-            }
-
-            var @case = hearing.Cases.First();
-
-            var participantsToEmail = participants ?? hearing.Participants;
-
-            var filteredParticipants = participantsToEmail;
-
-            if (hearing.Status != BookingsApi.Contract.Enums.BookingStatus.Created)
-            {
-                filteredParticipants = filteredParticipants 
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                    .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                    .ToList();
-            }
-
-            var notificationRequests = filteredParticipants
-                .Select(participant => 
-                    AddNotificationRequestMapper.MapToDemoOrTestNotification(hearing, participant, @case.Number, hearing.HearingTypeName)).Where(x => x != null)
-                .ToList();
-
-            if (notificationRequests.Count < 1) return;
-            await CreateNotifications(notificationRequests);
-        }
-
-        public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
-        {
-            if (hearing.IsGenericHearing())
-            {
-                await ProcessGenericEmail(hearing, null);
-                return;
-            }
-
-            if (hearing.DoesJudgeEmailExist())
-            {
-                await SendJudgeConfirmationEmail(hearing);
-            }
-
-            var requests = hearing.Participants
-                .Where(x => !x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase))
-                .Where(x => !x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
-                .ToList();
-
-            var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.GroupId.Value);
-            if (hearings.Count == 1)
-            {
-                requests.AddRange(hearing.Participants.Where(x => x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase)).Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant)).ToList());
-            }
-            else
-            {
-                requests.AddRange(hearing.Participants.Where(x => x.UserRoleName.Contains(RoleNames.StaffMember, StringComparison.CurrentCultureIgnoreCase)).Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, hearings.Count)).ToList());
-            }
-            await CreateNotifications(requests);
-        }
-
-        public async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
-        {
-            var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.GroupId.Value);
-            AddNotificationRequest request;
-
-            if (hearings.Count == 1)
-            {
-                var judge = hearing.Participants
-                    .First(x => x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
-            }
-            else
-            {
-                var firstHearingForGroup = hearings.First();
-                if (firstHearingForGroup.Id != hearing.Id)
-                {
-                    return;
-                }
-
-                var judge = firstHearingForGroup.Participants.First(x =>
-                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(
-                    firstHearingForGroup, judge, hearings.Count);
-            }
-
-            if (request.ContactEmail != null)
-            {
-                await _notificationApiClient.CreateNewNotificationAsync(request);
-            }
-        }
-
-        public async Task<TeleConferenceDetails> GetTelephoneConferenceDetails(Guid hearingId)
-        {
-            var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
-            if (conferenceDetailsResponse.HasValidMeetingRoom())
-                return new TeleConferenceDetails(_kinlyConfiguration.ConferencePhoneNumber,
-                    conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId);
-
-            throw new InvalidOperationException($"Couldn't get tele conference details as meeting room for a for a conference with the id {conferenceDetailsResponse.Id} was not valid");
         }
 
         public async Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
@@ -719,28 +397,6 @@ namespace AdminWebsite.Services
             }
         }
 
-        //private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName,
-        //    Guid hearingId)
-        //{
-        //    await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
-        //    (
-        //        4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
-        //        retryAttempt =>
-        //            _logger.LogDebug(
-        //                $"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
-        //        result => result.IsFaulted,
-        //        async () =>
-        //        {
-        //            _logger.LogDebug(
-        //                $"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-        //            await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
-        //            _logger.LogDebug(
-        //                $"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-        //            return Task.CompletedTask;
-        //        }
-        //    );
-        //}
-
         public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request,
             HearingDetailsResponse hearing)
         {
@@ -774,14 +430,6 @@ namespace AdminWebsite.Services
                         updateParticipantRequest);
                 }
             }
-        }
-
-        private async Task CreateNotifications(List<AddNotificationRequest> notificationRequests)
-        {
-            if(_featureToggles.BookAndConfirmToggle())
-                notificationRequests = notificationRequests.Where(req => !string.IsNullOrWhiteSpace(req.ContactEmail)).ToList();
-            
-            await Task.WhenAll(notificationRequests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
     }
 }
