@@ -263,9 +263,9 @@ describe('EndpointsComponent', () => {
         participantModel.display_name = 'display name';
         component.hearing.participants.push(participantModel);
         component.ngOnInit();
-        let result = component.getUsernameFromId('1000');
+        let result = component.getEmailFromId('1000');
         expect(result).toBe('username@hmcts.net');
-        result = component.getUsernameFromId('1001');
+        result = component.getEmailFromId('1001');
         expect(result).toBe('1001');
     });
     it('should unsubscribe all subcription on destroy', () => {

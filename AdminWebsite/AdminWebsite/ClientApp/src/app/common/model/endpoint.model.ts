@@ -5,4 +5,5 @@ export class EndpointModel {
     pin?: string | undefined;
     defenceAdvocate?: string | undefined;
     username?: string | undefined;
+    contactEmail?: string | undefined;
 }
