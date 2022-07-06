@@ -100,7 +100,12 @@ namespace AdminWebsite.Controllers
                 {
                     return Created("", hearingDetailsResponse);
                 }
-                
+                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
+                if (judgeExists)
+                {
+                    await GetConferenceStatus(hearingDetailsResponse.Id, 
+                        $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingDetailsResponse.Id}");
+                }
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -148,7 +153,15 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
                 _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
+
+                var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
+
+                var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false);
+                var tasks = conferenceStatusToGet.Select(x => GetConferenceStatus(x.Id, 
+                    $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {x.Id}")).ToList();
+                await Task.WhenAll(tasks);
                 
+
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -402,7 +415,7 @@ namespace AdminWebsite.Controllers
                 var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
-                
+
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
 
                 updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
@@ -413,37 +426,7 @@ namespace AdminWebsite.Controllers
                 if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse { Success = true });
 
-                try
-                {
-                    _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
-                    var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
-                    _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
-
-                    if (conferenceDetailsResponse.HasValidMeetingRoom())
-                    {
-                         return Ok(new UpdateBookingStatusResponse
-                        {
-                            Success = true,
-                            TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
-                        });
-                    }
-                    else
-                    {
-                        await UpdateFailedBookingStatus(hearingId);
-                        return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                    }
-                }
-                catch (VideoApiException ex)
-                {
-                    _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                    _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
-                    hearingId);
-
-                    // Set the booking status to failed as the video api failed
-                    await UpdateFailedBookingStatus(hearingId);
-
-                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                }
+                return await GetConferenceStatus(hearingId, errorMessage);
             }
             catch (Exception ex)
             {
@@ -463,6 +446,41 @@ namespace AdminWebsite.Controllers
                     return BadRequest(e);
                 }
                 return BadRequest(ex.Message);
+            }
+        }
+
+        private async Task<IActionResult> GetConferenceStatus(Guid hearingId, string errorMessage)
+        {
+            try
+            {
+                _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
+                var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
+
+                if (conferenceDetailsResponse.HasValidMeetingRoom())
+                {
+                    return Ok(new UpdateBookingStatusResponse
+                    {
+                        Success = true,
+                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                    });
+                }
+                else
+                {
+                    await UpdateFailedBookingStatus(hearingId);
+                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                }
+            }
+            catch (VideoApiException ex)
+            {
+                _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
+                hearingId);
+
+                // Set the booking status to failed as the video api failed
+                await UpdateFailedBookingStatus(hearingId);
+
+                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
             }
         }
 
