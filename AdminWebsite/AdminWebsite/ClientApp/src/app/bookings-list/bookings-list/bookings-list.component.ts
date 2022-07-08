@@ -120,9 +120,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     async getEditedBookingFromStorage() {
-        const selectedRecord = this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[
-            this.bookingPersistService.selectedItemIndex
-        ];
+        const selectedRecord =
+            this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[
+                this.bookingPersistService.selectedItemIndex
+            ];
         this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.HearingId });
         const response = await this.videoHearingService.getHearingById(selectedRecord.HearingId).toPromise();
         this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.HearingId });

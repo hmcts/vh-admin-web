@@ -12,13 +12,11 @@ describe('Date error message test suite', () => {
     const weekendErrorId = '#hearingDate-weekend-error';
     const requiredErrorId = '#hearingDate-required-error';
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [DateErrorMessagesComponent]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [DateErrorMessagesComponent]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(DateErrorMessagesComponent);

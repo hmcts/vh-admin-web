@@ -51,67 +51,56 @@ describe('AppComponent', () => {
         }
     };
 
-    beforeEach(
-        waitForAsync(() => {
-            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
-            configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
-            oidcSecurityService = mockOidcSecurityService;
+    beforeEach(waitForAsync(() => {
+        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+        configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
+        oidcSecurityService = mockOidcSecurityService;
 
-            window = jasmine.createSpyObj('WindowRef', ['getLocation']);
-            window.getLocation.and.returnValue(new WindowLocation('/url'));
+        window = jasmine.createSpyObj('WindowRef', ['getLocation']);
+        window.getLocation.and.returnValue(new WindowLocation('/url'));
 
-            pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+        pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
-            deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+        deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
 
-            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
-            TestBed.configureTestingModule({
-                imports: [HttpClientModule, RouterTestingModule],
-                declarations: [
-                    AppComponent,
-                    HeaderComponent,
-                    FooterStubComponent,
-                    SignOutPopupStubComponent,
-                    CancelPopupStubComponent,
-                    UnsupportedBrowserComponent
-                ],
-                providers: [
-                    { provide: OidcSecurityService, useValue: mockOidcSecurityService },
-                    { provide: ConfigService, useValue: configServiceSpy },
-                    { provide: Router, useValue: router },
-                    { provide: PageTrackerService, useValue: pageTracker },
-                    { provide: WindowRef, useValue: window },
-                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                    { provide: ConnectionService, useFactory: () => mockConnectionService }
-                ]
-            }).compileComponents();
-        })
-    );
-    it(
-        'should create the app',
-        waitForAsync(() => {
-            const fixture = TestBed.createComponent(AppComponent);
-            const app = fixture.debugElement.componentInstance;
-            expect(app).toBeTruthy();
-        })
-    );
-    it(
-        `should have as title 'Book hearing'`,
-        waitForAsync(() => {
-            const fixture = TestBed.createComponent(AppComponent);
-            const app = fixture.debugElement.componentInstance;
-            expect(app.title).toEqual('Book hearing');
-        })
-    );
-    it(
-        'should a tag Skip to main content',
-        waitForAsync(() => {
-            const fixture = TestBed.createComponent(AppComponent);
-            const compiled = fixture.debugElement.nativeElement;
-            expect(compiled.querySelector('a').textContent).toContain('Skip to main content');
-        })
-    );
+        httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule, RouterTestingModule],
+            declarations: [
+                AppComponent,
+                HeaderComponent,
+                FooterStubComponent,
+                SignOutPopupStubComponent,
+                CancelPopupStubComponent,
+                UnsupportedBrowserComponent
+            ],
+            providers: [
+                { provide: OidcSecurityService, useValue: mockOidcSecurityService },
+                { provide: ConfigService, useValue: configServiceSpy },
+                { provide: Router, useValue: router },
+                { provide: PageTrackerService, useValue: pageTracker },
+                { provide: WindowRef, useValue: window },
+                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                { provide: ConnectionService, useFactory: () => mockConnectionService }
+            ]
+        }).compileComponents();
+    }));
+    it('should create the app', waitForAsync(() => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.debugElement.componentInstance;
+        expect(app).toBeTruthy();
+    }));
+    it(`should have as title 'Book hearing'`, waitForAsync(() => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const app = fixture.debugElement.componentInstance;
+        expect(app.title).toEqual('Book hearing');
+    }));
+    it('should a tag Skip to main content', waitForAsync(() => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const compiled = fixture.debugElement.nativeElement;
+        expect(compiled.querySelector('a').textContent).toContain('Skip to main content');
+    }));
 
     it('should redirect to login with current url as return url if not authenticated', fakeAsync(() => {
         const fixture = TestBed.createComponent(AppComponent);
@@ -162,43 +151,41 @@ describe('AppComponent - ConnectionService', () => {
 
     let httpClient: jasmine.SpyObj<HttpClient>;
 
-    beforeEach(
-        waitForAsync(() => {
-            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
-            mockOidcSecurityService = new MockOidcSecurityService();
+    beforeEach(waitForAsync(() => {
+        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+        mockOidcSecurityService = new MockOidcSecurityService();
 
-            window = jasmine.createSpyObj('WindowRef', ['getLocation']);
-            window.getLocation.and.returnValue(new WindowLocation('/url'));
+        window = jasmine.createSpyObj('WindowRef', ['getLocation']);
+        window.getLocation.and.returnValue(new WindowLocation('/url'));
 
-            pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+        pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
-            deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+        deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
 
-            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+        httpClient = jasmine.createSpyObj<HttpClient>(['head']);
 
-            TestBed.configureTestingModule({
-                imports: [HttpClientModule, RouterTestingModule],
-                declarations: [
-                    AppComponent,
-                    HeaderComponent,
-                    FooterStubComponent,
-                    SignOutPopupStubComponent,
-                    CancelPopupStubComponent,
-                    UnsupportedBrowserComponent
-                ],
-                providers: [
-                    { provide: OidcSecurityService, useValue: mockOidcSecurityService },
-                    { provide: ConfigService, useValue: configServiceSpy },
-                    { provide: Router, useValue: router },
-                    { provide: PageTrackerService, useValue: pageTracker },
-                    { provide: WindowRef, useValue: window },
-                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                    { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
-                ]
-            }).compileComponents();
-        })
-    );
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule, RouterTestingModule],
+            declarations: [
+                AppComponent,
+                HeaderComponent,
+                FooterStubComponent,
+                SignOutPopupStubComponent,
+                CancelPopupStubComponent,
+                UnsupportedBrowserComponent
+            ],
+            providers: [
+                { provide: OidcSecurityService, useValue: mockOidcSecurityService },
+                { provide: ConfigService, useValue: configServiceSpy },
+                { provide: Router, useValue: router },
+                { provide: PageTrackerService, useValue: pageTracker },
+                { provide: WindowRef, useValue: window },
+                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
+            ]
+        }).compileComponents();
+    }));
 
     it('should redirect if the connection is lost', fakeAsync(
         inject([HttpClient], (http: HttpClient) => {
