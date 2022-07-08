@@ -345,6 +345,51 @@ namespace AdminWebsite.UnitTests.Services
             newParticipant.Username.Should().Be(participant.ContactEmail);
         }
 
+        [TestCase(RoleNames.PanelMember)]
+        [TestCase(RoleNames.Winger)]
+        public async Task Should_process_new_joh_participant_EJudFeature_Is_OFF(string hearingRole)
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                HearingRoleName = hearingRole,
+                ContactEmail = "contact@email.com"
+            };
+            var removedParticipantIds = new List<Guid>();
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().NotBe(participant.ContactEmail);
+        }
+
+        [Test]
+        public async Task Should_process_new_judge_participant_EJudFeature_Is_OFF()
+        {
+            // Arrange
+            var participant = new EditParticipantRequest()
+            {
+                Id = Guid.NewGuid(),
+                CaseRoleName = "Judge",
+                ContactEmail = "contact@email.com"
+            };
+            var removedParticipantIds = new List<Guid>();
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+
+            // Act
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+
+            // Assert
+            newParticipant.Should().NotBeNull();
+            newParticipant.Username.Should().Be(participant.ContactEmail);
+        }
+
         [Test]
         public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
         {
@@ -467,7 +512,47 @@ namespace AdminWebsite.UnitTests.Services
             //Assert
             response.Should().Be(shouldUpdateJudge);
         }
-        
+
+        [Test]
+        public void IsUpdatingJudge_should_be_false_when_judge_isempty()
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "xyz"
+            });
+            editHearing.OtherInformation = "JudgePhone|loremIpsum";
+            var hearing = InitHearing();
+            hearing.Participants.Remove(hearing.Participants.Single(x => x.HearingRoleName == "Judge"));
+            hearing.OtherInformation = "JudgePhone|loremIpsum";
+            //Act
+            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            //Assert
+            response.Should().Be(false);
+        }
+
+        [Test]
+        public void IsUpdatingJudge_should_be_false_when_other_info_empty()
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "xyz"
+            });
+            editHearing.OtherInformation = string.Empty;
+            var hearing = InitHearing();
+            hearing.Participants.Remove(hearing.Participants.Single(x => x.HearingRoleName == "Judge"));
+            hearing.OtherInformation = string.Empty;
+            //Act
+            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            //Assert
+            response.Should().Be(false);
+        }
+
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };

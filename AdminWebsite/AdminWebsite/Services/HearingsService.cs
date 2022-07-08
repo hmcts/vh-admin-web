@@ -40,8 +40,6 @@ namespace AdminWebsite.Services
 
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse);
-        bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse);
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
@@ -113,18 +111,6 @@ namespace AdminWebsite.Services
                    HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
         }
 
-        public bool IsAddingOrRemovingStaffMember(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
-        {
-            var existingStaffMember =
-                hearingDetailsResponse.Participants.FirstOrDefault(
-                    x => x.HearingRoleName == HearingRoleName.StaffMember);
-            var newStaffMember =
-                editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.StaffMember);
-            return (existingStaffMember == null && newStaffMember != null) ||
-                   (existingStaffMember != null && newStaffMember == null);
-        }
-
         public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse)
         {
@@ -137,7 +123,7 @@ namespace AdminWebsite.Services
             var newJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(editHearingRequest.OtherInformation);
 
             return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
-                   (newJudgeOtherInformation ?? string.Empty) != (existingJudgeOtherInformation ?? string.Empty);
+                   newJudgeOtherInformation != existingJudgeOtherInformation;
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
@@ -279,156 +265,6 @@ namespace AdminWebsite.Services
             };
             await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value,
                 updateEndpointRequest);
-        }
-
-        public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request,
-            HearingDetailsResponse hearing)
-        {
-            var existingParticipantWithLinks =
-                request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
-            foreach (var participantRequest in existingParticipantWithLinks)
-            {
-                await UpdateLinksForExistingParticipant(request, hearing, participantRequest);
-            }
-        }
-
-        private async Task UpdateLinksForExistingParticipant(EditHearingRequest request, HearingDetailsResponse hearing,
-            EditParticipantRequest requestParticipant)
-        {
-            var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
-            var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
-                .LinkedParticipants.ToList();
-
-            var requests =
-                BuildLinkedParticipantRequestForExistingParticipant(hearing, participant, linkedParticipantsInRequest);
-
-            var updateParticipantRequest = new UpdateParticipantRequest
-            {
-                LinkedParticipants = requests,
-                DisplayName = requestParticipant.DisplayName,
-                OrganisationName = requestParticipant.OrganisationName,
-                Representee = requestParticipant.Representee,
-                TelephoneNumber = requestParticipant.TelephoneNumber,
-                Title = requestParticipant.Title
-            };
-
-            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearing.Id, participant.Id,
-                updateParticipantRequest);
-        }
-
-        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(
-            HearingDetailsResponse hearing, ParticipantResponse participant,
-            IList<LinkedParticipant> linkedParticipantsInRequest)
-        {
-            var requests = new List<LinkedParticipantRequest>();
-
-            var newLinks = GetNewLinkedParticipants(linkedParticipantsInRequest);
-
-            requests.AddRange(newLinks);
-
-            var existingLinks = GetExistingLinkedParticipants(linkedParticipantsInRequest, hearing, participant);
-
-            requests.AddRange(existingLinks);
-
-            return requests;
-        }
-
-        private static IEnumerable<LinkedParticipantRequest> GetNewLinkedParticipants(
-            IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
-        {
-            return linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
-                .Select(lp => new LinkedParticipantRequest
-                {
-                    ParticipantContactEmail = lp.ParticipantContactEmail,
-                    LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
-                }).ToList();
-        }
-
-        private static IEnumerable<LinkedParticipantRequest> GetExistingLinkedParticipants(
-            IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing,
-            ParticipantResponse participant)
-        {
-            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x =>
-                    x.LinkedId != Guid.Empty && !HasExistingLink(x, participant) && LinkedParticipantExists(hearing, x))
-                .ToList();
-
-            var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest =>
-                hearing.Participants.Find(x => x.Id == linkedParticipantInRequest.LinkedId)).ToList();
-
-            if (!existingLinks.Any()) return new List<LinkedParticipantRequest>();
-
-            return existingLinks.Select(linkedParticipant => new LinkedParticipantRequest
-            {
-                ParticipantContactEmail = participant.ContactEmail,
-                LinkedParticipantContactEmail = linkedParticipant.ContactEmail
-            }).ToList();
-        }
-
-        private static bool LinkedParticipantExists(HearingDetailsResponse hearing, LinkedParticipant linkedParticipant)
-        {
-            return hearing.Participants.Any(participant => participant.Id == linkedParticipant.LinkedId);
-        }
-
-        private static bool HasExistingLink(LinkedParticipant linkedParticipantInRequest,
-            ParticipantResponse participant)
-        {
-            var linkedId = linkedParticipantInRequest.LinkedId;
-            var existingLink = false;
-
-            if (participant.LinkedParticipants != null)
-            {
-                existingLink = participant.LinkedParticipants.Exists(x => x.LinkedId == linkedId);
-            }
-
-            return existingLink;
-        }
-
-        public async Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList)
-        {
-            if (newParticipantList.Any())
-            {
-                _logger.LogDebug("Saving new participants {ParticipantCount} to hearing {Hearing}",
-                    newParticipantList.Count, hearingId);
-                await _bookingsApiClient.AddParticipantsToHearingAsync(hearingId, new AddParticipantsToHearingRequest()
-                {
-                    Participants = newParticipantList
-                });
-            }
-        }
-
-        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request,
-            HearingDetailsResponse hearing)
-        {
-            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
-            {
-                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
-                {
-                    if (requestParticipant.Id != null) continue;
-                    var requests = new List<LinkedParticipantRequest>();
-                    foreach (var lp in requestParticipant.LinkedParticipants)
-                    {
-                        requests.Add(new LinkedParticipantRequest
-                        {
-                            ParticipantContactEmail = lp.ParticipantContactEmail,
-                            LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
-                        });
-                    }
-
-                    var updateParticipantRequest = new UpdateParticipantRequest
-                    {
-                        LinkedParticipants = requests,
-                        DisplayName = requestParticipant.DisplayName,
-                        OrganisationName = requestParticipant.OrganisationName,
-                        Representee = requestParticipant.Representee,
-                        TelephoneNumber = requestParticipant.TelephoneNumber,
-                        Title = requestParticipant.Title
-                    };
-                    var newParticipant =
-                        hearing.Participants.First(p => p.ContactEmail == requestParticipant.ContactEmail);
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id,
-                        updateParticipantRequest);
-                }
-            }
         }
     }
 }
