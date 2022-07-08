@@ -67,7 +67,7 @@
         "jasmine-core": "~3.8",
         "jasmine-spec-reporter": "~6.0.0",
         "ng-mocks": "^12.4.0",
-        "nswag": "^13.10.9",
+        "nswag": "^13.16.1",
         "pa11y": "^5.3.1",
         "prettier": "^2.2.1",
         "puppeteer": "^9.1.1",
