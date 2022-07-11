@@ -4,4 +4,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="BookingsApi.Client" Version="1.35.14" />
+    </ItemGroup>
+
 </Project>

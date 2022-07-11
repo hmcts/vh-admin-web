@@ -2,6 +2,16 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v3.1": {
+      "BookingsApi.Client": {
+        "type": "Direct",
+        "requested": "[1.35.14, )",
+        "resolved": "1.35.14",
+        "contentHash": "54UN95hpQ/yHyGl2uefHVakEqQJ2KFeIL1mmfz81vKTSd1/8k8pqwzVrcyVNf9gHBMOYa7c2Rzu77H6XqvEgpg==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "12.0.3"
+        }
+      },
       "coverlet.msbuild": {
         "type": "Direct",
         "requested": "[3.0.2, )",
@@ -107,15 +117,6 @@
         "requested": "[8.18.0.27296, )",
         "resolved": "8.18.0.27296",
         "contentHash": "GoHb0jtrazBEzinjD/IV4zcMVSLMcVYA9UwZiJULyUxtRTFt/g9uduzpoGbAvpgjE3/fLf2KC2Tf6JjhHhkeKg=="
-      },
-      "BookingsApi.Client": {
-        "type": "Transitive",
-        "resolved": "1.35.14",
-        "contentHash": "54UN95hpQ/yHyGl2uefHVakEqQJ2KFeIL1mmfz81vKTSd1/8k8pqwzVrcyVNf9gHBMOYa7c2Rzu77H6XqvEgpg==",
-        "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Newtonsoft.Json": "12.0.3"
-        }
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -2627,8 +2628,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.27.12",
-        "contentHash": "i0tvDjT1fizLPevmrlFhgx4oA/DLAQBmAjW6BM3LIC9ExaBeCrvyBJ3wUm6EYjwfuaUgfbqLqeemymgK/UM3LQ==",
+        "resolved": "1.35.3",
+        "contentHash": "CenFFPsHySmV0WosJnLrc5H7mfFfm5BssC/KsIlor4qie8JNdG8cjL1EDmSvppiX5feHcjQE2sK+gYH3yhXSRA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2663,11 +2664,14 @@
           "TimeZoneConverter": "3.4.0",
           "UserApi.Client": "1.30.2",
           "VH.Core.Configuration": "0.1.12",
-          "VideoApi.Client": "1.27.12"
+          "VideoApi.Client": "1.35.3"
         }
       },
       "adminwebsite.testing.common": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "BookingsApi.Client": "1.35.14"
+        }
       }
     }
   }

@@ -110,9 +110,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.27.12, )",
-        "resolved": "1.27.12",
-        "contentHash": "i0tvDjT1fizLPevmrlFhgx4oA/DLAQBmAjW6BM3LIC9ExaBeCrvyBJ3wUm6EYjwfuaUgfbqLqeemymgK/UM3LQ==",
+        "requested": "[1.35.3, )",
+        "resolved": "1.35.3",
+        "contentHash": "CenFFPsHySmV0WosJnLrc5H7mfFfm5BssC/KsIlor4qie8JNdG8cjL1EDmSvppiX5feHcjQE2sK+gYH3yhXSRA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2595,11 +2595,14 @@
           "TimeZoneConverter": "3.4.0",
           "UserApi.Client": "1.30.2",
           "VH.Core.Configuration": "0.1.12",
-          "VideoApi.Client": "1.27.12"
+          "VideoApi.Client": "1.35.3"
         }
       },
       "adminwebsite.testing.common": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "BookingsApi.Client": "1.35.14"
+        }
       }
     }
   }
