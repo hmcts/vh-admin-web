@@ -110,10 +110,10 @@
           {{ endpoint.displayName }}
         </div>
       </div>
-      <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
+      <div *ngIf="getParticipantInfo(endpoint.defenceAdvocateContactEmail)" class="govuk-grid-row">
         <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
           <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
-          {{ getParticipantInfo(endpoint.defenceAdvocate) }}
+          {{ getParticipantInfo(endpoint.defenceAdvocateContactEmail) }}
         </div>
       </div>
       <div class="govuk-grid-row">

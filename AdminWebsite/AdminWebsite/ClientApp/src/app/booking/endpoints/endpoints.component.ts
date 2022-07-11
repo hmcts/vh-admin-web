@@ -84,7 +84,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 const displayNameText = SanitizeInputText(control.value.displayName);
                 endpointModel.displayName = displayNameText;
                 endpointModel.id = control.value.id;
-                endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
+                endpointModel.defenceAdvocateContactEmail = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
                 newEndpointsArray.push(endpointModel);
             }
         }
@@ -176,8 +176,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                 this.fb.group({
                     id: e.id,
                     displayName: e.displayName,
-                    defenceAdvocateId: e.defenceAdvocate,
-                    defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
+                    defenceAdvocateId: e.defenceAdvocateContactEmail,
+                    defenceAdvocate: e.defenceAdvocateContactEmail === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocateContactEmail)
                 })
             );
         });

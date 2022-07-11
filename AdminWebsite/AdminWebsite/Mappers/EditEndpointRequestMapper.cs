@@ -13,7 +13,7 @@ namespace AdminWebsite.Mappers
             {
                 Id = response.Id,
                 DisplayName = response.DisplayName,
-                DefenceAdvocateUsername =
+                DefenceAdvocateContactEmail =
                     response.DefenceAdvocateId == null ? null : response.DefenceAdvocateId.ToString()
             };
 

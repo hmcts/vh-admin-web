@@ -426,9 +426,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {DisplayName = "displayname1", DefenceAdvocateUsername = "username1@hmcts.net"},
+                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
                     new EndpointRequest
-                        {DisplayName = "displayname2", DefenceAdvocateUsername = "fname2.lname2@hmcts.net"},
+                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "fname2.lname2@hmcts.net"},
                 }
             };
 

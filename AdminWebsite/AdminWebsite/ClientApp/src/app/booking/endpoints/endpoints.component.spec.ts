@@ -178,7 +178,7 @@ describe('EndpointsComponent', () => {
         expect(component.duplicateDa).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
+        expect(component.hearing.endpoints[0].defenceAdvocateContactEmail).toBe('');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });
@@ -194,9 +194,9 @@ describe('EndpointsComponent', () => {
         expect(component.duplicateDa).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('username@hmcts.net');
+        expect(component.hearing.endpoints[0].defenceAdvocateContactEmail).toBe('username@hmcts.net');
         expect(component.hearing.endpoints[1].displayName).toBe('201');
-        expect(component.hearing.endpoints[1].defenceAdvocate).toBe('username1@hmcts.net');
+        expect(component.hearing.endpoints[1].defenceAdvocateContactEmail).toBe('username1@hmcts.net');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });
@@ -251,11 +251,11 @@ describe('EndpointsComponent', () => {
         const eps: EndpointModel[] = [];
         let ep = new EndpointModel();
         ep.displayName = 'displayname1';
-        ep.defenceAdvocate = '12345';
+        ep.defenceAdvocateContactEmail = '12345';
         eps.push(ep);
         ep = new EndpointModel();
         ep.displayName = 'displayname1';
-        ep.defenceAdvocate = '11223';
+        ep.defenceAdvocateContactEmail = '11223';
         existinghearing.endpoints = eps;
 
         component.hearing = existinghearing;
@@ -265,7 +265,7 @@ describe('EndpointsComponent', () => {
         component.saveEndpoints();
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('new display name');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('user@hmcts.net');
+        expect(component.hearing.endpoints[0].defenceAdvocateContactEmail).toBe('user@hmcts.net');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
 
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);

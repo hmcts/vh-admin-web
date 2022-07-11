@@ -90,7 +90,7 @@ namespace AdminWebsite.Controllers
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
                     var endpointsWithDa = newBookingRequest.Endpoints
-                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateUsername))
+                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
                         .ToList();
                     _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa,
                         newBookingRequest.Participants.AsReadOnly());

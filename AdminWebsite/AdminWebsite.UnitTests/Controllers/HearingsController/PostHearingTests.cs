@@ -165,7 +165,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
 
-            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = adUserName };
+            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateContactEmail = adUserName };
             var endpointList = new List<EndpointRequest> { endpoints };
 
             var hearing = new BookNewHearingRequest
@@ -204,7 +204,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
 
             const string da = "username@hmcts.net";
-            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = da };
+            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateContactEmail = da };
             var endpointList = new List<EndpointRequest> {endpoints};
 
             var hearing = new BookNewHearingRequest
@@ -257,9 +257,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {DisplayName = "displayname1", DefenceAdvocateUsername = "username1@hmcts.net"},
+                        {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
                     new EndpointRequest
-                        {DisplayName = "displayname2", DefenceAdvocateUsername = "username2@hmcts.net"},
+                        {DisplayName = "displayname2", DefenceAdvocateContactEmail = "username2@hmcts.net"},
                 }
             };
             
