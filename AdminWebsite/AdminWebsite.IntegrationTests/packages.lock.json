@@ -110,8 +110,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "1.35.14",
-        "contentHash": "54UN95hpQ/yHyGl2uefHVakEqQJ2KFeIL1mmfz81vKTSd1/8k8pqwzVrcyVNf9gHBMOYa7c2Rzu77H6XqvEgpg==",
+        "resolved": "1.36.13",
+        "contentHash": "Z55kCFREeSCFNIP/niQ5cDRh2p9jYWNd9c8hAGZDFZXPSXK05twXbu35DuFTxON+S2RnYoLg8fvJtf2eqqR97g==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2606,8 +2606,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.30.2",
-        "contentHash": "TLt8+UV0PcX78U12NHD76/YXh15eN14nbphrKXGDSki45n5+3cxfhxZEE+tc3NVh1i7Bqo7ySk9scOFZ56NsEw==",
+        "resolved": "1.30.5",
+        "contentHash": "yDH2HecC2dmfnLGf1eISCKU/HweF9a02GloVD/GZ5QZu5NI9l/Ly15fDancVGRo3cFTPuqJ1A6uOKVDDvObXjg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2627,8 +2627,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.27.12",
-        "contentHash": "i0tvDjT1fizLPevmrlFhgx4oA/DLAQBmAjW6BM3LIC9ExaBeCrvyBJ3wUm6EYjwfuaUgfbqLqeemymgK/UM3LQ==",
+        "resolved": "1.35.3",
+        "contentHash": "CenFFPsHySmV0WosJnLrc5H7mfFfm5BssC/KsIlor4qie8JNdG8cjL1EDmSvppiX5feHcjQE2sK+gYH3yhXSRA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2637,7 +2637,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.35.14",
+          "BookingsApi.Client": "1.36.13",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "LaunchDarkly.ServerSdk": "6.3.2",
@@ -2661,9 +2661,9 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "5.6.3",
           "Swashbuckle.AspNetCore.Swagger": "5.6.3",
           "TimeZoneConverter": "3.4.0",
-          "UserApi.Client": "1.30.2",
+          "UserApi.Client": "1.30.5",
           "VH.Core.Configuration": "0.1.12",
-          "VideoApi.Client": "1.27.12"
+          "VideoApi.Client": "1.35.3"
         }
       },
       "adminwebsite.testing.common": {
