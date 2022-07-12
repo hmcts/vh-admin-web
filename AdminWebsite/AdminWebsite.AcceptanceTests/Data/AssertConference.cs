@@ -79,7 +79,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 conferenceParticipant.Id.Should().NotBeEmpty();
                 conferenceParticipant.LastName.Trim().Should().Be(hearingParticipant.LastName.Trim());
                 conferenceParticipant.Name.Trim().Should().Be($"{hearingParticipant.Title} {hearingParticipant.FirstName.Trim()} {hearingParticipant.LastName.Trim()}");
-                conferenceParticipant.RefId.Should().Be(hearingParticipant.Id);
+                conferenceParticipant.RefId.ToString().Trim().Should().Be(hearingParticipant.Id.ToString().Trim());
                 conferenceParticipant.UserRole.ToString().Should().Be(hearingParticipant.UserRoleName.Trim());
                 conferenceParticipant.Username.Trim().Should().Be(hearingParticipant.Username.Trim());
             }
