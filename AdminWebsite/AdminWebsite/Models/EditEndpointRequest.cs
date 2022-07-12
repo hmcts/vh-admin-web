@@ -20,7 +20,7 @@ namespace AdminWebsite.Models
         /// <summary>
         ///     The username of the participant
         /// </summary>
-        public string DefenceAdvocateContactEmail { get; set; }
+        public string DefenceAdvocateUsername { get; set; }
 
         private sealed class EditEndpointRequestEqualityComparer : IEqualityComparer<EditEndpointRequest>
         {
@@ -30,12 +30,12 @@ namespace AdminWebsite.Models
                 if (ReferenceEquals(x, null)) return false;
                 if (ReferenceEquals(y, null)) return false;
                 if (x.GetType() != y.GetType()) return false;
-                return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName && x.DefenceAdvocateContactEmail == y.DefenceAdvocateContactEmail;
+                return Nullable.Equals(x.Id, y.Id) && x.DisplayName == y.DisplayName && x.DefenceAdvocateUsername == y.DefenceAdvocateUsername;
             }
 
             public int GetHashCode(EditEndpointRequest obj)
             {
-                return HashCode.Combine(obj.Id, obj.DisplayName, obj.DefenceAdvocateContactEmail);
+                return HashCode.Combine(obj.Id, obj.DisplayName, obj.DefenceAdvocateUsername);
             }
         }
 

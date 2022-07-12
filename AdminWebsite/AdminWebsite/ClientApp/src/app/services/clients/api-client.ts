@@ -3708,7 +3708,7 @@ export interface IParticipantRequest {
 
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
+    defence_advocate_username?: string | undefined;
 
     constructor(data?: IEndpointRequest) {
         if (data) {
@@ -3718,11 +3718,10 @@ export class EndpointRequest implements IEndpointRequest {
         }
     }
 
-
     init(_data?: any) {
         if (_data) {
             this.display_name = _data['display_name'];
-            this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            this.defence_advocate_username = _data['defence_advocate_username'];
         }
     }
 
@@ -3736,14 +3735,14 @@ export class EndpointRequest implements IEndpointRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['display_name'] = this.display_name;
-        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['defence_advocate_username'] = this.defence_advocate_username;
         return data;
     }
 }
 
 export interface IEndpointRequest {
     display_name?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
+    defence_advocate_username?: string | undefined;
 }
 
 export enum LinkedParticipantType {
@@ -4783,7 +4782,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
-    defence_advocate_contact_email?: string | undefined;
+    defence_advocate_username?: string | undefined;
 
     constructor(data?: IEditEndpointRequest) {
         if (data) {
@@ -4797,7 +4796,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         if (_data) {
             this.id = _data['id'];
             this.display_name = _data['display_name'];
-            this.defence_advocate_contact_email = _data['defence_advocate_username'];
+            this.defence_advocate_username = _data['defence_advocate_username'];
         }
     }
 
@@ -4812,7 +4811,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
         data['display_name'] = this.display_name;
-        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['defence_advocate_username'] = this.defence_advocate_username;
         return data;
     }
 }
@@ -4823,7 +4822,7 @@ export interface IEditEndpointRequest {
     /** The display name for the endpoint */
     display_name?: string | undefined;
     /** The username of the participant */
-    defence_advocate_contact_email?: string | undefined;
+    defence_advocate_username?: string | undefined;
 }
 
 /** Request for updating an existing hearing */

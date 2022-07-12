@@ -3,6 +3,6 @@ export class EndpointModel {
     displayName?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
-    defenceAdvocateContactEmail?: string | undefined;
+    defenceAdvocate?: string | undefined;
     username?: string | undefined;
 }

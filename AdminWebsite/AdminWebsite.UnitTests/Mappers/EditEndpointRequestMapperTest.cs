@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Mappers
 
             result.Id.Should().Be(source.Id);
             result.DisplayName.Should().Be(source.DisplayName);
-            result.DefenceAdvocateContactEmail.Should().Be(source.DefenceAdvocateId.ToString());
+            result.DefenceAdvocateUsername.Should().Be(source.DefenceAdvocateId.ToString());
         }
     }
 }

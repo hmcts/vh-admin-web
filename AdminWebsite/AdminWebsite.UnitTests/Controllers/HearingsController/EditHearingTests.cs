@@ -215,11 +215,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EditEndpointRequest>
                 {
                     new EditEndpointRequest
-                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net"},
+                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateUsername = "username@hmcts.net"},
                     new EditEndpointRequest
-                        {Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = "edit-user@hmcts.net"},
+                        {Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@hmcts.net"},
                     new EditEndpointRequest {Id = guid2, DisplayName = "data2-edit"},
-                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = ""}
+                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateUsername = ""}
                 }
             };
 

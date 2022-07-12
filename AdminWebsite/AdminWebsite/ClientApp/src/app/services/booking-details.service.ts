@@ -86,7 +86,7 @@ export class BookingDetailsService {
                 epModel.displayName = e.display_name;
                 epModel.pin = e.pin;
                 epModel.sip = e.sip;
-                epModel.defenceAdvocateContactEmail = e.defence_advocate_id;
+                epModel.defenceAdvocate = e.defence_advocate_id;
                 endpoints.push(epModel);
             });
         }

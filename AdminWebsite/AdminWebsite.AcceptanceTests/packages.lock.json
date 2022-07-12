@@ -2,16 +2,6 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v3.1": {
-      "BookingsApi.Client": {
-        "type": "Direct",
-        "requested": "[1.36.14, )",
-        "resolved": "1.36.14",
-        "contentHash": "fYzzWmaSfoWcvqrlBPFkQvLyGMVizHviieyYQZvDQxyCVvAXafOEi/DT2CMDYXopzxovqZP/9QTdj5mz2zuIiQ==",
-        "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Newtonsoft.Json": "12.0.3"
-        }
-      },
       "GovukNotify": {
         "type": "Direct",
         "requested": "[4.0.1, )",
@@ -160,6 +150,15 @@
         "type": "Transitive",
         "resolved": "1.5.0",
         "contentHash": "CzIPzdIAFSd2zuLxI+0K9s48Qv3HQDbWiApn9h96j284rHs2bSPrn/PMca3mi4q3xLSEqOp+GUJ6+mXDD9prKg=="
+      },
+      "BookingsApi.Client": {
+        "type": "Transitive",
+        "resolved": "1.36.10",
+        "contentHash": "GGsYhq61juW0yCwdqVHNR3B3vDPkenIlYEl3hJKoPxvItBkdtc8YOlUBYD8trrNAAUU8UDdUOvoIS5YI2H4+gw==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "12.0.3"
+        }
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -2909,7 +2908,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "1.36.14",
+          "BookingsApi.Client": "1.35.14",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
           "LaunchDarkly.ServerSdk": "6.3.2",

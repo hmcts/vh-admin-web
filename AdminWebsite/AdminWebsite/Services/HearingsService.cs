@@ -152,11 +152,11 @@ namespace AdminWebsite.Services
             foreach (var endpoint in endpointsWithDa)
             {
                 _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
-                    endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
+                    endpoint.DefenceAdvocateUsername, endpoint.DisplayName);
                 var defenceAdvocate = participants.Single(x =>
-                    x.Username.Equals(endpoint.DefenceAdvocateContactEmail,
+                    x.Username.Equals(endpoint.DefenceAdvocateUsername,
                         StringComparison.CurrentCultureIgnoreCase));
-                endpoint.DefenceAdvocateContactEmail = defenceAdvocate.Username;
+                endpoint.DefenceAdvocateUsername = defenceAdvocate.Username;
             }
         }
 
@@ -546,11 +546,11 @@ namespace AdminWebsite.Services
             foreach (var endpoint in request.Endpoints)
             {
                 var epToUpdate = newParticipantList
-                    .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
+                    .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateUsername,
                         StringComparison.CurrentCultureIgnoreCase));
                 if (epToUpdate != null)
                 {
-                    endpoint.DefenceAdvocateContactEmail = epToUpdate.Username;
+                    endpoint.DefenceAdvocateUsername = epToUpdate.Username;
                 }
 
                 if (endpoint.Id.HasValue)
@@ -583,7 +583,7 @@ namespace AdminWebsite.Services
             var addEndpointRequest = new AddEndpointRequest
             {
                 DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                DefenceAdvocateUsername = endpoint.DefenceAdvocateUsername
             };
             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
         }
@@ -594,7 +594,7 @@ namespace AdminWebsite.Services
             var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
             if (existingEndpointToEdit == null ||
                 existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-                existingEndpointToEdit.DefenceAdvocateId.ToString() == endpoint.DefenceAdvocateContactEmail)
+                existingEndpointToEdit.DefenceAdvocateId.ToString() == endpoint.DefenceAdvocateUsername)
                 return;
 
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
@@ -602,7 +602,7 @@ namespace AdminWebsite.Services
             var updateEndpointRequest = new UpdateEndpointRequest
             {
                 DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                DefenceAdvocateUsername = endpoint.DefenceAdvocateUsername
             };
             await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value,
                 updateEndpointRequest);

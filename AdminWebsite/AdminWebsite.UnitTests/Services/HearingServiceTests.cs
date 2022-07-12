@@ -633,7 +633,7 @@ namespace AdminWebsite.UnitTests.Services
             {
                 Id = Guid.NewGuid(),
                 DisplayName = "test",
-                DefenceAdvocateContactEmail = Guid.NewGuid().ToString(),
+                DefenceAdvocateUsername = Guid.NewGuid().ToString(),
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
@@ -665,7 +665,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_when_endpoint_defenceAdvocateContactEmail_is_changed()
+        public void Should_return_false_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
             Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
