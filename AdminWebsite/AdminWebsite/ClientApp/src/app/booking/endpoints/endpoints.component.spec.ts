@@ -16,6 +16,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MockValues } from 'src/app/testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { EndpointsComponent } from './endpoints.component';
+import { HearingRoles } from '../../common/model/hearing-roles.model';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -198,6 +199,48 @@ describe('EndpointsComponent', () => {
         expect(component.hearing.endpoints[1].defenceAdvocate).toBe('username1@hmcts.net');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+    });
+
+    it('it should filter  "Representative" user-types only as valid defenceAdvocates for JVM', () => {
+        // arrange
+        newHearing.participants = [
+            { user_role_name: 'Representative', display_name: 'Counsel', hearing_role_name: 'Counsel', case_role_name: 'Appellant' },
+            { user_role_name: 'Individual', display_name: 'Employer', hearing_role_name: 'Employer', case_role_name: 'Appellant' },
+            { user_role_name: 'Representative', display_name: 'Solicitor', hearing_role_name: 'Solicitor', case_role_name: 'Appellant' },
+            { user_role_name: 'Representative', display_name: 'Barrister', hearing_role_name: 'Barrister', case_role_name: 'Appellant' },
+            {
+                user_role_name: 'Representative',
+                display_name: 'pro-bono representative',
+                hearing_role_name: 'pro-bono representative',
+                case_role_name: 'ELAAS'
+            },
+            {
+                user_role_name: 'Representative',
+                display_name: 'Representative',
+                hearing_role_name: 'Representative',
+                case_role_name: 'Appellant'
+            },
+            { user_role_name: 'Representative', display_name: 'Advocate1', hearing_role_name: 'Advocate', case_role_name: 'Appellant' },
+            {
+                user_role_name: 'Individual',
+                display_name: 'Litigant in person',
+                hearing_role_name: 'Litigant in person',
+                case_role_name: 'Appellant'
+            },
+            { user_role_name: 'Representative', display_name: 'Advocate2', hearing_role_name: 'Advocate', case_role_name: 'Respondent' }
+        ];
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+        // act
+        component.ngOnInit();
+        // assert
+        // Current implementation of populateDefenceAdvocates() inserts an empty record at position[0]
+        expect(component.availableDefenceAdvocates[1].displayName).toBe('Counsel');
+        expect(component.availableDefenceAdvocates[2].displayName).toBe('Solicitor');
+        expect(component.availableDefenceAdvocates[3].displayName).toBe('Barrister');
+        expect(component.availableDefenceAdvocates[4].displayName).toBe('pro-bono representative');
+        expect(component.availableDefenceAdvocates[5].displayName).toBe('Representative');
+        expect(component.availableDefenceAdvocates[6].displayName).toBe('Advocate1');
+        expect(component.availableDefenceAdvocates[7].displayName).toBe('Advocate2');
     });
 
     it('it should validate form array on next click and navigate to summary page in edit mode', () => {
