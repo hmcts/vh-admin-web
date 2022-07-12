@@ -71,7 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 {
                     conferenceParticipant.ContactEmail.Should().Be(hearingParticipant.ContactEmail);
                 }
-                conferenceParticipant.ContactTelephone.Trim().Should().Be(hearingParticipant.TelephoneNumber.Trim());
+                conferenceParticipant.ContactTelephone?.Trim().Should().Be(hearingParticipant.TelephoneNumber?.Trim());
                 conferenceParticipant.CurrentStatus.Should().Be(ParticipantState.NotSignedIn);
                 conferenceParticipant.DisplayName.Trim().Should().Be(hearingParticipant.DisplayName.Trim());
                 conferenceParticipant.FirstName.Trim().Should().Be(hearingParticipant.FirstName.Trim());
