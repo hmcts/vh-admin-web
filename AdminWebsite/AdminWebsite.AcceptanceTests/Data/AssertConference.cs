@@ -71,6 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 {
                     conferenceParticipant.ContactEmail.Should().Be(hearingParticipant.ContactEmail);
                 }
+                conferenceParticipant.Name.Trim().Should().Contain($"{hearingParticipant.FirstName.Trim()} {hearingParticipant.LastName.Trim()}");
                 conferenceParticipant.ContactTelephone?.Trim().Should().Be(hearingParticipant.TelephoneNumber?.Trim());
                 conferenceParticipant.CurrentStatus.Should().Be(ParticipantState.NotSignedIn);
                 conferenceParticipant.DisplayName.Trim().Should().Be(hearingParticipant.DisplayName.Trim());
@@ -78,8 +79,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 conferenceParticipant.HearingRole.Trim().Should().Be(hearingParticipant.HearingRoleName.Trim());
                 conferenceParticipant.Id.Should().NotBeEmpty();
                 conferenceParticipant.LastName.Trim().Should().Be(hearingParticipant.LastName.Trim());
-                conferenceParticipant.Name.Trim().Should().Be($"{hearingParticipant.Title} {hearingParticipant.FirstName.Trim()} {hearingParticipant.LastName.Trim()}");
-                conferenceParticipant.RefId.ToString().Trim().Should().Be(hearingParticipant.Id.ToString().Trim());
+                conferenceParticipant.RefId.Should().Be(hearingParticipant.Id);
                 conferenceParticipant.UserRole.ToString().Should().Be(hearingParticipant.UserRoleName.Trim());
                 conferenceParticipant.Username.Trim().Should().Be(hearingParticipant.Username.Trim());
             }
