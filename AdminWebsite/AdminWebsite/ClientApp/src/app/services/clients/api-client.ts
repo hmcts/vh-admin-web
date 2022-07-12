@@ -3718,6 +3718,7 @@ export class EndpointRequest implements IEndpointRequest {
         }
     }
 
+
     init(_data?: any) {
         if (_data) {
             this.display_name = _data['display_name'];
