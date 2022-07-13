@@ -1,7 +1,8 @@
+using System;
+using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
 using LaunchDarkly.Sdk.Server.Interfaces;
-using Microsoft.Extensions.Configuration;
 
 namespace AdminWebsite.Configuration
 {
@@ -16,9 +17,15 @@ namespace AdminWebsite.Configuration
         private readonly User _user;
         private const string LdUser = "vh-admin-web";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
-        public FeatureToggles(IConfiguration config)
+        public FeatureToggles(string sdkKey)
         {
-            _ldClient = new LdClient(config["SDK-Key"]);
+            var config = LaunchDarkly.Sdk.Server.Configuration.Builder(sdkKey)
+                .Logging(
+                    Components.Logging(Logs.ToWriter(Console.Out)).Level(LogLevel.Warn)
+                )
+                .Build();
+            
+            _ldClient = new LdClient(config);
             _user = LaunchDarkly.Sdk.User.WithKey(LdUser);
         }
 
