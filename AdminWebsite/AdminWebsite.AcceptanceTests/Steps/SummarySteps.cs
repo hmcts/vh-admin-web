@@ -64,16 +64,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
-            VerifyBookingsCreated();
-            VerifyNewUsersCreatedInAad();
+            //VerifyBookingsCreated();
+            //VerifyNewUsersCreatedInAad();
         }
 
         [Then(@"the user views the information on the summary form")]
         public void ThenTheUserViewsTheInformationOnTheSummaryForm()
         {
             ClickBook();
-            VerifyBookingsCreated();
-            VerifyNewUsersCreatedInAad();
+            //VerifyBookingsCreated();
+            //VerifyNewUsersCreatedInAad();
         }
 
         private void ClickBook()
@@ -373,15 +373,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
 
             return hearings;
-        }
-
-        private void VerifyNewUsersCreatedInAad()
-        {
-            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
-            {
-                _c.Api.PollForParticipantExistsInAD(participant.Username);
-            }
-            _c.Test.SubmittedAndCreatedNewAadUsers = true;
         }
     }
 }
