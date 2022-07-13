@@ -358,7 +358,7 @@ stages:
 # Deploy Helm Chart to QA. ##########################
   - stage: Install_Demo
     displayName: Deploy Helm Chart Demo AKS
-    dependsOn: Run_Entity_Framework_Demo
+    dependsOn: Wait
     variables:
       - template: variables/qa.yaml
       - template: variables/shared.yaml
