@@ -2668,10 +2668,7 @@
         }
       },
       "adminwebsite.testing.common": {
-        "type": "Project",
-        "dependencies": {
-          "BookingsApi.Client": "1.36.12"
-        }
+        "type": "Project"
       }
     }
   }

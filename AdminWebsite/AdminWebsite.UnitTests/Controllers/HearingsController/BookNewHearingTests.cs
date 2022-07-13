@@ -56,48 +56,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_send_confirmation_email_to_judge_for_new_hearing() 
-        {
-            // Arrange
-            var bookingDetails = InitHearingForTest();
-
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                .WithEndPoints(2)
-                .WithParticipant("Representative", "username1@hmcts.net")
-                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Staff Member", "staff.member@hmcts.net")
-                .WithParticipant("Judge", "judge.fudge@hmcts.net");
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
-                .ReturnsAsync(hearingDetailsResponse);
-
-
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult)result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().Be(hearingDetailsResponse);
-
-            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-
-            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
-        }
-        
-        [Test]
         public async Task Should_book_hearing_for_single_day()
         {
             // Arrange
@@ -138,12 +96,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
         
         [Test]
@@ -186,12 +138,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
         
         [Test]
@@ -233,12 +179,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Once);
         }
 
         [Test]
@@ -263,9 +203,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
-
-            //_mocker.Mock<IUserAccountService>().Setup(x =>
-            //        x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>())).ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User() { UserId = participant.ContactEmail, Password = ""});
             
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
 
@@ -296,12 +233,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string,User>>()), Times.Once);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendMultiDayHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), expectedMultiDayHearingDuration), Times.Once);
         }
 
                 [Test]
@@ -335,12 +266,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()), Times.Once);
-
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.IsAny<HearingDetailsResponse>(), It.IsAny<Dictionary<string,User>>()), Times.Never);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.IsAny<HearingDetailsResponse>(), It.IsAny<Dictionary<string,User>>()), Times.Never);
-            
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendMultiDayHearingConfirmationEmail(It.IsAny<HearingDetailsResponse>(), It.IsAny<int>()), Times.Never);
         }
 
         [Test]
@@ -373,9 +298,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((ObjectResult)result.Result).StatusCode.Should().Be(201);
           
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
-            //_mocker.Mock<IHearingsService>().Verify(x => x.SendNewUserEmailParticipants(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string, User>>()), Times.Never);
-            //_mocker.Mock<IHearingsService>().Verify(x => x.AssignParticipantToCorrectGroups(It.Is<HearingDetailsResponse>(y => y == hearingDetailsResponse), It.IsAny<Dictionary<string, User>>()), Times.Never);
-            //_mocker.Mock<IHearingsService>().Verify(x => x.NewHearingSendConfirmation(It.IsAny<HearingDetailsResponse>(), null), Times.Never);
         }
 
 
