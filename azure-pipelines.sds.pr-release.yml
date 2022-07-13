@@ -45,13 +45,15 @@ stages:
           - checkout: self
 
           - pwsh: |
-              $appSettings = $ENV:UNITTESTSETTINGS | ConvertFrom-Json -AsHashTable
+              $appSettings = $Env:unitTestAppSettings | ConvertFrom-Json -AsHashTable
               foreach ($setting in $appSettings.GetEnumerator() ) {
               [Environment]::SetEnvironmentVariable($URL.Name, $URL.Value)
               }
 
               printenv
             displayName: Set App Settings
+            env:
+              unitTestAppSettings: $(unitTestSettings)
           
           - template: stages\dotnet-tests\unit-tests.yml@azTemplates
             parameters:
