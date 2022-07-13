@@ -47,7 +47,7 @@ stages:
           - pwsh: |
               $appSettings = $Env:unitTestAppSettings | ConvertFrom-Json -AsHashTable
               foreach ($setting in $appSettings.GetEnumerator() ) {
-              [Environment]::SetEnvironmentVariable($setting.Name, $setting.Value)
+              Write-Host ##vso[task.setvariable variable=$setting.Name;]$setting.Value  
               }
 
               printenv
