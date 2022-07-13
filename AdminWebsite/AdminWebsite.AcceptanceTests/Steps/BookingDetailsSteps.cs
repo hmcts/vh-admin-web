@@ -192,32 +192,32 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user confirms the hearing")]
         public void WhenTheUserConfirmsTheBooking()
         {
-            if (_c.WebConfig.BookingConfirmToggle) return;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmButton);
-            _browsers[_c.CurrentUser].ScrollTo(BookingDetailsPage.ConfirmButton);
-            _browsers[_c.CurrentUser].Click(BookingDetailsPage.ConfirmButton);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel);
-            _browsers[_c.CurrentUser].ScrollTo(BookingDetailsPage.ConfirmedLabel);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
+            //if (_c.WebConfig.BookingConfirmToggle) return;
+            //_browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmButton);
+            //_browsers[_c.CurrentUser].ScrollTo(BookingDetailsPage.ConfirmButton);
+            //_browsers[_c.CurrentUser].Click(BookingDetailsPage.ConfirmButton);
+            //_browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel);
+            //_browsers[_c.CurrentUser].ScrollTo(BookingDetailsPage.ConfirmedLabel);
+            //_browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
         }
 
         [When(@"the user confirms all the hearings")]
         public void WhenTheUserConfirmsAllTheBookings()
         {
-            if (_c.WebConfig.BookingConfirmToggle) return;
-            string caseName = "";
-            foreach (var hearing in GetHearings())
-            {
-                caseName = hearing.Cases.First().Name;
-                _browsers[_c.CurrentUser].Click(CommonAdminWebPage.BookingsListLink);
+            //if (_c.WebConfig.BookingConfirmToggle) return;
+            //string caseName = "";
+            //foreach (var hearing in GetHearings())
+            //{
+            //    caseName = hearing.Cases.First().Name;
+            //    _browsers[_c.CurrentUser].Click(CommonAdminWebPage.BookingsListLink);
 
-                _bookingsListSteps.SelectsBookingByCaseName(caseName);
+            //    _bookingsListSteps.SelectsBookingByCaseName(caseName);
 
-                NUnit.Framework.TestContext.WriteLine($"Confirming the hearing for '{caseName}'...");
-                WhenTheUserConfirmsTheBooking();
+            //    NUnit.Framework.TestContext.WriteLine($"Confirming the hearing for '{caseName}'...");
+            //    WhenTheUserConfirmsTheBooking();
 
-                NUnit.Framework.TestContext.WriteLine($"Hearing confirmed for '{caseName}'.");
-            }
+            //    NUnit.Framework.TestContext.WriteLine($"Hearing confirmed for '{caseName}'.");
+            //}
         }
         
         [Then(@"the hearing is available in video web")]
