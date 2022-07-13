@@ -38,35 +38,37 @@ describe('EndpointsComponent', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const newHearing = initHearingRequest();
 
-    beforeEach(waitForAsync(() => {
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'setBookingHasChanged',
-            'cancelRequest'
-        ]);
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'setBookingHasChanged',
+                'cancelRequest'
+            ]);
+            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        bookingServiceSpy = jasmine.createSpyObj('BookingService', ['isEditMode', 'resetEditMode', 'removeEditMode']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            bookingServiceSpy = jasmine.createSpyObj('BookingService', ['isEditMode', 'resetEditMode', 'removeEditMode']);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-        TestBed.configureTestingModule({
-            imports: [SharedModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            declarations: [EndpointsComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterTestingModule],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: ErrorService, useValue: errorService },
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                declarations: [EndpointsComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(EndpointsComponent);

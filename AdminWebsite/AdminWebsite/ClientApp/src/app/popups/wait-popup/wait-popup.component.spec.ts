@@ -8,11 +8,13 @@ describe('WaitPopupComponent', () => {
     let fixture: ComponentFixture<WaitPopupComponent>;
     let de: DebugElement;
     let headingText: ElementRef;
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [WaitPopupComponent]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [WaitPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(WaitPopupComponent);

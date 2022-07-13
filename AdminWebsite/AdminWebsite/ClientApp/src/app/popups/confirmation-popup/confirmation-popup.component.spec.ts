@@ -5,11 +5,13 @@ describe('ConfirmationPopupComponent', () => {
     let component: ConfirmationPopupComponent;
     let fixture: ComponentFixture<ConfirmationPopupComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [ConfirmationPopupComponent]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ConfirmationPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ConfirmationPopupComponent);

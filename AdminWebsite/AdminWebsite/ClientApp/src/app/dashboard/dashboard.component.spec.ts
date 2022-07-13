@@ -11,16 +11,18 @@ describe('DashboardComponent', () => {
     let fixture: ComponentFixture<DashboardComponent>;
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [DashboardComponent],
-            providers: [
-                { provide: UserIdentityService, useValue: userIdentitySpy },
-                { provide: Logger, useValue: loggerSpy }
-            ]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                imports: [RouterTestingModule],
+                declarations: [DashboardComponent],
+                providers: [
+                    { provide: UserIdentityService, useValue: userIdentitySpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(DashboardComponent);

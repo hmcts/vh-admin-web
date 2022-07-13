@@ -51,13 +51,15 @@ describe('HearingDetailsComponent', () => {
         'judge.green@hmcts.net',
         '1234567'
     );
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [HearingDetailsComponent, LongDatetimePipe],
-            imports: [RouterTestingModule],
-            providers: [Logger, { provide: ConfigService, useValue: configServiceSpy }]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [HearingDetailsComponent, LongDatetimePipe],
+                imports: [RouterTestingModule],
+                providers: [Logger, { provide: ConfigService, useValue: configServiceSpy }]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(HearingDetailsComponent);

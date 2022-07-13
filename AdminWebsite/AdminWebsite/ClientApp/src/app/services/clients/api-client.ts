@@ -60,9 +60,9 @@ export class BHClient {
                         try {
                             return this.processGetAudioRecordingLink(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingAudioRecordingResponse>;
+                            return (_observableThrow(e) as any) as Observable<HearingAudioRecordingResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingAudioRecordingResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingAudioRecordingResponse>;
                 })
             );
     }
@@ -154,9 +154,9 @@ export class BHClient {
                         try {
                             return this.processGetCvpAudioRecordingsAll(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -253,9 +253,9 @@ export class BHClient {
                         try {
                             return this.processGetCvpAudioRecordingsByCloudRoom(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -352,9 +352,9 @@ export class BHClient {
                         try {
                             return this.processGetCvpAudioRecordingsByDate(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -453,9 +453,9 @@ export class BHClient {
                         try {
                             return this.processBookingsList(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<BookingsResponse>;
+                            return (_observableThrow(e) as any) as Observable<BookingsResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<BookingsResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<BookingsResponse>;
                 })
             );
     }
@@ -547,9 +547,9 @@ export class BHClient {
                         try {
                             return this.processGetConfigSettings(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<ClientSettingsResponse>;
+                            return (_observableThrow(e) as any) as Observable<ClientSettingsResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<ClientSettingsResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<ClientSettingsResponse>;
                 })
             );
     }
@@ -625,9 +625,9 @@ export class BHClient {
                         try {
                             return this.processGetFeatureFlag(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<boolean>;
+                            return (_observableThrow(e) as any) as Observable<boolean>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<boolean>;
+                    } else return (_observableThrow(response_) as any) as Observable<boolean>;
                 })
             );
     }
@@ -711,9 +711,9 @@ export class BHClient {
                         try {
                             return this.processCheckServiceHealth(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HealthCheckResponse>;
+                            return (_observableThrow(e) as any) as Observable<HealthCheckResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HealthCheckResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HealthCheckResponse>;
                 })
             );
     }
@@ -796,9 +796,9 @@ export class BHClient {
                         try {
                             return this.processCheckServiceHealth2(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HealthCheckResponse>;
+                            return (_observableThrow(e) as any) as Observable<HealthCheckResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HealthCheckResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HealthCheckResponse>;
                 })
             );
     }
@@ -886,9 +886,9 @@ export class BHClient {
                         try {
                             return this.processBookNewHearing(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
+                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -978,9 +978,9 @@ export class BHClient {
                         try {
                             return this.processCloneHearing(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<void>;
+                            return (_observableThrow(e) as any) as Observable<void>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<void>;
+                    } else return (_observableThrow(response_) as any) as Observable<void>;
                 })
             );
     }
@@ -1068,9 +1068,9 @@ export class BHClient {
                         try {
                             return this.processEditHearing(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
+                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -1171,9 +1171,9 @@ export class BHClient {
                         try {
                             return this.processGetHearingById(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
+                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -1273,9 +1273,9 @@ export class BHClient {
                         try {
                             return this.processUpdateBookingStatus(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
+                            return (_observableThrow(e) as any) as Observable<UpdateBookingStatusResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<UpdateBookingStatusResponse>;
                 })
             );
     }
@@ -1374,9 +1374,9 @@ export class BHClient {
                         try {
                             return this.processSearchForAudioRecordedHearings(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingsForAudioFileSearchResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<HearingsForAudioFileSearchResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingsForAudioFileSearchResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingsForAudioFileSearchResponse[]>;
                 })
             );
     }
@@ -1467,9 +1467,9 @@ export class BHClient {
                         try {
                             return this.processGetTelephoneConferenceIdById(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PhoneConferenceResponse>;
+                            return (_observableThrow(e) as any) as Observable<PhoneConferenceResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PhoneConferenceResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<PhoneConferenceResponse>;
                 })
             );
     }
@@ -1566,9 +1566,9 @@ export class BHClient {
                         try {
                             return this.processPostJudgesBySearchTerm(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -1661,9 +1661,9 @@ export class BHClient {
                         try {
                             return this.processPostJudiciaryPersonBySearchTerm(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -1756,9 +1756,9 @@ export class BHClient {
                         try {
                             return this.processPostPersonBySearchTerm(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -1848,9 +1848,9 @@ export class BHClient {
                         try {
                             return this.processGetPersonForUpdateByContactEmail(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PersonResponse>;
+                            return (_observableThrow(e) as any) as Observable<PersonResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PersonResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse>;
                 })
             );
     }
@@ -1935,9 +1935,9 @@ export class BHClient {
                         try {
                             return this.processGetHearingsByUsernameForDeletion(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingsByUsernameForDeletionResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<HearingsByUsernameForDeletionResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingsByUsernameForDeletionResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingsByUsernameForDeletionResponse[]>;
                 })
             );
     }
@@ -2026,9 +2026,9 @@ export class BHClient {
                         try {
                             return this.processDeletePersonWithUsername(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<void>;
+                            return (_observableThrow(e) as any) as Observable<void>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<void>;
+                    } else return (_observableThrow(response_) as any) as Observable<void>;
                 })
             );
     }
@@ -2115,9 +2115,9 @@ export class BHClient {
                         try {
                             return this.processUpdatePersonDetails(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<void>;
+                            return (_observableThrow(e) as any) as Observable<void>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<void>;
+                    } else return (_observableThrow(response_) as any) as Observable<void>;
                 })
             );
     }
@@ -2206,9 +2206,9 @@ export class BHClient {
                         try {
                             return this.processGetHearingTypes(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingTypeResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<HearingTypeResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingTypeResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingTypeResponse[]>;
                 })
             );
     }
@@ -2298,9 +2298,9 @@ export class BHClient {
                         try {
                             return this.processGetParticipantRoles(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<CaseAndHearingRolesResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<CaseAndHearingRolesResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<CaseAndHearingRolesResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<CaseAndHearingRolesResponse[]>;
                 })
             );
     }
@@ -2388,9 +2388,9 @@ export class BHClient {
                         try {
                             return this.processGetCourts(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<HearingVenueResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<HearingVenueResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<HearingVenueResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<HearingVenueResponse[]>;
                 })
             );
     }
@@ -2478,9 +2478,9 @@ export class BHClient {
                         try {
                             return this.processPublicHolidays(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PublicHolidayResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<PublicHolidayResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PublicHolidayResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<PublicHolidayResponse[]>;
                 })
             );
     }
@@ -2570,9 +2570,9 @@ export class BHClient {
                         try {
                             return this.processGetStaffMembersBySearchTerm(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -2665,9 +2665,9 @@ export class BHClient {
                         try {
                             return this.processGetSuitabilityAnswers(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<SuitabilityAnswersResponse>;
+                            return (_observableThrow(e) as any) as Observable<SuitabilityAnswersResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<SuitabilityAnswersResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<SuitabilityAnswersResponse>;
                 })
             );
     }
@@ -2750,9 +2750,9 @@ export class BHClient {
                         try {
                             return this.processGetJudges(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -2839,9 +2839,9 @@ export class BHClient {
                         try {
                             return this.processSearchJudgesByEmail(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
+                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
+                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -2930,9 +2930,9 @@ export class BHClient {
                         try {
                             return this.processResetPassword(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<void>;
+                            return (_observableThrow(e) as any) as Observable<void>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<void>;
+                    } else return (_observableThrow(response_) as any) as Observable<void>;
                 })
             );
     }
@@ -3014,9 +3014,9 @@ export class BHClient {
                         try {
                             return this.processGetUserProfile(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<UserProfileResponse>;
+                            return (_observableThrow(e) as any) as Observable<UserProfileResponse>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<UserProfileResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<UserProfileResponse>;
                 })
             );
     }

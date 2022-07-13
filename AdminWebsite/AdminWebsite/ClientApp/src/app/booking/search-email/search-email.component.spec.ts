@@ -95,21 +95,30 @@ describe('SearchEmailComponent', () => {
         searchField = debugElement.query(By.css(`#${component.locator}`));
         expect(searchField.nativeElement).toBeTruthy();
     });
-    it('should have empty list of participant models', waitForAsync(() => {
-        expect(component.results).toBeTruthy();
-        expect(component.results.length).toBe(0);
-    }));
-    it('should set up intial properties', waitForAsync(() => {
-        expect(component.isValidEmail).toBeTruthy();
-        expect(component.$subscriptions.length).toBeGreaterThan(0);
-        expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
-        expect(component.isJoh).toBeFalsy();
-        expect(component.disabled).toBeTruthy();
-    }));
-    it('should return true if participant is a judge', waitForAsync(() => {
-        component.hearingRoleParticipant = 'Judge';
-        expect(component.isJudge).toBeTruthy();
-    }));
+    it(
+        'should have empty list of participant models',
+        waitForAsync(() => {
+            expect(component.results).toBeTruthy();
+            expect(component.results.length).toBe(0);
+        })
+    );
+    it(
+        'should set up intial properties',
+        waitForAsync(() => {
+            expect(component.isValidEmail).toBeTruthy();
+            expect(component.$subscriptions.length).toBeGreaterThan(0);
+            expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
+            expect(component.isJoh).toBeFalsy();
+            expect(component.disabled).toBeTruthy();
+        })
+    );
+    it(
+        'should return true if participant is a judge',
+        waitForAsync(() => {
+            component.hearingRoleParticipant = 'Judge';
+            expect(component.isJudge).toBeTruthy();
+        })
+    );
     it('should set email to initialEmail', () => {
         const emailValue = 'email@value.com';
         component.initialValue = emailValue;

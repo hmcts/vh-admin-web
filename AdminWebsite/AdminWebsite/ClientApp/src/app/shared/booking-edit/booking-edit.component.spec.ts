@@ -17,16 +17,18 @@ describe('BookingEditComponent', () => {
 
     bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            declarations: [BookingEditComponent],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: BookingService, useValue: bookingServiceSpy }
-            ]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                imports: [RouterTestingModule],
+                declarations: [BookingEditComponent],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy }
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(BookingEditComponent);
