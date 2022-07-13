@@ -152,9 +152,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
     private checkForExistingRequest(): void {
         this.hearing = this.videoHearingService.getCurrentRequest();
-        this.participants = this.hearing.participants.filter(
-            p => p.hearing_role_name === this.constants.DefenceAdvocate || p.hearing_role_name === this.constants.RespondentAdvocate
-        );
+        this.participants = this.hearing.participants.filter(p => p.user_role_name === this.constants.Representative);
     }
     private initialiseForm(): void {
         this.availableDefenceAdvocates = this.populateDefenceAdvocates();
