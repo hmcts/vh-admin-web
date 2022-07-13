@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading;
-using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -11,7 +9,6 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using BookingsApi.Contract.Responses;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -64,16 +61,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
-            //VerifyBookingsCreated();
-            //VerifyNewUsersCreatedInAad();
         }
 
         [Then(@"the user views the information on the summary form")]
         public void ThenTheUserViewsTheInformationOnTheSummaryForm()
         {
             ClickBook();
-            //VerifyBookingsCreated();
-            //VerifyNewUsersCreatedInAad();
         }
 
         private void ClickBook()
@@ -200,7 +193,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
-            VerifyBookingUpdated();
         }
 
         [Then(@"the participant details are updated")]
@@ -271,108 +263,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
             _browsers[_c.CurrentUser].TextOf(SummaryPage.VideoAccessPoints(0)).Should().Be(videoAccessPoints);
-        }
-
-        private void VerifyBookingsCreated()
-        {
-            var hearings = PollForAllHearings();
-
-            foreach (var hearing in hearings)
-            {
-                var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
-                AssertHearing.AssertHearingDetails(hearing, _c.Test);
-                AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
-                AssertHearing.AssertCreatedBy(hearing.CreatedBy, _c.CurrentUser.Username);
-                var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.ScheduledDateTime, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
-                AssertHearing.AssertTimeSpansMatch(hearing.ScheduledDuration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
-            }
-        }
-
-        private void VerifyBookingUpdated()
-        {
-            var hearings = PollForHearingUpdated();
-
-            foreach (var hearing in hearings)
-            {
-                var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
-                AssertHearing.AssertHearingDetails(hearing, _c.Test);
-                AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
-                AssertHearing.AssertCreatedBy(hearing.CreatedBy, _c.CurrentUser.Username);
-                var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.ScheduledDateTime, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
-                AssertHearing.AssertTimeSpansMatch(hearing.ScheduledDuration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
-                AssertHearing.AssertUpdatedStatus(hearing, _c.CurrentUser.Username, DateTime.Now);
-            }
-        }
-
-        private static int GetDayOfHearing(string caseName)
-        {
-            if (!caseName.Contains("Day") || !caseName.Contains("of")) return 1;
-            var daysPart = caseName[^("x of x").Length..];
-            var day = daysPart.Substring(0, 1);
-            return int.Parse(day);
-        }
-
-        private IEnumerable<HearingDetailsResponse> PollForHearingUpdated()
-        {
-            const int RETRIES = 10;
-            const int DELAY = 2;
-
-            for (var i = 0; i < RETRIES; i++)
-            {
-                var hearings = PollForAllHearings();
-
-                var pollForHearingUpdated = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
-                if (pollForHearingUpdated.All(x => x.UpdatedBy != null))
-                {
-                    return pollForHearingUpdated;
-                }
-
-                Thread.Sleep(TimeSpan.FromSeconds(DELAY));
-            }
-
-            throw new DataException($"Hearings not updated after {RETRIES * DELAY} seconds");
-        }
-
-        private IEnumerable<HearingDetailsResponse> PollForAllHearings()
-        {
-            const int RETRIES = 10;
-            const int DELAY = 2;
-
-            for (var i = 0; i < RETRIES; i++)
-            {
-                var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
-                var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
-                var hearings = GetHearingFromHearings(allHearings);
-
-                if (!_c.Test.HearingSchedule.MultiDays)
-                {
-                    return hearings;
-                }
-
-                var pollForAllHearings = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
-                if (pollForAllHearings.Count().Equals(_c.Test.HearingSchedule.NumberOfMultiDays))
-                {
-                    return pollForAllHearings;
-                }
-
-                Thread.Sleep(TimeSpan.FromSeconds(DELAY));
-            }
-            
-            throw new DataException($"All hearings not created after {RETRIES * DELAY} seconds");
-        }
-
-        private IEnumerable<HearingDetailsResponse> GetHearingFromHearings(IEnumerable<HearingDetailsResponse> allHearings)
-        {
-            var hearings = allHearings.Where(hearing => hearing.Cases.First().Name.Contains(_c.Test.HearingDetails.CaseName)).ToList();
-
-            if (hearings.Count == 0)
-            {
-                throw new DataException("Created hearing could not be found in the bookings api");
-            }
-
-            return hearings;
         }
     }
 }
