@@ -54,6 +54,9 @@ stages:
             displayName: Set App Settings
             env:
               unitTestAppSettings: $(unitTestSettings)
+
+          - pwsh: |
+              printenv
           
           - template: stages\dotnet-tests\unit-tests.yml@azTemplates
             parameters:
