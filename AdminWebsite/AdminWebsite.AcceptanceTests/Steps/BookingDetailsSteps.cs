@@ -282,10 +282,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonDropdownErrorLabel).Displayed.Should().BeTrue();
 
-            foreach (var hearing in GetHearings())
-            {
-                PollForHearingStatus(BookingStatus.Cancelled, hearing.Id).Should().BeFalse();
-            }
+            //foreach (var hearing in GetHearings())
+            //{
+            //    PollForHearingStatus(BookingStatus.Cancelled, hearing.Id).Should().BeFalse();
+            //}
 
             _browsers[_c.CurrentUser].Click(BookingDetailsPage.KeepBookingButton);
         }
@@ -384,24 +384,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return hearings;
         }
 
-        private bool PollForHearingStatus(BookingStatus expectedStatus, Guid hearingId)
-        {
-            const int POLL_FOR_HEARING_STATUS_TIMEOUT = 60;
+        //private bool PollForHearingStatus(BookingStatus expectedStatus, Guid hearingId)
+        //{
+        //    const int POLL_FOR_HEARING_STATUS_TIMEOUT = 60;
 
-            for (var i = 0; i < POLL_FOR_HEARING_STATUS_TIMEOUT; i++)
-            {
-                var hearing = GetHearing(hearingId);
-                if (hearing.Status.Equals(expectedStatus))
-                {
-                    NUnit.Framework.TestContext.WriteLine($"Hearing '{hearing.Cases.First().Name}' is confirmed to have status '{expectedStatus}'.");
-                    return true;
-                }
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-            }
+        //    for (var i = 0; i < POLL_FOR_HEARING_STATUS_TIMEOUT; i++)
+        //    {
+        //        var hearing = GetHearing(hearingId);
+        //        if (hearing.Status.Equals(expectedStatus))
+        //        {
+        //            NUnit.Framework.TestContext.WriteLine($"Hearing '{hearing.Cases.First().Name}' is confirmed to have status '{expectedStatus}'.");
+        //            return true;
+        //        }
+        //        Thread.Sleep(TimeSpan.FromSeconds(1));
+        //    }
 
-            NUnit.Framework.TestContext.WriteLine($"Unable to confirm the hearing status as '{expectedStatus}' after retrying for '{POLL_FOR_HEARING_STATUS_TIMEOUT}' seconds.");
-            return false;
-        }
+        //    NUnit.Framework.TestContext.WriteLine($"Unable to confirm the hearing status as '{expectedStatus}' after retrying for '{POLL_FOR_HEARING_STATUS_TIMEOUT}' seconds.");
+        //    return false;
+        //}
 
         public void ClickEdit()
         {
