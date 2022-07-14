@@ -48,7 +48,9 @@ stages:
               $appSettings = $Env:unitTestAppSettings | ConvertFrom-Json -AsHashTable
               foreach ($setting in $appSettings.GetEnumerator() ) {
               $envName = $setting.Name
+              echo $envName
               $envValue = $setting.Value
+              echo $envValue
               Write-Host "##vso[task.setvariable variable=$envName;]$envValue"
               }
 
