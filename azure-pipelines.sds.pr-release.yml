@@ -49,7 +49,7 @@ stages:
               foreach ($setting in $appSettings.GetEnumerator() ) {
               $envName = $setting.Name
               $envValue = $setting.Value
-              Write-Host ##vso[task.setvariable variable=$envName;]$envValue  
+              Write-Host "##vso[task.setvariable variable=$envName;]$envValue"
               }
 
               printenv
