@@ -6,3 +6,8 @@ version: 0.0.3
 description: Helm Chart for test Hearing test-api
 maintainers:
   - name: VH Devops
+  
+dependencies:
+  - name: java
+    version: 3.4.4
+    repository: https://hmctspublic.azurecr.io/helm/v1/repo/
