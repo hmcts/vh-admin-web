@@ -17,10 +17,8 @@ java:
       usePodIdentity: true
       secrets:
         - applicationinsights--instrumentationkey
-        - notifyconfiguration--apikey
         - wowzaconfiguration--storageaccountkey
         - azuread--temporarypassword
-        - testusersecrets--testuserpassword
     vh-admin-web:
       excludeEnvironmentSuffix: false
       esourceGroup: vh-infra-core-{{ .Values.global.environment }}
