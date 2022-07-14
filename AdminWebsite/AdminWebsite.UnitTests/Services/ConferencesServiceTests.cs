@@ -65,7 +65,44 @@ namespace AdminWebsite.UnitTests.Services
 
             response.Should().Be(expectedConferenceDetailsResponse);
         }
-        
+
+        [Test]
+        public async Task Should_call_polly_wait_retry_and_return_failed_response()
+        {
+            Guid hearingId = Guid.NewGuid();
+            var failedConferenceDetailsResponse = new ConferenceDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                HearingId = hearingId,
+                MeetingRoom = null
+            };
+
+            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+            (
+            It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+            It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+            ))
+            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
+                Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
+            {
+                sleepDuration(1);
+                retryAction(1);
+                handleResultCondition(failedConferenceDetailsResponse);
+                await executeFunction();
+            })
+            .ReturnsAsync(failedConferenceDetailsResponse);
+
+            var response = await _serviceUnderTest.GetConferenceDetailsByHearingIdWithRetry(hearingId, "error message");
+
+            _mocker.Mock<IPollyRetryService>().Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+               (
+                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+               ), Times.Exactly(1));
+
+            response.Should().Be(failedConferenceDetailsResponse);
+        }
+
         [Test]
         public async Task Should_return_an_empty_respons_if_an_exception_is_thrown()
         {

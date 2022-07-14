@@ -238,7 +238,7 @@ export class VideoHearingsService {
         const editEndpoint = new EditEndpointRequest();
         editEndpoint.id = endpoint.id;
         editEndpoint.display_name = endpoint.displayName;
-        editEndpoint.defence_advocate_username = endpoint.defenceAdvocate;
+        editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
         return editEndpoint;
     }
 
@@ -343,7 +343,7 @@ export class VideoHearingsService {
             endpointModel.forEach(e => {
                 endpoint = new EndpointRequest();
                 endpoint.display_name = e.displayName;
-                endpoint.defence_advocate_username = e.defenceAdvocate;
+                endpoint.defence_advocate_contact_email = e.defenceAdvocate;
                 eps.push(endpoint);
             });
         }

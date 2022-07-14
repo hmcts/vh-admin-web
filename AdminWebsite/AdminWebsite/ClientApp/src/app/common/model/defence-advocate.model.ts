@@ -3,4 +3,5 @@ export class DefenceAdvocateModel {
     username?: string | undefined;
     displayName?: string | undefined;
     isSelected?: boolean | undefined;
+    contactEmail?: string | undefined;
 }

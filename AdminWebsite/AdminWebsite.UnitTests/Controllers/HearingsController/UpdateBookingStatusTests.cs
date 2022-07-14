@@ -103,8 +103,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
         }
-        [Test(Description = "With BookAndConfirmToggle ON")]
-        public async Task UpdateBookingStatus_returns_success_response_when_conference_exists_with_meeting_room_and_NOT_send_reminder_email()
+
+        public async Task UpdateBookingStatus_returns_success_response_when_conference_exists_with_meeting_room()
         {
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
@@ -151,68 +151,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
-            
-            _mocker.Mock<IHearingsService>().Verify(
-                x => x.SendHearingReminderEmail(hearing), Times.Never);
         }
         
-        [Test(Description = "With BookAndConfirmToggle off")]
-        public async Task UpdateBookingStatus_returns_success_response_when_conference_exists_with_meeting_room_and_send_reminder_email()
-        {
-            _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(false);
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var request = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-            var hearingId = Guid.NewGuid();
-            var hearing = InitBookingForResponse(hearingId);
-            hearing.OtherInformation = new OtherInformationDetails
-            {
-                JudgeEmail = "judge@hmcts.net",
-                JudgePhone = "12345789",
-                OtherInformation = "info"
-            }.ToOtherInformationString();
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(hearing);
-
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant",
-                    PexipNode = "pexip",
-                    TelephoneConferenceId = "121212"
-                }
-            };
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request));
-            _mocker.Mock<IConferenceDetailsService>()
-                .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(expectedConferenceDetailsResponse);
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> { hearing });
-            var response = await _controller.UpdateBookingStatus(hearingId, request);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
-            
-            _mocker.Mock<IHearingsService>().Verify(
-                x => x.SendHearingReminderEmail(It.Is<HearingDetailsResponse>(x => x == hearing)), Times.AtLeast(1));
-        }
-
         [Test]
         public async Task UpdateBookingStatus_returns_false_response_when_video_api_throws()
         {
