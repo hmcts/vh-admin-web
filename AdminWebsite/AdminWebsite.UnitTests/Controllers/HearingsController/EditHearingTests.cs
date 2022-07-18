@@ -215,11 +215,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EditEndpointRequest>
                 {
                     new EditEndpointRequest
-                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateUsername = "username@hmcts.net"},
+                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net"},
                     new EditEndpointRequest
-                        {Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@hmcts.net"},
+                        {Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = "edit-user@hmcts.net"},
                     new EditEndpointRequest {Id = guid2, DisplayName = "data2-edit"},
-                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateUsername = ""}
+                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = ""}
                 }
             };
 
@@ -307,13 +307,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
                 .Returns(new ValidationResult());
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .ReturnsAsync((BookingsApi.Contract.Requests.ParticipantRequest participant) => new User()
-                {
-                    UserName = participant.ContactEmail,
-                    Password = "password"
-                });
         }
 
         [Test]
@@ -578,10 +571,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing);
 
             var userName = _addNewParticipantRequest.Participants.Last().ContactEmail;
-            _userAccountService
-               .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-               .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-               .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
 
             //Act
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -591,136 +580,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()));
         }
 
-        [Test]
-        public async Task Should_send_email_for_new_individual_participant_added()
-        {
-            var userName = "old@hmcts.net";
-            var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
-            {
-                Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases,
-                CaseTypeName = "Unit Test",
-                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
-            };
-            updatedHearing.Participants[0].FirstName = "New user firstname";
-            updatedHearing.Participants.Add(new ParticipantResponse
-            {
-                Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
-                TelephoneNumber = "030434545",
-                UserRoleName = "Individual"
-            });
-            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
-                .ReturnsAsync(updatedHearing)
-                .ReturnsAsync(updatedHearing);
-
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
-
-            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-
-            var participant = updatedHearing.Participants[0];
-            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                r.MessageType == MessageType.Email &&
-                r.NotificationType == NotificationType.CreateIndividual &&
-                r.ContactEmail == participant.ContactEmail &&
-                r.PhoneNumber == participant.TelephoneNumber &&
-                r.Parameters.ContainsKey("name") &&
-                r.Parameters["name"] == $"{participant.FirstName} {participant.LastName}" &&
-                r.Parameters.ContainsKey("username") && r.Parameters["username"] == participant.Username &&
-                r.Parameters.ContainsKey("random password") && r.Parameters["random password"] == "test123"
-            )), Times.Once);
-            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
-        }
-
-        [Test]
-        public async Task Should_send_email_with_only_matching_participant()
-        {
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
-            {
-                ContactEmail = "new2@hmcts.net",
-                FirstName = "Test2_FirstName",
-                LastName = "Test2_LastName"
-            });
-            var userName = "old@hmcts.net";
-            var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
-            {
-                Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases,
-                CaseTypeName = "Unit Test",
-                ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime
-            };
-            updatedHearing.Participants[0].FirstName = "New user firstname";
-            updatedHearing.Participants[0].Username = "old1@hmcts.net";
-            var newParticipant = new ParticipantResponse
-            {
-                Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
-                TelephoneNumber = "030434545",
-                UserRoleName = "Individual"
-            };
-            updatedHearing.Participants.Add(newParticipant);
-
-            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
-                .ReturnsAsync(updatedHearing)
-                .ReturnsAsync(updatedHearing);
-
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(
-                    It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new@hmcts.net")))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = userName, Password = "test123" });
-
-            _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(
-                    It.Is<BookingsApi.Contract.Requests.ParticipantRequest>(r => r.ContactEmail == "new2@hmcts.net")))
-                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => p.Username = "old1@hmcts.net")
-                .ReturnsAsync(new User { UserId = Guid.NewGuid().ToString(), UserName = "old1@hmcts.net", Password = "test123" });
-
-            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-
-            _notificationApiMock.Verify(
-                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.NotificationType == NotificationType.CreateIndividual)),
-                Times.Once);
-
-            _notificationApiMock.Verify(
-                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.NotificationType == NotificationType.HearingAmendmentJoh)),
-                Times.Never);
-            _notificationApiMock.Verify(
-                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.NotificationType == NotificationType.HearingAmendmentJudge)),
-                Times.Never);
-            _notificationApiMock.Verify(
-                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.NotificationType == NotificationType.HearingAmendmentLip)),
-                Times.Never);
-            _notificationApiMock.Verify(
-                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.NotificationType == NotificationType.HearingAmendmentRepresentative)),
-                Times.Never);
-            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
-            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
-            (
-                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
-            ), Times.Never);
-        }
 
         [Test]
         public async Task Should_not_send_email_for_existing_individual_participant_added()
@@ -941,8 +800,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             //Act
             var result = await _controller.EditHearing(hearingId, request);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            
-            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(),It.IsAny<UpdateBookingStatusRequest>()), Times.AtLeastOnce);
+
         }
         
         [Test]
@@ -1335,8 +1193,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             // assert
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                Times.Exactly(timeSent));
         }
 
         [Test]

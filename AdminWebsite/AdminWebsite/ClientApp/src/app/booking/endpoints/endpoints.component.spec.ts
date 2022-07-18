@@ -289,26 +289,26 @@ describe('EndpointsComponent', () => {
     it('should map participant list to defence advocate model', () => {
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
-        participantModel.username = 'username@hmcts.net';
+        participantModel.email = 'username@hmcts.net';
         participantModel.display_name = 'display name';
         component.ngOnInit();
         const dA = component.mapParticipantsToDefenceAdvocateModel(participantModel);
         expect(dA).toBeTruthy();
         expect(dA.id).toBe('1000');
-        expect(dA.username).toBe('username@hmcts.net');
+        expect(dA.contactEmail).toBe('username@hmcts.net');
         expect(dA.displayName).toBe('display name');
         expect(dA.isSelected).toBe(null);
     });
     it('should return the username from id', () => {
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
-        participantModel.username = 'username@hmcts.net';
+        participantModel.email = 'username@hmcts.net';
         participantModel.display_name = 'display name';
         component.hearing.participants.push(participantModel);
         component.ngOnInit();
-        let result = component.getUsernameFromId('1000');
+        let result = component.getEmailFromId('1000');
         expect(result).toBe('username@hmcts.net');
-        result = component.getUsernameFromId('1001');
+        result = component.getEmailFromId('1001');
         expect(result).toBe('1001');
     });
     it('should unsubscribe all subcription on destroy', () => {
