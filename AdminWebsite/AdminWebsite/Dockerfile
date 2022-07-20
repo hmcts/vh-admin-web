@@ -17,10 +17,10 @@ COPY . .
 RUN dotnet restore --configfile nuget.config "AdminWebsite/AdminWebsite.csproj"
 COPY . .
 WORKDIR "/src/AdminWebsite"
-RUN dotnet build "AdminWebsite.csproj" -c AksRelease -o /app/build
+RUN dotnet build "AdminWebsite.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AdminWebsite.csproj" -c AksRelease -o /app/publish -p:PublishRunWebpack=false
+RUN dotnet publish "AdminWebsite.csproj" -c Release -o /app/publish -p:PublishRunWebpack=false
 
 FROM base AS final
 WORKDIR /app
