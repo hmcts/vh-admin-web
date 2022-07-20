@@ -25,13 +25,13 @@
     <UserSecretsId>f99a3fe8-cf72-486a-b90f-b65c27da84ee</UserSecretsId>
   </PropertyGroup>
 
-  <Target Name="AssemblyVersionAttributes" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' != 'Debug' ">
+  <!--<Target Name="AssemblyVersionAttributes" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' != 'Debug' ">
     <PropertyGroup>
       <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
       <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
       <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
     </PropertyGroup>
-  </Target>
+  </Target>-->
 
   <ItemGroup>
 	<PackageReference Include="BookingsApi.Client" Version="1.36.12" />
