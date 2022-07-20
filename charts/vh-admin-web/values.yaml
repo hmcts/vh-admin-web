@@ -49,9 +49,11 @@ java:
     VHSERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__NOTIFICATIONAPIRESOURCEID: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__NOTIFICATIONAPIURL: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__VALIDATEEMAIL: "@hearings.reform.hmcts.net"
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "01234567890"
     KINLYCONFIGURATION__JOINBYPHONEFROMDATE: "00-00-0000"
     KINLYCONFIGURATION__CONFERENCEPHONENUMBERWELSH: "000"
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhinfrawowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
     NOTIFYCONFIGURATION__APIKEY: "012345"
+    FEATURETOGGLE__SDS-Key: "0000000"
