@@ -19,24 +19,40 @@ java:
         - applicationinsights--instrumentationkey
         - wowzaconfiguration--storageaccountkey
         - azuread--temporarypassword
+        - azuread--tenantid
     vh-admin-web:
       excludeEnvironmentSuffix: false
-      esourceGroup: vh-infra-core-{{ .Values.global.environment }}
+      resourceGroup: vh-infra-core-{{ .Values.global.environment }}
       usePodIdentity: true
       secrets:
         - azuread--clientsecret
         - azuread--clientid
   environment:
     ASPNETCORE_URLS: http://+:8080
-    AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
+    AZUREAD__BASEVIDEOURL: https://vhinfracoredev.blob.core.windows.net/video
     AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
+    AZUREAD__USERAPICLIENTID: "PLACEHOLDER"
+    AZUREAD__USERAPICLIENTSECRET: "PLACEHOLDER"
     DISABLEHTTPSREDIRECTION: true
+    FEATURETOGGLE__SDKKey: "PLACEHOLDER"
+    ISLIVE: "False"
+    KINLYCONFIGURATION__APISECRET: "PLACEHOLDER"
+    KINLYCONFIGURATION__CALLBACKSECRET: "PLACEHOLDER"
+    KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "PLACEHOLDER"
+    KINLYCONFIGURATION__CONFERENCEPHONENUMBERWELSH:  "PLACEHOLDER"
+    KINLYCONFIGURATION__JOINBYPHONEFROMDATE:  "PLACEHOLDER"
+    KINLYCONFIGURATION__SELFTESTAPISECRET:  "PLACEHOLDER"
+    NOTIFYCONFIGURATION__APIKEY: "PLACEHOLDER"
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
-    TESTUSERSECRETS__TESTUSERNAMESTEM: "@hearings.reform.hmcts.net"
+    SAUCELABS__ACCESSKEY: "PLACEHOLDER"
+    SAUCELABS__REALDEVICEAPIKEY: "PLACEHOLDER"
+    SAUCELABS__USERNAME: "PLACEHOLDER"
+    TESTUSERSECRETS__TESTUSERNAMESTEM: "PLACEHOLDER"
+    TESTUSERSECRETS__TESTUSERPASSWORD: "PLACEHOLDER"
     VHSERVICES__ADMINWEBRESOURCEID: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__ADMINWEBURL: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__BOOKINGSAPIRESOURCEID: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
@@ -50,10 +66,3 @@ java:
     VHSERVICES__NOTIFICATIONAPIRESOURCEID: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__NOTIFICATIONAPIURL: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__VALIDATEEMAIL: "@hearings.reform.hmcts.net"
-    KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "01234567890"
-    KINLYCONFIGURATION__JOINBYPHONEFROMDATE: "00-00-0000"
-    KINLYCONFIGURATION__CONFERENCEPHONENUMBERWELSH: "000"
-    WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhinfrawowza{{ .Values.global.environment }}
-    WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
-    NOTIFYCONFIGURATION__APIKEY: "012345"
-    FEATURETOGGLE__SDKKey: "0000000"
