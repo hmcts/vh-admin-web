@@ -177,7 +177,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                     id: e.id,
                     displayName: e.displayName,
                     defenceAdvocateId: e.defenceAdvocate,
-                    defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
+                    defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getEmailFromId(e.defenceAdvocate)
                 })
             );
         });
@@ -192,6 +192,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             id: null,
             username: this.constants.None,
             displayName: this.constants.None,
+            contactEmail: this.constants.None,
             isSelected: null
         });
         defenceAdvocates.unshift(defenceAdvocateModel);
@@ -202,14 +203,15 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             id: participant.id,
             username: participant.username,
             displayName: participant.display_name,
+            contactEmail: participant.email,
             isSelected: null
         });
         return defenceAdvocateModel;
     }
-    getUsernameFromId(participantId: string): string {
+    getEmailFromId(participantId: string): string {
         const defAdv = this.hearing.participants.find(p => p.id === participantId);
         if (defAdv) {
-            return defAdv.username;
+            return defAdv.email;
         }
         return participantId;
     }

@@ -50,12 +50,12 @@ namespace AdminWebsite.UnitTests.Models
             var endpoint1 = new EditEndpointRequest
             {
                 Id = It.IsAny<Guid>(),
-                DefenceAdvocateUsername = Guid.NewGuid().ToString()
+                DefenceAdvocateContactEmail = Guid.NewGuid().ToString()
             };
             var endpoint2 = new EditEndpointRequest
             {
                 Id = It.IsAny<Guid>(),
-                DefenceAdvocateUsername = Guid.NewGuid().ToString()
+                DefenceAdvocateContactEmail = Guid.NewGuid().ToString()
             };
             var endpointList1 = new List<EditEndpointRequest> { endpoint1 };
             var endpointList2 = new List<EditEndpointRequest> { endpoint2 };
@@ -68,7 +68,7 @@ namespace AdminWebsite.UnitTests.Models
             var endpoint1 = new EditEndpointRequest
             {
                 Id = It.IsAny<Guid>(),
-                DefenceAdvocateUsername = Guid.NewGuid().ToString()
+                DefenceAdvocateContactEmail = Guid.NewGuid().ToString()
             };
             var endpointList1 = new List<EditEndpointRequest> { endpoint1 };
             var endpointList2 = new List<EditEndpointRequest> { null };
