@@ -199,7 +199,7 @@ stages:
             value: $(IsLive)
           
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
 
@@ -309,7 +309,7 @@ stages:
             value: $(notification_api_url)
 
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
 

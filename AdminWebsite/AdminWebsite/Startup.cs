@@ -28,7 +28,7 @@ namespace AdminWebsite
         {
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDK-Key"]));
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"]));
             
             services.AddSwagger();
             services.AddJsonOptions();

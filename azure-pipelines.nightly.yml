@@ -298,7 +298,7 @@ stages:
             value: $(JoinByPhoneFromDate)
 
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
             
@@ -370,7 +370,7 @@ stages:
             value: $(TestUserSecrets:TestApiUserPassword)
 
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
             

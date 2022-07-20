@@ -231,7 +231,7 @@ stages:
             value: $(video_web_url)
 
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
 
@@ -295,7 +295,7 @@ stages:
             value: $(JoinByPhoneFromDate)
 
           # Feature Toggle
-          - name: FeatureToggle:SDK-Key
+          - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
             
