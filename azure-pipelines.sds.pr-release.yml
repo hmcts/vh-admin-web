@@ -95,9 +95,9 @@ stages:
           env: ${{ variables.env }}
       - group: vh-github-app-credentials
     jobs:
-      - job: Dock
-        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-        steps:
+    #   - job: Dock
+    #     displayName: "Build and Push Image ${{ variables.git_repo_name }}"
+    #     steps:
           # - checkout: self
 
           # - template: templates\Github\get-app-token.yaml@azTemplates
