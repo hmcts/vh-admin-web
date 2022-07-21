@@ -20,6 +20,8 @@ java:
         - wowzaconfiguration--storageaccountkey
         - azuread--temporarypassword
         - azuread--tenantid
+        - azuread--userapiclientid
+        - azuread--userapiclientsecret
     vh-admin-web:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -33,8 +35,6 @@ java:
     AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
-    AZUREAD__USERAPICLIENTID: "PLACEHOLDER"
-    AZUREAD__USERAPICLIENTSECRET: "PLACEHOLDER"
     DISABLEHTTPSREDIRECTION: true
     FEATURETOGGLE__SDKKey: "PLACEHOLDER"
     ISLIVE: "False"
