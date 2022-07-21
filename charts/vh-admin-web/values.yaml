@@ -32,7 +32,6 @@ java:
   environment:
     ASPNETCORE_URLS: http://+:8080
     AZUREAD__BASEVIDEOURL: https://vhinfracoredev.blob.core.windows.net/video
-    AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
     DISABLEHTTPSREDIRECTION: true
@@ -53,16 +52,18 @@ java:
     SAUCELABS__USERNAME: "PLACEHOLDER"
     TESTUSERSECRETS__TESTUSERNAMESTEM: "PLACEHOLDER"
     TESTUSERSECRETS__TESTUSERPASSWORD: "PLACEHOLDER"
-    VHSERVICES__ADMINWEBRESOURCEID: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__ADMINWEBURL: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__BOOKINGSAPIRESOURCEID: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__TESTAPIRESOURCEID: https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__TESTAPIURL: https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__USERAPIRESOURCEID: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__USERAPIURL: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__VIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__CONFERENCEPHONENUMBER: "PLACEHOLDER"
+    VHSERVICES__KINLYSELFTESTSCOREENDPOINTURL: "PLACEHOLDER"
+    VHSERVICES__LAUNCHDARKLYCLIENTID: "PLACEHOLDER"
+    VHSERVICES__PEXIPSELFTESTNODEURI: "PLACEHOLDER"
     VHSERVICES__NOTIFICATIONAPIRESOURCEID: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__NOTIFICATIONAPIURL: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__SERVICEWEBURL: "PLACEHOLDER"
+    VHSERVICES__USERAPIRESOURCEID: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__USERAPIURL: https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__VALIDATEEMAIL: "@hearings.reform.hmcts.net"
+    VHSERVICES__VIDEOAPIRESOURCEID: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__VIDEOWEBURL: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/
