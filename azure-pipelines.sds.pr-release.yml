@@ -264,7 +264,7 @@ stages:
           - group: KinlyConfiguration_${{ variables.env }}
           - group: Saucelabs
           - group: vh-test-users
-          - group: govuk-notifty-${{ variables.env }}
+          - group: govuk-notify-${{ variables.env }}
           steps:
           - template: templates/dotnet/run-acceptance-tests.yml@azTemplates
             parameters:
