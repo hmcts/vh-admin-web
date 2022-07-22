@@ -170,39 +170,39 @@ stages:
           
 #####################################################
 # Run Entity Framework Dev. #########################
-  - stage: Run_Entity_Framework_Dev
-    dependsOn: Dock
-    displayName: Run Entity Framework Dev
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-    jobs:
-      - job: Run_Entity_Framework_Dev
-        pool:
-          vmImage: 'windows-latest' # This Job Must be Run on Windows
-        displayName: Run Entity Framework Dev
-        steps:
-          - download: current
-            displayName: Download Sql Artifact
+  # - stage: Run_Entity_Framework_Dev
+  #   dependsOn: Dock
+  #   displayName: Run Entity Framework Dev
+  #   variables:
+  #     - template: variables/dev.yaml
+  #     - template: variables/shared.yaml
+  #       parameters:
+  #         env: ${{ variables.env }}
+  #   jobs:
+  #     - job: Run_Entity_Framework_Dev
+  #       pool:
+  #         vmImage: 'windows-latest' # This Job Must be Run on Windows
+  #       displayName: Run Entity Framework Dev
+  #       steps:
+  #         - download: current
+  #           displayName: Download Sql Artifact
 
-          - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-            parameters:
-              sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-              sqlServerName: ${{ variables.vhSQLServerName }}
-              databaseName: ${{ variables.TestApiDbName }}
-              azureSubscription: ${{ variables.subscriptionName }}
-              sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-              kvfirewallRequired: false
-              kvName: ${{ variables.vhKeyVault }}
-              kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-              kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+  #         - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+  #           parameters:
+  #             sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+  #             sqlServerName: ${{ variables.vhSQLServerName }}
+  #             databaseName: ${{ variables.TestApiDbName }}
+  #             azureSubscription: ${{ variables.subscriptionName }}
+  #             sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+  #             kvfirewallRequired: false
+  #             kvName: ${{ variables.vhKeyVault }}
+  #             kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+  #             kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
 #####################################################
 # Deploy Helm Chart to Dev. ######################### 
   - stage: Install
-    dependsOn: Run_Entity_Framework_Dev
+    dependsOn: Dock
     displayName: Deploy Helm Chart Dev AKS
     variables:
       - template: variables/dev.yaml
