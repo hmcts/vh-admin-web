@@ -1,7 +1,7 @@
 name: $(Date:yyyyMMddhhmm)-$(Rev:r)
 
 trigger:
-  - VIH-8966
+  - master
 
 pr: none
 
