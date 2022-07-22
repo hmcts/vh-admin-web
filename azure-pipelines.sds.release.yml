@@ -1,0 +1,263 @@
+name: $(Date:yyyyMMddhhmm)-$(Rev:r)
+
+trigger:
+  - VIH-8966
+
+pr: none
+
+resources:
+  repositories:
+    - repository: azTemplates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: master
+      endpoint: hmcts
+
+parameters:
+- name: environment
+  type: object
+  default:
+  - Dev
+  - Demo
+  - Staging
+  - Prod
+
+#####################################################
+# Generate Entity Framework Script. #################
+
+stages:
+  # - stage: pre_run_tasks
+  #   displayName: Pre-Release Tasks
+  #   variables:
+  #     - template: variables/shared.yaml
+  #     - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+  #       - template: variables/production.yaml
+  #     - ${{ else }}:
+  #       - template: variables/staging.yaml
+  #   jobs:
+  #     - job: Generate_Entity_Framework_Script
+  #       displayName: "Generate Entity Framework Script"
+  #       steps:
+  #       - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
+  #         parameters:
+  #           outputPath: $(Build.StagingDirectory)
+  #           contextName: ${{ variables.efContextName }}
+  #           workingPath: $(System.DefaultWorkingDirectory)/NotificationApi/NotificationApi 
+  #           projectName: ${{ variables.efProjectName }}
+
+  #       - task: PublishPipelineArtifact@1
+  #         displayName: Publish Artifacts
+  #         inputs:
+  #           targetPath: $(Build.StagingDirectory)
+  #           publishLocation: Pipeline
+  #           artifact: ${{ variables.efContextName }}-$(Build.BuildId)
+
+  #     - job: package_nuget
+  #       displayName: "Package Nuget Packages"
+  #       steps:
+  #         - template: templates\dotnet\package-nuget-packages.yml@azTemplates
+  #           parameters:
+  #             nugetProjectPath: 'NotificationApi/${{ variables.nuget_package_name }}'
+  #             vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+  #             gitVersionConfigPath: ${{ variables.git_version_config_path }}
+
+#####################################################
+# Approval Gate for EF. #############################
+
+  # - stage: Approve_Entity_Framework
+  #   displayName: 'Approve EF Release'
+  #   pool:
+  #     vmImage: 'ubuntu-latest'
+  #   jobs:
+  #     - job: waitForValidation
+  #       displayName: 'Approve Entity Framework'
+  #       pool: server
+  #       timeoutInMinutes: 4320 # job times out in 3 days
+  #       steps:
+  #       - task: ManualValidation@0
+  #         timeoutInMinutes: 1440 # task times out in 1 day
+  #         inputs:
+  #           instructions: 'Please Approve to Run Entity Framework Release...'
+  #           onTimeout: 'reject'
+
+#####################################################
+# Run Entity Framework Staging. #####################
+
+  # - ${{ each env in parameters.environment }}:
+  #   - stage: Run_Entity_Framework_${{ env }}
+  #     ${{ if eq(env, 'Prod') }}:
+  #       condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/heads/release'))
+  #     ${{ else }}:
+  #       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'master')) # change me 
+  #     dependsOn: Approve_Entity_Framework
+  #     displayName: ${{ env }} EF Release
+  #     variables:
+  #       - ${{ if eq(env, 'Dev') }}:
+  #         - template: variables/dev.yaml
+  #       - ${{ if eq(env, 'Staging') }}:
+  #         - template: variables/staging.yaml
+  #       - ${{ if eq(env, 'Demo') }}:
+  #         - template: variables/qa.yaml
+  #       - ${{ if eq(env, 'Prod') }}:
+  #         - template: variables/production.yaml
+          
+  #       - template: variables/shared.yaml
+  #         parameters:
+  #           env: ${{ variables.env }}
+  #     jobs:
+  #     - job: Run_Entity_Framework_${{ env }}
+  #       pool:
+  #         vmImage: 'windows-latest' # This Job Must be Run on Windows
+  #       displayName: Run Entity Framework ${{ env }}
+  #       steps:
+  #         - download: current
+  #           displayName: Download Sql Artifact
+
+  #         - ${{ if or( eq(env, 'Staging'), eq(env, 'Prod') ) }}: 
+  #           - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+  #             parameters:
+  #               addOrDelete: delete
+  #               lockName: "${{ variables.env }}-lock"
+  #               resourceGroup: ${{ variables.vhResourceGroup }}
+  #               azureSubscription: ${{ variables.subscriptionName }}
+
+  #         - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
+  #           parameters:
+  #             sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
+  #             sqlServerName: ${{ variables.vhSQLServerName }}
+  #             databaseName: ${{ variables.NotificationApiDbName }}
+  #             azureSubscription: ${{ variables.subscriptionName }}
+  #             sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
+  #             kvfirewallRequired: false
+  #             kvName: ${{ variables.vhKeyVault }}
+  #             kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
+  #             kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+
+  #         - ${{ if or( eq(env, 'Staging'), eq(env, 'Prod') ) }}: 
+  #           - template: templates/Azure/Common/unlock-lock.yaml@azTemplates
+  #             parameters:
+  #               addOrDelete: add
+  #               lockName: "${{ variables.env }}-lock"
+  #               resourceGroup: ${{ variables.vhResourceGroup }}
+  #               azureSubscription: ${{ variables.subscriptionName }}
+  #               lockType: CanNotDelete
+
+
+#####################################################
+# Approval Gate for Admin Web Release. #######
+
+  - stage: Approve_Helm_Release
+    displayName: 'Approve Helm Release'
+    # ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    #   dependsOn:
+    #     - Run_Entity_Framework_Dev
+    #     - Run_Entity_Framework_Demo
+    #     - Run_Entity_Framework_Staging
+    # ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+    #   dependsOn: Run_Entity_Framework_Prod
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: waitForValidation
+        displayName: 'Approve Helm Release'
+        pool: server
+        timeoutInMinutes: 4320 # job times out in 3 days
+        steps:
+        - task: ManualValidation@0
+          timeoutInMinutes: 1440 # task times out in 1 day
+          inputs:
+            instructions: 'Please Approve for Helm Release...'
+            onTimeout: 'reject'
+
+#####################################################
+# Build Docker Image & Push. ########################
+
+  - stage: Docker_Build_Push
+    displayName: Docker Build & Push Image
+    variables:
+      - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+        - template: variables/production.yaml
+      - ${{ else }}:
+        - template: variables/staging.yaml
+
+      - template: variables/shared.yaml
+    jobs:
+      - job: Docker_Build
+        displayName: "Docker Build and Push"
+        steps:
+          - checkout: self
+
+          - bash: |
+              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
+            displayName: Add NuGet Feed Authentication
+            workingDirectory: $(app_path)
+        
+          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName:  ${{ variables.repositoryName }}
+            
+          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+            parameters:
+              azureSubscription: ${{ variables.acrSubscription }}
+              acrName: ${{ variables.acrName }}
+              repositoryName:  ${{ variables.repositoryName }}
+              imageName: "${{ variables.imageName }}"
+              imageTags:
+                - ${{ if eq(variables['Build.SourceBranchName'], 'VIH-8966') }}:
+                  - '${{ variables.stagingTagName }}'
+                - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+                  - 'latest'
+                  - '${{ variables.releaseTagName }}'
+
+#####################################################
+# Deploy Nuget Packages. #########################
+  # - stage: Push_Nuget
+  #   dependsOn: Approve_Helm_Release
+  #   displayName: Deploy Nuget Packages
+  #   variables:
+  #     - template: variables/dev.yaml
+  #     - template: variables/shared.yaml
+  #       parameters:
+  #         env: ${{ variables.env }}
+  #   jobs: 
+  #     - job: Publish_Nuget
+  #       displayName: Publish NuGet Packages
+  #       steps:
+  #         - template: templates\dotnet\push-nuget-packages.yml@azTemplates
+  #           parameters:
+  #             vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+
+#########################################
+# Push Helm Charts to Repo. #############
+  - stage: Helm
+    displayName: Push Helm Charts
+    dependsOn: Docker_Build_Push
+    variables:
+      - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
+        - template: variables/production.yaml
+      - ${{ else }}:
+        - template: variables/staging.yaml
+        
+      - template: variables/shared.yaml
+      - group: vh-github-app-credentials
+    jobs:
+      - job: Helm
+        displayName: "Helm Push"
+        steps:
+          - checkout: self
+
+          - template: templates\Github\get-app-token.yaml@azTemplates
+            parameters:
+              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+              appId: $(gh_app_app_id)
+
+          - template: templates\Github\push-to-helm-chart-repo.yaml@azTemplates
+            parameters:
+              chartName: ${{ variables.chartName }}
+              chartPath: ${{ variables.chartPath }}
+              githubToken: $(githubappinstall.token)
+              githubUsername: $(gh_app_name)
+              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+              subDirectory: ${{ variables.subDirectory }}
