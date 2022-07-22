@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: VIH-9999-ATS
+      ref: master
       endpoint: hmcts
       
 trigger: none
@@ -17,7 +17,7 @@ variables:
   - group: vh-github-app-credentials
   - group: vh-admin-web
   - name: run_acceptance_tests
-    value: true
+    value: false
 
 stages:
 #####################################################
@@ -202,7 +202,7 @@ stages:
 #####################################################
 # Deploy Helm Chart to Dev. ######################### 
   - stage: Install
-    dependsOn: Dock
+    dependsOn: Run_Entity_Framework_Dev
     displayName: Deploy Helm Chart Dev AKS
     variables:
       - template: variables/dev.yaml
@@ -259,6 +259,7 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
+          dependsOn: aks_push
           displayName: Acceptance Tests Dev
           variables:
           - group: KinlyConfiguration_${{ variables.env }}
