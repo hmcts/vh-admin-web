@@ -26,6 +26,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=client /app/dist /app/ClientApp/dist
-RUN apt-get update && \
-      apt-get -y install dnsutils
 ENTRYPOINT ["dotnet", "AdminWebsite.dll"]

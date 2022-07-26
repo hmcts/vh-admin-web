@@ -8,10 +8,6 @@ parameters:
 
 variables:
 
-  - name: nuget_org_name
-    value: 'Video Hearings/vh-packages'
-  - name: nuget_feed_name
-    value: 'vh-packages'
   - name: git_version_config_path
     value: $(Build.SourcesDirectory)/sds-git-version-config.yml
   - name: nuget_package_name
@@ -66,24 +62,8 @@ variables:
   - name: gh_app_private_key_file_name
     value: hmcts-ado-cnp-app.private-key.pem
 
-
-  # - name: vhSQLServerName
-  #   value: vh-infra-core-${{ parameters.env }}
-  # - name: AdminWebDbName
-  #   value: vhadmin
   - name: vhResourceGroup
     value: vh-infra-core-${{ parameters.env }}
-
-  # - name: efContextName
-  #   value: TestApiDbContext
-  # - name: efProjectName
-  #   value: TestApi.csproj
-  # - name: vhKeyVault
-  #   value: vh-infra-core-${{ parameters.env }}
-  # - name: vhSqlUsernameSecret
-  #   value: "vh-infra-core-${{ parameters.env }}-sql-username"
-  # - name: vhSqlPasswordSecret
-  #   value: "vh-infra-core-${{ parameters.env }}-sql-password"
 
   - name: app_path
     value: AdminWebsite

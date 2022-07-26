@@ -97,32 +97,3 @@ stages:
             dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
             zoneName: ${{ variables.dnsZone }}
             recordName: ${{ variables.dnsRecordName }}
-
-  - stage: delete_packages
-    displayName: Delete PR Packages
-    dependsOn: []
-    variables:
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-          prNumber: ${{ parameters.prNumber }}
-    jobs:
-      - job: delete_packages
-        displayName: Delete Nuget Packages
-        steps:
-          - powershell: |
-              $prNumber=[int]"${{ parameters.prNumber }}"
-              Write-Host "PR Number $prNumber"
-
-              $prFilter='pr-{0:d4}' -f $prNumber
-              Write-Host "Filter $prFilter"
-
-              Write-Host "##vso[task.setvariable variable=prFilter;isOutput=true]$prFilter"
-            displayName: "Get PR Filter"
-            name: filter
-
-          - template: templates\dotnet\delete-nuget-package-versions-by-filter.yml@azTemplates
-            parameters:
-              feedName: ${{ variables.nuget_feed_name }}
-              packageName: ${{ variables.nuget_package_name }}
-              versionFilter: $(filter.prFilter)
