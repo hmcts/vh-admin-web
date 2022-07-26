@@ -133,27 +133,6 @@ stages:
               imageTags:
                 - '${{ variables.prTagName }}'
 
-      # - job: Generate_Entity_Framework_Script
-      #   displayName: "Generate Entity Framework Script"
-      #   steps:
-
-      #   - template: templates/Database/EntityFramework/generate-script.yaml@azTemplates
-      #     parameters:
-      #       outputPath: $(Build.StagingDirectory)
-      #       contextName: ${{ variables.efContextName }}
-      #       workingPath: $(System.DefaultWorkingDirectory)/TestApi/TestApi
-      #       projectName: ${{ variables.efProjectName }}
-
-      # - job: package_nuget
-      #   displayName: "Package NuGet Packages"
-      #   dependsOn: Dock
-      #   steps:
-      #     - template: templates\dotnet\package-nuget-packages.yml@azTemplates
-      #       parameters:
-      #         nugetProjectPath: "TestApi/${{ variables.nuget_package_name }}"
-      #         nugetConfigFile: "${{ variables.app_path }}/nuget.config" # Temp - Change To SDS Feed When Possible.
-      #         gitVersionConfigPath: ${{ variables.git_version_config_path }}
-
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: PublishAcceptanceTests
           displayName: Publish Acceptance Tests 
@@ -166,37 +145,7 @@ stages:
               nugetProjectPath: $(projectPath)
               nugetConfigPath: $(app_path)
               useNugetConfig: true
-          
-#####################################################
-# Run Entity Framework Dev. #########################
-  # - stage: Run_Entity_Framework_Dev
-  #   dependsOn: Dock
-  #   displayName: Run Entity Framework Dev
-  #   variables:
-  #     - template: variables/dev.yaml
-  #     - template: variables/shared.yaml
-  #       parameters:
-  #         env: ${{ variables.env }}
-  #   jobs:
-  #     - job: Run_Entity_Framework_Dev
-  #       pool:
-  #         vmImage: 'windows-latest' # This Job Must be Run on Windows
-  #       displayName: Run Entity Framework Dev
-  #       steps:
-  #         - download: current
-  #           displayName: Download Sql Artifact
-
-  #         - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-  #           parameters:
-  #             sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-  #             sqlServerName: ${{ variables.vhSQLServerName }}
-  #             databaseName: ${{ variables.TestApiDbName }}
-  #             azureSubscription: ${{ variables.subscriptionName }}
-  #             sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-  #             kvfirewallRequired: false
-  #             kvName: ${{ variables.vhKeyVault }}
-  #             kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-  #             kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
+        
 
 #####################################################
 # Deploy Helm Chart to Dev. ######################### 
@@ -368,24 +317,7 @@ stages:
                 # Ejud - test setting only
                 - name: UsingEjud
                   value: $(UsingEjud)
-                
-#####################################################
-# Deploy Nuget Packages. #########################
-  # - stage: Push_Nuget
-  #   dependsOn: Install
-  #   displayName: Deploy NuGet Packages
-  #   variables:
-  #     - template: variables/dev.yaml
-  #     - template: variables/shared.yaml
-  #       parameters:
-  #         env: ${{ variables.env }}
-  #   jobs: 
-  #     - job: Publish_Nuget
-  #       displayName: Publish NuGet Packages
-  #       steps:
-  #         - template: templates\dotnet\push-nuget-packages.yml@azTemplates
-  #           parameters:
-  #             vstsFeed: "${{ variables.nuget_org_name }}/${{ variables.nuget_feed_name }}"
+              
 
 #####################################################
 # Manual Approval To Demo. ##########################
@@ -400,37 +332,6 @@ stages:
             inputs:
               instructions: 'Please approve the release of PR-$(System.PullRequest.PullRequestNumber) to the Demo environment to resume'
               onTimeout: 'reject'
-
-#####################################################
-# Run Entity Framework Demo. ########################
-  # - stage: Run_Entity_Framework_Demo
-  #   dependsOn: Wait
-  #   displayName: Run Entity Framework Demo
-  #   variables:
-  #     - template: variables/qa.yaml
-  #     - template: variables/shared.yaml
-  #       parameters:
-  #         env: ${{ variables.env }}
-  #   jobs:
-  #     - job: Run_Entity_Framework_Demo
-  #       pool:
-  #        vmImage: 'windows-latest'
-  #       displayName: Run Entity Framework Demo
-  #       steps:
-  #         - download: current
-  #           displayName: Download Sql Artifact
-
-  #         - template: templates/Database/EntityFramework/run-entity-framework.yaml@azTemplates
-  #           parameters:
-  #             sqlServerResourceGroup: ${{ variables.vhResourceGroup }}
-  #             sqlServerName: ${{ variables.vhSQLServerName }}
-  #             databaseName: ${{ variables.testApiDbName }}
-  #             azureSubscription: ${{ variables.subscriptionName }}
-  #             sqlScriptLocation: "$(Pipeline.Workspace)/${{ variables.efContextName }}-$(Build.BuildId)/${{ variables.efContextName }}.sql"
-  #             kvfirewallRequired: false
-  #             kvName: ${{ variables.vhKeyVault }}
-  #             kvSqlPasswordSecret: ${{ variables.vhSqlPasswordSecret }}
-  #             kvSqlUsernameSecret: ${{ variables.vhSqlUsernameSecret }}
 
 #####################################################
 # Deploy Helm Chart to QA. ##########################
