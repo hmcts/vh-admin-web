@@ -166,7 +166,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         
         private void SetBookingConfirmToggleStatus(TestContext context)
         { 
-            var featureToggle = new FeatureToggles(_configRoot["FeatureToggle:SDK-Key"]);
+            var featureToggle = new FeatureToggles(_configRoot["FeatureToggle:SDKKey"]);
             context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
     }

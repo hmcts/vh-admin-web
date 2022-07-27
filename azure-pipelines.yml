@@ -80,7 +80,7 @@ parameters:
     value: $(video_web_url)
 
   # Feature Toggle
-  - name: FeatureToggle:SDK-Key
+  - name: FeatureToggle:SDKKey
     value: vh-admin-web-Feature-Toggle
     secret: true
 
@@ -206,7 +206,7 @@ parameters:
     value: $(video_web_url)
 
 # Feature Toggle
-  - name: FeatureToggle:SDK-Key
+  - name: FeatureToggle:SDKKey
     value: vh-admin-web-Feature-Toggle
     secret: true
 
