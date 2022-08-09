@@ -170,7 +170,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     blurEmail() {
-        if (!this.results || this.results.length === 0) {
+        const userAlreadyExists = this.results && this.results.find(p => p.email === this.email) ? true : false;
+
+        if (!this.results || this.results.length === 0 || !userAlreadyExists) {
             this.validateEmail();
             this.emailChanged.emit(this.email);
         }

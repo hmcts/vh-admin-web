@@ -308,7 +308,24 @@ describe('SearchEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
+    it('should emit event email is changed if searched email does not exist in non-empty results', () => {
+        const existingParticipant = new ParticipantModel({
+            email: 'YOSXJDKSD@hmcts.net',
+            first_name: 'YOSXJDKSD',
+            last_name: 'YOSXJDKSD'
+        });
 
+        const existingParticipants: ParticipantModel[] = [];
+        existingParticipants.push(existingParticipant);
+
+        component.results = existingParticipants;
+        component.email = 'sd@hmcts.net';
+        spyOn(component.emailChanged, 'emit');
+        component.blurEmail();
+        fixture.detectChanges();
+
+        expect(component.emailChanged.emit).toHaveBeenCalled();
+    });
     it('should find data and set notFoundParticipant to false', () => {
         component.setData(participantList);
         expect(component.results).toEqual(participantList);
