@@ -151,12 +151,17 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     validateEmail() {
-        const pattern = Constants.EmailPattern;
-        this.isValidEmail = this.email && this.email.length > 2 && this.email.length < 256 && pattern.test(this.email);
-        if (!this.isJudge) {
-            this.isValidEmail = this.isValidEmail && this.email.indexOf(this.invalidPattern) < 0;
-        }
+        this.isValidEmail = this.emailIsValid();
         return this.isValidEmail;
+    }
+
+    emailIsValid() {
+        const pattern = Constants.EmailPattern;
+        let isValidEmail = this.email && this.email.length > 2 && this.email.length < 256 && pattern.test(this.email);
+        if (!this.isJudge) {
+            isValidEmail = isValidEmail && this.email.indexOf(this.invalidPattern) < 0;
+        }
+        return isValidEmail;
     }
 
     blur() {
@@ -171,8 +176,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     blurEmail() {
         const userAlreadyExists = this.results && this.results.find(p => p.email === this.email) ? true : false;
+        const emailIsValid = this.emailIsValid();
 
-        if (!this.results || this.results.length === 0 || !userAlreadyExists) {
+        if (!this.results || this.results.length === 0 || (emailIsValid && !userAlreadyExists)) {
             this.validateEmail();
             this.emailChanged.emit(this.email);
         }
