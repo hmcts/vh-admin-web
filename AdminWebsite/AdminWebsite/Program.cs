@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using VH.Core.Configuration;
+using System.Collections.Generic;
 
 namespace AdminWebsite
 {
