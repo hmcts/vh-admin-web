@@ -330,6 +330,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
                         return;
                     }
+                    sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
                     this.router.navigate([PageUrls.BookingConfirmation]);
                 },
                 error => {

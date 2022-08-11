@@ -509,6 +509,15 @@ describe('SummaryComponent  with existing request', () => {
         fixture = TestBed.createComponent(SummaryComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        const mockSessionStorage = {
+            getItem: (key: string): string => {
+                return 'true';
+            },
+            setItem: (key: string, value: string) => {},
+            removeItem: (key: string) => {},
+            clear: () => {}
+        };
+        spyOn(sessionStorage, 'setItem').and.callFake(mockSessionStorage.setItem);
     });
 
     it('should indicate that the current booking is existing booking', () => {
@@ -550,6 +559,7 @@ describe('SummaryComponent  with existing request', () => {
         expect(component.bookingsSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(sessionStorage.setItem).toHaveBeenCalled();
 
         expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
     });
