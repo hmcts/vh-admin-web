@@ -18,12 +18,23 @@ namespace AdminWebsite
         {
             const string vhInfraCore = "/mnt/secrets/vh-infra-core";
             const string vhAdminWeb = "/mnt/secrets/vh-admin-web";
+            var keyVaults=new List<string> (){
+                "vh-infra-core",
+                "vh-admin-web",
+                "vh-bookings-api",
+                "vh-video-api",
+                "vh-notification-api",
+                "vh-user-api"
+            };
+
 
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((configBuilder) =>
                 {
-                    configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
-                    configBuilder.AddAksKeyVaultSecretProvider(vhAdminWeb);
+                    foreach (var keyVault in keyVaults)
+                    {
+                        configBuilder.AddAksKeyVaultSecretProvider($"/mnt/secrets/{keyVault}");
+                    }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
