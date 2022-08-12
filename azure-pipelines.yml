@@ -1,230 +1,230 @@
 parameters:
-  - name: PackageApp
-    displayName: Package App
-    type: boolean
-    default: true
+- name: PackageApp
+  displayName: Package App
+  type: boolean
+  default: true
 
-  - name: PackageACTests
-    displayName: Package Acceptance Tests
-    type: boolean
-    default: true
+- name: PackageACTests
+  displayName: Package Acceptance Tests
+  type: boolean
+  default: true
 
-  - name: RunUnitTests
-    displayName: Run Unit Tests
-    type: boolean
-    default: true
+- name: RunUnitTests
+  displayName: Run Unit Tests
+  type: boolean
+  default: true
 
-  - name: RunIntegTests
-    displayName: Run Integration Tests
-    type: boolean
-    default: true
+- name: RunIntegTests
+  displayName: Run Integration Tests
+  type: boolean
+  default: true
 
-  - name: RunSonarCloudTests
-    displayName: Run Sonar Cloud Analysis
-    type: boolean
-    default: true
+- name: RunSonarCloudTests
+  displayName: Run Sonar Cloud Analysis
+  type: boolean
+  default: true
 
-  - name: RunMutationTests
-    displayName: Run Mutation Tests
-    type: boolean
-    default: true
+- name: RunMutationTests
+  displayName: Run Mutation Tests
+  type: boolean
+  default: true
 
-  - name: RunACTests
-    displayName: Run Acceptance Tests
-    type: boolean
-    default: true
+- name: RunACTests
+  displayName: Run Acceptance Tests
+  type: boolean
+  default: true
 
-  - name: RunNodeTests
-    displayName: Run Node Tests
-    type: boolean
-    default: true
+- name: RunNodeTests
+  displayName: Run Node Tests
+  type: boolean
+  default: true
 
-  - name: testSettings
-    type: object
-    default:
-      # VhServices
-      - name: VhServices:AdminWebUrl
-        value: $(admin_web_url_staging)
-      - name: VhServices:AdminWebResourceId
-        value: vh-admin-web-identifieruris
-        secret: true
-      - name: VhServices:VideoApiUrl
-        value: $(video_api_url)
-      - name: VhServices:VideoApiResourceId
-        value: vh-video-api-identifieruris
-        secret: true
-      - name: VhServices:UserApiUrl
-        value: $(user_api_url)
-      - name: VhServices:UserApiResourceId
-        value: vh-user-api-identifieruris
-        secret: true
-      - name: VhServices:NotificationApiUrl
-        value: $(notification_api_url)
-      - name: VhServices:NotificationApiResourceId
-        value: vh-notification-api-identifieruris
-        secret: true
-      - name: VhServices:TestApiUrl
-        value: $(test_api_url)
-      - name: VhServices:TestApiResourceId
-        value: vh-test-api-identifieruris
-        secret: true
-      - name: VhServices:BookingsApiUrl
-        value: $(bookings_api_url)
-      - name: VhServices:BookingsApiResourceId
-        value: vh-bookings-api-identifieruris
-        secret: true
-      - name: VhServices:LaunchDarklyClientId
-        value: vh-launchdarkly-client-id
-        secret: true
-      - name: VhServices:VideoWebUrl
-        value: $(video_web_url)
+- name: testSettings
+  type: object
+  default:
+  # VhServices
+  - name: VhServices:AdminWebUrl
+    value: $(admin_web_url_staging)
+  - name: VhServices:AdminWebResourceId
+    value: vh-admin-web-identifieruris
+    secret: true
+  - name: VhServices:VideoApiUrl
+    value: $(video_api_url)
+  - name: VhServices:VideoApiResourceId
+    value: vh-video-api-identifieruris
+    secret: true
+  - name: VhServices:UserApiUrl
+    value: $(user_api_url)
+  - name: VhServices:UserApiResourceId
+    value: vh-user-api-identifieruris
+    secret: true
+  - name: VhServices:NotificationApiUrl
+    value: $(notification_api_url)
+  - name: VhServices:NotificationApiResourceId
+    value: vh-notification-api-identifieruris
+    secret: true
+  - name: VhServices:TestApiUrl
+    value: $(test_api_url)
+  - name: VhServices:TestApiResourceId
+    value: vh-test-api-identifieruris
+    secret: true    
+  - name: VhServices:BookingsApiUrl
+    value: $(bookings_api_url)
+  - name: VhServices:BookingsApiResourceId
+    value: vh-bookings-api-identifieruris
+    secret: true
+  - name: VhServices:LaunchDarklyClientId
+    value: vh-launchdarkly-client-id
+    secret: true
+  - name: VhServices:VideoWebUrl
+    value: $(video_web_url)
 
-      # Feature Toggle
-      - name: FeatureToggle:SDKKey
-        value: vh-admin-web-Feature-Toggle
-        secret: true
+  # Feature Toggle
+  - name: FeatureToggle:SDKKey
+    value: vh-admin-web-Feature-Toggle
+    secret: true
 
-      # GOV Notify Configuration
-      - name: NotifyConfiguration:ApiKey
-        value: $(notify-api-key)
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
+  # AzureAd
+  - name: AzureAd:TenantId
+    value: tenantid
+    secret: true
+  - name: AzureAd:ClientId
+    value: vh-video-web-appid-v2
+    secret: true
+  - name: AzureAd:ClientSecret
+    value: vh-video-web-key-v2
+    secret: true
+  - name: AzureAd:PostLogoutRedirectUri
+    slot: true
+  - name: AzureAd:RedirectUri
+    slot: true
+  - name: AzureAd:TemporaryPassword
+    value: $(TemporaryPassword)
+  - name: AzureAd:ResourceId
+    value: vh-video-web-appid-v2
+    secret: true
 
-      # AzureAd
-      - name: AzureAd:TenantId
-        value: tenantid
-        secret: true
-      - name: AzureAd:ClientId
-        value: vh-video-web-appid-v2
-        secret: true
-      - name: AzureAd:ClientSecret
-        value: vh-video-web-key-v2
-        secret: true
-      - name: AzureAd:PostLogoutRedirectUri
-        slot: true
-      - name: AzureAd:RedirectUri
-        slot: true
-      - name: AzureAd:TemporaryPassword
-        value: $(TemporaryPassword)
-      - name: AzureAd:ResourceId
-        value: vh-video-web-appid-v2
-        secret: true
+  # Testing
+  - name: TestUserSecrets:TestUsernameStem
+    value: $(TestUserSecrets:TestUsernameStem)
+  - name: TestUserSecrets:TestUserPassword
+    value: $(TestUserSecrets:TestApiUserPassword)
 
-      # Testing
-      - name: TestUserSecrets:TestUsernameStem
-        value: $(TestUserSecrets:TestUsernameStem)
-      - name: TestUserSecrets:TestUserPassword
-        value: $(TestUserSecrets:TestApiUserPassword)
+    # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
+  - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+    value: $(ConferencePhoneNumberWelsh)
+  - name: KinlyConfiguration:JoinByPhoneFromDate
+    value: $(JoinByPhoneFromDate)
+    
+  # SauceLabs
+  - name: Saucelabs:Username
+    value: $(Saucelabs:Username)
+  - name: Saucelabs:AccessKey
+    value: $(Saucelabs:AccessKey)
+  - name: Saucelabs:RealDeviceApiKey
+    value: $(RealDeviceApiKey)
 
-        # Kinly
-      - name: KinlyConfiguration:ConferencePhoneNumber
-        value: $(ConferencePhoneNumber)
-      - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-        value: $(ConferencePhoneNumberWelsh)
-      - name: KinlyConfiguration:JoinByPhoneFromDate
-        value: $(JoinByPhoneFromDate)
+  # WowzaConfiguration
+  - name: WowzaConfiguration:StorageAccountName
+    value: $(wowza_storageAccountName)
+  - name: WowzaConfiguration:StorageAccountKey
+    value: $(wowza_storageAccountKey)
+  - name: WowzaConfiguration:StorageContainerName
+    value: $(wowza_storageContainerName)
+    
+  # Ejud - test setting only
+  - name: UsingEjud
+    value: $(UsingEjud)
 
-      # SauceLabs
-      - name: Saucelabs:Username
-        value: $(Saucelabs:Username)
-      - name: Saucelabs:AccessKey
-        value: $(Saucelabs:AccessKey)
-      - name: Saucelabs:RealDeviceApiKey
-        value: $(RealDeviceApiKey)
+- name: appSettings
+  type: object
+  default:
+  - name: ApplicationInsights:InstrumentationKey
+    value: vh-core-infra-AppInsightsKey
+    secret: true
+  - name: AppInsightsKey
+    value: vh-core-infra-AppInsightsKey
+    secret: true
+  - name: IsLive
+    value: $(IsLive)
 
-      # WowzaConfiguration
-      - name: WowzaConfiguration:StorageAccountName
-        value: $(wowza_storageAccountName)
-      - name: WowzaConfiguration:StorageAccountKey
-        value: $(wowza_storageAccountKey)
-      - name: WowzaConfiguration:StorageContainerName
-        value: $(wowza_storageContainerName)
+  # AzureAd
+  - name: AzureAd:ClientId
+    value: vh-admin-web-appid-v2
+    secret: true
+  - name: AzureAd:ClientSecret
+    value: vh-admin-web-key-v2
+    secret: true
+  - name: AzureAd:PostLogoutRedirectUri
+    slot:
+      deployment:
+        value: $(admin_web_url_staging)logout
+      active:
+        value: $(admin_web_url)logout
+  - name: AzureAd:RedirectUri
+    slot:
+      deployment:
+        value: $(admin_web_url_staging)home
+      active:
+        value: $(admin_web_url)home
+  - name: AzureAd:TenantId
+    value: tenantid
+    secret: true
+    
+  # Testing
+  - name: TestUserSecrets:TestUsernameStem
+    value: $(TestUserSecrets:TestUsernameStem)
 
-      # Ejud - test setting only
-      - name: UsingEjud
-        value: $(UsingEjud)
+  # VhServices
+  - name: VhServices:BookingsApiResourceId
+    value: vh-bookings-api-identifieruris
+    secret: true
+  - name: VhServices:BookingsApiUrl
+    value: $(bookings_api_url)
+  - name: VhServices:UserApiResourceId
+    value: vh-user-api-identifieruris
+    secret: true
+  - name: VhServices:UserApiUrl
+    value: $(user_api_url)
+  - name: VhServices:VideoApiResourceId
+    value: vh-video-api-identifieruris
+    secret: true
+  - name: VhServices:VideoApiUrl
+    value: $(video_api_url)
+  - name: VhServices:NotificationApiUrl
+    value: $(notification_api_url)
+  - name: VhServices:NotificationApiResourceId
+    value: vh-notification-api-identifieruris
+    secret: true
+  - name: VhServices:LaunchDarklyClientId
+    value: vh-launchdarkly-client-id
+    secret: true    
+  - name: VhServices:VideoWebUrl
+    value: $(video_web_url)
 
-  - name: appSettings
-    type: object
-    default:
-      - name: ApplicationInsights:InstrumentationKey
-        value: vh-core-infra-AppInsightsKey
-        secret: true
-      - name: AppInsightsKey
-        value: vh-core-infra-AppInsightsKey
-        secret: true
-      - name: IsLive
-        value: $(IsLive)
+# Feature Toggle
+  - name: FeatureToggle:SDKKey
+    value: vh-admin-web-Feature-Toggle
+    secret: true
 
-      # AzureAd
-      - name: AzureAd:ClientId
-        value: vh-admin-web-appid-v2
-        secret: true
-      - name: AzureAd:ClientSecret
-        value: vh-admin-web-key-v2
-        secret: true
-      - name: AzureAd:PostLogoutRedirectUri
-        slot:
-          deployment:
-            value: $(admin_web_url_staging)logout
-          active:
-            value: $(admin_web_url)logout
-      - name: AzureAd:RedirectUri
-        slot:
-          deployment:
-            value: $(admin_web_url_staging)home
-          active:
-            value: $(admin_web_url)home
-      - name: AzureAd:TenantId
-        value: tenantid
-        secret: true
-
-      # Testing
-      - name: TestUserSecrets:TestUsernameStem
-        value: $(TestUserSecrets:TestUsernameStem)
-
-      # VhServices
-      - name: VhServices:BookingsApiResourceId
-        value: vh-bookings-api-identifieruris
-        secret: true
-      - name: VhServices:BookingsApiUrl
-        value: $(bookings_api_url)
-      - name: VhServices:UserApiResourceId
-        value: vh-user-api-identifieruris
-        secret: true
-      - name: VhServices:UserApiUrl
-        value: $(user_api_url)
-      - name: VhServices:VideoApiResourceId
-        value: vh-video-api-identifieruris
-        secret: true
-      - name: VhServices:VideoApiUrl
-        value: $(video_api_url)
-      - name: VhServices:NotificationApiUrl
-        value: $(notification_api_url)
-      - name: VhServices:NotificationApiResourceId
-        value: vh-notification-api-identifieruris
-        secret: true
-      - name: VhServices:LaunchDarklyClientId
-        value: vh-launchdarkly-client-id
-        secret: true
-      - name: VhServices:VideoWebUrl
-        value: $(video_web_url)
-
-      # Feature Toggle
-      - name: FeatureToggle:SDKKey
-        value: vh-admin-web-Feature-Toggle
-        secret: true
-
-      # GOV Notify Configuration
-      - name: NotifyConfiguration:ApiKey
-        value: $(notify-api-key)
-
-      # Kinly
-      - name: KinlyConfiguration:ConferencePhoneNumber
-        value: $(ConferencePhoneNumber)
-      - name: KinlyConfiguration:ConferencePhoneNumberWelsh
-        value: $(ConferencePhoneNumberWelsh)
-      - name: KinlyConfiguration:JoinByPhoneFromDate
-        value: $(JoinByPhoneFromDate)
-
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
+  # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
+  - name: KinlyConfiguration:ConferencePhoneNumberWelsh
+    value: $(ConferencePhoneNumberWelsh)
+  - name: KinlyConfiguration:JoinByPhoneFromDate
+    value: $(JoinByPhoneFromDate)
+    
 variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic
@@ -239,22 +239,22 @@ variables:
 trigger:
   branches:
     include:
-      - master
-      - release/*
-      - hotfix/*
+    - master
+    - release/*
+    - hotfix/*
 pr:
   branches:
     include:
-      - master
+    - master
 
 schedules:
-  - cron: "0 0 5,15,25 * *"
-    displayName: Fortnightly ci build
-    always: true
-    branches:
-      include:
-        - master
-
+- cron: "0 0 5,15,25 * *"
+  displayName: Fortnightly ci build
+  always: true
+  branches:
+    include:
+    - master
+  
 resources:
   repositories:
     - repository: templates
@@ -263,14 +263,14 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts
   containers:
-    - container: dotnetsdk
-      image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
-      endpoint: sspublicsbox
-    - container: dotnetsdk-cipipeline
-      image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
-      endpoint: sspublicsbox
-    - container: node
-      image: node:lts-alpine
+  - container: dotnetsdk
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
+    endpoint: sspublicsbox
+  - container: dotnetsdk-cipipeline
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
+    endpoint: sspublicsbox
+  - container: node
+    image: node:lts-alpine
 
 extends:
   template: stages\dotnet-package.yml@templates
@@ -298,9 +298,9 @@ extends:
       RunStryker: ${{ parameters.RunMutationTests }}
       IntegrationTestSettings:
         - ${{ each setting in parameters.testSettings }}:
-            - name: ${{ setting.name }}
-              value: ${{ setting.value }}
-              secret: ${{ setting.secret }}
+          - name: ${{ setting.name }}
+            value: ${{ setting.value }}
+            secret: ${{ setting.secret }}
       coverletCoverageExclusions:
         - "**/Testing.Common/**"
         - "AdminWebsite/Views/*"
@@ -344,4 +344,4 @@ extends:
         - name: WebsiteUrl
           value: $(admin_web_url_staging)
         - ${{ each setting in parameters.testSettings }}:
-            - ${{ insert }}: ${{ setting }}
+          - ${{ insert }}: ${{ setting }}
