@@ -33,6 +33,8 @@ java:
         - name: FeatureToggles--SDK-Key
           alias: FeatureToggles--SdkKey
         - NotifyConfiguration--ApiKey
+        - name: launchdarkly-client-id
+          alias: VHSERVICES--LAUNCHDARKLYCLIENTID
     vh-bookings-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -71,9 +73,6 @@ java:
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
-    TESTUSERSECRETS__TESTUSERNAMESTEM: "@hearings.reform.hmcts.net"
-    TESTUSERSECRETS__TESTUSERPASSWORD: "PLACEHOLDER"
-    VHSERVICES__LAUNCHDARKLYCLIENTID: "PLACEHOLDER"
     VHSERVICES__VALIDATEEMAIL: "@hearings.reform.hmcts.net"
     VHSERVICES__VIDEOAPIURL: https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__VIDEOWEBURL: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/
