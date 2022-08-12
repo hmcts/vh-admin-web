@@ -46,6 +46,7 @@ namespace AdminWebsite.Controllers
             var clientSettings = new ClientSettingsResponse
             {
                 ClientId = _azureAdConfiguration.ClientId,
+                ResourceId = _azureAdConfiguration.ResourceId,
                 TenantId = _azureAdConfiguration.TenantId,
                 RedirectUri = _azureAdConfiguration.RedirectUri,
                 PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri,

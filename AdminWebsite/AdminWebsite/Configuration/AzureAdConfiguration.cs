@@ -11,6 +11,11 @@
         public string ClientId { get; set; }
 
         /// <summary>
+        /// Alternative id for the app registration of the application 
+        /// </summary>
+        public string ResourceId { get; set; }
+
+        /// <summary>
         /// Secret used to authenticate as the <see cref="ClientId"/>
         /// </summary>
         public string ClientSecret { get; set; }

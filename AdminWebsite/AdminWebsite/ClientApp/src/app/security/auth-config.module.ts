@@ -8,13 +8,15 @@ import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.inte
 export function loadConfig(configService: ConfigService, oidcConfigService: OidcConfigService): Function {
     return () => {
         configService.getClientSettings().subscribe(clientSettings => {
+            const resource = clientSettings.resource_id ? clientSettings.resource_id : `api://${clientSettings.client_id}`;
+
             // https://github.com/damienbod/angular-auth-oidc-client/blob/8b66484755ad815948d5bc0711e8d9c69ac6661f/docs/configuration.md
             oidcConfigService.withConfig({
                 stsServer: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.redirect_uri,
                 postLogoutRedirectUri: clientSettings.post_logout_redirect_uri,
                 clientId: clientSettings.client_id,
-                scope: `openid profile offline_access api://${clientSettings.client_id}/feapi`,
+                scope: `openid profile offline_access ${resource}/feapi`,
                 responseType: 'code',
                 maxIdTokenIatOffsetAllowedInSeconds: 600,
                 autoUserinfo: false,
