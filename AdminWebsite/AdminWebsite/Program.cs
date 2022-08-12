@@ -17,8 +17,6 @@ namespace AdminWebsite
 
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-            const string vhInfraCore = "/mnt/secrets/vh-infra-core";
-            const string vhAdminWeb = "/mnt/secrets/vh-admin-web";
             var keyVaults=new List<string> (){
                 "vh-infra-core",
                 "vh-admin-web",
