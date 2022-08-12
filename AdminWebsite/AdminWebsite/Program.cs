@@ -47,8 +47,10 @@ namespace AdminWebsite
                     });
                     webBuilder.ConfigureAppConfiguration(configBuilder =>
                     {
-                        configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
-                        configBuilder.AddAksKeyVaultSecretProvider(vhAdminWeb);
+                        foreach (var keyVault in keyVaults)
+                        {
+                            configBuilder.AddAksKeyVaultSecretProvider($"/mnt/secrets/{keyVault}");
+                        }
                     });
                 });
         }
