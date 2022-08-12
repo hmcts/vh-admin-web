@@ -329,6 +329,9 @@ stages:
             slot: true
           - name: AzureAd:TemporaryPassword
             value: $(TemporaryPassword)
+          - name: AzureAd:ResourceId
+            value: vh-video-web-appid-v2
+            secret: true
 
           # Testing
           - name: TestUserSecrets:TestUsernameStem
