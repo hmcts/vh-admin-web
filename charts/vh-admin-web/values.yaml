@@ -66,7 +66,7 @@ java:
         - name: azuread--identifieruri
           alias: VhServices--UserApiResourceId
   environment:
-    ASPNETCORE_URLS: http://+:8080
+    ASPNETCORE_URLS: http://*:8080
     AZUREAD__BASEVIDEOURL: https://vhinfracore{{ lower .Values.global.environment }}.blob.core.windows.net/video
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home

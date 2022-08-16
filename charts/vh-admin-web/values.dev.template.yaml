@@ -3,3 +3,6 @@ java:
   image: '${IMAGE_NAME}'
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
+  environment:
+    AZUREAD__POSTLOGOUTREDIRECTURI: ${SERVICE_FQDN}/logout
+    AZUREAD__REDIRECTURI: ${SERVICE_FQDN}/home
