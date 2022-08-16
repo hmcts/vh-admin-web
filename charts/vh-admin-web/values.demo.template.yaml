@@ -4,5 +4,5 @@ java:
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
   environment:
-    AZUREAD__POSTLOGOUTREDIRECTURI: ${SERVICE_FQDN}/logout
-    AZUREAD__REDIRECTURI: ${SERVICE_FQDN}/home
+    AZUREAD__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
+    AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
