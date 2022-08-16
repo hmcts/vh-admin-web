@@ -6,3 +6,4 @@ java:
   environment:
     AZUREAD__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
+    VHSERVICES__VIDEOWEBURL: https://${SERVICE_FQDN}
