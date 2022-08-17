@@ -25,10 +25,10 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
-        #- name: azuread--identifieruri
-        #  alias: VhServices--ResourceId
         - name: azuread--identifieruri
-          alias: azuread--ResourceId
+          alias: VhServices--ResourceId
+        #- name: azuread--identifieruri
+        #  alias: azuread--ResourceId
         - kinlyconfiguration--conferencephonenumber
         - kinlyconfiguration--conferencephonenumberwelsh
         - kinlyconfiguration--joinbyphonefromdate
