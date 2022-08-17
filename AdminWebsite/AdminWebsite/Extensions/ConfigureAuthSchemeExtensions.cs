@@ -37,7 +37,7 @@ namespace AdminWebsite.Extensions
                 {
                     options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}/v2.0";
                     options.TokenValidationParameters.ValidateLifetime = true;
-                    options.Audience = securitySettings.ClientId;
+                    options.Audience = string.IsNullOrEmpty(securitySettings.ResourceId) ? securitySettings.ClientId :  securitySettings.ResourceId;
                     options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
                     options.TokenValidationParameters.NameClaimType = "preferred_username";
                     options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
