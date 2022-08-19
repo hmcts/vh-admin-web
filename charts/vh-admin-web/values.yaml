@@ -37,6 +37,7 @@ java:
         - NotifyConfiguration--ApiKey
         - name: launchdarkly-client-id
           alias: VHSERVICES--LAUNCHDARKLYCLIENTID
+        - TestUserSecrets--TestUsernameStem
     vh-bookings-api:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
