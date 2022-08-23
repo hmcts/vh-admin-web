@@ -144,6 +144,7 @@ stages:
           env: ${{ variables.env }}
       - name: dnsRecordName
         value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+      - group: vh-tenant-creds
     jobs:
       - job: helm_uninstall
         displayName: Uninstall Helm from Dev
@@ -164,6 +165,16 @@ stages:
       - job: aks_push
         displayName: Deploy To Dev AKS
         steps:
+
+          - template: templates\Azure\AAD\apps\add-remove-replyruls--no-sc.yaml@azTemplates
+            parameters:
+              azureClientId: $(vh_client_id)
+              azureClientSecret: $(vh_client_secret)
+              azureTenant: $(vh_tenant_id)
+              action: "add"
+              domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "${{ variables.gitRepoName }}-${{ parameters.env }}"
+              domainUris:  "/,/login,/home"
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:
