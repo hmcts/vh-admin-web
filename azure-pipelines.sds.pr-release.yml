@@ -173,7 +173,7 @@ stages:
               azureTenant: $(vh_tenant_id)
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
-              name: "${{ variables.gitRepoName }}-${{ parameters.env }}"
+              name: "${{ variables.gitRepoName }}-${{ variables.env }}"
               domainUris:  "/,/login,/home"
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
@@ -369,7 +369,7 @@ stages:
               azureTenant: $(vh_tenant_id)
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
-              name: "${{ variables.gitRepoName }}-${{ parameters.env }}"
+              name: "${{ variables.gitRepoName }}-${{ variables.env }}"
               domainUris:  "/,/login,/home"
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
