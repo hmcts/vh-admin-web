@@ -174,7 +174,7 @@ stages:
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  ${{ parameters.app_redirect_uri }}
+              domainUris:  ${{ variables.app_redirect_uri }}
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:
@@ -371,7 +371,7 @@ stages:
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  ${{ parameters.app_redirect_uri }}
+              domainUris:  ${{ variables.app_redirect_uri }}
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:

@@ -74,7 +74,7 @@ stages:
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  ${{ parameters.app_redirect_uri }}
+              domainUris:  ${{ variables.app_redirect_uri }}
 
   - stage: uninstall_demo
     displayName: Uninstall Demo Helm and DNS
@@ -125,4 +125,4 @@ stages:
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  ${{ parameters.app_redirect_uri }}
+              domainUris:  ${{ variables.app_redirect_uri }}
