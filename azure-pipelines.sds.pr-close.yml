@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: VIH-9254-redirect-url
       endpoint: hmcts
 
 pr: none
@@ -74,7 +74,7 @@ stages:
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  "/,/login,/home"
+              domainUris:  ${{ parameters.app_redirect_uri }}
 
   - stage: uninstall_demo
     displayName: Uninstall Demo Helm and DNS
@@ -125,4 +125,4 @@ stages:
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  "/,/login,/home"
+              domainUris:  ${{ parameters.app_redirect_uri }}

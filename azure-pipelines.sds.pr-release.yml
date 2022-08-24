@@ -174,13 +174,13 @@ stages:
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  "/,/login,/home"
+              domainUris:  ${{ parameters.app_redirect_uri }}
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:
               subscriptionName: "${{ variables.subscriptionName }}"
               environment: ${{ variables.env }}
-              
+
           - template: templates/Containerisation/helm/helm-install.yaml@azTemplates
             parameters:
               privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
@@ -371,7 +371,7 @@ stages:
               action: "add"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
               name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
-              domainUris:  "/,/login,/home"
+              domainUris:  ${{ parameters.app_redirect_uri }}
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:

@@ -67,3 +67,6 @@ variables:
 
   - name: app_path
     value: AdminWebsite
+
+  - name: app_redirect_uri
+    value: "/,/logout,/home"
