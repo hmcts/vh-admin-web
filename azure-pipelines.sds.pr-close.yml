@@ -30,7 +30,7 @@ stages:
           env: ${{ variables.env }}
           prNumber: ${{ parameters.prNumber }}
       - name: dnsRecordName
-        value: ${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
       - group: vh-tenant-creds
     jobs:
       - job: helm_uninstall
@@ -86,7 +86,7 @@ stages:
           env: ${{ variables.env }}
           prNumber: ${{ parameters.prNumber }}
       - name: dnsRecordName
-        value: ${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
       - group: vh-tenant-creds
     jobs:
       - job: helm_uninstall
