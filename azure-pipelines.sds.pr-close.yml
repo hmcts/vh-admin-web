@@ -73,7 +73,7 @@ stages:
               azureTenant: $(vh_tenant_id)
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
-              name: "a${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
               domainUris:  "/,/login,/home"
 
   - stage: uninstall_demo
@@ -124,5 +124,5 @@ stages:
               azureTenant: $(vh_tenant_id)
               action: "remove"
               domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
-              name: "a${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
               domainUris:  "/,/login,/home"
