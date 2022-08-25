@@ -30,7 +30,8 @@ stages:
           env: ${{ variables.env }}
           prNumber: ${{ parameters.prNumber }}
       - name: dnsRecordName
-        value: ${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+      - group: vh-tenant-creds
     jobs:
       - job: helm_uninstall
         displayName: Uninstall Helm from Dev
@@ -50,6 +51,7 @@ stages:
             azureSubscription: "${{ variables.subscriptionName }}"
             aksResourceGroupName: "$(aksCluster.resourceGroup)"
             aksClusterName: "$(aksCluster.name)"
+
       - job: dns_uninstall
         displayName: Uninstall DNS from Dev
         steps:
@@ -61,6 +63,19 @@ stages:
             zoneName: ${{ variables.dnsZone }}
             recordName: ${{ variables.dnsRecordName }}
 
+      - job: redirect_url_remove
+        displayName: Remove AAD Redirect Url 
+        steps:
+          - template: templates\Azure\AAD\apps\add-remove-replyruls--no-sc.yaml@azTemplates
+            parameters:
+              azureClientId: $(vh_client_id)
+              azureClientSecret: $(vh_client_secret)
+              azureTenant: $(vh_tenant_id)
+              action: "remove"
+              domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
+              domainUris:  ${{ variables.app_redirect_uri }}
+
   - stage: uninstall_demo
     displayName: Uninstall Demo Helm and DNS
     dependsOn: []
@@ -71,7 +86,8 @@ stages:
           env: ${{ variables.env }}
           prNumber: ${{ parameters.prNumber }}
       - name: dnsRecordName
-        value: ${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+        value: vh-${{ variables.git_repo_name }}-${{ variables.prTagPrefix }}
+      - group: vh-tenant-creds
     jobs:
       - job: helm_uninstall
         displayName: Uninstall Helm from Demo
@@ -97,3 +113,16 @@ stages:
             dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
             zoneName: ${{ variables.dnsZone }}
             recordName: ${{ variables.dnsRecordName }}
+
+      - job: redirect_url_remove
+        displayName: Remove AAD Redirect Url 
+        steps:
+          - template: templates\Azure\AAD\apps\add-remove-replyruls--no-sc.yaml@azTemplates
+            parameters:
+              azureClientId: $(vh_client_id)
+              azureClientSecret: $(vh_client_secret)
+              azureTenant: $(vh_tenant_id)
+              action: "remove"
+              domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
+              domainUris:  ${{ variables.app_redirect_uri }}
