@@ -19,7 +19,6 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.Configuration;
@@ -27,7 +26,6 @@ using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using NotificationApi.Client;
-using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
@@ -108,12 +106,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
-                _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object,
-                _featureToggle.Object);
+                _conferencesServiceMock.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest
