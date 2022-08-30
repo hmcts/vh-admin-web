@@ -1069,6 +1069,55 @@ describe('AddParticipantComponent edit mode', () => {
         expect(component.form.controls['email']).toBeTruthy();
         expect(component.form.controls['email'].errors['required']).toBeTruthy();
     });
+    it('should check text input is valid for tranformation to email address in UserApi', () => {
+        //arrange
+        const testCases =
+            {
+                "wil.li_am." : false,
+                "Cr.aig_1234": true,
+                "I.": false,
+                ".william1234": false,
+                "_a": true,
+                "Willi..amCraig1234": false,
+                " qweqwe ": false,
+                "w.w": true,
+                "XY": true,
+                "Z": false
+            }
+        component.form.setValue({
+            title: 'Mr',
+            firstName: participant.first_name,
+            lastName: participant.last_name,
+            party: 'Panel Member',
+            role: 'Panel Member',
+            email: participant.email,
+            phone: participant.phone,
+            displayName: participant.display_name,
+            companyName: participant.company,
+            companyNameIndividual: participant.company,
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
+        });
+        component.initialiseForm();
+
+        for (const [test, expectedResult] of Object.entries(testCases)) {
+
+            //act
+            component.firstName.setValue(test);
+            component.lastName.setValue(test);
+
+            //assert
+            if(expectedResult == false){
+                expect(component.form.controls['firstName'].status).toBe('INVALID');
+                expect(component.form.controls['lastName'].status).toBe('INVALID');
+            }
+            else{
+                expect(component.form.controls['firstName'].status).toBe('VALID');
+                expect(component.form.controls['lastName'].status).toBe('VALID');
+            }
+        }
+    });
+
     it('should set title list and get current data from session', () => {
         component.ngOnInit();
         fixture.detectChanges();
