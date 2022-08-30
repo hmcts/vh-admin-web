@@ -1081,8 +1081,7 @@ describe('AddParticipantComponent edit mode', () => {
                 "Willi..amCraig1234": false,
                 " qweqwe ": false,
                 "w.w": true,
-                "XY": true,
-                "Z": false
+                "XY": true
             }
         component.form.setValue({
             title: 'Mr',
