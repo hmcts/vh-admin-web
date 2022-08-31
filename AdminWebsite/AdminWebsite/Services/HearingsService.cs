@@ -43,6 +43,7 @@ namespace AdminWebsite.Services
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
+        void SetJudgeInformationForUpdate(EditHearingRequest request);
     }
 
     public class HearingsService : IHearingsService
@@ -124,6 +125,15 @@ namespace AdminWebsite.Services
 
             return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
                    newJudgeOtherInformation != existingJudgeOtherInformation;
+        }
+
+        public void SetJudgeInformationForUpdate(EditHearingRequest request)
+        {
+            var otherInfoProperties = request.OtherInformation.Split('|');
+            string ExtractJudgeInfo(string[] properties, string property) => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : string.Empty;
+            var judge = request.Participants.First(e => e.HearingRoleName == "Judge");
+            judge.ContactEmail = ExtractJudgeInfo(otherInfoProperties, "JudgeEmail");
+            judge.TelephoneNumber = ExtractJudgeInfo(otherInfoProperties, "JudgePhone");
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
