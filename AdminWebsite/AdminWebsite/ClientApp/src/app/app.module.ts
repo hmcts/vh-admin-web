@@ -38,6 +38,7 @@ import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
+import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -52,7 +53,8 @@ export function loadConfig(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        WorkAllocationComponent
     ],
     imports: [
         MomentModule,
