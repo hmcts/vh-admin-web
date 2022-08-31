@@ -1169,4 +1169,16 @@ describe('BookingsListComponent', () => {
             expect(component.searchForm.controls.endDate.value).toEqual('2022-04-12');
         });
     });
+
+    describe('onSearch', () => {
+        it('should clear previously selected row', () => {
+            component.bookings = new ArrayBookingslistModelTestData().getTestData();
+            const rowIndex = component.bookings.length - 1;
+            component.rowSelected(0, rowIndex);
+            component.onSearch();
+            expect(component.selectedHearingId).toBe('');
+            expect(component.selectedGroupIndex).toBe(-1);
+            expect(component.selectedItemIndex).toBe(-1);
+        });
+    });
 });
