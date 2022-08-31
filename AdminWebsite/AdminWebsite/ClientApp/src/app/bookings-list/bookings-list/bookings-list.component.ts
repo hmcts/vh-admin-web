@@ -237,6 +237,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.participantLastName = lastName;
             this.bookingPersistService.noJugdeInHearings = noJudge ?? false;
             this.cursor = undefined;
+            this.clearSelectedRow();
             this.bookings = [];
             this.loadBookingsList();
             this.title = 'Search results';
@@ -338,6 +339,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.logger.debug(`${this.loggerPrefix} Unselecting rows`, { groupByDate, indexHearing });
             this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = false;
         }
+    }
+
+    clearSelectedRow() {
+        this.selectedHearingId = '';
+        this.selectedGroupIndex = -1;
+        this.selectedItemIndex = -1;
     }
 
     persistInformation() {
