@@ -128,9 +128,10 @@ namespace AdminWebsite.Services
         }
 
         public void SetJudgeInformationForUpdate(EditHearingRequest request)
-        {
-            var otherInfoProperties = request.OtherInformation.Split('|');
+        { 
+            if(String.IsNullOrWhiteSpace(request.OtherInformation)) return;
             string ExtractJudgeInfo(string[] properties, string property) => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : string.Empty;
+            var otherInfoProperties = request.OtherInformation.Split('|');
             var judge = request.Participants.First(e => e.HearingRoleName == "Judge");
             judge.ContactEmail = ExtractJudgeInfo(otherInfoProperties, "JudgeEmail");
             judge.TelephoneNumber = ExtractJudgeInfo(otherInfoProperties, "JudgePhone");
