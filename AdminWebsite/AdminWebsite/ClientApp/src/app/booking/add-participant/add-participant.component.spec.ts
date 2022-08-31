@@ -1070,19 +1070,18 @@ describe('AddParticipantComponent edit mode', () => {
         expect(component.form.controls['email'].errors['required']).toBeTruthy();
     });
     it('should check text input is valid for tranformation to email address in UserApi', () => {
-        //arrange
-        const testCases =
-            {
-                "wil.li_am." : false,
-                "Cr.aig_1234": true,
-                "I.": false,
-                ".william1234": false,
-                "_a": true,
-                "Willi..amCraig1234": false,
-                " qweqwe ": false,
-                "w.w": true,
-                "XY": true
-            }
+        // arrange
+        const testCases = {
+            'wil.li_am.': false,
+            'Cr.aig_1234': true,
+            'I.': false,
+            '.william1234': false,
+            _a: true,
+            'Willi..amCraig1234': false,
+            ' qweqwe ': false,
+            'w.w': true,
+            XY: true
+        };
         component.form.setValue({
             title: 'Mr',
             firstName: participant.first_name,
@@ -1100,19 +1099,17 @@ describe('AddParticipantComponent edit mode', () => {
         component.initialiseForm();
 
         for (const [test, expectedResult] of Object.entries(testCases)) {
-
-            //act
+            // act
             component.firstName.setValue(test);
             component.lastName.setValue(test);
 
-            //assert
-            if(expectedResult == false){
-                expect(component.form.controls['firstName'].status).toBe('INVALID');
-                expect(component.form.controls['lastName'].status).toBe('INVALID');
-            }
-            else{
+            // assert
+            if (expectedResult) {
                 expect(component.form.controls['firstName'].status).toBe('VALID');
                 expect(component.form.controls['lastName'].status).toBe('VALID');
+            } else {
+                expect(component.form.controls['firstName'].status).toBe('INVALID');
+                expect(component.form.controls['lastName'].status).toBe('INVALID');
             }
         }
     });
