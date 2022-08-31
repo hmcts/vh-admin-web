@@ -16,6 +16,7 @@ namespace AdminWebsite.Mappers
                 TelephoneNumber = participant.TelephoneNumber,
                 Representee = participant.Representee,
                 ParticipantId = participant.Id ?? Guid.Empty,
+                ContactEmail = participant.ContactEmail 
             };
             return updateParticipantRequest;
         }
