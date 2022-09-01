@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, Subscription } from 'rxjs';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
@@ -117,5 +117,14 @@ describe('DashboardComponent', () => {
         launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeTruthy();
+    });
+
+    it('should unsubscribe from launch darkly flag changes', () => {
+        component.$ldSubcription = new Subscription();
+        const unsubscribeSpy = spyOn(component.$ldSubcription, 'unsubscribe');
+
+        component.ngOnDestroy();
+
+        expect(unsubscribeSpy).toHaveBeenCalled();
     });
 });

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-work-allocation',
-    templateUrl: './work-allocation.component.html',
+    templateUrl: './work-allocation.component.html'
 })
 export class WorkAllocationComponent {
     constructor() {
