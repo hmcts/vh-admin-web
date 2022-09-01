@@ -130,7 +130,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.phone = new FormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
         this.displayName = new FormControl('', [
             Validators.required,
-            Validators.pattern(Constants.TextInputPatternName),
+            Validators.pattern(Constants.TextInputPatternDisplayName),
             Validators.maxLength(255)
         ]);
         this.companyName = new FormControl('');
