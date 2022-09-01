@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FeatureFlagService } from '../services/feature-flag.service';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
