@@ -40,6 +40,7 @@ import { ClientSettingsResponse } from './services/clients/api-client';
 import { of } from 'rxjs';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HearingSearchResultsComponent } from './get-audio-file/get-audio-file-vh/hearing-search-results/hearing-search-results.component';
+import { LaunchDarklyService } from './services/launch-darkly.service';
 
 describe('app routing', () => {
     let location: Location;
@@ -51,11 +52,13 @@ describe('app routing', () => {
         tenant_id: 'tenantid',
         client_id: 'clientid',
         post_logout_redirect_uri: '/dashboard',
-        redirect_uri: '/dashboard'
+        redirect_uri: '/dashboard',
+        launch_darkly_client_id: 'launchDarklyClientId'
     });
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig', 'getConfig']);
     configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
+    const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
@@ -88,6 +91,7 @@ describe('app routing', () => {
                 AdminGuard,
                 { provide: ChangesGuard, useClass: MockChangesGuard },
                 { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 HttpClient,
                 HttpHandler,
                 { provide: ConfigService, useValue: configServiceSpy },
