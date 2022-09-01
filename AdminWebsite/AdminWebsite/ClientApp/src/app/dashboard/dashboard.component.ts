@@ -12,7 +12,11 @@ import { UserIdentityService } from '../services/user-identity.service';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[Dashboard] -';
-    constructor(private launchDarklyService: LaunchDarklyService, private userIdentityService: UserIdentityService, private logger: Logger) {}
+    constructor(
+        private launchDarklyService: LaunchDarklyService,
+        private userIdentityService: UserIdentityService,
+        private logger: Logger
+    ) {}
 
     showCheckList = false;
     showBooking = false;
@@ -22,27 +26,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     $ldSubcription: Subscription;
 
     ngOnInit() {
-        console.log(this.launchDarklyService.flagChange)
         this.$ldSubcription = this.launchDarklyService.flagChange.subscribe(value => {
             if (value) {
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-                console.log('Arif', this.vhoWorkAllocationFeature)
             }
         });
 
         this.userIdentityService
-        .getUserInformation()
-        .toPromise()
-        .then(profile => {
-            this.showCheckList = profile.is_vh_officer_administrator_role;
-            this.showWorkAllocation = profile.is_vh_officer_administrator_role && this.vhoWorkAllocationFeature;
-            this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
-            this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
-                showCheckList: this.showCheckList,
-                showBooking: this.showBooking,
-                showWorkAllocation: this.showWorkAllocation,
+            .getUserInformation()
+            .toPromise()
+            .then(profile => {
+                this.showCheckList = profile.is_vh_officer_administrator_role;
+                this.showWorkAllocation = profile.is_vh_officer_administrator_role && this.vhoWorkAllocationFeature;
+                this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
+                this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
+                    showCheckList: this.showCheckList,
+                    showBooking: this.showBooking,
+                    showWorkAllocation: this.showWorkAllocation
+                });
             });
-        });
     }
 
     ngOnDestroy() {

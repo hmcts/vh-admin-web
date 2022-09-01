@@ -11,11 +11,11 @@ describe('DashboardComponent', () => {
     let component: DashboardComponent;
     let fixture: ComponentFixture<DashboardComponent>;
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
-    
+
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
     launchDarklyServiceSpy.flagChange = new BehaviorSubject({ 'vho-work-allocation': false });
-    
+
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(
@@ -62,7 +62,7 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showBooking).toBeTruthy();
     });
-    
+
     it('should not show work allocation toggle if user is not a VHO', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
@@ -75,7 +75,7 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
-    
+
     it('should not show work allocation tile if user is not a VHO', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
@@ -88,7 +88,7 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
-    
+
     it('should not show work allocation tile if feature is switched off', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
@@ -98,12 +98,12 @@ describe('DashboardComponent', () => {
                 })
             )
         );
-        
-        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false })
+
+        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
-    
+
     it('should show work allocation tile if feature is switched on and user is VHO', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
@@ -114,7 +114,7 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true })
+        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeTruthy();
     });
