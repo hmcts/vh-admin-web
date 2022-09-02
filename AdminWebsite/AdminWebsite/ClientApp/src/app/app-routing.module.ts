@@ -13,6 +13,8 @@ import { DeleteParticipantSearchComponent } from './delete-participant/delete-pa
 import { EditParticipantSearchComponent } from './edit-participant/edit-participant-search/edit-participant-search.component';
 import { EditParticipantComponent } from './edit-participant/edit-participant/edit-participant.component';
 import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
+import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
+import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -27,7 +29,7 @@ export const routes: Routes = [
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
-    { path: 'work-allocation', component: WorkAllocationComponent },
+    { path: 'work-allocation', component: WorkAllocationComponent, canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard] },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 

@@ -15,6 +15,7 @@ import { AuthGuard } from './security/auth.guard';
 import { AdminGuard } from './security/admin.guard';
 import { LastMinuteAmendmentsGuard } from './security/last-minute-amendments.guard';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
+import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { BH_API_BASE_URL } from './services/clients/api-client';
@@ -93,7 +94,8 @@ export function loadConfig(configService: ConfigService) {
         ErrorService,
         PageTrackerService,
         AppInsightsLogger,
-        WindowRef
+        WindowRef,
+        WorkAllocationFeatureGuard
     ],
     bootstrap: [AppComponent]
 })
