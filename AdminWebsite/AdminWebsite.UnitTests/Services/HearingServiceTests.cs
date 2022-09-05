@@ -552,6 +552,24 @@ namespace AdminWebsite.UnitTests.Services
             //Assert
             response.Should().Be(false);
         }
+        [Test]
+        public void SetJudgeInformationForUpdate_should_extract_OtherInformation_and_update_EditRequest_participant()
+        {
+            // Arrange
+            var editHearing = _editHearingRequest;
+            editHearing.Participants.Add(new EditParticipantRequest
+            {
+                ContactEmail = "Judge@court.com",
+                HearingRoleName = "Judge"
+            });
+            editHearing.OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678";
+            //Act
+            _service.SetJudgeInformationForUpdate(editHearing);
+            //Assert
+            var judge = editHearing.Participants.First(e => e.HearingRoleName == "Judge");
+            judge.TelephoneNumber.Should().Be("0123454678");
+            judge.ContactEmail.Should().Be("judge@email.com");
+        }
 
         private HearingDetailsResponse InitHearing()
         {
