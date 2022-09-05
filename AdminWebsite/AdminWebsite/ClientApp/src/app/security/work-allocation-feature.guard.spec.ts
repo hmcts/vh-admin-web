@@ -15,7 +15,7 @@ describe('WorkAllocationFeatureGuard', () => {
     launchDarklyServiceSpy.flagChange = new BehaviorSubject({ 'vho-work-allocation': false });
 
     const routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
-    
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
@@ -30,14 +30,14 @@ describe('WorkAllocationFeatureGuard', () => {
 
     it('should return true if feature toggle is on', () => {
         launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
-        workAllocationFeatureGuard.canActivate(null, null).subscribe((result) => {
+        workAllocationFeatureGuard.canActivate(null, null).subscribe(result => {
             expect(result).toBeTruthy();
         });
     });
 
     it('should redirect to home page if feature toggle is off', () => {
         launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
-        workAllocationFeatureGuard.canActivate(null, null).subscribe((result) => {
+        workAllocationFeatureGuard.canActivate(null, null).subscribe(result => {
             expect(result).toBeFalsy();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
         });
