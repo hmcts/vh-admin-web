@@ -15,6 +15,7 @@ import { AuthGuard } from './security/auth.guard';
 import { AdminGuard } from './security/admin.guard';
 import { LastMinuteAmendmentsGuard } from './security/last-minute-amendments.guard';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
+import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { BH_API_BASE_URL } from './services/clients/api-client';
@@ -38,6 +39,7 @@ import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
+import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -52,7 +54,8 @@ export function loadConfig(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        WorkAllocationComponent
     ],
     imports: [
         MomentModule,
@@ -91,7 +94,8 @@ export function loadConfig(configService: ConfigService) {
         ErrorService,
         PageTrackerService,
         AppInsightsLogger,
-        WindowRef
+        WindowRef,
+        WorkAllocationFeatureGuard
     ],
     bootstrap: [AppComponent]
 })

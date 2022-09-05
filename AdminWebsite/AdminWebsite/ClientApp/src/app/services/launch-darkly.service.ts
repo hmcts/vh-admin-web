@@ -4,8 +4,8 @@ import { BehaviorSubject } from 'rxjs';
 import { ConfigService } from './config.service';
 
 export const FeatureFlags = {
-    adminSearch: 'admin_search'
-    // Add more ...
+    adminSearch: 'admin_search',
+    vhoWorkAllocation: 'vho-work-allocation'
 };
 
 @Injectable({
