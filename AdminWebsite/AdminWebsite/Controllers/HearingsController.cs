@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Controllers
 {
@@ -266,12 +267,11 @@ namespace AdminWebsite.Controllers
                 {
                     if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
                     {
-                        if (newParticipant.HearingRoleName == "Judge")
+                        if (newParticipant.Username == HearingRoleName.Judge)
                         {
-                            newParticipant.ContactEmail = String.IsNullOrWhiteSpace(judgeContact.email) ? newParticipant.ContactEmail : judgeContact.email;
-                            newParticipant.TelephoneNumber = String.IsNullOrWhiteSpace(judgeContact.phone) ? newParticipant.TelephoneNumber :  judgeContact.phone;
+                            newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
+                            newParticipant.TelephoneNumber =  judgeContact.phone ?? newParticipant.TelephoneNumber;
                         }
-                        
                         newParticipants.Add(newParticipant);
                     }
                 }
@@ -280,10 +280,10 @@ namespace AdminWebsite.Controllers
                     var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                     if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         continue;
-                    if (existingParticipant.HearingRoleName == "Judge")
+                    if (existingParticipant.HearingRoleName == HearingRoleName.Judge)
                     {
-                        participant.ContactEmail = String.IsNullOrWhiteSpace(judgeContact.email) ? existingParticipant.ContactEmail : judgeContact.email;
-                        participant.TelephoneNumber = String.IsNullOrWhiteSpace(judgeContact.phone) ? existingParticipant.TelephoneNumber : judgeContact.phone;
+                        participant.ContactEmail = judgeContact.email ?? existingParticipant.ContactEmail;
+                        participant.TelephoneNumber = judgeContact.phone ?? existingParticipant.TelephoneNumber;
                     }
                     var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                     existingParticipants.Add(updateParticipantRequest);
