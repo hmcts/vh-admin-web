@@ -1033,6 +1033,60 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_update_a_judge_and_set_contact_info_to_other_info()
+        {
+            var _existingHearingWithNewLinkedParticipants = new HearingDetailsResponse
+            {
+                Id = _validId,
+                GroupId = _validId,
+                Cases = _existingHearingWithLinkedParticipants.Cases,
+                CaseTypeName = "case type",
+                HearingTypeName = "hearing type",
+                Participants = new List<ParticipantResponse>
+                {
+                    new ParticipantResponse
+                    {
+                        Id = _existingHearingWithLinkedParticipants.Participants[0].Id, CaseRoleName = "Judge", HearingRoleName = "Judge",
+                        ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
+                        LinkedParticipants = null
+                    }
+                },
+                ScheduledDateTime = DateTime.UtcNow.AddHours(3)
+            };
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(_existingHearingWithNewLinkedParticipants);
+
+
+            var addParticipantLinksToHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest>
+                {
+                     new EditParticipantRequest
+                    {
+                         Id = _existingHearingWithLinkedParticipants.Participants[0].Id, CaseRoleName = "Judge", HearingRoleName = "Judge",
+                        ContactEmail = "username@hmcts.net", FirstName = "Judge"
+                    }
+                },
+                OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678"
+            };
+
+            var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
+
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(x 
+                => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingParticipantsRequest>(uhpr => JudgeValidation(uhpr))));
+        }
+        private bool JudgeValidation(UpdateHearingParticipantsRequest request)
+        {
+            request.ExistingParticipants[0].ContactEmail.Should().Be("judge@email.com");
+            request.ExistingParticipants[0].TelephoneNumber.Should().Be("0123454678");
+            return true;
+        }
+        
+        [Test]
         public async Task Returns_Valid_When_Linked_Contact_Email_Is_Null_When_Adding_A_New_Participant_To_Existing_Hearing()
         {
             var linkedParticipantEmail = "individual4.user@email.com";

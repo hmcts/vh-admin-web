@@ -228,7 +228,7 @@ namespace AdminWebsite.Controllers
                 var judgeExistsInRequest = request?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
                 {
-                    var errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
+                    const string errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
                     _logger.LogWarning(errorMessage);
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
