@@ -7,7 +7,6 @@ using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
-using AdminWebsite.Services.Models;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.Configuration;
@@ -29,8 +28,8 @@ namespace AdminWebsite.UnitTests.Services
         private AutoMock _mocker;
         private HearingsService _service;
         private HearingDetailsResponse _hearing;
-        private const string _expectedTeleConferencePhoneNumber = "expected_conference_phone_number";
-        private const string _expectedTeleConferenceId = "expected_conference_phone_id";
+        private const string ExpectedTeleConferencePhoneNumber = "expected_conference_phone_number";
+        private const string ExpectedTeleConferenceId = "expected_conference_phone_id";
 
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Guid _validId;
@@ -43,7 +42,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker = AutoMock.GetLoose();
             _mocker.Mock<IOptions<KinlyConfiguration>>().Setup(opt => opt.Value).Returns(new KinlyConfiguration()
             {
-                ConferencePhoneNumber = _expectedTeleConferencePhoneNumber
+                ConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
             });
 
             _mocker.Mock<IConferenceDetailsService>()
@@ -57,7 +56,7 @@ namespace AdminWebsite.UnitTests.Services
                         ParticipantUri = "ParticipantUri",
                         PexipNode = "PexipNode",
                         PexipSelfTestNode = "PexipSelfTestNode",
-                        TelephoneConferenceId = _expectedTeleConferenceId
+                        TelephoneConferenceId = ExpectedTeleConferenceId
                     }
                 });
             _mocker.Mock<IBookingsApiClient>()
@@ -564,11 +563,10 @@ namespace AdminWebsite.UnitTests.Services
             });
             editHearing.OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678";
             //Act
-            _service.SetJudgeInformationForUpdate(editHearing);
+            var judge = _service.GetJudgeInformationForUpdate(editHearing.OtherInformation);
             //Assert
-            var judge = editHearing.Participants.First(e => e.HearingRoleName == "Judge");
-            judge.TelephoneNumber.Should().Be("0123454678");
-            judge.ContactEmail.Should().Be("judge@email.com");
+            judge.phone.Should().Be("0123454678");
+            judge.email.Should().Be("judge@email.com");
         }
 
         private HearingDetailsResponse InitHearing()

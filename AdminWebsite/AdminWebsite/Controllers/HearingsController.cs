@@ -232,7 +232,6 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
-                if (judgeExistsInRequest) _hearingsService.SetJudgeInformationForUpdate(request);
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
@@ -256,6 +255,8 @@ namespace AdminWebsite.Controllers
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
             var newParticipants = new List<ParticipantRequest>();
+            var judgeContact =_hearingsService.GetJudgeInformationForUpdate(request.OtherInformation);
+            
             var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
 
@@ -264,15 +265,26 @@ namespace AdminWebsite.Controllers
                 if (!participant.Id.HasValue)
                 {
                     if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
+                    {
+                        if (newParticipant.HearingRoleName == "Judge")
+                        {
+                            newParticipant.ContactEmail = String.IsNullOrWhiteSpace(judgeContact.email) ? newParticipant.ContactEmail : judgeContact.email;
+                            newParticipant.TelephoneNumber = String.IsNullOrWhiteSpace(judgeContact.phone) ? newParticipant.TelephoneNumber :  judgeContact.phone;
+                        }
+                        
                         newParticipants.Add(newParticipant);
+                    }
                 }
                 else
                 {
-                    var existingParticipant =
-                        originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                    var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                     if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         continue;
-                    
+                    if (existingParticipant.HearingRoleName == "Judge")
+                    {
+                        participant.ContactEmail = String.IsNullOrWhiteSpace(judgeContact.email) ? existingParticipant.ContactEmail : judgeContact.email;
+                        participant.TelephoneNumber = String.IsNullOrWhiteSpace(judgeContact.phone) ? existingParticipant.TelephoneNumber : judgeContact.phone;
+                    }
                     var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                     existingParticipants.Add(updateParticipantRequest);
                 }
