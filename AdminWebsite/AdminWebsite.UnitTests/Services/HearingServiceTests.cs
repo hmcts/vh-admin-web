@@ -551,24 +551,31 @@ namespace AdminWebsite.UnitTests.Services
             //Assert
             response.Should().Be(false);
         }
+        
         [Test]
-        public void SetJudgeInformationForUpdate_should_extract_OtherInformation_and_update_EditRequest_participant()
+        public void GetJudgeInformationForUpdate_should_extract_OtherInformation_and_update_EditRequest_participant()
         {
             // Arrange
-            var editHearing = _editHearingRequest;
-            editHearing.Participants.Add(new EditParticipantRequest
-            {
-                ContactEmail = "Judge@court.com",
-                HearingRoleName = "Judge"
-            });
-            editHearing.OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678";
+            var otherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678";
             //Act
-            var judge = _service.GetJudgeInformationForUpdate(editHearing.OtherInformation);
+            var judge = _service.GetJudgeInformationForUpdate(otherInformation);
             //Assert
             judge.phone.Should().Be("0123454678");
             judge.email.Should().Be("judge@email.com");
         }
-
+        
+        [Test]
+        public void GetJudgeInformationForUpdate_should_return_break_when_otherInfo_empty()
+        {
+            // Arrange
+            var otherInformation = "";
+            //Act
+            var judge = _service.GetJudgeInformationForUpdate(otherInformation);
+            //Assert
+            judge.phone.Should().BeEmpty();
+            judge.email.Should().BeEmpty();
+        }
+        
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse> { new CaseResponse { Name = "Test", Number = "123456" } };

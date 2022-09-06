@@ -967,7 +967,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
-                OtherInformation = ""
+                OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678"
             };
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(_existingHearingWithNewLinkedParticipants);
@@ -1018,7 +1018,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         }
                     }
                 },
-                OtherInformation = ""
+                OtherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678"
             };
 
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
