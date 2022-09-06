@@ -267,7 +267,7 @@ namespace AdminWebsite.Controllers
                 {
                     if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
                     {
-                        if (newParticipant.Username == HearingRoleName.Judge)
+                        if (newParticipant.HearingRoleName == HearingRoleName.Judge)
                         {
                             newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
                             newParticipant.TelephoneNumber =  judgeContact.phone ?? newParticipant.TelephoneNumber;
