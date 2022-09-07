@@ -112,10 +112,10 @@ namespace AdminWebsite.Services
         public (string email, string phone) GetJudgeInformationForUpdate(string otherInformation)
         {
             string ExtractJudgeInfo(string[] properties, string property) 
-                => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : string.Empty;
+                => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : null;
 
             if (String.IsNullOrWhiteSpace(otherInformation)) 
-                return (string.Empty, string.Empty);
+                return (null, null);
             
             var otherInfoProperties = otherInformation.Split('|');
             return (email: ExtractJudgeInfo(otherInfoProperties, "JudgeEmail"), 
