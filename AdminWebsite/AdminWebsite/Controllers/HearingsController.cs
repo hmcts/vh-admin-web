@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Controllers
 {
@@ -227,12 +228,11 @@ namespace AdminWebsite.Controllers
                 var judgeExistsInRequest = request?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
                 {
-                    var errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
+                    const string errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
                     _logger.LogWarning(errorMessage);
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
-                if (judgeExistsInRequest) _hearingsService.SetJudgeInformationForUpdate(request);
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
@@ -256,6 +256,8 @@ namespace AdminWebsite.Controllers
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
             var newParticipants = new List<ParticipantRequest>();
+            var judgeContact =_hearingsService.GetJudgeInformationForUpdate(request.OtherInformation);
+            
             var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
 
@@ -264,15 +266,25 @@ namespace AdminWebsite.Controllers
                 if (!participant.Id.HasValue)
                 {
                     if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
+                    {
+                        if (newParticipant.HearingRoleName == HearingRoleName.Judge)
+                        {
+                            newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
+                            newParticipant.TelephoneNumber =  judgeContact.phone ?? newParticipant.TelephoneNumber;
+                        }
                         newParticipants.Add(newParticipant);
+                    }
                 }
                 else
                 {
-                    var existingParticipant =
-                        originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                    var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
                     if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                         continue;
-                    
+                    if (existingParticipant.HearingRoleName == HearingRoleName.Judge)
+                    {
+                        participant.ContactEmail = judgeContact.email ?? existingParticipant.ContactEmail;
+                        participant.TelephoneNumber = judgeContact.phone ?? existingParticipant.TelephoneNumber;
+                    }
                     var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                     existingParticipants.Add(updateParticipantRequest);
                 }

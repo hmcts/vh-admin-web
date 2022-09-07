@@ -1,5 +1,4 @@
-﻿using AdminWebsite.Configuration;
-using AdminWebsite.Contracts.Enums;
+﻿using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -8,13 +7,10 @@ using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using NotificationApi.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
 using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
@@ -43,32 +39,18 @@ namespace AdminWebsite.Services
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
-        void SetJudgeInformationForUpdate(EditHearingRequest request);
+        (string email, string phone) GetJudgeInformationForUpdate(string otherInformation);
     }
 
     public class HearingsService : IHearingsService
     {
-        private readonly IPollyRetryService _pollyRetryService;
-        private readonly IUserAccountService _userAccountService;
-        private readonly INotificationApiClient _notificationApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
-        private readonly IConferenceDetailsService _conferenceDetailsService;
-        private readonly IFeatureToggles _featureToggles;
-        private readonly KinlyConfiguration _kinlyConfiguration;
 #pragma warning disable S107
-        public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,
-            IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IConferenceDetailsService conferenceDetailsService, IOptions<KinlyConfiguration> kinlyOptions, IFeatureToggles featureToggles)
+        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
         {
-            _pollyRetryService = pollyRetryService;
-            _userAccountService = userAccountService;
-            _notificationApiClient = notificationApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
-            _conferenceDetailsService = conferenceDetailsService;
-            _featureToggles = featureToggles;
-            _kinlyConfiguration = kinlyOptions.Value;
         }
 
         public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
@@ -127,14 +109,17 @@ namespace AdminWebsite.Services
                    newJudgeOtherInformation != existingJudgeOtherInformation;
         }
 
-        public void SetJudgeInformationForUpdate(EditHearingRequest request)
-        { 
-            if(String.IsNullOrWhiteSpace(request.OtherInformation)) return;
-            string ExtractJudgeInfo(string[] properties, string property) => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : string.Empty;
-            var otherInfoProperties = request.OtherInformation.Split('|');
-            var judge = request.Participants.First(e => e.HearingRoleName == "Judge");
-            judge.ContactEmail = ExtractJudgeInfo(otherInfoProperties, "JudgeEmail");
-            judge.TelephoneNumber = ExtractJudgeInfo(otherInfoProperties, "JudgePhone");
+        public (string email, string phone) GetJudgeInformationForUpdate(string otherInformation)
+        {
+            string ExtractJudgeInfo(string[] properties, string property) 
+                => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : string.Empty;
+
+            if (String.IsNullOrWhiteSpace(otherInformation)) 
+                return (string.Empty, string.Empty);
+            
+            var otherInfoProperties = otherInformation.Split('|');
+            return (email: ExtractJudgeInfo(otherInfoProperties, "JudgeEmail"), 
+                    phone: ExtractJudgeInfo(otherInfoProperties, "JudgePhone"));
         }
 
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
