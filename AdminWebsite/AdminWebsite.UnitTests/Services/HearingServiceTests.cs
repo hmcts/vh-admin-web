@@ -572,8 +572,8 @@ namespace AdminWebsite.UnitTests.Services
             //Act
             var judge = _service.GetJudgeInformationForUpdate(otherInformation);
             //Assert
-            judge.phone.Should().BeEmpty();
-            judge.email.Should().BeEmpty();
+            judge.phone.Should().BeNullOrEmpty();
+            judge.email.Should().BeNullOrEmpty();
         }
         
         private HearingDetailsResponse InitHearing()
