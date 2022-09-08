@@ -2,13 +2,19 @@ import { TestBed, inject } from '@angular/core/testing';
 import { UserIdentityService } from './user-identity.service';
 import { HttpClientModule } from '@angular/common/http';
 import { Constants } from '../common/constants';
-import { UserProfileResponse } from './clients/api-client';
+import { BHClient, UserProfileResponse } from './clients/api-client';
+import { of } from 'rxjs';
 
 describe('UserIdentityService', () => {
+    const bhClientSpy = jasmine.createSpyObj('BHClient', ['getUserProfile']);
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [UserIdentityService]
+            providers: [
+                { provide: BHClient, useValue: bhClientSpy },
+                UserIdentityService
+            ]
         });
     });
 
@@ -41,7 +47,7 @@ describe('UserIdentityService', () => {
                 is_vh_team_leader: true
             });
 
-            sessionStorage.setItem(Constants.SessionStorageKeys.userProfile, JSON.stringify(userProfile));
+            bhClientSpy.getUserProfile.and.returnValue(of(userProfile));
 
             service.getUserInformation().subscribe(result => {
                 expect(result.is_case_administrator).toEqual(userProfile.is_case_administrator);
