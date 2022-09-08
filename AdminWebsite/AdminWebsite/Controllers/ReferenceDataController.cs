@@ -49,7 +49,6 @@ namespace AdminWebsite.Controllers
             var reult = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
-                Code = string.Empty, // not used anymore
                 Id = hearingType.Id,
                 Name = hearingType.Name
             })).ToList();
