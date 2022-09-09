@@ -11,10 +11,7 @@ describe('UserIdentityService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [
-                { provide: BHClient, useValue: bhClientSpy },
-                UserIdentityService
-            ]
+            providers: [{ provide: BHClient, useValue: bhClientSpy }, UserIdentityService]
         });
     });
 
