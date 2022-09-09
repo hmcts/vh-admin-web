@@ -147,8 +147,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
         private List<HearingTypeResponse> GetHearingTypes()
         {
-            var result = 
-             new List<HearingTypeResponse>()
+            var result = new List<HearingTypeResponse>()
             {
                 new HearingTypeResponse() {Id = 10, Name = "HType10"},
                 new HearingTypeResponse() {Id = 20, Name = "HType20"},
