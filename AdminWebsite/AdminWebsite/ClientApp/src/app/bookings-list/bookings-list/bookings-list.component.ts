@@ -1,7 +1,7 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
@@ -51,6 +51,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     today = new Date();
     ejudFeatureFlag: boolean;
 
+    refreshSubscription: any;
+
     constructor(
         private bookingsListService: BookingsListService,
         private bookingPersistService: BookingPersistService,
@@ -82,6 +84,17 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             .subscribe(result => {
                 this.ejudFeatureFlag = result;
             });
+
+        this.router.routeReuseStrategy.shouldReuseRoute = function () {
+            return false;
+        };
+        this.refreshSubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                // You need to tell the router that, you didn't visit or load the page previously,
+                // so mark the navigated flag to false as below.
+                this.router.navigated = false;
+            }
+        });
     }
 
     async ngOnInit() {
@@ -479,5 +492,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.$subcription?.unsubscribe();
         this.$ldSubcription?.unsubscribe();
+
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
     }
 }
