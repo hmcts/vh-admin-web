@@ -88,7 +88,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.router.routeReuseStrategy.shouldReuseRoute = function () {
             return false;
         };
-        this.$refreshSubscription = this.router.events.subscribe((event) => {
+        this.$refreshSubscription = this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
                 // You need to tell the router that, you didn't visit or load the page previously,
                 // so mark the navigated flag to false as below.
