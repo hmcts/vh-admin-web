@@ -3,11 +3,11 @@ import { Component, Directive, EventEmitter, Output } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { Router, RouterEvent } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as moment from 'moment';
 import { MomentModule } from 'ngx-moment';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
@@ -545,10 +545,16 @@ export class BookingPersistServiceSpy {
     }
     resetAll() {}
 }
-
-let routerSpy: jasmine.SpyObj<Router>;
+const eventSubject = new ReplaySubject<RouterEvent>(1);
+const routerSpy = {
+    navigate: jasmine.createSpy('navigate'),
+    routeReuseStrategy: jasmine.createSpy('routeReuseStrategy'),
+    events: eventSubject.asObservable()
+};
 const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
+
+export type Spied<T> = { [Method in keyof T]: jasmine.Spy };
 
 describe('BookingsListComponent', () => {
     beforeEach(
@@ -561,7 +567,6 @@ describe('BookingsListComponent', () => {
             const listModel = new ArrayBookingslistModelTestData().getTestData();
             bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
             bookingsListServiceSpy.addBookings.and.returnValue(listModel);
-            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));

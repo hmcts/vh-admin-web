@@ -51,7 +51,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     today = new Date();
     ejudFeatureFlag: boolean;
 
-    refreshSubscription: any;
+    $refreshSubscription: Subscription;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -88,7 +88,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.router.routeReuseStrategy.shouldReuseRoute = function () {
             return false;
         };
-        this.refreshSubscription = this.router.events.subscribe((event) => {
+        this.$refreshSubscription = this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
                 // You need to tell the router that, you didn't visit or load the page previously,
                 // so mark the navigated flag to false as below.
@@ -493,8 +493,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.$subcription?.unsubscribe();
         this.$ldSubcription?.unsubscribe();
 
-        if (this.refreshSubscription) {
-            this.refreshSubscription.unsubscribe();
+        if (this.$refreshSubscription) {
+            this.$refreshSubscription.unsubscribe();
         }
     }
 }
