@@ -54,5 +54,8 @@ export const Constants = {
         Observer: 'Observer',
         Interpreter: 'Interpreter'
     },
-    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
+    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
+    SessionStorageKeys: {
+        userProfile: 'userProfile'
+    }
 };
