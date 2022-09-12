@@ -8,8 +8,6 @@ namespace AdminWebsite.Helper
 {
     public class AdministratorRoleClaims
     {
-        private const string UserCaseTypesClaimName = "UserCaseTypes";
-
         public AdministratorRoleClaims(UserRole userRole)
         {
             var caseTypes = (userRole.CaseTypes ?? Enumerable.Empty<string>()).ToList();
@@ -19,14 +17,14 @@ namespace AdminWebsite.Helper
 
             Claims = new List<Claim>
             {
-                new Claim(UserCaseTypesClaimName, userRoleCaseTypes)
+                new Claim(ClaimNames.UserCaseTypes, userRoleCaseTypes)
             };
         }
 
         public AdministratorRoleClaims(IEnumerable<Claim> claims)
         {
             var claimsList = claims.ToList();
-            var userCaseTypes = claimsList.FirstOrDefault(x => x.Type == UserCaseTypesClaimName);
+            var userCaseTypes = claimsList.FirstOrDefault(x => x.Type == ClaimNames.UserCaseTypes);
             
             UserCaseTypes = userCaseTypes?.Value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                             ??

@@ -5787,6 +5787,7 @@ export interface ISuitabilityAnswersResponse {
 
 export class UserProfileResponse implements IUserProfileResponse {
     is_vh_officer_administrator_role?: boolean;
+    is_vh_team_leader?: boolean;
     is_case_administrator?: boolean;
 
     constructor(data?: IUserProfileResponse) {
@@ -5800,6 +5801,7 @@ export class UserProfileResponse implements IUserProfileResponse {
     init(_data?: any) {
         if (_data) {
             this.is_vh_officer_administrator_role = _data['is_vh_officer_administrator_role'];
+            this.is_vh_team_leader = _data['is_vh_team_leader'];
             this.is_case_administrator = _data['is_case_administrator'];
         }
     }
@@ -5814,6 +5816,7 @@ export class UserProfileResponse implements IUserProfileResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['is_vh_officer_administrator_role'] = this.is_vh_officer_administrator_role;
+        data['is_vh_team_leader'] = this.is_vh_team_leader;
         data['is_case_administrator'] = this.is_case_administrator;
         return data;
     }
@@ -5821,6 +5824,7 @@ export class UserProfileResponse implements IUserProfileResponse {
 
 export interface IUserProfileResponse {
     is_vh_officer_administrator_role?: boolean;
+    is_vh_team_leader?: boolean;
     is_case_administrator?: boolean;
 }
 
