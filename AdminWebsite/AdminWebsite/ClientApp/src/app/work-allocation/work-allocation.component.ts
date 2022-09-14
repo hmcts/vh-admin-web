@@ -1,13 +1,18 @@
 import { Component } from '@angular/core';
+import { UserProfileResponse } from '../services/clients/api-client';
+import { UserIdentityService } from '../services/user-identity.service';
 
 @Component({
     selector: 'app-work-allocation',
-    templateUrl: './work-allocation.component.html'
+    templateUrl: './work-allocation.component.html',
+    styleUrls: ['./work-allocation.component.scss']
 })
 export class WorkAllocationComponent {
-    constructor() {
-        console.log('This is just here to avoid an');
-        console.log('empty constructor sonar cloud code smmell');
-        console.log('Will be removed in future tickets that build this comp');
+    public isVhTeamLeader = false;
+
+    constructor(private userIdentityService: UserIdentityService) {
+        this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
+            this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
+        });
     }
 }
