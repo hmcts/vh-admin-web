@@ -1,9 +1,7 @@
 <div class="govuk-!-margin-top-7">
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="citizen-contact-details">
-        Upload working hours / non-availability
-      </span>
+      <span class="govuk-details__summary-text" id="citizen-contact-details"> Upload working hours / non-availability </span>
     </summary>
     <div class="govuk-!-margin-left-5">
       <div class="govuk-grid-row">
@@ -11,10 +9,8 @@
           <p>Upload working hours:</p>
         </div>
         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
-        <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload">
-          Select .CSV file to upload
-        </label>
-          <input class="govuk-file-upload" id="working-hours-file-upload" name="working-hours-file-upload" type="file">
+          <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload"> Select .CSV file to upload </label>
+          <input class="govuk-file-upload" id="working-hours-file-upload" name="working-hours-file-upload" type="file" />
         </div>
       </div>
       <div class="govuk-grid-row">
@@ -22,34 +18,32 @@
           <p>Upload non-availability hours:</p>
         </div>
         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
-          <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload">
-            Select .CSV file to upload
-          </label>
-          <input class="govuk-file-upload" id="non-availability-hours-file-upload" name="non-availability-hours-file-upload" type="file">
+          <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
+          <input class="govuk-file-upload" id="non-availability-hours-file-upload" name="non-availability-hours-file-upload" type="file" />
         </div>
       </div>
     </div>
   </details>
   <details class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="edit-availability">
-        Edit working hours / non-availability
-      </span>
+      <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-6">
       <fieldset class="govuk-fieldset">
         <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
           <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="edit-working-hours" name="edit-working-hours" type="radio" value="edit-working-hours">
-            <label class="govuk-label govuk-radios__label" for="edit-working-hours">
-              Edit working hours
-            </label>
+            <input class="govuk-radios__input" id="edit-working-hours" name="edit-working-hours" type="radio" value="edit-working-hours" />
+            <label class="govuk-label govuk-radios__label" for="edit-working-hours"> Edit working hours </label>
           </div>
           <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="edit-non-availability-hours" name="edit-non-availability-hours" type="radio" value="edit-non-availability-hours">
-            <label class="govuk-label govuk-radios__label" for="edit-non-availability-hours">
-              Edit non-availability hours
-            </label>
+            <input
+              class="govuk-radios__input"
+              id="edit-non-availability-hours"
+              name="edit-non-availability-hours"
+              type="radio"
+              value="edit-non-availability-hours"
+            />
+            <label class="govuk-label govuk-radios__label" for="edit-non-availability-hours"> Edit non-availability hours </label>
           </div>
         </div>
       </fieldset>
@@ -57,9 +51,7 @@
   </details>
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="manage-team">
-        Manage team
-      </span>
+      <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-6">
       <div class="govuk-form-group">
@@ -68,33 +60,27 @@
         </label>
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-one-third">
-            <input class="govuk-input" id="search-team-member" name="search-team-member" type="text">
+            <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" />
           </div>
-          <button class="govuk-button" data-module="govuk-button">
-            Search
-          </button>
+          <button class="govuk-button" data-module="govuk-button">Search</button>
         </div>
       </div>
     </div>
   </details>
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="citizen-contact-details">
-        Allocate hearings
-      </span>
+      <span class="govuk-details__summary-text" id="citizen-contact-details"> Allocate hearings </span>
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-6">
-      <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">
-        Search hearings
-      </p>
+      <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">Search hearings</p>
       <div class="govuk-grid-row govuk-!-margin-bottom-4">
         <div class="govuk-grid-column-one-third">
           <label class="govuk-label" for="hearing-date-entry">Hearing date</label>
-          <input class="govuk-input" id="hearing-date-entry" name="hearing-date-entry" type="date">
+          <input class="govuk-input" id="hearing-date-entry" name="hearing-date-entry" type="date" />
         </div>
         <div class="govuk-grid-column-one-third">
           <label class="govuk-label" for="Ctsc-officer-user-name-entry">CTSC officer user name</label>
-          <input class="govuk-input" id="Ctsc-officer-user-name-entry" name="Ctsc-officer-user-name-entry" type="text">
+          <input class="govuk-input" id="Ctsc-officer-user-name-entry" name="Ctsc-officer-user-name-entry" type="text" />
         </div>
       </div>
 
@@ -105,13 +91,19 @@
         </div>
         <div class="govuk-grid-column-one-third">
           <label class="govuk-label" for="case-number-entry">Case number</label>
-          <input class="govuk-input" id="case-number-entry" name="case-number-entry" type="text">
+          <input class="govuk-input" id="case-number-entry" name="case-number-entry" type="text" />
         </div>
       </div>
 
       <div class="govuk-checkboxes govuk-!-margin-bottom-4" data-module="govuk-checkboxes">
         <div class="govuk-checkboxes__item">
-          <input class="govuk-checkboxes__input" id="show-unallocated-hearings-only-checkbox" name="show-unallocated-hearings-only-checkbox" type="checkbox" value="true">
+          <input
+            class="govuk-checkboxes__input"
+            id="show-unallocated-hearings-only-checkbox"
+            name="show-unallocated-hearings-only-checkbox"
+            type="checkbox"
+            value="true"
+          />
           <label class="govuk-label govuk-checkboxes__label" for="show-unallocated-hearings-only-checkbox">
             Only show unallocated hearings
           </label>
@@ -119,19 +111,15 @@
       </div>
 
       <div class="govuk-!-margin-bottom-2">
-        <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button">
-          Search
-        </button>
-        <button class="govuk-button govuk-button--secondary" data-module="govuk-button">
-          Clear
-        </button>
+        <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button">Search</button>
+        <button class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear</button>
       </div>
 
       <table class="govuk-table">
         <thead class="govuk-table__head">
           <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">
-                <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true">
+              <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true" />
             </th>
             <th scope="col" class="govuk-table__header">Hearing date</th>
             <th scope="col" class="govuk-table__header">Start time</th>
@@ -141,8 +129,7 @@
             <th scope="col" class="govuk-table__header">Allocated officer</th>
           </tr>
         </thead>
-        <tbody class="govuk-table__body">
-        </tbody>
+        <tbody class="govuk-table__body"></tbody>
       </table>
     </div>
   </details>

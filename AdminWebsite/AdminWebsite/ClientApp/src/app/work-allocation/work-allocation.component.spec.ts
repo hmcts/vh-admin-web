@@ -12,16 +12,16 @@ describe('WorkAllocationComponent', () => {
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-    userIdentityServiceSpy.getUserInformation.and.returnValue(of({
-        is_vh_team_leader: true,
-    }));
+    userIdentityServiceSpy.getUserInformation.and.returnValue(
+        of({
+            is_vh_team_leader: true
+        })
+    );
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [WorkAllocationComponent],
-            providers: [
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-            ]
+            providers: [{ provide: UserIdentityService, useValue: userIdentityServiceSpy }]
         }).compileComponents();
     });
 
@@ -41,7 +41,7 @@ Edit working hours / non-availability
 Manage team
 Allocate hearings`);
         });
-        
+
         it('should show vho view', () => {
             component.isVhTeamLeader = false;
             fixture.detectChanges();

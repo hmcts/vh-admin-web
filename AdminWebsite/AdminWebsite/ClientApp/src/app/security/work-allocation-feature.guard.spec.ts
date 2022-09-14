@@ -5,7 +5,6 @@ import { LaunchDarklyService } from '../services/launch-darkly.service';
 import { WorkAllocationFeatureGuard } from './work-allocation-feature.guard';
 
 describe('WorkAllocationFeatureGuard', () => {
-
     let workAllocationFeatureGuard: WorkAllocationFeatureGuard;
 
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
@@ -20,7 +19,7 @@ describe('WorkAllocationFeatureGuard', () => {
             providers: [
                 WorkAllocationFeatureGuard,
                 { provide: Router, useValue: routerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
         workAllocationFeatureGuard = TestBed.inject(WorkAllocationFeatureGuard);
