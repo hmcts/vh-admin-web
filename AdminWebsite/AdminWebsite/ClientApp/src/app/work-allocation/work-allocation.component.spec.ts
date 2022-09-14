@@ -42,7 +42,7 @@ Manage team
 Allocate hearings`);
         });
         
-        fit('should show vho view', () => {
+        it('should show vho view', () => {
             component.isVhTeamLeader = false;
             fixture.detectChanges();
 
