@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as LDClient from 'launchdarkly-js-client-sdk';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { ConfigService } from './config.service';
 
 export const FeatureFlags = {
@@ -14,7 +14,7 @@ export const FeatureFlags = {
 export class LaunchDarklyService {
     private flags: any;
     ldClient: LDClient.LDClient;
-    flagChange = new BehaviorSubject(null);
+    flagChange = new ReplaySubject();
 
     constructor(private config: ConfigService) {
         this.initialize();

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as moment from 'moment';
 import { MomentModule } from 'ngx-moment';
-import { BehaviorSubject, of } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
 import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
@@ -566,7 +566,8 @@ describe('BookingsListComponent', () => {
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
-            launchDarklyServiceSpy.flagChange = new BehaviorSubject({ admin_search: true });
+            launchDarklyServiceSpy.flagChange = new ReplaySubject();
+            launchDarklyServiceSpy.flagChange.next({ admin_search: true });
             referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 

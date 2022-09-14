@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Logger } from '../services/logger';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { map, take } from 'rxjs/operators';
 
@@ -9,7 +8,7 @@ import { map, take } from 'rxjs/operators';
 export class WorkAllocationFeatureGuard implements CanActivate {
     private readonly loggerPrefix = '[VhOfficerAdminGuard] -';
 
-    constructor(private launchDarklyService: LaunchDarklyService, private router: Router, private logger: Logger) {}
+    constructor(private launchDarklyService: LaunchDarklyService, private router: Router) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         return this.launchDarklyService.flagChange.pipe(

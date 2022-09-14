@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BehaviorSubject, of, Subscription } from 'rxjs';
+import { of, ReplaySubject, Subscription } from 'rxjs';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
@@ -14,7 +14,8 @@ describe('DashboardComponent', () => {
 
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
-    launchDarklyServiceSpy.flagChange = new BehaviorSubject({ 'vho-work-allocation': false });
+    launchDarklyServiceSpy.flagChange = new ReplaySubject();
+    launchDarklyServiceSpy.flagChange.next({ admin_search: true });
 
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 

@@ -29,21 +29,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
             if (value) {
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
             }
-        });
 
-        this.userIdentityService
-            .getUserInformation()
-            .toPromise()
-            .then(profile => {
-                this.showCheckList = profile.is_vh_officer_administrator_role;
-                this.showWorkAllocation = profile.is_vh_officer_administrator_role && this.vhoWorkAllocationFeature;
-                this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
-                this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
-                    showCheckList: this.showCheckList,
-                    showBooking: this.showBooking,
-                    showWorkAllocation: this.showWorkAllocation
+            this.userIdentityService
+                .getUserInformation()
+                .toPromise()
+                .then(profile => {
+                    this.showCheckList = profile.is_vh_officer_administrator_role;
+                    this.showWorkAllocation = profile.is_vh_officer_administrator_role && this.vhoWorkAllocationFeature;
+                    this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
+                    this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
+                        showCheckList: this.showCheckList,
+                        showBooking: this.showBooking,
+                        showWorkAllocation: this.showWorkAllocation
+                    });
                 });
-            });
+        });
     }
 
     ngOnDestroy() {

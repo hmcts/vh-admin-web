@@ -1,28 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
-import { Logger } from '../services/logger';
+import { ReplaySubject } from 'rxjs';
 import { LaunchDarklyService } from '../services/launch-darkly.service';
 import { WorkAllocationFeatureGuard } from './work-allocation-feature.guard';
 
 describe('WorkAllocationFeatureGuard', () => {
-    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     let workAllocationFeatureGuard: WorkAllocationFeatureGuard;
 
     let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
-    launchDarklyServiceSpy.flagChange = new BehaviorSubject({ 'vho-work-allocation': false });
 
     const routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
 
     beforeEach(() => {
+        launchDarklyServiceSpy.flagChange = new ReplaySubject();
+
         TestBed.configureTestingModule({
             providers: [
                 WorkAllocationFeatureGuard,
                 { provide: Router, useValue: routerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
         workAllocationFeatureGuard = TestBed.inject(WorkAllocationFeatureGuard);
