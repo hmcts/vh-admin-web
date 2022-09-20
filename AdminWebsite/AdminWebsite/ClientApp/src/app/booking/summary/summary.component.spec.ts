@@ -6,9 +6,7 @@ import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import {
-    RemoveInterpreterPopupComponent
-} from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
+import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
@@ -141,11 +139,11 @@ describe('SummaryComponent with valid request', () => {
             videoHearingsServiceSpy.updateFailedStatus.and.returnValue(of(mockResp));
             TestBed.configureTestingModule({
                 providers: [
-                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-                    {provide: Router, useValue: routerSpy},
-                    {provide: Logger, useValue: loggerSpy},
-                    {provide: RecordingGuardService, useValue: recordingGuardServiceSpy},
-                    {provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 declarations: [
                     SummaryComponent,
@@ -321,9 +319,11 @@ describe('SummaryComponent with valid request', () => {
             const mockResp = new UpdateBookingStatusResponse();
             mockResp.success = true;
 
-            backend.expectOne({
-                method: 'GET'
-            }).flush(mockResp);
+            backend
+                .expectOne({
+                    method: 'GET'
+                })
+                .flush(mockResp);
 
             await component.bookHearing();
             expect(component.bookingsSaving).toBeTruthy();
@@ -364,9 +364,11 @@ describe('SummaryComponent with valid request', () => {
             const mockResp = new UpdateBookingStatusResponse();
             mockResp.success = true;
 
-            backend.expectOne({
-                method: 'GET'
-            }).flush(mockResp);
+            backend
+                .expectOne({
+                    method: 'GET'
+                })
+                .flush(mockResp);
 
             await component.bookHearing();
             expect(component.bookingsSaving).toBeTruthy();
@@ -449,10 +451,10 @@ describe('SummaryComponent  with invalid request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-                    {provide: Router, useValue: routerSpy},
-                    {provide: Logger, useValue: loggerSpy},
-                    {provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -508,11 +510,11 @@ describe('SummaryComponent  with existing request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-                    {provide: Router, useValue: routerSpy},
-                    {provide: Logger, useValue: loggerSpy},
-                    {provide: RecordingGuardService, useValue: recordingGuardServiceSpy},
-                    {provide: FeatureFlagService, useValue: featureFlagSpy}
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagSpy }
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -538,12 +540,9 @@ describe('SummaryComponent  with existing request', () => {
             getItem: (key: string): string => {
                 return 'true';
             },
-            setItem: (key: string, value: string) => {
-            },
-            removeItem: (key: string) => {
-            },
-            clear: () => {
-            }
+            setItem: (key: string, value: string) => {},
+            removeItem: (key: string) => {},
+            clear: () => {}
         };
         spyOn(sessionStorage, 'setItem').and.callFake(mockSessionStorage.setItem);
     });
