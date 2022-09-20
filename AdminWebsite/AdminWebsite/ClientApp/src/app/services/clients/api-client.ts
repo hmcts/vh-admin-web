@@ -1366,6 +1366,192 @@ export class BHClient {
     }
 
     /**
+     * Get the conference status.
+     * @param hearingId The hearing id
+     * @return Success
+     */
+    getHearingConferenceStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/conference-status';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetHearingConferenceStatus(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetHearingConferenceStatus(<any>response_);
+                        } catch (e) {
+                            return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetHearingConferenceStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UpdateBookingStatusResponse>(<any>null);
+    }
+
+    /**
+     * Update the failed hearing status.
+     * @param hearingId The hearing id
+     * @return Success
+     */
+    updateFailedBookingStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/update-status';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUpdateFailedBookingStatus(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUpdateFailedBookingStatus(<any>response_);
+                        } catch (e) {
+                            return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUpdateFailedBookingStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UpdateBookingStatusResponse>(<any>null);
+    }
+
+    /**
      * Gets for confirmed booking the telephone conference Id by hearing Id.
      * @param hearingId The unique sequential value of hearing ID.
      * @return Success
@@ -3346,7 +3532,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     tenant_id?: string | undefined;
     /** The UI Client Id */
     client_id?: string | undefined;
-    /** The UI Resource Id */
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
     resource_id?: string | undefined;
     /** The Uri to redirect back to after a successful login */
     redirect_uri?: string | undefined;
@@ -3423,7 +3609,7 @@ export interface IClientSettingsResponse {
     tenant_id?: string | undefined;
     /** The UI Client Id */
     client_id?: string | undefined;
-    /** The UI Resource Id */
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
     resource_id?: string | undefined;
     /** The Uri to redirect back to after a successful login */
     redirect_uri?: string | undefined;
@@ -3803,6 +3989,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
@@ -3811,6 +3998,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     created_by?: string | undefined;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
+    hearing_type_code?: string | undefined;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
@@ -3832,6 +4020,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_name = _data['hearing_venue_name'];
             this.case_type_name = _data['case_type_name'];
+            this.case_type_service_id = _data['case_type_service_id'];
             this.hearing_type_name = _data['hearing_type_name'];
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
@@ -3846,6 +4035,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.created_by = _data['created_by'];
             this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
+            this.hearing_type_code = _data['hearing_type_code'];
             this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
@@ -3871,6 +4061,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_name'] = this.hearing_venue_name;
         data['case_type_name'] = this.case_type_name;
+        data['case_type_service_id'] = this.case_type_service_id;
         data['hearing_type_name'] = this.hearing_type_name;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
@@ -3885,6 +4076,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data['created_by'] = this.created_by;
         data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
+        data['hearing_type_code'] = this.hearing_type_code;
         data['is_multi_day_hearing'] = this.is_multi_day_hearing;
         if (Array.isArray(this.endpoints)) {
             data['endpoints'] = [];
@@ -3903,6 +4095,7 @@ export interface IBookNewHearingRequest {
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
@@ -3911,6 +4104,7 @@ export interface IBookNewHearingRequest {
     created_by?: string | undefined;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
+    hearing_type_code?: string | undefined;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
@@ -4349,6 +4543,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    hearing_type_code?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -4396,6 +4591,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
+            this.hearing_type_code = _data['hearing_type_code'];
         }
     }
 
@@ -4443,6 +4639,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
+        data['hearing_type_code'] = this.hearing_type_code;
         return data;
     }
 }
@@ -4471,6 +4668,7 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    hearing_type_code?: string | undefined;
 }
 
 /** Case request */

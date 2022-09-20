@@ -6,7 +6,9 @@ import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
+import {
+    RemoveInterpreterPopupComponent
+} from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
@@ -17,7 +19,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse } from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -28,6 +30,7 @@ import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { HttpTestingController } from '@angular/common/http/testing';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -111,7 +114,9 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'setBookingHasChanged',
     'cloneMultiHearings',
     'isConferenceClosed',
-    'isHearingAboutToStart'
+    'isHearingAboutToStart',
+    'getStatus',
+    'updateFailedStatus'
 ]);
 featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
@@ -125,18 +130,22 @@ describe('SummaryComponent with valid request', () => {
         waitForAsync(() => {
             existingRequest = initExistingHearingRequest();
 
+            const mockResp = new UpdateBookingStatusResponse();
+            mockResp.success = true;
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
             videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
             videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
-
+            videoHearingsServiceSpy.getStatus.and.returnValue(of(mockResp));
+            mockResp.success = false;
+            videoHearingsServiceSpy.updateFailedStatus.and.returnValue(of(mockResp));
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                    { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy }
+                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
+                    {provide: Router, useValue: routerSpy},
+                    {provide: Logger, useValue: loggerSpy},
+                    {provide: RecordingGuardService, useValue: recordingGuardServiceSpy},
+                    {provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 declarations: [
                     SummaryComponent,
@@ -303,18 +312,26 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.participants[0].first_name).toBe('firstname');
     });
     it('should save new booking with multi hearings', async () => {
-        component.ngOnInit();
-        component.hearing.multiDays = true;
-        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
-        fixture.detectChanges();
+        fakeAsync(async (backend: HttpTestingController) => {
+            component.ngOnInit();
+            component.hearing.multiDays = true;
+            component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+            component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+            fixture.detectChanges();
+            const mockResp = new UpdateBookingStatusResponse();
+            mockResp.success = true;
 
-        await component.bookHearing();
-        expect(component.bookingsSaving).toBeTruthy();
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+            backend.expectOne({
+                method: 'GET'
+            }).flush(mockResp);
+
+            await component.bookHearing();
+            expect(component.bookingsSaving).toBeTruthy();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+        });
     });
 
     it('should save new booking with multi hearings - single date', async () => {
@@ -332,24 +349,32 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
     });
 
-    it('should save new booking with multi hearings - mutli date', async () => {
-        component.ngOnInit();
-        component.hearing.multiDays = true;
-        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+    it('should save new booking with multi hearings - multi date', async () => {
+        fakeAsync(async (backend: HttpTestingController) => {
+            component.ngOnInit();
+            component.hearing.multiDays = true;
+            component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+            component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
 
-        const hearingDate = new Date(component.hearing.scheduled_date_time);
-        const hearingDatePlusOne = new Date(hearingDate);
-        hearingDatePlusOne.setDate(hearingDatePlusOne.getDate() + 1);
-        component.hearing.hearing_dates = [hearingDate, hearingDatePlusOne];
-        fixture.detectChanges();
+            const hearingDate = new Date(component.hearing.scheduled_date_time);
+            const hearingDatePlusOne = new Date(hearingDate);
+            hearingDatePlusOne.setDate(hearingDatePlusOne.getDate() + 1);
+            component.hearing.hearing_dates = [hearingDate, hearingDatePlusOne];
+            fixture.detectChanges();
+            const mockResp = new UpdateBookingStatusResponse();
+            mockResp.success = true;
 
-        await component.bookHearing();
-        expect(component.bookingsSaving).toBeTruthy();
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+            backend.expectOne({
+                method: 'GET'
+            }).flush(mockResp);
+
+            await component.bookHearing();
+            expect(component.bookingsSaving).toBeTruthy();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+        });
     });
 
     it('should set error when booking new hearing request fails', fakeAsync(async () => {
@@ -424,10 +449,10 @@ describe('SummaryComponent  with invalid request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                    { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy }
+                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
+                    {provide: Router, useValue: routerSpy},
+                    {provide: Logger, useValue: loggerSpy},
+                    {provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -483,11 +508,11 @@ describe('SummaryComponent  with existing request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                    { provide: Router, useValue: routerSpy },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagSpy }
+                    {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
+                    {provide: Router, useValue: routerSpy},
+                    {provide: Logger, useValue: loggerSpy},
+                    {provide: RecordingGuardService, useValue: recordingGuardServiceSpy},
+                    {provide: FeatureFlagService, useValue: featureFlagSpy}
                 ],
                 imports: [RouterTestingModule],
                 declarations: [
@@ -513,9 +538,12 @@ describe('SummaryComponent  with existing request', () => {
             getItem: (key: string): string => {
                 return 'true';
             },
-            setItem: (key: string, value: string) => {},
-            removeItem: (key: string) => {},
-            clear: () => {}
+            setItem: (key: string, value: string) => {
+            },
+            removeItem: (key: string) => {
+            },
+            clear: () => {
+            }
         };
         spyOn(sessionStorage, 'setItem').and.callFake(mockSessionStorage.setItem);
     });
@@ -759,11 +787,19 @@ describe('SummaryComponent  with multi days request', () => {
         component.hearing.participants = participants;
 
         const participantList = component.participantsListComponent;
-        participantList.removeParticipant({ email: 'firstname.lastname@email.com', is_exist_person: false, is_judge: false });
+        participantList.removeParticipant({
+            email: 'firstname.lastname@email.com',
+            is_exist_person: false,
+            is_judge: false
+        });
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmRemoveInterpretee).toBe(true);
-        participantList.removeParticipant({ email: 'firstname1.lastname1@email.com', is_exist_person: false, is_judge: false });
+        participantList.removeParticipant({
+            email: 'firstname1.lastname1@email.com',
+            is_exist_person: false,
+            is_judge: false
+        });
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmationRemoveParticipant).toBe(true);
