@@ -17,6 +17,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
 using Autofac.Extras.Moq;
+using BookingsApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -154,5 +155,23 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             hearing.Success.Should().Be(false);
         }
         
+        [Test]
+        public async Task Should_return_ok_status_after_update_hearing()
+        {
+            
+            
+            // Arrange
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()));
+
+            // Act
+            var result = await _controller.UpdateHearingStatus(_guid);
+            
+            // Assert
+            var okRequestResult = (OkObjectResult) result;
+            okRequestResult.StatusCode.Should().Be(200);
+
+            var hearing = (UpdateBookingStatusResponse) ((OkObjectResult) result).Value;
+            hearing.Success.Should().Be(false);
+        }
     }
 }
