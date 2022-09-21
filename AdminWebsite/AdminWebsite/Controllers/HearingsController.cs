@@ -96,13 +96,7 @@ namespace AdminWebsite.Controllers
                 {
                     return Created("", hearingDetailsResponse);
                 }
-
-                // var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
-                // if (judgeExists)
-                // {
-                //     await GetConferenceStatus(hearingDetailsResponse.Id, 
-                //         $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingDetailsResponse.Id}");
-                // }
+                
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -497,29 +491,37 @@ namespace AdminWebsite.Controllers
                 var conferenceDetailsResponse =
                     await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
                 _logger.LogInformation($"Found conference for hearing {hearingId}");
-                if (conferenceDetailsResponse.HasValidMeetingRoom())
+                if (conferenceDetailsResponse != null)
                 {
-                    return Ok(new UpdateBookingStatusResponse
+                    if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
-                        Success = true,
-                        TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
-                    });
+                        return Ok(new UpdateBookingStatusResponse
+                        {
+                            Success = true,
+                            TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                        });
+                    }
+                    else
+                    {
+                        return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                    }
                 }
                 else
                 {
-                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                    _logger.LogError("Could not find hearing {Hearing}. Updating status to failed",
+                        hearingId);
+                    return NotFound();
                 }
             }
-            catch (VideoApiException ex)
+            catch (VideoApiException e)
             {
-                _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
 
-                // Set the booking status to failed as the video api failed
-                //await UpdateFailedBookingStatus(hearingId);
-
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                throw;
             }
         }
 
@@ -528,7 +530,7 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name="hearingId">The hearing id</param>
         /// <returns>Success status</returns>
-        [HttpGet("{hearingId}/update-status")]
+        [HttpPut("{hearingId}/failed-status")]
         [SwaggerOperation(OperationId = "UpdateFailedBookingStatus")]
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -536,16 +538,18 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> UpdateHearingStatus(Guid hearingId)
         {
             var errorMessage =
-                $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+                $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
             {
                 await UpdateFailedBookingStatus(hearingId);
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = $"Status updated for hearing: {hearingId}"});
             }
-            catch (Exception e)
+            catch (VideoApiException e)
             {
                 _logger.LogError(e,
-                    "Update Hearing Status - There was a problem saving the booking.");
+                    errorMessage);
+                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }

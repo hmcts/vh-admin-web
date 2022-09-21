@@ -252,7 +252,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     return;
                 }
 
-                this.oberserableTimer(hearingDetailsResponse.id).then(async hearingStatusResponse => {
+                this.getHearingStatus(hearingDetailsResponse.id).then(async hearingStatusResponse => {
                     if (hearingStatusResponse?.success) {
                         if (this.hearing.multiDays) {
                             this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
@@ -319,13 +319,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
 
-    async oberserableTimer(hearingId: string): Promise<UpdateBookingStatusResponse> {
+    async getHearingStatus(hearingId: string): Promise<UpdateBookingStatusResponse> {
         let hearingStatusResponse;
 
         const source = timer(0, 5000);
         const schedule = source.subscribe(async counter => {
             hearingStatusResponse = await this.hearingService.getStatus(hearingId);
-            if (hearingStatusResponse.success || counter === 6) {
+            if (hearingStatusResponse.success || counter === 10) {
                 schedule.unsubscribe();
                 return Promise.resolve(hearingStatusResponse);
             }
