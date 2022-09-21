@@ -18,6 +18,7 @@ using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.Requests;
+using VideoApi.Client;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -153,6 +154,44 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (UpdateBookingStatusResponse) ((OkObjectResult) result).Value;
             hearing.Success.Should().Be(false);
+        }
+        
+        [Test]
+        public async Task Should_return_not_found_if_hearing_has_not_be_found()
+        {
+            
+            ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
+            mock.MeetingRoom = new MeetingRoomResponse();
+            
+            
+            // Arrange
+            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .Throws(new VideoApiException("Error", 404, null, null, null));
+
+            // Act
+            var result = await _controller.GetHearingConferenceStatus(_guid);
+            
+            // Assert
+            var notFoundResult = (NotFoundResult)result;
+            notFoundResult.StatusCode.Should().Be(404);
+            
+        }
+        
+        [Test]
+        public async Task Should_return_not_found_if_hearing_failed_to_update()
+        {
+
+            // Arrange
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Throws(new VideoApiException("Error", 404, null, null, null));
+
+            // Act
+            var result = await _controller.UpdateHearingStatus(_guid);
+            
+            // Assert
+            var notFoundResult = (NotFoundResult)result;
+            notFoundResult.StatusCode.Should().Be(404);
+            
         }
         
         [Test]
