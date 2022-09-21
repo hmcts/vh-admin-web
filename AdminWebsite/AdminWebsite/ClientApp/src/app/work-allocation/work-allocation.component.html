@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
           <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload"> Select .CSV file to upload </label>
           <input  (change)="handleFileInput($event.target.files[0])" class="govuk-file-upload" id="working-hours-file-upload" name="working-hours-file-upload" type="file" accept=".CSV" />
-          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours">Upload</button>
+          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
         </div>
       </div>
       <div class="govuk-grid-row">
@@ -22,7 +22,7 @@
         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
           <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
           <input class="govuk-file-upload" id="non-availability-hours-file-upload" name="non-availability-hours-file-upload" type="file" accept=".CSV" />
-          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonAvailability">Upload</button>
+          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonAvailability()">Upload</button>
         </div>
       </div>
     </div>

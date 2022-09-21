@@ -89,5 +89,5 @@ Allocate hearings`);
             expect(component.isWorkingHoursFileUploadError).toBe(true);
             expect(component.workingHoursFileUploadError).toBe('File cannot be larger than 200kb');
         });
-      });
+    });
 });
