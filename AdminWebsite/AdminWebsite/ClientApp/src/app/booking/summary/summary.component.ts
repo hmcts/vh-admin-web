@@ -330,7 +330,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 return Promise.resolve(hearingStatusResponse);
             }
         });
-        return Promise.resolve(hearingStatusResponse);
+        return hearingStatusResponse;
     }
 
     private setDurationOfMultiHearing() {
