@@ -1,5 +1,5 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -11,7 +11,7 @@ COPY AdminWebsite/ClientApp .
 RUN [[ ${skip_client_build} = true ]] && echo "Skipping npm install" || npm install
 RUN [[ ${skip_client_build} = true ]] && mkdir dist || npm run-script build-prod
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore --configfile nuget.config "AdminWebsite/AdminWebsite.csproj"
