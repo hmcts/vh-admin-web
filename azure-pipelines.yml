@@ -264,10 +264,10 @@ resources:
       endpoint: hmcts
   containers:
   - container: dotnetsdk
-    image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular:6
     endpoint: sspublicsbox
   - container: dotnetsdk-cipipeline
-    image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:6
     endpoint: sspublicsbox
   - container: node
     image: node:lts-alpine
@@ -317,6 +317,7 @@ extends:
         sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
     ACTest: ${{ parameters.RunACTests }}
     releaseParameters:
+      netVersion: 6.x
       environment: Preview
       subscription: $(pr_Subscription)
       secrets_KeyVault: $(pr_Secret_KeyVault)
