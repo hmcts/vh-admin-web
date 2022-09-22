@@ -252,7 +252,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     return;
                 }
 
-
                 const source = timer(0, 5000);
                 const schedule = source.subscribe(async counter => {
                     const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
@@ -268,8 +267,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         this.router.navigate([PageUrls.BookingConfirmation]);
                     }
                 });
-
-
             } catch (error) {
                 this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error, { payload: this.hearing });
                 this.setError(error);
@@ -278,7 +275,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     async processBooking(hearingDetailsResponse, hearingStatusResponse): Promise<void> {
-         if (hearingStatusResponse?.success) {
+        if (hearingStatusResponse?.success) {
             if (this.hearing.multiDays) {
                 this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                     hearingId: hearingDetailsResponse.id,
