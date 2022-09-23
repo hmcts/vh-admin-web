@@ -265,7 +265,7 @@ stages:
           - name: NotifyConfiguration:ApiKey
             value: $(notify-api-key)
             
-            # Kinly
+          # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
           - name: KinlyConfiguration:ConferencePhoneNumberWelsh
