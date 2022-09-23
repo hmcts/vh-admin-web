@@ -61,11 +61,87 @@ Allocate hearings`);
                 .nativeElement.innerText;
             expect(error).toContain('Error: error message');
         });
+
+        it('should show file upload formatting errors', () => {
+            component.readWorkAvailability(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,19:00,a7:00,0900,17:30,17:30,08:00,09:60,17:-01,09:00,17:00'
+
+            );
+            fixture.detectChanges();
+
+            const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error'))
+                .nativeElement.innerText;
+            expect(error).toContain('Error: Row 3, Entry: 2 - Hour value (19) is not within 08:00 - 18:00' +
+                'Error: Row 3, Entry: 3 - Value is not a valid time' +
+                'Error: Row 3, Entry: 4 - Incorrect delimiter used. Please use a colon to separate the hours and minutes.' +
+                'Error: Row 3, Entry: 6-7 - End time 8:00 is before start time 17:30' +
+                'Error: Row 3, Entry: 8 - Minutes value (60) is not within 0-59' +
+                'Error: Row 3, Entry: 9 - Minutes value (-1) is not within 0-59');
+        });
     });
 
     it('should retrieve vh team leader status', () => {
         expect(component.isVhTeamLeader).toBeTruthy();
     });
+
+    describe('areDayWorkingHoursValid', () => {
+        it('should validate start time', () => {
+            const startTimeArray = [10, 0];
+            const endTimeArray = [17, 0];
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const validateSpy = spyOn(component, 'validateTimeCell');
+
+            component.areDayWorkingHoursValid(
+                startTimeArray, endTimeArray, rowNumber, entryNumber
+            );
+
+            expect(validateSpy).toHaveBeenCalledWith(
+                startTimeArray, `Row ${rowNumber}, Entry: ${entryNumber} -`
+            );
+        });
+
+        it('should validate end time', () => {
+            const startTimeArray = [10, 0];
+            const endTimeArray = [17, 0];
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const validateSpy = spyOn(component, 'validateTimeCell');
+
+            component.areDayWorkingHoursValid(
+                startTimeArray, endTimeArray, rowNumber, entryNumber
+            );
+
+            expect(validateSpy).toHaveBeenCalledWith(
+                startTimeArray, `Row ${rowNumber}, Entry: ${entryNumber} -`
+            );
+        });
+        
+        it('should validate start time is before end time', () => {
+            const startTimeArray = [10, 0];
+            const endTimeArray = [17, 0];
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const validateSpy = spyOn(component, 'validateStartTimeBeforeEndTime');
+
+            component.areDayWorkingHoursValid(
+                startTimeArray, endTimeArray, rowNumber, entryNumber
+            );
+
+            expect(validateSpy).toHaveBeenCalledWith(
+                startTimeArray[0],
+                startTimeArray[1],
+                endTimeArray[0],
+                endTimeArray[1],
+                `Row ${rowNumber}, Entry: ${entryNumber}-${entryNumber + 1} -`
+            );
+        });
+      });
 
     describe('handleFileInput', () => {
         it('should reset file upload errors', () => {
@@ -85,6 +161,31 @@ Allocate hearings`);
 
             expect(component.isWorkingHoursFileUploadError).toBe(true);
             expect(component.workingHoursFileUploadErrors[0]).toBe('File cannot be larger than 200kb');
+        });
+    });
+
+    describe('isDelimiterValid', () => {
+        it('should return false when incorrect delimeter is used', () => {
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const result =
+                component.isDelimiterValid('0900', rowNumber, entryNumber);
+
+            expect(result).toBeFalsy();
+            expect(component.workingHoursFileUploadErrors[0]).
+                toBe(`Row ${rowNumber}, Entry: ${entryNumber} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`);
+        });
+
+        it('should return true when correct delimeter is used', () => {
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const result =
+                component.isDelimiterValid('09:00', rowNumber, entryNumber);
+
+            expect(result).toBeTruthy();
+            expect(component.workingHoursFileUploadErrors[0]).toBeUndefined();
         });
     });
 
@@ -134,7 +235,7 @@ Allocate hearings`);
         const testCases = [
             { case: 'hour is not a number', timeCell: [NaN, 30], errorMessage: 'Value is not a valid time' },
             { case: 'minute is not a number', timeCell: [9, NaN], errorMessage: 'Value is not a valid time' },
-            { case: 'hour is before work hours', timeCell: [8, 30], errorMessage: 'Hour value (8) is not within 08:00 - 18:00' },
+            { case: 'hour is before work hours', timeCell: [7, 30], errorMessage: 'Hour value (7) is not within 08:00 - 18:00' },
             { case: 'hour is after work hours', timeCell: [19, 30], errorMessage: 'Hour value (19) is not within 08:00 - 18:00' },
             { case: 'minute is above 59', timeCell: [9, -1], errorMessage: 'Minutes value (-1) is not within 0-59' },
             { case: 'minute is below 0', timeCell: [9, 60], errorMessage: 'Minutes value (60) is not within 0-59' },
@@ -163,7 +264,7 @@ Allocate hearings`);
         });
     });
     
-    describe('validateTimeCell', () => {
+    describe('validateStartTimeBeforeEndTime', () => {
         const testCases = [
             { startTimeHour: 11, startTimeMinute: 0, endTimeHour: 9, endTimeMinute: 0},
             { startTimeHour: 11, startTimeMinute: 0, endTimeHour: 9, endTimeMinute: 30},

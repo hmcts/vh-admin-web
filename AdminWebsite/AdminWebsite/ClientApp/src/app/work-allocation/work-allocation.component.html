@@ -5,7 +5,9 @@
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-5">
       <div [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileUploadError }" id="working-hours-file-upload-error" class="govuk-grid-row">
-        <p *ngIf="isWorkingHoursFileUploadError" class="govuk-error-message govuk-!-margin-left-3">Error: {{ workingHoursFileUploadError }}</p>
+        <div *ngIf="isWorkingHoursFileUploadError">
+          <p *ngFor="let workingHoursFileUploadError of workingHoursFileUploadErrors; index as i;" class="govuk-error-message govuk-!-margin-left-3">Error: {{ workingHoursFileUploadError }}</p>
+        </div>
         <div class="govuk-grid-column-one-third">
           <p>Upload working hours:</p>
         </div>

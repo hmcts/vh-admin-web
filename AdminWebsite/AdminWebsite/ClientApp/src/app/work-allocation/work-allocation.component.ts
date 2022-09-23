@@ -19,12 +19,38 @@ export class WorkAllocationComponent {
 
     public workingHoursFile: File | null = null;
 
+    private timeDelimiter = ':';
+    private earliestStartHour = 8;
+    private latestEndHour = 18;
+
     maxFileUploadSize = 200000;
 
     constructor(private userIdentityService: UserIdentityService) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
             this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
         });
+    }
+
+    areDayWorkingHoursValid(
+        startTimeArray: number[],
+        endTimeArray: number[],
+        rowNumber: number,
+        entryNumber: number,
+    ) {
+        const isStartTimeCellValid =
+            this.validateTimeCell(startTimeArray, `Row ${rowNumber}, Entry: ${entryNumber} -`);
+        const isEndTimeCellValid =
+            this.validateTimeCell(endTimeArray, `Row ${rowNumber}, Entry: ${entryNumber + 1} -`);
+        
+        const isStartTimeBeforeEndTime = this.validateStartTimeBeforeEndTime(
+            startTimeArray[0],
+            startTimeArray[1],
+            endTimeArray[0],
+            endTimeArray[1],
+            `Row ${rowNumber}, Entry: ${entryNumber}-${entryNumber + 1} -`
+        );
+
+        return isStartTimeCellValid && isEndTimeCellValid && isStartTimeBeforeEndTime;
     }
 
     handleFileInput(file: File) {
@@ -43,6 +69,23 @@ export class WorkAllocationComponent {
         };
     }
 
+    isDelimiterValid(
+        time: string,
+        rowNumber: number,
+        entryNumber: number
+    ) {
+        let isValid = true;
+
+        const timeArray = time.split(this.timeDelimiter);
+
+        if (timeArray.length !== 2) {
+            this.workingHoursFileUploadErrors.push(`Row ${rowNumber}, Entry: ${entryNumber} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
     resetErrors() {
         this.isWorkingHoursFileUploadError = false;
         this.workingHoursFileUploadErrors = [];
@@ -55,10 +98,8 @@ export class WorkAllocationComponent {
         reader.onload = (e) => this.readWorkAvailability(e.target.result as string);
     }
 
-    //  TODO: Test
     readWorkAvailability(text: string): any {
         const delimiter = ',';
-        const timeDelimiter = ':';
 
         let userWorkAvailabilityRows = text.split("\n");
         // Remove headings rows
@@ -82,39 +123,23 @@ export class WorkAllocationComponent {
                 const rowNumber = index + 3;
                 const entryNumber = i + 1;
                 
-                const startTimeArray = convertToNumberArray(values[i].split(timeDelimiter));
-                const endTimeArray = convertToNumberArray(values[i + 1].split(timeDelimiter));
-
-                let isDelimiterError = false;
-                [startTimeArray, endTimeArray].forEach((array, arrayIndex) => {
-                    if (array.length !== 2) {
-                        this.isWorkingHoursFileUploadError = isDelimiterError = true;
-                        this.workingHoursFileUploadErrors.push(`Row ${rowNumber}, Entry: ${entryNumber + arrayIndex} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`);
-                    }
-                    return;
-                })
-
-                if (isDelimiterError) {
+                if (
+                    !this.isDelimiterValid(values[i], rowNumber, entryNumber) ||
+                    !this.isDelimiterValid(values[i + 1], rowNumber, entryNumber + 1)) {
                     i++;
                     continue;
                 }
+
+                const startTimeArray = convertToNumberArray(values[i].split(this.timeDelimiter));
+                const endTimeArray = convertToNumberArray(values[i + 1].split(this.timeDelimiter));
+
                 
-                const isStartTimeCellValid =
-                    this.validateTimeCell(startTimeArray, `Row ${rowNumber}, Entry: ${entryNumber} -`);
-                const isEndTimeCellValid =
-                    this.validateTimeCell(endTimeArray, `Row ${rowNumber}, Entry: ${entryNumber + 1} -`);
-                
-                const isStartTimeBeforeEndTime = this.validateStartTimeBeforeEndTime(
-                    startTimeArray[0],
-                    startTimeArray[1],
-                    endTimeArray[0],
-                    endTimeArray[1],
-                    `Row ${rowNumber}, Entry: ${entryNumber}-${entryNumber + 1} -`
+                const areDayWorkingHoursValid = this.areDayWorkingHoursValid(
+                    startTimeArray, endTimeArray, rowNumber, entryNumber
                 );
                                 
                 if (!this.isWorkingHoursFileUploadError) {
-                    this.isWorkingHoursFileUploadError =
-                        !isStartTimeCellValid || !isEndTimeCellValid || !isStartTimeBeforeEndTime;
+                    this.isWorkingHoursFileUploadError = !areDayWorkingHoursValid;
                 }
                 
                 if (!this.isWorkingHoursFileUploadError) {
@@ -157,8 +182,8 @@ export class WorkAllocationComponent {
             this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Value is not a valid time`);
             hasError = true;
         } else {
-            if (hour < 9 || hour > 17) {
-                this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Hour value (${hour}) is not within 08:00 - 18:00`);
+            if (hour < this.earliestStartHour || hour > this.latestEndHour) {
+                this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Hour value (${hour}) is not within 0${this.earliestStartHour}:00 - ${this.latestEndHour}:00`);
                 hasError = true;
             }
             
