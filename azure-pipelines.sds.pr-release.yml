@@ -58,13 +58,14 @@ stages:
               #vstsFeedId: 'Video Hearings/vh-packages'
               nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
               unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
+              dotNetCoreVersion: '6.x'
               coverletCoverageExclusions:
                 - "**/Testing.Common/**"
                 - "AdminWebsite/Views/*"
                 - "AdminWebsite/Pages/*"
                 - "AdminWebsite.UserAPI.Client/*"
                 - "AdminWebsite.AcceptanceTests/*"
-
+              
           - template: templates/sonarCloud/runAnalysis.yml@azTemplates
 
 #####################################################
@@ -126,6 +127,7 @@ stages:
           steps:
           - template: templates\dotnet\publish-acceptance-tests.yml@azTemplates
             parameters:
+              netVersion: 6.x
               coreProjectPath: $(projectPath)
               nugetProjectPath: $(projectPath)
               nugetConfigPath: $(app_path)

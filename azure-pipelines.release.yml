@@ -71,6 +71,7 @@ resources:
 stages:
   - template: templates/vh-release.yml@templates
     parameters:
+      netVersion: 6.x
       ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
         environments:
           - ${{ parameters.environment }}
@@ -264,7 +265,7 @@ stages:
           - name: NotifyConfiguration:ApiKey
             value: $(notify-api-key)
             
-            # Kinly
+          # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
           - name: KinlyConfiguration:ConferencePhoneNumberWelsh
