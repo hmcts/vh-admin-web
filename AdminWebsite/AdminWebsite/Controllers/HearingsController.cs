@@ -510,7 +510,7 @@ namespace AdminWebsite.Controllers
                 {
                     _logger.LogError("Could not find hearing {Hearing}. Updating status to failed",
                         hearingId);
-                    return NotFound();
+                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
                 }
             }
             catch (VideoApiException e)
@@ -518,10 +518,9 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
+                
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
 
-                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
             }
         }
 

@@ -255,7 +255,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 const source = timer(0, 5000);
                 const schedule = source.subscribe(async counter => {
                     const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
-                    if (hearingStatusResponse.success || counter === 10) {
+                    if (hearingStatusResponse?.success || counter === 10) {
                         schedule.unsubscribe();
                         await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
                         sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
