@@ -215,14 +215,24 @@ describe('SummaryComponent with valid request', () => {
         expect(component.showWaitSaving).toBeFalsy();
     });
     it('should save new booking', async () => {
-        component.ngOnInit();
-        fixture.detectChanges();
-        await component.bookHearing();
-        expect(component.bookingsSaving).toBeTruthy();
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(featureFlagSpy.getFeatureFlagByName).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        fakeAsync(async (backend: HttpTestingController) => {
+            component.ngOnInit();
+            fixture.detectChanges();
+            const mockResp = new UpdateBookingStatusResponse();
+            mockResp.success = true;
+
+            backend
+                .expectOne({
+                    method: 'GET'
+                })
+                .flush(mockResp);
+            await component.bookHearing();
+            expect(component.bookingsSaving).toBeTruthy();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(featureFlagSpy.getFeatureFlagByName).toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        });
     });
 
     it('should display valid court address when room number is empty', () => {
@@ -335,18 +345,28 @@ describe('SummaryComponent with valid request', () => {
     });
 
     it('should save new booking with multi hearings - single date', async () => {
-        component.ngOnInit();
-        component.hearing.multiDays = true;
-        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
-        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
-        component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
-        fixture.detectChanges();
+        fakeAsync(async (backend: HttpTestingController) => {
+            component.ngOnInit();
+            component.hearing.multiDays = true;
+            component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+            component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+            component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
+            fixture.detectChanges();
+            const mockResp = new UpdateBookingStatusResponse();
+            mockResp.success = true;
 
-        await component.bookHearing();
-        expect(component.bookingsSaving).toBeTruthy();
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(routerSpy.navigate).toHaveBeenCalled();
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+            backend
+                .expectOne({
+                    method: 'GET'
+                })
+                .flush(mockResp);
+
+            await component.bookHearing();
+            expect(component.bookingsSaving).toBeTruthy();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        });
     });
 
     it('should save new booking with multi hearings - multi date', async () => {
