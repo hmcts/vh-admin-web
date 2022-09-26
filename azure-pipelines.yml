@@ -275,6 +275,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
+    netVersion: 6.x
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
@@ -283,6 +284,7 @@ extends:
     PackageAcceptanceTests: ${{ parameters.PackageACTests }}
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
+      netVersion: 6.x
       useNugetConfig: false
       nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
