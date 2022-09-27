@@ -195,18 +195,11 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 .updateBookingStatus(this.hearingId, updateBookingStatus)
                 .toPromise();
             if (updateBookingStatusResponse.success) {
-                // timer
-                const hearingStatusResponse = await this.videoHearingService.getStatus(this.hearingId);
-                if (hearingStatusResponse.success) {
-                    this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
-                    this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-                    this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
-                    this.updateStatusHandler(status);
-                    this.booking.isConfirmed = true;
-                } else {
-                    this.showConfirmingFailed = true;
-                    this.updateStatusHandler(UpdateBookingStatus.Failed);
-                }
+                this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
+                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
+                this.updateStatusHandler(status);
+                this.booking.isConfirmed = true;
             } else {
                 this.showConfirmingFailed = true;
                 this.updateStatusHandler(UpdateBookingStatus.Failed);

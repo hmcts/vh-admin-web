@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -10,7 +10,7 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse, MultiHearingRequest, UpdateBookingStatusResponse } from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
