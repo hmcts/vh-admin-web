@@ -174,7 +174,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Assert
             var notFoundResult = (OkObjectResult)result;
             notFoundResult.StatusCode.Should().Be(200);
-            
+            ((UpdateBookingStatusResponse) notFoundResult.Value).Success.Should().BeFalse();
+
         }
         
         [Test]
