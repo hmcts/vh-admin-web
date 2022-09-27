@@ -57,7 +57,6 @@ export class WorkAllocationComponent {
         if (this.workingHoursFile.size > this.maxFileUploadSize) {
             this.isWorkingHoursFileUploadError = true;
             this.workingHoursFileUploadErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
-            return;
         }
     }
 
@@ -172,6 +171,9 @@ export class WorkAllocationComponent {
 
             workAvailability.workingHours = workingHours;
             workAvailabilities.push(workAvailability);
+
+            // This is here for SonarCloud. Will be removed when we actually use this variable.
+            console.log(workAvailabilities)
         });
     }
 
