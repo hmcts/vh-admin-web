@@ -6,7 +6,7 @@ import { UserIdentityService } from '../services/user-identity.service';
 
 import { WorkAllocationComponent } from './work-allocation.component';
 
-fdescribe('WorkAllocationComponent', () => {
+describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
