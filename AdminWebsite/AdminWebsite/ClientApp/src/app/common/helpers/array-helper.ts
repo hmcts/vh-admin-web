@@ -1,4 +1,3 @@
-//  TODO: Test
 export function convertToNumberArray(array: string[]) {
     const numberArray: number[] = [];
 

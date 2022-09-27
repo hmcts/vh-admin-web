@@ -133,7 +133,7 @@ export class WorkAllocationComponent {
             let dayOfWeekId = 0;
             let dayWorkingHours: DayWorkingHours;
 
-            for (let i = 1; i < values.length; i++) {
+            for (let i = 1; i < values.length; i += 2) {
                 dayOfWeekId++;
 
                 const rowNumber = index + 3;
@@ -141,14 +141,12 @@ export class WorkAllocationComponent {
 
                 if (this.isNonWorkingDayError(values[i], values[i + 1], `Row ${rowNumber}, Entry ${entryNumber}-${entryNumber + 1} -`)) {
                     this.isWorkingHoursFileUploadError = true;
-                    i++;
                     continue;
                 }
 
                 if (this.isNonWorkingDay(values[i], values[i + 1])) {
                     dayWorkingHours = new DayWorkingHours(dayOfWeekId);
                     workingHours.push(dayWorkingHours);
-                    i++;
                     continue;
                 }
 
@@ -156,7 +154,6 @@ export class WorkAllocationComponent {
                     !this.isDelimiterValid(values[i], rowNumber, entryNumber) ||
                     !this.isDelimiterValid(values[i + 1], rowNumber, entryNumber + 1)
                 ) {
-                    i++;
                     continue;
                 }
 
@@ -171,8 +168,6 @@ export class WorkAllocationComponent {
 
                 dayWorkingHours = new DayWorkingHours(dayOfWeekId, startTimeArray[0], startTimeArray[1], endTimeArray[0], endTimeArray[1]);
                 workingHours.push(dayWorkingHours);
-
-                i++;
             }
 
             workAvailability.workingHours = workingHours;

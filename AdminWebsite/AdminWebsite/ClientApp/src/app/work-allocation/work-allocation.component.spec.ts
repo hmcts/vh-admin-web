@@ -6,7 +6,7 @@ import { UserIdentityService } from '../services/user-identity.service';
 
 import { WorkAllocationComponent } from './work-allocation.component';
 
-describe('WorkAllocationComponent', () => {
+fdescribe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
@@ -71,13 +71,13 @@ Allocate hearings`);
 
             const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
             expect(error).toContain(
-                'Error: Row 3, Entry 2 - Hour value (19) is not within 08:00 - 18:00' +
-                    'Error: Row 3, Entry 3 - Value is not a valid time' +
-                    'Error: Row 3, Entry 4 - Incorrect delimiter used. Please use a colon to separate the hours and minutes.' +
-                    'Error: Row 3, Entry 6-7 - End time 8:00 is before start time 17:30' +
-                    'Error: Row 3, Entry 8 - Minutes value (60) is not within 0-59' +
-                    'Error: Row 3, Entry 9 - Minutes value (-1) is not within 0-59' +
-                    'Error: Row 3, Entry 10-11 - End time is blank'
+                ' Error: Row 3, Entry 2 - Hour value (19) is not within 08:00 - 18:00' +
+                    '  Error: Row 3, Entry 3 - Value is not a valid time' +
+                    '  Error: Row 3, Entry 4 - Incorrect delimiter used. Please use a colon to separate the hours and minutes.' +
+                    '  Error: Row 3, Entry 6-7 - End time 8:00 is before start time 17:30' +
+                    '  Error: Row 3, Entry 8 - Minutes value (60) is not within 0-59' +
+                    '  Error: Row 3, Entry 9 - Minutes value (-1) is not within 0-59' +
+                    '  Error: Row 3, Entry 10-11 - End time is blank'
             );
         });
     });
