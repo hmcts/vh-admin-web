@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -243,6 +243,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number
                 });
+
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
                 if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
@@ -251,61 +252,78 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     return;
                 }
 
-                if (this.hearing.multiDays) {
-                    this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
-                        hearingId: hearingDetailsResponse.id,
-                        caseName: this.hearing.cases[0].name,
-                        caseNumber: this.hearing.cases[0].number
-                    });
-
-                    const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
-                    const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
-
-                    if (isMultipleIndividualHearingDates) {
-                        this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
-                            hearingId: hearingDetailsResponse.id,
-                            caseName: this.hearing.cases[0].name,
-                            caseNumber: this.hearing.cases[0].number
+                const source = timer(0, 5000);
+                const schedule = source.subscribe(async counter => {
+                    const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
+                    if (hearingStatusResponse?.success || counter === 10) {
+                        schedule.unsubscribe();
+                        await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
+                        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+                        this.hearingService.cancelRequest();
+                        this.showWaitSaving = false;
+                        this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
+                            hearingId: hearingDetailsResponse.id
                         });
-                        await this.hearingService.cloneMultiHearings(
-                            hearingDetailsResponse.id,
-                            new MultiHearingRequest({
-                                hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
-                            })
-                        );
-                    } else if (isHearingDateRange) {
-                        this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
-                            hearingId: hearingDetailsResponse.id,
-                            caseName: this.hearing.cases[0].name,
-                            caseNumber: this.hearing.cases[0].number
-                        });
-                        await this.hearingService.cloneMultiHearings(
-                            hearingDetailsResponse.id,
-                            new MultiHearingRequest({
-                                start_date: new Date(this.hearing.scheduled_date_time),
-                                end_date: new Date(this.hearing.end_hearing_date_time)
-                            })
-                        );
-                    } else {
-                        this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
-                            hearingId: hearingDetailsResponse.id,
-                            caseName: this.hearing.cases[0].name,
-                            caseNumber: this.hearing.cases[0].number
-                        });
+                        this.router.navigate([PageUrls.BookingConfirmation]);
                     }
-                }
-
-                sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                this.hearingService.cancelRequest();
-                this.showWaitSaving = false;
-                this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
-                    hearingId: hearingDetailsResponse.id
                 });
-                this.router.navigate([PageUrls.BookingConfirmation]);
             } catch (error) {
                 this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error, { payload: this.hearing });
                 this.setError(error);
             }
+        }
+    }
+
+    async processBooking(hearingDetailsResponse, hearingStatusResponse): Promise<void> {
+        if (hearingStatusResponse?.success) {
+            if (this.hearing.multiDays) {
+                this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
+                    hearingId: hearingDetailsResponse.id,
+                    caseName: this.hearing.cases[0].name,
+                    caseNumber: this.hearing.cases[0].number
+                });
+
+                const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
+                const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
+
+                if (isMultipleIndividualHearingDates) {
+                    this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
+                        hearingId: hearingDetailsResponse.id,
+                        caseName: this.hearing.cases[0].name,
+                        caseNumber: this.hearing.cases[0].number
+                    });
+                    await this.hearingService.cloneMultiHearings(
+                        hearingDetailsResponse.id,
+                        new MultiHearingRequest({
+                            hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                        })
+                    );
+                } else if (isHearingDateRange) {
+                    this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
+                        hearingId: hearingDetailsResponse.id,
+                        caseName: this.hearing.cases[0].name,
+                        caseNumber: this.hearing.cases[0].number
+                    });
+                    await this.hearingService.cloneMultiHearings(
+                        hearingDetailsResponse.id,
+                        new MultiHearingRequest({
+                            start_date: new Date(this.hearing.scheduled_date_time),
+                            end_date: new Date(this.hearing.end_hearing_date_time)
+                        })
+                    );
+                } else {
+                    this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
+                        hearingId: hearingDetailsResponse.id,
+                        caseName: this.hearing.cases[0].name,
+                        caseNumber: this.hearing.cases[0].number
+                    });
+                }
+            }
+        } else {
+            // call UpdateFailedBookingStatus
+            await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
+            this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+            return;
         }
     }
 
@@ -380,9 +398,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showConfirmRemoveInterpretee = false;
         this.removeInterpreteeAndInterpreter();
     }
+
     handleCancelRemoveInterpreter() {
         this.showConfirmRemoveInterpretee = false;
     }
+
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
         const interpreterExists = this.hearing.linked_participants.find(p => p.participantEmail === email);
@@ -391,6 +411,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.linked_participants = [];
         }
     }
+
     private removeInterpreteeAndInterpreter() {
         const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
         let interpreter: ParticipantModel;
