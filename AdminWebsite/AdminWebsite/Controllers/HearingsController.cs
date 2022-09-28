@@ -96,12 +96,6 @@ namespace AdminWebsite.Controllers
                 {
                     return Created("", hearingDetailsResponse);
                 }
-                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
-                if (judgeExists)
-                {
-                    await GetConferenceStatus(hearingDetailsResponse.Id, 
-                        $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingDetailsResponse.Id}");
-                }
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -523,6 +517,88 @@ namespace AdminWebsite.Controllers
             {
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                throw;
+            }
+        }
+        
+    /// <summary>
+        ///     Get the conference status.
+        /// </summary>
+        /// <param name="hearingId">The hearing id</param>
+        /// <returns>Success status</returns>
+        [HttpGet("{hearingId}/conference-status")]
+        [SwaggerOperation(OperationId = "GetHearingConferenceStatus")]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetHearingConferenceStatus(Guid hearingId)
+        {
+            var errorMessage =
+                $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+            try
+            {
+                _logger.LogDebug($"Hearing {hearingId} is confirmed. Polling for Conference in VideoApi");
+                var conferenceDetailsResponse =
+                    await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+                _logger.LogInformation($"Found conference for hearing {hearingId}");
+                if (conferenceDetailsResponse != null)
+                {
+                    if (conferenceDetailsResponse.HasValidMeetingRoom())
+                    {
+                        return Ok(new UpdateBookingStatusResponse
+                        {
+                            Success = true,
+                            TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                        });
+                    }
+                    else
+                    {
+                        return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                    }
+                }
+                else
+                {
+                    _logger.LogError("Could not find hearing {Hearing}. Updating status to failed",
+                        hearingId);
+                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                }
+            }
+            catch (VideoApiException e)
+            {
+                _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
+                    hearingId);
+                
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+
+            }
+        }
+
+        /// <summary>
+        ///     Update the failed hearing status.
+        /// </summary>
+        /// <param name="hearingId">The hearing id</param>
+        /// <returns>Success status</returns>
+        [HttpPut("{hearingId}/failed-status")]
+        [SwaggerOperation(OperationId = "UpdateFailedBookingStatus")]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateHearingStatus(Guid hearingId)
+        {
+            var errorMessage =
+                $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
+            try
+            {
+                await UpdateFailedBookingStatus(hearingId);
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = $"Status updated for hearing: {hearingId}"});
+            }
+            catch (VideoApiException e)
+            {
+                _logger.LogError(e,
+                    errorMessage);
+                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
