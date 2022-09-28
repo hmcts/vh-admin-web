@@ -96,6 +96,7 @@ namespace AdminWebsite.Controllers
                 {
                     return Created("", hearingDetailsResponse);
                 }
+                // test coverage
                 var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
                 if (judgeExists)
                 {
