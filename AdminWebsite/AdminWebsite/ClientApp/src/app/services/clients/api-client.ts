@@ -1366,6 +1366,192 @@ export class BHClient {
     }
 
     /**
+     * Get the conference status.
+     * @param hearingId The hearing id
+     * @return Success
+     */
+    getHearingConferenceStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/conference-status';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetHearingConferenceStatus(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetHearingConferenceStatus(<any>response_);
+                        } catch (e) {
+                            return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetHearingConferenceStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UpdateBookingStatusResponse>(<any>null);
+    }
+
+    /**
+     * Update the failed hearing status.
+     * @param hearingId The hearing id
+     * @return Success
+     */
+    updateFailedBookingStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/failed-status';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('put', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUpdateFailedBookingStatus(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUpdateFailedBookingStatus(<any>response_);
+                        } catch (e) {
+                            return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UpdateBookingStatusResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUpdateFailedBookingStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UpdateBookingStatusResponse>(<any>null);
+    }
+
+    /**
      * Gets for confirmed booking the telephone conference Id by hearing Id.
      * @param hearingId The unique sequential value of hearing ID.
      * @return Success
