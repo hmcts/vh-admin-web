@@ -591,6 +591,7 @@ namespace AdminWebsite.Controllers
 
         private async Task UpdateFailedBookingStatus(Guid hearingId)
         {
+            
             await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
                 new UpdateBookingStatusRequest
                 {

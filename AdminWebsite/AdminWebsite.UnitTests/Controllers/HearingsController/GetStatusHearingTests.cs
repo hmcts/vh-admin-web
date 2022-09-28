@@ -1,7 +1,6 @@
 ﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helper;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +9,12 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Extensions;
 using BookingsApi.Client;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
 using Autofac.Extras.Moq;
+using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
@@ -31,9 +29,25 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private HearingDetailsResponse _vhExistingHearing;
         private Guid _guid;
 
+        private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<IUserIdentity> _userIdentity;
+        private Mock<IUserAccountService> _userAccountService;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
+        private IHearingsService _hearingsService;
+        private Mock<IConferenceDetailsService> _conferencesServiceMock;
+        private Mock<ILogger<HearingsService>> _participantGroupLogger;
+
+        private Mock<ILogger<AdminWebsite.Controllers.HearingsController>> _logger;
+        
         [SetUp]
         public void Setup()
         {
+            _bookingsApiClient = new Mock<IBookingsApiClient>();
+            _userIdentity = new Mock<IUserIdentity>();
+            _userAccountService = new Mock<IUserAccountService>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
+            _logger = new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>();
             _mocker = AutoMock.GetLoose();
             _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(new ConferenceDetailsResponse
@@ -49,7 +63,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 });
             
-            _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
+            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
+            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
+            _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
+            
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
+                _userIdentity.Object,
+                _editHearingRequestValidator.Object,
+                _logger.Object,
+                _hearingsService,
+                _conferencesServiceMock.Object);
 
             Initialise();
         }
@@ -119,7 +142,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid))
                 .ReturnsAsync(mock);
 
             // Act
@@ -181,10 +204,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_not_found_if_hearing_failed_to_update()
         {
-
             // Arrange
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
-                .Throws(new VideoApiException("Error", 404, null, null, null));
+            _bookingsApiClient
+                .Setup(x => x.UpdateBookingStatusAsync(_guid, It.IsAny<UpdateBookingStatusRequest>()))
+                .ThrowsAsync(new VideoApiException("Error", 404, null, null, null));
 
             // Act
             var result = await _controller.UpdateHearingStatus(_guid);
