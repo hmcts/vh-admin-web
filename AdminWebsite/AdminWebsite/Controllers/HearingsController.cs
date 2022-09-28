@@ -565,12 +565,17 @@ namespace AdminWebsite.Controllers
             }
             catch (VideoApiException e)
             {
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+
                 _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
-                
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
 
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) 
+                    return BadRequest(e.Response);
+
+                throw;
             }
         }
 

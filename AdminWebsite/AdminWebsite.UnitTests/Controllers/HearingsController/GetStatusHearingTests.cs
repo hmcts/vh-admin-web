@@ -156,7 +156,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
             mock.MeetingRoom = new MeetingRoomResponse();
-            
+            var errorMessage = "Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null";
             
             // Arrange
             _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
@@ -166,9 +166,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.GetHearingConferenceStatus(_guid);
             
             // Assert
-            var notFoundResult = (NotFoundResult)result;
-            notFoundResult.StatusCode.Should().Be(404);
-            
+            var okButnotFoundResult = (OkObjectResult)result;
+            okButnotFoundResult.StatusCode.Should().Be(200);
         }
         
         [Test]
