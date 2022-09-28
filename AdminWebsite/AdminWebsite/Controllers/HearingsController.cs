@@ -461,10 +461,14 @@ namespace AdminWebsite.Controllers
                 $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
             try
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogDebug($"Hearing {hearingId} is confirmed. Polling for Conference in VideoApi");
+#pragma warning restore CA2254 // Template should be a static expression
                 var conferenceDetailsResponse =
                     await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogInformation($"Found conference for hearing {hearingId}");
+#pragma warning restore CA2254 // Template should be a static expression
                 if (conferenceDetailsResponse != null)
                 {
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
@@ -510,8 +514,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateHearingStatus(Guid hearingId)
         {
-            var errorMessage =
-                $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
+            var errorMessage = $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
             {
                 await UpdateFailedBookingStatus(hearingId);
@@ -519,8 +522,10 @@ namespace AdminWebsite.Controllers
             }
             catch (VideoApiException e)
             {
-                _logger.LogError(e,
-                    errorMessage);
+#pragma warning disable CA2254 // Template should be a static expression
+                _logger.LogError(e, errorMessage);
+#pragma warning restore CA2254 // Template should be a static expression
+                
                 if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;

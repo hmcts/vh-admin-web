@@ -323,7 +323,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
             // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
             this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
-            return;
         }
     }
 
