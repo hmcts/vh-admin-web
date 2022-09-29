@@ -83,18 +83,18 @@ export class WorkAllocationComponent {
         return false;
     }
 
-    isNonWorkingDayError(startTime: string, endTime: string, errorLocationMessaage: string = '') {
-        if (errorLocationMessaage) {
-            errorLocationMessaage = errorLocationMessaage + ' ';
+    isNonWorkingDayError(startTime: string, endTime: string, errorLocationMessage: string = '') {
+        if (errorLocationMessage) {
+            errorLocationMessage = errorLocationMessage + ' ';
         }
 
         if (!startTime && endTime && endTime !== '\r') {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Start time is blank`);
+            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Start time is blank`);
             return true;
         }
 
         if (startTime && (!endTime || endTime === '\r')) {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}End time is blank`);
+            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}End time is blank`);
             return true;
         }
 
@@ -173,7 +173,7 @@ export class WorkAllocationComponent {
             workAvailabilities.push(workAvailability);
 
             // This is here for SonarCloud. Will be removed when we actually use this variable.
-            console.log(workAvailabilities);
+            console.log(workAvailabilities); 
         });
     }
 
@@ -187,28 +187,28 @@ export class WorkAllocationComponent {
         this.readFile(this.workingHoursFile);
     }
 
-    validateTimeCell(timeCell: number[], errorLocationMessaage: string = ''): boolean {
+    validateTimeCell(timeCell: number[], errorLocationMessage: string = ''): boolean {
         const hour = timeCell[0];
         const minutes = timeCell[1];
 
-        if (errorLocationMessaage) {
-            errorLocationMessaage = errorLocationMessaage + ' ';
+        if (errorLocationMessage) {
+            errorLocationMessage = errorLocationMessage + ' ';
         }
 
         let hasError = false;
         if (isNaN(hour) || isNaN(minutes)) {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Value is not a valid time`);
+            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Value is not a valid time`);
             hasError = true;
         } else {
             if (hour < this.earliestStartHour || hour > this.latestEndHour) {
                 this.workingHoursFileUploadErrors.push(
-                    `${errorLocationMessaage}Hour value (${hour}) is not within 0${this.earliestStartHour}:00 - ${this.latestEndHour}:00`
+                    `${errorLocationMessage}Hour value (${hour}) is not within 0${this.earliestStartHour}:00 - ${this.latestEndHour}:00`
                 );
                 hasError = true;
             }
 
             if (minutes < 0 || minutes > 59) {
-                this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}Minutes value (${minutes}) is not within 0-59`);
+                this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Minutes value (${minutes}) is not within 0-59`);
                 hasError = true;
             }
         }
@@ -221,17 +221,17 @@ export class WorkAllocationComponent {
         startTimeMinute: number,
         endTimeHour: number,
         endTimeMinute: number,
-        errorLocationMessaage: string = ''
+        errorLocationMessage: string = ''
     ) {
-        if (errorLocationMessaage) {
-            errorLocationMessaage = errorLocationMessaage + ' ';
+        if (errorLocationMessage) {
+            errorLocationMessage = errorLocationMessage + ' ';
         }
 
         if (endTimeHour < startTimeHour || (endTimeHour === startTimeHour && endTimeMinute < startTimeMinute)) {
             const startTime = `${startTimeHour}:${startTimeMinute === 0 ? '00' : startTimeMinute}`;
             const endTime = `${endTimeHour}:${endTimeMinute === 0 ? '00' : endTimeMinute}`;
 
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessaage}End time ${endTime} is before start time ${startTime}`);
+            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}End time ${endTime} is before start time ${startTime}`);
 
             return false;
         }

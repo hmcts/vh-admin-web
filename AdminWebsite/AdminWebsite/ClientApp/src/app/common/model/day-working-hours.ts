@@ -2,7 +2,7 @@ export class DayWorkingHours {
     dayOfWeekId: number;
     endTimeHour: number | null;
     endTimeMinutes: number | null;
-    startTimeHour?: number | null;
+    startTimeHour: number | null;
     startTimeMinutes: number | null;
 
     constructor(
