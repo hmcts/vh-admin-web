@@ -173,7 +173,7 @@ export class WorkAllocationComponent {
             workAvailabilities.push(workAvailability);
 
             // This is here for SonarCloud. Will be removed when we actually use this variable.
-            console.log(workAvailabilities); 
+            console.log(workAvailabilities);
         });
     }
 
