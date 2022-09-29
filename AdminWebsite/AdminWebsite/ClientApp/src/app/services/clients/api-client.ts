@@ -3532,7 +3532,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     tenant_id?: string | undefined;
     /** The UI Client Id */
     client_id?: string | undefined;
-    /** The UI Resource Id */
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
     resource_id?: string | undefined;
     /** The Uri to redirect back to after a successful login */
     redirect_uri?: string | undefined;
@@ -3609,7 +3609,7 @@ export interface IClientSettingsResponse {
     tenant_id?: string | undefined;
     /** The UI Client Id */
     client_id?: string | undefined;
-    /** The UI Resource Id */
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
     resource_id?: string | undefined;
     /** The Uri to redirect back to after a successful login */
     redirect_uri?: string | undefined;
@@ -3989,6 +3989,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
@@ -3997,6 +3998,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     created_by?: string | undefined;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
+    hearing_type_code?: string | undefined;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
@@ -4018,6 +4020,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_name = _data['hearing_venue_name'];
             this.case_type_name = _data['case_type_name'];
+            this.case_type_service_id = _data['case_type_service_id'];
             this.hearing_type_name = _data['hearing_type_name'];
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
@@ -4032,6 +4035,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.created_by = _data['created_by'];
             this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
+            this.hearing_type_code = _data['hearing_type_code'];
             this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
@@ -4057,6 +4061,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_name'] = this.hearing_venue_name;
         data['case_type_name'] = this.case_type_name;
+        data['case_type_service_id'] = this.case_type_service_id;
         data['hearing_type_name'] = this.hearing_type_name;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
@@ -4071,6 +4076,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data['created_by'] = this.created_by;
         data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
+        data['hearing_type_code'] = this.hearing_type_code;
         data['is_multi_day_hearing'] = this.is_multi_day_hearing;
         if (Array.isArray(this.endpoints)) {
             data['endpoints'] = [];
@@ -4089,6 +4095,7 @@ export interface IBookNewHearingRequest {
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
@@ -4097,6 +4104,7 @@ export interface IBookNewHearingRequest {
     created_by?: string | undefined;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
+    hearing_type_code?: string | undefined;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
@@ -4535,6 +4543,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    hearing_type_code?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -4582,6 +4591,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
+            this.hearing_type_code = _data['hearing_type_code'];
         }
     }
 
@@ -4629,6 +4639,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
+        data['hearing_type_code'] = this.hearing_type_code;
         return data;
     }
 }
@@ -4657,6 +4668,7 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    hearing_type_code?: string | undefined;
 }
 
 /** Case request */

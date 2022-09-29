@@ -92,17 +92,11 @@ namespace AdminWebsite.Controllers
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
                     hearingDetailsResponse.Id);
 
-                if(hearingDetailsResponse.Status == BookingStatus.Failed)
+                if (hearingDetailsResponse.Status == BookingStatus.Failed)
                 {
                     return Created("", hearingDetailsResponse);
                 }
-                // test coverage
-                var judgeExists = request.BookingDetails.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false;
-                if (judgeExists)
-                {
-                    await GetConferenceStatus(hearingDetailsResponse.Id, 
-                        $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingDetailsResponse.Id}");
-                }
+                
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -450,7 +444,6 @@ namespace AdminWebsite.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
         
         /// <summary>
         ///     Get the conference status.

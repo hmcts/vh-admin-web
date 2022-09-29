@@ -140,7 +140,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             mock.MeetingRoom.JudgeUri = "JudgeUri";
             mock.MeetingRoom.PexipNode = "PexipNode";
 
-
             // Arrange
             _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid))
                 .ReturnsAsync(mock);
@@ -155,14 +154,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearing = (UpdateBookingStatusResponse) ((OkObjectResult) result).Value;
             hearing.Success.Should().Be(true);
         }
-
+        
+        
         [Test]
         public async Task Should_return_ok_status_if_hearing_has_not_valid_room()
         {
-
+            
             ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
             mock.MeetingRoom = new MeetingRoomResponse();
-
+            
+            
 
             // Arrange
             _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
@@ -185,8 +186,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
             mock.MeetingRoom = new MeetingRoomResponse();
-
-
+            
             // Arrange
             _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
@@ -217,12 +217,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             notFoundResult.StatusCode.Should().Be(404);
 
         }
-
+        
+        
         [Test]
         public async Task Should_return_ok_status_after_update_hearing()
         {
-
-
+            
+            
             // Arrange
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()));
 
@@ -237,4 +238,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             hearing.Success.Should().Be(false);
         }
     }
+
 }
+
