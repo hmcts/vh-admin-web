@@ -11,6 +11,7 @@ import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 
 import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { WorkAvailability } from 'src/app/common/model/work-availability';
 
 export const BH_API_BASE_URL = new InjectionToken<string>('BH_API_BASE_URL');
 
@@ -2893,6 +2894,66 @@ export class BHClient {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
+        }
+        return _observableOf<UserProfileResponse>(<any>null);
+    }
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+     uploadWorkHours(body: WorkAvailability[] | null | undefined): Observable<UserProfileResponse> {
+        let url_ = this.baseUrl + "/api/workhours";
+        url_ = url_.replace(/[?&]$/, "");
+
+         const content_ = JSON.stringify(body);
+         console.log('Arif', content_);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUploadWorkHours(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUploadWorkHours(<any>response_);
+                } catch (e) {
+                    return <Observable<UserProfileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserProfileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUploadWorkHours(response: HttpResponseBase): Observable<UserProfileResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserProfileResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
         }
         return _observableOf<UserProfileResponse>(<any>null);
     }
