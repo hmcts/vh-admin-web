@@ -13,8 +13,7 @@ describe('WorkAllocationComponent', () => {
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    const bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
-    bHClientSpy.uploadWorkHours.and.returnValue(of([]));
+    let bHClientSpy: jasmine.SpyObj<BHClient>
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
@@ -23,6 +22,9 @@ describe('WorkAllocationComponent', () => {
     );
 
     beforeEach(() => {
+        bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
+        bHClientSpy.uploadWorkHours.and.returnValue(of([]));
+
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
             declarations: [WorkAllocationComponent],
@@ -121,8 +123,8 @@ Allocate hearings`);
                     const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
                         ' Team working hours upload partially successfully. Below CTSC support officer(s) could ' +
-                            'not be found: first.second@xyz.comPlease check that these user names have been entered correctly. ' +
-                            'If the problem persists, please raise a ticket in ServiceNow.'
+                            'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
+                            'If the problem persists, please raise a ticket in ServiceNow. '
                     );
                     done();
                 });
@@ -141,9 +143,9 @@ Allocate hearings`);
                 bHClientSpy.uploadWorkHours().subscribe(() => {
                     const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
-                        ' Team working hours not uploaded. No users found.' +
+                        ' Team working hours not uploaded. No users found. ' +
                             'Please check that these user names have been entered correctly. ' +
-                            'If the problem persists, please raise a ticket in ServiceNow.'
+                            'If the problem persists, please raise a ticket in ServiceNow. '
                     );
                     done();
                 });
