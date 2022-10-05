@@ -5,13 +5,13 @@
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-5">
       <div
-        [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileUploadError }"
+        [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileValidationErrors }"
         id="working-hours-file-upload-error"
         class="govuk-grid-row"
       >
-        <div *ngIf="isWorkingHoursFileUploadError">
+        <div *ngIf="isWorkingHoursFileValidationErrors">
           <p
-            *ngFor="let workingHoursFileUploadError of workingHoursFileUploadErrors; index as i"
+            *ngFor="let workingHoursFileUploadError of workingHoursFileValidationErrors; index as i"
             class="govuk-error-message govuk-!-margin-left-3"
           >
             Error: {{ workingHoursFileUploadError }}

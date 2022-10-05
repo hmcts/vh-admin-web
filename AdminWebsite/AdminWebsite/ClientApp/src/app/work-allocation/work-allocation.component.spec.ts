@@ -2,6 +2,7 @@ import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
+import { BHClient } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 
 import { WorkAllocationComponent } from './work-allocation.component';
@@ -11,6 +12,10 @@ describe('WorkAllocationComponent', () => {
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
+    let bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
+    bHClientSpy.uploadWorkHours.and.returnValue(
+        of()
+    );
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
@@ -21,7 +26,10 @@ describe('WorkAllocationComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [WorkAllocationComponent],
-            providers: [{ provide: UserIdentityService, useValue: userIdentityServiceSpy }]
+            providers: [
+                { provide: BHClient, useValue: bHClientSpy },
+                { provide: UserIdentityService, useValue: userIdentityServiceSpy }
+            ]
         }).compileComponents();
     });
 
@@ -53,8 +61,8 @@ Allocate hearings`);
         });
 
         it('should show working hours file upload max size error', () => {
-            component.isWorkingHoursFileUploadError = true;
-            component.workingHoursFileUploadErrors.push('error message');
+            component.isWorkingHoursFileValidationErrors = true;
+            component.workingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
             const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
@@ -149,8 +157,8 @@ Allocate hearings`);
 
             component.handleFileInput(file);
 
-            expect(component.isWorkingHoursFileUploadError).toBe(true);
-            expect(component.workingHoursFileUploadErrors[0]).toBe('File cannot be larger than 200kb');
+            expect(component.isWorkingHoursFileValidationErrors).toBe(true);
+            expect(component.workingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
     });
 
@@ -162,7 +170,7 @@ Allocate hearings`);
             const result = component.isDelimiterValid('0900', rowNumber, entryNumber);
 
             expect(result).toBeFalsy();
-            expect(component.workingHoursFileUploadErrors[0]).toBe(
+            expect(component.workingHoursFileValidationErrors[0]).toBe(
                 `Row ${rowNumber}, Entry ${entryNumber} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`
             );
         });
@@ -174,7 +182,7 @@ Allocate hearings`);
             const result = component.isDelimiterValid('09:00', rowNumber, entryNumber);
 
             expect(result).toBeTruthy();
-            expect(component.workingHoursFileUploadErrors[0]).toBeUndefined();
+            expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
         });
     });
 
@@ -211,27 +219,49 @@ Allocate hearings`);
                 const isError = component.isNonWorkingDayError(testCase.startTime, testCase.endTime);
 
                 expect(isError).toBeTruthy();
-                expect(component.workingHoursFileUploadErrors[0]).toBe(testCase.errorMessage);
+                expect(component.workingHoursFileValidationErrors[0]).toBe(testCase.errorMessage);
             });
         });
 
         it('should add space to passed in error message', () => {
             component.isNonWorkingDayError('', '17:30', 'Location -');
-            expect(component.workingHoursFileUploadErrors[0]).toBe('Location - Start time is blank');
+            expect(component.workingHoursFileValidationErrors[0]).toBe('Location - Start time is blank');
         });
     });
 
     describe('resetErrors', () => {
         it('should reset errors', () => {
-            component.isWorkingHoursFileUploadError = true;
-            component.workingHoursFileUploadErrors.push('error message');
+            component.isWorkingHoursFileValidationErrors = true;
+            component.workingHoursFileValidationErrors.push('error message');
 
             component.resetErrors();
 
-            expect(component.isWorkingHoursFileUploadError).toBe(false);
-            expect(component.workingHoursFileUploadErrors).toEqual([]);
+            expect(component.isWorkingHoursFileValidationErrors).toBe(false);
+            expect(component.workingHoursFileValidationErrors).toEqual([]);
         });
     });
+
+    describe('readWorkAvailability', () => {
+        it('should not call api to upload work hours when validation errors exist', () => {
+            component.readWorkAvailability(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                    ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                    'first.second@xyz.com,900,17:00,09:00,17:30,9:30,18:00,09:00,17:00,09:00,17:00,,,,'
+            );
+
+            expect(bHClientSpy.uploadWorkHours).not.toHaveBeenCalled();
+        });
+
+        it('should call api to upload work hours', () => {
+            component.readWorkAvailability(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                    ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                    'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,09:00,17:00,09:00,17:00,,,,'
+            );
+
+            expect(bHClientSpy.uploadWorkHours).toHaveBeenCalled();
+        });
+      });
 
     describe('uploadWorkingHours', () => {
         it('should reset file upload errors', () => {
@@ -278,20 +308,20 @@ Allocate hearings`);
                 const isValid = component.validateTimeCell(testCase.timeCell, '');
 
                 expect(isValid).toBeFalsy();
-                expect(component.workingHoursFileUploadErrors[0]).toBe(testCase.errorMessage);
+                expect(component.workingHoursFileValidationErrors[0]).toBe(testCase.errorMessage);
             });
         });
 
         it('should add space to passed in error message', () => {
             component.validateTimeCell([NaN, 30], 'Location -');
-            expect(component.workingHoursFileUploadErrors[0]).toBe('Location - Value is not a valid time');
+            expect(component.workingHoursFileValidationErrors[0]).toBe('Location - Value is not a valid time');
         });
 
         it('should return true with no error message', () => {
             const isValid = component.validateTimeCell([9, 30], 'Location -');
 
             expect(isValid).toBeTruthy();
-            expect(component.workingHoursFileUploadErrors[0]).toBeUndefined();
+            expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
         });
     });
 
@@ -316,7 +346,7 @@ Allocate hearings`);
                 );
 
                 expect(isValid).toBeFalsy();
-                expect(component.workingHoursFileUploadErrors[0]).toBe(`End time ${endTime} is before start time ${startTime}`);
+                expect(component.workingHoursFileValidationErrors[0]).toBe(`End time ${endTime} is before start time ${startTime}`);
             });
         });
 
@@ -325,14 +355,14 @@ Allocate hearings`);
             const endTime = '9:00';
 
             component.validateStartTimeBeforeEndTime(11, 0, 9, 0, 'Location -');
-            expect(component.workingHoursFileUploadErrors[0]).toBe(`Location - End time ${endTime} is before start time ${startTime}`);
+            expect(component.workingHoursFileValidationErrors[0]).toBe(`Location - End time ${endTime} is before start time ${startTime}`);
         });
 
         it('should return true with no error message', () => {
             const isValid = component.validateStartTimeBeforeEndTime(9, 0, 17, 0, 'Location -');
 
             expect(isValid).toBeTruthy();
-            expect(component.workingHoursFileUploadErrors[0]).toBeUndefined();
+            expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
         });
     });
 });
