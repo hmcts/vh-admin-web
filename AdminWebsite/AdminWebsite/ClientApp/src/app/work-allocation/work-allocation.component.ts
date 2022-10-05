@@ -12,13 +12,17 @@ import { convertToNumberArray } from '../common/helpers/array-helper';
 })
 export class WorkAllocationComponent {
     public isWorkingHoursFileValidationErrors = false;
+    public isWorkingHoursUploadComplete = false;
     public isVhTeamLeader = false;
+
+    public numberOfUsernamesToUploadWorkHours = 0;
 
     public workingHoursFileUploadUsernameErrors: string[] = [];
     public workingHoursFileValidationErrors: string[] = [];
 
     public workingHoursFile: File | null = null;
 
+    private csvDelimiter = ',';
     private timeDelimiter = ':';
     private earliestStartHour = 8;
     private latestEndHour = 18;
@@ -114,7 +118,7 @@ export class WorkAllocationComponent {
     }
 
     readWorkAvailability(text: string): any {
-        const delimiter = ',';
+        this.isWorkingHoursUploadComplete = false;
 
         const userWorkAvailabilityRows = text.split('\n');
         // Remove headings rows
@@ -122,8 +126,10 @@ export class WorkAllocationComponent {
 
         const workAvailabilities: WorkAvailability[] = [];
 
+        this.numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
+
         userWorkAvailabilityRows.forEach((row, index) => {
-            const values = row.split(delimiter);
+            const values = row.split(this.csvDelimiter);
 
             const workAvailability = new WorkAvailability();
             workAvailability.username = values[0];
@@ -173,14 +179,16 @@ export class WorkAllocationComponent {
 
             workAvailability.working_hours = workingHours;
             workAvailabilities.push(workAvailability);
-
         });
-console.log(this.isWorkingHoursFileValidationErrors)
+
         if (this.isWorkingHoursFileValidationErrors) {
             return;
         }
 
-        this.bhClient.uploadWorkHours(workAvailabilities).subscribe();
+        this.bhClient.uploadWorkHours(workAvailabilities).subscribe(result => {
+            this.isWorkingHoursUploadComplete = true;
+            this.workingHoursFileUploadUsernameErrors = result;
+        });
     }
 
     uploadWorkingHours() {

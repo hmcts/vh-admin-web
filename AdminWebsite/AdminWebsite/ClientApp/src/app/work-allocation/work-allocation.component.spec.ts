@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
 import { BHClient } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
+import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 
 import { WorkAllocationComponent } from './work-allocation.component';
 
@@ -12,10 +13,8 @@ describe('WorkAllocationComponent', () => {
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    let bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
-    bHClientSpy.uploadWorkHours.and.returnValue(
-        of()
-    );
+    const bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
+    bHClientSpy.uploadWorkHours.and.returnValue(of([]));
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
@@ -25,6 +24,7 @@ describe('WorkAllocationComponent', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
+            imports: [FontAwesomeTestingModule],
             declarations: [WorkAllocationComponent],
             providers: [
                 { provide: BHClient, useValue: bHClientSpy },
@@ -87,6 +87,67 @@ Allocate hearings`);
                     '  Error: Row 3, Entry 9 - Minutes value (-1) is not within 0-59' +
                     '  Error: Row 3, Entry 10-11 - End time is blank'
             );
+        });
+
+        describe('upload file result', () => {
+            it('should show success result', done => {
+                component.readWorkAvailability(
+                    'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                        ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                        'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                        'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadWorkHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(' Team working hours uploaded successfully');
+                    done();
+                });
+            });
+
+            it('should show partial success result', done => {
+                bHClientSpy.uploadWorkHours.and.returnValue(of(['first.second@xyz.com']));
+
+                component.readWorkAvailability(
+                    'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                        ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                        'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                        'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadWorkHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(
+                        ' Team working hours upload partially successfully. Below CTSC support officer(s) could ' +
+                            'not be found: first.second@xyz.comPlease check that these user names have been entered correctly. ' +
+                            'If the problem persists, please raise a ticket in ServiceNow.'
+                    );
+                    done();
+                });
+            });
+
+            it('should show failure result', done => {
+                bHClientSpy.uploadWorkHours.and.returnValue(of(['first.second@xyz.com', 'first.second.2@xyz.com']));
+                component.readWorkAvailability(
+                    'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                        ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                        'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                        'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadWorkHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(
+                        ' Team working hours not uploaded. No users found.' +
+                            'Please check that these user names have been entered correctly. ' +
+                            'If the problem persists, please raise a ticket in ServiceNow.'
+                    );
+                    done();
+                });
+            });
         });
     });
 
@@ -261,7 +322,7 @@ Allocate hearings`);
 
             expect(bHClientSpy.uploadWorkHours).toHaveBeenCalled();
         });
-      });
+    });
 
     describe('uploadWorkingHours', () => {
         it('should reset file upload errors', () => {
