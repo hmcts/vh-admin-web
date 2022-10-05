@@ -25,7 +25,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _failedUsernames = new List<string> { "failedusername@test.com" };
 
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
-            _bookingsApiClientMock.Setup(x => x.SaveWorkAllocationsAsync(It.IsAny<List<UploadWorkAllocationRequest>>()))
+            _bookingsApiClientMock.Setup(x => x.SaveWorkHoursAsync(It.IsAny<List<UploadWorkHoursRequest>>()))
                 .ReturnsAsync(_failedUsernames);
                 
 
@@ -36,13 +36,13 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_call_api_and_return_failed_usernames()
         {
             // Arrange
-            var request = new List<UploadWorkAllocationRequest>();
+            var request = new List<UploadWorkHoursRequest>();
 
             // Act
             var response = (await _controller.UploadWorkHours(request)) as OkObjectResult;
 
             // Assert
-            _bookingsApiClientMock.Verify(x => x.SaveWorkAllocationsAsync(request), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.SaveWorkHoursAsync(request), Times.Once);
             Assert.AreEqual(_failedUsernames, response.Value);
         }
     }

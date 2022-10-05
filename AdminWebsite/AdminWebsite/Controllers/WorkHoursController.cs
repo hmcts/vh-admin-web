@@ -25,9 +25,9 @@ namespace AdminWebsite.Controllers
         [AllowAnonymous]
         [SwaggerOperation(OperationId = "UploadWorkHours")]
         [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkAllocationRequest> request)
+        public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
         {
-            var failedUsernames = await _bookingsApiClient.SaveWorkAllocationsAsync(request);
+            var failedUsernames = await _bookingsApiClient.SaveWorkHoursAsync(request);
 
             return Ok(failedUsernames);
         }
