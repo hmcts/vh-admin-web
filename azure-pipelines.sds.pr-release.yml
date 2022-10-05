@@ -41,6 +41,8 @@ stages:
 
       - job: UnitTests
         displayName: "Unit Tests"
+        pool: 
+          vmimage: windows-latest
         steps:
           - checkout: self
 
