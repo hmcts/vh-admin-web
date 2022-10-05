@@ -13,7 +13,7 @@ describe('WorkAllocationComponent', () => {
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    let bHClientSpy: jasmine.SpyObj<BHClient>
+    let bHClientSpy: jasmine.SpyObj<BHClient>;
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
