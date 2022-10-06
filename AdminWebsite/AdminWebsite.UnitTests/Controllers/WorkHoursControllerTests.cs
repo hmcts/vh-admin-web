@@ -22,7 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [SetUp]
         public void Setup()
         {
-            _failedUsernames = new List<string> { "failedusername@test.com" };
+            _failedUsernames = new List<string>();
 
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.SaveWorkHoursAsync(It.IsAny<List<UploadWorkHoursRequest>>()))
@@ -37,6 +37,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             // Arrange
             var request = new List<UploadWorkHoursRequest>();
+            _failedUsernames.Add("failedusername@test.com");
 
             // Act
             var response = (await _controller.UploadWorkHours(request)) as OkObjectResult;
