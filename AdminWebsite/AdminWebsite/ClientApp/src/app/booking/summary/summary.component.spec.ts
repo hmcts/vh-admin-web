@@ -17,7 +17,12 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse } from '../../services/clients/api-client';
+import {
+    BookHearingException,
+    BookingStatus,
+    HearingDetailsResponse,
+    UpdateBookingStatusResponse
+} from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -29,6 +34,7 @@ import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { HttpTestingController } from '@angular/common/http/testing';
+import {Exception} from "@microsoft/applicationinsights-web";
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -413,6 +419,19 @@ describe('SummaryComponent with valid request', () => {
     });
 
     it('should set error when booking new hearing request fails', fakeAsync(async () => {
+        videoHearingsServiceSpy.getStatus.calls.reset();
+        videoHearingsServiceSpy.saveHearing.and.throwError('BadRequest');
+        await component.bookHearing().then(() =>{
+            expect(component.errors).toBeDefined();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(0);
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        });
+    }));
+
+
+    it('When booking status false will re-poll', fakeAsync(async () => {
+        videoHearingsServiceSpy.getStatus.calls.reset();
         const response = {
             id: 'hearing_id',
             status: BookingStatus.Failed,
@@ -420,14 +439,16 @@ describe('SummaryComponent with valid request', () => {
         } as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
-        await component.bookHearing();
-        tick();
 
-        expect(component.errors).toBeDefined();
-        expect(component.showWaitSaving).toBeFalsy();
-        expect(component.hearing.hearing_id).toEqual('hearing_id');
-        expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(0);
-        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve({ success: false } as UpdateBookingStatusResponse));
+
+        await component.bookHearing().then(() =>{
+            tick(50000);
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledWith(response.id)
+            expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(11);
+        });
+
     }));
 
     it('should be able to edit when conference is not about to start and is open', () => {

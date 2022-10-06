@@ -82,29 +82,22 @@ namespace AdminWebsite.Controllers
                     var endpointsWithDa = newBookingRequest.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateContactEmail))
                         .ToList();
-                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa,
-                        newBookingRequest.Participants.AsReadOnly());
+                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, newBookingRequest.Participants.AsReadOnly());
                 }
 
                 newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
                 _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
-                _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}",
-                    hearingDetailsResponse.Id);
+                _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                if (hearingDetailsResponse.Status == BookingStatus.Failed)
-                {
-                    return Created("", hearingDetailsResponse);
-                }
-                
-                return Created("", hearingDetailsResponse);
+                return Created("",hearingDetailsResponse);
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e,
-                    "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
+                _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) 
+                    return BadRequest(e.Response);
                 throw;
             }
             catch (Exception e)

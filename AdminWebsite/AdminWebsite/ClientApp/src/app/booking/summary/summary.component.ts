@@ -55,12 +55,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
     bookinConfirmed = false;
     endpoints: EndpointModel[] = [];
     switchOffRecording = false;
-    hearingDetailsResponseMulti: HearingDetailsResponse;
     multiDays: boolean;
     endHearingDate: Date;
     interpreterPresent: boolean;
 
-    groupedHearingDates = {};
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -246,14 +244,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
-                if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
-                    this.hearing.hearing_id = hearingDetailsResponse.id;
-                    this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
-                    return;
-                }
-
-                const source = timer(0, 5000);
-                const schedule = source.subscribe(async counter => {
+                //Poll Video-Api for booking confirmation
+                const schedule = timer(0, 5000).subscribe(async counter => {
                     const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
                     if (hearingStatusResponse?.success || counter === 10) {
                         schedule.unsubscribe();
@@ -264,7 +256,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
                             hearingId: hearingDetailsResponse.id
                         });
-                        this.router.navigate([PageUrls.BookingConfirmation]);
+                        await this.router.navigate([PageUrls.BookingConfirmation]);
                     }
                 });
             } catch (error) {
