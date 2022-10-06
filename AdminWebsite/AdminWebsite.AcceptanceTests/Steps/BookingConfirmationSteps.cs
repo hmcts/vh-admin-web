@@ -40,7 +40,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user views the booking confirmation form")]
         public void VerifyBookingWasSuccessful()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.SuccessMessage).Displayed.Should().BeTrue();
+            const int timeout = 60;
+            
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.SuccessMessage, timeout).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Driver.WaitForPageToLoad();
             _browsers[_c.CurrentUser].TextOf(BookingConfirmationPage.CaseNumber).Should().Contain(_c.Test.HearingDetails.CaseNumber);
             _browsers[_c.CurrentUser].TextOf(BookingConfirmationPage.CaseName).Should().Contain(_c.Test.HearingDetails.CaseName);
