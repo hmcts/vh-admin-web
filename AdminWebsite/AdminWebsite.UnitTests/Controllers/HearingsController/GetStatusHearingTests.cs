@@ -159,9 +159,29 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var notFoundResult = (OkObjectResult)result;
             notFoundResult.StatusCode.Should().Be(200);
             ((UpdateBookingStatusResponse) notFoundResult.Value)?.Success.Should().BeFalse();
-
         }
         
+        [Test]
+        public async Task Should_return_BadRequest_if_hearing_has_not_be_found()
+        {
+            
+            ConferenceDetailsResponse conferenceResponse = new ConferenceDetailsResponse();
+            conferenceResponse.MeetingRoom = new MeetingRoomResponse();
+            
+            
+            // Arrange
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .Throws(new VideoApiException("Error", 400, null, null, null));
+
+            // Act
+            var result = await _controller.GetHearingConferenceStatus(_guid);
+            
+            // Assert
+            var notFoundResult = (BadRequestObjectResult)result;
+            notFoundResult.StatusCode.Should().Be(400);
+        } 
+
         [Test]
         public async Task Should_return_not_found_if_hearing_failed_to_update()
         {
@@ -177,6 +197,23 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
             var notFoundResult = (NotFoundResult)result;
             notFoundResult.StatusCode.Should().Be(404);
+        }
+        
+        [Test]
+        public async Task Should_return_badRequest_if_hearing_failed_to_update()
+        {
+            // Arrange
+            _mocker.Mock<IHearingsService>()
+                .Setup(x => x.UpdateFailedBookingStatus(_guid))
+                .ThrowsAsync(new VideoApiException("Error", 400, null, null, null));
+            
+            // Act
+            var result = await _controller.UpdateHearingStatus(_guid);
+            
+            // Assert
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
+            var notFoundResult = (BadRequestObjectResult)result;
+            notFoundResult.StatusCode.Should().Be(400);
         }
         
         [Test]

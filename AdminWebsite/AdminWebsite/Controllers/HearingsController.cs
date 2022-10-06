@@ -465,9 +465,7 @@ namespace AdminWebsite.Controllers
                 var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
 
                 _logger.LogInformation($"Found conference for hearing {hearingId}");
-
-                if (conferenceDetailsResponse != null)
-                {
+                
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         return Ok(new UpdateBookingStatusResponse
@@ -476,19 +474,17 @@ namespace AdminWebsite.Controllers
                             TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                         });
                     }
-                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
-                }
+                    
                 _logger.LogError("Could not find hearing {Hearing}. Updating status to failed", hearingId);
                 return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
             }
             catch (VideoApiException e)
             {                                
                 _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
-                    hearingId);
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                     return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
                 
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed", hearingId);  
                 return BadRequest(e.Response);
             }
         }
