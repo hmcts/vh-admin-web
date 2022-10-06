@@ -22,7 +22,6 @@ namespace AdminWebsite.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [SwaggerOperation(OperationId = "UploadWorkHours")]
         [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
