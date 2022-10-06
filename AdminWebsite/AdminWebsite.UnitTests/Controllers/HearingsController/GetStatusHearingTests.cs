@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
-using Autofac.Extras.Moq;
 using BookingsApi.Contract.Configuration;
 using BookingsApi.Contract.Requests;
 using VideoApi.Client;
@@ -23,7 +22,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class GetStatusHearingTests
     {
-        private AutoMock _mocker;
         private AdminWebsite.Controllers.HearingsController _controller;
         
         private HearingDetailsResponse _vhExistingHearing;
@@ -31,7 +29,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
-        private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private IHearingsService _hearingsService;
         private Mock<IConferenceDetailsService> _conferencesServiceMock;
@@ -44,36 +41,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _logger = new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>();
-            _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
-                .ReturnsAsync(new ConferenceDetailsResponse
-                {
-                    MeetingRoom = new MeetingRoomResponse
-                    {
-                        AdminUri = "AdminUri",
-                        JudgeUri = "JudgeUri",
-                        ParticipantUri = "ParticipantUri",
-                        PexipNode = "PexipNode",
-                        PexipSelfTestNode = "PexipSelfTestNode",
-                        TelephoneConferenceId = "expected_conference_phone_id"
-                    }
-                });
-            
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
             _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
-            
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _editHearingRequestValidator.Object,
                 _logger.Object,
                 _hearingsService,
                 _conferencesServiceMock.Object);
-
+            
             Initialise();
         }
         
@@ -125,7 +105,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 UpdatedDate = DateTime.UtcNow
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+            _bookingsApiClient
+                .Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhExistingHearing);
         }
 
@@ -142,7 +123,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid))
+            _conferencesServiceMock
+                .Setup(x => x.GetConferenceDetailsByHearingId(_guid))
                 .ReturnsAsync(mock);
 
             // Act
@@ -160,13 +142,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_ok_status_if_hearing_has_not_valid_room()
         {
             
-            ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
-            mock.MeetingRoom = new MeetingRoomResponse();
+            ConferenceDetailsResponse conferenceResponse = new ConferenceDetailsResponse();
+            conferenceResponse.MeetingRoom = new MeetingRoomResponse();
             
             
             // Arrange
-            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
-                .ReturnsAsync(mock);
+            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .ReturnsAsync(conferenceResponse);
 
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
@@ -183,12 +165,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_not_found_if_hearing_has_not_be_found()
         {
             
-            ConferenceDetailsResponse mock = new ConferenceDetailsResponse();
-            mock.MeetingRoom = new MeetingRoomResponse();
+            ConferenceDetailsResponse conferenceResponse = new ConferenceDetailsResponse();
+            conferenceResponse.MeetingRoom = new MeetingRoomResponse();
             
             
             // Arrange
-            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
 
             // Act
@@ -211,7 +193,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             // Act
             var result = await _controller.UpdateHearingStatus(_guid);
-            
+
             // Assert
             var notFoundResult = (NotFoundResult)result;
             notFoundResult.StatusCode.Should().Be(404);
@@ -224,7 +206,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()));
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()));
 
             // Act
             var result = await _controller.UpdateHearingStatus(_guid);
