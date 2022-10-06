@@ -1,4 +1,5 @@
-﻿using BookingsApi.Client;
+﻿using AdminWebsite.Models;
+using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,15 @@ namespace AdminWebsite.Controllers
 
         [HttpPost]
         [SwaggerOperation(OperationId = "UploadWorkHours")]
-        [ProducesResponseType(typeof(List<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UploadWorkHoursResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
         {
             var failedUsernames = await _bookingsApiClient.SaveWorkHoursAsync(request);
 
-            return Ok(failedUsernames);
+            var uploadWorkHoursResponse = new UploadWorkHoursResponse();
+            uploadWorkHoursResponse.FailedUsernames.AddRange(failedUsernames);
+
+            return Ok(uploadWorkHoursResponse);
         }
     }
 }

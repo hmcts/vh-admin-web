@@ -1,4 +1,5 @@
 using AdminWebsite.Controllers;
+using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             // Assert
             _bookingsApiClientMock.Verify(x => x.SaveWorkHoursAsync(request), Times.Once);
-            Assert.AreEqual(_failedUsernames, response.Value);
+            Assert.AreEqual(_failedUsernames, (response.Value as UploadWorkHoursResponse).FailedUsernames);
         }
     }
 }

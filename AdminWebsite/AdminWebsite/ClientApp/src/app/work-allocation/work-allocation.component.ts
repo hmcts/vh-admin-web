@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DayWorkingHours } from '../common/model/day-working-hours';
 import { WorkAvailability } from '../common/model/work-availability';
-import { BHClient, UserProfileResponse } from '../services/clients/api-client';
+import { BHClient, UploadWorkHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 
@@ -124,20 +124,20 @@ export class WorkAllocationComponent {
         // Remove headings rows
         userWorkAvailabilityRows.splice(0, 2);
 
-        const workAvailabilities: WorkAvailability[] = [];
+        const workAvailabilities: UploadWorkHoursRequest[] = [];
 
         this.numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
 
         userWorkAvailabilityRows.forEach((row, index) => {
             const values = row.split(this.csvDelimiter);
 
-            const workAvailability = new WorkAvailability();
+            const workAvailability = new UploadWorkHoursRequest();
             workAvailability.username = values[0];
 
-            const workingHours: DayWorkingHours[] = [];
+            const workingHours: WorkingHours[] = [];
 
             let dayOfWeekId = 0;
-            let dayWorkingHours: DayWorkingHours;
+            let dayWorkingHours: WorkingHours;
 
             for (let i = 1; i < values.length; i += 2) {
                 dayOfWeekId++;
@@ -151,7 +151,8 @@ export class WorkAllocationComponent {
                 }
 
                 if (this.isNonWorkingDay(values[i], values[i + 1])) {
-                    dayWorkingHours = new DayWorkingHours(dayOfWeekId);
+                    dayWorkingHours = new WorkingHours();
+                    dayWorkingHours.day_of_week_id = dayOfWeekId
                     workingHours.push(dayWorkingHours);
                     continue;
                 }
@@ -173,7 +174,13 @@ export class WorkAllocationComponent {
                     this.isWorkingHoursFileValidationErrors = !areDayWorkingHoursValid;
                 }
 
-                dayWorkingHours = new DayWorkingHours(dayOfWeekId, startTimeArray[0], startTimeArray[1], endTimeArray[0], endTimeArray[1]);
+                dayWorkingHours = {
+                    day_of_week_id: dayOfWeekId,
+                    start_time_hour: startTimeArray[0],
+                    start_time_minutes: startTimeArray[1],
+                    end_time_hour: endTimeArray[0],
+                    end_time_minutes: endTimeArray[1]
+                } as WorkingHours;
                 workingHours.push(dayWorkingHours);
             }
 
@@ -187,7 +194,7 @@ export class WorkAllocationComponent {
 
         this.bhClient.uploadWorkHours(workAvailabilities).subscribe(result => {
             this.isWorkingHoursUploadComplete = true;
-            this.workingHoursFileUploadUsernameErrors = result;
+            this.workingHoursFileUploadUsernameErrors = result.failed_usernames;
         });
     }
 

@@ -23,7 +23,7 @@ describe('WorkAllocationComponent', () => {
 
     beforeEach(() => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
-        bHClientSpy.uploadWorkHours.and.returnValue(of([]));
+        bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
 
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
@@ -109,7 +109,7 @@ Allocate hearings`);
             });
 
             it('should show partial success result', done => {
-                bHClientSpy.uploadWorkHours.and.returnValue(of(['first.second@xyz.com']));
+                bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: ['first.second@xyz.com'] }));
 
                 component.readWorkAvailability(
                     'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
@@ -131,7 +131,7 @@ Allocate hearings`);
             });
 
             it('should show failure result', done => {
-                bHClientSpy.uploadWorkHours.and.returnValue(of(['first.second@xyz.com', 'first.second.2@xyz.com']));
+                bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: ['first.second@xyz.com', 'first.second.2@xyz.com'] }));
                 component.readWorkAvailability(
                     'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
                         ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
