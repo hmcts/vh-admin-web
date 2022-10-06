@@ -59,7 +59,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     endHearingDate: Date;
     interpreterPresent: boolean;
 
-
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
     showConfirmRemoveInterpretee = false;
@@ -244,7 +243,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
-                //Poll Video-Api for booking confirmation
+                // Poll Video-Api for booking confirmation
                 const schedule = timer(0, 5000).subscribe(async counter => {
                     const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
                     if (hearingStatusResponse?.success || counter === 10) {
