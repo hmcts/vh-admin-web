@@ -34,9 +34,9 @@
       },
       "coverlet.msbuild": {
         "type": "Direct",
-        "requested": "[3.0.2, )",
-        "resolved": "3.0.2",
-        "contentHash": "chWBtSiXjjjQDOpnSl6Qld7jaUrGg+raxyCUaGKOab5Mc5TyQmCGYgU1CwWx6Zcb9KdRuAz/5r4hmqMmyhvFfw=="
+        "requested": "[3.1.2, )",
+        "resolved": "3.1.2",
+        "contentHash": "QhM0fnDtmIMImY7oxyQ/kh1VYtRxPyRVeLwRUGuUvI6Xp83pSYG9gerK8WgJj4TzUl7ISziADUGtIWKhtlbkbQ=="
       },
       "FluentAssertions": {
         "type": "Direct",
@@ -104,9 +104,9 @@
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[8.18.0.27296, )",
-        "resolved": "8.18.0.27296",
-        "contentHash": "GoHb0jtrazBEzinjD/IV4zcMVSLMcVYA9UwZiJULyUxtRTFt/g9uduzpoGbAvpgjE3/fLf2KC2Tf6JjhHhkeKg=="
+        "requested": "[8.46.0.54807, )",
+        "resolved": "8.46.0.54807",
+        "contentHash": "fBPVe0f83VEzabzplC6aXdyht99ZJAEfD+NZzSPZ38oDkh7JoJVzAK+lJ8U8Lyfgw+F6qfdB0IOrgHvWDUa5gQ=="
       },
       "VideoApi.Client": {
         "type": "Direct",
