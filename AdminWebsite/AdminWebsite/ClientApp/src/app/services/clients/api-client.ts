@@ -11,7 +11,6 @@ import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 
 import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
-import { WorkAvailability } from 'src/app/common/model/work-availability';
 
 export const BH_API_BASE_URL = new InjectionToken<string>('BH_API_BASE_URL');
 

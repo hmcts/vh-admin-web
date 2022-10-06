@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { DayWorkingHours } from '../common/model/day-working-hours';
-import { WorkAvailability } from '../common/model/work-availability';
 import { BHClient, UploadWorkHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
