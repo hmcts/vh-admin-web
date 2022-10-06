@@ -178,8 +178,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.GetHearingConferenceStatus(_guid);
             
             // Assert
-            var notFoundResult = (BadRequestObjectResult)result;
-            notFoundResult.StatusCode.Should().Be(400);
+            var badRequest = (BadRequestObjectResult)result;
+            badRequest.StatusCode.Should().Be(400);
         } 
 
         [Test]

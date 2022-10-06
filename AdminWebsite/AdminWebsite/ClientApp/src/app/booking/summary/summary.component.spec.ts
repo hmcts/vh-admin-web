@@ -167,6 +167,15 @@ describe('SummaryComponent with valid request', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
+
+
+    it('Call ProcessBooking when hearingStatusResponse has failed', async () => {
+        //arrange
+        const hearingStatusResponse = {"success": false};
+        await component.processBooking(jasmine.any(HearingDetailsResponse), hearingStatusResponse)
+        expect(videoHearingsServiceSpy.updateFailedStatus).toHaveBeenCalled();
+    })
+
     it('should get booking data from storage', () => {
         component.ngOnInit();
         fixture.detectChanges();
