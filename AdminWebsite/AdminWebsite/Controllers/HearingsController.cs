@@ -435,7 +435,7 @@ namespace AdminWebsite.Controllers
                 if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                 {
                     // Set the booking status to failed as the video api failed
-                    await UpdateFailedBookingStatus(hearingId);
+                    await _hearingsService.UpdateFailedBookingStatus(hearingId);
 
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
@@ -466,35 +466,24 @@ namespace AdminWebsite.Controllers
                         TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                     });
                 }
-                else
-                {
-                    await UpdateFailedBookingStatus(hearingId);
-                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                }
+                //If not a success
+                await _hearingsService.UpdateFailedBookingStatus(hearingId);
+                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                
             }
             catch (VideoApiException ex)
             {
                 _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
-                hearingId);
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed", hearingId);
 
                 // Set the booking status to failed as the video api failed
-                await UpdateFailedBookingStatus(hearingId);
+                await _hearingsService.UpdateFailedBookingStatus(hearingId);
 
                 return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
             }
         }
 
-        private async Task UpdateFailedBookingStatus(Guid hearingId)
-        {
-            await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                    new UpdateBookingStatusRequest
-                    {
-                        Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                        UpdatedBy = "System",
-                        CancelReason = string.Empty
-                    });
-        }
+
 
         /// <summary>
         ///     Gets for confirmed booking the telephone conference Id by hearing Id.

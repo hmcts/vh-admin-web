@@ -40,6 +40,7 @@ namespace AdminWebsite.Services
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
         (string email, string phone) GetJudgeInformationForUpdate(string otherInformation);
+        Task UpdateFailedBookingStatus(Guid hearingId);
     }
 
     public class HearingsService : IHearingsService
@@ -218,7 +219,17 @@ namespace AdminWebsite.Services
                 }
             }
         }
-
+        public async Task UpdateFailedBookingStatus(Guid hearingId)
+        {
+            await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
+                new UpdateBookingStatusRequest
+                {
+                    Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                    UpdatedBy = "System",
+                    CancelReason = string.Empty
+                });
+        }
+        
         private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing,
             IEnumerable<EndpointResponse> listOfEndpointsToDelete)
         {
