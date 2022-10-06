@@ -1,20 +1,16 @@
 ﻿using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 
@@ -26,34 +22,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         
         private HearingDetailsResponse _vhExistingHearing;
         private Guid _guid;
-
-        private Mock<IBookingsApiClient> _bookingsApiClient;
-        private Mock<IUserIdentity> _userIdentity;
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
-        private IHearingsService _hearingsService;
-        private Mock<IConferenceDetailsService> _conferencesServiceMock;
-        private Mock<ILogger<HearingsService>> _participantGroupLogger;
-
-        private Mock<ILogger<AdminWebsite.Controllers.HearingsController>> _logger;
         
+        private AutoMock _mocker;
+
         [SetUp]
         public void Setup()
         {
-            _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _userIdentity = new Mock<IUserIdentity>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
-            _logger = new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>();
-            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
-            _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
-                _userIdentity.Object,
-                _editHearingRequestValidator.Object,
-                _logger.Object,
-                _hearingsService,
-                _conferencesServiceMock.Object);
             
+            _mocker = AutoMock.GetLoose();
+            _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
             Initialise();
         }
         
@@ -75,22 +52,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 OtherInformation = "Any other information about the hearing",
-                Participants = new List<ParticipantResponse>()
+                Participants = new List<ParticipantResponse>
                 {
-                    new ParticipantResponse()
+                    new()
                     {
                         CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net", DisplayName = "Judge Lumb",
                         FirstName = "Judge", HearingRoleName = "Judge", LastName = "Lumb", MiddleNames = string.Empty,
                         TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hmcts.net"
                     },
-                    new ParticipantResponse()
+                    new()
                     {
                         CaseRoleName = "Applicant", ContactEmail = "test.applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hmcts.net"
                     },
-                    new ParticipantResponse()
+                    new()
                     {
                         CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
@@ -105,7 +82,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 UpdatedDate = DateTime.UtcNow
             };
 
-            _bookingsApiClient
+            _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhExistingHearing);
         }
@@ -123,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _conferencesServiceMock
+            _mocker.Mock<IConferenceDetailsService>()
                 .Setup(x => x.GetConferenceDetailsByHearingId(_guid))
                 .ReturnsAsync(mock);
 
@@ -147,7 +124,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .ReturnsAsync(conferenceResponse);
 
             // Act
@@ -170,7 +148,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             
             // Arrange
-            _conferencesServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
 
             // Act
@@ -179,7 +158,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Assert
             var notFoundResult = (OkObjectResult)result;
             notFoundResult.StatusCode.Should().Be(200);
-            ((UpdateBookingStatusResponse) notFoundResult.Value).Success.Should().BeFalse();
+            ((UpdateBookingStatusResponse) notFoundResult.Value)?.Success.Should().BeFalse();
 
         }
         
@@ -187,31 +166,32 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_not_found_if_hearing_failed_to_update()
         {
             // Arrange
-            _bookingsApiClient
-                .Setup(x => x.UpdateBookingStatusAsync(_guid, It.IsAny<UpdateBookingStatusRequest>()))
+            _mocker.Mock<IHearingsService>()
+                .Setup(x => x.UpdateFailedBookingStatus(_guid))
                 .ThrowsAsync(new VideoApiException("Error", 404, null, null, null));
-
+            
             // Act
             var result = await _controller.UpdateHearingStatus(_guid);
-
+            
             // Assert
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
             var notFoundResult = (NotFoundResult)result;
             notFoundResult.StatusCode.Should().Be(404);
-            
         }
         
         [Test]
         public async Task Should_return_ok_status_after_update_hearing()
         {
-            
-            
             // Arrange
-            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()));
-
             // Act
             var result = await _controller.UpdateHearingStatus(_guid);
             
             // Assert
+            
+            _mocker.Mock<IHearingsService>().Verify(
+                x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()),
+                Times.Exactly(1));
+
             var okRequestResult = (OkObjectResult) result;
             okRequestResult.StatusCode.Should().Be(200);
 

@@ -430,7 +430,7 @@ namespace AdminWebsite.Controllers
                 if (updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                 {
                     // Set the booking status to failed as the video api failed
-                    await UpdateFailedBookingStatus(hearingId);
+                    await _hearingsService.UpdateFailedBookingStatus(hearingId);
 
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
                 }
@@ -457,18 +457,15 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetHearingConferenceStatus(Guid hearingId)
         {
-            var errorMessage =
-                $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+            var errorMessage = $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
             try
             {
-#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogDebug($"Hearing {hearingId} is confirmed. Polling for Conference in VideoApi");
-#pragma warning restore CA2254 // Template should be a static expression
-                var conferenceDetailsResponse =
-                    await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
-#pragma warning disable CA2254 // Template should be a static expression
+
+                var conferenceDetailsResponse = await _conferenceDetailsService.GetConferenceDetailsByHearingId(hearingId);
+
                 _logger.LogInformation($"Found conference for hearing {hearingId}");
-#pragma warning restore CA2254 // Template should be a static expression
+
                 if (conferenceDetailsResponse != null)
                 {
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
@@ -479,26 +476,20 @@ namespace AdminWebsite.Controllers
                             TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                         });
                     }
-                    else
-                    {
-                        return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
-                    }
-                }
-                else
-                {
-                    _logger.LogError("Could not find hearing {Hearing}. Updating status to failed",
-                        hearingId);
                     return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
                 }
+                _logger.LogError("Could not find hearing {Hearing}. Updating status to failed", hearingId);
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
             }
             catch (VideoApiException e)
-            {
+            {                                
                 _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
                     hearingId);
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                    return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
                 
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
-
+                return BadRequest(e.Response);
             }
         }
 
@@ -517,15 +508,12 @@ namespace AdminWebsite.Controllers
             var errorMessage = $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
             {
-                await UpdateFailedBookingStatus(hearingId);
+                await _hearingsService.UpdateFailedBookingStatus(hearingId);
                 return Ok(new UpdateBookingStatusResponse {Success = false, Message = $"Status updated for hearing: {hearingId}"});
             }
             catch (VideoApiException e)
             {
-#pragma warning disable CA2254 // Template should be a static expression
                 _logger.LogError(e, errorMessage);
-#pragma warning restore CA2254 // Template should be a static expression
-                
                 if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
@@ -549,35 +537,24 @@ namespace AdminWebsite.Controllers
                         TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
                     });
                 }
-                else
-                {
-                    await UpdateFailedBookingStatus(hearingId);
-                    return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                }
+                //If not a success
+                await _hearingsService.UpdateFailedBookingStatus(hearingId);
+                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                
             }
             catch (VideoApiException ex)
             {
                 _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
-                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
-                hearingId);
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed", hearingId);
 
                 // Set the booking status to failed as the video api failed
-                await UpdateFailedBookingStatus(hearingId);
+                await _hearingsService.UpdateFailedBookingStatus(hearingId);
 
                 return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
             }
         }
 
-        private async Task UpdateFailedBookingStatus(Guid hearingId)
-        {
-            await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                    new UpdateBookingStatusRequest
-                    {
-                        Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
-                        UpdatedBy = "System",
-                        CancelReason = string.Empty
-                    });
-        }
+
 
         /// <summary>
         ///     Gets for confirmed booking the telephone conference Id by hearing Id.

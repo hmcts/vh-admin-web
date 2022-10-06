@@ -267,8 +267,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_update_booking_status()
         {
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+            _mocker.Mock<IHearingsService>()
+                .Setup(x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()))
                 .Verifiable();
 
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest{Status = UpdateBookingStatus.Created});
@@ -277,7 +277,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()),
-                Times.Exactly(2));
+                Times.Exactly(1));
+            
+            _mocker.Mock<IHearingsService>().Verify(
+                x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()),
+                Times.Exactly(1));
         }
         
         [Test]
