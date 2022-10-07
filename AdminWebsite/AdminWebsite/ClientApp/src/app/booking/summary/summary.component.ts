@@ -250,15 +250,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         if (hearingStatusResponse?.success || counter === 10) {
                             schedule.unsubscribe();
                             await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
-                            sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                            this.hearingService.cancelRequest();
-                            this.showWaitSaving = false;
-                            this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
-                                hearingId: hearingDetailsResponse.id
-                            });
-                            await this.router.navigate([PageUrls.BookingConfirmation]);
                         }
                     });
+                } else {
+                    await this.processMultiHearing(hearingDetailsResponse);
+                    await this.postProcessBooking(hearingDetailsResponse);
                 }
             } catch (error) {
                 this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error, { payload: this.hearing });
@@ -267,56 +263,71 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
 
-    async processBooking(hearingDetailsResponse, hearingStatusResponse): Promise<void> {
-        if (hearingStatusResponse?.success) {
-            if (this.hearing.multiDays) {
-                this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
+    async processMultiHearing(hearingDetailsResponse) {
+        if (this.hearing.multiDays) {
+            this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
+                hearingId: hearingDetailsResponse.id,
+                caseName: this.hearing.cases[0].name,
+                caseNumber: this.hearing.cases[0].number
+            });
+
+            const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
+            const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
+
+            if (isMultipleIndividualHearingDates) {
+                this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
                     hearingId: hearingDetailsResponse.id,
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number
                 });
-
-                const isMultipleIndividualHearingDates = this.hearing.hearing_dates && this.hearing.hearing_dates.length > 1;
-                const isHearingDateRange = !this.hearing.hearing_dates || this.hearing.hearing_dates.length === 0;
-
-                if (isMultipleIndividualHearingDates) {
-                    this.logger.info(`${this.loggerPrefix} Hearing has multiple, individual days. Booking remaining days`, {
-                        hearingId: hearingDetailsResponse.id,
-                        caseName: this.hearing.cases[0].name,
-                        caseNumber: this.hearing.cases[0].number
-                    });
-                    await this.hearingService.cloneMultiHearings(
-                        hearingDetailsResponse.id,
-                        new MultiHearingRequest({
-                            hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
-                        })
-                    );
-                } else if (isHearingDateRange) {
-                    this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
-                        hearingId: hearingDetailsResponse.id,
-                        caseName: this.hearing.cases[0].name,
-                        caseNumber: this.hearing.cases[0].number
-                    });
-                    await this.hearingService.cloneMultiHearings(
-                        hearingDetailsResponse.id,
-                        new MultiHearingRequest({
-                            start_date: new Date(this.hearing.scheduled_date_time),
-                            end_date: new Date(this.hearing.end_hearing_date_time)
-                        })
-                    );
-                } else {
-                    this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
-                        hearingId: hearingDetailsResponse.id,
-                        caseName: this.hearing.cases[0].name,
-                        caseNumber: this.hearing.cases[0].number
-                    });
-                }
+                await this.hearingService.cloneMultiHearings(
+                    hearingDetailsResponse.id,
+                    new MultiHearingRequest({
+                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                    })
+                );
+            } else if (isHearingDateRange) {
+                this.logger.info(`${this.loggerPrefix} Hearing has a range of days. Booking remaining days`, {
+                    hearingId: hearingDetailsResponse.id,
+                    caseName: this.hearing.cases[0].name,
+                    caseNumber: this.hearing.cases[0].number
+                });
+                await this.hearingService.cloneMultiHearings(
+                    hearingDetailsResponse.id,
+                    new MultiHearingRequest({
+                        start_date: new Date(this.hearing.scheduled_date_time),
+                        end_date: new Date(this.hearing.end_hearing_date_time)
+                    })
+                );
+            } else {
+                this.logger.info(`${this.loggerPrefix} Hearing has just one day, no remaining days to book`, {
+                    hearingId: hearingDetailsResponse.id,
+                    caseName: this.hearing.cases[0].name,
+                    caseNumber: this.hearing.cases[0].number
+                });
             }
+        }
+    }
+
+    async processBooking(hearingDetailsResponse, hearingStatusResponse): Promise<void> {
+        if (hearingStatusResponse?.success) {
+            await this.processMultiHearing(hearingDetailsResponse);
         } else {
             // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
             this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
         }
+        await this.postProcessBooking(hearingDetailsResponse);
+    }
+
+    async postProcessBooking(hearingDetailsResponse: HearingDetailsResponse) {
+        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+        this.hearingService.cancelRequest();
+        this.showWaitSaving = false;
+        this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
+            hearingId: hearingDetailsResponse.id
+        });
+        await this.router.navigate([PageUrls.BookingConfirmation]);
     }
 
     private setDurationOfMultiHearing() {

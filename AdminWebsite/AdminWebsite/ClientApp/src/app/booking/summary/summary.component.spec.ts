@@ -488,7 +488,7 @@ describe('SummaryComponent with valid request', () => {
     it('When booking status false will re-poll', fakeAsync(async () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
         const participants: ParticipantModel[] = [];
-        let participant = new ParticipantModel();
+        const participant = new ParticipantModel();
         participant.first_name = 'firstname';
         participant.last_name = 'lastname';
         participant.email = 'firstname.lastname@email.com';
