@@ -150,7 +150,7 @@ export class WorkAllocationComponent {
 
                 if (this.isNonWorkingDay(values[i], values[i + 1])) {
                     dayWorkingHours = new WorkingHours();
-                    dayWorkingHours.day_of_week_id = dayOfWeekId
+                    dayWorkingHours.day_of_week_id = dayOfWeekId;
                     workingHours.push(dayWorkingHours);
                     continue;
                 }

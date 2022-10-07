@@ -2898,61 +2898,77 @@ export class BHClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
-     uploadWorkHours(body: UploadWorkHoursRequest[] | null | undefined): Observable<UploadWorkHoursResponse> {
-        let url_ = this.baseUrl + "/api/workhours";
-        url_ = url_.replace(/[?&]$/, "");
+    uploadWorkHours(body: UploadWorkHoursRequest[] | null | undefined): Observable<UploadWorkHoursResponse> {
+        let url_ = this.baseUrl + '/api/workhours';
+        url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
 
-        let options_ : any = {
+        let options_: any = {
             body: content_,
-            observe: "response",
-            responseType: "blob",
+            observe: 'response',
+            responseType: 'blob',
             headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "application/json"
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUploadWorkHours(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUploadWorkHours(<any>response_);
-                } catch (e) {
-                    return <Observable<UploadWorkHoursResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<UploadWorkHoursResponse>><any>_observableThrow(response_);
-        }));
+        return this.http
+            .request('post', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUploadWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUploadWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<UploadWorkHoursResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UploadWorkHoursResponse>>(<any>_observableThrow(response_));
+                })
+            );
     }
 
     protected processUploadWorkHours(response: HttpResponseBase): Observable<UploadWorkHoursResponse> {
         const status = response.status;
         const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = UploadWorkHoursResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UploadWorkHoursResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
         } else if (status === 401) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("Unauthorized", status, _responseText, _headers);
-            }));
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
         }
         return _observableOf<UploadWorkHoursResponse>(<any>null);
     }
@@ -5898,19 +5914,18 @@ export class WorkingHours implements IWorkingHours {
     constructor(data?: IWorkingHours) {
         if (data) {
             for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
             }
         }
     }
 
     init(_data?: any) {
         if (_data) {
-            this.day_of_week_id = _data["day_of_week_id"];
-            this.end_time_hour = _data["end_time_hour"];
-            this.end_time_minutes = _data["end_time_minutes"];
-            this.start_time_hour = _data["start_time_hour"];
-            this.start_time_minutes = _data["start_time_minutes"];
+            this.day_of_week_id = _data['day_of_week_id'];
+            this.end_time_hour = _data['end_time_hour'];
+            this.end_time_minutes = _data['end_time_minutes'];
+            this.start_time_hour = _data['start_time_hour'];
+            this.start_time_minutes = _data['start_time_minutes'];
         }
     }
 
@@ -5923,12 +5938,12 @@ export class WorkingHours implements IWorkingHours {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["day_of_week_id"] = this.day_of_week_id;
-        data["end_time_hour"] = this.end_time_hour;
-        data["end_time_minutes"] = this.end_time_minutes;
-        data["start_time_hour"] = this.start_time_hour;
-        data["start_time_minutes"] = this.start_time_minutes;
-        return data; 
+        data['day_of_week_id'] = this.day_of_week_id;
+        data['end_time_hour'] = this.end_time_hour;
+        data['end_time_minutes'] = this.end_time_minutes;
+        data['start_time_hour'] = this.start_time_hour;
+        data['start_time_minutes'] = this.start_time_minutes;
+        return data;
     }
 }
 
@@ -5947,19 +5962,17 @@ export class UploadWorkHoursRequest implements IUploadWorkHoursRequest {
     constructor(data?: IUploadWorkHoursRequest) {
         if (data) {
             for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
             }
         }
     }
 
     init(_data?: any) {
         if (_data) {
-            this.username = _data["username"];
-            if (Array.isArray(_data["working_hours"])) {
+            this.username = _data['username'];
+            if (Array.isArray(_data['working_hours'])) {
                 this.working_hours = [] as any;
-                for (let item of _data["working_hours"])
-                    this.working_hours!.push(WorkingHours.fromJS(item));
+                for (let item of _data['working_hours']) this.working_hours!.push(WorkingHours.fromJS(item));
             }
         }
     }
@@ -5973,13 +5986,12 @@ export class UploadWorkHoursRequest implements IUploadWorkHoursRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["username"] = this.username;
+        data['username'] = this.username;
         if (Array.isArray(this.working_hours)) {
-            data["working_hours"] = [];
-            for (let item of this.working_hours)
-                data["working_hours"].push(item.toJSON());
+            data['working_hours'] = [];
+            for (let item of this.working_hours) data['working_hours'].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5994,18 +6006,16 @@ export class UploadWorkHoursResponse implements IUploadWorkHoursResponse {
     constructor(data?: IUploadWorkHoursResponse) {
         if (data) {
             for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
             }
         }
     }
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data["failed_usernames"])) {
+            if (Array.isArray(_data['failed_usernames'])) {
                 this.failed_usernames = [] as any;
-                for (let item of _data["failed_usernames"])
-                    this.failed_usernames!.push(item);
+                for (let item of _data['failed_usernames']) this.failed_usernames!.push(item);
             }
         }
     }
@@ -6020,11 +6030,10 @@ export class UploadWorkHoursResponse implements IUploadWorkHoursResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         if (Array.isArray(this.failed_usernames)) {
-            data["failed_usernames"] = [];
-            for (let item of this.failed_usernames)
-                data["failed_usernames"].push(item);
+            data['failed_usernames'] = [];
+            for (let item of this.failed_usernames) data['failed_usernames'].push(item);
         }
-        return data; 
+        return data;
     }
 }
 
