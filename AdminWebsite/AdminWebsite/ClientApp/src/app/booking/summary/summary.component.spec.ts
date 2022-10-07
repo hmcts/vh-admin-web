@@ -487,22 +487,31 @@ describe('SummaryComponent with valid request', () => {
 
     it('When booking status false will re-poll', fakeAsync(async () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participant.user_role_name = 'Judge';
+        participants.push(participant);
         const response = {
             id: 'hearing_id',
             status: BookingStatus.Failed,
-            created_by: 'test@hmcts.net'
+            created_by: 'test@hmcts.net',
+            participants: participants
         } as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve({ success: false } as UpdateBookingStatusResponse));
 
-        await component.bookHearing().then(() => {
-            tick(50000);
-            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
-            expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledWith(response.id);
-            expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(11);
-        });
+        await component.bookHearing();
+        tick(50000);
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledWith(response.id);
+        expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(11);
     }));
 
     it('should be able to edit when conference is not about to start and is open', () => {
