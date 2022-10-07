@@ -243,21 +243,23 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
-                // Poll Video-Api for booking confirmation
-                const schedule = timer(0, 5000).subscribe(async counter => {
-                    const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
-                    if (hearingStatusResponse?.success || counter === 10) {
-                        schedule.unsubscribe();
-                        await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
-                        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                        this.hearingService.cancelRequest();
-                        this.showWaitSaving = false;
-                        this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
-                            hearingId: hearingDetailsResponse.id
-                        });
-                        await this.router.navigate([PageUrls.BookingConfirmation]);
-                    }
-                });
+                if (this.hasJudge) {
+                    // Poll Video-Api for booking confirmation
+                    const schedule = timer(0, 5000).subscribe(async counter => {
+                        const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
+                        if (hearingStatusResponse?.success || counter === 10) {
+                            schedule.unsubscribe();
+                            await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
+                            sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+                            this.hearingService.cancelRequest();
+                            this.showWaitSaving = false;
+                            this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
+                                hearingId: hearingDetailsResponse.id
+                            });
+                            await this.router.navigate([PageUrls.BookingConfirmation]);
+                        }
+                    });
+                }
             } catch (error) {
                 this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error, { payload: this.hearing });
                 this.setError(error);
@@ -356,6 +358,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showWaitSaving = false;
         this.showErrorSaving = true;
         this.errors = error;
+    }
+
+    private hasJudge(hearing: HearingModel): boolean {
+        return !!(hearing.participants.find(x => x.is_judge));
     }
 
     cancel(): void {
