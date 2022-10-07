@@ -180,6 +180,64 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.updateFailedStatus).toHaveBeenCalled();
     });
 
+    it('Call ProcessBooking when hearingStatusResponse has succeeded and it is Multiple Individual HearingDates', async () => {
+        // arrange
+        const hearingStatusResponse = { success: true };
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+        component.hearing.hearing_dates = [
+            new Date(component.hearing.scheduled_date_time),
+            new Date(component.hearing.end_hearing_date_time)
+        ];
+        fixture.detectChanges();
+
+        await component.processBooking(jasmine.any(HearingDetailsResponse), hearingStatusResponse);
+
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
+
+    it(
+        'Call ProcessBooking when hearingStatusResponse has succeeded and it is not Multiple Individual HearingDates ' +
+            'and is hearing date range',
+        async () => {
+            // arrange
+            const hearingStatusResponse = { success: true };
+            component.hearing.multiDays = true;
+            component.hearing.hearing_dates = [];
+            fixture.detectChanges();
+
+            await component.processBooking(jasmine.any(HearingDetailsResponse), hearingStatusResponse);
+
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'Call ProcessBooking when hearingStatusResponse has succeeded and it is not Multiple Individual HearingDates ' +
+            'and is not hearing date range',
+        async () => {
+            // arrange
+            const hearingStatusResponse = { success: true };
+            const hearingDetailsResponse = { id: 'mock hearing Id' };
+            component.hearing.multiDays = true;
+            component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
+
+            fixture.detectChanges();
+
+            await component.processBooking(hearingDetailsResponse, hearingStatusResponse);
+            const message = '[Booking] - [Summary] - Hearing has just one day, no remaining days to book';
+            expect(loggerSpy.info).toHaveBeenCalledWith(
+                message,
+                Object({
+                    hearingId: hearingDetailsResponse.id,
+                    caseName: component.hearing.cases[0].name,
+                    caseNumber: component.hearing.cases[0].number
+                })
+            );
+        }
+    );
+
     it('should get booking data from storage', () => {
         component.ngOnInit();
         fixture.detectChanges();
