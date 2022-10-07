@@ -361,7 +361,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private hasJudge(hearing: HearingModel): boolean {
-        return !!(hearing.participants.find(x => x.is_judge));
+        return !!hearing.participants.find(x => x.is_judge);
     }
 
     cancel(): void {
