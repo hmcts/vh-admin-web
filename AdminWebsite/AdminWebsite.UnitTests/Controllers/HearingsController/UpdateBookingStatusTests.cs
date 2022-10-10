@@ -177,10 +177,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     PexipNode = "pexip"
                 }
             };
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
             _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
@@ -203,7 +199,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -223,10 +219,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 HearingId = hearingId
             };
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
+            
             _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
@@ -249,7 +242,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -265,11 +258,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearingId = Guid.NewGuid();
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
 
-            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
-                                    .ThrowsAsync(new VideoApiException("", 0, "", null, null));
+            _mocker.Mock<IConferenceDetailsService>()
+                .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
+                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
@@ -281,10 +274,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updateBookingStatusResp.Message.Should().Be($"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}");
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(b => b.Status == UpdateBookingStatus.Failed
-                                                                                                                     && b.UpdatedBy == "System"
-                                                                                                                     && b.CancelReason == string.Empty
-                                                                                                                                )), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -311,9 +301,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
             _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
@@ -336,7 +323,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -363,9 +350,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
             _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
@@ -388,7 +372,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -415,7 +399,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
+            _mocker.Mock<IHearingsService>().Setup(x => x.UpdateFailedBookingStatus(hearingId));
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
 
             _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
@@ -440,7 +424,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.AtLeastOnce);
         }
 
         [Test]
@@ -456,10 +440,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearingId = Guid.NewGuid();
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status != UpdateBookingStatus.Failed)))
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus))
                 .ThrowsAsync(new Exception("test exception"));
-
+            
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
             var result = (OkObjectResult)response;
@@ -467,7 +451,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
         }
 
         [Test]
@@ -483,8 +467,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearingId = Guid.NewGuid();
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status == UpdateBookingStatus.Cancelled)))
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(request => request.Status == UpdateBookingStatus.Cancelled)))
                 .ThrowsAsync(new ArgumentException("test argument exception"));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
@@ -519,7 +503,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task UpdateBookingStatus_with_cancellation_returns_not_found_when_throws_bookings_api_exception_of_status_code_not_found()
         {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
+            _mocker.Mock<IUserIdentity>()
+                .Setup(x => x.GetUserIdentityName())
+                .Returns("test");
+            
             var request = new UpdateBookingStatusRequest
             {
                 UpdatedBy = "test",
@@ -529,7 +516,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearingId = Guid.NewGuid();
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
                 .ThrowsAsync(new BookingsApiException("", StatusCodes.Status404NotFound, "", null, null));
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
@@ -542,7 +530,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_badrequest()
         {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
                 UpdatedBy = "test",
