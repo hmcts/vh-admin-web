@@ -130,6 +130,14 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }
 
+    getStatus(hearingId: string) {
+        return this.bhClient.getHearingConferenceStatus(hearingId).toPromise();
+    }
+
+    updateFailedStatus(hearingId: string) {
+        return this.bhClient.updateFailedBookingStatus(hearingId).toPromise();
+    }
+
     saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
         const hearingRequest = this.mapHearing(newRequest);
         const bookingRequest = new BookHearingRequest({

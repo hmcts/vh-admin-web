@@ -234,8 +234,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
         }
-
-                [Test]
+        
+        [Test]
         public async Task Should_catch_bookings_api_exceptions_and_return_bad_request_if_that_was_the_status_code()
         {
             // Arrange
