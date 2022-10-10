@@ -17,7 +17,7 @@ variables:
   - group: vh-github-app-credentials
   - group: vh-admin-web
   - name: run_acceptance_tests
-    value: false
+    value: true
 
 stages:
 #####################################################
