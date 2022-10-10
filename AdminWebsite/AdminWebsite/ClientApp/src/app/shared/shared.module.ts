@@ -12,6 +12,8 @@ import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
@@ -30,4 +32,8 @@ import { ClipboardModule } from 'ngx-clipboard';
         LongDatetimePipe
     ]
 })
-export class SharedModule {}
+export class SharedModule {
+    constructor(library: FaIconLibrary) {
+        library.addIcons(faExclamationCircle);
+    }
+}

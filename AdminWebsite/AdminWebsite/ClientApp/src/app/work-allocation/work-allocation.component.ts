@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { DayWorkingHours } from '../common/model/day-working-hours';
-import { WorkAvailability } from '../common/model/work-availability';
-import { UserProfileResponse } from '../services/clients/api-client';
+import { BHClient, UploadWorkHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 
@@ -11,20 +9,25 @@ import { convertToNumberArray } from '../common/helpers/array-helper';
     styleUrls: ['./work-allocation.component.scss']
 })
 export class WorkAllocationComponent {
-    public isWorkingHoursFileUploadError = false;
+    public isWorkingHoursFileValidationErrors = false;
+    public isWorkingHoursUploadComplete = false;
     public isVhTeamLeader = false;
 
-    public workingHoursFileUploadErrors: string[] = [];
+    public numberOfUsernamesToUploadWorkHours = 0;
+
+    public workingHoursFileUploadUsernameErrors: string[] = [];
+    public workingHoursFileValidationErrors: string[] = [];
 
     public workingHoursFile: File | null = null;
 
+    private csvDelimiter = ',';
     private timeDelimiter = ':';
     private earliestStartHour = 8;
     private latestEndHour = 18;
 
     maxFileUploadSize = 200000;
 
-    constructor(private userIdentityService: UserIdentityService) {
+    constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
             this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
         });
@@ -55,8 +58,8 @@ export class WorkAllocationComponent {
         this.workingHoursFile = file;
 
         if (this.workingHoursFile.size > this.maxFileUploadSize) {
-            this.isWorkingHoursFileUploadError = true;
-            this.workingHoursFileUploadErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
+            this.isWorkingHoursFileValidationErrors = true;
+            this.workingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
         }
     }
 
@@ -66,7 +69,7 @@ export class WorkAllocationComponent {
         const timeArray = time.split(this.timeDelimiter);
 
         if (timeArray.length !== 2) {
-            this.workingHoursFileUploadErrors.push(
+            this.workingHoursFileValidationErrors.push(
                 `Row ${rowNumber}, Entry ${entryNumber} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`
             );
             isValid = false;
@@ -89,12 +92,12 @@ export class WorkAllocationComponent {
         }
 
         if (!startTime && endTime && endTime !== '\r') {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Start time is blank`);
+            this.workingHoursFileValidationErrors.push(`${errorLocationMessage}Start time is blank`);
             return true;
         }
 
         if (startTime && (!endTime || endTime === '\r')) {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}End time is blank`);
+            this.workingHoursFileValidationErrors.push(`${errorLocationMessage}End time is blank`);
             return true;
         }
 
@@ -102,8 +105,8 @@ export class WorkAllocationComponent {
     }
 
     resetErrors() {
-        this.isWorkingHoursFileUploadError = false;
-        this.workingHoursFileUploadErrors = [];
+        this.isWorkingHoursFileValidationErrors = false;
+        this.workingHoursFileValidationErrors = [];
     }
 
     readFile(file: File) {
@@ -113,24 +116,26 @@ export class WorkAllocationComponent {
     }
 
     readWorkAvailability(text: string): any {
-        const delimiter = ',';
+        this.isWorkingHoursUploadComplete = false;
 
         const userWorkAvailabilityRows = text.split('\n');
         // Remove headings rows
         userWorkAvailabilityRows.splice(0, 2);
 
-        const workAvailabilities: WorkAvailability[] = [];
+        const workAvailabilities: UploadWorkHoursRequest[] = [];
+
+        this.numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
 
         userWorkAvailabilityRows.forEach((row, index) => {
-            const values = row.split(delimiter);
+            const values = row.split(this.csvDelimiter);
 
-            const workAvailability = new WorkAvailability();
+            const workAvailability = new UploadWorkHoursRequest();
             workAvailability.username = values[0];
 
-            const workingHours: DayWorkingHours[] = [];
+            const workingHours: WorkingHours[] = [];
 
             let dayOfWeekId = 0;
-            let dayWorkingHours: DayWorkingHours;
+            let dayWorkingHours: WorkingHours;
 
             for (let i = 1; i < values.length; i += 2) {
                 dayOfWeekId++;
@@ -139,12 +144,13 @@ export class WorkAllocationComponent {
                 const entryNumber = i + 1;
 
                 if (this.isNonWorkingDayError(values[i], values[i + 1], `Row ${rowNumber}, Entry ${entryNumber}-${entryNumber + 1} -`)) {
-                    this.isWorkingHoursFileUploadError = true;
+                    this.isWorkingHoursFileValidationErrors = true;
                     continue;
                 }
 
                 if (this.isNonWorkingDay(values[i], values[i + 1])) {
-                    dayWorkingHours = new DayWorkingHours(dayOfWeekId);
+                    dayWorkingHours = new WorkingHours();
+                    dayWorkingHours.day_of_week_id = dayOfWeekId;
                     workingHours.push(dayWorkingHours);
                     continue;
                 }
@@ -153,6 +159,7 @@ export class WorkAllocationComponent {
                     !this.isDelimiterValid(values[i], rowNumber, entryNumber) ||
                     !this.isDelimiterValid(values[i + 1], rowNumber, entryNumber + 1)
                 ) {
+                    this.isWorkingHoursFileValidationErrors = true;
                     continue;
                 }
 
@@ -161,19 +168,31 @@ export class WorkAllocationComponent {
 
                 const areDayWorkingHoursValid = this.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
-                if (!this.isWorkingHoursFileUploadError) {
-                    this.isWorkingHoursFileUploadError = !areDayWorkingHoursValid;
+                if (!this.isWorkingHoursFileValidationErrors) {
+                    this.isWorkingHoursFileValidationErrors = !areDayWorkingHoursValid;
                 }
 
-                dayWorkingHours = new DayWorkingHours(dayOfWeekId, startTimeArray[0], startTimeArray[1], endTimeArray[0], endTimeArray[1]);
+                dayWorkingHours = {
+                    day_of_week_id: dayOfWeekId,
+                    start_time_hour: startTimeArray[0],
+                    start_time_minutes: startTimeArray[1],
+                    end_time_hour: endTimeArray[0],
+                    end_time_minutes: endTimeArray[1]
+                } as WorkingHours;
                 workingHours.push(dayWorkingHours);
             }
 
-            workAvailability.workingHours = workingHours;
+            workAvailability.working_hours = workingHours;
             workAvailabilities.push(workAvailability);
+        });
 
-            // This is here for SonarCloud. Will be removed when we actually use this variable.
-            console.log(workAvailabilities);
+        if (this.isWorkingHoursFileValidationErrors) {
+            return;
+        }
+
+        this.bhClient.uploadWorkHours(workAvailabilities).subscribe(result => {
+            this.isWorkingHoursUploadComplete = true;
+            this.workingHoursFileUploadUsernameErrors = result.failed_usernames;
         });
     }
 
@@ -197,18 +216,18 @@ export class WorkAllocationComponent {
 
         let hasError = false;
         if (isNaN(hour) || isNaN(minutes)) {
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Value is not a valid time`);
+            this.workingHoursFileValidationErrors.push(`${errorLocationMessage}Value is not a valid time`);
             hasError = true;
         } else {
             if (hour < this.earliestStartHour || hour > this.latestEndHour) {
-                this.workingHoursFileUploadErrors.push(
+                this.workingHoursFileValidationErrors.push(
                     `${errorLocationMessage}Hour value (${hour}) is not within 0${this.earliestStartHour}:00 - ${this.latestEndHour}:00`
                 );
                 hasError = true;
             }
 
             if (minutes < 0 || minutes > 59) {
-                this.workingHoursFileUploadErrors.push(`${errorLocationMessage}Minutes value (${minutes}) is not within 0-59`);
+                this.workingHoursFileValidationErrors.push(`${errorLocationMessage}Minutes value (${minutes}) is not within 0-59`);
                 hasError = true;
             }
         }
@@ -231,7 +250,7 @@ export class WorkAllocationComponent {
             const startTime = `${startTimeHour}:${startTimeMinute === 0 ? '00' : startTimeMinute}`;
             const endTime = `${endTimeHour}:${endTimeMinute === 0 ? '00' : endTimeMinute}`;
 
-            this.workingHoursFileUploadErrors.push(`${errorLocationMessage}End time ${endTime} is before start time ${startTime}`);
+            this.workingHoursFileValidationErrors.push(`${errorLocationMessage}End time ${endTime} is before start time ${startTime}`);
 
             return false;
         }

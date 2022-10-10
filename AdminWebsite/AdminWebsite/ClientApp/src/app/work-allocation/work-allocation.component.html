@@ -5,13 +5,13 @@
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-5">
       <div
-        [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileUploadError }"
+        [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileValidationErrors }"
         id="working-hours-file-upload-error"
         class="govuk-grid-row"
       >
-        <div *ngIf="isWorkingHoursFileUploadError">
+        <div *ngIf="isWorkingHoursFileValidationErrors">
           <p
-            *ngFor="let workingHoursFileUploadError of workingHoursFileUploadErrors; index as i"
+            *ngFor="let workingHoursFileUploadError of workingHoursFileValidationErrors; index as i"
             class="govuk-error-message govuk-!-margin-left-3"
           >
             Error: {{ workingHoursFileUploadError }}
@@ -33,6 +33,42 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
         </div>
       </div>
+      <ng-container *ngIf="isWorkingHoursUploadComplete" [ngSwitch]="workingHoursFileUploadUsernameErrors.length">
+        <div id="working-hours-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result">
+          <p *ngSwitchCase="0"><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours uploaded successfully</p>
+
+          <ng-container *ngSwitchCase="numberOfUsernamesToUploadWorkHours">
+            <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours not uploaded. No users found.</p>
+            <p>
+              Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
+            </p>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            <p>
+              <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
+              Team working hours upload partially successfully. Below CTSC support officer(s) could not be found:
+            </p>
+
+            <ul class="govuk-body govuk-!-font-weight-normal">
+              <li *ngFor="let username of workingHoursFileUploadUsernameErrors">{{ username }}</li>
+            </ul>
+            <p>
+              Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
+            </p>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-template #workingHoursUploadFailedMessage class="govuk-body upload-result">
+        <div class="govuk-!-font-weight-bold">
+          <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours not uploaded. No users found</p>
+          <p>
+            Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
+          </p>
+        </div>
+      </ng-template>
+
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
           <p>Upload non-availability hours:</p>

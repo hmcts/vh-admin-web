@@ -40,6 +40,7 @@ import { DeleteParticipantModule } from './delete-participant/delete-participant
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
 import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -62,6 +63,7 @@ export function loadConfig(configService: ConfigService) {
         BookingModule,
         BookingsListModule,
         BrowserModule,
+        FontAwesomeModule,
         SuitabilityModule,
         AppRoutingModule,
         SharedModule,
