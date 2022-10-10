@@ -514,6 +514,33 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(11);
     }));
 
+    it('When booking status created but not judge assigned', fakeAsync(async () => {
+        videoHearingsServiceSpy.getStatus.calls.reset();
+        const participants: ParticipantModel[] = [];
+        const participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participants.push(participant);
+        const response = {
+            id: 'hearing_id',
+            status: BookingStatus.Created,
+            created_by: 'test@hmcts.net',
+            participants: participants
+        } as HearingDetailsResponse;
+
+        videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
+
+        videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve({ success: false } as UpdateBookingStatusResponse));
+
+        await component.bookHearing();
+        tick(50000);
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(0);
+    }));
+
     it('should be able to edit when conference is not about to start and is open', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
