@@ -243,7 +243,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
-                if (this.hasJudge(hearingDetailsResponse)) {
+                if (this.judgeAssigned) {
                     // Poll Video-Api for booking confirmation
                     const schedule = timer(0, 5000).subscribe(async counter => {
                         const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
@@ -369,10 +369,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showWaitSaving = false;
         this.showErrorSaving = true;
         this.errors = error;
-    }
-
-    private hasJudge(hearing: HearingDetailsResponse): boolean {
-        return !!hearing.participants.find(x => x.user_role_name === 'Judge');
     }
 
     cancel(): void {
