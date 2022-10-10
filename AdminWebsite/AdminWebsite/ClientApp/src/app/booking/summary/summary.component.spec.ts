@@ -494,8 +494,9 @@ describe('SummaryComponent with valid request', () => {
         participant.email = 'firstname.lastname@email.com';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
-        participant.user_role_name = 'Judge';
+        participant.is_judge = true;
         participants.push(participant);
+        component.hearing.participants = participants;
         const response = {
             id: 'hearing_id',
             status: BookingStatus.Failed,
@@ -506,7 +507,7 @@ describe('SummaryComponent with valid request', () => {
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve({ success: false } as UpdateBookingStatusResponse));
-
+        component.ngOnInit();
         await component.bookHearing();
         tick(50000);
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
@@ -523,7 +524,9 @@ describe('SummaryComponent with valid request', () => {
         participant.email = 'firstname.lastname@email.com';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
+        participant.is_judge = false;
         participants.push(participant);
+        component.hearing.participants = participants;
         const response = {
             id: 'hearing_id',
             status: BookingStatus.Created,
@@ -535,6 +538,7 @@ describe('SummaryComponent with valid request', () => {
 
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve({ success: false } as UpdateBookingStatusResponse));
 
+        component.ngOnInit();
         await component.bookHearing();
         tick(50000);
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
