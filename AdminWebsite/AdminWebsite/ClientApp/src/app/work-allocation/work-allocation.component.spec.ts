@@ -362,7 +362,7 @@ Allocate hearings`);
     describe('readFile', () => {
         it('should read file and return reader', () => {
             const file = new File([''], 'filename', { type: 'text/html' });
-            
+
             const reader = component.readFile(file);
 
             expect(reader).not.toBeNull();
