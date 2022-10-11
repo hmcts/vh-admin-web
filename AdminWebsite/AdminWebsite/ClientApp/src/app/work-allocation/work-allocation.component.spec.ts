@@ -367,7 +367,7 @@ Allocate hearings`);
 
             expect(reader).not.toBeNull();
         });
-      });
+    });
 
     describe('readWorkAvailability', () => {
         it('should not call api to upload work hours when validation errors exist', () => {
