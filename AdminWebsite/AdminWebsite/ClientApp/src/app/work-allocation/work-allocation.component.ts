@@ -26,6 +26,7 @@ export class WorkAllocationComponent {
     public workingHoursFileValidationErrors: string[] = [];
 
     public workingHoursFile: File | null = null;
+    public nonWorkingHoursFile: File | null = null;
 
     private csvDelimiter = ',';
     private timeDelimiter = ':';
@@ -64,9 +65,7 @@ export class WorkAllocationComponent {
             return;
         }
 
-        this.workingHoursFile = file;
-
-        if (this.workingHoursFile.size > this.maxFileUploadSize) {
+        if (file.size > this.maxFileUploadSize) {
             if (fileType === FileType.UploadNonWorkingHours) {
                 this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
@@ -74,6 +73,12 @@ export class WorkAllocationComponent {
                 this.isWorkingHoursFileValidationErrors = true;
                 this.workingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
             }
+        }
+        
+        if (fileType === FileType.UploadNonWorkingHours) {
+            this.workingHoursFile = file;
+        } else {
+            this.nonWorkingHoursFile = file;
         }
     }
 
@@ -298,11 +303,11 @@ export class WorkAllocationComponent {
 
         // TODO this file variable name should be agnostic of file type
         // if this comment remains in PR please flag :(
-        if (!this.workingHoursFile) {
+        if (!this.nonWorkingHoursFile) {
             return;
         }
 
-        const reader = this.readFile(this.workingHoursFile);
+        const reader = this.readFile(this.nonWorkingHoursFile);
         reader.onload = e => this.readNonWorkAvailability(e.target.result as string);
     }
 
