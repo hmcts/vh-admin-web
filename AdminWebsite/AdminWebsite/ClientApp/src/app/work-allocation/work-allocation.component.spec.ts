@@ -7,6 +7,7 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 
 import { WorkAllocationComponent } from './work-allocation.component';
+import { FileType } from '../common/model/file-type';
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
@@ -88,6 +89,30 @@ Allocate hearings`);
                     '  Error: Row 3, Entry 8 - Minutes value (60) is not within 0-59' +
                     '  Error: Row 3, Entry 9 - Minutes value (-1) is not within 0-59' +
                     '  Error: Row 3, Entry 10-11 - End time is blank'
+            );
+        });
+
+        it('should show non-working hours file upload max size error', () => {
+            component.isNonWorkingHoursFileValidationErrors = true;
+            component.nonWorkingHoursFileValidationErrors.push('error message');
+            fixture.detectChanges();
+
+            const error = fixture.debugElement.query(By.css('#non-working-hours-file-upload-error')).nativeElement.innerText;
+            expect(error).toContain('Error: error message');
+        });
+
+        it('should show non-working hours file upload formatting errors', () => {
+            component.readNonWorkAvailability(
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                    'first.second@xyz.com,2022-01-01,10#00,2022-01-07,17:00\n' +
+                    'first.second2@xyz.com,2022-01-01,10:100,2022-01-07,17:00'
+            );
+            fixture.detectChanges();
+
+            const error = fixture.debugElement.query(By.css('#non-working-hours-file-upload-error')).nativeElement.innerText;
+            expect(error).toContain(
+                ' Error: Row 2, Entry 2 - Incorrect delimiter used. Please use a colon to separate the hours and minutes. ' +
+                    ' Error: Row 3 - Contains an invalid date'
             );
         });
 
@@ -209,43 +234,49 @@ Allocate hearings`);
             const resetErrorsSpy = spyOn(component, 'resetErrors');
             const file = new File([''], 'filename', { type: 'text/html' });
 
-            component.handleFileInput(file);
+            component.handleFileInput(file, FileType.UploadNonWorkingHours);
 
             expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
-        it('should set errors when maximum file size is exceeded', () => {
+        it(`should set errors when maximum working hours file size is exceeded`, () => {
             const file = new File([''], 'filename', { type: 'text/html' });
             Object.defineProperty(file, 'size', { value: 2000001 });
 
-            component.handleFileInput(file);
+            component.handleFileInput(file, FileType.UploadWorkingHours);
 
             expect(component.isWorkingHoursFileValidationErrors).toBe(true);
             expect(component.workingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
+
+        it(`should set errors when maximum non-working hours file size is exceeded`, () => {
+            const file = new File([''], 'filename', { type: 'text/html' });
+            Object.defineProperty(file, 'size', { value: 2000001 });
+
+            component.handleFileInput(file, FileType.UploadNonWorkingHours);
+
+            expect(component.isNonWorkingHoursFileValidationErrors).toBe(true);
+            expect(component.nonWorkingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
+        });
     });
 
     describe('isDelimiterValid', () => {
-        it('should return false when incorrect delimeter is used', () => {
+        it('should return false when incorrect delimeter is used in working hours file', () => {
             const rowNumber = 2;
             const entryNumber = 3;
 
-            const result = component.isDelimiterValid('0900', rowNumber, entryNumber);
+            const result = component.isDelimiterValid('0900');
 
             expect(result).toBeFalsy();
-            expect(component.workingHoursFileValidationErrors[0]).toBe(
-                `Row ${rowNumber}, Entry ${entryNumber} - Incorrect delimiter used. Please use a colon to separate the hours and minutes.`
-            );
         });
 
         it('should return true when correct delimeter is used', () => {
             const rowNumber = 2;
             const entryNumber = 3;
 
-            const result = component.isDelimiterValid('09:00', rowNumber, entryNumber);
+            const result = component.isDelimiterValid('09:00');
 
             expect(result).toBeTruthy();
-            expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
         });
     });
 
@@ -295,12 +326,16 @@ Allocate hearings`);
     describe('resetErrors', () => {
         it('should reset errors', () => {
             component.isWorkingHoursFileValidationErrors = true;
+            component.isNonWorkingHoursFileValidationErrors = true;
             component.workingHoursFileValidationErrors.push('error message');
+            component.nonWorkingHoursFileValidationErrors.push('error message');
 
             component.resetErrors();
 
             expect(component.isWorkingHoursFileValidationErrors).toBe(false);
+            expect(component.isNonWorkingHoursFileValidationErrors).toBe(false);
             expect(component.workingHoursFileValidationErrors).toEqual([]);
+            expect(component.nonWorkingHoursFileValidationErrors).toEqual([]);
         });
     });
 
@@ -346,7 +381,10 @@ Allocate hearings`);
 
         it('should read file', () => {
             spyOn(component, 'resetErrors');
-            const readFileSpy = spyOn(component, 'readFile');
+
+            const readFileSpy = spyOn(component, 'readFile').and.returnValue({
+                onload: () => 'fileContents'
+            });
 
             component.workingHoursFile = new File([''], 'filename', { type: 'text/html' });
 

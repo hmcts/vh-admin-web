@@ -11,10 +11,10 @@
       >
         <div *ngIf="isWorkingHoursFileValidationErrors">
           <p
-            *ngFor="let workingHoursFileUploadError of workingHoursFileValidationErrors; index as i"
+            *ngFor="let workingHoursFileValidationError of workingHoursFileValidationErrors; index as i"
             class="govuk-error-message govuk-!-margin-left-3"
           >
-            Error: {{ workingHoursFileUploadError }}
+            Error: {{ workingHoursFileValidationError }}
           </p>
         </div>
         <div class="govuk-grid-column-one-third">
@@ -69,20 +69,33 @@
         </div>
       </ng-template>
 
-      <div class="govuk-grid-row">
+      <div
+        [ngClass]="{ 'govuk-form-group--error': isNonWorkingHoursFileValidationErrors }"
+        id="non-working-hours-file-upload-error"
+        class="govuk-grid-row"
+      >
+        <div *ngIf="isNonWorkingHoursFileValidationErrors">
+          <p
+            *ngFor="let nonWorkingHoursFileValidationError of nonWorkingHoursFileValidationErrors; index as i"
+            class="govuk-error-message govuk-!-margin-left-3"
+          >
+            Error: {{ nonWorkingHoursFileValidationError }}
+          </p>
+        </div>
         <div class="govuk-grid-column-one-third">
           <p>Upload non-availability hours:</p>
         </div>
         <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
           <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
           <input
+            (change)="handleFileInput($event.target.files[0], 'UploadNonWorkingHours')"
             class="govuk-file-upload"
             id="non-availability-hours-file-upload"
             name="non-availability-hours-file-upload"
             type="file"
             accept=".CSV"
           />
-          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonAvailability()">Upload</button>
+          <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
         </div>
       </div>
     </div>
