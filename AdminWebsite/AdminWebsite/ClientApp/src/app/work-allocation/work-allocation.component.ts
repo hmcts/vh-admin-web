@@ -151,6 +151,10 @@ export class WorkAllocationComponent {
                 if (this.isNonWorkingDay(values[i], values[i + 1])) {
                     dayWorkingHours = new WorkingHours();
                     dayWorkingHours.day_of_week_id = dayOfWeekId;
+                    dayWorkingHours.start_time_hour = null;
+                    dayWorkingHours.start_time_minutes = null;
+                    dayWorkingHours.end_time_hour = null;
+                    dayWorkingHours.end_time_minutes = null;
                     workingHours.push(dayWorkingHours);
                     continue;
                 }
@@ -172,13 +176,12 @@ export class WorkAllocationComponent {
                     this.isWorkingHoursFileValidationErrors = !areDayWorkingHoursValid;
                 }
 
-                dayWorkingHours = {
-                    day_of_week_id: dayOfWeekId,
-                    start_time_hour: startTimeArray[0],
-                    start_time_minutes: startTimeArray[1],
-                    end_time_hour: endTimeArray[0],
-                    end_time_minutes: endTimeArray[1]
-                } as WorkingHours;
+                dayWorkingHours = new WorkingHours();
+                dayWorkingHours.day_of_week_id = dayOfWeekId;
+                dayWorkingHours.start_time_hour = startTimeArray[0];
+                dayWorkingHours.start_time_minutes = startTimeArray[1];
+                dayWorkingHours.end_time_hour = endTimeArray[0];
+                dayWorkingHours.end_time_minutes = endTimeArray[1];
                 workingHours.push(dayWorkingHours);
             }
 
