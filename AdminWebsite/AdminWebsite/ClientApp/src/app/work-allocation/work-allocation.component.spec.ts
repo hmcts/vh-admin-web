@@ -239,6 +239,26 @@ Allocate hearings`);
             expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
+        it('should not assign working hours file if file is null', () => {
+            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const file = new File([''], 'filename', { type: 'text/html' });
+            component.workingHoursFile = file;
+
+            component.handleFileInput(null, FileType.UploadNonWorkingHours);
+
+            expect(component.workingHoursFile).not.toBeNull();
+        });
+
+        it('should not assign non-working hours file if file is null', () => {
+            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const file = new File([''], 'filename', { type: 'text/html' });
+            component.nonWorkingHoursFile = file;
+
+            component.handleFileInput(null, FileType.UploadNonWorkingHours);
+
+            expect(component.nonWorkingHoursFile).not.toBeNull();
+        });
+
         it(`should set errors when maximum working hours file size is exceeded`, () => {
             const file = new File([''], 'filename', { type: 'text/html' });
             Object.defineProperty(file, 'size', { value: 2000001 });
@@ -339,6 +359,16 @@ Allocate hearings`);
         });
     });
 
+    describe('readFile', () => {
+        it('should read file and return reader', () => {
+            const file = new File([''], 'filename', { type: 'text/html' });
+            
+            const reader = component.readFile(file);
+
+            expect(reader).not.toBeNull();
+        });
+      });
+
     describe('readWorkAvailability', () => {
         it('should not call api to upload work hours when validation errors exist', () => {
             component.readWorkAvailability(
@@ -370,7 +400,7 @@ Allocate hearings`);
             expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
-        it('should does not read file if file does not exist', () => {
+        it('should not read file if file does not exist', () => {
             spyOn(component, 'resetErrors');
             const readFileSpy = spyOn(component, 'readFile');
 
@@ -391,6 +421,39 @@ Allocate hearings`);
             component.uploadWorkingHours();
 
             expect(readFileSpy).toHaveBeenCalledWith(component.workingHoursFile);
+        });
+    });
+
+    describe('uploadNonWorkingHours', () => {
+        it('should reset file upload errors', () => {
+            const resetErrorsSpy = spyOn(component, 'resetErrors');
+
+            component.uploadNonWorkingHours();
+
+            expect(resetErrorsSpy).toHaveBeenCalled();
+        });
+
+        it('should not read file if file does not exist', () => {
+            spyOn(component, 'resetErrors');
+            const readFileSpy = spyOn(component, 'readFile');
+
+            component.uploadNonWorkingHours();
+
+            expect(readFileSpy).not.toHaveBeenCalled();
+        });
+
+        it('should read file', () => {
+            spyOn(component, 'resetErrors');
+
+            const readFileSpy = spyOn(component, 'readFile').and.returnValue({
+                onload: () => 'fileContents'
+            });
+
+            component.nonWorkingHoursFile = new File([''], 'filename', { type: 'text/html' });
+
+            component.uploadNonWorkingHours();
+
+            expect(readFileSpy).toHaveBeenCalledWith(component.nonWorkingHoursFile);
         });
     });
 

@@ -301,8 +301,6 @@ export class WorkAllocationComponent {
     uploadNonWorkingHours() {
         this.resetErrors();
 
-        // TODO this file variable name should be agnostic of file type
-        // if this comment remains in PR please flag :(
         if (!this.nonWorkingHoursFile) {
             return;
         }
