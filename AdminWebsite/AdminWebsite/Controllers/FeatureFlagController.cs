@@ -1,8 +1,5 @@
 ﻿using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Threading.Tasks;
