@@ -74,7 +74,7 @@ export class WorkAllocationComponent {
                 this.workingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
             }
         }
-        
+
         if (fileType === FileType.UploadNonWorkingHours) {
             this.workingHoursFile = file;
         } else {
