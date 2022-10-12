@@ -11,9 +11,6 @@ import { FileType } from '../common/model/file-type';
     styleUrls: ['./work-allocation.component.scss']
 })
 export class WorkAllocationComponent {
-    public isWorkingHoursFileValidationErrors = false;
-    public isNonWorkingHoursFileValidationErrors = false;
-
     public isWorkingHoursUploadComplete = false;
     public isNonWorkingHoursUploadComplete = false;
     public isVhTeamLeader = false;
@@ -43,7 +40,7 @@ export class WorkAllocationComponent {
         });
     }
 
-    areDayWorkingHoursValid(startTimeArray: number[], endTimeArray: number[], rowNumber: number, entryNumber: number) {
+    validateDayWorkingHours(startTimeArray: number[], endTimeArray: number[], rowNumber: number, entryNumber: number) {
         const isStartTimeCellValid = this.validateTimeCell(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         const isEndTimeCellValid = this.validateTimeCell(endTimeArray, `Row ${rowNumber}, Entry ${entryNumber + 1} -`);
 
@@ -67,15 +64,13 @@ export class WorkAllocationComponent {
 
         if (file.size > this.maxFileUploadSize) {
             if (fileType === FileType.UploadNonWorkingHours) {
-                this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
             } else {
-                this.isWorkingHoursFileValidationErrors = true;
                 this.workingHoursFileValidationErrors.push(`File cannot be larger than ${this.maxFileUploadSize / 1000}kb`);
             }
         }
 
-        if (fileType === FileType.UploadNonWorkingHours) {
+        if (fileType === FileType.UploadWorkingHours) {
             this.workingHoursFile = file;
         } else {
             this.nonWorkingHoursFile = file;
@@ -121,8 +116,6 @@ export class WorkAllocationComponent {
     }
 
     resetErrors() {
-        this.isWorkingHoursFileValidationErrors = false;
-        this.isNonWorkingHoursFileValidationErrors = false;
         this.nonWorkingHoursFileValidationErrors = [];
         this.workingHoursFileValidationErrors = [];
     }
@@ -162,7 +155,6 @@ export class WorkAllocationComponent {
                 const entryNumber = i + 1;
 
                 if (this.isNonWorkingDayError(values[i], values[i + 1], `Row ${rowNumber}, Entry ${entryNumber}-${entryNumber + 1} -`)) {
-                    this.isWorkingHoursFileValidationErrors = true;
                     continue;
                 }
 
@@ -178,7 +170,6 @@ export class WorkAllocationComponent {
                 }
 
                 if (!this.isDelimiterValid(values[i])) {
-                    this.isWorkingHoursFileValidationErrors = true;
                     this.workingHoursFileValidationErrors.push(
                         `Row ${rowNumber}, Entry ${entryNumber} - ${this.incorrectDelimiterErrorMessage}`
                     );
@@ -186,7 +177,6 @@ export class WorkAllocationComponent {
                 }
 
                 if (!this.isDelimiterValid(values[i + 1])) {
-                    this.isWorkingHoursFileValidationErrors = true;
                     this.workingHoursFileValidationErrors.push(
                         `Row ${rowNumber}, Entry ${entryNumber + 2} - ${this.incorrectDelimiterErrorMessage}`
                     );
@@ -196,11 +186,7 @@ export class WorkAllocationComponent {
                 const startTimeArray = convertToNumberArray(values[i].split(this.timeDelimiter));
                 const endTimeArray = convertToNumberArray(values[i + 1].split(this.timeDelimiter));
 
-                const areDayWorkingHoursValid = this.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
-
-                if (!this.isWorkingHoursFileValidationErrors) {
-                    this.isWorkingHoursFileValidationErrors = !areDayWorkingHoursValid;
-                }
+                this.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
                 dayWorkingHours = new WorkingHours();
                 dayWorkingHours.day_of_week_id = dayOfWeekId;
@@ -215,7 +201,7 @@ export class WorkAllocationComponent {
             workAvailabilities.push(uploadWorkHoursRequest);
         });
 
-        if (this.isWorkingHoursFileValidationErrors) {
+        if (this.workingHoursFileValidationErrors.length > 0) {
             return;
         }
 
@@ -244,7 +230,6 @@ export class WorkAllocationComponent {
             const entryNumber = 2;
 
             if (!this.isDelimiterValid(values[2])) {
-                this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(
                     `Row ${rowNumber}, Entry ${entryNumber} - ${this.incorrectDelimiterErrorMessage}`
                 );
@@ -252,7 +237,6 @@ export class WorkAllocationComponent {
             }
 
             if (!this.isDelimiterValid(values[4])) {
-                this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(
                     `Row ${rowNumber}, Entry ${entryNumber + 2} - ${this.incorrectDelimiterErrorMessage}`
                 );
@@ -263,16 +247,14 @@ export class WorkAllocationComponent {
             const endDate = new Date(`${values[3]}T${values[4]}`);
 
             if (isNaN(endDate.getTime()) || isNaN(startDate.getTime())) {
-                this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
             }
 
             if (endDate < startDate) {
-                this.isNonWorkingHoursFileValidationErrors = true;
                 this.nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - End date time is before start date time`);
             }
 
-            if (this.isNonWorkingHoursFileValidationErrors) {
+            if (this.nonWorkingHoursFileValidationErrors.length > 0) {
                 return;
             }
 
