@@ -44,7 +44,7 @@ stages:
               onTimeout: 'reject'
 
 #####################################################
-# Build Docker Image & Push. #######################
+# Build Docker Image & Push. ########################
 
   - stage: Docker_Build_Push
     displayName: Docker Build & Push Image
