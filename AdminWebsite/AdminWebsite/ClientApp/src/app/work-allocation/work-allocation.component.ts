@@ -75,7 +75,7 @@ export class WorkAllocationComponent {
             }
         }
 
-        if (fileType === FileType.UploadNonWorkingHours) {
+        if (fileType === FileType.UploadWorkingHours) {
             this.workingHoursFile = file;
         } else {
             this.nonWorkingHoursFile = file;
