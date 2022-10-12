@@ -40,7 +40,7 @@ export class WorkAllocationComponent {
         });
     }
 
-    areDayWorkingHoursValid(startTimeArray: number[], endTimeArray: number[], rowNumber: number, entryNumber: number) {
+    validateDayWorkingHours(startTimeArray: number[], endTimeArray: number[], rowNumber: number, entryNumber: number) {
         const isStartTimeCellValid = this.validateTimeCell(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         const isEndTimeCellValid = this.validateTimeCell(endTimeArray, `Row ${rowNumber}, Entry ${entryNumber + 1} -`);
 
@@ -185,6 +185,8 @@ export class WorkAllocationComponent {
 
                 const startTimeArray = convertToNumberArray(values[i].split(this.timeDelimiter));
                 const endTimeArray = convertToNumberArray(values[i + 1].split(this.timeDelimiter));
+
+                this.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
                 dayWorkingHours = new WorkingHours();
                 dayWorkingHours.day_of_week_id = dayOfWeekId;

@@ -180,7 +180,7 @@ Allocate hearings`);
         expect(component.isVhTeamLeader).toBeTruthy();
     });
 
-    describe('areDayWorkingHoursValid', () => {
+    describe('validateDayWorkingHours', () => {
         it('should validate start time', () => {
             const startTimeArray = [10, 0];
             const endTimeArray = [17, 0];
@@ -189,7 +189,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateTimeCell');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         });
@@ -202,7 +202,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateTimeCell');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         });
@@ -215,7 +215,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateStartTimeBeforeEndTime');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(
                 startTimeArray[0],
