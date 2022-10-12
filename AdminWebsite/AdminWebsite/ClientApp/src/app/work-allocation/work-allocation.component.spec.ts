@@ -64,7 +64,6 @@ Allocate hearings`);
         });
 
         it('should show working hours file upload max size error', () => {
-            component.isWorkingHoursFileValidationErrors = true;
             component.workingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
@@ -93,7 +92,6 @@ Allocate hearings`);
         });
 
         it('should show non-working hours file upload max size error', () => {
-            component.isNonWorkingHoursFileValidationErrors = true;
             component.nonWorkingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
@@ -182,7 +180,7 @@ Allocate hearings`);
         expect(component.isVhTeamLeader).toBeTruthy();
     });
 
-    describe('areDayWorkingHoursValid', () => {
+    describe('validateDayWorkingHours', () => {
         it('should validate start time', () => {
             const startTimeArray = [10, 0];
             const endTimeArray = [17, 0];
@@ -191,7 +189,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateTimeCell');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         });
@@ -204,7 +202,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateTimeCell');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(startTimeArray, `Row ${rowNumber}, Entry ${entryNumber} -`);
         });
@@ -217,7 +215,7 @@ Allocate hearings`);
 
             const validateSpy = spyOn(component, 'validateStartTimeBeforeEndTime');
 
-            component.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
+            component.validateDayWorkingHours(startTimeArray, endTimeArray, rowNumber, entryNumber);
 
             expect(validateSpy).toHaveBeenCalledWith(
                 startTimeArray[0],
@@ -265,7 +263,6 @@ Allocate hearings`);
 
             component.handleFileInput(file, FileType.UploadWorkingHours);
 
-            expect(component.isWorkingHoursFileValidationErrors).toBe(true);
             expect(component.workingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
 
@@ -275,7 +272,6 @@ Allocate hearings`);
 
             component.handleFileInput(file, FileType.UploadNonWorkingHours);
 
-            expect(component.isNonWorkingHoursFileValidationErrors).toBe(true);
             expect(component.nonWorkingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
     });
@@ -345,15 +341,11 @@ Allocate hearings`);
 
     describe('resetErrors', () => {
         it('should reset errors', () => {
-            component.isWorkingHoursFileValidationErrors = true;
-            component.isNonWorkingHoursFileValidationErrors = true;
             component.workingHoursFileValidationErrors.push('error message');
             component.nonWorkingHoursFileValidationErrors.push('error message');
 
             component.resetErrors();
 
-            expect(component.isWorkingHoursFileValidationErrors).toBe(false);
-            expect(component.isNonWorkingHoursFileValidationErrors).toBe(false);
             expect(component.workingHoursFileValidationErrors).toEqual([]);
             expect(component.nonWorkingHoursFileValidationErrors).toEqual([]);
         });
