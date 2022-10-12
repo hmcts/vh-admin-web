@@ -443,7 +443,8 @@ export class VideoHearingsService {
         const savedConferencePhoneNumber = sessionStorage.getItem(conferencePhoneNumberKey);
         if (savedConferencePhoneNumber === null) {
             const response = await this.bhClient.getConfigSettings().toPromise();
-            sessionStorage.setItem(conferencePhoneNumberKey, response.conference_phone_number);
+            const conferencePhoneNumberValue = isWelsh ? response.conference_phone_number_welsh : response.conference_phone_number;
+            sessionStorage.setItem(conferencePhoneNumberKey, conferencePhoneNumberValue);
             return isWelsh ? response.conference_phone_number_welsh : response.conference_phone_number;
         } else {
             return savedConferencePhoneNumber;
