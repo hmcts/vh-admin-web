@@ -186,8 +186,6 @@ export class WorkAllocationComponent {
                 const startTimeArray = convertToNumberArray(values[i].split(this.timeDelimiter));
                 const endTimeArray = convertToNumberArray(values[i + 1].split(this.timeDelimiter));
 
-                const areDayWorkingHoursValid = this.areDayWorkingHoursValid(startTimeArray, endTimeArray, rowNumber, entryNumber);
-
                 dayWorkingHours = new WorkingHours();
                 dayWorkingHours.day_of_week_id = dayOfWeekId;
                 dayWorkingHours.start_time_hour = startTimeArray[0];
