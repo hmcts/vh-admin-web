@@ -64,7 +64,6 @@ Allocate hearings`);
         });
 
         it('should show working hours file upload max size error', () => {
-            component.isWorkingHoursFileValidationErrors = true;
             component.workingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
@@ -93,7 +92,6 @@ Allocate hearings`);
         });
 
         it('should show non-working hours file upload max size error', () => {
-            component.isNonWorkingHoursFileValidationErrors = true;
             component.nonWorkingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
@@ -265,7 +263,6 @@ Allocate hearings`);
 
             component.handleFileInput(file, FileType.UploadWorkingHours);
 
-            expect(component.isWorkingHoursFileValidationErrors).toBe(true);
             expect(component.workingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
 
@@ -275,7 +272,6 @@ Allocate hearings`);
 
             component.handleFileInput(file, FileType.UploadNonWorkingHours);
 
-            expect(component.isNonWorkingHoursFileValidationErrors).toBe(true);
             expect(component.nonWorkingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
         });
     });
@@ -345,15 +341,11 @@ Allocate hearings`);
 
     describe('resetErrors', () => {
         it('should reset errors', () => {
-            component.isWorkingHoursFileValidationErrors = true;
-            component.isNonWorkingHoursFileValidationErrors = true;
             component.workingHoursFileValidationErrors.push('error message');
             component.nonWorkingHoursFileValidationErrors.push('error message');
 
             component.resetErrors();
 
-            expect(component.isWorkingHoursFileValidationErrors).toBe(false);
-            expect(component.isNonWorkingHoursFileValidationErrors).toBe(false);
             expect(component.workingHoursFileValidationErrors).toEqual([]);
             expect(component.nonWorkingHoursFileValidationErrors).toEqual([]);
         });

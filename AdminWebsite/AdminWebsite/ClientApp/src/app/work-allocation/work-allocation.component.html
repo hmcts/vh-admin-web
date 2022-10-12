@@ -5,11 +5,11 @@
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-5">
       <div
-        [ngClass]="{ 'govuk-form-group--error': isWorkingHoursFileValidationErrors }"
+        [ngClass]="{ 'govuk-form-group--error': workingHoursFileValidationErrors.length > 0 }"
         id="working-hours-file-upload-error"
         class="govuk-grid-row"
       >
-        <div *ngIf="isWorkingHoursFileValidationErrors">
+        <div *ngIf="workingHoursFileValidationErrors.length > 0">
           <p
             *ngFor="let workingHoursFileValidationError of workingHoursFileValidationErrors; index as i"
             class="govuk-error-message govuk-!-margin-left-3"
@@ -70,11 +70,11 @@
       </ng-template>
 
       <div
-        [ngClass]="{ 'govuk-form-group--error': isNonWorkingHoursFileValidationErrors }"
+        [ngClass]="{ 'govuk-form-group--error': nonWorkingHoursFileValidationErrors.length > 0 }"
         id="non-working-hours-file-upload-error"
         class="govuk-grid-row"
       >
-        <div *ngIf="isNonWorkingHoursFileValidationErrors">
+        <div *ngIf="nonWorkingHoursFileValidationErrors.length > 0">
           <p
             *ngFor="let nonWorkingHoursFileValidationError of nonWorkingHoursFileValidationErrors; index as i"
             class="govuk-error-message govuk-!-margin-left-3"
