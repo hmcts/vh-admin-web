@@ -272,6 +272,11 @@ stages:
                   secret: true
                   keyVaultName: vh-video-web-${{ variables.env }}
 
+                - name: AzureAd:ResourceId
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-video-web-${{ variables.env }}
+
                 - name: AzureAd:PostLogoutRedirectUri
                   value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net/logout
 
