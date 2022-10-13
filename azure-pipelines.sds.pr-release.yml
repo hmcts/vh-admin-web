@@ -249,7 +249,7 @@ stages:
                   value: https://vh-video-web.${{ variables.env }}.platform.hmcts.net/
 
                 # Feature Toggle
-                - name: FeatureToggle:SDKKey
+                - name: FeatureToggle:SDK-Key
                   value: "PLACEHOLDER"
 
                 # GOV Notify Configuration
