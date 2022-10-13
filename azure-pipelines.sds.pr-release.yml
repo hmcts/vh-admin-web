@@ -210,7 +210,7 @@ stages:
           displayName: Acceptance Tests Dev
           variables:
           - group: KinlyConfiguration_${{ variables.env }}
-          - group: FeatureFlags_${{ variable.env}}
+          - group: FeatureFlags_${{ variables.env}}
           - group: Saucelabs
           - group: vh-test-users
           - group: govuk-notify-${{ variables.env }}
@@ -251,7 +251,7 @@ stages:
 
                 # Feature Toggle
                 - name: FeatureToggle:SDK-Key
-                  value: "PLACEHOLDER"
+                  value: $(SDK-Key)
 
                 # GOV Notify Configuration
                 - name: NotifyConfiguration:ApiKey
