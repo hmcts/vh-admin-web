@@ -1,12 +1,15 @@
-﻿using AdminWebsite.Models;
+﻿using System;
+using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Extensions;
+using BookingsApi.Contract.Responses;
+using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -33,6 +36,31 @@ namespace AdminWebsite.Controllers
             uploadWorkHoursResponse.FailedUsernames.AddRange(failedUsernames);
 
             return Ok(uploadWorkHoursResponse);
+        }
+        
+        [HttpGet("vho")]
+        [SwaggerOperation(OperationId = "GetWorkHours")]
+        [ProducesResponseType(typeof(VhoSearchResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetWorkHours(string vho)
+        {
+            try
+            {
+                return Ok(await _bookingsApiClient.GetVhoWorkHoursAsync(vho.Sanitise()));
+            }
+            catch(VideoApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound("Username could not be found. Please check the username and try again");
+                    case (int)HttpStatusCode.BadRequest:
+                        return BadRequest(ex.Response);
+                    default:
+                        throw;
+                }
+            }
         }
     }
 }
