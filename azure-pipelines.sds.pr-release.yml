@@ -313,11 +313,17 @@ stages:
 
                 # WowzaConfiguration
                 - name: WowzaConfiguration:StorageAccountName
-                  value: $(wowza_storageAccountName)
+                  value: wowzaconfiguration--storage-account
+                  secret: true
+                  keyVaultName: vh-infra-core-${{ variables.env }}
                 - name: WowzaConfiguration:StorageAccountKey
-                  value: $(wowza_storageAccountKey)
+                  value: wowzaconfiguration--storageaccountkey
+                  secret: true
+                  keyVaultName: vh-infra-core-${{ variables.env }}
                 - name: WowzaConfiguration:StorageContainerName
-                  value: $(wowza_storageContainerName)
+                  value: wowzaconfiguration--storage-account-container
+                  secret: true
+                  keyVaultName: vh-infra-core-${{ variables.env }}
                   
                 # Ejud - test setting only
                 - name: UsingEjud
