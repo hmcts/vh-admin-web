@@ -245,7 +245,9 @@ stages:
                 - name: VhServices:BookingsApiResourceId
                   value: https://vh-bookings-api.${{ variables.env }}.platform.hmcts.net
                 - name: VhServices:LaunchDarklyClientId
-                  value: "PLACEHOLDER"
+                  value: launchdarkly-client-id
+                  secret: true
+                  keyVaultName: vh-admin-web-${{ variables.env }}
                 - name: VhServices:VideoWebUrl
                   value: https://vh-video-web.${{ variables.env }}.platform.hmcts.net/
 
