@@ -254,10 +254,12 @@ stages:
                 # Feature Toggle
                 - name: FeatureToggle:SDK-Key
                   value: $(SDK-Key)
+                  secret: true
 
                 # GOV Notify Configuration
                 - name: NotifyConfiguration:ApiKey
                   value: $(notify-api-key)
+                  secret: true
                 
                 # Application insights
                 - name: ApplicationInsights:InstrumentationKey
@@ -305,8 +307,10 @@ stages:
                 # Testing
                 - name: TestUserSecrets:TestUsernameStem
                   value: $(TestUserSecrets:TestUsernameStem)
+                  secret: true
                 - name: TestUserSecrets:TestUserPassword
                   value: $(TestUserSecrets:TestApiUserPassword)
+                  secret: true
 
                   # Kinly
                 - name: KinlyConfiguration:ConferencePhoneNumber
@@ -319,10 +323,13 @@ stages:
                 # SauceLabs
                 - name: Saucelabs:Username
                   value: $(Saucelabs:Username)
+                  secret: true
                 - name: Saucelabs:AccessKey
                   value: $(Saucelabs:AccessKey)
+                  secret: true
                 - name: Saucelabs:RealDeviceApiKey
                   value: $(RealDeviceApiKey)
+                  secret: true
 
                 # WowzaConfiguration
                 - name: WowzaConfiguration:StorageAccountName
