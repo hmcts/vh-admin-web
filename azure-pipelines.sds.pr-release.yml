@@ -258,6 +258,17 @@ stages:
                 # GOV Notify Configuration
                 - name: NotifyConfiguration:ApiKey
                   value: $(notify-api-key)
+                
+                # Application insights
+                - name: ApplicationInsights:InstrumentationKey
+                  value: applicationinsights--instrumentationkey
+                  secret: true
+                  keyVaultName: vh-infra-core-${{ variables.env }}
+
+                - name: ApplicationInsights:AppInsightsKey
+                  value: azuread--appinsightskey
+                  secret: true
+                  keyVaultName: vh-infra-core-${{ variables.env }}
                   
                 # AzureAd
                 - name: AzureAd:TenantId
