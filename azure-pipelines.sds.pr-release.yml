@@ -206,6 +206,8 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
+          pool:
+            vmImage: 'windows-latest'
           #dependsOn: aks_push
           displayName: Acceptance Tests Dev
           variables:
