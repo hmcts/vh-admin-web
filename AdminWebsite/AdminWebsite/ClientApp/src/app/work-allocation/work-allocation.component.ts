@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { BHClient, UploadWorkHoursRequest, UploadNonWorkingHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
+import {
+    BHClient,
+    UploadWorkHoursRequest,
+    UploadNonWorkingHoursRequest,
+    UserProfileResponse,
+    WorkingHours
+} from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 import { FileType } from '../common/model/file-type';

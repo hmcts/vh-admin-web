@@ -180,8 +180,8 @@ Allocate hearings`);
             it('should show success result', done => {
                 component.readNonWorkAvailability(
                     'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
-                    'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
                 );
                 fixture.detectChanges();
 
@@ -197,8 +197,8 @@ Allocate hearings`);
 
                 component.readNonWorkAvailability(
                     'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
-                    'first.second@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
                 );
                 fixture.detectChanges();
 
@@ -214,12 +214,14 @@ Allocate hearings`);
             });
 
             it('should show failure result', done => {
-                bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: ['manual.vhoteamlead1@hearings.reform.hmcts.net', 'first.second.2@xyz.com'] }));
+                bHClientSpy.uploadNonWorkingHours.and.returnValue(
+                    of({ failed_usernames: ['manual.vhoteamlead1@hearings.reform.hmcts.net', 'first.second.2@xyz.com'] })
+                );
 
                 component.readNonWorkAvailability(
                     'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
-                    'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
                 );
                 fixture.detectChanges();
 
@@ -443,13 +445,12 @@ Allocate hearings`);
         });
     });
 
-
     describe('readNonWorkAvailability', () => {
         it('should not call api to upload work hours when validation errors exist', () => {
             component.readNonWorkAvailability(
                 'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
-                'first.second2@xyz.com,2022-01-01,1000,2022-01-07,17:00'
+                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                    'first.second2@xyz.com,2022-01-01,1000,2022-01-07,17:00'
             );
 
             expect(bHClientSpy.uploadNonWorkingHours).not.toHaveBeenCalled();
@@ -458,8 +459,8 @@ Allocate hearings`);
         it('should call api to upload work hours', () => {
             component.readNonWorkAvailability(
                 'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
-                'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                    'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
             );
 
             expect(bHClientSpy.uploadNonWorkingHours).toHaveBeenCalled();

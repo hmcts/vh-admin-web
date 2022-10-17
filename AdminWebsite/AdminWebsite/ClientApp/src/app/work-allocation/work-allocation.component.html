@@ -33,9 +33,14 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
         </div>
       </div>
-      <ng-container *ngIf="isWorkingHoursUploadComplete" 
-        [ngTemplateOutlet]="fileUploadResult" 
-        [ngTemplateOutletContext]="{ usernameErrors: workingHoursFileUploadUsernameErrors, numberOfUsernamesUploaded: numberOfUsernamesToUploadWorkHours }">
+      <ng-container
+        *ngIf="isWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          usernameErrors: workingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadWorkHours
+        }"
+      >
       </ng-container>
 
       <ng-template let-errors="usernameErrors" let-numberOfUploads="numberOfUsernamesUploaded" #fileUploadResult>
@@ -104,11 +109,15 @@
         </div>
       </div>
 
-      <ng-container *ngIf="isNonWorkingHoursUploadComplete" 
-        [ngTemplateOutlet]="fileUploadResult" 
-        [ngTemplateOutletContext]="{ usernameErrors: nonWorkingHoursFileUploadUsernameErrors, numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours }">
+      <ng-container
+        *ngIf="isNonWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
+        }"
+      >
       </ng-container>
-
     </div>
   </details>
   <details class="govuk-details" data-module="govuk-details">
