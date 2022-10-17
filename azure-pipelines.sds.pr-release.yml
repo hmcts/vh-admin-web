@@ -22,51 +22,51 @@ variables:
 stages:
 #####################################################
 # CI Build Checks. ##################################
-  - stage: CI_Build
-    displayName: CI Build
-    variables: 
-      - template: variables/shared.yaml
-        parameters:
-          env: ''
-    jobs:
-      - job: CI_Helm
-        displayName: "Helm CI"
-        steps:
-          - checkout: self
+  # - stage: CI_Build
+  #   displayName: CI Build
+  #   variables: 
+  #     - template: variables/shared.yaml
+  #       parameters:
+  #         env: ''
+  #   jobs:
+  #     - job: CI_Helm
+  #       displayName: "Helm CI"
+  #       steps:
+  #         - checkout: self
 
-          - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
-            parameters:
-              chartPath: ${{ variables.chartPath }}
-              chartValuesPath: ${{ variables.chartPath }}
+  #         - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
+  #           parameters:
+  #             chartPath: ${{ variables.chartPath }}
+  #             chartValuesPath: ${{ variables.chartPath }}
 
-      - job: UnitTests
-        displayName: "Unit Tests"
-        steps:
-          - checkout: self
+  #     - job: UnitTests
+  #       displayName: "Unit Tests"
+  #       steps:
+  #         - checkout: self
 
-          - template: templates/sonarCloud/prepare.yml@azTemplates
-            parameters:
-              ExtraProperties: |
-                sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
-                sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
-                sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
-                sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)/Coverage/coverage.opencover.xml
-                sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
+  #         - template: templates/sonarCloud/prepare.yml@azTemplates
+  #           parameters:
+  #             ExtraProperties: |
+  #               sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
+  #               sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
+  #               sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
+  #               sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)/Coverage/coverage.opencover.xml
+  #               sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
     
-          - template: stages\dotnet-tests\unit-tests.yml@azTemplates
-            parameters:
-              #vstsFeedId: 'Video Hearings/vh-packages'
-              nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
-              unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
-              dotNetCoreVersion: '6.x'
-              coverletCoverageExclusions:
-                - "**/Testing.Common/**"
-                - "AdminWebsite/Views/*"
-                - "AdminWebsite/Pages/*"
-                - "AdminWebsite.UserAPI.Client/*"
-                - "AdminWebsite.AcceptanceTests/*"
+  #         - template: stages\dotnet-tests\unit-tests.yml@azTemplates
+  #           parameters:
+  #             #vstsFeedId: 'Video Hearings/vh-packages'
+  #             nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
+  #             unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
+  #             dotNetCoreVersion: '6.x'
+  #             coverletCoverageExclusions:
+  #               - "**/Testing.Common/**"
+  #               - "AdminWebsite/Views/*"
+  #               - "AdminWebsite/Pages/*"
+  #               - "AdminWebsite.UserAPI.Client/*"
+  #               - "AdminWebsite.AcceptanceTests/*"
               
-          - template: templates/sonarCloud/runAnalysis.yml@azTemplates
+  #         - template: templates/sonarCloud/runAnalysis.yml@azTemplates
 
 #####################################################
 # Pre Steps. ########################################
@@ -80,44 +80,44 @@ stages:
           env: ${{ variables.env }}
       - group: vh-github-app-credentials
     jobs:
-      - job: Dock
-        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-        steps:
-          - checkout: self
+      # - job: Dock
+      #   displayName: "Build and Push Image ${{ variables.git_repo_name }}"
+      #   steps:
+      #     - checkout: self
 
-          - template: templates\Github\get-app-token.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
+      #     - template: templates\Github\get-app-token.yaml@azTemplates
+      #       parameters:
+      #         privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
+      #         appId: $(gh_app_app_id)
 
-          - template: templates\Github\bump-chart-versions.yaml@azTemplates
-            parameters:
-              chartName: ${{ variables.chartName }}
-              chartPath: $(Build.SourcesDirectory)
-              chartBranch: $(System.PullRequest.SourceBranch)
-              githubToken: $(githubappinstall.token)
-              githubUsername: $(gh_app_name)
-              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
+      #     - template: templates\Github\bump-chart-versions.yaml@azTemplates
+      #       parameters:
+      #         chartName: ${{ variables.chartName }}
+      #         chartPath: $(Build.SourcesDirectory)
+      #         chartBranch: $(System.PullRequest.SourceBranch)
+      #         githubToken: $(githubappinstall.token)
+      #         githubUsername: $(gh_app_name)
+      #         githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
           
-          - bash: |
-              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
-            displayName: Add NuGet Feed Authentication
-            workingDirectory: ${{ variables.app_path }}
+      #     - bash: |
+      #         sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.sds.config
+      #       displayName: Add NuGet Feed Authentication
+      #       workingDirectory: ${{ variables.app_path }}
 
-          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates # Temp - Change nuget.config to nuget.sds.config.
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName:  ${{ variables.repositoryName }}
+      #     - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates # Temp - Change nuget.config to nuget.sds.config.
+      #       parameters:
+      #         azureSubscription: ${{ variables.acrSubscription }}
+      #         acrName: ${{ variables.acrName }}
+      #         repositoryName:  ${{ variables.repositoryName }}
 
-          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName:  ${{ variables.repositoryName }}
-              imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
-              imageTags:
-                - '${{ variables.prTagName }}'
+      #     - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
+      #       parameters:
+      #         azureSubscription: ${{ variables.acrSubscription }}
+      #         acrName: ${{ variables.acrName }}
+      #         repositoryName:  ${{ variables.repositoryName }}
+      #         imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
+      #         imageTags:
+      #           - '${{ variables.prTagName }}'
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: PublishAcceptanceTests
@@ -222,32 +222,45 @@ stages:
               acceptanceTestSettings:
                 - name: VhServices:AdminWebUrl
                   value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net/
+                  
                 - name: VhServices:AdminWebResourceId
                   value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:VideoApiUrl
                   value: https://vh-video-api.${{ variables.env }}.platform.hmcts.net/
+
                 - name: VhServices:VideoApiResourceId
                   value: https://vh-video-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:UserApiUrl
                   value: https://vh-user-api.${{ variables.env }}.platform.hmcts.net/
+
                 - name: VhServices:UserApiResourceId
                   value: https://vh-user-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:NotificationApiUrl
                   value: https://vh-notification-api.${{ variables.env }}.platform.hmcts.net/
+
                 - name: VhServices:NotificationApiResourceId
                   value: https://vh-notification-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:TestApiUrl
                   value: https://vh-test-api.${{ variables.env }}.platform.hmcts.net/
+
                 - name: VhServices:TestApiResourceId
                   value: https://vh-test-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:BookingsApiUrl
                   value: https://vh-bookings-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:BookingsApiResourceId
                   value: https://vh-bookings-api.${{ variables.env }}.platform.hmcts.net
+
                 - name: VhServices:LaunchDarklyClientId
                   value: launchdarkly-client-id
                   secret: true
                   keyVaultName: vh-admin-web-${{ variables.env }}
+
                 - name: VhServices:VideoWebUrl
                   value: https://vh-video-web.${{ variables.env }}.platform.hmcts.net/
 
@@ -271,9 +284,6 @@ stages:
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   
                 # AzureAd
-                - name: AzureAd:Authority
-                  value: 'https://login.microsoftonline.com/'
-
                 - name: AzureAd:TenantId
                   value: azuread--tenantid
                   secret: true
@@ -282,17 +292,17 @@ stages:
                 - name: AzureAd:ClientId
                   value: azuread--clientid
                   secret: true
-                  keyVaultName: vh-video-web-${{ variables.env }}
+                  keyVaultName: vh-admin-web-${{ variables.env }}
 
                 - name: AzureAd:ClientSecret
                   value: azuread--clientsecret
                   secret: true
-                  keyVaultName: vh-video-web-${{ variables.env }}
+                  keyVaultName: vh-admin-web-${{ variables.env }}
 
                 - name: AzureAd:ResourceId
                   value: azuread--clientid
                   secret: true
-                  keyVaultName: vh-video-web-${{ variables.env }}
+                  keyVaultName: vh-admin-web-${{ variables.env }}
 
                 - name: AzureAd:PostLogoutRedirectUri
                   value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net/logout
