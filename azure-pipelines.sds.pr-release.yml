@@ -271,6 +271,9 @@ stages:
                   keyVaultName: vh-infra-core-${{ variables.env }}
                   
                 # AzureAd
+                - name: AzureAd:Authority
+                  value: 'https://login.microsoftonline.com/'
+
                 - name: AzureAd:TenantId
                   value: azuread--tenantid
                   secret: true
@@ -287,7 +290,7 @@ stages:
                   keyVaultName: vh-video-web-${{ variables.env }}
 
                 - name: AzureAd:ResourceId
-                  value: azuread--identifieruri
+                  value: azuread--clientid
                   secret: true
                   keyVaultName: vh-video-web-${{ variables.env }}
 
