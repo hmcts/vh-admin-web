@@ -23,8 +23,9 @@ describe('WorkAllocationComponent', () => {
     );
 
     beforeEach(() => {
-        bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours']);
+        bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
+        bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
 
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
@@ -114,7 +115,7 @@ Allocate hearings`);
             );
         });
 
-        describe('upload file result', () => {
+        describe('upload work hours result', () => {
             it('should show success result', done => {
                 component.readWorkAvailability(
                     'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
@@ -125,7 +126,7 @@ Allocate hearings`);
                 fixture.detectChanges();
 
                 bHClientSpy.uploadWorkHours().subscribe(() => {
-                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                     expect(result).toBe(' Team working hours uploaded successfully');
                     done();
                 });
@@ -143,7 +144,7 @@ Allocate hearings`);
                 fixture.detectChanges();
 
                 bHClientSpy.uploadWorkHours().subscribe(() => {
-                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
                         ' Team working hours upload partially successfully. Below CTSC support officer(s) could ' +
                             'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
@@ -164,7 +165,68 @@ Allocate hearings`);
                 fixture.detectChanges();
 
                 bHClientSpy.uploadWorkHours().subscribe(() => {
-                    const result = fixture.debugElement.query(By.css('#working-hours-upload-result')).nativeElement.innerText;
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(
+                        ' Team working hours not uploaded. No users found. ' +
+                            'Please check that these user names have been entered correctly. ' +
+                            'If the problem persists, please raise a ticket in ServiceNow. '
+                    );
+                    done();
+                });
+            });
+        });
+
+        describe('upload non-working hours result', () => {
+            it('should show success result', done => {
+                component.readNonWorkAvailability(
+                    'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadNonWorkingHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(' Team working hours uploaded successfully');
+                    done();
+                });
+            });
+
+            it('should show partial success result', done => {
+                bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: ['first.second@xyz.com'] }));
+
+                component.readNonWorkAvailability(
+                    'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadNonWorkingHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
+                    expect(result).toBe(
+                        ' Team working hours upload partially successfully. Below CTSC support officer(s) could ' +
+                            'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
+                            'If the problem persists, please raise a ticket in ServiceNow. '
+                    );
+                    done();
+                });
+            });
+
+            it('should show failure result', done => {
+                bHClientSpy.uploadNonWorkingHours.and.returnValue(
+                    of({ failed_usernames: ['manual.vhoteamlead1@hearings.reform.hmcts.net', 'first.second.2@xyz.com'] })
+                );
+
+                component.readNonWorkAvailability(
+                    'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                        'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                        'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+                );
+                fixture.detectChanges();
+
+                bHClientSpy.uploadNonWorkingHours().subscribe(() => {
+                    const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
                         ' Team working hours not uploaded. No users found. ' +
                             'Please check that these user names have been entered correctly. ' +
@@ -380,6 +442,28 @@ Allocate hearings`);
             );
 
             expect(bHClientSpy.uploadWorkHours).toHaveBeenCalled();
+        });
+    });
+
+    describe('readNonWorkAvailability', () => {
+        it('should not call api to upload work hours when validation errors exist', () => {
+            component.readNonWorkAvailability(
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                    'first.second2@xyz.com,2022-01-01,1000,2022-01-07,17:00'
+            );
+
+            expect(bHClientSpy.uploadNonWorkingHours).not.toHaveBeenCalled();
+        });
+
+        it('should call api to upload work hours', () => {
+            component.readNonWorkAvailability(
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                    'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                    'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00'
+            );
+
+            expect(bHClientSpy.uploadNonWorkingHours).toHaveBeenCalled();
         });
     });
 

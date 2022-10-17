@@ -26,13 +26,14 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.SaveWorkHoursAsync(It.IsAny<List<UploadWorkHoursRequest>>()))
                 .ReturnsAsync(_failedUsernames);
-                
+            _bookingsApiClientMock.Setup(x => x.SaveNonWorkingHoursAsync(It.IsAny<List<UploadNonWorkingHoursRequest>>()))
+                .ReturnsAsync(_failedUsernames);
 
             _controller = new WorkHoursController(_bookingsApiClientMock.Object);
         }
 
         [Test]
-        public async Task Should_call_api_and_return_failed_usernames()
+        public async Task UploadWorkHours_should_call_api_and_return_failed_usernames()
         {
             // Arrange
             var request = new List<UploadWorkHoursRequest>();
@@ -44,6 +45,21 @@ namespace AdminWebsite.UnitTests.Controllers
             // Assert
             _bookingsApiClientMock.Verify(x => x.SaveWorkHoursAsync(request), Times.Once);
             Assert.AreEqual(_failedUsernames, (response.Value as UploadWorkHoursResponse).FailedUsernames);
+        }
+
+        [Test]
+        public async Task UploadNonWorkingHours_should_call_api_and_return_failed_usernames()
+        {
+            // Arrange
+            var request = new List<UploadNonWorkingHoursRequest>();
+            _failedUsernames.Add("failedusername@test.com");
+
+            // Act
+            var response = (await _controller.UploadNonWorkingHours(request)) as OkObjectResult;
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.SaveNonWorkingHoursAsync(request), Times.Once);
+            Assert.AreEqual(_failedUsernames, (response.Value as UploadNonWorkingHoursResponse).FailedUsernames);
         }
     }
 }

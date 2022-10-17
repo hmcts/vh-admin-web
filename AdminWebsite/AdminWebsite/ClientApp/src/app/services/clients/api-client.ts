@@ -3088,7 +3088,7 @@ export class BHClient {
      * @return Success
      */
     uploadWorkHours(body: UploadWorkHoursRequest[] | null | undefined): Observable<UploadWorkHoursResponse> {
-        let url_ = this.baseUrl + '/api/workhours';
+        let url_ = this.baseUrl + '/api/workhours/UploadWorkHours';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -3157,6 +3157,82 @@ export class BHClient {
             );
         }
         return _observableOf<UploadWorkHoursResponse>(<any>null);
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    uploadNonWorkingHours(body: UploadNonWorkingHoursRequest[] | null | undefined): Observable<UploadNonWorkingHoursResponse> {
+        let url_ = this.baseUrl + '/api/workhours/UploadNonWorkingHours';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('post', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUploadNonWorkingHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUploadNonWorkingHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<UploadNonWorkingHoursResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UploadNonWorkingHoursResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUploadNonWorkingHours(response: HttpResponseBase): Observable<UploadNonWorkingHoursResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UploadNonWorkingHoursResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UploadNonWorkingHoursResponse>(<any>null);
     }
 }
 
@@ -6236,6 +6312,90 @@ export class UploadWorkHoursResponse implements IUploadWorkHoursResponse {
 }
 
 export interface IUploadWorkHoursResponse {
+    failed_usernames?: string[] | undefined;
+}
+
+export class UploadNonWorkingHoursRequest implements IUploadNonWorkingHoursRequest {
+    username?: string | undefined;
+    end_time?: Date;
+    start_time?: Date;
+
+    constructor(data?: IUploadNonWorkingHoursRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data['username'];
+            this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
+            this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UploadNonWorkingHoursRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UploadNonWorkingHoursRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['username'] = this.username;
+        data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
+        data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IUploadNonWorkingHoursRequest {
+    username?: string | undefined;
+    end_time?: Date;
+    start_time?: Date;
+}
+
+export class UploadNonWorkingHoursResponse implements IUploadNonWorkingHoursResponse {
+    failed_usernames?: string[] | undefined;
+
+    constructor(data?: IUploadNonWorkingHoursResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['failed_usernames'])) {
+                this.failed_usernames = [] as any;
+                for (let item of _data['failed_usernames']) this.failed_usernames!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UploadNonWorkingHoursResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UploadNonWorkingHoursResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.failed_usernames)) {
+            data['failed_usernames'] = [];
+            for (let item of this.failed_usernames) data['failed_usernames'].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IUploadNonWorkingHoursResponse {
     failed_usernames?: string[] | undefined;
 }
 
