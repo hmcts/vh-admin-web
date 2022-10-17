@@ -206,7 +206,7 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
-          dependsOn: aks_push
+          #dependsOn: aks_push
           displayName: Acceptance Tests Dev
           variables:
           - group: KinlyConfiguration_${{ variables.env }}
