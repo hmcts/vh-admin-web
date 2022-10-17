@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { BHClient, UploadWorkHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
+import { BHClient, UploadWorkHoursRequest, UploadNonWorkingHoursRequest, UserProfileResponse, WorkingHours } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
-import { NonWorkingHours, UploadNonWorkHoursRequest } from './upload-non-work-hours-models';
 import { FileType } from '../common/model/file-type';
 
 @Component({
@@ -18,8 +17,10 @@ export class WorkAllocationComponent {
     public numberOfUsernamesToUploadWorkHours = 0;
     public numberOfUsernamesToUploadNonWorkHours = 0;
 
-    public workingHoursFileUploadUsernameErrors: string[] = [];
+    public nonWorkingHoursFileUploadUsernameErrors: string[] = [];
     public nonWorkingHoursFileValidationErrors: string[] = [];
+
+    public workingHoursFileUploadUsernameErrors: string[] = [];
     public workingHoursFileValidationErrors: string[] = [];
 
     public workingHoursFile: File | null = null;
@@ -218,13 +219,13 @@ export class WorkAllocationComponent {
         // Remove headings rows
         userNonWorkAvailabilityRows.splice(0, 1);
 
-        const uploadNonWorkHoursRequests: UploadNonWorkHoursRequest[] = [];
+        const uploadNonWorkHoursRequests: UploadNonWorkingHoursRequest[] = [];
         this.numberOfUsernamesToUploadNonWorkHours = userNonWorkAvailabilityRows.length;
 
         userNonWorkAvailabilityRows.forEach((row, index) => {
             const values = row.replace(/\r/g, '').split(this.csvDelimiter);
 
-            const uploadNonWorkHoursRequest = new UploadNonWorkHoursRequest();
+            const uploadNonWorkHoursRequest = new UploadNonWorkingHoursRequest();
 
             const rowNumber = index + 2;
             const entryNumber = 2;
@@ -243,14 +244,14 @@ export class WorkAllocationComponent {
                 return;
             }
 
-            const startDate = new Date(`${values[1]}T${values[2]}`);
-            const endDate = new Date(`${values[3]}T${values[4]}`);
+            const startTime = new Date(`${values[1]}T${values[2]}`);
+            const endTime = new Date(`${values[3]}T${values[4]}`);
 
-            if (isNaN(endDate.getTime()) || isNaN(startDate.getTime())) {
+            if (isNaN(endTime.getTime()) || isNaN(startTime.getTime())) {
                 this.nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
             }
 
-            if (endDate < startDate) {
+            if (endTime < startTime) {
                 this.nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - End date time is before start date time`);
             }
 
@@ -258,18 +259,20 @@ export class WorkAllocationComponent {
                 return;
             }
 
-            const nonWorkingHours: NonWorkingHours = {
-                end_date_time: endDate,
-                start_date_time: startDate
-            };
-
-            uploadNonWorkHoursRequest.non_working_hours = nonWorkingHours;
+            uploadNonWorkHoursRequest.end_time = endTime;
+            uploadNonWorkHoursRequest.start_time = startTime;
             uploadNonWorkHoursRequest.username = values[0];
             uploadNonWorkHoursRequests.push(uploadNonWorkHoursRequest);
         });
 
-        // Here for sonarcloud. To be removed in follow up stories
-        console.log('Arif', uploadNonWorkHoursRequests);
+        if (this.nonWorkingHoursFileValidationErrors.length > 0) {
+            return;
+        }
+
+        this.bhClient.uploadNonWorkingHours(uploadNonWorkHoursRequests).subscribe(result => {
+            this.isNonWorkingHoursUploadComplete = true;
+            this.nonWorkingHoursFileUploadUsernameErrors = result.failed_usernames;
+        });
     }
 
     uploadWorkingHours() {
