@@ -299,10 +299,10 @@ stages:
                   secret: true
                   keyVaultName: vh-admin-web-${{ variables.env }}
 
-                # - name: AzureAd:ResourceId
-                #   value: azuread--clientid
-                #   secret: true
-                #   keyVaultName: vh-admin-web-${{ variables.env }}
+                - name: AzureAd:ResourceId
+                  value: azuread--clientid
+                  secret: true
+                  keyVaultName: vh-admin-web-${{ variables.env }}
 
                 - name: AzureAd:PostLogoutRedirectUri
                   value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net/logout
