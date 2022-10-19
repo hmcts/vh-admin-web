@@ -6,7 +6,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Extensions;
 using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
@@ -58,7 +57,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                return Ok(await _bookingsApiClient.GetVhoWorkAvailabilityHoursAsync(vho.Sanitise()));
+                return Ok(await _bookingsApiClient.GetVhoWorkAvailabilityHoursAsync(vho.ToLowerInvariant().Trim()));
             }
             catch(BookingsApiException ex)
             {

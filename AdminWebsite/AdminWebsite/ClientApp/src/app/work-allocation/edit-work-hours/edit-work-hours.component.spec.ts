@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EditWorkHoursComponent } from './edit-work-hours.component';
 import { VhoSearchResponse } from '../../services/clients/api-client';
-import {DebugElement} from "@angular/core";
-import {By} from "@angular/platform-browser";
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 describe('EditWorkHoursComponent', () => {
     let component: EditWorkHoursComponent;
@@ -48,5 +47,4 @@ describe('EditWorkHoursComponent', () => {
         expect(component).toBeTruthy();
         expect(component.result).toBe(parameter);
     });
-
 });
