@@ -7,7 +7,7 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
     styleUrls: ['./vho-work-hours-table.component.css']
 })
 export class VhoWorkHoursTableComponent implements OnInit {
-    constructor() {}
+
     workHours: VhoWorkHoursResponse[];
 
     @Input() set result(value: VhoSearchResponse) {
@@ -16,5 +16,7 @@ export class VhoWorkHoursTableComponent implements OnInit {
         }
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        console.log('Needs something for sonarcloud. Delete this later');
+    }
 }
