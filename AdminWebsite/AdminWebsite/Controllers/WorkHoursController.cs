@@ -23,7 +23,7 @@ namespace AdminWebsite.Controllers
             _bookingsApiClient = bookingsApiClient;
         }
 
-        [HttpPost]
+        [HttpPost("UploadWorkHours")]
         [SwaggerOperation(OperationId = "UploadWorkHours")]
         [ProducesResponseType(typeof(UploadWorkHoursResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
@@ -31,6 +31,19 @@ namespace AdminWebsite.Controllers
             var failedUsernames = await _bookingsApiClient.SaveWorkHoursAsync(request);
 
             var uploadWorkHoursResponse = new UploadWorkHoursResponse();
+            uploadWorkHoursResponse.FailedUsernames.AddRange(failedUsernames);
+
+            return Ok(uploadWorkHoursResponse);
+        }
+
+        [HttpPost("UploadNonWorkingHours")]
+        [SwaggerOperation(OperationId = "UploadNonWorkingHours")]
+        [ProducesResponseType(typeof(UploadNonWorkingHoursResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UploadNonWorkingHours([FromBody] List<UploadNonWorkingHoursRequest> request)
+        {
+            var failedUsernames = await _bookingsApiClient.SaveNonWorkingHoursAsync(request);
+
+            var uploadWorkHoursResponse = new UploadNonWorkingHoursResponse();
             uploadWorkHoursResponse.FailedUsernames.AddRange(failedUsernames);
 
             return Ok(uploadWorkHoursResponse);

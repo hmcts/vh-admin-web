@@ -33,11 +33,21 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
         </div>
       </div>
-      <ng-container *ngIf="isWorkingHoursUploadComplete" [ngSwitch]="workingHoursFileUploadUsernameErrors.length">
-        <div id="working-hours-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result">
+      <ng-container
+        *ngIf="isWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          usernameErrors: workingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadWorkHours
+        }"
+      >
+      </ng-container>
+
+      <ng-template let-errors="usernameErrors" let-numberOfUploads="numberOfUsernamesUploaded" #fileUploadResult>
+        <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
           <p *ngSwitchCase="0"><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours uploaded successfully</p>
 
-          <ng-container *ngSwitchCase="numberOfUsernamesToUploadWorkHours">
+          <ng-container *ngSwitchCase="numberOfUploads">
             <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours not uploaded. No users found.</p>
             <p>
               Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
@@ -51,14 +61,14 @@
             </p>
 
             <ul class="govuk-body govuk-!-font-weight-normal">
-              <li *ngFor="let username of workingHoursFileUploadUsernameErrors">{{ username }}</li>
+              <li *ngFor="let username of errors">{{ username }}</li>
             </ul>
             <p>
               Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
             </p>
           </ng-container>
         </div>
-      </ng-container>
+      </ng-template>
 
       <ng-template #workingHoursUploadFailedMessage class="govuk-body upload-result">
         <div class="govuk-!-font-weight-bold">
@@ -98,6 +108,16 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
         </div>
       </div>
+
+      <ng-container
+        *ngIf="isNonWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
+        }"
+      >
+      </ng-container>
     </div>
   </details>
   <app-edit-work-hours [isVhTeamLeader]="isVhTeamLeader"></app-edit-work-hours>
