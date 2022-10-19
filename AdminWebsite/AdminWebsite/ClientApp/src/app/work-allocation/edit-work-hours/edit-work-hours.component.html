@@ -20,6 +20,8 @@
       </div>
     </div>
   </div>
-  <app-vho-search (vhoSearchEmitter)="setSearchResult($event)"></app-vho-search>
-  <app-vho-work-hours-table [result]="result"> </app-vho-work-hours-table>
+  <div *ngIf="isVhTeamLeader">
+    <app-vho-search (vhoSearchEmitter)="setSearchResult($event)"></app-vho-search>
+    <app-vho-work-hours-table [result]="result"> </app-vho-work-hours-table>
+  </div>
 </details>

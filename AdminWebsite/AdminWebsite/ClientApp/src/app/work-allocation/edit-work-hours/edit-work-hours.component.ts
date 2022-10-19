@@ -8,6 +8,7 @@ import { VhoSearchResponse } from '../../services/clients/api-client';
 })
 export class EditWorkHoursComponent implements OnInit {
     result: VhoSearchResponse;
+    @Input() isVhTeamLeader: boolean;
 
     ngOnInit(): void {
         console.log('Needs something for sonarcloud. Delete this later');

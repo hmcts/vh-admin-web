@@ -120,7 +120,7 @@
       </ng-container>
     </div>
   </details>
-  <app-edit-work-hours *ngIf="isVhTeamLeader"></app-edit-work-hours>
+  <app-edit-work-hours [isVhTeamLeader]="isVhTeamLeader"></app-edit-work-hours>
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
       <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
