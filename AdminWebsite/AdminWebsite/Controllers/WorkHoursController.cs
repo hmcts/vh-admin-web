@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +8,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Extensions;
 using BookingsApi.Contract.Responses;
-using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -39,22 +37,22 @@ namespace AdminWebsite.Controllers
         }
         
         [HttpGet("vho")]
-        [SwaggerOperation(OperationId = "GetWorkHours")]
+        [SwaggerOperation(OperationId = "GetWorkAvailabilityHours")]
         [ProducesResponseType(typeof(VhoSearchResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetWorkHours(string vho)
+        public async Task<IActionResult> GetWorkAvailabilityHours(string vho)
         {
             try
             {
-                return Ok(await _bookingsApiClient.GetVhoWorkHoursAsync(vho.Sanitise()));
+                return Ok(await _bookingsApiClient.GetVhoWorkAvailabilityHoursAsync(vho.Sanitise()));
             }
-            catch(VideoApiException ex)
+            catch(BookingsApiException ex)
             {
                 switch (ex.StatusCode)
                 {
                     case (int)HttpStatusCode.NotFound:
-                        return NotFound("Username could not be found. Please check the username and try again");
+                        return NotFound("User could not be found. Please check the username and try again");
                     case (int)HttpStatusCode.BadRequest:
                         return BadRequest(ex.Response);
                     default:
