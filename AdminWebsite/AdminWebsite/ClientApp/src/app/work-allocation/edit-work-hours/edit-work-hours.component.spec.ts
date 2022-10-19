@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditWorkHoursComponent } from './edit-work-hours.component';
-import {VhoSearchResponse} from "../../services/clients/api-client";
+import { VhoSearchResponse } from '../../services/clients/api-client';
 
 describe('EditWorkHoursComponent', () => {
     let component: EditWorkHoursComponent;
@@ -25,7 +25,7 @@ describe('EditWorkHoursComponent', () => {
 
     it('setSearchResult should assign event to results property', () => {
         const parameter = new VhoSearchResponse();
-        component.setSearchResult(parameter)
+        component.setSearchResult(parameter);
         expect(component).toBeTruthy();
         expect(component.result).toBe(parameter);
     });

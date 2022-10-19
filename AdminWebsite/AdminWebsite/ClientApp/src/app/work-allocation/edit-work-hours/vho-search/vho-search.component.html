@@ -1,10 +1,10 @@
 <div class="govuk-form-group govuk-!-margin-left-6">
-    <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="username"> Search for team member </label>
-    <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': error !== null}">
-    <p *ngIf="error" class="govuk-error-message govuk-!-margin-left-3">Error: {{error}}</p>
-     <div class="govuk-grid-row" [formGroup]="form">
+  <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="username"> Search for team member </label>
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': error !== null }">
+    <p *ngIf="error" class="govuk-error-message govuk-!-margin-left-3">Error: {{ error }}</p>
+    <div class="govuk-grid-row" [formGroup]="form">
       <div class="govuk-grid-column-one-third">
-        <input class="govuk-input" id="username" name="username" type="text" formControlName="username" required (input)="clear()"/>
+        <input class="govuk-input" id="username" name="username" type="text" formControlName="username" required (input)="clear()" />
       </div>
       <button class="govuk-button" data-module="govuk-button" (click)="search()" [disabled]="form.invalid">Search</button>
     </div>

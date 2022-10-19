@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {VhoSearchResponse, VhoWorkHoursResponse} from '../../../services/clients/api-client';
+import { Component, Input, OnInit } from '@angular/core';
+import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 @Component({
     selector: 'app-vho-work-hours-table',

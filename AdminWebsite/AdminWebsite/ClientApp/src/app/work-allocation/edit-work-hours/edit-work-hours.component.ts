@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {VhoSearchResponse} from '../../services/clients/api-client';
+import { Component, Input, OnInit } from '@angular/core';
+import { VhoSearchResponse } from '../../services/clients/api-client';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -7,7 +7,6 @@ import {VhoSearchResponse} from '../../services/clients/api-client';
     styleUrls: ['./edit-work-hours.component.css']
 })
 export class EditWorkHoursComponent implements OnInit {
-
     result: VhoSearchResponse;
     @Input() isVhTeamLeader: boolean;
 

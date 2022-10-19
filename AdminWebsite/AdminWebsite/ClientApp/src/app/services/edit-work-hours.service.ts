@@ -10,7 +10,7 @@ export class EditWorkHoursService {
 
     async searchForVho(username: string) {
         try {
-           return await this.bhClient.getWorkAvailabilityHours(username).toPromise();
+            return await this.bhClient.getWorkAvailabilityHours(username).toPromise();
         } catch (error) {
             if (error.status === 404 || error.status === 400) {
                 this.logger.warn(`Failed to find user ${username}. ${error.response}`, error);
