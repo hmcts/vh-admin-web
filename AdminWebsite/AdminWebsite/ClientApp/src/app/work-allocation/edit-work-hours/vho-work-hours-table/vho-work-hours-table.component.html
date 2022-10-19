@@ -1,40 +1,17 @@
-<table class="govuk-table" data-module="moj-sortable-table">
-    <thead class="govuk-table__head">
+<table class="govuk-table" data-module="moj-sortable-table" *ngIf="workHours">
+  <thead class="govuk-table__head">
     <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header" aria-sort="ascending">Day of the Week</th>
-        <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
-        <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
+      <th scope="col" class="govuk-table__header" aria-sort="ascending">Day of the Week</th>
+      <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
+      <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
     </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Monday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Tuesday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Wednesday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Thursday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Friday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Saturday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    <tr class="govuk-table__row">
-        <td class="govuk-table__cell">Sunday</td>
-        <td class="govuk-table__cell"><input type="time"></td>
-        <td class="govuk-table__cell"><input type="time"></td>
-    </tbody>
+  </thead>
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row" *ngFor="let day of workHours">
+      <td class="govuk-table__cell">{{day.day_of_week}}</td>
+      <td class="govuk-table__cell"><input type="time" value="{{day.start_time}}"/></td>
+      <td class="govuk-table__cell"><input type="time" value="{{day.end_time}}"/></td>
+    </tr>
+  </tbody>
 </table>
 <button class="govuk-button" data-module="govuk-button">Edit</button>

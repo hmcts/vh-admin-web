@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {VhoSearchResponse, VhoWorkHoursResponse} from '../../../services/clients/api-client';
 
 @Component({
-  selector: 'app-vho-work-hours-table',
-  templateUrl: './vho-work-hours-table.component.html',
-  styleUrls: ['./vho-work-hours-table.component.css']
+    selector: 'app-vho-work-hours-table',
+    templateUrl: './vho-work-hours-table.component.html',
+    styleUrls: ['./vho-work-hours-table.component.css']
 })
 export class VhoWorkHoursTableComponent implements OnInit {
+    constructor() {}
+    workHours: VhoWorkHoursResponse[];
 
-  constructor() { }
+    @Input() set result(value: VhoSearchResponse) {
+        if (value?.vho_work_hours) {
+            this.workHours = value.vho_work_hours;
+        }
+    }
 
-  ngOnInit(): void {
-  }
-
+    ngOnInit(): void {}
 }
