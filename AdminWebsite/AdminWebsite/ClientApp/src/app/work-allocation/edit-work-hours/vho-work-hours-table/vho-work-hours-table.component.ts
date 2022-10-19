@@ -7,7 +7,6 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
     styleUrls: ['./vho-work-hours-table.component.css']
 })
 export class VhoWorkHoursTableComponent implements OnInit {
-
     workHours: VhoWorkHoursResponse[];
 
     @Input() set result(value: VhoSearchResponse) {
