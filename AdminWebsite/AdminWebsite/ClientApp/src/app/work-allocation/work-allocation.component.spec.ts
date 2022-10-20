@@ -5,7 +5,6 @@ import { of } from 'rxjs';
 import { BHClient } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
-
 import { WorkAllocationComponent } from './work-allocation.component';
 import { FileType } from '../common/model/file-type';
 
@@ -49,7 +48,6 @@ describe('WorkAllocationComponent', () => {
             const componentOuterDiv = componentDebugElement.query(By.css('div')).nativeElement;
 
             expect(componentOuterDiv.innerText).toEqual(`Upload working hours / non-availability
-Edit working hours / non-availability
 Manage team
 Allocate hearings`);
         });
@@ -61,7 +59,7 @@ Allocate hearings`);
             const componentDebugElement: DebugElement = fixture.debugElement;
             const componentOuterDiv = componentDebugElement.query(By.css('div')).nativeElement;
 
-            expect(componentOuterDiv.innerText).toEqual('Edit working hours / non-availability');
+            expect(componentOuterDiv.innerText).toEqual(''); // update if more divs become available
         });
 
         it('should show working hours file upload max size error', () => {

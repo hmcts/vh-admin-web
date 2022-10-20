@@ -6,6 +6,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
 {
@@ -45,6 +46,31 @@ namespace AdminWebsite.Controllers
             uploadWorkHoursResponse.FailedUsernames.AddRange(failedUsernames);
 
             return Ok(uploadWorkHoursResponse);
+        }
+        
+        [HttpGet("vho")]
+        [SwaggerOperation(OperationId = "GetWorkAvailabilityHours")]
+        [ProducesResponseType(typeof(VhoSearchResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetWorkAvailabilityHours(string vho)
+        {
+            try
+            {
+                return Ok(await _bookingsApiClient.GetVhoWorkAvailabilityHoursAsync(vho.ToLowerInvariant().Trim()));
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound("User could not be found. Please check the username and try again");
+                    case (int)HttpStatusCode.BadRequest:
+                        return BadRequest(ex.Response);
+                    default:
+                        throw;
+                }
+            }
         }
     }
 }

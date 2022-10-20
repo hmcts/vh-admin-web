@@ -3234,6 +3234,91 @@ export class BHClient {
         }
         return _observableOf<UploadNonWorkingHoursResponse>(<any>null);
     }
+
+    /**
+     * @param vho (optional)
+     * @return Success
+     */
+    getWorkAvailabilityHours(vho: string | null | undefined): Observable<VhoSearchResponse> {
+        let url_ = this.baseUrl + '/api/workhours/vho?';
+        if (vho !== undefined && vho !== null) url_ += 'vho=' + encodeURIComponent('' + vho) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return this.http
+            .request('get', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetWorkAvailabilityHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetWorkAvailabilityHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<VhoSearchResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<VhoSearchResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetWorkAvailabilityHours(response: HttpResponseBase): Observable<VhoSearchResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = VhoSearchResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Bad Request', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Not Found', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<VhoSearchResponse>(<any>null);
+    }
 }
 
 export class HearingAudioRecordingResponse implements IHearingAudioRecordingResponse {
@@ -6397,6 +6482,118 @@ export class UploadNonWorkingHoursResponse implements IUploadNonWorkingHoursResp
 
 export interface IUploadNonWorkingHoursResponse {
     failed_usernames?: string[] | undefined;
+}
+
+export class VhoWorkHoursResponse implements IVhoWorkHoursResponse {
+    day_of_week_id?: number;
+    day_of_week?: string | undefined;
+    start_time?: string | undefined;
+    end_time?: string | undefined;
+
+    constructor(data?: IVhoWorkHoursResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.day_of_week_id = _data['day_of_week_id'];
+            this.day_of_week = _data['day_of_week'];
+            this.start_time = _data['start_time'];
+            this.end_time = _data['end_time'];
+        }
+    }
+
+    static fromJS(data: any): VhoWorkHoursResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new VhoWorkHoursResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['day_of_week_id'] = this.day_of_week_id;
+        data['day_of_week'] = this.day_of_week;
+        data['start_time'] = this.start_time;
+        data['end_time'] = this.end_time;
+        return data;
+    }
+}
+
+export interface IVhoWorkHoursResponse {
+    day_of_week_id?: number;
+    day_of_week?: string | undefined;
+    start_time?: string | undefined;
+    end_time?: string | undefined;
+}
+
+export class VhoSearchResponse implements IVhoSearchResponse {
+    username?: string | undefined;
+    first_name?: string | undefined;
+    lastname?: string | undefined;
+    contact_email?: string | undefined;
+    telephone?: string | undefined;
+    user_role?: string | undefined;
+    vho_work_hours?: VhoWorkHoursResponse[] | undefined;
+
+    constructor(data?: IVhoSearchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data['username'];
+            this.first_name = _data['first_name'];
+            this.lastname = _data['lastname'];
+            this.contact_email = _data['contact_email'];
+            this.telephone = _data['telephone'];
+            this.user_role = _data['user_role'];
+            if (Array.isArray(_data['vho_work_hours'])) {
+                this.vho_work_hours = [] as any;
+                for (let item of _data['vho_work_hours']) this.vho_work_hours!.push(VhoWorkHoursResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): VhoSearchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new VhoSearchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['username'] = this.username;
+        data['first_name'] = this.first_name;
+        data['lastname'] = this.lastname;
+        data['contact_email'] = this.contact_email;
+        data['telephone'] = this.telephone;
+        data['user_role'] = this.user_role;
+        if (Array.isArray(this.vho_work_hours)) {
+            data['vho_work_hours'] = [];
+            for (let item of this.vho_work_hours) data['vho_work_hours'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IVhoSearchResponse {
+    username?: string | undefined;
+    first_name?: string | undefined;
+    lastname?: string | undefined;
+    contact_email?: string | undefined;
+    telephone?: string | undefined;
+    user_role?: string | undefined;
+    vho_work_hours?: VhoWorkHoursResponse[] | undefined;
 }
 
 export class BookHearingException extends Error {

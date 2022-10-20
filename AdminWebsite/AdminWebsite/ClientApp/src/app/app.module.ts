@@ -41,6 +41,9 @@ import { EditParticipantModule } from './edit-participant/edit-participant.modul
 import { AuthConfigModule } from './security/auth-config.module';
 import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { EditWorkHoursComponent } from './work-allocation/edit-work-hours/edit-work-hours.component';
+import { VhoSearchComponent } from './work-allocation/edit-work-hours/vho-search/vho-search.component';
+import { VhoWorkHoursTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -56,7 +59,10 @@ export function loadConfig(configService: ConfigService) {
         ErrorComponent,
         UnsupportedBrowserComponent,
         ChangePasswordComponent,
-        WorkAllocationComponent
+        WorkAllocationComponent,
+        EditWorkHoursComponent,
+        VhoSearchComponent,
+        VhoWorkHoursTableComponent
     ],
     imports: [
         MomentModule,

@@ -1,0 +1,27 @@
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary" tabindex="0" role="button">
+    <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
+  </summary>
+  <div class="govuk-form-group govuk-!-margin-left-6">
+    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+      <div class="govuk-radios__item">
+        <input class="govuk-radios__input" id="edit-working-hours" name="edit-working-hours" type="radio" value="edit-working-hours" />
+        <label class="govuk-label govuk-radios__label" for="edit-working-hours"> Edit working hours </label>
+      </div>
+      <div class="govuk-radios__item">
+        <input
+          class="govuk-radios__input"
+          id="edit-non-availability-hours"
+          name="edit-non-availability-hours"
+          type="radio"
+          value="edit-non-availability-hours"
+        />
+        <label class="govuk-label govuk-radios__label" for="edit-non-availability-hours"> Edit non-availability hours </label>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isVhTeamLeader">
+    <app-vho-search (vhoSearchEmitter)="setSearchResult($event)"></app-vho-search>
+    <app-vho-work-hours-table [result]="result"> </app-vho-work-hours-table>
+  </div>
+</details>
