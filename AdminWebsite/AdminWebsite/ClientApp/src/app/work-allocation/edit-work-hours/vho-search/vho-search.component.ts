@@ -6,8 +6,7 @@ import { VhoSearchResponse } from '../../../services/clients/api-client';
 
 @Component({
     selector: 'app-vho-search',
-    templateUrl: './vho-search.component.html',
-    styleUrls: ['./vho-search.component.css']
+    templateUrl: './vho-search.component.html'
 })
 export class VhoSearchComponent implements OnInit {
     form: FormGroup;

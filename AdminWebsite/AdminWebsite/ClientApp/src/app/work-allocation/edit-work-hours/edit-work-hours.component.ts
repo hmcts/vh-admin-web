@@ -3,8 +3,7 @@ import { VhoSearchResponse } from '../../services/clients/api-client';
 
 @Component({
     selector: 'app-edit-work-hours',
-    templateUrl: './edit-work-hours.component.html',
-    styleUrls: ['./edit-work-hours.component.css']
+    templateUrl: './edit-work-hours.component.html'
 })
 export class EditWorkHoursComponent implements OnInit {
     result: VhoSearchResponse;

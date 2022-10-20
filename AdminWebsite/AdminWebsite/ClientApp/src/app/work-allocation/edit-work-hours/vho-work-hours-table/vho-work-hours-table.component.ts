@@ -3,8 +3,7 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
 
 @Component({
     selector: 'app-vho-work-hours-table',
-    templateUrl: './vho-work-hours-table.component.html',
-    styleUrls: ['./vho-work-hours-table.component.css']
+    templateUrl: './vho-work-hours-table.component.html'
 })
 export class VhoWorkHoursTableComponent implements OnInit {
     workHours: VhoWorkHoursResponse[];
