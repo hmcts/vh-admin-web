@@ -8,7 +8,7 @@
 // ReSharper disable InconsistentNaming
 
 import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
+import { Observable, from as _observableFrom, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
@@ -25,6 +25,11 @@ export class BHClient {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'https://localhost:5400';
+    }
+
+    protected transformOptions(options: any) {
+        options.headers = options.headers.append('Cache-Control', 'no-store');
+        return Promise.resolve(options);
     }
 
     /**
@@ -46,8 +51,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetAudioRecordingLink(response_);
@@ -136,8 +145,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsAll(response_);
@@ -229,8 +242,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsByCloudRoom(response_);
@@ -322,8 +339,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsByDate(response_);
@@ -417,8 +438,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processBookingsList(response_);
@@ -507,8 +532,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetConfigSettings(response_);
@@ -581,8 +610,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetFeatureFlag(response_);
@@ -662,8 +695,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCheckServiceHealth(response_);
@@ -743,8 +780,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCheckServiceHealth2(response_);
@@ -829,8 +870,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processBookNewHearing(response_);
@@ -917,8 +962,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCloneHearing(response_);
@@ -1003,8 +1052,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processEditHearing(response_);
@@ -1102,8 +1155,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingById(response_);
@@ -1200,8 +1257,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('patch', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdateBookingStatus(response_);
@@ -1297,8 +1358,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processSearchForAudioRecordedHearings(response_);
@@ -1384,8 +1449,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingConferenceStatus(response_);
@@ -1477,8 +1546,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdateFailedBookingStatus(response_);
@@ -1570,8 +1643,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetTelephoneConferenceIdById(response_);
@@ -1665,8 +1742,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostJudgesBySearchTerm(response_);
@@ -1754,8 +1835,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostJudiciaryPersonBySearchTerm(response_);
@@ -1843,8 +1928,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostPersonBySearchTerm(response_);
@@ -1929,8 +2018,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetPersonForUpdateByContactEmail(response_);
@@ -2012,8 +2105,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingsByUsernameForDeletion(response_);
@@ -2097,8 +2194,12 @@ export class BHClient {
             headers: new HttpHeaders({})
         };
 
-        return this.http
-            .request('delete', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('delete', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processDeletePersonWithUsername(response_);
@@ -2182,8 +2283,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdatePersonDetails(response_);
@@ -2269,8 +2374,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingTypes(response_);
@@ -2355,8 +2464,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetParticipantRoles(response_);
@@ -2439,8 +2552,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCourts(response_);
@@ -2523,8 +2640,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPublicHolidays(response_);
@@ -2609,8 +2730,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetStaffMembersBySearchTerm(response_);
@@ -2698,8 +2823,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetSuitabilityAnswers(response_);
@@ -2779,8 +2908,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetJudges(response_);
@@ -2862,8 +2995,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processSearchJudgesByEmail(response_);
@@ -2947,8 +3084,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('patch', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processResetPassword(response_);
@@ -3027,8 +3168,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetUserProfile(response_);
@@ -3103,8 +3248,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUploadWorkHours(response_);
@@ -3179,8 +3328,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUploadNonWorkingHours(response_);
@@ -3252,8 +3405,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetWorkAvailabilityHours(response_);
