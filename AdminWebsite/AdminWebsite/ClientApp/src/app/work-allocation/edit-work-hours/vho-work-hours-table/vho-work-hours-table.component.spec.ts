@@ -4,7 +4,7 @@ import { VhoWorkHoursResponse } from 'src/app/services/clients/api-client';
 
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
 
-fdescribe('VhoWorkHoursTableComponent', () => {
+describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
 
@@ -92,6 +92,31 @@ fdescribe('VhoWorkHoursTableComponent', () => {
           
             expect(component.isEditing).toBeFalsy();
         });
+
+        it('should set work hours back to original values', () => {
+            const originalMondayWorkHours = new VhoWorkHoursResponse();
+            originalMondayWorkHours.day_of_week_id = 1;
+            originalMondayWorkHours.end_time = '17:00';
+            originalMondayWorkHours.start_time = '09:00';
+
+            const editedMondayWorkHours = new VhoWorkHoursResponse();
+            originalMondayWorkHours.day_of_week_id = 1;
+            originalMondayWorkHours.end_time = '17:00';
+            originalMondayWorkHours.start_time = '09:00';
+
+            component.originalWorkHours = [
+                originalMondayWorkHours
+            ];
+
+            component.workHours = [
+                editedMondayWorkHours
+            ]
+            
+            component.switchToEditMode();
+
+            expect(JSON.stringify(component.originalWorkHours)).
+                toEqual(JSON.stringify(component.workHours));
+        });
     });
 
     describe('switchToEditMode', () => {
@@ -113,6 +138,22 @@ fdescribe('VhoWorkHoursTableComponent', () => {
             component.switchToEditMode();
 
             expect(component.isEditing).toBeFalsy();
+        });
+
+        it('should make a copy of original work hours', () => {
+            const mondayWorkHours = new VhoWorkHoursResponse();
+            mondayWorkHours.day_of_week_id = 1;
+            mondayWorkHours.end_time = '17:00';
+            mondayWorkHours.start_time = '09:00';
+
+            component.workHours = [
+                mondayWorkHours
+            ];
+            
+            component.switchToEditMode();
+
+            expect(JSON.stringify(component.originalWorkHours)).
+                toEqual(JSON.stringify(component.workHours));
         });
     });
 });
