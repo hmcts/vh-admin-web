@@ -7,6 +7,7 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
 })
 export class VhoWorkHoursTableComponent implements OnInit {
     workHours: VhoWorkHoursResponse[];
+    isEditing = false;
 
     @Input() set result(value: VhoSearchResponse) {
         if (value?.vho_work_hours) {

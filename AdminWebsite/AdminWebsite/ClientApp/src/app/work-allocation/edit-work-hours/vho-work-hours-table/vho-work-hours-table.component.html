@@ -9,9 +9,9 @@
   <tbody class="govuk-table__body">
     <tr class="govuk-table__row" *ngFor="let day of workHours">
       <td class="govuk-table__cell">{{ day.day_of_week }}</td>
-      <td class="govuk-table__cell"><input type="time" value="{{ day.start_time }}" /></td>
-      <td class="govuk-table__cell"><input type="time" value="{{ day.end_time }}" /></td>
+      <td class="govuk-table__cell"><input [disabled]="!isEditing" type="time" value="{{ day.start_time }}" /></td>
+      <td class="govuk-table__cell"><input [disabled]="!isEditing" type="time" value="{{ day.end_time }}" /></td>
     </tr>
   </tbody>
 </table>
-<button class="govuk-button" data-module="govuk-button">Edit</button>
+<button id="edit-work-hours-button" class="govuk-button" data-module="govuk-button" (click)="isEditing = true">Edit</button>
