@@ -1,4 +1,4 @@
-<table class="govuk-table" data-module="moj-sortable-table" *ngIf="workHours" aria-describedby="vho work availability table">
+<table id="individual-work-hours-table" class="govuk-table" data-module="moj-sortable-table" *ngIf="workHours.length > 0" aria-describedby="vho work availability table">
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">
       <th scope="col" class="govuk-table__header" aria-sort="ascending">Day of the Week</th>
@@ -15,7 +15,7 @@
   </tbody>
 </table>
 
-<button *ngIf="!isEditing; else editingButtonsBlock" id="edit-individual-work-hours-button" class="govuk-button" data-module="govuk-button" (click)="isEditing = true">Edit</button>
+<button *ngIf="!isEditing; else editingButtonsBlock" id="edit-individual-work-hours-button" class="govuk-button" data-module="govuk-button" (click)="switchToEditMode()">Edit</button>
 <ng-template #editingButtonsBlock >
   <div class="govuk-button-group">
     <button id="save-individual-work-hours-button" class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="saveWorkingHours()">Save</button>

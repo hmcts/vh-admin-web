@@ -6,7 +6,7 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
     templateUrl: './vho-work-hours-table.component.html'
 })
 export class VhoWorkHoursTableComponent implements OnInit {
-    workHours: VhoWorkHoursResponse[];
+    workHours: VhoWorkHoursResponse[] = [];
     isEditing = false;
 
     @Input() set result(value: VhoSearchResponse) {
@@ -25,5 +25,11 @@ export class VhoWorkHoursTableComponent implements OnInit {
 
     saveWorkingHours() {
 
+    }
+
+    switchToEditMode() {
+        if (this.workHours.length > 0) {
+            this.isEditing = true;
+        }
     }
 }
