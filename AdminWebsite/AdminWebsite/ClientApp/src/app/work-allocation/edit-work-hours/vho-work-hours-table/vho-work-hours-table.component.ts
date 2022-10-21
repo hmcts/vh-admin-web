@@ -18,4 +18,12 @@ export class VhoWorkHoursTableComponent implements OnInit {
     ngOnInit(): void {
         console.log('Needs something for sonarcloud. Delete this later');
     }
+
+    cancelEditingWorkingHours() {
+        this.isEditing = false;
+    }
+
+    saveWorkingHours() {
+
+    }
 }

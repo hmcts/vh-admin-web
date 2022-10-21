@@ -14,4 +14,11 @@
     </tr>
   </tbody>
 </table>
-<button id="edit-work-hours-button" class="govuk-button" data-module="govuk-button" (click)="isEditing = true">Edit</button>
+
+<button *ngIf="!isEditing; else editingButtonsBlock" id="edit-individual-work-hours-button" class="govuk-button" data-module="govuk-button" (click)="isEditing = true">Edit</button>
+<ng-template #editingButtonsBlock >
+  <div class="govuk-button-group">
+    <button id="save-individual-work-hours-button" class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="saveWorkingHours()">Save</button>
+    <button id="cancel-editing-individual-work-hours-button" class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelEditingWorkingHours()">Cancel</button>
+  </div>
+</ng-template>
