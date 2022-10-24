@@ -48,9 +48,9 @@ namespace AdminWebsite.Controllers
             return Ok(uploadWorkHoursResponse);
         }
         
-        [HttpGet("vho")]
+        [HttpGet("VHO")]
         [SwaggerOperation(OperationId = "GetWorkAvailabilityHours")]
-        [ProducesResponseType(typeof(VhoSearchResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<VhoWorkHoursResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetWorkAvailabilityHours(string vho)
@@ -58,6 +58,32 @@ namespace AdminWebsite.Controllers
             try
             {
                 return Ok(await _bookingsApiClient.GetVhoWorkAvailabilityHoursAsync(vho.ToLowerInvariant().Trim()));
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound("User could not be found. Please check the username and try again");
+                    case (int)HttpStatusCode.BadRequest:
+                        return BadRequest(ex.Response);
+                    default:
+                        throw;
+                }
+            }
+        }
+        
+                
+        [HttpGet("/NonAvailability/VHO")]
+        [SwaggerOperation(OperationId = "GetNonAvailabilityWorkHours")]
+        [ProducesResponseType(typeof(List<VhoNonAvailabilityWorkHoursResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetNonAvailabilityWorkHours(string vho)
+        {
+            try
+            {
+                return Ok(await _bookingsApiClient.GetVhoNonAvailabilityHoursAsync(vho.ToLowerInvariant().Trim()));
             }
             catch(BookingsApiException ex)
             {

@@ -8,7 +8,7 @@ import { Logger } from './logger';
 export class EditWorkHoursService {
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
-    async searchForVho(username: string) {
+    async getWorkAvailabilityForVho(username: string) {
         try {
             return await this.bhClient.getWorkAvailabilityHours(username).toPromise();
         } catch (error) {

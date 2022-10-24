@@ -3,6 +3,7 @@ import { By } from '@angular/platform-browser';
 import { VhoWorkHoursResponse } from 'src/app/services/clients/api-client';
 
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -16,7 +17,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(VhoWorkHoursTableComponent);
-        component = fixture.componentInstance;
+        component = fixture.debugElement.children[0].componentInstance;
         fixture.detectChanges();
     });
 

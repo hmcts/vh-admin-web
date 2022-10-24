@@ -11,9 +11,9 @@ export class VhoWorkHoursTableComponent implements OnInit {
     originalWorkHours: VhoWorkHoursResponse[] = [];
     isEditing = false;
 
-    @Input() set result(value: VhoSearchResponse) {
-        if (value?.vho_work_hours) {
-            this.workHours = value.vho_work_hours;
+    @Input() set result(value: VhoWorkHoursResponse[]) {
+        if (value) {
+            this.workHours = value;
         }
     }
 
