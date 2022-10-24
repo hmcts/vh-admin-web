@@ -13,6 +13,10 @@ export class EditWorkHoursComponent implements OnInit {
         console.log('Needs something for sonarcloud. Delete this later');
     }
 
+    onSaveWorkHours($event: VhoWorkHoursResponse[]) {
+        console.log('Arif', $event)
+    }
+
     setSearchResult($event: VhoWorkHoursResponse[]) {
         this.result = $event;
     }

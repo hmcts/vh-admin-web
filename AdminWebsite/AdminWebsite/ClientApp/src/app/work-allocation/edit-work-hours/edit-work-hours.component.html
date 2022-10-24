@@ -22,6 +22,6 @@
   </div>
   <div *ngIf="isVhTeamLeader">
     <app-vho-search (vhoSearchEmitter)="setSearchResult($event)"></app-vho-search>
-    <app-vho-work-hours-table [result]="result"> </app-vho-work-hours-table>
+    <app-vho-work-hours-table (saveWorkHours)="onSaveWorkHours($event)" [result]="result"> </app-vho-work-hours-table>
   </div>
 </details>
