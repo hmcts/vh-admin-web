@@ -119,6 +119,61 @@ describe('VhoWorkHoursTableComponent', () => {
         });
     });
 
+    fdescribe('saveWorkingHours', () => {
+        it('should add end time before start time error', () => {
+            const workHours = [
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '09:00',
+                    start_time: '12:00',
+                })
+            ] as VhoWorkHoursResponse[];
+
+            component.workHours = workHours;
+
+            component.saveWorkingHours();
+
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(1);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
+        });
+
+        it('should not emit event if errors exist', () => {
+            const workHours = [
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '09:00',
+                    start_time: '12:00',
+                })
+            ] as VhoWorkHoursResponse[];
+
+            component.workHours = workHours;
+
+            spyOn(component.saveWorkHours, 'emit');
+            component.saveWorkingHours();
+
+            expect(component.saveWorkHours.emit).not.toHaveBeenCalledTimes(1);
+        });
+
+        it('should emit event if no errors exist', () => {
+            const workHours = [
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '12:00',
+                    start_time: '09:00',
+                })
+            ] as VhoWorkHoursResponse[];
+
+            component.workHours = workHours;
+
+            spyOn(component.saveWorkHours, 'emit');
+            component.saveWorkingHours();
+
+            expect(component.saveWorkHours.emit).toHaveBeenCalledTimes(1);
+            expect(component.saveWorkHours.emit)
+                .toHaveBeenCalledWith(component.workHours);
+        });
+    });
+
     describe('switchToEditMode', () => {
         it('should set component to editing when work hours are not empty', () => {
             component.isEditing = false;
