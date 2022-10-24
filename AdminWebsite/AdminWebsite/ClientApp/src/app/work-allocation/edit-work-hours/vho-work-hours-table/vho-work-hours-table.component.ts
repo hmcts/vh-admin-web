@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 @Component({
     selector: 'app-vho-work-hours-table',
@@ -8,9 +8,9 @@ import { VhoSearchResponse, VhoWorkHoursResponse } from '../../../services/clien
 export class VhoWorkHoursTableComponent implements OnInit {
     workHours: VhoWorkHoursResponse[];
 
-    @Input() set result(value: VhoSearchResponse) {
-        if (value?.vho_work_hours) {
-            this.workHours = value.vho_work_hours;
+    @Input() set result(value: VhoWorkHoursResponse[]) {
+        if (value) {
+            this.workHours = value;
         }
     }
 

@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
-import { VhoSearchResponse } from '../../../services/clients/api-client';
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 @Component({
     selector: 'app-vho-search',
@@ -11,9 +11,10 @@ import { VhoSearchResponse } from '../../../services/clients/api-client';
 export class VhoSearchComponent implements OnInit {
     form: FormGroup;
     error: string = null;
+
     private loggerPrefix = 'vho-search';
 
-    @Output() vhoSearchEmitter = new EventEmitter<VhoSearchResponse>();
+    @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[]>();
 
     get username() {
         return this.form.get('username');
@@ -32,7 +33,7 @@ export class VhoSearchComponent implements OnInit {
             this.error = null;
             this.logger.debug(`${this.loggerPrefix} Attempting to search for username`, { username: this.username.value });
             try {
-                const result = await this.service.searchForVho(this.username.value);
+                const result = await this.service.getWorkAvailabilityForVho(this.username.value);
                 if (result) {
                     this.vhoSearchEmitter.emit(result);
                 } else {
