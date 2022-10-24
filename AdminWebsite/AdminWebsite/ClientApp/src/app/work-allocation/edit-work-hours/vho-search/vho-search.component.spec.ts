@@ -24,6 +24,7 @@ describe('VhoSearchComponent', () => {
         fixture = TestBed.createComponent(VhoSearchComponent);
         component = fixture.componentInstance;
         component.vhoSearchEmitter = jasmine.createSpyObj('vhoSearchEmitter', ['emit']);
+        component.usernameEmitter = jasmine.createSpyObj('usernameEmitter', ['emit']);
         fixture.detectChanges();
     });
 
