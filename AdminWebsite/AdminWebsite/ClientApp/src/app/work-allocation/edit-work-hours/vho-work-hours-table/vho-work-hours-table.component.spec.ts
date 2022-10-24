@@ -29,4 +29,10 @@ describe('VhoWorkHoursTableComponent', () => {
         fixture.detectChanges();
         expect(component.workHours).toEqual([new VhoWorkHoursResponse()]);
     });
+    it('check input set', () => {
+        component.result = null
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.workHours).toBeNull();
+    });
 });
