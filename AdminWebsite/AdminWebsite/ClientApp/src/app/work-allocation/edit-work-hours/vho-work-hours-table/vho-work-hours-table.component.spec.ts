@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
-import {VhoWorkHoursResponse} from "../../../services/clients/api-client";
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -30,7 +30,7 @@ describe('VhoWorkHoursTableComponent', () => {
         expect(component.workHours).toEqual([new VhoWorkHoursResponse()]);
     });
     it('check input set is null', () => {
-        component.result = null
+        component.result = null;
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.workHours).toBeNull();
