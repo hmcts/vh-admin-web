@@ -14,7 +14,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(VhoWorkHoursTableComponent);
-        component = fixture.componentInstance;
+        component = fixture.debugElement.children[0].componentInstance;
         fixture.detectChanges();
     });
 
