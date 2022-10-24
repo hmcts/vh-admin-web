@@ -33,6 +33,6 @@ describe('VhoWorkHoursTableComponent', () => {
         component.result = null;
         component.ngOnInit();
         fixture.detectChanges();
-        expect(component.workHours).toBeNull();
+        expect(component.workHours).toBeUndefined();
     });
 });
