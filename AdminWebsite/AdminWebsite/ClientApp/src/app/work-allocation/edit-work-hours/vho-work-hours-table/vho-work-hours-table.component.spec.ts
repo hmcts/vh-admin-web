@@ -23,13 +23,13 @@ describe('VhoWorkHoursTableComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('check input set', () => {
+    it('check input set has value', () => {
         component.result = [new VhoWorkHoursResponse()];
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.workHours).toEqual([new VhoWorkHoursResponse()]);
     });
-    it('check input set', () => {
+    it('check input set is null', () => {
         component.result = null
         component.ngOnInit();
         fixture.detectChanges();
