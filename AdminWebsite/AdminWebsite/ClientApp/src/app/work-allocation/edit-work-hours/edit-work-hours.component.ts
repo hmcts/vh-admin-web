@@ -13,8 +13,7 @@ export class EditWorkHoursComponent implements OnInit {
 
     @Input() isVhTeamLeader: boolean;
 
-    constructor(private bhClient: BHClient) {
-    }
+    constructor(private bhClient: BHClient) {}
 
     ngOnInit(): void {
         console.log('Needs something for sonarcloud. Delete this later');
@@ -34,16 +33,14 @@ export class EditWorkHoursComponent implements OnInit {
             const editedWorkHourStartTime = editedWorkHour.start_time?.split(':');
 
             if (!editedWorkHourEndTime || !editedWorkHourStartTime) {
-                workHour.end_time_hour =
-                workHour.end_time_minutes =
-                workHour.start_time_hour =
-                workHour.start_time_minutes = null 
+                workHour.end_time_hour = workHour.end_time_minutes = null;
+                workHour.start_time_hour = workHour.start_time_minutes = null;
             } else {
-                workHour.end_time_hour = parseInt(editedWorkHourEndTime[0]);
-                workHour.end_time_minutes = parseInt(editedWorkHourEndTime[1]);
+                workHour.end_time_hour = parseInt(editedWorkHourEndTime[0], 10);
+                workHour.end_time_minutes = parseInt(editedWorkHourEndTime[1], 10);
 
-                workHour.start_time_hour = parseInt(editedWorkHourStartTime[0]);
-                workHour.start_time_minutes = parseInt(editedWorkHourStartTime[1]);
+                workHour.start_time_hour = parseInt(editedWorkHourStartTime[0], 10);
+                workHour.start_time_minutes = parseInt(editedWorkHourStartTime[1], 10);
             }
 
             uploadWorkHoursRequest.working_hours.push(workHour);
@@ -51,7 +48,7 @@ export class EditWorkHoursComponent implements OnInit {
 
         this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(() => {
             this.isUploadWorkHoursSuccessful = true;
-        })
+        });
     }
 
     setSearchResult($event: VhoWorkHoursResponse[]) {

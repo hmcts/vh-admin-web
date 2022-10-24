@@ -38,14 +38,14 @@ export class VhoWorkHoursTableComponent implements OnInit {
             let workHourArray = workHour.start_time.split(':');
 
             const startDate = new Date();
-            startDate.setHours(parseInt(workHourArray[0]));
-            startDate.setMinutes(parseInt(workHourArray[1]));
+            startDate.setHours(parseInt(workHourArray[0], 10));
+            startDate.setMinutes(parseInt(workHourArray[1], 10));
 
             workHourArray = workHour.end_time.split(':');
 
             const endDate = new Date();
-            endDate.setHours(parseInt(workHourArray[0]));
-            endDate.setMinutes(parseInt(workHourArray[1]));
+            endDate.setHours(parseInt(workHourArray[0], 10));
+            endDate.setMinutes(parseInt(workHourArray[1], 10));
 
             if (endDate < startDate) {
                 this.workHoursEndTimeBeforeStartTimeErrors.push(index);
@@ -66,7 +66,6 @@ export class VhoWorkHoursTableComponent implements OnInit {
 
         this.isEditing = true;
 
-        this.originalWorkHours =
-            JSON.parse(JSON.stringify(this.workHours));
+        this.originalWorkHours = JSON.parse(JSON.stringify(this.workHours));
     }
 }

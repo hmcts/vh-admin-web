@@ -21,13 +21,10 @@ describe('VhoWorkHoursTableComponent', () => {
 
     describe('UI tests', () => {
         it('should show work hours table when work hours not empty', () => {
-            component.workHours = [
-                new VhoWorkHoursResponse()
-            ];
+            component.workHours = [new VhoWorkHoursResponse()];
             fixture.detectChanges();
-            
-            const workHoursTable = fixture.debugElement
-                .query(By.css('#individual-work-hours-table')).nativeElement;
+
+            const workHoursTable = fixture.debugElement.query(By.css('#individual-work-hours-table')).nativeElement;
 
             expect(workHoursTable).toBeTruthy();
         });
@@ -35,9 +32,8 @@ describe('VhoWorkHoursTableComponent', () => {
         it('should not show work hours table when work hours are empty', () => {
             component.workHours = [];
             fixture.detectChanges();
-            
-            const workHoursTable = fixture.debugElement
-                .query(By.css('#individual-work-hours-table'));
+
+            const workHoursTable = fixture.debugElement.query(By.css('#individual-work-hours-table'));
 
             expect(workHoursTable).toBeNull();
         });
@@ -45,8 +41,7 @@ describe('VhoWorkHoursTableComponent', () => {
         it('should switch to edit mode when edit button is clicked', () => {
             component.isEditing = false;
             const spy = spyOn(component, 'switchToEditMode');
-            const editButton = fixture.debugElement
-                .query(By.css('#edit-individual-work-hours-button')).nativeElement;
+            const editButton = fixture.debugElement.query(By.css('#edit-individual-work-hours-button')).nativeElement;
 
             editButton.click();
             fixture.detectChanges();
@@ -58,8 +53,7 @@ describe('VhoWorkHoursTableComponent', () => {
             component.isEditing = true;
             fixture.detectChanges();
             const spy = spyOn(component, 'saveWorkingHours');
-            const saveButton = fixture.debugElement
-                .query(By.css('#save-individual-work-hours-button')).nativeElement;
+            const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
 
             saveButton.click();
 
@@ -70,14 +64,13 @@ describe('VhoWorkHoursTableComponent', () => {
             component.isEditing = true;
             fixture.detectChanges();
             const spy = spyOn(component, 'cancelEditingWorkingHours');
-            const cancelButton = fixture.debugElement
-                .query(By.css('#cancel-editing-individual-work-hours-button')).nativeElement;
+            const cancelButton = fixture.debugElement.query(By.css('#cancel-editing-individual-work-hours-button')).nativeElement;
 
             cancelButton.click();
 
             expect(spy).toHaveBeenCalledTimes(1);
         });
-      });
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
@@ -88,7 +81,7 @@ describe('VhoWorkHoursTableComponent', () => {
             component.isEditing = true;
 
             component.cancelEditingWorkingHours();
-          
+
             expect(component.isEditing).toBeFalsy();
         });
 
@@ -103,18 +96,13 @@ describe('VhoWorkHoursTableComponent', () => {
             originalMondayWorkHours.end_time = '17:00';
             originalMondayWorkHours.start_time = '09:00';
 
-            component.originalWorkHours = [
-                originalMondayWorkHours
-            ];
+            component.originalWorkHours = [originalMondayWorkHours];
 
-            component.workHours = [
-                editedMondayWorkHours
-            ]
-            
+            component.workHours = [editedMondayWorkHours];
+
             component.switchToEditMode();
 
-            expect(JSON.stringify(component.originalWorkHours)).
-                toEqual(JSON.stringify(component.workHours));
+            expect(JSON.stringify(component.originalWorkHours)).toEqual(JSON.stringify(component.workHours));
         });
     });
 
@@ -124,7 +112,7 @@ describe('VhoWorkHoursTableComponent', () => {
                 new VhoWorkHoursResponse({
                     day_of_week_id: 1,
                     end_time: '09:00',
-                    start_time: '12:00',
+                    start_time: '12:00'
                 })
             ] as VhoWorkHoursResponse[];
 
@@ -141,7 +129,7 @@ describe('VhoWorkHoursTableComponent', () => {
                 new VhoWorkHoursResponse({
                     day_of_week_id: 1,
                     end_time: '09:00',
-                    start_time: '12:00',
+                    start_time: '12:00'
                 })
             ] as VhoWorkHoursResponse[];
 
@@ -158,7 +146,7 @@ describe('VhoWorkHoursTableComponent', () => {
                 new VhoWorkHoursResponse({
                     day_of_week_id: 1,
                     end_time: '12:00',
-                    start_time: '09:00',
+                    start_time: '09:00'
                 })
             ] as VhoWorkHoursResponse[];
 
@@ -168,18 +156,15 @@ describe('VhoWorkHoursTableComponent', () => {
             component.saveWorkingHours();
 
             expect(component.saveWorkHours.emit).toHaveBeenCalledTimes(1);
-            expect(component.saveWorkHours.emit)
-                .toHaveBeenCalledWith(component.workHours);
+            expect(component.saveWorkHours.emit).toHaveBeenCalledWith(component.workHours);
         });
     });
 
     describe('switchToEditMode', () => {
         it('should set component to editing when work hours are not empty', () => {
             component.isEditing = false;
-            component.workHours = [
-                new VhoWorkHoursResponse()
-            ];
-            
+            component.workHours = [new VhoWorkHoursResponse()];
+
             component.switchToEditMode();
 
             expect(component.isEditing).toBeTruthy();
@@ -188,7 +173,7 @@ describe('VhoWorkHoursTableComponent', () => {
         it('should not set component to editing when work hours is empty', () => {
             component.isEditing = false;
             component.workHours = [];
-            
+
             component.switchToEditMode();
 
             expect(component.isEditing).toBeFalsy();
@@ -200,14 +185,11 @@ describe('VhoWorkHoursTableComponent', () => {
             mondayWorkHours.end_time = '17:00';
             mondayWorkHours.start_time = '09:00';
 
-            component.workHours = [
-                mondayWorkHours
-            ];
-            
+            component.workHours = [mondayWorkHours];
+
             component.switchToEditMode();
 
-            expect(JSON.stringify(component.originalWorkHours)).
-                toEqual(JSON.stringify(component.workHours));
+            expect(JSON.stringify(component.originalWorkHours)).toEqual(JSON.stringify(component.workHours));
         });
     });
 });

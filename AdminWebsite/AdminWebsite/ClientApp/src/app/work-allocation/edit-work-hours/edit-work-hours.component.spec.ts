@@ -16,9 +16,7 @@ describe('EditWorkHoursComponent', () => {
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
         await TestBed.configureTestingModule({
             declarations: [EditWorkHoursComponent],
-            providers: [
-                { provide: BHClient, useValue: bHClientSpy },
-            ]
+            providers: [{ provide: BHClient, useValue: bHClientSpy }]
         }).compileComponents();
     });
 
@@ -57,7 +55,7 @@ describe('EditWorkHoursComponent', () => {
     });
 
     it('setUsername should assign event to username property', () => {
-        const username = "username@test.com";
+        const username = 'username@test.com';
         component.setUsername(username);
         expect(component).toBeTruthy();
         expect(component.username).toBe(username);
@@ -80,11 +78,7 @@ describe('EditWorkHoursComponent', () => {
             vhoWorkHoursResponseThree.end_time = null;
             vhoWorkHoursResponseThree.start_time = '09:00';
 
-            const vhoWorkHoursResponses = [
-                vhoWorkHoursResponseOne,
-                vhoWorkHoursResponseTwo,
-                vhoWorkHoursResponseThree
-            ];
+            const vhoWorkHoursResponses = [vhoWorkHoursResponseOne, vhoWorkHoursResponseTwo, vhoWorkHoursResponseThree];
 
             const username = 'username@test.com';
 
@@ -97,24 +91,16 @@ describe('EditWorkHoursComponent', () => {
 
             const expectedWorkingHoursTwo = new WorkingHours();
             expectedWorkingHoursTwo.day_of_week_id = vhoWorkHoursResponseTwo.day_of_week_id;
-            expectedWorkingHoursTwo.end_time_hour = 
-            expectedWorkingHoursTwo.end_time_minutes = 
-            expectedWorkingHoursTwo.start_time_hour = 
-            expectedWorkingHoursTwo.start_time_minutes = null;
+            expectedWorkingHoursTwo.end_time_hour = expectedWorkingHoursTwo.end_time_minutes = null;
+            expectedWorkingHoursTwo.start_time_hour = expectedWorkingHoursTwo.start_time_minutes = null;
 
             const expectedWorkingHoursThree = new WorkingHours();
             expectedWorkingHoursThree.day_of_week_id = vhoWorkHoursResponseThree.day_of_week_id;
-            expectedWorkingHoursThree.end_time_hour = 
-            expectedWorkingHoursThree.end_time_minutes = 
-            expectedWorkingHoursThree.start_time_hour = 
-            expectedWorkingHoursThree.start_time_minutes = null;
+            expectedWorkingHoursThree.end_time_hour = expectedWorkingHoursThree.end_time_minutes = null;
+            expectedWorkingHoursThree.start_time_hour = expectedWorkingHoursThree.start_time_minutes = null;
 
             const expectedUploadWorkHoursRequests = new UploadWorkHoursRequest();
-            expectedUploadWorkHoursRequests.working_hours = [
-                expectedWorkingHoursOne,
-                expectedWorkingHoursTwo,
-                expectedWorkingHoursThree
-            ];
+            expectedUploadWorkHoursRequests.working_hours = [expectedWorkingHoursOne, expectedWorkingHoursTwo, expectedWorkingHoursThree];
             expectedUploadWorkHoursRequests.username = username;
 
             component.username = username;
