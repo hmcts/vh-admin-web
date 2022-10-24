@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
+import {VhoWorkHoursResponse} from "../../../services/clients/api-client";
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -20,5 +21,12 @@ describe('VhoWorkHoursTableComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('check input set', () => {
+        component.result = [new VhoWorkHoursResponse()];
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.workHours).toEqual([new VhoWorkHoursResponse()]);
     });
 });
