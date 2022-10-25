@@ -3,7 +3,11 @@
     <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
   </summary>
   <div *ngIf="isVhTeamLeader">
-    <app-vho-search [isWorkHours]="true" (vhoSearchEmitter)="setSearchResult($event)" (usernameEmitter)="setUsername($event)"></app-vho-search>
+    <app-vho-search
+      [isWorkHours]="true"
+      (vhoSearchEmitter)="setSearchResult($event)"
+      (usernameEmitter)="setUsername($event)"
+    ></app-vho-search>
     <app-vho-work-hours-table (saveWorkHours)="onSaveWorkHours($event)" [result]="result"> </app-vho-work-hours-table>
     <p *ngIf="isUploadWorkHoursSuccessful" class="govuk-body govuk-!-font-weight-bold">
       <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> User working hours changes saved successfully
