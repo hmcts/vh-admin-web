@@ -43,7 +43,7 @@ export class WorkAllocationComponent {
 
     constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
-            this.isVhTeamLeader = true; // userProfileResponse.is_vh_team_leader;
+            this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
         });
     }
 
