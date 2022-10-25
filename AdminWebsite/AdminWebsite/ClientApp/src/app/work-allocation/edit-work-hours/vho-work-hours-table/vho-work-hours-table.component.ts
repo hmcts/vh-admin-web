@@ -47,7 +47,7 @@ export class VhoWorkHoursTableComponent implements OnInit {
             endDate.setHours(parseInt(workHourArray[0], 10));
             endDate.setMinutes(parseInt(workHourArray[1], 10));
 
-            if (endDate < startDate) {
+            if (endDate <= startDate) {
                 this.workHoursEndTimeBeforeStartTimeErrors.push(index);
             }
         });
