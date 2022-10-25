@@ -27,6 +27,7 @@ describe('VhoSearchComponent', () => {
         fixture = TestBed.createComponent(VhoSearchComponent);
         component = fixture.componentInstance;
         component.vhoSearchEmitter = jasmine.createSpyObj('vhoSearchEmitter', ['emit']);
+        component.usernameEmitter = jasmine.createSpyObj('usernameEmitter', ['emit']);
         fixture.detectChanges();
     });
 
@@ -47,6 +48,7 @@ describe('VhoSearchComponent', () => {
             expect(component).toBeTruthy();
             expect(service.getWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
+            expect(component.usernameEmitter.emit).toHaveBeenCalledWith('username');
         });
 
         it('should call searchForVho return null and set the error message', async () => {
