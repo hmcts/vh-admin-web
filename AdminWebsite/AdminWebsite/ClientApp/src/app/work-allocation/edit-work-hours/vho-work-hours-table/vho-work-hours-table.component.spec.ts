@@ -113,6 +113,11 @@ describe('VhoWorkHoursTableComponent', () => {
                     day_of_week_id: 1,
                     end_time: '09:00',
                     start_time: '12:00'
+                }),
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '12:00',
+                    start_time: '12:00'
                 })
             ] as VhoWorkHoursResponse[];
 
@@ -120,8 +125,9 @@ describe('VhoWorkHoursTableComponent', () => {
 
             component.saveWorkingHours();
 
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(1);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(2);
             expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors[1]).toBe(1);
         });
 
         it('should not emit event if errors exist', () => {
