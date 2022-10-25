@@ -65,7 +65,6 @@ describe('VhoSearchComponent', () => {
         });
 
         it('should call searchForVho and throw exception', async () => {
-
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
 
             service.getWorkAvailabilityForVho.and.throwError('bad request');

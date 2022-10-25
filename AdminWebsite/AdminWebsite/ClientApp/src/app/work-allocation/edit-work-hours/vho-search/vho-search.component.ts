@@ -5,7 +5,6 @@ import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 
-
 @Component({
     selector: 'app-vho-search',
     templateUrl: './vho-search.component.html'
