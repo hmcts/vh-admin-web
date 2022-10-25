@@ -11,9 +11,11 @@ export class VhoWorkHoursTableComponent implements OnInit {
     originalWorkHours: VhoWorkHoursResponse[] = [];
     isEditing = false;
 
-    @Input() set result(value: VhoWorkHoursResponse[]) {
-        if (value) {
+    @Input() set result(value) {
+        if (value && value[0] instanceof VhoWorkHoursResponse) {
             this.workHours = value;
+        } else {
+            this.workHours = null;
         }
     }
 
@@ -47,7 +49,7 @@ export class VhoWorkHoursTableComponent implements OnInit {
             endDate.setHours(parseInt(workHourArray[0], 10));
             endDate.setMinutes(parseInt(workHourArray[1], 10));
 
-            if (endDate < startDate) {
+            if (endDate <= startDate) {
                 this.workHoursEndTimeBeforeStartTimeErrors.push(index);
             }
         });

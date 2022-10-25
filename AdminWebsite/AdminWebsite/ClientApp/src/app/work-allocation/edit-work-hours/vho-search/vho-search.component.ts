@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
-import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 
@@ -16,7 +16,7 @@ export class VhoSearchComponent implements OnInit {
     private loggerPrefix = 'vho-search';
 
     @Output() usernameEmitter = new EventEmitter<string>();
-    @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[]>();
+    @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]>();
 
     get username() {
         return this.form.get('username');
@@ -53,6 +53,7 @@ export class VhoSearchComponent implements OnInit {
                     this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';
+                    this.clear();
                 }
             } catch (error) {
                 this.error = error.message;

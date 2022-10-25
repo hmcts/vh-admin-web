@@ -26,6 +26,7 @@ describe('VhoSearchComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(VhoSearchComponent);
         component = fixture.componentInstance;
+        spyOn(component, 'clear');
         component.vhoSearchEmitter = jasmine.createSpyObj('vhoSearchEmitter', ['emit']);
         component.usernameEmitter = jasmine.createSpyObj('usernameEmitter', ['emit']);
         fixture.detectChanges();
@@ -62,7 +63,7 @@ describe('VhoSearchComponent', () => {
 
             expect(component).toBeTruthy();
             expect(service.getWorkAvailabilityForVho).toHaveBeenCalled();
-            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledTimes(0);
+            expect(component.clear).toHaveBeenCalled();
             expect(component.error).toBe('User could not be found. Please check the username and try again');
         });
 
@@ -103,7 +104,7 @@ describe('VhoSearchComponent', () => {
 
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
-            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledTimes(0);
+            expect(component.clear).toHaveBeenCalled();
             expect(component.error).toBe('User could not be found. Please check the username and try again');
         });
 

@@ -1,0 +1,21 @@
+<span *ngIf="nonWorkHours?.length > 0">
+  <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="vho work non availability table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header" aria-sort="none">Start Date</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">End Date</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row" *ngFor="let day of nonWorkHours">
+        <td class="govuk-table__cell"><input type="date" [value]="day.start_time | date: 'yyyy-MM-dd'" /></td>
+        <td class="govuk-table__cell"><input type="date" [value]="day.end_time | date: 'yyyy-MM-dd'" /></td>
+        <td class="govuk-table__cell"><input type="time" [value]="day.start_time?.toLocaleTimeString()" /></td>
+        <td class="govuk-table__cell"><input type="time" [value]="day.end_time?.toLocaleTimeString()" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="govuk-button" data-module="govuk-button">Edit</button>
+</span>

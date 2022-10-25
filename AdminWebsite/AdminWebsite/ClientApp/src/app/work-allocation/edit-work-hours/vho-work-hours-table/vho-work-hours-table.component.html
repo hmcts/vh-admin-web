@@ -1,8 +1,8 @@
 <table
+  *ngIf="workHours?.length > 0"
   id="individual-work-hours-table"
   class="govuk-table"
   data-module="moj-sortable-table"
-  *ngIf="workHours.length > 0"
   aria-describedby="vho work availability table"
 >
   <thead class="govuk-table__head">
@@ -28,7 +28,6 @@
     <p class="govuk-error-message">Error: End Time cannot be before Start Time</p>
   </div>
 </table>
-
 <button
   *ngIf="!isEditing; else editingButtonsBlock"
   id="edit-individual-work-hours-button"

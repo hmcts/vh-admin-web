@@ -1,6 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Logger } from 'src/app/services/logger';
-import { BHClient, UploadWorkHoursRequest, VhoWorkHoursResponse, WorkingHours } from '../../services/clients/api-client';
+import {
+    BHClient,
+    UploadWorkHoursRequest,
+    VhoWorkHoursResponse,
+    VhoNonAvailabilityWorkHoursResponse,
+    WorkingHours
+} from '../../services/clients/api-client';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -8,13 +14,13 @@ import { BHClient, UploadWorkHoursRequest, VhoWorkHoursResponse, WorkingHours } 
 })
 export class EditWorkHoursComponent implements OnInit {
     loggerPrefix = 'EditWorkHoursComponent';
-
-    result: VhoWorkHoursResponse[];
     workHours: VhoWorkHoursResponse[];
     username: string;
 
     isUploadWorkHoursSuccessful = false;
     showSaveFailedPopup = false;
+
+    result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
 
     @Input() isVhTeamLeader: boolean;
 
@@ -73,7 +79,7 @@ export class EditWorkHoursComponent implements OnInit {
         );
     }
 
-    setSearchResult($event: VhoWorkHoursResponse[]) {
+    setSearchResult($event: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]) {
         this.result = $event;
     }
 
