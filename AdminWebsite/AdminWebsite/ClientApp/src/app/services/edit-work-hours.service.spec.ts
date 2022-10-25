@@ -1,6 +1,7 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { EditWorkHoursService } from './edit-work-hours.service';
 import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from './clients/api-client';
+
 import { Logger } from './logger';
 import { of, throwError } from 'rxjs';
 

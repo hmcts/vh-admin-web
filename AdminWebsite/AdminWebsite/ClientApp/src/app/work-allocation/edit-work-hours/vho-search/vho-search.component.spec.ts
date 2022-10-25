@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VhoSearchComponent } from './vho-search.component';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+
 import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
@@ -14,6 +15,7 @@ describe('VhoSearchComponent', () => {
 
     beforeEach(async () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
+
         logger = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
             declarations: [VhoSearchComponent],
@@ -35,7 +37,9 @@ describe('VhoSearchComponent', () => {
     describe('search tests working hours', () => {
         it('should call searchForVho and emit vhoSearchResult', async () => {
             const vhoSearchResult: Array<VhoWorkHoursResponse> = [];
+
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
+
             service.getWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
 
             await component.search();
@@ -47,7 +51,9 @@ describe('VhoSearchComponent', () => {
 
         it('should call searchForVho return null and set the error message', async () => {
             const vhoSearchResult = null;
+
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
+
             service.getWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
 
             await component.search();
@@ -59,12 +65,15 @@ describe('VhoSearchComponent', () => {
         });
 
         it('should call searchForVho and throw exception', async () => {
+
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
+
             service.getWorkAvailabilityForVho.and.throwError('bad request');
 
             await component.search().catch(err => {
                 expect(component).toBeTruthy();
                 expect(service.getWorkAvailabilityForVho).toHaveBeenCalled();
+
                 expect(component.vhoSearchEmitter.emit).toHaveBeenCalledTimes(0);
                 expect(component.error).toBe('bad request');
             });
@@ -104,6 +113,7 @@ describe('VhoSearchComponent', () => {
             await component.search().catch(err => {
                 expect(component).toBeTruthy();
                 expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
+
                 expect(component.vhoSearchEmitter.emit).toHaveBeenCalledTimes(0);
                 expect(component.error).toBe('bad request');
             });
