@@ -15,6 +15,7 @@ export class VhoSearchComponent implements OnInit {
 
     private loggerPrefix = 'vho-search';
 
+    @Output() usernameEmitter = new EventEmitter<string>();
     @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[]>();
 
     get username() {
@@ -49,6 +50,7 @@ export class VhoSearchComponent implements OnInit {
 
                 if (result) {
                     this.vhoSearchEmitter.emit(result);
+                    this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';
                 }

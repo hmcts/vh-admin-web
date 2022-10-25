@@ -3,7 +3,39 @@
     <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
   </summary>
   <div *ngIf="isVhTeamLeader">
-    <app-vho-search [isWorkHours]="true" (vhoSearchEmitter)="setSearchResult($event)"></app-vho-search>
-    <app-vho-work-hours-table [result]="result"> </app-vho-work-hours-table>
+    <app-vho-search
+      [isWorkHours]="true"
+      (vhoSearchEmitter)="setSearchResult($event)"
+      (usernameEmitter)="setUsername($event)"
+    ></app-vho-search>
+    <app-vho-work-hours-table (saveWorkHours)="onSaveWorkHours($event)" [result]="result"> </app-vho-work-hours-table>
+    <p *ngIf="isUploadWorkHoursSuccessful" class="govuk-body govuk-!-font-weight-bold">
+      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> User working hours changes saved successfully
+    </p>
   </div>
 </details>
+
+<div *ngIf="showSaveFailedPopup" id="saveFailedPopup" class="vh-popup-overlay">
+  <div class="vh-popup vh-popup-xsmall">
+    <h1 class="govuk-heading-m vh-ml70 vh-mr70">Working hours could not be saved. Please try again.</h1>
+
+    <div class="content">
+      <div class="govuk-grid-row">
+        <div class="vh-top">
+          <button id="btnTryAgain" class="govuk-button vh-mr25" data-module="govuk-button" (click)="saveWorkHours()" alt="Try again">
+            Try again
+          </button>
+          <button
+            id="btnCancel"
+            class="govuk-button hmcts-button--secondary"
+            data-module="govuk-button"
+            (click)="cancelSave()"
+            alt="Confirm cancellation"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
