@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Logger } from 'src/app/services/logger';
 import { BHClient, UploadWorkHoursRequest, VhoWorkHoursResponse, WorkingHours } from '../../services/clients/api-client';
 
 @Component({
@@ -6,26 +7,40 @@ import { BHClient, UploadWorkHoursRequest, VhoWorkHoursResponse, WorkingHours } 
     templateUrl: './edit-work-hours.component.html'
 })
 export class EditWorkHoursComponent implements OnInit {
+    loggerPrefix = 'EditWorkHoursComponent';
+
     result: VhoWorkHoursResponse[];
+    workHours: VhoWorkHoursResponse[];
     username: string;
 
     isUploadWorkHoursSuccessful = false;
+    showSaveFailedPopup = false;
 
     @Input() isVhTeamLeader: boolean;
 
-    constructor(private bhClient: BHClient) {}
+    constructor(private bhClient: BHClient, private logger: Logger) {}
 
     ngOnInit(): void {
         console.log('Needs something for sonarcloud. Delete this later');
     }
 
+    cancelSave() {
+        this.showSaveFailedPopup = false;
+    }
+
     onSaveWorkHours($event: VhoWorkHoursResponse[]) {
+        this.workHours = $event;
+        this.saveWorkHours();
+    }
+
+    saveWorkHours() {
         this.isUploadWorkHoursSuccessful = false;
+
         const uploadWorkHoursRequest = new UploadWorkHoursRequest();
         uploadWorkHoursRequest.working_hours = [];
         uploadWorkHoursRequest.username = this.username;
 
-        $event.forEach(editedWorkHour => {
+        this.workHours.forEach(editedWorkHour => {
             const workHour = new WorkingHours();
             workHour.day_of_week_id = editedWorkHour.day_of_week_id;
 
@@ -46,9 +61,16 @@ export class EditWorkHoursComponent implements OnInit {
             uploadWorkHoursRequest.working_hours.push(workHour);
         });
 
-        this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(() => {
-            this.isUploadWorkHoursSuccessful = true;
-        });
+        this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(
+            () => {
+                this.showSaveFailedPopup = false;
+                this.isUploadWorkHoursSuccessful = true;
+            },
+            error => {
+                this.showSaveFailedPopup = true;
+                this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
+            }
+        );
     }
 
     setSearchResult($event: VhoWorkHoursResponse[]) {

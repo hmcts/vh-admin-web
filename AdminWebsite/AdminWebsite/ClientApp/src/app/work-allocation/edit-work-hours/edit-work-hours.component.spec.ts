@@ -1,12 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { EditWorkHoursComponent } from './edit-work-hours.component';
 import { BHClient, UploadWorkHoursRequest, VhoWorkHoursResponse, WorkingHours } from '../../services/clients/api-client';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { Logger } from 'src/app/services/logger';
 
 describe('EditWorkHoursComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
+    let loggerSpy: jasmine.SpyObj<Logger>;
+
     let component: EditWorkHoursComponent;
     let fixture: ComponentFixture<EditWorkHoursComponent>;
 
@@ -14,9 +17,13 @@ describe('EditWorkHoursComponent', () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+        loggerSpy = jasmine.createSpyObj('Logger', ['debug', 'error']);
         await TestBed.configureTestingModule({
             declarations: [EditWorkHoursComponent],
-            providers: [{ provide: BHClient, useValue: bHClientSpy }]
+            providers: [
+                { provide: BHClient, useValue: bHClientSpy },
+                { provide: Logger, useValue: loggerSpy }
+            ]
         }).compileComponents();
     });
 
@@ -45,6 +52,16 @@ describe('EditWorkHoursComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    describe('cancelSave', () => {
+        it('should remove save failed popup', () => {
+            component.showSaveFailedPopup = true;
+
+            component.cancelSave();
+
+            expect(component.showSaveFailedPopup).toBe(false);
+        });
     });
 
     it('setSearchResult should assign event to results property', () => {
@@ -110,6 +127,15 @@ describe('EditWorkHoursComponent', () => {
             expect(bHClientSpy.uploadWorkHours).toHaveBeenCalled();
             expect(bHClientSpy.uploadWorkHours).toHaveBeenCalledWith([expectedUploadWorkHoursRequests]);
             expect(component.isUploadWorkHoursSuccessful).toBeTruthy();
+        });
+
+        it('should show save failed popup when api fails', () => {
+            bHClientSpy.uploadWorkHours.and.returnValue(throwError(new Error()));
+
+            component.onSaveWorkHours([]);
+
+            expect(component.showSaveFailedPopup).toBe(true);
+            expect(loggerSpy.error).toHaveBeenCalled();
         });
     });
 });
