@@ -20,4 +20,17 @@ export class EditWorkHoursService {
             throw error;
         }
     }
+
+    async getNonWorkAvailabilityForVho(username: string) {
+        try {
+            return await this.bhClient.getNonAvailabilityWorkHours(username).toPromise();
+        } catch (error) {
+            if (error.status === 404 || error.status === 400) {
+                this.logger.warn(`Failed to find user ${username}. ${error.response}`, error);
+                return null;
+            }
+            this.logger.error(`Failed to find user ${username}. ${error.response}`, error);
+            throw error;
+        }
+    }
 }
