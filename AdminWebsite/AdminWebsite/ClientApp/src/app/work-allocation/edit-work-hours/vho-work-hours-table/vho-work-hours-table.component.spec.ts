@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { VhoWorkHoursResponse } from 'src/app/services/clients/api-client';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
+import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -70,10 +70,6 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(spy).toHaveBeenCalledTimes(1);
         });
-    });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
     });
 
     describe('cancelEditingWorkingHours', () => {
@@ -197,5 +193,23 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(JSON.stringify(component.originalWorkHours)).toEqual(JSON.stringify(component.workHours));
         });
+    });
+
+    it('check results input parameter sets the value', () => {
+        component.result = [new VhoWorkHoursResponse()];
+        fixture.detectChanges();
+        expect(component.workHours).toEqual([new VhoWorkHoursResponse()]);
+    });
+
+    it('check results input parameter sets to null', () => {
+        component.result = null;
+        fixture.detectChanges();
+        expect(component.workHours).toBeNull();
+    });
+
+    it('check results input parameter, when wrong type sets to null', () => {
+        component.result = [new VhoNonAvailabilityWorkHoursResponse()];
+        fixture.detectChanges();
+        expect(component.workHours).toBeNull();
     });
 });
