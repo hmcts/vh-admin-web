@@ -1,8 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Injector } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
-import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { HoursType } from '../../../common/model/hours-type';
+import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-search',
@@ -21,22 +22,32 @@ export class VhoSearchComponent implements OnInit {
         return this.form.get('username');
     }
 
-    constructor(private formBuilder: FormBuilder, private service: EditWorkHoursService, private logger: Logger) {}
+    constructor(private formBuilder: FormBuilder, private logger: Logger, private service: EditWorkHoursService) {}
 
     ngOnInit(): void {
         this.form = this.formBuilder.group({
-            // If username is prepopulated please leave comment.
-            // This was only to make dev work easier
-            username: ['manual.vhoteamlead1@hearings.reform.hmcts.net', Validators.required]
+            username: ['', Validators.required],
+            hoursType: ['', Validators.required]
         });
     }
 
     async search(): Promise<void> {
         if (this.form.valid) {
+            const hoursType: HoursType = this.form.controls['hoursType'].value;
             this.error = null;
-            this.logger.debug(`${this.loggerPrefix} Attempting to search for username`, { username: this.username.value });
+            const userName = this.username.value;
+            this.logger.debug(`${this.loggerPrefix} Attempting to search for username`, { userName });
             try {
-                const result = await this.service.getWorkAvailabilityForVho(this.username.value);
+                let result;
+                switch (hoursType) {
+                    case HoursType.WorkingHours:
+                        result = await this.service.getWorkAvailabilityForVho(this.username.value);
+                        break;
+                    case HoursType.NonWorkingHours:
+                        result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
+                        break;
+                }
+
                 if (result) {
                     this.vhoSearchEmitter.emit(result);
                     this.usernameEmitter.emit(this.username.value);
