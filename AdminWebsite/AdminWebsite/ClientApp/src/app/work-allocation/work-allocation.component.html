@@ -44,12 +44,23 @@
       >
       </ng-container>
 
-      <ng-template let-isWorkingHoursUpload="isWorkingHoursUpload" let-errors="usernameErrors" let-numberOfUploads="numberOfUsernamesUploaded" #fileUploadResult>
+      <ng-template
+        let-isWorkingHoursUpload="isWorkingHoursUpload"
+        let-errors="usernameErrors"
+        let-numberOfUploads="numberOfUsernamesUploaded"
+        #fileUploadResult
+      >
         <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
-          <p *ngSwitchCase="0"><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully</p>
+          <p *ngSwitchCase="0">
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+            {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully
+          </p>
 
           <ng-container *ngSwitchCase="numberOfUploads">
-            <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found.</p>
+            <p>
+              <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+              {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found.
+            </p>
             <p>
               Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
             </p>
@@ -58,7 +69,8 @@
           <ng-container *ngSwitchDefault>
             <p>
               <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
-              Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successfully. Below CTSC support officer(s) could not be found:
+              Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successfully. Below CTSC support
+              officer(s) could not be found:
             </p>
 
             <ul class="govuk-body govuk-!-font-weight-normal">
@@ -73,7 +85,10 @@
 
       <ng-template #workingHoursUploadFailedMessage class="govuk-body upload-result">
         <div class="govuk-!-font-weight-bold">
-          <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found</p>
+          <p>
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+            {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found
+          </p>
           <p>
             Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
           </p>

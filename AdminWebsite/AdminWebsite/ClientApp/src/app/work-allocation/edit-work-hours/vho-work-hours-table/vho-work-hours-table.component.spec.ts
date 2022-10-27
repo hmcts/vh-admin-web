@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
-fdescribe('VhoWorkHoursTableComponent', () => {
+describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
 
