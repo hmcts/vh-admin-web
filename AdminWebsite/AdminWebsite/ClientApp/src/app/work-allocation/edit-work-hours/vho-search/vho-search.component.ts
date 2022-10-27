@@ -26,7 +26,7 @@ export class VhoSearchComponent implements OnInit {
 
     ngOnInit(): void {
         this.form = this.formBuilder.group({
-            username: ['', Validators.required],
+            username: ['manual.vhoteamlead1@hearings.reform.hmcts.net', Validators.required],
             hoursType: ['', Validators.required]
         });
     }

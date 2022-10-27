@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
-describe('VhoWorkHoursTableComponent', () => {
+fdescribe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
 
@@ -81,6 +81,14 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.isEditing).toBeFalsy();
         });
 
+        it('should reset errors', () => {
+            component.isEditing = true;
+
+            component.cancelEditingWorkingHours();
+
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
+        });
+
         it('should set work hours back to original values', () => {
             const originalMondayWorkHours = new VhoWorkHoursResponse();
             originalMondayWorkHours.day_of_week_id = 1;
@@ -126,6 +134,30 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.workHoursEndTimeBeforeStartTimeErrors[1]).toBe(1);
         });
 
+        it('should reset errors before processing', () => {
+            const workHours = [
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '09:00',
+                    start_time: '12:00'
+                }),
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '12:00',
+                    start_time: '12:00'
+                })
+            ] as VhoWorkHoursResponse[];
+
+            component.workHours = workHours;
+
+            component.saveWorkingHours();
+
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(2);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors[1]).toBe(1);
+            expect(component.isEditing).toBe(false);
+        });
+
         it('should not emit event if errors exist', () => {
             const workHours = [
                 new VhoWorkHoursResponse({
@@ -159,6 +191,24 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(component.saveWorkHours.emit).toHaveBeenCalledTimes(1);
             expect(component.saveWorkHours.emit).toHaveBeenCalledWith(component.workHours);
+        });
+
+        it('should reset state on successful upload', () => {
+            const workHours = [
+                new VhoWorkHoursResponse({
+                    day_of_week_id: 1,
+                    end_time: '12:00',
+                    start_time: '09:00'
+                })
+            ] as VhoWorkHoursResponse[];
+
+            component.workHours = workHours;
+
+            spyOn(component.saveWorkHours, 'emit');
+            component.saveWorkingHours();
+
+            expect(component.isEditing).toBe(false);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
         });
     });
 

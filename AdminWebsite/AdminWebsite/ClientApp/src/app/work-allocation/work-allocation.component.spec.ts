@@ -185,7 +185,7 @@ Allocate hearings`);
 
                 bHClientSpy.uploadNonWorkingHours().subscribe(() => {
                     const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
-                    expect(result).toBe(' Team working hours uploaded successfully');
+                    expect(result).toBe(' Team non-availability hours uploaded successfully');
                     done();
                 });
             });
@@ -203,7 +203,7 @@ Allocate hearings`);
                 bHClientSpy.uploadNonWorkingHours().subscribe(() => {
                     const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
-                        ' Team working hours upload partially successfully. Below CTSC support officer(s) could ' +
+                        ' Team non-availability hours upload partially successfully. Below CTSC support officer(s) could ' +
                             'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
                             'If the problem persists, please raise a ticket in ServiceNow. '
                     );
@@ -226,7 +226,7 @@ Allocate hearings`);
                 bHClientSpy.uploadNonWorkingHours().subscribe(() => {
                     const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                     expect(result).toBe(
-                        ' Team working hours not uploaded. No users found. ' +
+                        ' Team non-availability hours not uploaded. No users found. ' +
                             'Please check that these user names have been entered correctly. ' +
                             'If the problem persists, please raise a ticket in ServiceNow. '
                     );

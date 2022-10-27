@@ -27,11 +27,14 @@ export class VhoWorkHoursTableComponent implements OnInit {
 
     cancelEditingWorkingHours() {
         this.isEditing = false;
+        this.workHoursEndTimeBeforeStartTimeErrors = [];
 
         this.workHours = this.originalWorkHours;
     }
 
     saveWorkingHours() {
+        this.workHoursEndTimeBeforeStartTimeErrors = [];
+
         this.workHours.forEach((workHour, index) => {
             if (!workHour.start_time || !workHour.end_time) {
                 return;
@@ -59,6 +62,8 @@ export class VhoWorkHoursTableComponent implements OnInit {
         }
 
         this.saveWorkHours.emit(this.workHours);
+        this.workHoursEndTimeBeforeStartTimeErrors = [];
+        this.isEditing = false;
     }
 
     switchToEditMode() {
