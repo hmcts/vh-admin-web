@@ -58,10 +58,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         // this.isCancelButtonEnabled = false;
         this.isSaving = true;
 
-        if (!this.validate()) {
-            this.isSaving = false;
-            return;
-        }
+        // if (!this.validate()) {
+        //     this.isSaving = false;
+        //     return;
+        // }
 
         this.saveNonWorkHours.emit(this.nonWorkHours);
     }
@@ -219,5 +219,443 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         var datetime = new Date(year, month, day, hour, minutes, seconds, milliseconds);
         return datetime;
+    }
+
+    onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
+        const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
+
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End time cannot be before Start time'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End time cannot be before Start time'
+        );
+
+        if (endDateTime < startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End time cannot be before Start time'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End time cannot be before Start time');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End time cannot be before Start time')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End datetime must be after Start datetime'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End datetime must be after Start datetime'
+        );
+
+        if (endDateTime == startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End datetime must be after Start datetime'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End datetime must be after Start datetime');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        // Start date required
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'Start date is required'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'Start date is required');
+
+        if (nonWorkHour.start_date == '') {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'Start date is required'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('Start date is required');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'Start date is required')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        // Overlapping dates
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'You cannot enter overlapping non-availability for the same person'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'You cannot enter overlapping non-availability for the same person'
+        );
+        var overlappingDateFailures = this.checkOverlappingDates();
+        if (overlappingDateFailures.find(x => x.id == nonWorkHour.id)) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'You cannot enter overlapping non-availability for the same person'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('You cannot enter overlapping non-availability for the same person');
+            }
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'You cannot enter overlapping non-availability for the same person')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+    }
+
+    onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
+        const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
+
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End time cannot be before Start time'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End time cannot be before Start time'
+        );
+
+        if (endDateTime < startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End time cannot be before Start time'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End time cannot be before Start time');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End time cannot be before Start time')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End datetime must be after Start datetime'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End datetime must be after Start datetime'
+        );
+
+        if (endDateTime == startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End datetime must be after Start datetime'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End datetime must be after Start datetime');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End date is required'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'End date is required');
+
+        if (nonWorkHour.end_date == '') {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End date is required'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End date is required');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End date is required')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        // Overlapping dates
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'You cannot enter overlapping non-availability for the same person'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'You cannot enter overlapping non-availability for the same person'
+        );
+        var overlappingDateFailures = this.checkOverlappingDates();
+        if (overlappingDateFailures.find(x => x.id == nonWorkHour.id)) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'You cannot enter overlapping non-availability for the same person'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('You cannot enter overlapping non-availability for the same person');
+            }
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'You cannot enter overlapping non-availability for the same person')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+    }
+
+    onStartTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
+        const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
+
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End time cannot be before Start time'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End time cannot be before Start time'
+        );
+
+        if (endDateTime < startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End time cannot be before Start time'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End time cannot be before Start time');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End time cannot be before Start time')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End datetime must be after Start datetime'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End datetime must be after Start datetime'
+        );
+
+        if (endDateTime == startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End datetime must be after Start datetime'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End datetime must be after Start datetime');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+    }
+
+    onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
+        const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
+
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End time cannot be before Start time'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End time cannot be before Start time'
+        );
+
+        if (endDateTime < startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End time cannot be before Start time'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End time cannot be before Start time');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End time cannot be before Start time')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End datetime must be after Start datetime'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'End datetime must be after Start datetime'
+        );
+
+        if (endDateTime == startDateTime) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End datetime must be after Start datetime'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End datetime must be after Start datetime');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+    }
+
+    checkOverlappingDates() {
+        let firstHour: NonWorkingHours = null;
+        let checkedHours: NonWorkingHours[] = [];
+        let validationFailures: ValidationFailure[] = [];
+
+        let nonWorkHoursRequestModels: NonWorkingHours[] = [];
+        nonWorkHoursRequestModels = this.nonWorkHours.map(
+            x =>
+                new NonWorkingHours({
+                    id: x.id,
+                    start_time: this.combineDateAndTime(x.start_date, x.start_time),
+                    end_time: this.combineDateAndTime(x.end_date, x.end_time)
+                })
+        );
+        nonWorkHoursRequestModels = nonWorkHoursRequestModels.sort((a, b) =>
+            a.start_time > b.start_time ? 1 : b.start_time > a.start_time ? -1 : 0
+        );
+
+        nonWorkHoursRequestModels.forEach(nonWorkHour => {
+            if (firstHour !== null) {
+                checkedHours.push(firstHour);
+                const uncheckedHours = nonWorkHoursRequestModels.filter(
+                    x => x.start_time >= firstHour.start_time && x !== firstHour && checkedHours.every(m => m != x)
+                );
+
+                if (uncheckedHours.some(uncheckedHour => this.overlapsWith(firstHour, uncheckedHour))) {
+                    validationFailures.push({
+                        //id: nonWorkHour.id,
+                        id: firstHour.id,
+                        errorMessage: 'You cannot enter overlapping non-availability for the same person'
+                    });
+                }
+            }
+            firstHour = nonWorkHour;
+        });
+
+        return validationFailures;
     }
 }
