@@ -223,15 +223,44 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        // Start date required
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'Start date is required'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'Start date is required');
+
+        if (nonWorkHour.start_date == '') {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'Start date is required'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('Start date is required');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'Start date is required')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
         const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
         const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
 
-        var existingValidationFailureIndex = this.validationFailures.findIndex(
+        existingValidationFailureIndex = this.validationFailures.findIndex(
             x => x.id == nonWorkHour.id && x.errorMessage == 'End time cannot be before Start time'
         );
-        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
-            x => x == 'End time cannot be before Start time'
-        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'End time cannot be before Start time');
 
         if (endDateTime < startDateTime) {
             if (existingValidationFailureIndex == -1) {
@@ -286,37 +315,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         if (existingDistinctValidationFailureIndex !== -1) {
             if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
-                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
-            }
-        }
-
-        // Start date required
-        existingValidationFailureIndex = this.validationFailures.findIndex(
-            x => x.id == nonWorkHour.id && x.errorMessage == 'Start date is required'
-        );
-        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'Start date is required');
-
-        if (nonWorkHour.start_date == '') {
-            if (existingValidationFailureIndex == -1) {
-                this.validationFailures.push({
-                    id: nonWorkHour.id,
-                    errorMessage: 'Start date is required'
-                });
-            }
-
-            if (existingDistinctValidationFailureIndex == -1) {
-                this.distinctValidationErrors.push('Start date is required');
-            }
-
-            return;
-        }
-
-        if (existingValidationFailureIndex !== -1) {
-            this.validationFailures.splice(existingValidationFailureIndex, 1);
-        }
-
-        if (existingDistinctValidationFailureIndex !== -1) {
-            if (!this.validationFailures.some(x => x.errorMessage == 'Start date is required')) {
                 this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
             }
         }
@@ -354,6 +352,37 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        // End date is required
+        var existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'End date is required'
+        );
+        var existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'End date is required');
+
+        if (nonWorkHour.end_date == '') {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'End date is required'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('End date is required');
+            }
+
+            return;
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'End date is required')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
         const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
         const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
 
@@ -417,36 +446,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         if (existingDistinctValidationFailureIndex !== -1) {
             if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
-                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
-            }
-        }
-
-        existingValidationFailureIndex = this.validationFailures.findIndex(
-            x => x.id == nonWorkHour.id && x.errorMessage == 'End date is required'
-        );
-        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(x => x == 'End date is required');
-
-        if (nonWorkHour.end_date == '') {
-            if (existingValidationFailureIndex == -1) {
-                this.validationFailures.push({
-                    id: nonWorkHour.id,
-                    errorMessage: 'End date is required'
-                });
-            }
-
-            if (existingDistinctValidationFailureIndex == -1) {
-                this.distinctValidationErrors.push('End date is required');
-            }
-
-            return;
-        }
-
-        if (existingValidationFailureIndex !== -1) {
-            this.validationFailures.splice(existingValidationFailureIndex, 1);
-        }
-
-        if (existingDistinctValidationFailureIndex !== -1) {
-            if (!this.validationFailures.some(x => x.errorMessage == 'End date is required')) {
                 this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
             }
         }
