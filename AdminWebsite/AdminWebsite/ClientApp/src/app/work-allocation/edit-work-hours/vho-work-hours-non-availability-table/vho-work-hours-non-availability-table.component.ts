@@ -264,7 +264,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             x => x == 'End datetime must be after Start datetime'
         );
 
-        if (endDateTime == startDateTime) {
+        if (endDateTime.toISOString() == startDateTime.toISOString()) {
             if (existingValidationFailureIndex == -1) {
                 this.validationFailures.push({
                     id: nonWorkHour.id,
@@ -395,7 +395,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             x => x == 'End datetime must be after Start datetime'
         );
 
-        if (endDateTime == startDateTime) {
+        if (endDateTime.toISOString() == startDateTime.toISOString()) {
             if (existingValidationFailureIndex == -1) {
                 this.validationFailures.push({
                     id: nonWorkHour.id,
@@ -525,7 +525,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             x => x == 'End datetime must be after Start datetime'
         );
 
-        if (endDateTime == startDateTime) {
+        if (endDateTime.toISOString() == startDateTime.toISOString()) {
             if (existingValidationFailureIndex == -1) {
                 this.validationFailures.push({
                     id: nonWorkHour.id,
@@ -594,7 +594,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             x => x == 'End datetime must be after Start datetime'
         );
 
-        if (endDateTime == startDateTime) {
+        if (endDateTime.toISOString() == startDateTime.toISOString()) {
             if (existingValidationFailureIndex == -1) {
                 this.validationFailures.push({
                     id: nonWorkHour.id,
