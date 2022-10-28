@@ -49,6 +49,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             // this.isSaveButtonEnabled = true;
             // this.isCancelButtonEnabled = true;
             this.isSaving = false;
+            this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
         });
     }
 
