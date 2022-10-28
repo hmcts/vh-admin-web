@@ -29,7 +29,7 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
         {
             // Error handling test
-            throw new Exception();
+            //throw new Exception();
             
             var failedUsernames = await _bookingsApiClient.SaveWorkHoursAsync(request);
 
