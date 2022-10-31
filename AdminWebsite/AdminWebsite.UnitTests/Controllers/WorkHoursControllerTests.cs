@@ -32,6 +32,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(_failedUsernames);
             _bookingsApiClientMock.Setup(x => x.SaveNonWorkingHoursAsync(It.IsAny<List<UploadNonWorkingHoursRequest>>()))
                 .ReturnsAsync(_failedUsernames);
+            _bookingsApiClientMock.Setup(x => x.DeleteVhoNonAvailabilityHoursAsync(It.IsAny<int>()));
 
             _controller = new WorkHoursController(_bookingsApiClientMock.Object);
         }
@@ -189,6 +190,49 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var objectResult = (BadRequestObjectResult)response;
             objectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        }
+        
+        [Test]
+        public async Task Should_call_DeleteNonAvailabilityWorkHours_and_return_BadRequest()
+        {
+            // Arrange
+  
+            var username = "test.user@hmcts.net";
+            _bookingsApiClientMock
+                .Setup(e => e.DeleteVhoNonAvailabilityHoursAsync(1))
+                .Throws(new BookingsApiException("error",400,"", null, new Exception()));
+
+
+            // Act
+            var response = await _controller.DeleteNonAvailabilityWorkHours(1);
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.DeleteVhoNonAvailabilityHoursAsync(1), Times.Once);
+            
+            response.Should().NotBeNull();
+
+            var objectResult = (BadRequestObjectResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        }
+        
+        [Test]
+        public async Task Should_call_DeleteNonAvailabilityWorkHours_and_return_Ok()
+        {
+            // Arrange
+  
+            var username = "test.user@hmcts.net";
+
+
+            // Act
+            var response = await _controller.DeleteNonAvailabilityWorkHours(1);
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.DeleteVhoNonAvailabilityHoursAsync(1), Times.Once);
+            
+            response.Should().NotBeNull();
+
+            var objectResult = (OkResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
     }
 }

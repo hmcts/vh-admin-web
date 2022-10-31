@@ -1,4 +1,10 @@
 <span *ngIf="nonWorkHours?.length > 0">
+  <app-confirm-delete-hours-popup
+    *ngIf="displayConfirmPopup"
+    (deletionAnswer)="onDeletionAnswer($event)"
+    [slotToDelete]="slotToDelete"
+    [userName]="userName"
+  ></app-confirm-delete-hours-popup>
   <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="vho work non availability table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
@@ -6,6 +12,7 @@
         <th scope="col" class="govuk-table__header" aria-sort="none">End Date</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none"><fa-icon [icon]="faCalendarPlus"></fa-icon></th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -14,8 +21,12 @@
         <td class="govuk-table__cell"><input type="date" [value]="day.end_time | date: 'yyyy-MM-dd'" /></td>
         <td class="govuk-table__cell"><input type="time" [value]="day.start_time?.toLocaleTimeString()" /></td>
         <td class="govuk-table__cell"><input type="time" [value]="day.end_time?.toLocaleTimeString()" /></td>
+        <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
       </tr>
     </tbody>
   </table>
   <button class="govuk-button" data-module="govuk-button">Edit</button>
 </span>
+<div id="successMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-size-27 govuk-!-font-weight-bold">
+  <fa-icon [icon]="faExclamation"></fa-icon> Non-availability hours changes saved succesfully
+</div>
