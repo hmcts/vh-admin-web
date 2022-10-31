@@ -60,6 +60,16 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
 
+        it('should disable save button when errors exist', () => {
+            component.isEditing = true;
+            component.workHoursEndTimeBeforeStartTimeErrors = [0];
+            fixture.detectChanges();
+            
+            const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
+
+            expect(saveButton.disabled).toBe(true);
+        });
+
         it('should cancel editing mode when cancel button is clicked', () => {
             component.isEditing = true;
             fixture.detectChanges();
@@ -111,71 +121,7 @@ describe('VhoWorkHoursTableComponent', () => {
     });
 
     describe('saveWorkingHours', () => {
-        it('should add end time before start time error', () => {
-            const workHours = [
-                new VhoWorkHoursResponse({
-                    day_of_week_id: 1,
-                    end_time: '09:00',
-                    start_time: '12:00'
-                }),
-                new VhoWorkHoursResponse({
-                    day_of_week_id: 1,
-                    end_time: '12:00',
-                    start_time: '12:00'
-                })
-            ] as VhoWorkHoursResponse[];
-
-            component.workHours = workHours;
-
-            component.saveWorkingHours();
-
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(2);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors[1]).toBe(1);
-        });
-
-        it('should reset errors before processing', () => {
-            const workHours = [
-                new VhoWorkHoursResponse({
-                    day_of_week_id: 1,
-                    end_time: '09:00',
-                    start_time: '12:00'
-                }),
-                new VhoWorkHoursResponse({
-                    day_of_week_id: 1,
-                    end_time: '12:00',
-                    start_time: '12:00'
-                })
-            ] as VhoWorkHoursResponse[];
-
-            component.workHours = workHours;
-
-            component.saveWorkingHours();
-
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(2);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors[1]).toBe(1);
-            expect(component.isEditing).toBe(false);
-        });
-
-        it('should not emit event if errors exist', () => {
-            const workHours = [
-                new VhoWorkHoursResponse({
-                    day_of_week_id: 1,
-                    end_time: '09:00',
-                    start_time: '12:00'
-                })
-            ] as VhoWorkHoursResponse[];
-
-            component.workHours = workHours;
-
-            spyOn(component.saveWorkHours, 'emit');
-            component.saveWorkingHours();
-
-            expect(component.saveWorkHours.emit).not.toHaveBeenCalledTimes(1);
-        });
-
-        it('should emit event if no errors exist', () => {
+        it('should emit event', () => {
             const workHours = [
                 new VhoWorkHoursResponse({
                     day_of_week_id: 1,
@@ -261,5 +207,34 @@ describe('VhoWorkHoursTableComponent', () => {
         component.result = [new VhoNonAvailabilityWorkHoursResponse()];
         fixture.detectChanges();
         expect(component.workHours).toBeNull();
+    });
+
+    describe('validateTimes', () => {
+        it('should add end time before start time error', () => {
+            const workHourDay = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                end_time: '09:00',
+                start_time: '12:00'
+            });
+
+            component.validateTimes(workHourDay);
+
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(1);
+            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
+        });
+
+        it('should remove end time before start time error when fixed', () => {
+            component.workHoursEndTimeBeforeStartTimeErrors = [0];
+
+            const workHourDay = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                end_time: '12:00',
+                start_time: '09:00'
+            });
+
+            component.validateTimes(workHourDay);
+
+            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
+        });
     });
 });
