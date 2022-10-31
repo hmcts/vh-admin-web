@@ -64,7 +64,7 @@ describe('VhoWorkHoursTableComponent', () => {
             component.isEditing = true;
             component.workHoursEndTimeBeforeStartTimeErrors = [0];
             fixture.detectChanges();
-            
+
             const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
 
             expect(saveButton.disabled).toBe(true);

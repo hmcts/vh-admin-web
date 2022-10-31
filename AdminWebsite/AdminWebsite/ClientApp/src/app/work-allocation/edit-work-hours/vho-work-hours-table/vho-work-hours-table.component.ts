@@ -49,7 +49,6 @@ export class VhoWorkHoursTableComponent implements OnInit {
     }
 
     validateTimes(day: VhoWorkHoursResponse) {
-        console.log('Arif', day)
         if (!day.start_time || !day.end_time) {
             return;
         }
@@ -68,11 +67,9 @@ export class VhoWorkHoursTableComponent implements OnInit {
 
         if (endDate <= startDate) {
             this.workHoursEndTimeBeforeStartTimeErrors.push(day.day_of_week_id - 1);
-        }
-        else {
-            const index = this.workHoursEndTimeBeforeStartTimeErrors
-                .findIndex(x => x === day.day_of_week_id - 1);
-            
+        } else {
+            const index = this.workHoursEndTimeBeforeStartTimeErrors.findIndex(x => x === day.day_of_week_id - 1);
+
             if (index > -1) {
                 this.workHoursEndTimeBeforeStartTimeErrors.splice(index, 1);
             }
