@@ -114,11 +114,23 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> UpdateNonAvailabilityWorkHours(string username, [FromBody]UpdateNonWorkingHoursRequest request)
         {
-            // throw new Exception();
-        
-            await _bookingsApiClient.UpdateVhoNonAvailabilityHoursAsync(username, request);
-
-            return NoContent();
+            try
+            {
+                await _bookingsApiClient.UpdateVhoNonAvailabilityHoursAsync(username, request);
+                return NoContent();
+            }
+            catch (BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
+                    case (int)HttpStatusCode.BadRequest:
+                        return BadRequest(ex.Response);
+                    default:
+                        throw;   
+                }
+            }
         }
     }
 }
