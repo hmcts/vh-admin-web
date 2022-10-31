@@ -197,7 +197,6 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             // Arrange
   
-            var username = "test.user@hmcts.net";
             _bookingsApiClientMock
                 .Setup(e => e.DeleteVhoNonAvailabilityHoursAsync(1))
                 .Throws(new BookingsApiException("error",400,"", null, new Exception()));
@@ -216,13 +215,30 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        public async Task Should_call_DeleteNonAvailabilityWorkHours_and_return_Ok()
+        public async Task Should_call_DeleteNonAvailabilityWorkHours_and_return_NotFound()
         {
             // Arrange
   
-            var username = "test.user@hmcts.net";
+            _bookingsApiClientMock
+                .Setup(e => e.DeleteVhoNonAvailabilityHoursAsync(1))
+                .Throws(new BookingsApiException("error",404,"", null, new Exception()));
 
 
+            // Act
+            var response = await _controller.DeleteNonAvailabilityWorkHours(1);
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.DeleteVhoNonAvailabilityHoursAsync(1), Times.Once);
+            
+            response.Should().NotBeNull();
+
+            var objectResult = (NotFoundObjectResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        public async Task Should_call_DeleteNonAvailabilityWorkHours_and_return_Ok()
+        {
             // Act
             var response = await _controller.DeleteNonAvailabilityWorkHours(1);
 

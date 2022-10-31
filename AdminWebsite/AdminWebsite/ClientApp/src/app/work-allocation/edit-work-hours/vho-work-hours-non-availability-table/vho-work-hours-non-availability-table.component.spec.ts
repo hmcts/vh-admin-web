@@ -48,6 +48,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             start_time: new Date()
         });
         component.result = [slot];
+        component.delete(slot);
         component.onDeletionAnswer(false);
         fixture.detectChanges();
         expect(component.nonWorkHours).toEqual([slot]);
@@ -78,6 +79,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.delete(slot);
             component.onDeletionAnswer(true);
             fixture.detectChanges();
+            bHClientSpy.deleteNonAvailabilityWorkHours(slot.id).subscribe(()=> {
+                expect(loggerSpy.info).toHaveBeenCalledTimes(1);
+            });
             expect(component.nonWorkHours.length).toEqual(0);
             expect(component.displayConfirmPopup).toBeTruthy();
         });
@@ -98,6 +102,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.nonWorkHours.length).toEqual(1);
             expect(component.displayConfirmPopup).toBeTruthy();
             expect(component.displayMessageAndFade).toHaveBeenCalledTimes(0);
+            expect(loggerSpy.error).toHaveBeenCalledTimes(1);
         });
     });
 });

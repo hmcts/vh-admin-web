@@ -13,7 +13,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     faTrash = faTrash;
     faCalendarPlus = faCalendarPlus;
     faExclamation = faCircleExclamation;
-    timeMessageDuration = 2000;
+    timeMessageDuration = 4000;
 
     displayConfirmPopup = false;
     slotToDelete: VhoNonAvailabilityWorkHoursResponse;
