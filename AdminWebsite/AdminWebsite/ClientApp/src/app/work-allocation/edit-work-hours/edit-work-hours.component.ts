@@ -12,27 +12,18 @@ import {
     selector: 'app-edit-work-hours',
     templateUrl: './edit-work-hours.component.html'
 })
-export class EditWorkHoursComponent implements OnInit {
+export class EditWorkHoursComponent {
     loggerPrefix = 'EditWorkHoursComponent';
     workHours: VhoWorkHoursResponse[];
     username: string;
 
     isUploadWorkHoursSuccessful = false;
-    showSaveFailedPopup = false;
 
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
 
     @Input() isVhTeamLeader: boolean;
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
-
-    ngOnInit(): void {
-        console.log('Needs something for sonarcloud. Delete this later');
-    }
-
-    cancelSave() {
-        this.showSaveFailedPopup = false;
-    }
 
     onSaveWorkHours($event: VhoWorkHoursResponse[]) {
         this.workHours = $event;
@@ -69,11 +60,9 @@ export class EditWorkHoursComponent implements OnInit {
 
         this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(
             () => {
-                this.showSaveFailedPopup = false;
                 this.isUploadWorkHoursSuccessful = true;
             },
             error => {
-                this.showSaveFailedPopup = true;
                 this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
             }
         );

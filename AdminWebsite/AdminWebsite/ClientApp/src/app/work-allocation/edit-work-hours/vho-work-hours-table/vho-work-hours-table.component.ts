@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 @Component({
     selector: 'app-vho-work-hours-table',
     templateUrl: './vho-work-hours-table.component.html'
 })
-export class VhoWorkHoursTableComponent implements OnInit {
+export class VhoWorkHoursTableComponent {
     workHours: VhoWorkHoursResponse[] = [];
     workHoursEndTimeBeforeStartTimeErrors: number[] = [];
     originalWorkHours: VhoWorkHoursResponse[] = [];
@@ -20,10 +20,6 @@ export class VhoWorkHoursTableComponent implements OnInit {
     }
 
     @Output() saveWorkHours: EventEmitter<VhoWorkHoursResponse[]> = new EventEmitter();
-
-    ngOnInit(): void {
-        console.log('Needs something for sonarcloud. Delete this later');
-    }
 
     cancelEditingWorkingHours() {
         this.isEditing = false;

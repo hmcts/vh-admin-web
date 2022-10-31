@@ -54,16 +54,6 @@ describe('EditWorkHoursComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    describe('cancelSave', () => {
-        it('should remove save failed popup', () => {
-            component.showSaveFailedPopup = true;
-
-            component.cancelSave();
-
-            expect(component.showSaveFailedPopup).toBe(false);
-        });
-    });
-
     it('setSearchResult should assign event to results property', () => {
         const parameter: Array<VhoWorkHoursResponse> = [];
         component.setSearchResult(parameter);
@@ -134,7 +124,6 @@ describe('EditWorkHoursComponent', () => {
 
             component.onSaveWorkHours([]);
 
-            expect(component.showSaveFailedPopup).toBe(true);
             expect(loggerSpy.error).toHaveBeenCalled();
         });
     });
