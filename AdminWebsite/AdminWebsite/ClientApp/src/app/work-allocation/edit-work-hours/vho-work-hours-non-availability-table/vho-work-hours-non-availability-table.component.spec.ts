@@ -79,7 +79,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.delete(slot);
             component.onDeletionAnswer(true);
             fixture.detectChanges();
-            bHClientSpy.deleteNonAvailabilityWorkHours(slot.id).subscribe(()=> {
+            bHClientSpy.deleteNonAvailabilityWorkHours(slot.id).subscribe(() => {
                 expect(loggerSpy.info).toHaveBeenCalledTimes(1);
             });
             expect(component.nonWorkHours.length).toEqual(0);
