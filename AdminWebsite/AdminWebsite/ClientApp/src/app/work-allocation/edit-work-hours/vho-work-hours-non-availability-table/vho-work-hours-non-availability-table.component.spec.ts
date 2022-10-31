@@ -24,22 +24,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     });
 
     it('check results input parameter sets the value', () => {
-        component.result = [
-            new VhoNonAvailabilityWorkHoursResponse({
-                id: 1,
-                start_time: new Date(2022, 0, 1, 8, 0, 0),
-                end_time: new Date(2022, 0, 2, 10, 0, 0)
-            })
-        ];
+        component.result = [new VhoNonAvailabilityWorkHoursResponse()];
         fixture.detectChanges();
-        const model: EditVhoNonAvailabilityWorkHoursModel = {
-            id: 1,
-            start_date: '2022-01-01',
-            start_time: '08:00:00',
-            end_date: '2022-01-02',
-            end_time: '10:00:00'
-        };
-        expect(component.nonWorkHours).toEqual([model]);
+        expect(component.nonWorkHours).toEqual([new EditVhoNonAvailabilityWorkHoursModel()]);
     });
 
     it('check results input parameter sets to null', () => {

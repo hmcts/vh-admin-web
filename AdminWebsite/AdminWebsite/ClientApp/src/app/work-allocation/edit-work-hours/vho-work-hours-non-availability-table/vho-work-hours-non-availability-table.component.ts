@@ -88,7 +88,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     mapNonWorkingHoursToEditModel(nonWorkHour: VhoNonAvailabilityWorkHoursResponse): EditVhoNonAvailabilityWorkHoursModel {
-        //this.datePipe.transform(date, 'yyyy-MM-dd');
+        if (nonWorkHour.id == null || undefined) {
+            return new EditVhoNonAvailabilityWorkHoursModel();
+        }
 
         var hours: EditVhoNonAvailabilityWorkHoursModel = {
             id: nonWorkHour.id,
