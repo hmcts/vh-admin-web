@@ -6,8 +6,11 @@
     <app-vho-search (vhoSearchEmitter)="setSearchResult($event)" (usernameEmitter)="setUsername($event)"></app-vho-search>
     <app-vho-work-hours-table (saveWorkHours)="onSaveWorkHours($event)" [result]="result"> </app-vho-work-hours-table>
     <app-vho-work-hours-non-availability-table [result]="result"></app-vho-work-hours-non-availability-table>
-    <p *ngIf="isUploadWorkHoursSuccessful" class="govuk-body govuk-!-font-weight-bold">
-      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> User working hours changes saved successfully
+    <p *ngIf="isUploadWorkHoursSuccessful" id="edit-upload-hours-success" class="govuk-body govuk-!-font-weight-bold">
+      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>User working hours changes saved successfully
+    </p>
+    <p *ngIf="isUploadWorkHoursFailure" id="edit-upload-hours-failure" class="govuk-error-message">
+      Error: Work hour changes could not be saved.
     </p>
   </div>
 </details>

@@ -18,6 +18,7 @@ export class EditWorkHoursComponent {
     username: string;
 
     isUploadWorkHoursSuccessful = false;
+    isUploadWorkHoursFailure = false;
 
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
 
@@ -32,6 +33,7 @@ export class EditWorkHoursComponent {
 
     saveWorkHours() {
         this.isUploadWorkHoursSuccessful = false;
+        this.isUploadWorkHoursFailure = false;
 
         const uploadWorkHoursRequest = new UploadWorkHoursRequest();
         uploadWorkHoursRequest.working_hours = [];
@@ -63,6 +65,8 @@ export class EditWorkHoursComponent {
                 this.isUploadWorkHoursSuccessful = true;
             },
             error => {
+                console.log('Arif error');
+                this.isUploadWorkHoursFailure = true;
                 this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
             }
         );
