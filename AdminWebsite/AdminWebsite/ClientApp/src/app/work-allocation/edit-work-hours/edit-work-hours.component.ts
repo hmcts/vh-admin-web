@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Logger } from 'src/app/services/logger';
 import {
     BHClient,
@@ -7,6 +7,7 @@ import {
     VhoNonAvailabilityWorkHoursResponse,
     WorkingHours
 } from '../../services/clients/api-client';
+import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -23,6 +24,8 @@ export class EditWorkHoursComponent {
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
 
     @Input() isVhTeamLeader: boolean;
+
+    @ViewChild(VhoWorkHoursTableComponent) vhoWorkHoursTableComponent!: VhoWorkHoursTableComponent;
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
@@ -65,8 +68,8 @@ export class EditWorkHoursComponent {
                 this.isUploadWorkHoursSuccessful = true;
             },
             error => {
-                console.log('Arif error');
                 this.isUploadWorkHoursFailure = true;
+                this.vhoWorkHoursTableComponent.isEditing = true;
                 this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
             }
         );

@@ -5,6 +5,7 @@ import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
+import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 
 describe('EditWorkHoursComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
@@ -141,10 +142,12 @@ describe('EditWorkHoursComponent', () => {
 
         it('should show save failed popup when api fails', () => {
             bHClientSpy.uploadWorkHours.and.returnValue(throwError(new Error()));
+            component.vhoWorkHoursTableComponent = new VhoWorkHoursTableComponent();
 
             component.onSaveWorkHours([]);
 
             expect(component.isUploadWorkHoursFailure).toBeTruthy();
+            expect(component.vhoWorkHoursTableComponent.isEditing).toBeTruthy();
             expect(loggerSpy.error).toHaveBeenCalled();
         });
     });
