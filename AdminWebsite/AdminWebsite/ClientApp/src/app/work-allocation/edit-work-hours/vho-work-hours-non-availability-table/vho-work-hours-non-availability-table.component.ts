@@ -45,7 +45,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         this.displayConfirmPopup = false;
         if ($event) {
             this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
-                (res) => {
+                res => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.displayMessageAndFade('Non-availability hours changes saved succesfully');
                     this.removeSlot();
