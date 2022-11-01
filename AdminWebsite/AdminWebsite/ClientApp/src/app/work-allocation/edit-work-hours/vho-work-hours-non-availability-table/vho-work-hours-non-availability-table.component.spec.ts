@@ -20,7 +20,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(VhoWorkHoursNonAvailabilityTableComponent);
         component = fixture.componentInstance;
-        component.saveNonWorkHoursCompleted$ = new Subject<void>();
+        component.saveNonWorkHoursCompleted$ = new Subject<boolean>();
         fixture.detectChanges();
     });
 
@@ -157,12 +157,25 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         });
 
         describe('ngOnInit', () => {
-            it('handles save non work hours on complete', () => {
+            it('handles save non work hours on success', () => {
+                component.switchToEditMode();
                 component.ngOnInit();
-                component.saveNonWorkHoursCompleted$.next();
+                component.saveNonWorkHoursCompleted$.next(true);
 
                 expect(component.isSaving).toBe(false);
+                expect(component.isEditing).toBe(false);
                 expect(JSON.stringify(component.originalNonWorkHours)).toEqual(JSON.stringify(component.nonWorkHours));
+            });
+
+            it('handles save non work hours on fail', () => {
+                component.switchToEditMode();
+                component.ngOnInit();
+                const originalNonWorkHours = JSON.parse(JSON.stringify(component.nonWorkHours));
+                component.saveNonWorkHoursCompleted$.next(false);
+
+                expect(component.isSaving).toBe(false);
+                expect(component.isEditing).toBe(true);
+                expect(JSON.stringify(component.originalNonWorkHours)).toEqual(JSON.stringify(originalNonWorkHours));
             });
         });
 

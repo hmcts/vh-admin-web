@@ -33,7 +33,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         }
     }
 
-    @Input() saveNonWorkHoursCompleted$: Subject<void>;
+    @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     //@Input() onSaveNonWorkHoursComplete:
 
     // @Input() onSaveComplete: () => {
@@ -44,12 +44,15 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     ngOnInit(): void {
         console.log('Needs something for sonarcloud. Delete this later');
-        this.saveNonWorkHoursCompleted$.subscribe(() => {
+        this.saveNonWorkHoursCompleted$.subscribe(success => {
             console.log('onSaveNonWorkHoursComplete received');
             // this.isSaveButtonEnabled = true;
             // this.isCancelButtonEnabled = true;
             this.isSaving = false;
-            this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+            if (success) {
+                this.isEditing = false;
+                this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+            }
         });
     }
 
