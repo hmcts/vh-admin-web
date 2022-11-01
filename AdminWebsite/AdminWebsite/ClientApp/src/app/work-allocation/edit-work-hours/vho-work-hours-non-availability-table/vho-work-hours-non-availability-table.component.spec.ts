@@ -79,11 +79,12 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     });
 
     describe('editing non availability', () => {
-        const ERROR_START_DATE_REQUIRED = 'Start date is required';
-        const ERROR_END_DATE_REQUIRED = 'End date is required';
-        const ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME = 'End time cannot be before Start time';
-        const ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME = 'End datetime must be after Start datetime';
-        const ERROR_OVERLAPPING_DATETIMES = 'You cannot enter overlapping non-availability for the same person';
+        const ERROR_START_DATE_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired;
+        const ERROR_END_DATE_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired;
+        const ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeCannotBeBeforeStartTime;
+        const ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME =
+            VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDatetimeMustBeAfterStartDatetime;
+        const ERROR_OVERLAPPING_DATETIMES = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
 
         beforeEach(() => {
             const nonWorkHours: VhoNonAvailabilityWorkHoursResponse[] = [];
@@ -194,8 +195,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
                 triggerBlurEvent(elementId);
 
-                expect(component.distinctValidationErrors.length).toBe(1);
-                expect(component.distinctValidationErrors[0]).toEqual(ERROR_START_DATE_REQUIRED);
+                expect(component.validationSummary.length).toBe(1);
+                expect(component.validationSummary[0]).toEqual(ERROR_START_DATE_REQUIRED);
                 expect(component.validationFailures.length).toBe(1);
                 const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
                 expect(validationFailure).not.toEqual(null);
@@ -232,7 +233,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 previousDistinctValidationFailures.push(ERROR_START_DATE_REQUIRED);
                 previousDistinctValidationFailures.push(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
                 component.validationFailures = [...previousValidationFailures];
-                component.distinctValidationErrors = [...previousDistinctValidationFailures];
+                component.validationSummary = [...previousDistinctValidationFailures];
 
                 const elementId = `#${elementPrefix}_${nonWorkHourIdWithValidData}`;
                 triggerBlurEvent(elementId);
@@ -242,8 +243,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                     x => x.id == nonWorkHourIdWithValidData && x.errorMessage == previousValidationError
                 );
                 expect(previousFailure).toBeUndefined();
-                expect(component.distinctValidationErrors.length).toBe(previousDistinctValidationFailures.length - 1);
-                const previousError = component.distinctValidationErrors.find(x => x == previousValidationError);
+                expect(component.validationSummary.length).toBe(previousDistinctValidationFailures.length - 1);
+                const previousError = component.validationSummary.find(x => x == previousValidationError);
                 expect(previousError).toBeUndefined();
             });
 
@@ -270,8 +271,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 });
 
                 expect(component.validationFailures.length).toBe(2);
-                expect(component.distinctValidationErrors.length).toBe(1);
-                expect(component.distinctValidationErrors[0]).toBe(ERROR_START_DATE_REQUIRED);
+                expect(component.validationSummary.length).toBe(1);
+                expect(component.validationSummary[0]).toBe(ERROR_START_DATE_REQUIRED);
             });
         });
 
@@ -290,8 +291,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
                 triggerBlurEvent(elementId);
 
-                expect(component.distinctValidationErrors.length).toBe(1);
-                expect(component.distinctValidationErrors[0]).toEqual(ERROR_END_DATE_REQUIRED);
+                expect(component.validationSummary.length).toBe(1);
+                expect(component.validationSummary[0]).toEqual(ERROR_END_DATE_REQUIRED);
                 expect(component.validationFailures.length).toBe(1);
                 const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
                 expect(validationFailure).not.toEqual(null);
@@ -370,8 +371,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
             triggerBlurEvent(elementId);
 
-            expect(component.distinctValidationErrors.length).toBe(1);
-            expect(component.distinctValidationErrors[0]).toEqual(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toEqual(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
             expect(component.validationFailures.length).toBe(1);
             const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
             expect(validationFailure).not.toEqual(null);
@@ -390,8 +391,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
             triggerBlurEvent(elementId);
 
-            expect(component.distinctValidationErrors.length).toBe(1);
-            expect(component.distinctValidationErrors[0]).toEqual(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toEqual(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
             expect(component.validationFailures.length).toBe(1);
             const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
             expect(validationFailure).not.toEqual(null);
@@ -421,8 +422,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             const elementId = `#${elementPrefix}_${workHour1.id}`;
             triggerBlurEvent(elementId);
 
-            expect(component.distinctValidationErrors.length).toBe(1);
-            expect(component.distinctValidationErrors[0]).toEqual(ERROR_OVERLAPPING_DATETIMES);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toEqual(ERROR_OVERLAPPING_DATETIMES);
             expect(component.validationFailures.length).toBe(1);
             const validationFailure = component.validationFailures.find(x => x.id == workHour1.id);
             expect(validationFailure).not.toEqual(null);

@@ -85,12 +85,6 @@ export class EditWorkHoursComponent {
             this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
             this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
         }
-        // if (this.result && this.result[0] instanceof VhoWorkHoursResponse) {
-        //     this.showWorkHoursTable = true;
-        // }
-        // if (this.result && this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
-        //     this.showNonWorkHoursTable = true;
-        // }
     }
 
     setUsername($event: string) {

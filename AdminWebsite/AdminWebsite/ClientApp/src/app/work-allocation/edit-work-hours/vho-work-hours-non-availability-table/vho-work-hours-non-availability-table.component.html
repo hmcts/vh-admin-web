@@ -56,9 +56,9 @@
     </tbody>
   </table>
 
-  <div *ngIf="distinctValidationErrors.length > 0">
+  <div *ngIf="validationSummary.length > 0">
     <p class="govuk-error-message">Error:</p>
-    <div *ngFor="let error of distinctValidationErrors">
+    <div *ngFor="let error of validationSummary">
       <p class="govuk-error-message">{{ error }}</p>
     </div>
   </div>
