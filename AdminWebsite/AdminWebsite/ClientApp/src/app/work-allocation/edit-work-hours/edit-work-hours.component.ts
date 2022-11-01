@@ -1,13 +1,18 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import {
     BHClient,
     UploadWorkHoursRequest,
     VhoWorkHoursResponse,
     VhoNonAvailabilityWorkHoursResponse,
-    WorkingHours
+    WorkingHours,
+    UpdateNonWorkingHoursRequest,
+    NonWorkingHours
 } from '../../services/clients/api-client';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
+import { EditVhoNonAvailabilityWorkHoursModel } from './edit-non-work-hours-model';
+import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -16,12 +21,19 @@ import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hour
 export class EditWorkHoursComponent {
     loggerPrefix = 'EditWorkHoursComponent';
     workHours: VhoWorkHoursResponse[];
+    nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     username: string;
 
     isUploadWorkHoursSuccessful = false;
     isUploadWorkHoursFailure = false;
 
+    isUploadNonWorkHoursSuccessful = false;
+    showSaveNonWorkHoursFailedPopup = false;
+    saveNonWorkHoursCompleted$: Subject<boolean> = new Subject();
+
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
+    showWorkHoursTable = false;
+    showNonWorkHoursTable = false;
 
     @Input() isVhTeamLeader: boolean;
 
@@ -77,9 +89,61 @@ export class EditWorkHoursComponent {
 
     setSearchResult($event: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]) {
         this.result = $event;
+        this.showWorkHoursTable = false;
+        this.showNonWorkHoursTable = false;
+        if (this.result) {
+            this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
+            this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
+        }
     }
 
     setUsername($event: string) {
         this.username = $event;
+    }
+
+    onSaveNonWorkHours($event: EditVhoNonAvailabilityWorkHoursModel[]) {
+        this.nonWorkHours = $event;
+        this.saveNonWorkHours();
+    }
+
+    saveNonWorkHours() {
+        this.isUploadNonWorkHoursSuccessful = false;
+
+        const username = this.username;
+        const updateNonWorkHoursRequest = new UpdateNonWorkingHoursRequest();
+        const hours: NonWorkingHours[] = [];
+
+        this.nonWorkHours.forEach(editedNonWorkHour => {
+            const nonWorkHour = new NonWorkingHours();
+
+            nonWorkHour.id = editedNonWorkHour.id;
+            nonWorkHour.start_time = this.combineDateAndTime(editedNonWorkHour.start_date, editedNonWorkHour.start_time);
+            nonWorkHour.end_time = this.combineDateAndTime(editedNonWorkHour.end_date, editedNonWorkHour.end_time);
+
+            hours.push(nonWorkHour);
+        });
+
+        updateNonWorkHoursRequest.hours = hours;
+
+        this.bhClient.updateNonAvailabilityWorkHours(username, updateNonWorkHoursRequest).subscribe(
+            () => {
+                this.showSaveNonWorkHoursFailedPopup = false;
+                this.isUploadNonWorkHoursSuccessful = true;
+                this.saveNonWorkHoursCompleted$.next(true);
+            },
+            error => {
+                this.showSaveNonWorkHoursFailedPopup = true;
+                this.logger.error(`${this.loggerPrefix} Non working hours could not be saved`, error, { nonWorkHours: this.nonWorkHours });
+                this.saveNonWorkHoursCompleted$.next(false);
+            }
+        );
+    }
+
+    cancelSaveNonWorkHours() {
+        this.showSaveNonWorkHoursFailedPopup = false;
+    }
+
+    combineDateAndTime(date: string, time: string) {
+        return CombineDateAndTime(date, time);
     }
 }
