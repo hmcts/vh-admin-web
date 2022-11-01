@@ -98,6 +98,36 @@ namespace AdminWebsite.Controllers
                 }
             }
         }
+
+        /// <summary>
+        /// Updates non availability hours for a vho
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="request"></param>
+        /// <returns>Success status</returns>
+        [HttpPatch("/NonAvailability/VHO/{username}")]
+        [SwaggerOperation(OperationId = "UpdateNonAvailabilityWorkHours")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> UpdateNonAvailabilityWorkHours(string username, [FromBody]UpdateNonWorkingHoursRequest request)
+        {
+            try
+            {
+                await _bookingsApiClient.UpdateVhoNonAvailabilityHoursAsync(username, request);
+                return NoContent();
+            }
+            catch (BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
+                    case (int)HttpStatusCode.BadRequest:
+                        return BadRequest(ex.Response);
+                    default:
+                        throw;   
+                }
+            }
+        }
         
         [HttpDelete("/NonAvailability")]
         [SwaggerOperation(OperationId = "DeleteNonAvailabilityWorkHours")]

@@ -250,5 +250,101 @@ namespace AdminWebsite.UnitTests.Controllers
             var objectResult = (OkResult)response;
             objectResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
+
+        [Test]
+        public async Task UpdateNonAvailabilityWorkHours_should_return_no_content_when_update_successful()
+        {
+            // Arrange
+            var username = "test.user@hmcts.net";
+            var request = new UpdateNonWorkingHoursRequest
+            {
+                Hours = new List<NonWorkingHours>
+                {
+                    new()
+                    {
+                        Id = 1,
+                        StartTime = new DateTime(2022, 1, 1, 8, 0, 0, DateTimeKind.Utc),
+                        EndTime = new DateTime(2022, 1, 1, 10, 0, 0, DateTimeKind.Utc)
+                    }
+                }
+            };
+
+            // Act
+            var response = await _controller.UpdateNonAvailabilityWorkHours(username, request);
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.UpdateVhoNonAvailabilityHoursAsync(username, request), Times.Once);
+
+            response.Should().NotBeNull();
+
+            var objectResult = (NoContentResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
+        }
+
+        [Test]
+        public async Task UpdateNonAvailabilityWorkHours_should_return_bad_request_when_bookings_api_returns_bad_request()
+        {
+            // Arrange
+            var username = "test.user@hmcts.net";
+            var request = new UpdateNonWorkingHoursRequest
+            {
+                Hours = new List<NonWorkingHours>
+                {
+                    new()
+                    {
+                        Id = 1,
+                        StartTime = new DateTime(2022, 1, 1, 10, 0, 0, DateTimeKind.Utc),
+                        EndTime = new DateTime(2022, 1, 1, 8, 0, 0, DateTimeKind.Utc)
+                    }
+                }
+            };
+            _bookingsApiClientMock
+                .Setup(e => e.UpdateVhoNonAvailabilityHoursAsync(username, request))
+                .Throws(new BookingsApiException("error",400,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
+            
+            // Act
+            var response = await _controller.UpdateNonAvailabilityWorkHours(username, request);
+            
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.UpdateVhoNonAvailabilityHoursAsync(username, request), Times.Once);
+
+            response.Should().NotBeNull();
+
+            var objectResult = (BadRequestObjectResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        }
+        
+        [Test]
+        public async Task UpdateNonAvailabilityWorkHours_should_return_not_found_when_bookings_api_returns_not_found()
+        {
+            // Arrange
+            var username = "test.user@hmcts.net";
+            var request = new UpdateNonWorkingHoursRequest
+            {
+                Hours = new List<NonWorkingHours>
+                {
+                    new()
+                    {
+                        Id = 1,
+                        StartTime = new DateTime(2022, 1, 1, 8, 0, 0, DateTimeKind.Utc),
+                        EndTime = new DateTime(2022, 1, 1, 10, 0, 0, DateTimeKind.Utc)
+                    }
+                }
+            };
+            _bookingsApiClientMock
+                .Setup(e => e.UpdateVhoNonAvailabilityHoursAsync(username, request))
+                .Throws(new BookingsApiException("error",404,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
+
+            // Act
+            var response = await _controller.UpdateNonAvailabilityWorkHours(username, request);
+
+            // Assert
+            _bookingsApiClientMock.Verify(x => x.UpdateVhoNonAvailabilityHoursAsync(username, request), Times.Once);
+
+            response.Should().NotBeNull();
+
+            var objectResult = (NotFoundResult)response;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+        }
     }
 }

@@ -1,10 +1,4 @@
 <span *ngIf="nonWorkHours?.length > 0">
-  <app-confirm-delete-hours-popup
-    *ngIf="displayConfirmPopup"
-    (deletionAnswer)="onDeletionAnswer($event)"
-    [slotToDelete]="slotToDelete"
-    [userName]="userName"
-  ></app-confirm-delete-hours-popup>
   <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="vho work non availability table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
@@ -17,15 +11,90 @@
     </thead>
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row" *ngFor="let day of nonWorkHours">
-        <td class="govuk-table__cell"><input type="date" [value]="day.start_time | date: 'yyyy-MM-dd'" /></td>
-        <td class="govuk-table__cell"><input type="date" [value]="day.end_time | date: 'yyyy-MM-dd'" /></td>
-        <td class="govuk-table__cell"><input type="time" [value]="day.start_time?.toLocaleTimeString()" /></td>
-        <td class="govuk-table__cell"><input type="time" [value]="day.end_time?.toLocaleTimeString()" /></td>
-        <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
+        <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': !nonWorkHourIsValid(day) }">
+          <input
+            id="start-date_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="date"
+            [(ngModel)]="day.start_date"
+            max="{{ day.end_date }}"
+            required="true"
+            (blur)="onStartDateBlur(day)"
+          />
+        </td>
+        <td class="govuk-table__cell">
+          <input
+            id="end-date_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="date"
+            [(ngModel)]="day.end_date"
+            min="{{ day.start_date }}"
+            required="true"
+            (blur)="onEndDateBlur(day)"
+          />
+        </td>
+        <td class="govuk-table__cell">
+          <input
+            id="start-time_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="time"
+            [(ngModel)]="day.start_time"
+            [max]="day.end_time"
+            (blur)="onStartTimeBlur(day)"
+          />
+        </td>
+        <td class="govuk-table__cell">
+          <input
+            id="end-time_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="time"
+            [(ngModel)]="day.end_time"
+            [min]="day.start_time"
+            (blur)="onEndTimeBlur(day)"
+          />
+        </td>
+          <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
       </tr>
     </tbody>
   </table>
-  <button class="govuk-button" data-module="govuk-button">Edit</button>
+
+  <div *ngIf="validationSummary.length > 0">
+    <p class="govuk-error-message">Error:</p>
+    <div *ngFor="let error of validationSummary">
+      <p class="govuk-error-message">{{ error }}</p>
+    </div>
+  </div>
+  <button
+    *ngIf="!isEditing; else editingButtonsBlock"
+    id="edit-individual-non-work-hours-button"
+    class="govuk-button"
+    data-module="govuk-button"
+    (click)="switchToEditMode()"
+  >
+    Edit
+  </button>
+  <ng-template #editingButtonsBlock>
+    <div class="govuk-button-group">
+      <button
+        id="save-individual-non-work-hours-button"
+        class="govuk-button govuk-!-margin-right-6"
+        data-module="govuk-button"
+        (click)="saveNonWorkingHours()"
+        [disabled]="isSaving || validationFailures.length > 0"
+      >
+        Save
+      </button>
+      <button
+        id="cancel-editing-individual-non-work-hours-button"
+        class="govuk-button govuk-button--secondary"
+        data-module="govuk-button"
+        (click)="cancelEditingNonWorkingHours()"
+        [disabled]="isSaving"
+      >
+        Cancel
+      </button>
+    </div>
+  </ng-template>
 </span>
 <div id="successMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
   <fa-icon [icon]="faExclamation"></fa-icon> {{ message }}
