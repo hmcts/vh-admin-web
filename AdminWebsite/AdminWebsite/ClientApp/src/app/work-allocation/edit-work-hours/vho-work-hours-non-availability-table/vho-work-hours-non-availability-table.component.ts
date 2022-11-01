@@ -27,6 +27,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         }
     }
     @Input() userName: string;
+    message: string;
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
@@ -46,19 +47,20 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
                 (res) => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
-                    this.displayMessageAndFade();
+                    this.displayMessageAndFade('Non-availability hours changes saved succesfully');
                     this.removeSlot();
                 },
                 error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
-                    this.displayMessage = false;
+                    this.displayMessageAndFade('Non-availability hours changes could not be saved succesfully');
                 }
             );
         }
     }
 
-    displayMessageAndFade() {
+    displayMessageAndFade(message: string) {
         this.displayMessage = true;
+        this.message = message;
         this.fadeOutLink();
     }
 
