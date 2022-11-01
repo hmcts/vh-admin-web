@@ -44,13 +44,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         this.displayConfirmPopup = false;
         if ($event) {
             this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
-                () => {
+                (res) => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.displayMessageAndFade();
                     this.removeSlot();
                 },
                 error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
+                    this.displayMessage = false;
                 }
             );
         }
