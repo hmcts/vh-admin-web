@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { NonWorkingHours, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 
-class ValidationFailure {
+export class ValidationFailure {
     id: number;
     errorMessage: string;
 }
@@ -551,6 +551,37 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
                 this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
             }
         }
+
+        // Overlapping dates
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'You cannot enter overlapping non-availability for the same person'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'You cannot enter overlapping non-availability for the same person'
+        );
+        var overlappingDateFailures = this.checkOverlappingDates();
+        if (overlappingDateFailures.find(x => x.id == nonWorkHour.id)) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'You cannot enter overlapping non-availability for the same person'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('You cannot enter overlapping non-availability for the same person');
+            }
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'You cannot enter overlapping non-availability for the same person')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
     }
 
     onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
@@ -617,6 +648,37 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         if (existingDistinctValidationFailureIndex !== -1) {
             if (!this.validationFailures.some(x => x.errorMessage == 'End datetime must be after Start datetime')) {
+                this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
+            }
+        }
+
+        // Overlapping dates
+        existingValidationFailureIndex = this.validationFailures.findIndex(
+            x => x.id == nonWorkHour.id && x.errorMessage == 'You cannot enter overlapping non-availability for the same person'
+        );
+        existingDistinctValidationFailureIndex = this.distinctValidationErrors.findIndex(
+            x => x == 'You cannot enter overlapping non-availability for the same person'
+        );
+        var overlappingDateFailures = this.checkOverlappingDates();
+        if (overlappingDateFailures.find(x => x.id == nonWorkHour.id)) {
+            if (existingValidationFailureIndex == -1) {
+                this.validationFailures.push({
+                    id: nonWorkHour.id,
+                    errorMessage: 'You cannot enter overlapping non-availability for the same person'
+                });
+            }
+
+            if (existingDistinctValidationFailureIndex == -1) {
+                this.distinctValidationErrors.push('You cannot enter overlapping non-availability for the same person');
+            }
+        }
+
+        if (existingValidationFailureIndex !== -1) {
+            this.validationFailures.splice(existingValidationFailureIndex, 1);
+        }
+
+        if (existingDistinctValidationFailureIndex !== -1) {
+            if (!this.validationFailures.some(x => x.errorMessage == 'You cannot enter overlapping non-availability for the same person')) {
                 this.distinctValidationErrors.splice(existingDistinctValidationFailureIndex, 1);
             }
         }

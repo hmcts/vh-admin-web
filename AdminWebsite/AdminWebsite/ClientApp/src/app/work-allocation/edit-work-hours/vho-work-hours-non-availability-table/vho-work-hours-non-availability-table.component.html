@@ -12,6 +12,7 @@
       <tr class="govuk-table__row" *ngFor="let day of nonWorkHours">
         <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': !nonWorkHourIsValid(day) }">
           <input
+            id="start-date_{{ day.id }}"
             [disabled]="!isEditing"
             type="date"
             [(ngModel)]="day.start_date"
@@ -22,6 +23,7 @@
         </td>
         <td class="govuk-table__cell">
           <input
+            id="end-date_{{ day.id }}"
             [disabled]="!isEditing"
             type="date"
             [(ngModel)]="day.end_date"
@@ -31,10 +33,24 @@
           />
         </td>
         <td class="govuk-table__cell">
-          <input [disabled]="!isEditing" type="time" [(ngModel)]="day.start_time" [max]="day.end_time" (blur)="onStartTimeBlur(day)" />
+          <input
+            id="start-time_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="time"
+            [(ngModel)]="day.start_time"
+            [max]="day.end_time"
+            (blur)="onStartTimeBlur(day)"
+          />
         </td>
         <td class="govuk-table__cell">
-          <input [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" [min]="day.start_time" (blur)="onEndTimeBlur(day)" />
+          <input
+            id="end-time_{{ day.id }}"
+            [disabled]="!isEditing"
+            type="time"
+            [(ngModel)]="day.end_time"
+            [min]="day.start_time"
+            (blur)="onEndTimeBlur(day)"
+          />
         </td>
       </tr>
     </tbody>
@@ -46,7 +62,13 @@
       <p class="govuk-error-message">{{ error }}</p>
     </div>
   </div>
-  <button *ngIf="!isEditing; else editingButtonsBlock" class="govuk-button" data-module="govuk-button" (click)="switchToEditMode()">
+  <button
+    *ngIf="!isEditing; else editingButtonsBlock"
+    id="edit-individual-non-work-hours-button"
+    class="govuk-button"
+    data-module="govuk-button"
+    (click)="switchToEditMode()"
+  >
     Edit
   </button>
   <ng-template #editingButtonsBlock>
