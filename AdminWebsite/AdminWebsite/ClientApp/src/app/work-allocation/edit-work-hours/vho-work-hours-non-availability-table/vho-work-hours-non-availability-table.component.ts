@@ -79,9 +79,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         const hours: EditVhoNonAvailabilityWorkHoursModel = {
             id: nonWorkHour.id,
             start_date: this.datePipe.transform(nonWorkHour.start_time, 'yyyy-MM-dd'),
-            start_time: nonWorkHour.start_time.toLocaleTimeString(),
+            start_time: this.datePipe.transform(nonWorkHour.start_time, 'HH:mm:ss'),
             end_date: this.datePipe.transform(nonWorkHour.end_time, 'yyyy-MM-dd'),
-            end_time: nonWorkHour.end_time.toLocaleTimeString()
+            end_time: this.datePipe.transform(nonWorkHour.end_time, 'HH:mm:ss')
         };
         return hours;
     }
