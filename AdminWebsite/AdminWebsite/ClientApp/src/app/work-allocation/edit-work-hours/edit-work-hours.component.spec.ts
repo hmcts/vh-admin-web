@@ -66,7 +66,7 @@ describe('EditWorkHoursComponent', () => {
 
             const successElement = fixture.debugElement.query(By.css('#edit-upload-hours-failure')).nativeElement;
 
-            expect(successElement.innerText).toEqual('Error: Work hour changes could not be saved.');
+            expect(successElement.innerText).toEqual(' Error: Work hour changes could not be saved. ');
         });
     });
 
