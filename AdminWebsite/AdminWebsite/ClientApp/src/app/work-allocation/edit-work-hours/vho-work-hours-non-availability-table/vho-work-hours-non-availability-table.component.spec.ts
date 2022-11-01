@@ -14,13 +14,12 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
     beforeEach(async () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['deleteNonAvailabilityWorkHours']);
-        //bHClientSpy.deleteNonAvailabilityWorkHours = new Observable()
-        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({value: 0}));
+        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({ value: 0 }));
         loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
             providers: [
-                {provide: Logger, useValue: loggerSpy},
-                {provide: BHClient, useValue: bHClientSpy}
+                { provide: Logger, useValue: loggerSpy },
+                { provide: BHClient, useValue: bHClientSpy }
             ],
             declarations: [VhoWorkHoursNonAvailabilityTableComponent, ConfirmDeleteHoursPopupComponent]
         }).compileComponents();
@@ -100,4 +99,4 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         expect(component.displayConfirmPopup).toBeFalsy();
         expect(loggerSpy.error).toHaveBeenCalledTimes(1);
     });
-})
+});
