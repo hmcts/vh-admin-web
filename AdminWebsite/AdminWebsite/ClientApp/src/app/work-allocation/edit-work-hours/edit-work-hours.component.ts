@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Logger } from 'src/app/services/logger';
 import {
     BHClient,
@@ -7,32 +7,27 @@ import {
     VhoNonAvailabilityWorkHoursResponse,
     WorkingHours
 } from '../../services/clients/api-client';
+import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 
 @Component({
     selector: 'app-edit-work-hours',
     templateUrl: './edit-work-hours.component.html'
 })
-export class EditWorkHoursComponent implements OnInit {
+export class EditWorkHoursComponent {
     loggerPrefix = 'EditWorkHoursComponent';
     workHours: VhoWorkHoursResponse[];
     username: string;
 
     isUploadWorkHoursSuccessful = false;
-    showSaveFailedPopup = false;
+    isUploadWorkHoursFailure = false;
 
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
 
     @Input() isVhTeamLeader: boolean;
 
+    @ViewChild(VhoWorkHoursTableComponent) vhoWorkHoursTableComponent!: VhoWorkHoursTableComponent;
+
     constructor(private bhClient: BHClient, private logger: Logger) {}
-
-    ngOnInit(): void {
-        console.log('Needs something for sonarcloud. Delete this later');
-    }
-
-    cancelSave() {
-        this.showSaveFailedPopup = false;
-    }
 
     onSaveWorkHours($event: VhoWorkHoursResponse[]) {
         this.workHours = $event;
@@ -41,6 +36,7 @@ export class EditWorkHoursComponent implements OnInit {
 
     saveWorkHours() {
         this.isUploadWorkHoursSuccessful = false;
+        this.isUploadWorkHoursFailure = false;
 
         const uploadWorkHoursRequest = new UploadWorkHoursRequest();
         uploadWorkHoursRequest.working_hours = [];
@@ -69,11 +65,11 @@ export class EditWorkHoursComponent implements OnInit {
 
         this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(
             () => {
-                this.showSaveFailedPopup = false;
                 this.isUploadWorkHoursSuccessful = true;
             },
             error => {
-                this.showSaveFailedPopup = true;
+                this.isUploadWorkHoursFailure = true;
+                this.vhoWorkHoursTableComponent.isEditing = true;
                 this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
             }
         );

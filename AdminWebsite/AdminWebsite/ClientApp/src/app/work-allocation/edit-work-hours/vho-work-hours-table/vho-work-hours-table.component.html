@@ -20,8 +20,12 @@
       >
         {{ day.day_of_week }}
       </td>
-      <td class="govuk-table__cell"><input [disabled]="!isEditing" type="time" [(ngModel)]="day.start_time" /></td>
-      <td class="govuk-table__cell"><input [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" /></td>
+      <td class="govuk-table__cell">
+        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.start_time" />
+      </td>
+      <td class="govuk-table__cell">
+        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.end_time" />
+      </td>
     </tr>
   </tbody>
   <div *ngIf="workHoursEndTimeBeforeStartTimeErrors.length > 0">
@@ -44,6 +48,7 @@
       class="govuk-button govuk-!-margin-right-6"
       data-module="govuk-button"
       (click)="saveWorkingHours()"
+      [disabled]="workHoursEndTimeBeforeStartTimeErrors.length > 0"
     >
       Save
     </button>
