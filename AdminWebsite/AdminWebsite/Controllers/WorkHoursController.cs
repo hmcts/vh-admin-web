@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +27,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UploadWorkHoursResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UploadWorkHours([FromBody] List<UploadWorkHoursRequest> request)
         {
-            // Error handling test
-            //throw new Exception();
-            
             var failedUsernames = await _bookingsApiClient.SaveWorkHoursAsync(request);
 
             var uploadWorkHoursResponse = new UploadWorkHoursResponse();
