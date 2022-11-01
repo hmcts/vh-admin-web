@@ -206,8 +206,7 @@ stages:
 
       - ${{ if eq(variables.run_acceptance_tests, true) }}:
         - job: AcceptanceTestsDev
-          pool:
-            vmImage: 'windows-latest'
+          pool: VH Self Hosted
           #dependsOn: aks_push
           displayName: Acceptance Tests Dev
           variables:
@@ -223,48 +222,60 @@ stages:
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: VhServices:AdminWebUrl
-                  value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net/
+                  value: https://vh-admin-web.${{ variables.env }}-pr-$(System.PullRequest.PullRequestNumber).platform.hmcts.net/
                   
                 - name: VhServices:AdminWebResourceId
-                  value: https://vh-admin-web.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-admin-web-${{ variables.env }}
 
                 - name: VhServices:VideoApiUrl
                   value: https://vh-video-api.${{ variables.env }}.platform.hmcts.net/
 
                 - name: VhServices:VideoApiResourceId
-                  value: https://vh-video-api.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-video-api-${{ variables.env }}
 
                 - name: VhServices:UserApiUrl
                   value: https://vh-user-api.${{ variables.env }}.platform.hmcts.net/
 
                 - name: VhServices:UserApiResourceId
-                  value: https://vh-user-api.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-user-api-${{ variables.env }}
 
                 - name: VhServices:NotificationApiUrl
                   value: https://vh-notification-api.${{ variables.env }}.platform.hmcts.net/
 
                 - name: VhServices:NotificationApiResourceId
-                  value: https://vh-notification-api.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-notification-api-${{ variables.env }}
 
                 - name: VhServices:TestApiUrl
                   value: https://vh-test-api.${{ variables.env }}.platform.hmcts.net/
 
                 - name: VhServices:TestApiResourceId
-                  value: https://vh-test-api.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-test-api-${{ variables.env }}
 
                 - name: VhServices:BookingsApiUrl
                   value: https://vh-bookings-api.${{ variables.env }}.platform.hmcts.net
 
                 - name: VhServices:BookingsApiResourceId
-                  value: https://vh-bookings-api.${{ variables.env }}.platform.hmcts.net
+                  value: azuread--identifieruri
+                  secret: true
+                  keyVaultName: vh-bookings-api-${{ variables.env }}
+
+                - name: VhServices:VideoWebUrl
+                  value: https://vh-video-web.${{ variables.env }}.platform.hmcts.net/
 
                 - name: VhServices:LaunchDarklyClientId
                   value: launchdarkly-client-id
                   secret: true
                   keyVaultName: vh-admin-web-${{ variables.env }}
-
-                - name: VhServices:VideoWebUrl
-                  value: https://vh-video-web.${{ variables.env }}.platform.hmcts.net/
 
                 # Feature Toggle
                 - name: FeatureToggle:SDK-Key
