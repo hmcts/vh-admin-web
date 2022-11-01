@@ -142,7 +142,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         if (!this.validateEndDatetimeAfterStartDatetime(nonWorkHour)) {
             return;
         }
-        if (!this.validateOverlappingDates(nonWorkHour)) {
+        if (!this.validateOverlappingDates()) {
             return;
         }
     }
@@ -191,14 +191,19 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         return true;
     }
 
-    validateOverlappingDates(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+    validateOverlappingDates() {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
         var overlappingDateFailures = this.checkOverlappingDates();
-        if (overlappingDateFailures.find(x => x.id == nonWorkHour.id)) {
-            this.addValidationError(nonWorkHour.id, error);
+        overlappingDateFailures.forEach(failure => {
+            this.addValidationError(failure.id, error);
+        });
+        if (overlappingDateFailures.length > 0) {
             return false;
         }
-        this.removeValidationError(nonWorkHour.id, error);
+        const existingValidationFailures = this.validationFailures.filter(x => x.errorMessage == error);
+        existingValidationFailures.forEach(failure => {
+            this.removeValidationError(failure.id, error);
+        });
         return true;
     }
 
