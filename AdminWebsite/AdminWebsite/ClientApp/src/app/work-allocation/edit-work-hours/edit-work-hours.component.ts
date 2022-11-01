@@ -22,8 +22,6 @@ export class EditWorkHoursComponent {
     isUploadWorkHoursFailure = false;
 
     result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
-    showWorkHoursTable = false;
-    showNonWorkHoursTable = false;
 
     @Input() isVhTeamLeader: boolean;
 
@@ -79,12 +77,6 @@ export class EditWorkHoursComponent {
 
     setSearchResult($event: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]) {
         this.result = $event;
-        this.showWorkHoursTable = false;
-        this.showNonWorkHoursTable = false;
-        if (this.result) {
-            this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
-            this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
-        }
     }
 
     setUsername($event: string) {

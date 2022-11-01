@@ -128,7 +128,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('should revert non work hour changes', () => {
                 component.switchToEditMode();
                 const originalNonWorkHours = JSON.parse(JSON.stringify(component.nonWorkHours));
-                let updatedWorkHour = component.nonWorkHours[0];
+                const updatedWorkHour = component.nonWorkHours[0];
                 updatedWorkHour.start_date = '2022-1-2';
                 updatedWorkHour.end_date = '2022-1-2';
                 fixture.detectChanges();
@@ -189,7 +189,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('fails validation when start date is empty', () => {
-                let nonWorkHour = component.nonWorkHours[0];
+                const nonWorkHour = component.nonWorkHours[0];
                 nonWorkHour.start_date = '';
 
                 const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
@@ -198,7 +198,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(component.validationSummary.length).toBe(1);
                 expect(component.validationSummary[0]).toEqual(ERROR_START_DATE_REQUIRED);
                 expect(component.validationFailures.length).toBe(1);
-                const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
+                const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
                 expect(validationFailure).not.toEqual(null);
                 expect(validationFailure.id).toBe(nonWorkHour.id);
                 expect(validationFailure.errorMessage).toBe(ERROR_START_DATE_REQUIRED);
@@ -220,7 +220,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('removes previous validation error when valid', () => {
                 const nonWorkHourIdWithValidData = 1;
                 const previousValidationError = ERROR_START_DATE_REQUIRED;
-                let previousValidationFailures: ValidationFailure[] = [];
+                const previousValidationFailures: ValidationFailure[] = [];
                 const failure1 = new ValidationFailure();
                 failure1.id = nonWorkHourIdWithValidData;
                 failure1.errorMessage = ERROR_START_DATE_REQUIRED;
@@ -240,11 +240,11 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
                 expect(component.validationFailures.length).toBe(previousValidationFailures.length - 1);
                 const previousFailure = component.validationFailures.find(
-                    x => x.id == nonWorkHourIdWithValidData && x.errorMessage == previousValidationError
+                    x => x.id === nonWorkHourIdWithValidData && x.errorMessage === previousValidationError
                 );
                 expect(previousFailure).toBeUndefined();
                 expect(component.validationSummary.length).toBe(previousDistinctValidationFailures.length - 1);
-                const previousError = component.validationSummary.find(x => x == previousValidationError);
+                const previousError = component.validationSummary.find(x => x === previousValidationError);
                 expect(previousError).toBeUndefined();
             });
 
@@ -285,7 +285,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('fails validation when end date is empty', () => {
-                let nonWorkHour = component.nonWorkHours[0];
+                const nonWorkHour = component.nonWorkHours[0];
                 nonWorkHour.end_date = '';
 
                 const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
@@ -294,7 +294,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(component.validationSummary.length).toBe(1);
                 expect(component.validationSummary[0]).toEqual(ERROR_END_DATE_REQUIRED);
                 expect(component.validationFailures.length).toBe(1);
-                const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
+                const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
                 expect(validationFailure).not.toEqual(null);
                 expect(validationFailure.id).toBe(nonWorkHour.id);
                 expect(validationFailure.errorMessage).toBe(ERROR_END_DATE_REQUIRED);
@@ -362,7 +362,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         }
 
         function checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix: string) {
-            let nonWorkHour = component.nonWorkHours[0];
+            const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = '2022-01-01';
@@ -374,7 +374,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
             expect(component.validationFailures.length).toBe(1);
-            const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
+            const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
@@ -382,7 +382,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         }
 
         function checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix: string) {
-            let nonWorkHour = component.nonWorkHours[0];
+            const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = nonWorkHour.start_date;
@@ -394,7 +394,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
             expect(component.validationFailures.length).toBe(1);
-            const validationFailure = component.validationFailures.find(x => x.id == nonWorkHour.id);
+            const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
@@ -425,7 +425,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_OVERLAPPING_DATETIMES);
             expect(component.validationFailures.length).toBe(1);
-            const validationFailure = component.validationFailures.find(x => x.id == workHour1.id);
+            const validationFailure = component.validationFailures.find(x => x.id === workHour1.id);
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(workHour1.id);
             expect(validationFailure.errorMessage).toBe(ERROR_OVERLAPPING_DATETIMES);

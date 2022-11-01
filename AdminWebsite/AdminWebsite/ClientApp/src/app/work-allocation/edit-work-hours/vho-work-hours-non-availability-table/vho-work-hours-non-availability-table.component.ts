@@ -75,7 +75,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             return new EditVhoNonAvailabilityWorkHoursModel();
         }
 
-        var hours: EditVhoNonAvailabilityWorkHoursModel = {
+        const hours: EditVhoNonAvailabilityWorkHoursModel = {
             id: nonWorkHour.id,
             start_date: this.datePipe.transform(nonWorkHour.start_time, 'yyyy-MM-dd'),
             start_time: nonWorkHour.start_time.toLocaleTimeString(),
@@ -100,16 +100,16 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     combineDateAndTime(date: string, time: string) {
         const dateParts = date.split('-');
-        const year = parseInt(dateParts[0]);
-        const month = parseInt(dateParts[1]) - 1;
-        const day = parseInt(dateParts[2]);
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1;
+        const day = parseInt(dateParts[2], 10);
         const timeParts = time.split(':');
-        const hour = parseInt(timeParts[0]);
-        const minutes = parseInt(timeParts[1]);
+        const hour = parseInt(timeParts[0], 10);
+        const minutes = parseInt(timeParts[1], 10);
         const seconds = 0;
         const milliseconds = 0;
 
-        var datetime = new Date(year, month, day, hour, minutes, seconds, milliseconds);
+        const datetime = new Date(year, month, day, hour, minutes, seconds, milliseconds);
         return datetime;
     }
 
@@ -149,7 +149,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     validateStartDateRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired;
-        if (nonWorkHour.start_date == '') {
+        if (nonWorkHour.start_date === '') {
             this.addValidationError(nonWorkHour.id, error);
             return false;
         }
@@ -159,7 +159,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     validateEndDateRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired;
-        if (nonWorkHour.end_date == '') {
+        if (nonWorkHour.end_date === '') {
             this.addValidationError(nonWorkHour.id, error);
             return false;
         }
@@ -183,7 +183,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDatetimeMustBeAfterStartDatetime;
         const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
         const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
-        if (endDateTime.toISOString() == startDateTime.toISOString()) {
+        if (endDateTime.toISOString() === startDateTime.toISOString()) {
             this.addValidationError(nonWorkHour.id, error);
             return false;
         }
@@ -193,14 +193,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     validateOverlappingDates() {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
-        var overlappingDateFailures = this.checkOverlappingDates();
+        const overlappingDateFailures = this.checkOverlappingDates();
         overlappingDateFailures.forEach(failure => {
             this.addValidationError(failure.id, error);
         });
         if (overlappingDateFailures.length > 0) {
             return false;
         }
-        const existingValidationFailures = this.validationFailures.filter(x => x.errorMessage == error);
+        const existingValidationFailures = this.validationFailures.filter(x => x.errorMessage === error);
         existingValidationFailures.forEach(failure => {
             this.removeValidationError(failure.id, error);
         });
@@ -209,8 +209,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     checkOverlappingDates() {
         let firstHour: NonWorkingHours = null;
-        let checkedHours: NonWorkingHours[] = [];
-        let validationFailures: ValidationFailure[] = [];
+        const checkedHours: NonWorkingHours[] = [];
+        const validationFailures: ValidationFailure[] = [];
 
         let nonWorkHoursRequestModels: NonWorkingHours[] = [];
         nonWorkHoursRequestModels = this.nonWorkHours.map(
@@ -229,7 +229,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             if (firstHour !== null) {
                 checkedHours.push(firstHour);
                 const uncheckedHours = nonWorkHoursRequestModels.filter(
-                    x => x.start_time >= firstHour.start_time && x !== firstHour && checkedHours.every(m => m != x)
+                    x => x.start_time >= firstHour.start_time && x !== firstHour && checkedHours.every(m => m !== x)
                 );
 
                 if (uncheckedHours.some(uncheckedHour => this.overlapsWith(firstHour, uncheckedHour))) {
@@ -253,31 +253,31 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
-        var existingValidationFailureIndex = this.validationFailures.findIndex(x => x.id == nonWorkHourId && x.errorMessage == error);
-        var existingValidationSummaryIndex = this.validationSummary.findIndex(x => x == error);
+        const existingValidationFailureIndex = this.validationFailures.findIndex(x => x.id === nonWorkHourId && x.errorMessage === error);
+        const existingValidationSummaryIndex = this.validationSummary.findIndex(x => x === error);
 
-        if (existingValidationFailureIndex == -1) {
+        if (existingValidationFailureIndex === -1) {
             this.validationFailures.push({
                 id: nonWorkHourId,
                 errorMessage: error
             });
         }
 
-        if (existingValidationSummaryIndex == -1) {
+        if (existingValidationSummaryIndex === -1) {
             this.validationSummary.push(error);
         }
     }
 
     removeValidationError(nonWorkHourId: number, error: string) {
-        var existingValidationFailureIndex = this.validationFailures.findIndex(x => x.id == nonWorkHourId && x.errorMessage == error);
-        var existingValidationSummaryIndex = this.validationSummary.findIndex(x => x == error);
+        const existingValidationFailureIndex = this.validationFailures.findIndex(x => x.id === nonWorkHourId && x.errorMessage === error);
+        const existingValidationSummaryIndex = this.validationSummary.findIndex(x => x === error);
 
         if (existingValidationFailureIndex !== -1) {
             this.validationFailures.splice(existingValidationFailureIndex, 1);
         }
 
         if (existingValidationSummaryIndex !== -1) {
-            if (!this.validationFailures.some(x => x.errorMessage == error)) {
+            if (!this.validationFailures.some(x => x.errorMessage === error)) {
                 this.validationSummary.splice(existingValidationSummaryIndex, 1);
             }
         }
