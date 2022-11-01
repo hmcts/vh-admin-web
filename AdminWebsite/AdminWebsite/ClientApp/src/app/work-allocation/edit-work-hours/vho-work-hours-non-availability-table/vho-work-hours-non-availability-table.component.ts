@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { NonWorkingHours, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
+import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
 
 export class ValidationFailure {
     id: number;
@@ -99,18 +100,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     combineDateAndTime(date: string, time: string) {
-        const dateParts = date.split('-');
-        const year = parseInt(dateParts[0], 10);
-        const month = parseInt(dateParts[1], 10) - 1;
-        const day = parseInt(dateParts[2], 10);
-        const timeParts = time.split(':');
-        const hour = parseInt(timeParts[0], 10);
-        const minutes = parseInt(timeParts[1], 10);
-        const seconds = 0;
-        const milliseconds = 0;
-
-        const datetime = new Date(year, month, day, hour, minutes, seconds, milliseconds);
-        return datetime;
+        return CombineDateAndTime(date, time);
     }
 
     onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
@@ -221,9 +211,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
                     end_time: this.combineDateAndTime(x.end_date, x.end_time)
                 })
         );
-        nonWorkHoursRequestModels = nonWorkHoursRequestModels.sort((a, b) =>
-            a.start_time > b.start_time ? 1 : b.start_time > a.start_time ? -1 : 0
-        );
+        nonWorkHoursRequestModels = nonWorkHoursRequestModels.sort((a, b) => a.start_time.getTime() - b.start_time.getTime());
 
         nonWorkHoursRequestModels.forEach(nonWorkHour => {
             if (firstHour !== null) {
