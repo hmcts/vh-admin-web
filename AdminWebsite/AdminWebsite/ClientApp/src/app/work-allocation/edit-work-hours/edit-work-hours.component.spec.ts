@@ -5,6 +5,7 @@ import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
+import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 
 describe('EditWorkHoursComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
@@ -48,20 +49,30 @@ describe('EditWorkHoursComponent', () => {
 
             expect(componentOuterDiv.innerText).toEqual('Edit working hours / non-availability');
         });
+
+        it('should show upload successful message', () => {
+            component.isVhTeamLeader = true;
+            component.isUploadWorkHoursSuccessful = true;
+            fixture.detectChanges();
+
+            const successElement = fixture.debugElement.query(By.css('#edit-upload-hours-success')).nativeElement;
+
+            expect(successElement.innerText).toEqual('User working hours changes saved successfully ');
+        });
+
+        it('should show upload failure message', () => {
+            component.isVhTeamLeader = true;
+            component.isUploadWorkHoursFailure = true;
+            fixture.detectChanges();
+
+            const successElement = fixture.debugElement.query(By.css('#edit-upload-hours-failure')).nativeElement;
+
+            expect(successElement.innerText).toEqual(' Error: Work hour changes could not be saved. ');
+        });
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    describe('cancelSave', () => {
-        it('should remove save failed popup', () => {
-            component.showSaveFailedPopup = true;
-
-            component.cancelSave();
-
-            expect(component.showSaveFailedPopup).toBe(false);
-        });
     });
 
     it('setSearchResult should assign event to results property', () => {
@@ -131,10 +142,12 @@ describe('EditWorkHoursComponent', () => {
 
         it('should show save failed popup when api fails', () => {
             bHClientSpy.uploadWorkHours.and.returnValue(throwError(new Error()));
+            component.vhoWorkHoursTableComponent = new VhoWorkHoursTableComponent();
 
             component.onSaveWorkHours([]);
 
-            expect(component.showSaveFailedPopup).toBe(true);
+            expect(component.isUploadWorkHoursFailure).toBeTruthy();
+            expect(component.vhoWorkHoursTableComponent.isEditing).toBeTruthy();
             expect(loggerSpy.error).toHaveBeenCalled();
         });
     });
