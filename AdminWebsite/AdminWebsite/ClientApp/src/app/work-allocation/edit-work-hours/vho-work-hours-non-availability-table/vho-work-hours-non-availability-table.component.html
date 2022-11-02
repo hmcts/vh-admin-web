@@ -1,4 +1,10 @@
 <span *ngIf="nonWorkHours?.length > 0">
+  <app-confirm-delete-hours-popup
+    *ngIf="displayConfirmPopup"
+    (deletionAnswer)="onDeletionAnswer($event)"
+    [slotToDelete]="slotToDelete"
+    [userName]="userName"
+  ></app-confirm-delete-hours-popup>
   <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="vho work non availability table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
@@ -96,6 +102,6 @@
     </div>
   </ng-template>
 </span>
-<div id="successMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-size-24 govuk-!-font-weight-bold">
+<div id="successMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-weight-bold">
   <fa-icon [icon]="faExclamation"></fa-icon> {{ message }}
 </div>
