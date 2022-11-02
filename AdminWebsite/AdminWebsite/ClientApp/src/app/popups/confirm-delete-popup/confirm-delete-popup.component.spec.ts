@@ -1,21 +1,23 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Logger } from 'src/app/services/logger';
-
 import { ConfirmDeleteHoursPopupComponent } from './confirm-delete-popup.component';
-import { VhoNonAvailabilityWorkHoursResponse } from '../../services/clients/api-client';
+import { EditVhoNonAvailabilityWorkHoursModel } from '../../work-allocation/edit-work-hours/edit-non-work-hours-model';
+import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
 
 describe('ConfirmDeleteHoursPopupComponent', () => {
     let component: ConfirmDeleteHoursPopupComponent;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['debug']);
-    const slotToDelete = new VhoNonAvailabilityWorkHoursResponse();
+    const slotToDelete = new EditVhoNonAvailabilityWorkHoursModel();
 
     beforeEach(() => {
         component = new ConfirmDeleteHoursPopupComponent(loggerSpy);
         spyOn(component.deletionAnswer, 'emit');
 
         slotToDelete.id = 1;
-        slotToDelete.start_time = new Date();
-        slotToDelete.end_time = new Date();
+
+        slotToDelete.start_time = new Date().toTimeString();
+        slotToDelete.end_time = new Date().toTimeString();
+        slotToDelete.start_date = new Date().toDateString();
+        slotToDelete.end_date = new Date().toDateString();
         component.slotToDelete = slotToDelete;
     });
 
@@ -23,8 +25,8 @@ describe('ConfirmDeleteHoursPopupComponent', () => {
         component.ngOnInit();
         component.confirmDelete();
         expect(component.deletionAnswer.emit).toHaveBeenCalledWith(true);
-        expect(component.startDate).toBe(slotToDelete.start_time.toDateString());
-        expect(component.endDate).toBe(slotToDelete.end_time.toDateString());
+        expect(component.startDate).toBe(CombineDateAndTime(slotToDelete.start_date, slotToDelete.start_time).toDateString());
+        expect(component.endDate).toBe(CombineDateAndTime(slotToDelete.end_date, slotToDelete.end_time).toDateString());
     });
 
     it('should emit false on cancel', () => {

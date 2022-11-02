@@ -3576,6 +3576,85 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Updates non availability hours for a vho
+     * @param body (optional)
+     * @return Success
+     */
+    updateNonAvailabilityWorkHours(username: string | null, body: UpdateNonWorkingHoursRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/NonAvailability/VHO/{username}';
+        if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
+        url_ = url_.replace('{username}', encodeURIComponent('' + username));
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUpdateNonAvailabilityWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUpdateNonAvailabilityWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<void>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUpdateNonAvailabilityWorkHours(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return _observableOf<void>(<any>null);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param id (optional)
      * @return Success
      */
@@ -3642,85 +3721,6 @@ export class BHClient extends ApiClientBase {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
                     return throwException('Not Found', status, _responseText, _headers);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * Updates non availability hours for a vho
-     * @param body (optional)
-     * @return Success
-     */
-    updateNonAvailabilityWorkHours(username: string | null, body: UpdateNonWorkingHoursRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + '/NonAvailability/VHO/{username}';
-        if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
-        url_ = url_.replace('{username}', encodeURIComponent('' + username));
-        url_ = url_.replace(/[?&]$/, '');
-
-        const content_ = JSON.stringify(body);
-
-        let options_: any = {
-            body: content_,
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('patch', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processUpdateNonAvailabilityWorkHours(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processUpdateNonAvailabilityWorkHours(<any>response_);
-                        } catch (e) {
-                            return <Observable<void>>(<any>_observableThrow(e));
-                        }
-                    } else return <Observable<void>>(<any>_observableThrow(response_));
-                })
-            );
-    }
-
-    protected processUpdateNonAvailabilityWorkHours(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return _observableOf<void>(<any>null);
                 })
             );
         } else if (status === 401) {
@@ -6951,6 +6951,7 @@ export interface IVhoWorkHoursResponse {
 }
 
 export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityWorkHoursResponse {
+    id?: number;
     end_time?: Date;
     start_time?: Date;
 
@@ -6964,6 +6965,7 @@ export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityW
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data['id'];
             this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
             this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
         }
@@ -6978,6 +6980,7 @@ export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityW
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
         data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
         data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
         return data;
@@ -6985,8 +6988,93 @@ export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityW
 }
 
 export interface IVhoNonAvailabilityWorkHoursResponse {
+    id?: number;
     end_time?: Date;
     start_time?: Date;
+}
+
+export class NonWorkingHours implements INonWorkingHours {
+    id?: number;
+    start_time?: Date;
+    end_time?: Date;
+
+    constructor(data?: INonWorkingHours) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
+            this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NonWorkingHours {
+        data = typeof data === 'object' ? data : {};
+        let result = new NonWorkingHours();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
+        data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface INonWorkingHours {
+    id?: number;
+    start_time?: Date;
+    end_time?: Date;
+}
+
+export class UpdateNonWorkingHoursRequest implements IUpdateNonWorkingHoursRequest {
+    hours?: NonWorkingHours[] | undefined;
+
+    constructor(data?: IUpdateNonWorkingHoursRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['hours'])) {
+                this.hours = [] as any;
+                for (let item of _data['hours']) this.hours!.push(NonWorkingHours.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateNonWorkingHoursRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateNonWorkingHoursRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.hours)) {
+            data['hours'] = [];
+            for (let item of this.hours) data['hours'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IUpdateNonWorkingHoursRequest {
+    hours?: NonWorkingHours[] | undefined;
 }
 
 export class BookHearingException extends Error {

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { Logger } from 'src/app/services/logger';
-import { VhoNonAvailabilityWorkHoursResponse } from '../../services/clients/api-client';
+import { EditVhoNonAvailabilityWorkHoursModel } from '../../work-allocation/edit-work-hours/edit-non-work-hours-model';
+import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
 
 @Component({
     selector: 'app-confirm-delete-hours-popup',
@@ -9,7 +10,7 @@ import { VhoNonAvailabilityWorkHoursResponse } from '../../services/clients/api-
 export class ConfirmDeleteHoursPopupComponent implements OnInit {
     private readonly loggerPrefix = '[DeleteNonWorkingHours] -';
     @Output() deletionAnswer = new EventEmitter<boolean>();
-    @Input() slotToDelete: VhoNonAvailabilityWorkHoursResponse;
+    @Input() slotToDelete: EditVhoNonAvailabilityWorkHoursModel;
     @Input() userName: string;
 
     startDate: string;
@@ -18,8 +19,8 @@ export class ConfirmDeleteHoursPopupComponent implements OnInit {
     constructor(private logger: Logger) {}
 
     ngOnInit(): void {
-        this.startDate = this.slotToDelete.start_time.toDateString();
-        this.endDate = this.slotToDelete.end_time.toDateString();
+        this.startDate = CombineDateAndTime(this.slotToDelete.start_date, this.slotToDelete.start_time).toDateString();
+        this.endDate = CombineDateAndTime(this.slotToDelete.end_date, this.slotToDelete.end_time).toDateString();
     }
 
     confirmDelete() {
