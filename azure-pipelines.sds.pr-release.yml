@@ -350,7 +350,6 @@ stages:
                 #   value: $(Saucelabs:AccessKey)
                 # - name: Saucelabs:RealDeviceApiKey
                 #   value: $(RealDeviceApiKey)
-
                 # WowzaConfiguration
                 - name: WowzaConfiguration:StorageAccountName
                   value: wowzaconfiguration--storage-account
