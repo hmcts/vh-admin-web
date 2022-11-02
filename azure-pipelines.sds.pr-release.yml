@@ -333,7 +333,7 @@ stages:
                 - name: TestUserSecrets:TestUsernameStem
                   value: $(TestUserSecrets:TestUsernameStem)
                 - name: TestUserSecrets:TestUserPassword
-                  value: $(TestUserSecrets:TestApiUserPassword)
+                  value: $(TestUserSecrets:TestUserPassword)
 
                   # Kinly
                 - name: KinlyConfiguration:ConferencePhoneNumber
