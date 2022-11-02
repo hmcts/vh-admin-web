@@ -344,12 +344,12 @@ stages:
                   value: $(JoinByPhoneFromDate)
                   
                 # SauceLabs
-                - name: Saucelabs:Username
-                  value: $(Saucelabs:Username)
-                - name: Saucelabs:AccessKey
-                  value: $(Saucelabs:AccessKey)
-                - name: Saucelabs:RealDeviceApiKey
-                  value: $(RealDeviceApiKey)
+                # - name: Saucelabs:Username
+                #   value: $(Saucelabs:Username)
+                # - name: Saucelabs:AccessKey
+                #   value: $(Saucelabs:AccessKey)
+                # - name: Saucelabs:RealDeviceApiKey
+                #   value: $(RealDeviceApiKey)
 
                 # WowzaConfiguration
                 - name: WowzaConfiguration:StorageAccountName
