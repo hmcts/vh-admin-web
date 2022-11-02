@@ -223,7 +223,7 @@ stages:
               azureSubscription: ${{ variables.subscriptionName }}
               acceptanceTestSettings:
                 - name: VhServices:AdminWebUrl
-                  value: https://vh-admin-web.${{ variables.env }}-pr-$(System.PullRequest.PullRequestNumber).platform.hmcts.net/
+                  value: https://vh-admin-web-pr-$(System.PullRequest.PullRequestNumber).${{ variables.env }}.platform.hmcts.net/
                   
                 - name: VhServices:AdminWebResourceId
                   value: azuread--identifieruri

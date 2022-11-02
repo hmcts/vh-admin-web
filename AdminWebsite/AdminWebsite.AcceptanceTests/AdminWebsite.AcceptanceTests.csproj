@@ -21,7 +21,7 @@
     <PackageReference Include="TestApi.Client" Version="1.31.1" />
     <PackageReference Include="VH.AcceptanceTests.Common" Version="1.23.0" />
     <PackageReference Include="VideoApi.Client" Version="1.38.10" />
-	<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="106.0.5249.6100" />
+	  <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="106.0.5249.6100" />
 	</ItemGroup>
 
   <ItemGroup>
