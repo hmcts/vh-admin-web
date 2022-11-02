@@ -1,0 +1,64 @@
+<table
+  *ngIf="workHours?.length > 0"
+  id="individual-work-hours-table"
+  class="govuk-table"
+  data-module="moj-sortable-table"
+  aria-describedby="vho work availability table"
+>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header" aria-sort="ascending">Day of the Week</th>
+      <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
+      <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row" *ngFor="let day of workHours; index as i">
+      <td
+        [ngClass]="{ 'govuk-form-group--error': workHoursEndTimeBeforeStartTimeErrors.includes(i) }"
+        class="govuk-table__cell govuk-!-padding-left-2"
+      >
+        {{ day.day_of_week }}
+      </td>
+      <td class="govuk-table__cell">
+        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.start_time" />
+      </td>
+      <td class="govuk-table__cell">
+        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.end_time" />
+      </td>
+    </tr>
+  </tbody>
+  <div *ngIf="workHoursEndTimeBeforeStartTimeErrors.length > 0">
+    <p class="govuk-error-message">Error: End Time cannot be before Start Time</p>
+  </div>
+</table>
+<button
+  *ngIf="!isEditing; else editingButtonsBlock"
+  id="edit-individual-work-hours-button"
+  class="govuk-button"
+  data-module="govuk-button"
+  (click)="switchToEditMode()"
+>
+  Edit
+</button>
+<ng-template #editingButtonsBlock>
+  <div class="govuk-button-group">
+    <button
+      id="save-individual-work-hours-button"
+      class="govuk-button govuk-!-margin-right-6"
+      data-module="govuk-button"
+      (click)="saveWorkingHours()"
+      [disabled]="workHoursEndTimeBeforeStartTimeErrors.length > 0"
+    >
+      Save
+    </button>
+    <button
+      id="cancel-editing-individual-work-hours-button"
+      class="govuk-button govuk-button--secondary"
+      data-module="govuk-button"
+      (click)="cancelEditingWorkingHours()"
+    >
+      Cancel
+    </button>
+  </div>
+</ng-template>

@@ -8,21 +8,29 @@
 // ReSharper disable InconsistentNaming
 
 import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
+import { Observable, from as _observableFrom, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 export const BH_API_BASE_URL = new InjectionToken<string>('BH_API_BASE_URL');
 
+export class ApiClientBase {
+    protected transformOptions(options: any) {
+        options.headers = options.headers.append('Cache-Control', 'no-store');
+        return Promise.resolve(options);
+    }
+}
+
 @Injectable({
     providedIn: 'root'
 })
-export class BHClient {
+export class BHClient extends ApiClientBase {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
+        super();
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'https://localhost:5400';
     }
@@ -46,8 +54,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetAudioRecordingLink(response_);
@@ -136,8 +148,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsAll(response_);
@@ -229,8 +245,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsByCloudRoom(response_);
@@ -322,8 +342,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCvpAudioRecordingsByDate(response_);
@@ -417,8 +441,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processBookingsList(response_);
@@ -507,8 +535,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetConfigSettings(response_);
@@ -581,8 +613,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetFeatureFlag(response_);
@@ -662,8 +698,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCheckServiceHealth(response_);
@@ -743,8 +783,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCheckServiceHealth2(response_);
@@ -829,8 +873,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processBookNewHearing(response_);
@@ -917,8 +965,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processCloneHearing(response_);
@@ -1003,8 +1055,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processEditHearing(response_);
@@ -1102,8 +1158,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingById(response_);
@@ -1200,8 +1260,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('patch', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdateBookingStatus(response_);
@@ -1297,8 +1361,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processSearchForAudioRecordedHearings(response_);
@@ -1384,8 +1452,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingConferenceStatus(response_);
@@ -1477,8 +1549,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdateFailedBookingStatus(response_);
@@ -1570,8 +1646,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetTelephoneConferenceIdById(response_);
@@ -1665,8 +1745,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostJudgesBySearchTerm(response_);
@@ -1754,8 +1838,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostJudiciaryPersonBySearchTerm(response_);
@@ -1843,8 +1931,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPostPersonBySearchTerm(response_);
@@ -1929,8 +2021,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetPersonForUpdateByContactEmail(response_);
@@ -2012,8 +2108,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingsByUsernameForDeletion(response_);
@@ -2097,8 +2197,12 @@ export class BHClient {
             headers: new HttpHeaders({})
         };
 
-        return this.http
-            .request('delete', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('delete', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processDeletePersonWithUsername(response_);
@@ -2182,8 +2286,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('put', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUpdatePersonDetails(response_);
@@ -2269,8 +2377,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetHearingTypes(response_);
@@ -2355,8 +2467,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetParticipantRoles(response_);
@@ -2439,8 +2555,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetCourts(response_);
@@ -2523,8 +2643,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processPublicHolidays(response_);
@@ -2609,8 +2733,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetStaffMembersBySearchTerm(response_);
@@ -2698,8 +2826,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetSuitabilityAnswers(response_);
@@ -2779,8 +2911,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetJudges(response_);
@@ -2862,8 +2998,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processSearchJudgesByEmail(response_);
@@ -2947,8 +3087,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('patch', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processResetPassword(response_);
@@ -3027,8 +3171,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('get', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processGetUserProfile(response_);
@@ -3088,7 +3236,7 @@ export class BHClient {
      * @return Success
      */
     uploadWorkHours(body: UploadWorkHoursRequest[] | null | undefined): Observable<UploadWorkHoursResponse> {
-        let url_ = this.baseUrl + '/api/workhours';
+        let url_ = this.baseUrl + '/api/workhours/UploadWorkHours';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -3103,8 +3251,12 @@ export class BHClient {
             })
         };
 
-        return this.http
-            .request('post', url_, options_)
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
             .pipe(
                 _observableMergeMap((response_: any) => {
                     return this.processUploadWorkHours(response_);
@@ -3157,6 +3309,434 @@ export class BHClient {
             );
         }
         return _observableOf<UploadWorkHoursResponse>(<any>null);
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    uploadNonWorkingHours(body: UploadNonWorkingHoursRequest[] | null | undefined): Observable<UploadNonWorkingHoursResponse> {
+        let url_ = this.baseUrl + '/api/workhours/UploadNonWorkingHours';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUploadNonWorkingHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUploadNonWorkingHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<UploadNonWorkingHoursResponse>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<UploadNonWorkingHoursResponse>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUploadNonWorkingHours(response: HttpResponseBase): Observable<UploadNonWorkingHoursResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UploadNonWorkingHoursResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UploadNonWorkingHoursResponse>(<any>null);
+    }
+
+    /**
+     * @param vho (optional)
+     * @return Success
+     */
+    getWorkAvailabilityHours(vho: string | null | undefined): Observable<VhoWorkHoursResponse[]> {
+        let url_ = this.baseUrl + '/api/workhours/VHO?';
+        if (vho !== undefined && vho !== null) url_ += 'vho=' + encodeURIComponent('' + vho) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetWorkAvailabilityHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetWorkAvailabilityHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<VhoWorkHoursResponse[]>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<VhoWorkHoursResponse[]>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetWorkAvailabilityHours(response: HttpResponseBase): Observable<VhoWorkHoursResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(VhoWorkHoursResponse.fromJS(item));
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Bad Request', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Not Found', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<VhoWorkHoursResponse[]>(<any>null);
+    }
+
+    /**
+     * @param vho (optional)
+     * @return Success
+     */
+    getNonAvailabilityWorkHours(vho: string | null | undefined): Observable<VhoNonAvailabilityWorkHoursResponse[]> {
+        let url_ = this.baseUrl + '/NonAvailability/VHO?';
+        if (vho !== undefined && vho !== null) url_ += 'vho=' + encodeURIComponent('' + vho) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetNonAvailabilityWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetNonAvailabilityWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<VhoNonAvailabilityWorkHoursResponse[]>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<VhoNonAvailabilityWorkHoursResponse[]>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processGetNonAvailabilityWorkHours(response: HttpResponseBase): Observable<VhoNonAvailabilityWorkHoursResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(VhoNonAvailabilityWorkHoursResponse.fromJS(item));
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Bad Request', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Not Found', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<VhoNonAvailabilityWorkHoursResponse[]>(<any>null);
+    }
+
+    /**
+     * Updates non availability hours for a vho
+     * @param body (optional)
+     * @return Success
+     */
+    updateNonAvailabilityWorkHours(username: string | null, body: UpdateNonWorkingHoursRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/NonAvailability/VHO/{username}';
+        if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
+        url_ = url_.replace('{username}', encodeURIComponent('' + username));
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processUpdateNonAvailabilityWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processUpdateNonAvailabilityWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<void>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processUpdateNonAvailabilityWorkHours(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return _observableOf<void>(<any>null);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param id (optional)
+     * @return Success
+     */
+    deleteNonAvailabilityWorkHours(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/NonAvailability?';
+        if (id === null) throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined) url_ += 'id=' + encodeURIComponent('' + id) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({})
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('delete', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processDeleteNonAvailabilityWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processDeleteNonAvailabilityWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<void>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processDeleteNonAvailabilityWorkHours(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return _observableOf<void>(<any>null);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Bad Request', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Not Found', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -6237,6 +6817,264 @@ export class UploadWorkHoursResponse implements IUploadWorkHoursResponse {
 
 export interface IUploadWorkHoursResponse {
     failed_usernames?: string[] | undefined;
+}
+
+export class UploadNonWorkingHoursRequest implements IUploadNonWorkingHoursRequest {
+    username?: string | undefined;
+    end_time?: Date;
+    start_time?: Date;
+
+    constructor(data?: IUploadNonWorkingHoursRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.username = _data['username'];
+            this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
+            this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UploadNonWorkingHoursRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UploadNonWorkingHoursRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['username'] = this.username;
+        data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
+        data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IUploadNonWorkingHoursRequest {
+    username?: string | undefined;
+    end_time?: Date;
+    start_time?: Date;
+}
+
+export class UploadNonWorkingHoursResponse implements IUploadNonWorkingHoursResponse {
+    failed_usernames?: string[] | undefined;
+
+    constructor(data?: IUploadNonWorkingHoursResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['failed_usernames'])) {
+                this.failed_usernames = [] as any;
+                for (let item of _data['failed_usernames']) this.failed_usernames!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UploadNonWorkingHoursResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UploadNonWorkingHoursResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.failed_usernames)) {
+            data['failed_usernames'] = [];
+            for (let item of this.failed_usernames) data['failed_usernames'].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IUploadNonWorkingHoursResponse {
+    failed_usernames?: string[] | undefined;
+}
+
+export class VhoWorkHoursResponse implements IVhoWorkHoursResponse {
+    day_of_week_id?: number;
+    day_of_week?: string | undefined;
+    start_time?: string | undefined;
+    end_time?: string | undefined;
+
+    constructor(data?: IVhoWorkHoursResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.day_of_week_id = _data['day_of_week_id'];
+            this.day_of_week = _data['day_of_week'];
+            this.start_time = _data['start_time'];
+            this.end_time = _data['end_time'];
+        }
+    }
+
+    static fromJS(data: any): VhoWorkHoursResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new VhoWorkHoursResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['day_of_week_id'] = this.day_of_week_id;
+        data['day_of_week'] = this.day_of_week;
+        data['start_time'] = this.start_time;
+        data['end_time'] = this.end_time;
+        return data;
+    }
+}
+
+export interface IVhoWorkHoursResponse {
+    day_of_week_id?: number;
+    day_of_week?: string | undefined;
+    start_time?: string | undefined;
+    end_time?: string | undefined;
+}
+
+export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityWorkHoursResponse {
+    id?: number;
+    end_time?: Date;
+    start_time?: Date;
+
+    constructor(data?: IVhoNonAvailabilityWorkHoursResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
+            this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): VhoNonAvailabilityWorkHoursResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new VhoNonAvailabilityWorkHoursResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
+        data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IVhoNonAvailabilityWorkHoursResponse {
+    id?: number;
+    end_time?: Date;
+    start_time?: Date;
+}
+
+export class NonWorkingHours implements INonWorkingHours {
+    id?: number;
+    start_time?: Date;
+    end_time?: Date;
+
+    constructor(data?: INonWorkingHours) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.start_time = _data['start_time'] ? new Date(_data['start_time'].toString()) : <any>undefined;
+            this.end_time = _data['end_time'] ? new Date(_data['end_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): NonWorkingHours {
+        data = typeof data === 'object' ? data : {};
+        let result = new NonWorkingHours();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['start_time'] = this.start_time ? this.start_time.toISOString() : <any>undefined;
+        data['end_time'] = this.end_time ? this.end_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface INonWorkingHours {
+    id?: number;
+    start_time?: Date;
+    end_time?: Date;
+}
+
+export class UpdateNonWorkingHoursRequest implements IUpdateNonWorkingHoursRequest {
+    hours?: NonWorkingHours[] | undefined;
+
+    constructor(data?: IUpdateNonWorkingHoursRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['hours'])) {
+                this.hours = [] as any;
+                for (let item of _data['hours']) this.hours!.push(NonWorkingHours.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateNonWorkingHoursRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateNonWorkingHoursRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.hours)) {
+            data['hours'] = [];
+            for (let item of this.hours) data['hours'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IUpdateNonWorkingHoursRequest {
+    hours?: NonWorkingHours[] | undefined;
 }
 
 export class BookHearingException extends Error {

@@ -33,12 +33,34 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
         </div>
       </div>
-      <ng-container *ngIf="isWorkingHoursUploadComplete" [ngSwitch]="workingHoursFileUploadUsernameErrors.length">
-        <div id="working-hours-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result">
-          <p *ngSwitchCase="0"><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours uploaded successfully</p>
+      <ng-container
+        *ngIf="isWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          isWorkingHoursUpload: true,
+          usernameErrors: workingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadWorkHours
+        }"
+      >
+      </ng-container>
 
-          <ng-container *ngSwitchCase="numberOfUsernamesToUploadWorkHours">
-            <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours not uploaded. No users found.</p>
+      <ng-template
+        let-isWorkingHoursUpload="isWorkingHoursUpload"
+        let-errors="usernameErrors"
+        let-numberOfUploads="numberOfUsernamesUploaded"
+        #fileUploadResult
+      >
+        <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
+          <p *ngSwitchCase="0">
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+            {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully
+          </p>
+
+          <ng-container *ngSwitchCase="numberOfUploads">
+            <p>
+              <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+              {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found.
+            </p>
             <p>
               Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
             </p>
@@ -47,22 +69,26 @@
           <ng-container *ngSwitchDefault>
             <p>
               <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
-              Team working hours upload partially successfully. Below CTSC support officer(s) could not be found:
+              Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successfully. Below CTSC support
+              officer(s) could not be found:
             </p>
 
             <ul class="govuk-body govuk-!-font-weight-normal">
-              <li *ngFor="let username of workingHoursFileUploadUsernameErrors">{{ username }}</li>
+              <li *ngFor="let username of errors">{{ username }}</li>
             </ul>
             <p>
               Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
             </p>
           </ng-container>
         </div>
-      </ng-container>
+      </ng-template>
 
       <ng-template #workingHoursUploadFailedMessage class="govuk-body upload-result">
         <div class="govuk-!-font-weight-bold">
-          <p><fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team working hours not uploaded. No users found</p>
+          <p>
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Team
+            {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found
+          </p>
           <p>
             Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
           </p>
@@ -98,31 +124,20 @@
           <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
         </div>
       </div>
+
+      <ng-container
+        *ngIf="isNonWorkingHoursUploadComplete"
+        [ngTemplateOutlet]="fileUploadResult"
+        [ngTemplateOutletContext]="{
+          isWorkingHoursUpload: false,
+          usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
+          numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
+        }"
+      >
+      </ng-container>
     </div>
   </details>
-  <details class="govuk-details" data-module="govuk-details">
-    <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
-    </summary>
-    <div class="govuk-form-group govuk-!-margin-left-6">
-      <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-        <div class="govuk-radios__item">
-          <input class="govuk-radios__input" id="edit-working-hours" name="edit-working-hours" type="radio" value="edit-working-hours" />
-          <label class="govuk-label govuk-radios__label" for="edit-working-hours"> Edit working hours </label>
-        </div>
-        <div class="govuk-radios__item">
-          <input
-            class="govuk-radios__input"
-            id="edit-non-availability-hours"
-            name="edit-non-availability-hours"
-            type="radio"
-            value="edit-non-availability-hours"
-          />
-          <label class="govuk-label govuk-radios__label" for="edit-non-availability-hours"> Edit non-availability hours </label>
-        </div>
-      </div>
-    </div>
-  </details>
+  <app-edit-work-hours [isVhTeamLeader]="isVhTeamLeader"></app-edit-work-hours>
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
       <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>

@@ -1,0 +1,28 @@
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary" tabindex="0" role="button">
+    <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
+  </summary>
+  <div *ngIf="isVhTeamLeader">
+    <app-vho-search (vhoSearchEmitter)="setSearchResult($event)" (usernameEmitter)="setUsername($event)"></app-vho-search>
+    <app-vho-work-hours-table *ngIf="showWorkHoursTable" (saveWorkHours)="onSaveWorkHours($event)" [result]="result">
+    </app-vho-work-hours-table>
+    <app-vho-work-hours-non-availability-table
+      *ngIf="showNonWorkHoursTable"
+      [result]="result"
+      (saveNonWorkHours)="onSaveNonWorkHours($event)"
+      [saveNonWorkHoursCompleted$]="saveNonWorkHoursCompleted$"
+    ></app-vho-work-hours-non-availability-table>
+    <p *ngIf="isUploadWorkHoursSuccessful" id="edit-upload-hours-success" class="govuk-body govuk-!-font-weight-bold">
+      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>User working hours changes saved successfully
+    </p>
+    <p *ngIf="isUploadWorkHoursFailure" id="edit-upload-hours-failure" class="govuk-error-message">
+      Error: Work hour changes could not be saved.
+    </p>
+    <p *ngIf="isUploadNonWorkHoursSuccessful" class="govuk-body govuk-!-font-weight-bold">
+      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Non-availability hours changes saved successfully
+    </p>
+    <p *ngIf="showSaveNonWorkHoursFailedPopup" class="govuk-error-message">
+      <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon> Error: Non-availability hours could not be saved
+    </p>
+  </div>
+</details>
