@@ -1,7 +1,10 @@
-import { DatePipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { Logger } from '../../../services/logger';
+import { ConfirmDeleteHoursPopupComponent } from '../../../popups/confirm-delete-popup/confirm-delete-popup.component';
+import { of, throwError } from 'rxjs';
+import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
-import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
@@ -9,11 +12,16 @@ import { By } from '@angular/platform-browser';
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursNonAvailabilityTableComponent>;
+    let bHClientSpy: jasmine.SpyObj<BHClient>;
+    let loggerSpy: jasmine.SpyObj<Logger>;
 
     beforeEach(async () => {
+        bHClientSpy = jasmine.createSpyObj('BHClient', ['deleteNonAvailabilityWorkHours']);
+        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({ value: 0 }));
+        loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
-            declarations: [VhoWorkHoursNonAvailabilityTableComponent],
-            providers: [DatePipe]
+            providers: [{ provide: Logger, useValue: loggerSpy }, { provide: BHClient, useValue: bHClientSpy }, DatePipe],
+            declarations: [VhoWorkHoursNonAvailabilityTableComponent, ConfirmDeleteHoursPopupComponent]
         }).compileComponents();
     });
 
@@ -25,45 +33,59 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     });
 
     it('check results input parameter sets the value', () => {
-        component.result = [new VhoNonAvailabilityWorkHoursResponse()];
+        const slot = new VhoNonAvailabilityWorkHoursResponse({
+            id: 1,
+            start_time: new Date(2022, 1, 1, 6, 0, 0),
+            end_time: new Date(2022, 1, 1, 8, 0, 0)
+        });
+        const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+        component.result = [slot];
         fixture.detectChanges();
-        expect(component.nonWorkHours).toEqual([new EditVhoNonAvailabilityWorkHoursModel()]);
+        expect(component.nonWorkHours).toEqual([slotMapped]);
+    });
+
+    it('check the slot is not removed if confirmation is popup is false', () => {
+        const slot = new VhoNonAvailabilityWorkHoursResponse({
+            id: 1,
+            start_time: new Date(2022, 1, 1, 6, 0, 0),
+            end_time: new Date(2022, 1, 1, 8, 0, 0)
+        });
+        const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+        component.result = [slot];
+        component.delete(slotMapped);
+        component.onDeletionAnswer(false);
+        fixture.detectChanges();
+        expect(component.nonWorkHours).toEqual([slotMapped]);
+        expect(bHClientSpy.deleteNonAvailabilityWorkHours).toHaveBeenCalledTimes(0);
+        expect(component.displayConfirmPopup).toBeFalsy();
     });
 
     it('check results input parameter with populated values sets the value', () => {
-        const nonWorkHours: VhoNonAvailabilityWorkHoursResponse[] = [];
-        nonWorkHours.push(
-            new VhoNonAvailabilityWorkHoursResponse({
-                id: 1,
-                start_time: new Date(2022, 1, 1, 6, 0, 0),
-                end_time: new Date(2022, 1, 1, 8, 0, 0)
-            })
-        );
-        nonWorkHours.push(
-            new VhoNonAvailabilityWorkHoursResponse({
-                id: 2,
-                start_time: new Date(2022, 2, 3, 18, 0, 0),
-                end_time: new Date(2022, 2, 3, 20, 0, 0)
-            })
-        );
-        component.result = nonWorkHours;
+        const nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
+        const nonWorkHoursPassed: VhoNonAvailabilityWorkHoursResponse[] = [];
+        let slot = new VhoNonAvailabilityWorkHoursResponse({
+            id: 1,
+            start_time: new Date(2022, 1, 1, 6, 0, 0),
+            end_time: new Date(2022, 1, 1, 8, 0, 0)
+        });
+        let slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+        nonWorkHours.push(slotMapped);
+        nonWorkHoursPassed.push(slot);
+
+        slot = new VhoNonAvailabilityWorkHoursResponse({
+            id: 1,
+            start_time: new Date(2022, 1, 1, 6, 0, 0),
+            end_time: new Date(2022, 1, 1, 8, 0, 0)
+        });
+        slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+
+        nonWorkHours.push(slotMapped);
+        nonWorkHoursPassed.push(slot);
+
+        component.result = nonWorkHoursPassed;
         fixture.detectChanges();
-        const mappedWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
-        const mappedWorkHours1 = new EditVhoNonAvailabilityWorkHoursModel();
-        mappedWorkHours1.id = 1;
-        mappedWorkHours1.start_date = '2022-02-01';
-        mappedWorkHours1.start_time = '06:00:00';
-        mappedWorkHours1.end_date = '2022-02-01';
-        mappedWorkHours1.end_time = '08:00:00';
-        const mappedWorkHours2 = new EditVhoNonAvailabilityWorkHoursModel();
-        mappedWorkHours2.id = 2;
-        mappedWorkHours2.start_date = '2022-03-03';
-        mappedWorkHours2.start_time = '18:00:00';
-        mappedWorkHours2.end_date = '2022-03-03';
-        mappedWorkHours2.end_time = '20:00:00';
-        mappedWorkHours.push(mappedWorkHours1);
-        mappedWorkHours.push(mappedWorkHours2);
-        expect(JSON.stringify(component.nonWorkHours)).toEqual(JSON.stringify(mappedWorkHours));
+
+        expect(JSON.stringify(component.nonWorkHours)).toEqual(JSON.stringify(nonWorkHours));
     });
 
     it('check results input parameter sets to null', () => {
@@ -73,9 +95,38 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     });
 
     it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new VhoWorkHoursResponse()];
+        component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
         fixture.detectChanges();
         expect(component.nonWorkHours).toBeNull();
+    });
+
+    it('check remove slot from result when confirm deletion', () => {
+        const slot = new VhoNonAvailabilityWorkHoursResponse();
+        component.result = [slot];
+        const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+        component.delete(slotMapped);
+        component.onDeletionAnswer(true);
+        fixture.detectChanges();
+
+        expect(component.nonWorkHours.length).toEqual(0);
+        expect(component.displayConfirmPopup).toBeFalsy();
+    });
+
+    it('check slot not removed from result when confirm deletion but error in api', () => {
+        const slot = new VhoNonAvailabilityWorkHoursResponse({
+            id: 1,
+            start_time: new Date(2022, 1, 1, 6, 0, 0),
+            end_time: new Date(2022, 1, 1, 8, 0, 0)
+        });
+        const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(throwError({ status: 500 }));
+        component.result = [slot];
+        component.delete(slotMapped);
+        component.onDeletionAnswer(true);
+        fixture.detectChanges();
+        expect(component.nonWorkHours.length).toEqual(1);
+        expect(component.displayConfirmPopup).toBeFalsy();
+        expect(loggerSpy.error).toHaveBeenCalledTimes(1);
     });
 
     describe('editing non availability', () => {
@@ -87,15 +138,16 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         const ERROR_OVERLAPPING_DATETIMES = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
 
         beforeEach(() => {
-            const nonWorkHours: VhoNonAvailabilityWorkHoursResponse[] = [];
-            nonWorkHours.push(
-                new VhoNonAvailabilityWorkHoursResponse({
-                    id: 1,
-                    start_time: new Date(2022, 0, 1, 8, 0, 0),
-                    end_time: new Date(2022, 0, 1, 10, 0, 0)
-                })
-            );
-            component.result = nonWorkHours;
+            const nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
+            const slot = new VhoNonAvailabilityWorkHoursResponse({
+                id: 1,
+                start_time: new Date(2022, 0, 1, 8, 0, 0),
+                end_time: new Date(2022, 0, 1, 10, 0, 0)
+            });
+            const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+            nonWorkHours.push(slotMapped);
+
+            component.result = [slot];
             component.isEditing = false;
             component.ngOnInit();
             fixture.detectChanges();

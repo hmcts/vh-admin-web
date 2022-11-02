@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
-import { NonWorkingHours, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
 
@@ -9,17 +8,31 @@ export class ValidationFailure {
     id: number;
     errorMessage: string;
 }
+import { BHClient, VhoNonAvailabilityWorkHoursResponse, NonWorkingHours } from '../../../services/clients/api-client';
+import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { Logger } from '../../../services/logger';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
     templateUrl: './vho-work-hours-non-availability-table.component.html'
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
+    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger) {}
+
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
     public static readonly ErrorEndTimeCannotBeBeforeStartTime = 'End time cannot be before Start time';
     public static readonly ErrorEndDatetimeMustBeAfterStartDatetime = 'End datetime must be after Start datetime';
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
+    loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
+    faTrash = faTrash;
+    faCalendarPlus = faCalendarPlus;
+    faExclamation = faCircleExclamation;
+    timeMessageDuration = 4000;
+
+    displayConfirmPopup = false;
+    slotToDelete: EditVhoNonAvailabilityWorkHoursModel;
+    displayMessage = false;
 
     nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
@@ -27,9 +40,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     isSaving = false;
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
+    message: string;
 
-    constructor(private datePipe: DatePipe) {}
-
+    @Input() userName: string;
     @Input() set result(value) {
         if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
@@ -37,12 +50,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.nonWorkHours = null;
         }
     }
-
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
 
     ngOnInit(): void {
-        console.log('Needs something for sonarcloud. Delete this later');
         this.saveNonWorkHoursCompleted$.subscribe(success => {
             this.isSaving = false;
             if (success) {
@@ -269,5 +280,46 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
                 this.validationSummary.splice(existingValidationSummaryIndex, 1);
             }
         }
+    }
+
+    delete(slot: EditVhoNonAvailabilityWorkHoursModel) {
+        this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
+        this.displayConfirmPopup = true;
+        this.slotToDelete = slot;
+    }
+
+    onDeletionAnswer($event: boolean) {
+        this.displayConfirmPopup = false;
+        if ($event) {
+            this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
+                res => {
+                    this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
+                    this.displayMessageAndFade('Non-availability hours changes saved succesfully');
+                    this.removeSlot();
+                },
+                error => {
+                    this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
+                    this.displayMessageAndFade('Non-availability hours changes could not be saved succesfully');
+                }
+            );
+        }
+    }
+
+    displayMessageAndFade(message: string) {
+        this.displayMessage = true;
+        this.message = message;
+        this.fadeOutLink();
+    }
+
+    fadeOutLink() {
+        setTimeout(() => {
+            this.displayMessage = false;
+        }, this.timeMessageDuration);
+    }
+
+    private removeSlot() {
+        const slot = this.nonWorkHours.find(x => x.id === this.slotToDelete.id);
+        const idx = this.nonWorkHours.indexOf(slot);
+        this.nonWorkHours.splice(idx, 1);
     }
 }

@@ -3653,6 +3653,91 @@ export class BHClient extends ApiClientBase {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @param id (optional)
+     * @return Success
+     */
+    deleteNonAvailabilityWorkHours(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/NonAvailability?';
+        if (id === null) throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined) url_ += 'id=' + encodeURIComponent('' + id) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({})
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('delete', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processDeleteNonAvailabilityWorkHours(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processDeleteNonAvailabilityWorkHours(<any>response_);
+                        } catch (e) {
+                            return <Observable<void>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processDeleteNonAvailabilityWorkHours(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return _observableOf<void>(<any>null);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Bad Request', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Not Found', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 export class HearingAudioRecordingResponse implements IHearingAudioRecordingResponse {
