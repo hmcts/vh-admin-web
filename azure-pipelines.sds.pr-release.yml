@@ -343,13 +343,6 @@ stages:
                 - name: KinlyConfiguration:JoinByPhoneFromDate
                   value: $(JoinByPhoneFromDate)
                   
-                # SauceLabs
-                # - name: Saucelabs:Username
-                #   value: $(Saucelabs:Username)
-                # - name: Saucelabs:AccessKey
-                #   value: $(Saucelabs:AccessKey)
-                # - name: Saucelabs:RealDeviceApiKey
-                #   value: $(RealDeviceApiKey)
                 # WowzaConfiguration
                 - name: WowzaConfiguration:StorageAccountName
                   value: wowzaconfiguration--storage-account
