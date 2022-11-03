@@ -136,6 +136,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         const ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME =
             VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDatetimeMustBeAfterStartDatetime;
         const ERROR_OVERLAPPING_DATETIMES = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
+        const ERROR_START_TIME_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired;
+        const ERROR_END_TIME_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired;
 
         beforeEach(() => {
             const nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
@@ -155,17 +157,20 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('edit button clicked', () => {
             it('should switch to edit mode', () => {
+                spyOn(component.editNonWorkHours, 'emit');
                 const editButton = fixture.debugElement.query(By.css('#edit-individual-non-work-hours-button')).nativeElement;
                 editButton.click();
                 fixture.detectChanges();
 
                 expect(component.isEditing).toBe(true);
                 expect(JSON.stringify(component.originalNonWorkHours)).toEqual(JSON.stringify(component.nonWorkHours));
+                expect(component.editNonWorkHours.emit).toHaveBeenCalledTimes(1);
             });
         });
 
         describe('cancel button clicked', () => {
             it('should switch to read mode', () => {
+                spyOn(component.cancelSaveNonWorkHours, 'emit');
                 component.switchToEditMode();
                 fixture.detectChanges();
 
@@ -175,6 +180,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
                 expect(component.isEditing).toBe(false);
                 expect(JSON.stringify(component.nonWorkHours)).toEqual(JSON.stringify(component.originalNonWorkHours));
+                expect(component.cancelSaveNonWorkHours.emit).toHaveBeenCalledTimes(1);
             });
 
             it('should revert non work hour changes', () => {
@@ -385,6 +391,10 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('fails validation when datetimes overlap with another non work hour', () => {
                 checkValidationFailsWhenDatetimesOverlap(elementPrefix);
             });
+
+            it('fails validation when start time is empty', () => {
+                checkValidationFailsWhenStartTimeIsEmpty(elementPrefix);
+            });
         });
 
         describe('onEndTimeBlur', () => {
@@ -405,6 +415,10 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
             it('fails validation when datetimes overlap with another non work hour', () => {
                 checkValidationFailsWhenDatetimesOverlap(elementPrefix);
+            });
+
+            it('fails validation when end time is empty', () => {
+                checkValidationFailsWhenEndTimeIsEmpty(elementPrefix);
             });
         });
 
@@ -481,6 +495,46 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(workHour1.id);
             expect(validationFailure.errorMessage).toBe(ERROR_OVERLAPPING_DATETIMES);
+            assertSaveButtonIsDisabled();
+        }
+
+        function checkValidationFailsWhenStartTimeIsEmpty(elementPrefix: string) {
+            const nonWorkHour = component.nonWorkHours[0];
+            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_time = '';
+            nonWorkHour.end_date = '2022-01-01';
+            nonWorkHour.end_time = '10:00:00';
+
+            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
+            triggerBlurEvent(elementId);
+
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toEqual(ERROR_START_TIME_REQUIRED);
+            expect(component.validationFailures.length).toBe(1);
+            const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
+            expect(validationFailure).not.toEqual(null);
+            expect(validationFailure.id).toBe(nonWorkHour.id);
+            expect(validationFailure.errorMessage).toBe(ERROR_START_TIME_REQUIRED);
+            assertSaveButtonIsDisabled();
+        }
+
+        function checkValidationFailsWhenEndTimeIsEmpty(elementPrefix: string) {
+            const nonWorkHour = component.nonWorkHours[0];
+            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_time = '08:00:00';
+            nonWorkHour.end_date = '2022-01-01';
+            nonWorkHour.end_time = '';
+
+            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
+            triggerBlurEvent(elementId);
+
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toEqual(ERROR_END_TIME_REQUIRED);
+            expect(component.validationFailures.length).toBe(1);
+            const validationFailure = component.validationFailures.find(x => x.id === nonWorkHour.id);
+            expect(validationFailure).not.toEqual(null);
+            expect(validationFailure.id).toBe(nonWorkHour.id);
+            expect(validationFailure.errorMessage).toBe(ERROR_END_TIME_REQUIRED);
             assertSaveButtonIsDisabled();
         }
     });

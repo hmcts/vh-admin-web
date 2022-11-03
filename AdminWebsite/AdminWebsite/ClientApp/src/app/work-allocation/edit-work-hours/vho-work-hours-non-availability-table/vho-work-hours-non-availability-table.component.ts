@@ -24,6 +24,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     public static readonly ErrorEndTimeCannotBeBeforeStartTime = 'End time cannot be before Start time';
     public static readonly ErrorEndDatetimeMustBeAfterStartDatetime = 'End datetime must be after Start datetime';
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
+    public static readonly ErrorStartTimeRequired = 'Start time is required';
+    public static readonly ErrorEndTimeRequired = 'End time is required';
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
     faCalendarPlus = faCalendarPlus;
@@ -52,6 +54,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
+    @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
+    @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
 
     ngOnInit(): void {
         this.saveNonWorkHoursCompleted$.subscribe(success => {
@@ -74,12 +78,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
+        this.cancelSaveNonWorkHours.emit();
     }
 
     switchToEditMode() {
         this.isEditing = true;
 
         this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+        this.editNonWorkHours.emit();
     }
 
     mapNonWorkingHoursToEditModel(nonWorkHour: VhoNonAvailabilityWorkHoursResponse): EditVhoNonAvailabilityWorkHoursModel {
@@ -137,6 +143,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         if (!this.validateEndDateRequired(nonWorkHour)) {
             return;
         }
+        if (!this.validateStartTimeRequired(nonWorkHour)) {
+            return;
+        }
+        if (!this.validateEndTimeRequired(nonWorkHour)) {
+            return;
+        }
         if (!this.validateEndTimeBeforeStartTime(nonWorkHour)) {
             return;
         }
@@ -161,6 +173,26 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     validateEndDateRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired;
         if (nonWorkHour.end_date === '') {
+            this.addValidationError(nonWorkHour.id, error);
+            return false;
+        }
+        this.removeValidationError(nonWorkHour.id, error);
+        return true;
+    }
+
+    validateStartTimeRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired;
+        if (nonWorkHour.start_time === '') {
+            this.addValidationError(nonWorkHour.id, error);
+            return false;
+        }
+        this.removeValidationError(nonWorkHour.id, error);
+        return true;
+    }
+
+    validateEndTimeRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
+        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired;
+        if (nonWorkHour.end_time === '') {
             this.addValidationError(nonWorkHour.id, error);
             return false;
         }

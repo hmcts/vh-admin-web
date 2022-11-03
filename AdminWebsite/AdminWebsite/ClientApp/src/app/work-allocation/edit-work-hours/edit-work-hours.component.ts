@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import {
@@ -95,6 +95,7 @@ export class EditWorkHoursComponent {
             this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
             this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
         }
+        this.clearConfirmationMessagesForSaveNonWorkHours();
     }
 
     setUsername($event: string) {
@@ -145,5 +146,18 @@ export class EditWorkHoursComponent {
 
     combineDateAndTime(date: string, time: string) {
         return CombineDateAndTime(date, time);
+    }
+
+    onEditNonWorkHours() {
+        this.clearConfirmationMessagesForSaveNonWorkHours();
+    }
+
+    onCancelSaveNonWorkHours() {
+        this.clearConfirmationMessagesForSaveNonWorkHours();
+    }
+
+    clearConfirmationMessagesForSaveNonWorkHours() {
+        this.showSaveNonWorkHoursFailedPopup = false;
+        this.isUploadNonWorkHoursSuccessful = false;
     }
 }
