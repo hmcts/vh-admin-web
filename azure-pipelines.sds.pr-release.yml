@@ -221,6 +221,7 @@ stages:
             parameters:
               environment: ${{ variables.env }}
               azureSubscription: ${{ variables.subscriptionName }}
+              testFilterCriteria: TestCategory=Smoketest
               acceptanceTestSettings:
                 - name: VhServices:AdminWebUrl
                   value: https://vh-admin-web-pr-$(System.PullRequest.PullRequestNumber).${{ variables.env }}.platform.hmcts.net/
