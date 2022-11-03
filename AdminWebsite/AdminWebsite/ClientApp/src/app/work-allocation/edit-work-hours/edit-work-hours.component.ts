@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import {
