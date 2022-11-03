@@ -108,6 +108,24 @@ describe('EditWorkHoursComponent', () => {
             expect(component.showWorkHoursTable).toBe(false);
             expect(component.showNonWorkHoursTable).toBe(true);
         });
+
+        it('should clear update non-working hour confirmation messages after searching for work hours', () => {
+            component.showSaveNonWorkHoursFailedPopup = true;
+            component.isUploadNonWorkHoursSuccessful = true;
+            const parameter: Array<VhoWorkHoursResponse> = [];
+            parameter.push(new VhoWorkHoursResponse());
+            component.setSearchResult(parameter);
+            assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
+
+        it('should clear update non-working hour confirmation messages after searching for non-work hours', () => {
+            component.showSaveNonWorkHoursFailedPopup = true;
+            component.isUploadNonWorkHoursSuccessful = true;
+            const parameter: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            parameter.push(new VhoNonAvailabilityWorkHoursResponse());
+            component.setSearchResult(parameter);
+            assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
     });
 
     it('setUsername should assign event to username property', () => {

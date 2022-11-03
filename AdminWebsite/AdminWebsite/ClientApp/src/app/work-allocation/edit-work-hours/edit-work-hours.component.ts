@@ -95,6 +95,7 @@ export class EditWorkHoursComponent {
             this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
             this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
         }
+        this.clearConfirmationMessagesForSaveNonWorkHours();
     }
 
     setUsername($event: string) {
