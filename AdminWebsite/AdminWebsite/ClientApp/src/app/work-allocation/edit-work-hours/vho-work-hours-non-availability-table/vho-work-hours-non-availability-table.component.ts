@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 export class ValidationFailure {
     id: number;
@@ -17,7 +18,12 @@ import { Logger } from '../../../services/logger';
     templateUrl: './vho-work-hours-non-availability-table.component.html'
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
-    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger) {}
+    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder) {
+        this.filterForm = fb.group({
+            startDate: [''],
+            endDate: ['']
+        });
+    }
 
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
@@ -36,6 +42,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     slotToDelete: EditVhoNonAvailabilityWorkHoursModel;
     displayMessage = false;
 
+    nonAvailabilityWorkHoursResponses: VhoNonAvailabilityWorkHoursResponse[];
     nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     isEditing = false;
@@ -43,15 +50,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
+    filterForm: FormGroup;
 
     @Input() userName: string;
     @Input() set result(value) {
         if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
+            this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
         } else {
             this.nonWorkHours = null;
         }
     }
+
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
@@ -353,5 +363,24 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         const slot = this.nonWorkHours.find(x => x.id === this.slotToDelete.id);
         const idx = this.nonWorkHours.indexOf(slot);
         this.nonWorkHours.splice(idx, 1);
+    }
+
+    filterByDate() {
+        let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
+        let startDate: Date;
+        let endDate: Date;
+        if (this.filterForm.value.startDate) {
+            startDate = new Date(this.filterForm.value.startDate);
+            tempWorkHours = tempWorkHours.filter(e => e.start_time >= startDate);
+        }
+        if (this.filterForm.value.endDate) {
+            endDate = new Date(this.filterForm.value.endDate);
+            tempWorkHours = tempWorkHours.filter(e => new Date(e.end_time.toDateString()) <= endDate); // remove the time from date
+        }
+        if (startDate > endDate) {
+            this.filterForm.setValue({ startDate: null, endDate: null });
+            return;
+        }
+        this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
     }
 }
