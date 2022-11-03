@@ -45,19 +45,11 @@
             [disabled]="!isEditing"
             type="time"
             [(ngModel)]="day.start_time"
-            [max]="day.end_time"
             (blur)="onStartTimeBlur(day)"
           />
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="end-time_{{ day.id }}"
-            [disabled]="!isEditing"
-            type="time"
-            [(ngModel)]="day.end_time"
-            [min]="day.start_time"
-            (blur)="onEndTimeBlur(day)"
-          />
+          <input id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" (blur)="onEndTimeBlur(day)" />
         </td>
         <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
       </tr>
