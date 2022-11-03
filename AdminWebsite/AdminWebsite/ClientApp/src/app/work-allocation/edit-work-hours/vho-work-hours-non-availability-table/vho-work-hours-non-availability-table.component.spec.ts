@@ -8,6 +8,8 @@ import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
+import { HoursType } from '../../../common/model/hours-type';
+import { FormBuilder } from '@angular/forms';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
@@ -20,7 +22,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({ value: 0 }));
         loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
-            providers: [{ provide: Logger, useValue: loggerSpy }, { provide: BHClient, useValue: bHClientSpy }, DatePipe],
+            providers: [{ provide: Logger, useValue: loggerSpy }, { provide: BHClient, useValue: bHClientSpy }, DatePipe, FormBuilder],
             declarations: [VhoWorkHoursNonAvailabilityTableComponent, ConfirmDeleteHoursPopupComponent]
         }).compileComponents();
     });
@@ -544,4 +546,86 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         startDateElement.dispatchEvent(new Event('blur'));
         fixture.detectChanges();
     }
+
+    describe('date filter function', () => {
+        beforeEach(() => {
+            component.nonWorkHours = [
+                { id: 0, start_date: '2022/10/24', end_date: '2022/10/24', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 1, start_date: '2022/10/25', end_date: '2022/10/25', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 2, start_date: '2022/10/26', end_date: '2022/10/26', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 3, start_date: '2022/10/27', end_date: '2022/10/27', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 4, start_date: '2022/10/28', end_date: '2022/10/28', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 5, start_date: '2022/10/29', end_date: '2022/10/29', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 6, start_date: '2022/10/30', end_date: '2022/10/30', start_time: '09:00:00', end_time: '23:00:00' },
+                { id: 7, start_date: '2022/10/31', end_date: '2022/10/31', start_time: '09:00:00', end_time: '23:00:00' }
+            ];
+            component.nonAvailabilityWorkHoursResponses = [
+                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2022/10/24'), end_time: new Date('2022/10/24') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2022/10/25'), end_time: new Date('2022/10/25') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2022/10/26'), end_time: new Date('2022/10/26') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 3, start_time: new Date('2022/10/27'), end_time: new Date('2022/10/27') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 4, start_time: new Date('2022/10/28'), end_time: new Date('2022/10/28') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 5, start_time: new Date('2022/10/29'), end_time: new Date('2022/10/29') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 6, start_time: new Date('2022/10/30'), end_time: new Date('2022/10/30') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 7, start_time: new Date('2022/10/31'), end_time: new Date('2022/10/31') })
+            ];
+            fixture.detectChanges();
+        });
+
+        it('a start date, but no end is selected', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(6);
+        });
+
+        it('an end date, but no start is selected', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '', endDate: '2022/10/27' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(4);
+        });
+
+        it('an end date, and a start is selected', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022/10/28', endDate: '2022/10/30' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(3);
+        });
+
+        it('an end date, and a start is selected, on the same day', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022/10/24', endDate: '2022/10/24' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(1);
+        });
+
+        it('an end date, and a start is selected, outside range', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022/11/24', endDate: '2022/11/28' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(0);
+        });
+
+        it('User somehow managed to enter an end date before the start dat', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/10/29' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(8);
+            expect(component.filterForm.value.startDate).toBeNull();
+            expect(component.filterForm.value.endDate).toBeNull();
+        });
+    });
 });
