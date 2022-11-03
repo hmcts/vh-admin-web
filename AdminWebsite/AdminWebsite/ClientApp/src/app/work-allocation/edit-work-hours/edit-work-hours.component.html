@@ -11,6 +11,8 @@
       [result]="result"
       (saveNonWorkHours)="onSaveNonWorkHours($event)"
       [saveNonWorkHoursCompleted$]="saveNonWorkHoursCompleted$"
+      (editNonWorkHours)="onEditNonWorkHours()"
+      (cancelSaveNonWorkHours)="onCancelSaveNonWorkHours()"
     ></app-vho-work-hours-non-availability-table>
     <p *ngIf="isUploadWorkHoursSuccessful" id="edit-upload-hours-success" class="govuk-body govuk-!-font-weight-bold">
       <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>User working hours changes saved successfully

@@ -250,4 +250,29 @@ describe('EditWorkHoursComponent', () => {
             expect(loggerSpy.error).toHaveBeenCalled();
         });
     });
+
+    describe('onEditNonWorkHours', () => {
+        it('should clear update non-working hour confirmation messages', () => {
+            component.showSaveNonWorkHoursFailedPopup = true;
+            component.isUploadNonWorkHoursSuccessful = true;
+            component.onEditNonWorkHours();
+
+            assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
+    });
+
+    describe('onCancelSaveNonWorkHours', () => {
+        it('should clear update non-working hour confirmation messages', () => {
+            component.showSaveNonWorkHoursFailedPopup = true;
+            component.isUploadNonWorkHoursSuccessful = true;
+            component.onCancelSaveNonWorkHours();
+
+            assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
+    });
+
+    function assertConfirmationMessagesForSaveNonWorkHoursAreCleared() {
+        expect(component.showSaveNonWorkHoursFailedPopup).toBe(false);
+        expect(component.isUploadNonWorkHoursSuccessful).toBe(false);
+    }
 });

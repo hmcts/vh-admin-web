@@ -54,6 +54,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
+    @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
+    @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
 
     ngOnInit(): void {
         this.saveNonWorkHoursCompleted$.subscribe(success => {
@@ -76,12 +78,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
+        this.cancelSaveNonWorkHours.emit();
     }
 
     switchToEditMode() {
         this.isEditing = true;
 
         this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+        this.editNonWorkHours.emit();
     }
 
     mapNonWorkingHoursToEditModel(nonWorkHour: VhoNonAvailabilityWorkHoursResponse): EditVhoNonAvailabilityWorkHoursModel {

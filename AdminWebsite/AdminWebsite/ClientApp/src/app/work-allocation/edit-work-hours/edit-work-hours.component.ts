@@ -146,4 +146,17 @@ export class EditWorkHoursComponent {
     combineDateAndTime(date: string, time: string) {
         return CombineDateAndTime(date, time);
     }
+
+    onEditNonWorkHours() {
+        this.clearConfirmationMessagesForSaveNonWorkHours();
+    }
+
+    onCancelSaveNonWorkHours() {
+        this.clearConfirmationMessagesForSaveNonWorkHours();
+    }
+
+    clearConfirmationMessagesForSaveNonWorkHours() {
+        this.showSaveNonWorkHoursFailedPopup = false;
+        this.isUploadNonWorkHoursSuccessful = false;
+    }
 }

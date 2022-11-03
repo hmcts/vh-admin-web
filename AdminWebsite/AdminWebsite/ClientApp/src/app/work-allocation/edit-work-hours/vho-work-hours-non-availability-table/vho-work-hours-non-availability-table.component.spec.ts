@@ -157,17 +157,20 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('edit button clicked', () => {
             it('should switch to edit mode', () => {
+                spyOn(component.editNonWorkHours, 'emit');
                 const editButton = fixture.debugElement.query(By.css('#edit-individual-non-work-hours-button')).nativeElement;
                 editButton.click();
                 fixture.detectChanges();
 
                 expect(component.isEditing).toBe(true);
                 expect(JSON.stringify(component.originalNonWorkHours)).toEqual(JSON.stringify(component.nonWorkHours));
+                expect(component.editNonWorkHours.emit).toHaveBeenCalledTimes(1);
             });
         });
 
         describe('cancel button clicked', () => {
             it('should switch to read mode', () => {
+                spyOn(component.cancelSaveNonWorkHours, 'emit');
                 component.switchToEditMode();
                 fixture.detectChanges();
 
@@ -177,6 +180,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
                 expect(component.isEditing).toBe(false);
                 expect(JSON.stringify(component.nonWorkHours)).toEqual(JSON.stringify(component.originalNonWorkHours));
+                expect(component.cancelSaveNonWorkHours.emit).toHaveBeenCalledTimes(1);
             });
 
             it('should revert non work hour changes', () => {
