@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export class ValidationFailure {
     id: number;
@@ -20,7 +20,7 @@ import { Logger } from '../../../services/logger';
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder) {
         this.filterForm = fb.group({
-            startDate: [''],
+            startDate: ['', Validators.required],
             endDate: ['']
         });
     }
@@ -366,20 +366,29 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     filterByDate() {
+        const clean = (d: Date): Date => new Date(d.toDateString()); // remove time from date
+        const calenderStartDate = this.filterForm.value.startDate === '' ? null : new Date(this.filterForm.value.startDate);
+        const calenderEndDate = this.filterForm.value.endDate === '' ? null : new Date(this.filterForm.value.endDate);
         let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
-        let startDate: Date;
-        let endDate: Date;
-        if (this.filterForm.value.startDate) {
-            startDate = new Date(this.filterForm.value.startDate);
-            tempWorkHours = tempWorkHours.filter(e => e.start_time >= startDate);
-        }
-        if (this.filterForm.value.endDate) {
-            endDate = new Date(this.filterForm.value.endDate);
-            tempWorkHours = tempWorkHours.filter(e => new Date(e.end_time.toDateString()) <= endDate); // remove the time from date
-        }
-        if (startDate > endDate) {
-            this.filterForm.setValue({ startDate: null, endDate: null });
-            return;
+
+        if (calenderStartDate && calenderEndDate) {
+            if (calenderEndDate < calenderStartDate) {
+                this.filterForm.setValue({ startDate: null, endDate: null });
+                return;
+            }
+            tempWorkHours = tempWorkHours.filter(
+                nonWorkHours =>
+                    !(
+                        (clean(nonWorkHours.start_time) < calenderStartDate && clean(nonWorkHours.end_time) < calenderStartDate) ||
+                        (clean(nonWorkHours.start_time) > calenderEndDate && clean(nonWorkHours.end_time) > calenderEndDate)
+                    )
+            );
+        } else if (calenderStartDate) {
+            tempWorkHours = tempWorkHours.filter(
+                nonWorkHours =>
+                    clean(nonWorkHours.start_time) === calenderStartDate ||
+                    (clean(nonWorkHours.start_time) <= calenderStartDate && clean(nonWorkHours.end_time) >= calenderStartDate)
+            );
         }
         this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
     }
