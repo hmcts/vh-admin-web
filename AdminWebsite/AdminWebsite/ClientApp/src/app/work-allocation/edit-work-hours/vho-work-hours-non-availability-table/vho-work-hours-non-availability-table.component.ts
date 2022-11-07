@@ -15,7 +15,8 @@ import { Logger } from '../../../services/logger';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
-    templateUrl: './vho-work-hours-non-availability-table.component.html'
+    templateUrl: './vho-work-hours-non-availability-table.component.html',
+    styleUrls: ['./vho-work-hours-non-availability-table.component.css']
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder) {

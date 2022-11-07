@@ -8,16 +8,19 @@
   <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="filterForm">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third">
+        <label class="govuk-label govuk-radios__label" for="start-date">Start Date</label>
         <input
           class="govuk-input"
           id="start-date"
           name="startDate"
           type="date"
           formControlName="startDate"
+          ls
           max="{{ filterForm.value.endDate }}"
         />
       </div>
       <div class="govuk-grid-column-one-third" *ngIf="filterForm.valid">
+        <label class="govuk-label govuk-radios__label" for="end-date">End Date</label>
         <input
           class="govuk-input"
           id="end-date"
@@ -28,8 +31,7 @@
         />
       </div>
       <div class="govuk-grid-column-one-third">
-        <label class="govuk-label govuk-radios__label" for="btn"></label>
-        <button class="govuk-button" id="btn" data-module="govuk-button" (click)="filterByDate()">Filter by date</button>
+        <button class="govuk-button" id="filter-btn" data-module="govuk-button" (click)="filterByDate()">Filter by date</button>
       </div>
     </div>
   </div>
