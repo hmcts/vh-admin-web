@@ -240,6 +240,21 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
+        describe('addNewNonAvailabilityRow', () => {
+            it('should add new row and validate', () => {
+                const originalNonWorkHoursLength = component.nonWorkHours.length;
+                const spy = spyOn(component, 'onStartDateBlur');
+
+                component.addNewNonAvailabilityRow()
+                const addedNonWorkHours = component.nonWorkHours[component.nonWorkHours.length - 1];
+
+                expect(component.nonWorkHours.length).toBe(originalNonWorkHoursLength + 1);
+                expect(addedNonWorkHours.end_date).toBe(addedNonWorkHours.start_date);
+                expect(addedNonWorkHours.end_time).toBe(addedNonWorkHours.start_time);
+                expect(spy).toHaveBeenCalledTimes(1);
+            });
+          });
+
         describe('onStartDateBlur', () => {
             const elementPrefix = 'start-date';
 

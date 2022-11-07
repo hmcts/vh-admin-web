@@ -293,6 +293,17 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         return firstEndDateTime > secondStartDateTime;
     }
 
+    addNewNonAvailabilityRow() {
+        const editVhoNonAvailabilityWorkHoursModel = new EditVhoNonAvailabilityWorkHoursModel();
+        editVhoNonAvailabilityWorkHoursModel.end_date = new Date().toISOString().split('T')[0];
+        editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
+        editVhoNonAvailabilityWorkHoursModel.end_time = '00:00:00';
+        editVhoNonAvailabilityWorkHoursModel.start_time = '00:00:00';
+
+        this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
+        this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
+    }
+
     addValidationError(nonWorkHourId: number, error: string) {
         const existingValidationFailureIndex = this.validationFailures.findIndex(x => x.id === nonWorkHourId && x.errorMessage === error);
         const existingValidationSummaryIndex = this.validationSummary.findIndex(x => x === error);
