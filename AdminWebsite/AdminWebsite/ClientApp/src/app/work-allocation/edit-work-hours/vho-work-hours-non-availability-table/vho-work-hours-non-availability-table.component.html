@@ -121,8 +121,8 @@
   <fa-icon [icon]="faExclamation"></fa-icon> {{ message }}
 </div>
 <app-confirm-delete-hours-popup
-    *ngIf="displayConfirmPopup"
-    (deletionAnswer)="onDeletionAnswer($event)"
-    [slotToDelete]="slotToDelete"
-    [userName]="userName"
+  *ngIf="displayConfirmPopup"
+  (deletionAnswer)="onDeletionAnswer($event)"
+  [slotToDelete]="slotToDelete"
+  [userName]="userName"
 ></app-confirm-delete-hours-popup>
