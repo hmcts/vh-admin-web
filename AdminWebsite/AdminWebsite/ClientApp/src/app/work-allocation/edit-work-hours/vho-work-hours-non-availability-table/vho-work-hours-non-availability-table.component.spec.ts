@@ -245,7 +245,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 const originalNonWorkHoursLength = component.nonWorkHours.length;
                 const spy = spyOn(component, 'onStartDateBlur');
 
-                component.addNewNonAvailabilityRow()
+                component.addNewNonAvailabilityRow();
                 const addedNonWorkHours = component.nonWorkHours[component.nonWorkHours.length - 1];
 
                 expect(component.nonWorkHours.length).toBe(originalNonWorkHoursLength + 1);
@@ -253,7 +253,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(addedNonWorkHours.end_time).toBe(addedNonWorkHours.start_time);
                 expect(spy).toHaveBeenCalledTimes(1);
             });
-          });
+        });
 
         describe('onStartDateBlur', () => {
             const elementPrefix = 'start-date';
