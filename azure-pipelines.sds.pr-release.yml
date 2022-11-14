@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: VIH-9191-test-Acceptance-tests-in-PR-pipeline
+      ref: master
       endpoint: hmcts
       
 trigger: none
