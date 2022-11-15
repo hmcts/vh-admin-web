@@ -83,7 +83,6 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-              
                 return Ok(await _bookingsApiClient.GetVhoNonAvailabilityHoursAsync(vho.ToLowerInvariant().Trim()));
             }
             catch(BookingsApiException ex)
