@@ -14,6 +14,7 @@ export class VhoSearchComponent implements OnInit {
     error: string = null;
 
     private loggerPrefix = 'vho-search';
+    private filterSize = 20;
 
     @Output() usernameEmitter = new EventEmitter<string>();
     @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]>();
@@ -47,9 +48,9 @@ export class VhoSearchComponent implements OnInit {
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
                         break;
                 }
-
-                if (result) {
-                    this.vhoSearchEmitter.emit(result);
+                const filteredResults= result.slice(0,this.filterSize);
+                if (filteredResults) {
+                    this.vhoSearchEmitter.emit(filteredResults);
                     this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';
