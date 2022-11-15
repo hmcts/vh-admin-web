@@ -47,14 +47,15 @@ export class VhoSearchComponent implements OnInit {
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
                         break;
                 }
-
-                if (result) {
-                    this.vhoSearchEmitter.emit(result);
+                var myItems = result.slice(0, 20);
+                if (myItems) {
+                    this.vhoSearchEmitter.emit(myItems);
                     this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';
                     this.clear();
                 }
+
             } catch (error) {
                 this.error = error.message;
             }
