@@ -48,7 +48,7 @@ export class VhoSearchComponent implements OnInit {
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
                         break;
                 }
-                const filteredResults= result.slice(0,this.filterSize);
+                const filteredResults = result.slice(0, this.filterSize);
                 if (filteredResults) {
                     this.vhoSearchEmitter.emit(filteredResults);
                     this.usernameEmitter.emit(this.username.value);

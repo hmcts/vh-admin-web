@@ -99,14 +99,14 @@ describe('VhoSearchComponent', () => {
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             for (let i = 1; i <= 21; i++) {
                 vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
-                    id:i
-                }))
+                    id: i
+                }));
             }
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
 
             await component.search();
-            const  expectedVhoSearchResult =vhoSearchResult.slice(0,-1);
+            const  expectedVhoSearchResult = vhoSearchResult.slice(0, -1);
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(expectedVhoSearchResult);
