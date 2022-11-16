@@ -95,48 +95,60 @@ describe('VhoSearchComponent', () => {
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
         });
         it('should  emit maximum twenty  search results ', async () => {
-
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             for (let i = 1; i <= 21; i++) {
-                vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
-                    id: i
-                }));
+                vhoSearchResult.push(
+                    new VhoNonAvailabilityWorkHoursResponse({
+                        id: i
+                    })
+                );
             }
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
 
             await component.search();
-            const  expectedVhoSearchResult = vhoSearchResult.slice(0, -1);
+            const expectedVhoSearchResult = vhoSearchResult.slice(0, -1);
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(expectedVhoSearchResult);
         });
         it('should  sort the dates in chronological order ', async () => {
-
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
-            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-03-08T17:53:01.8455023'),
-            }));
-            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-01-08T14:53:01.8455023'),
-            }));
-            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-09-08T14:53:01.8455023'),
-            }));
+            vhoSearchResult.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-03-08T17:53:01.8455023')
+                })
+            );
+            vhoSearchResult.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-01-08T14:53:01.8455023')
+                })
+            );
+            vhoSearchResult.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-09-08T14:53:01.8455023')
+                })
+            );
             await component.search();
 
             const vhoSortedDates: Array<VhoNonAvailabilityWorkHoursResponse> = [];
-            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-01-08T14:53:01.8455023'),
-            }));
-            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-03-08T17:53:01.8455023'),
-            }));
-            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
-                start_time: new Date('2022-09-08T14:53:01.8455023'),
-            }));
+            vhoSortedDates.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-01-08T14:53:01.8455023')
+                })
+            );
+            vhoSortedDates.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-03-08T17:53:01.8455023')
+                })
+            );
+            vhoSortedDates.push(
+                new VhoNonAvailabilityWorkHoursResponse({
+                    start_time: new Date('2022-09-08T14:53:01.8455023')
+                })
+            );
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSortedDates);
