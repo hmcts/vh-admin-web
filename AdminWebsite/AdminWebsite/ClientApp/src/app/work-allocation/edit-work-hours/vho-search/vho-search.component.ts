@@ -48,7 +48,8 @@ export class VhoSearchComponent implements OnInit {
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
                         break;
                 }
-                const filteredResults = [...result].sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime()).slice(0, this.filterSize);
+                const filteredResults = [...result].sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime()).
+                slice(0, this.filterSize);
                 if (filteredResults) {
                     this.vhoSearchEmitter.emit(filteredResults);
                     this.usernameEmitter.emit(this.username.value);
