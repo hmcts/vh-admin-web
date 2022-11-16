@@ -46,13 +46,16 @@ export class VhoSearchComponent implements OnInit {
                         break;
                     case HoursType.NonWorkingHours:
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
+                        if (!result) {
+                            break;
+                        }
+                        result = result
+                            .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
+                            .slice(0, this.filterSize);
                         break;
                 }
-                const filteredResults = [...result]
-                    .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
-                    .slice(0, this.filterSize);
-                if (filteredResults) {
-                    this.vhoSearchEmitter.emit(filteredResults);
+                if (result) {
+                    this.vhoSearchEmitter.emit(result);
                     this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';

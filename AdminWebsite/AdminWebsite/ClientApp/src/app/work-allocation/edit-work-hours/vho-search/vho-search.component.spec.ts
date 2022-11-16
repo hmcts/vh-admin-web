@@ -96,12 +96,15 @@ describe('VhoSearchComponent', () => {
         });
         it('should  emit maximum twenty  search results ', async () => {
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            const startTime = new Date('2022-01-01');
             for (let i = 1; i <= 21; i++) {
                 vhoSearchResult.push(
                     new VhoNonAvailabilityWorkHoursResponse({
-                        id: i
+                        id: i,
+                        start_time: startTime
                     })
                 );
+                startTime.setDate(startTime.getDate() + i);
             }
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
