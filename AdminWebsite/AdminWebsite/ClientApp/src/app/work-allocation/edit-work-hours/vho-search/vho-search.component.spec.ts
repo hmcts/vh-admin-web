@@ -111,7 +111,36 @@ describe('VhoSearchComponent', () => {
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(expectedVhoSearchResult);
         });
+        it('should  sort the dates in chronological order ', async () => {
 
+            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
+            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
+            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-03-08T17:53:01.8455023'),
+            }));
+            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-01-08T14:53:01.8455023'),
+            }));
+            vhoSearchResult.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-09-08T14:53:01.8455023'),
+            }));
+            await component.search();
+
+            const vhoSortedDates: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-01-08T14:53:01.8455023'),
+            }));
+            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-03-08T17:53:01.8455023'),
+            }));
+            vhoSortedDates.push(new VhoNonAvailabilityWorkHoursResponse({
+                start_time: new Date('2022-09-08T14:53:01.8455023'),
+            }));
+            expect(component).toBeTruthy();
+            expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
+            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSortedDates);
+        });
         it('should call searchForVho return null and set the error message', async () => {
             const vhoSearchResult = null;
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
