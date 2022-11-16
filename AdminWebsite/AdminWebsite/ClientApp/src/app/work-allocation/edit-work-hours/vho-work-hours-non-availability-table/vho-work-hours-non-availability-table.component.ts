@@ -343,8 +343,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         this.slotToDelete = slot;
         if (slot.new_row) {
             this.removeSlot();
-        }
-        else {
+        } else {
             this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
             this.displayConfirmPopup = true;
         }
