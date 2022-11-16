@@ -265,6 +265,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(addedNonWorkHours.end_date).toBe(addedNonWorkHours.start_date);
                 expect(addedNonWorkHours.end_time).toBe(addedNonWorkHours.start_time);
                 expect(spy).toHaveBeenCalledTimes(1);
+                expect(component.isEditing).toBe(true);
             });
         });
 

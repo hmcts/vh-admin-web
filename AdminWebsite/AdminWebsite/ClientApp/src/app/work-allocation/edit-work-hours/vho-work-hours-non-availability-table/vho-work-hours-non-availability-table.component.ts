@@ -88,7 +88,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     cancelEditingNonWorkingHours() {
         this.isEditing = false;
-
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
         this.cancelSaveNonWorkHours.emit();
@@ -96,7 +95,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     switchToEditMode() {
         this.isEditing = true;
-
         this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
         this.editNonWorkHours.emit();
     }
@@ -307,6 +305,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
+        this.switchToEditMode();
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
