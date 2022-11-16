@@ -114,6 +114,19 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         expect(component.displayConfirmPopup).toBeFalsy();
     });
 
+    it('Delete newly created slot', () => {
+        component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+        component.addNewNonAvailabilityRow();
+        const slot = component.nonWorkHours[component.nonWorkHours.length - 1];
+
+        expect(component.nonWorkHours.length).toEqual(2);
+        component.delete(slot);
+        fixture.detectChanges();
+
+        expect(component.nonWorkHours.length).toEqual(1);
+        expect(component.displayConfirmPopup).toBeFalsy();
+    });
+
     it('check slot not removed from result when confirm deletion but error in api', () => {
         const slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
@@ -565,9 +578,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     describe('date filter function', () => {
         beforeEach(() => {
             component.nonWorkHours = [
-                { id: 0, start_date: '2022/10/24', end_date: '2022/10/24', start_time: '09:00:00', end_time: '23:00:00' },
-                { id: 1, start_date: '2022/10/25', end_date: '2022/10/29', start_time: '09:00:00', end_time: '23:00:00' },
-                { id: 2, start_date: '2022/10/30', end_date: '2022/10/31', start_time: '09:00:00', end_time: '23:00:00' }
+                { id: 0, start_date: '2022/10/24', end_date: '2022/10/24', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
+                { id: 1, start_date: '2022/10/25', end_date: '2022/10/29', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
+                { id: 2, start_date: '2022/10/30', end_date: '2022/10/31', start_time: '09:00:00', end_time: '23:00:00', new_row: false }
             ];
             component.nonAvailabilityWorkHoursResponses = [
                 new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2022/10/24'), end_time: new Date('2022/10/24') }),

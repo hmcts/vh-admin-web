@@ -80,8 +80,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     saveNonWorkingHours() {
         this.isSaving = true;
-
         this.saveNonWorkHours.emit(this.nonWorkHours);
+        this.nonWorkHours.forEach(slot => {
+            slot.new_row = false;
+        });
     }
 
     cancelEditingNonWorkingHours() {
@@ -109,7 +111,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             start_date: this.datePipe.transform(nonWorkHour.start_time, 'yyyy-MM-dd'),
             start_time: this.datePipe.transform(nonWorkHour.start_time, 'HH:mm:ss'),
             end_date: this.datePipe.transform(nonWorkHour.end_time, 'yyyy-MM-dd'),
-            end_time: this.datePipe.transform(nonWorkHour.end_time, 'HH:mm:ss')
+            end_time: this.datePipe.transform(nonWorkHour.end_time, 'HH:mm:ss'),
+            new_row: false
         };
         return hours;
     }
@@ -300,6 +303,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.end_time = '00:00:00';
         editVhoNonAvailabilityWorkHoursModel.start_time = '00:00:00';
+        editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
@@ -337,9 +341,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     delete(slot: EditVhoNonAvailabilityWorkHoursModel) {
-        this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
-        this.displayConfirmPopup = true;
         this.slotToDelete = slot;
+        if (slot.new_row) {
+            this.removeSlot();
+        }
+        else {
+            this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
+            this.displayConfirmPopup = true;
+        }
     }
 
     onDeletionAnswer($event: boolean) {
@@ -348,12 +357,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
                 res => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
-                    this.displayMessageAndFade('Non-availability hours changes saved succesfully');
+                    this.displayMessageAndFade('Non-availability hours changes saved successfully');
                     this.removeSlot();
                 },
                 error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
-                    this.displayMessageAndFade('Non-availability hours changes could not be saved succesfully');
+                    this.displayMessageAndFade('Non-availability hours changes could not be saved successfully');
                 }
             );
         }
@@ -372,8 +381,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     private removeSlot() {
-        const slot = this.nonWorkHours.find(x => x.id === this.slotToDelete.id);
-        const idx = this.nonWorkHours.indexOf(slot);
+        const idx = this.nonWorkHours.indexOf(this.slotToDelete);
         this.nonWorkHours.splice(idx, 1);
     }
 
