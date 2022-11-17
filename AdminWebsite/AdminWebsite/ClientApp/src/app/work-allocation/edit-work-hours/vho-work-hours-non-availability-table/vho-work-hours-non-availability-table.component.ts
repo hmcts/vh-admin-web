@@ -59,7 +59,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
         } else {
-            this.nonWorkHours = null;
+            this.nonWorkHours = [];
         }
     }
 
@@ -302,6 +302,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         editVhoNonAvailabilityWorkHoursModel.start_time = '00:00:00';
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
+        console.log('arif', editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
     }
 
