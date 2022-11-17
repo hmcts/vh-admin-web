@@ -14,6 +14,7 @@ export class VhoSearchComponent implements OnInit {
     error: string = null;
 
     private loggerPrefix = 'vho-search';
+    private filterSize = 20;
 
     @Output() hoursTypeEmitter = new EventEmitter<HoursType>();
     @Output() usernameEmitter = new EventEmitter<string>();
@@ -46,9 +47,14 @@ export class VhoSearchComponent implements OnInit {
                         break;
                     case HoursType.NonWorkingHours:
                         result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
+                        if (!result) {
+                            break;
+                        }
+                        result = result
+                            .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
+                            .slice(0, this.filterSize);
                         break;
                 }
-
                 if (result) {
                     this.hoursTypeEmitter.emit(hoursType);
                     this.vhoSearchEmitter.emit(result);
