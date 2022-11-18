@@ -96,7 +96,7 @@ export class EditWorkHoursComponent {
         if (this.result[0] instanceof VhoWorkHoursResponse) {
             this.showWorkHoursTable = true;
         }
-        if (this.hoursType === HoursType.NonWorkingHours) {
+        else if (this.hoursType === HoursType.NonWorkingHours) {
             this.showNonWorkHoursTable = true;
         }
         this.clearConfirmationMessagesForSaveNonWorkHours();

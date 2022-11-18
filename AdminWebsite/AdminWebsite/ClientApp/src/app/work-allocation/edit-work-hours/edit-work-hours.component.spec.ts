@@ -146,13 +146,6 @@ describe('EditWorkHoursComponent', () => {
         expect(component.username).toBe(username);
     });
 
-    it('setUsername should assign event to username property', () => {
-        const username = 'username@test.com';
-        component.setUsername(username);
-        expect(component).toBeTruthy();
-        expect(component.username).toBe(username);
-    });
-
     describe('onSaveWorkHours', () => {
         it('should call api to upload work hours', () => {
             const vhoWorkHoursResponseOne = new VhoWorkHoursResponse();

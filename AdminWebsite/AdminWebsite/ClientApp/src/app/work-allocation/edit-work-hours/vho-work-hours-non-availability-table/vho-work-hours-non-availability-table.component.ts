@@ -304,7 +304,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
-        console.log('arif', editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
         this.switchToEditMode();
     }
