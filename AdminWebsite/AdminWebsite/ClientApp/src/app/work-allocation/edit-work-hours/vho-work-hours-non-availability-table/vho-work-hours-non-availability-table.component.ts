@@ -12,6 +12,7 @@ export class ValidationFailure {
 import { BHClient, VhoNonAvailabilityWorkHoursResponse, NonWorkingHours } from '../../../services/clients/api-client';
 import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { Logger } from '../../../services/logger';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
@@ -19,7 +20,7 @@ import { Logger } from '../../../services/logger';
     styleUrls: ['./vho-work-hours-non-availability-table.component.css']
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
-    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder) {
+    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder, private videoHearingsService: VideoHearingsService) {
         this.filterForm = fb.group({
             startDate: ['', Validators.required],
             endDate: ['']
@@ -133,18 +134,26 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onStartTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
+    }
+
+    registerUnsavedChanges() {
+        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
     }
 
     validateNonWorkHour(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {

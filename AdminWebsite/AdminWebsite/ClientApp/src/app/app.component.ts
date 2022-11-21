@@ -70,7 +70,7 @@ export class AppComponent implements OnInit {
                     this.showConfirmation();
                 });
                 this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-                    this.showConfirmationSaveBooking(menuItemIndex);
+                    this.showConfirmationSave(menuItemIndex);
                 });
             });
         });
@@ -88,12 +88,13 @@ export class AppComponent implements OnInit {
         }
     }
 
-    showConfirmationSaveBooking(menuItemIndex) {
+    showConfirmationSave(menuItemIndex) {
         this.menuItemIndex = menuItemIndex;
-        if (this.videoHearingsService.hasUnsavedChanges()) {
+        if (this.videoHearingsService.hasUnsavedChanges() || this.videoHearingsService.hasUnsavedVhoNonAvailabilityChanges()) {
             this.showSaveConfirmation = true;
         } else {
             this.videoHearingsService.cancelRequest();
+            this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
             this.bookingService.resetEditMode();
             this.headerComponent.navigateToSelectedMenuItem(menuItemIndex);
         }
@@ -107,12 +108,14 @@ export class AppComponent implements OnInit {
     handleSignOut() {
         this.showSignOutConfirmation = false;
         this.videoHearingsService.cancelRequest();
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.router.navigate(['/logout']);
     }
 
     handleNavigate() {
         this.showSaveConfirmation = false;
         this.videoHearingsService.cancelRequest();
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.headerComponent.navigateToSelectedMenuItem(this.menuItemIndex);
     }
 
