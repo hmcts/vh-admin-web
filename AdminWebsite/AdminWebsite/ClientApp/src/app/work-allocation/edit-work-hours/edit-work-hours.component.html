@@ -3,7 +3,11 @@
     <span class="govuk-details__summary-text" id="edit-availability"> Edit working hours / non-availability </span>
   </summary>
   <div *ngIf="isVhTeamLeader">
-    <app-vho-search (vhoSearchEmitter)="setSearchResult($event)" (usernameEmitter)="setUsername($event)"></app-vho-search>
+    <app-vho-search
+      (vhoSearchEmitter)="setSearchResult($event)"
+      (hoursTypeEmitter)="setHoursType($event)"
+      (usernameEmitter)="setUsername($event)"
+    ></app-vho-search>
     <app-vho-work-hours-table *ngIf="showWorkHoursTable" (saveWorkHours)="onSaveWorkHours($event)" [result]="result">
     </app-vho-work-hours-table>
     <app-vho-work-hours-non-availability-table

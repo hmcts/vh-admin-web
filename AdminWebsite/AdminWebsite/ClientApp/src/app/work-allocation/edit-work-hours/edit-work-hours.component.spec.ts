@@ -15,6 +15,7 @@ import { of, throwError } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from './edit-non-work-hours-model';
+import { HoursType } from 'src/app/common/model/hours-type';
 
 describe('EditWorkHoursComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
@@ -101,9 +102,10 @@ describe('EditWorkHoursComponent', () => {
             expect(component.showNonWorkHoursTable).toBe(false);
         });
 
-        it('should show non work hours table when non work hours results found', () => {
+        it('should show non work hours table when non work hours selected', () => {
             const parameter: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             parameter.push(new VhoNonAvailabilityWorkHoursResponse());
+            component.hoursType = HoursType.NonWorkingHours;
             component.setSearchResult(parameter);
             expect(component.showWorkHoursTable).toBe(false);
             expect(component.showNonWorkHoursTable).toBe(true);
@@ -125,6 +127,15 @@ describe('EditWorkHoursComponent', () => {
             parameter.push(new VhoNonAvailabilityWorkHoursResponse());
             component.setSearchResult(parameter);
             assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
+    });
+
+    describe('setHoursType', () => {
+        it('should assign event to hoursType property', () => {
+            const hoursType = HoursType.NonWorkingHours;
+            component.setHoursType(hoursType);
+            expect(component).toBeTruthy();
+            expect(component.hoursType).toBe(hoursType);
         });
     });
 
