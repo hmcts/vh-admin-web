@@ -4,4 +4,5 @@ export class EditVhoNonAvailabilityWorkHoursModel {
     start_time: string;
     end_date: string;
     end_time: string;
+    new_row: boolean;
 }
