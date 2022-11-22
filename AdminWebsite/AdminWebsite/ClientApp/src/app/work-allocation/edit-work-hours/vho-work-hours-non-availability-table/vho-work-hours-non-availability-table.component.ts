@@ -59,7 +59,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
         } else {
-            this.nonWorkHours = [];
+            this.nonWorkHours = null;
         }
     }
 

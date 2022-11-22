@@ -13,7 +13,6 @@ import {
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from './edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
-import { HoursType } from 'src/app/common/model/hours-type';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -23,7 +22,6 @@ export class EditWorkHoursComponent {
     loggerPrefix = 'EditWorkHoursComponent';
     workHours: VhoWorkHoursResponse[];
     nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
-    hoursType: HoursType;
     username: string;
 
     isUploadWorkHoursSuccessful = false;
@@ -93,16 +91,11 @@ export class EditWorkHoursComponent {
         this.result = $event;
         this.showWorkHoursTable = false;
         this.showNonWorkHoursTable = false;
-        if (this.result[0] instanceof VhoWorkHoursResponse) {
-            this.showWorkHoursTable = true;
-        } else if (this.hoursType === HoursType.NonWorkingHours) {
-            this.showNonWorkHoursTable = true;
+        if (this.result) {
+            this.showWorkHoursTable = this.result[0] instanceof VhoWorkHoursResponse;
+            this.showNonWorkHoursTable = this.result[0] instanceof VhoNonAvailabilityWorkHoursResponse;
         }
         this.clearConfirmationMessagesForSaveNonWorkHours();
-    }
-
-    setHoursType($event: HoursType) {
-        this.hoursType = $event;
     }
 
     setUsername($event: string) {

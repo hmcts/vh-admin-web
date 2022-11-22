@@ -93,13 +93,13 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     it('check results input parameter sets to null', () => {
         component.result = null;
         fixture.detectChanges();
-        expect(component.nonWorkHours.length).toBe(0);
+        expect(component.nonWorkHours).toBeNull();
     });
 
     it('check results input parameter, when wrong type sets to null', () => {
         component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
         fixture.detectChanges();
-        expect(component.nonWorkHours.length).toBe(0);
+        expect(component.nonWorkHours).toBeNull();
     });
 
     it('check remove slot from result when confirm deletion', () => {
