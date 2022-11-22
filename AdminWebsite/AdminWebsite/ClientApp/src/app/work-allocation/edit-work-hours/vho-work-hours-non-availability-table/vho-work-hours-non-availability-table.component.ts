@@ -155,18 +155,26 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onStartTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
     }
 
     onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
+        this.registerUnsavedChanges();
+    }
+
+    registerUnsavedChanges() {
+        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
     }
 
     validateNonWorkHour(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
@@ -322,9 +330,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.end_time = '00:00:00';
         editVhoNonAvailabilityWorkHoursModel.start_time = '00:00:00';
+        editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
+        this.switchToEditMode();
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
@@ -359,9 +369,13 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     delete(slot: EditVhoNonAvailabilityWorkHoursModel) {
-        this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
-        this.displayConfirmPopup = true;
         this.slotToDelete = slot;
+        if (slot.new_row) {
+            this.removeSlot();
+        } else {
+            this.logger.info(`${this.loggerPrefix} Non Working hours confirmation to delete`);
+            this.displayConfirmPopup = true;
+        }
     }
 
     onDeletionAnswer($event: boolean) {
