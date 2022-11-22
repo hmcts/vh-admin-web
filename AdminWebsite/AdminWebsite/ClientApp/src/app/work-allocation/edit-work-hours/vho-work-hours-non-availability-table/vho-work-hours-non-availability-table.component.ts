@@ -33,14 +33,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             endDate: ['']
         });
     }
-    @Input() set result(value) {
-        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
-            this.nonAvailabilityWorkHoursResponses = value;
-            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
-        } else {
-            this.nonWorkHours = null;
-        }
-    }
+
 
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
@@ -70,7 +63,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     filterForm: FormGroup;
 
     @Input() userName: string;
-
+    @Input() set result(value) {
+        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
+            this.nonAvailabilityWorkHoursResponses = value;
+            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
+        } else {
+            this.nonWorkHours = null;
+        }
+    }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
@@ -99,16 +99,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     saveNonWorkingHours() {
         this.isSaving = true;
-        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+
         this.saveNonWorkHours.emit(this.nonWorkHours);
+        this.nonWorkHours.forEach(slot => {
+            slot.new_row = false;
+        });
     }
 
     cancelEditingNonWorkingHours() {
         this.isEditing = false;
-        this.showSaveConfirmation = false;
+
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
-        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.cancelSaveNonWorkHours.emit();
     }
 
@@ -129,13 +131,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             start_date: this.datePipe.transform(nonWorkHour.start_time, 'yyyy-MM-dd'),
             start_time: this.datePipe.transform(nonWorkHour.start_time, 'HH:mm:ss'),
             end_date: this.datePipe.transform(nonWorkHour.end_time, 'yyyy-MM-dd'),
-            end_time: this.datePipe.transform(nonWorkHour.end_time, 'HH:mm:ss')
+            end_time: this.datePipe.transform(nonWorkHour.end_time, 'HH:mm:ss'),
+            new_row: false
         };
         return hours;
     }
 
     nonWorkHourIsValid(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        return !this.validationFailures.some(x => x.id === nonWorkHour.id);
+        if (this.validationFailures.some(x => x.id === nonWorkHour.id)) {
+            return false;
+        }
+
+        return true;
     }
 
     clearValidationErrors() {
@@ -149,26 +156,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
     }
 
     onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
     }
 
     onStartTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
     }
 
     onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
         this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
-    }
-
-    registerUnsavedChanges() {
-        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
     }
 
     validateNonWorkHour(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
@@ -396,8 +395,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     private removeSlot() {
-        const slot = this.nonWorkHours.find(x => x.id === this.slotToDelete.id);
-        const idx = this.nonWorkHours.indexOf(slot);
+        const idx = this.nonWorkHours.indexOf(this.slotToDelete);
         this.nonWorkHours.splice(idx, 1);
     }
 
