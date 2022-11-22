@@ -34,7 +34,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
 
-
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
     public static readonly ErrorEndTimeCannotBeBeforeStartTime = 'End time cannot be before Start time';
