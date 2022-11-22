@@ -61,6 +61,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         } else {
             this.nonWorkHours = null;
         }
+
+        this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date');
     }
 
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
