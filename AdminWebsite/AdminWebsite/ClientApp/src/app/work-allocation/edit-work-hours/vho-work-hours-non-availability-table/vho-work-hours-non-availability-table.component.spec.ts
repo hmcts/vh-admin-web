@@ -663,5 +663,18 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.filterForm.value.startDate).toBeNull();
             expect(component.filterForm.value.endDate).toBeNull();
         });
+
+        it('User filter table without save changes', () => {
+            // arrange
+            component.switchToEditMode();
+            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/11/01' });
+
+            component.nonWorkHours[2].start_date = '2022/10/29';
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(3);
+            expect(component.showSaveConfirmation).toBe(true);
+        });
     });
 });

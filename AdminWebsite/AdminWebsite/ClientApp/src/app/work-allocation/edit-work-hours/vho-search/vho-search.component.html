@@ -9,6 +9,8 @@
           type="radio"
           formControlName="hoursType"
           value="WorkingHours"
+          (focus)="changeSearch()"
+          #workingOptionRef
         />
         <label class="govuk-label govuk-radios__label" for="edit-working-hours"> Edit working hours </label>
       </div>
@@ -20,6 +22,8 @@
           type="radio"
           formControlName="hoursType"
           value="NonWorkingHours"
+          (focus)="changeSearch()"
+          #nonWorkingOptionRef
         />
         <label class="govuk-label govuk-radios__label" for="edit-non-availability-hours"> Edit non-availability hours </label>
       </div>
@@ -37,4 +41,7 @@
       </div>
     </div>
   </div>
+</div>
+<div *ngIf="showSaveConfirmation">
+  <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditing()"></app-cancel-popup>
 </div>

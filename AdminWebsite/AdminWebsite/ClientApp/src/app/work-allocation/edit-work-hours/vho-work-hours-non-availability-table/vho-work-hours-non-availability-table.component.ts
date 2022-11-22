@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,18 +13,33 @@ import { BHClient, VhoNonAvailabilityWorkHoursResponse, NonWorkingHours } from '
 import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
     templateUrl: './vho-work-hours-non-availability-table.component.html',
     styleUrls: ['./vho-work-hours-non-availability-table.component.css']
 })
-export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
-    constructor(private datePipe: DatePipe, private bhClient: BHClient, private logger: Logger, private fb: FormBuilder, private videoHearingsService: VideoHearingsService) {
+export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
+    constructor(
+        private datePipe: DatePipe,
+        private bhClient: BHClient,
+        private logger: Logger,
+        private fb: FormBuilder,
+        private videoHearingsService: VideoHearingsService
+    ) {
         this.filterForm = fb.group({
             startDate: ['', Validators.required],
             endDate: ['']
         });
+    }
+    @Input() set result(value) {
+        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
+            this.nonAvailabilityWorkHoursResponses = value;
+            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
+        } else {
+            this.nonWorkHours = null;
+        }
     }
 
     public static readonly ErrorStartDateRequired = 'Start date is required';
@@ -55,19 +70,22 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     filterForm: FormGroup;
 
     @Input() userName: string;
-    @Input() set result(value) {
-        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
-            this.nonAvailabilityWorkHoursResponses = value;
-            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
-        } else {
-            this.nonWorkHours = null;
-        }
-    }
 
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
     @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
+    showSaveConfirmation = false;
+
+    @HostListener('window:beforeunload', ['$event'])
+    canDeactive(): Observable<boolean> | boolean {
+        if (this.isDataChangedAndUnsaved()) {
+            this.showSaveConfirmation = true;
+            event.preventDefault();
+            return false;
+        }
+        return true;
+    }
 
     ngOnInit(): void {
         this.saveNonWorkHoursCompleted$.subscribe(success => {
@@ -81,15 +99,16 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
 
     saveNonWorkingHours() {
         this.isSaving = true;
-
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.saveNonWorkHours.emit(this.nonWorkHours);
     }
 
     cancelEditingNonWorkingHours() {
         this.isEditing = false;
-
+        this.showSaveConfirmation = false;
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.cancelSaveNonWorkHours.emit();
     }
 
@@ -116,11 +135,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
     }
 
     nonWorkHourIsValid(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        if (this.validationFailures.some(x => x.id === nonWorkHour.id)) {
-            return false;
-        }
-
-        return true;
+        return !this.validationFailures.some(x => x.id === nonWorkHour.id);
     }
 
     clearValidationErrors() {
@@ -386,31 +401,43 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
         this.nonWorkHours.splice(idx, 1);
     }
 
-    filterByDate() {
-        const clean = (d: Date): Date => new Date(d.toDateString()); // remove time from date
-        const calenderStartDate = this.filterForm.value.startDate === '' ? null : new Date(this.filterForm.value.startDate);
-        const calenderEndDate = this.filterForm.value.endDate === '' ? null : new Date(this.filterForm.value.endDate);
-        let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
+    isDataChangedAndUnsaved() {
+        return this.isEditing && this.nonWorkHours !== this.originalNonWorkHours;
+    }
 
-        if (calenderStartDate && calenderEndDate) {
-            if (calenderEndDate < calenderStartDate) {
-                this.filterForm.setValue({ startDate: null, endDate: null });
-                return;
+    filterByDate() {
+        if (!this.isDataChangedAndUnsaved()) {
+            const clean = (d: Date): Date => new Date(d.toDateString()); // remove time from date
+            const calenderStartDate = this.filterForm.value.startDate === '' ? null : new Date(this.filterForm.value.startDate);
+            const calenderEndDate = this.filterForm.value.endDate === '' ? null : new Date(this.filterForm.value.endDate);
+            let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
+
+            if (calenderStartDate && calenderEndDate) {
+                if (calenderEndDate < calenderStartDate) {
+                    this.filterForm.setValue({ startDate: null, endDate: null });
+                    return;
+                }
+                tempWorkHours = tempWorkHours.filter(
+                    nonWorkHours =>
+                        !(
+                            (clean(nonWorkHours.start_time) < calenderStartDate && clean(nonWorkHours.end_time) < calenderStartDate) ||
+                            (clean(nonWorkHours.start_time) > calenderEndDate && clean(nonWorkHours.end_time) > calenderEndDate)
+                        )
+                );
+            } else if (calenderStartDate) {
+                tempWorkHours = tempWorkHours.filter(
+                    nonWorkHours =>
+                        clean(nonWorkHours.start_time) === calenderStartDate ||
+                        (clean(nonWorkHours.start_time) <= calenderStartDate && clean(nonWorkHours.end_time) >= calenderStartDate)
+                );
             }
-            tempWorkHours = tempWorkHours.filter(
-                nonWorkHours =>
-                    !(
-                        (clean(nonWorkHours.start_time) < calenderStartDate && clean(nonWorkHours.end_time) < calenderStartDate) ||
-                        (clean(nonWorkHours.start_time) > calenderEndDate && clean(nonWorkHours.end_time) > calenderEndDate)
-                    )
-            );
-        } else if (calenderStartDate) {
-            tempWorkHours = tempWorkHours.filter(
-                nonWorkHours =>
-                    clean(nonWorkHours.start_time) === calenderStartDate ||
-                    (clean(nonWorkHours.start_time) <= calenderStartDate && clean(nonWorkHours.end_time) >= calenderStartDate)
-            );
+            this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
+        } else {
+            this.showSaveConfirmation = true;
         }
-        this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
+    }
+
+    handleContinue() {
+        this.showSaveConfirmation = false;
     }
 }

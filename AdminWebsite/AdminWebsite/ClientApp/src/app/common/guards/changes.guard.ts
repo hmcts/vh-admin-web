@@ -12,13 +12,10 @@ export class ChangesGuard implements CanDeactivate<CanDeactiveComponent> {
         state: RouterStateSnapshot,
         nextState?: RouterStateSnapshot
     ) {
-        if (nextState.url === '/dashboard') {
-            return component.hasChanges ? !component.hasChanges() : true;
-        }
-        return true;
+        return component.canDeactive ? component.canDeactive() : true;
     }
 }
 
 export interface CanDeactiveComponent {
-    hasChanges: () => Observable<boolean> | Promise<boolean> | boolean;
+    canDeactive: () => Observable<boolean> | Promise<boolean> | boolean;
 }

@@ -85,10 +85,7 @@ export class VideoHearingsService {
 
     hasUnsavedVhoNonAvailabilityChanges(): boolean {
         const request = sessionStorage.getItem(this.vhoNonAvailabiltiesHaveChangesKey);
-        if (request) {
-            return true;
-        }
-        return false;
+        return !!request;
     }
 
     setBookingHasChanged(isChanged: boolean) {

@@ -1,9 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
 
 @Component({
     selector: 'app-vho-search',
@@ -18,12 +19,21 @@ export class VhoSearchComponent implements OnInit {
 
     @Output() usernameEmitter = new EventEmitter<string>();
     @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]>();
+    showSaveConfirmation = false;
+
+    @ViewChild('workingOptionRef', { read: ElementRef, static: true }) workingOptionRef: ElementRef;
+    @ViewChild('nonWorkingOptionRef', { read: ElementRef, static: true }) nonWorkingOptionRef: ElementRef;
 
     get username() {
         return this.form.get('username');
     }
 
-    constructor(private formBuilder: FormBuilder, private logger: Logger, private service: EditWorkHoursService) {}
+    constructor(
+        private formBuilder: FormBuilder,
+        private logger: Logger,
+        private service: EditWorkHoursService,
+        private videoService: VideoHearingsService
+    ) {}
 
     ngOnInit(): void {
         this.form = this.formBuilder.group({
@@ -69,5 +79,33 @@ export class VhoSearchComponent implements OnInit {
 
     clear() {
         this.vhoSearchEmitter.emit(null);
+    }
+
+    isDataChaged(): boolean {
+        return this.videoService.hasUnsavedVhoNonAvailabilityChanges();
+    }
+
+    handleContinue() {
+        const hoursType: HoursType = this.form.controls['hoursType'].value;
+        if (hoursType === HoursType.WorkingHours) {
+            this.nonWorkingOptionRef.nativeElement.focus();
+            this.nonWorkingOptionRef.nativeElement.click();
+        } else {
+            this.workingOptionRef.nativeElement.focus();
+            this.workingOptionRef.nativeElement.click();
+        }
+        this.showSaveConfirmation = false;
+    }
+
+    cancelEditing() {
+        this.videoService.cancelVhoNonAvailabiltiesRequest();
+        this.showSaveConfirmation = false;
+        this.vhoSearchEmitter.emit(null);
+    }
+
+    changeSearch() {
+        if (this.isDataChaged()) {
+            this.showSaveConfirmation = true;
+        }
     }
 }
