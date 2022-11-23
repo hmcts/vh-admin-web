@@ -7,6 +7,7 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
 import { FileType } from '../common/model/file-type';
+import { VideoHearingsService } from '../services/video-hearings.service';
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;

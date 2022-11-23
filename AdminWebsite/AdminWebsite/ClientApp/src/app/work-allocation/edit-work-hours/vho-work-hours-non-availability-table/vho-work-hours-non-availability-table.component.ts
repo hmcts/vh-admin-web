@@ -78,12 +78,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {
-        if (this.isDataChangedAndUnsaved()) {
-            this.showSaveConfirmation = true;
-            event.preventDefault();
-            return false;
-        }
-        return true;
+        return !this.isDataChangedAndUnsaved();
     }
 
     ngOnInit(): void {
@@ -107,9 +102,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     cancelEditingNonWorkingHours() {
         this.isEditing = false;
-
+        this.showSaveConfirmation = false;
         this.nonWorkHours = this.originalNonWorkHours;
         this.clearValidationErrors();
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         this.cancelSaveNonWorkHours.emit();
     }
 

@@ -29,12 +29,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
 
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {
-        if (this.isDataChangedAndUnsaved()) {
-            this.showSaveConfirmation = true;
-            event.preventDefault();
-            return false;
-        }
-        return true;
+        return !this.isDataChangedAndUnsaved();
     }
 
     isDataChangedAndUnsaved() {

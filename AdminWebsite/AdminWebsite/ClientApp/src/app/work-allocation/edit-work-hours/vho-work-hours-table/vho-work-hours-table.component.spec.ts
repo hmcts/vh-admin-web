@@ -1,14 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
-import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { Logger } from '../../../services/logger';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { DatePipe } from '@angular/common';
+import { FormBuilder } from '@angular/forms';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
+    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+        'cancelVhoNonAvailabiltiesRequest',
+        'setVhoNonAvailabiltiesHaveChanged'
+    ]);
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
+            providers: [{ provide: VideoHearingsService, useValue: videoServiceSpy }],
             declarations: [VhoWorkHoursTableComponent]
         }).compileComponents();
     });

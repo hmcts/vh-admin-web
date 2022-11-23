@@ -6,20 +6,30 @@ import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../..
 import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
 
 describe('VhoSearchComponent', () => {
     let component: VhoSearchComponent;
     let fixture: ComponentFixture<VhoSearchComponent>;
     let service: jasmine.SpyObj<EditWorkHoursService>;
     let logger: jasmine.SpyObj<Logger>;
+    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
     beforeEach(async () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
-
+        videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+            'cancelVhoNonAvailabiltiesRequest',
+            'setVhoNonAvailabiltiesHaveChanged'
+        ]);
         logger = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
             declarations: [VhoSearchComponent],
-            providers: [FormBuilder, { provide: Logger, useValue: logger }, { provide: EditWorkHoursService, useValue: service }]
+            providers: [
+                FormBuilder,
+                { provide: Logger, useValue: logger },
+                { provide: EditWorkHoursService, useValue: service },
+                { provide: VideoHearingsService, useValue: videoServiceSpy }
+            ]
         }).compileComponents();
     });
 

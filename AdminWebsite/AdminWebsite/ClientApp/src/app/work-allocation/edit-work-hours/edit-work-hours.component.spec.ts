@@ -15,6 +15,7 @@ import { of, throwError } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hours-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from './edit-non-work-hours-model';
+import { VideoHearingsService } from '../../services/video-hearings.service';
 
 describe('EditWorkHoursComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
@@ -22,8 +23,13 @@ describe('EditWorkHoursComponent', () => {
 
     let component: EditWorkHoursComponent;
     let fixture: ComponentFixture<EditWorkHoursComponent>;
+    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
     beforeEach(async () => {
+        videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+            'cancelVhoNonAvailabiltiesRequest',
+            'setVhoNonAvailabiltiesHaveChanged'
+        ]);
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours', 'updateNonAvailabilityWorkHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
@@ -188,7 +194,7 @@ describe('EditWorkHoursComponent', () => {
 
         it('should show save failed popup when api fails', () => {
             bHClientSpy.uploadWorkHours.and.returnValue(throwError(new Error()));
-            component.vhoWorkHoursTableComponent = new VhoWorkHoursTableComponent();
+            component.vhoWorkHoursTableComponent = new VhoWorkHoursTableComponent(videoServiceSpy);
 
             component.onSaveWorkHours([]);
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
@@ -19,10 +19,14 @@ export class VhoSearchComponent implements OnInit {
 
     @Output() usernameEmitter = new EventEmitter<string>();
     @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]>();
-    showSaveConfirmation = false;
+    @Output() dataChange = new EventEmitter<boolean>();
+
+    @Input() dataChangedBroadcast = new EventEmitter<boolean>();
 
     @ViewChild('workingOptionRef', { read: ElementRef, static: true }) workingOptionRef: ElementRef;
     @ViewChild('nonWorkingOptionRef', { read: ElementRef, static: true }) nonWorkingOptionRef: ElementRef;
+
+    showSaveConfirmation = false;
 
     get username() {
         return this.form.get('username');
@@ -39,6 +43,13 @@ export class VhoSearchComponent implements OnInit {
         this.form = this.formBuilder.group({
             username: ['', Validators.required],
             hoursType: ['', Validators.required]
+        });
+        this.dataChangedBroadcast.subscribe(x => {
+            if (!x) {
+                this.handleContinue();
+            } else {
+                this.cancelEditing();
+            }
         });
     }
 
@@ -81,7 +92,7 @@ export class VhoSearchComponent implements OnInit {
         this.vhoSearchEmitter.emit(null);
     }
 
-    isDataChaged(): boolean {
+    isDataChanged(): boolean {
         return this.videoService.hasUnsavedVhoNonAvailabilityChanges();
     }
 
@@ -95,17 +106,20 @@ export class VhoSearchComponent implements OnInit {
             this.workingOptionRef.nativeElement.click();
         }
         this.showSaveConfirmation = false;
+        this.dataChange.emit(false);
     }
 
     cancelEditing() {
         this.videoService.cancelVhoNonAvailabiltiesRequest();
         this.showSaveConfirmation = false;
+        this.dataChange.emit(false);
         this.vhoSearchEmitter.emit(null);
     }
 
     changeSearch() {
-        if (this.isDataChaged()) {
+        if (this.isDataChanged()) {
             this.showSaveConfirmation = true;
+            this.dataChange.emit(true);
         }
     }
 }

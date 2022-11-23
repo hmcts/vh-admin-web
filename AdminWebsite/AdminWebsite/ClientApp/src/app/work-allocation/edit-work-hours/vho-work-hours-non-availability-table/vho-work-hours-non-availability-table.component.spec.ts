@@ -10,19 +10,31 @@ import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { HoursType } from '../../../common/model/hours-type';
 import { FormBuilder } from '@angular/forms';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursNonAvailabilityTableComponent>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
     let loggerSpy: jasmine.SpyObj<Logger>;
+    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+        'cancelVhoNonAvailabiltiesRequest',
+        'setVhoNonAvailabiltiesHaveChanged'
+    ]);
 
     beforeEach(async () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['deleteNonAvailabilityWorkHours']);
         bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({ value: 0 }));
         loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
-            providers: [{ provide: Logger, useValue: loggerSpy }, { provide: BHClient, useValue: bHClientSpy }, DatePipe, FormBuilder],
+            providers: [
+                { provide: Logger, useValue: loggerSpy },
+                { provide: BHClient, useValue: bHClientSpy },
+                { provide: VideoHearingsService, useValue: videoServiceSpy },
+                DatePipe,
+                FormBuilder
+            ],
             declarations: [VhoWorkHoursNonAvailabilityTableComponent, ConfirmDeleteHoursPopupComponent]
         }).compileComponents();
     });
