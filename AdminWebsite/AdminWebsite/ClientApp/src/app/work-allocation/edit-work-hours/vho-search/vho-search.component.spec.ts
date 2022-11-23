@@ -19,7 +19,8 @@ describe('VhoSearchComponent', () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'cancelVhoNonAvailabiltiesRequest',
-            'setVhoNonAvailabiltiesHaveChanged', 'hasUnsavedVhoNonAvailabilityChanges'
+            'setVhoNonAvailabiltiesHaveChanged',
+            'hasUnsavedVhoNonAvailabilityChanges'
         ]);
         logger = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
@@ -31,7 +32,6 @@ describe('VhoSearchComponent', () => {
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();
-
     });
 
     beforeEach(() => {
