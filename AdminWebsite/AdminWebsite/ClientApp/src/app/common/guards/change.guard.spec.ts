@@ -1,9 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { CanDeactiveComponent, ChangesGuard } from './changes.guard';
-import {
-    VhoWorkHoursNonAvailabilityTableComponent
-} from '../../work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
+import { VhoWorkHoursNonAvailabilityTableComponent } from '../../work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 
 const activatedRouteSnapshot: ActivatedRouteSnapshot = new ActivatedRouteSnapshot();
 
