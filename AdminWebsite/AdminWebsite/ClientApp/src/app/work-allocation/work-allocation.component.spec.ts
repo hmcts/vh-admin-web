@@ -34,7 +34,6 @@ describe('WorkAllocationComponent', () => {
                 { provide: UserIdentityService, useValue: userIdentityServiceSpy }
             ]
         }).compileComponents();
-
     });
 
     beforeEach(() => {
@@ -606,7 +605,6 @@ Allocate hearings`);
         });
 
         it('should call handleContinue and click on non working Option', async () => {
-
             await component.handleContinue();
 
             expect(component).toBeTruthy();

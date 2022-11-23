@@ -229,12 +229,15 @@ describe('AppComponent - handle unsaved changes on working allocation', () => {
         navigateByUrl: jasmine.createSpy('navigateByUrl')
     };
 
-    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges', 'hasUnsavedVhoNonAvailabilityChanges', 'cancelVhoNonAvailabiltiesRequest', 'cancelRequest']);
-
+    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+        'hasUnsavedChanges',
+        'hasUnsavedVhoNonAvailabilityChanges',
+        'cancelVhoNonAvailabiltiesRequest',
+        'cancelRequest'
+    ]);
 
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
-    let headerComponentSpy: jasmine.SpyObj<HeaderComponent>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
     const mockOidcSecurityService = new MockOidcSecurityService();
@@ -286,7 +289,6 @@ describe('AppComponent - handle unsaved changes on working allocation', () => {
                     { provide: WindowRef, useValue: window },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                    { provide: HeaderComponent, useValue: headerComponentSpy },
                     { provide: ConnectionService, useFactory: () => mockConnectionService }
                 ]
             }).compileComponents();
