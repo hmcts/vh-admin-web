@@ -19,7 +19,7 @@ describe('VhoSearchComponent', () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'cancelVhoNonAvailabiltiesRequest',
-            'setVhoNonAvailabiltiesHaveChanged'
+            'setVhoNonAvailabiltiesHaveChanged', 'hasUnsavedVhoNonAvailabilityChanges'
         ]);
         logger = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
@@ -31,6 +31,7 @@ describe('VhoSearchComponent', () => {
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();
+
     });
 
     beforeEach(() => {
@@ -38,8 +39,15 @@ describe('VhoSearchComponent', () => {
         component = fixture.componentInstance;
         spyOn(component, 'clear');
         component.vhoSearchEmitter = jasmine.createSpyObj('vhoSearchEmitter', ['emit']);
+        component.dataChange = jasmine.createSpyObj('dataChange', ['emit']);
         component.usernameEmitter = jasmine.createSpyObj('usernameEmitter', ['emit']);
         fixture.detectChanges();
+
+        component.workingOptionRef = jasmine.createSpyObj('workingOptionRef', ['nativeElement']);
+        component.workingOptionRef.nativeElement = jasmine.createSpyObj('nativeElement', ['focus', 'click']);
+
+        component.nonWorkingOptionRef = jasmine.createSpyObj('nonWorkingOptionRef', ['nativeElement']);
+        component.nonWorkingOptionRef.nativeElement = jasmine.createSpyObj('nativeElement', ['focus', 'click']);
     });
 
     it('should create', () => {
@@ -190,6 +198,51 @@ describe('VhoSearchComponent', () => {
                 expect(component.vhoSearchEmitter.emit).toHaveBeenCalledTimes(0);
                 expect(component.error).toBe('bad request');
             });
+        });
+
+        it('should call handleContinue and click on working Option', async () => {
+            component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
+
+            await component.handleContinue();
+
+            expect(component).toBeTruthy();
+            expect(component.workingOptionRef.nativeElement.focus).toHaveBeenCalled();
+            expect(component.dataChange.emit).toHaveBeenCalledWith(false);
+        });
+
+        it('should call handleContinue and click on non working Option', async () => {
+            component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
+
+            await component.handleContinue();
+
+            expect(component).toBeTruthy();
+            expect(component.nonWorkingOptionRef.nativeElement.focus).toHaveBeenCalled();
+            expect(component.dataChange.emit).toHaveBeenCalledWith(false);
+        });
+
+        it('should call cancelEditing and emit dataChange', async () => {
+            await component.cancelEditing();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChange.emit).toHaveBeenCalledWith(false);
+        });
+
+        it('should call changeSearch and emit dataChange if data is Changed', async () => {
+            videoServiceSpy.hasUnsavedVhoNonAvailabilityChanges.and.returnValue(true);
+
+            await component.changeSearch();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChange.emit).toHaveBeenCalledWith(true);
+        });
+
+        it('should call changeSearch and not emit dataChange if data is not Changed', async () => {
+            videoServiceSpy.hasUnsavedVhoNonAvailabilityChanges.and.returnValue(false);
+
+            await component.changeSearch();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChange.emit).toHaveBeenCalledTimes(0);
         });
     });
 });

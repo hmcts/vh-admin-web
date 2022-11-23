@@ -585,5 +585,12 @@ describe('Video hearing service', () => {
             service.updateHearingRequest(model);
             expect(service.isHearingAboutToStart()).toBe(false);
         });
+
+        it('should not have changes if we set it to false', () => {
+            service.setVhoNonAvailabiltiesHaveChanged(true);
+            expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(true);
+            service.setVhoNonAvailabiltiesHaveChanged(false);
+            expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(false);
+        });
     });
 });

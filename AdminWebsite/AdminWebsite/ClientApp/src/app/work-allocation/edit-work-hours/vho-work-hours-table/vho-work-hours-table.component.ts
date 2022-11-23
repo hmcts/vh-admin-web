@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { BHClient, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { Observable } from 'rxjs';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
