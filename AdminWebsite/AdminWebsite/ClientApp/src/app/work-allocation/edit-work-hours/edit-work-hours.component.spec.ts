@@ -35,6 +35,7 @@ describe('EditWorkHoursComponent', () => {
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
         bHClientSpy.updateNonAvailabilityWorkHours.and.returnValue(of(undefined));
         loggerSpy = jasmine.createSpyObj('Logger', ['debug', 'error']);
+
         await TestBed.configureTestingModule({
             declarations: [EditWorkHoursComponent],
             providers: [
@@ -42,11 +43,10 @@ describe('EditWorkHoursComponent', () => {
                 { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(EditWorkHoursComponent);
         component = fixture.componentInstance;
+        component.dataChange = jasmine.createSpyObj('dataChange', ['emit']);
         fixture.detectChanges();
     });
     describe('rendering', () => {
@@ -292,6 +292,14 @@ describe('EditWorkHoursComponent', () => {
             component.onCancelSaveNonWorkHours();
 
             assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
+        });
+    });
+
+    describe('dataChange', () => {
+        it('should clear update non-working hour confirmation messages', () => {
+            component.dataChanged(true);
+
+            expect(component.dataChange.emit).toHaveBeenCalledWith(true);
         });
     });
 

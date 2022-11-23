@@ -7,7 +7,6 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
 import { FileType } from '../common/model/file-type';
-import { VideoHearingsService } from '../services/video-hearings.service';
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
@@ -35,11 +34,13 @@ describe('WorkAllocationComponent', () => {
                 { provide: UserIdentityService, useValue: userIdentityServiceSpy }
             ]
         }).compileComponents();
+
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(WorkAllocationComponent);
         component = fixture.componentInstance;
+        component.dataChangedBroadcast = jasmine.createSpyObj('dataChangedBroadcast', ['emit']);
         fixture.detectChanges();
     });
 
@@ -602,6 +603,28 @@ Allocate hearings`);
 
             expect(isValid).toBeTruthy();
             expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
+        });
+
+        it('should call handleContinue and click on non working Option', async () => {
+
+            await component.handleContinue();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChangedBroadcast.emit).toHaveBeenCalledWith(false);
+        });
+
+        it('should call cancelEditing and emit dataChange', async () => {
+            await component.cancelEditing();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChangedBroadcast.emit).toHaveBeenCalledWith(true);
+        });
+
+        it('should call onDataChange and emit dataChange', async () => {
+            await component.onDataChange(true);
+
+            expect(component).toBeTruthy();
+            expect(component.showSaveConfirmation).toBeTruthy();
         });
     });
 });
