@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ClientSettingsResponse } from '../services/clients/api-client';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpBackend, HttpClient } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../common/model/config';
 import { filter, map } from 'rxjs/operators';
 import { SessionStorage } from './session-storage';
@@ -51,6 +51,11 @@ export class ConfigService {
     private retrieveConfigFromApi(): Observable<ClientSettingsResponse> {
         let url = '/api/config';
         url = url.replace(/[?&]$/, '');
-        return this.httpClient.get<ClientSettingsResponse>(url);
+        const options: any = {
+            headers: new HttpHeaders()
+        };
+        options.headers = options.headers.append('Cache-Control', 'no-store');
+
+        return this.httpClient.get<ClientSettingsResponse>(url, options as object);
     }
 }
