@@ -146,7 +146,12 @@ describe('AppComponent - ConnectionService', () => {
         navigateByUrl: jasmine.createSpy('navigateByUrl')
     };
 
-    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
+    const videoHearingServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+        'hasUnsavedChanges',
+        'hasUnsavedVhoNonAvailabilityChanges',
+        'cancelVhoNonAvailabiltiesRequest',
+        'cancelRequest'
+    ]);
 
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
@@ -197,6 +202,7 @@ describe('AppComponent - ConnectionService', () => {
                     { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
                 ]
             }).compileComponents();
+            videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
         })
     );
 
@@ -221,79 +227,7 @@ describe('AppComponent - ConnectionService', () => {
             expect(url).toEqual('/error');
         })
     ));
-});
 
-describe('AppComponent - handle unsaved changes on working allocation', () => {
-    const router = {
-        navigate: jasmine.createSpy('navigate'),
-        navigateByUrl: jasmine.createSpy('navigateByUrl')
-    };
-
-    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
-        'hasUnsavedChanges',
-        'hasUnsavedVhoNonAvailabilityChanges',
-        'cancelVhoNonAvailabiltiesRequest',
-        'cancelRequest'
-    ]);
-
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    let pageTracker: jasmine.SpyObj<PageTrackerService>;
-    let window: jasmine.SpyObj<WindowRef>;
-    let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
-    const mockOidcSecurityService = new MockOidcSecurityService();
-    let oidcSecurityService;
-
-    const clientSettings = new ClientSettingsResponse({
-        tenant_id: 'tenantid',
-        client_id: 'clientid',
-        post_logout_redirect_uri: '/dashboard',
-        redirect_uri: '/dashboard'
-    });
-
-    let httpClient: jasmine.SpyObj<HttpClient>;
-
-    const mockConnectionService = {
-        hasConnection$: {
-            subscribe: () => of(null),
-            pipe: () => of(null)
-        }
-    };
-    beforeEach(
-        waitForAsync(() => {
-            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
-            configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
-            oidcSecurityService = mockOidcSecurityService;
-
-            window = jasmine.createSpyObj('WindowRef', ['getLocation']);
-            window.getLocation.and.returnValue(new WindowLocation('/url'));
-
-            pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
-            deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
-
-            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
-            TestBed.configureTestingModule({
-                imports: [HttpClientModule, RouterTestingModule],
-                declarations: [
-                    AppComponent,
-                    HeaderComponent,
-                    FooterStubComponent,
-                    SignOutPopupStubComponent,
-                    CancelPopupStubComponent,
-                    UnsupportedBrowserComponent
-                ],
-                providers: [
-                    { provide: OidcSecurityService, useValue: mockOidcSecurityService },
-                    { provide: ConfigService, useValue: configServiceSpy },
-                    { provide: Router, useValue: router },
-                    { provide: PageTrackerService, useValue: pageTracker },
-                    { provide: WindowRef, useValue: window },
-                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                    { provide: ConnectionService, useFactory: () => mockConnectionService }
-                ]
-            }).compileComponents();
-        })
-    );
     it('should popup if work allocation data changed', () => {
         const fixture = TestBed.createComponent(AppComponent);
         videoHearingServiceSpy.hasUnsavedVhoNonAvailabilityChanges.and.returnValue(true);
