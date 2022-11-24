@@ -146,7 +146,12 @@ describe('AppComponent - ConnectionService', () => {
         navigateByUrl: jasmine.createSpy('navigateByUrl')
     };
 
-    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
+    const videoHearingServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+        'hasUnsavedChanges',
+        'hasUnsavedVhoNonAvailabilityChanges',
+        'cancelVhoNonAvailabiltiesRequest',
+        'cancelRequest'
+    ]);
 
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
@@ -197,6 +202,7 @@ describe('AppComponent - ConnectionService', () => {
                     { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
                 ]
             }).compileComponents();
+            videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
         })
     );
 
@@ -221,4 +227,27 @@ describe('AppComponent - ConnectionService', () => {
             expect(url).toEqual('/error');
         })
     ));
+
+    it('should popup if work allocation data changed', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        videoHearingServiceSpy.hasUnsavedVhoNonAvailabilityChanges.and.returnValue(true);
+        const component = fixture.componentInstance;
+        component.showConfirmationSave(1);
+        expect(component.showSaveConfirmation).toBeTruthy();
+    });
+
+    it('should popup if work allocation data not changed', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        videoHearingServiceSpy.hasUnsavedVhoNonAvailabilityChanges.and.returnValue(false);
+        const component = fixture.componentInstance;
+        component.showConfirmationSave(1);
+        expect(videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
+    });
+
+    it('should cancel flag when handleSignOut is called', () => {
+        const fixture = TestBed.createComponent(AppComponent);
+        const component = fixture.componentInstance;
+        component.handleSignOut();
+        expect(videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
+    });
 });

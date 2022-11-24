@@ -1,15 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
+import { Observable } from 'rxjs';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
 
 @Component({
     selector: 'app-vho-work-hours-table',
     templateUrl: './vho-work-hours-table.component.html'
 })
-export class VhoWorkHoursTableComponent {
-    workHours: VhoWorkHoursResponse[] = [];
-    workHoursEndTimeBeforeStartTimeErrors: number[] = [];
-    originalWorkHours: VhoWorkHoursResponse[] = [];
-    isEditing = false;
+export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
+    constructor(private videoHearingsService: VideoHearingsService) {}
 
     @Input() set result(value) {
         if (value && value[0] instanceof VhoWorkHoursResponse) {
@@ -19,19 +19,35 @@ export class VhoWorkHoursTableComponent {
         }
     }
 
+    workHours: VhoWorkHoursResponse[] = [];
+    workHoursEndTimeBeforeStartTimeErrors: number[] = [];
+    originalWorkHours: VhoWorkHoursResponse[] = [];
+    isEditing = false;
+    showSaveConfirmation = false;
+
     @Output() saveWorkHours: EventEmitter<VhoWorkHoursResponse[]> = new EventEmitter();
+
+    @HostListener('window:beforeunload', ['$event'])
+    canDeactive(): Observable<boolean> | boolean {
+        return !this.isDataChangedAndUnsaved();
+    }
+
+    isDataChangedAndUnsaved() {
+        return this.isEditing && this.workHours !== this.originalWorkHours;
+    }
 
     cancelEditingWorkingHours() {
         this.isEditing = false;
         this.workHoursEndTimeBeforeStartTimeErrors = [];
-
         this.workHours = this.originalWorkHours;
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
     }
 
     saveWorkingHours() {
         this.saveWorkHours.emit(this.workHours);
         this.workHoursEndTimeBeforeStartTimeErrors = [];
         this.isEditing = false;
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
     }
 
     switchToEditMode() {
@@ -70,5 +86,14 @@ export class VhoWorkHoursTableComponent {
                 this.workHoursEndTimeBeforeStartTimeErrors.splice(index, 1);
             }
         }
+        this.registerUnsavedChanges();
+    }
+
+    handleContinue() {
+        this.showSaveConfirmation = false;
+    }
+
+    registerUnsavedChanges() {
+        this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
     }
 }
