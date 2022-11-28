@@ -14,6 +14,7 @@ import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
+import { EditWorkHoursService } from 'src/app/services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
@@ -26,7 +27,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         private bhClient: BHClient,
         private logger: Logger,
         private fb: FormBuilder,
-        private videoHearingsService: VideoHearingsService
+        private videoHearingsService: VideoHearingsService,
+        private editWorkHoursService: EditWorkHoursService
     ) {
         this.filterForm = fb.group({
             startDate: ['', Validators.required],
@@ -89,6 +91,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             if (success) {
                 this.isEditing = false;
                 this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+                this.editWorkHoursService.fetchNonWorkHours$.next();
             }
         });
     }

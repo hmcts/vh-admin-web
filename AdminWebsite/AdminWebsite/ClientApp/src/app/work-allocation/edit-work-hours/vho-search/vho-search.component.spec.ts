@@ -7,6 +7,7 @@ import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { Subject } from 'rxjs';
 
 describe('VhoSearchComponent', () => {
     let component: VhoSearchComponent;
@@ -17,6 +18,7 @@ describe('VhoSearchComponent', () => {
 
     beforeEach(async () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
+        service.fetchNonWorkHours$ = new Subject<void>();
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'cancelVhoNonAvailabiltiesRequest',
             'setVhoNonAvailabiltiesHaveChanged',
@@ -28,7 +30,7 @@ describe('VhoSearchComponent', () => {
             providers: [
                 FormBuilder,
                 { provide: Logger, useValue: logger },
-                { provide: EditWorkHoursService, useValue: service },
+                { provide: EditWorkHoursService, useValue: service},
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();
