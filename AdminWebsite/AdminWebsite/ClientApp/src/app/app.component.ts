@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
     }
 
     showConfirmation() {
-        if (this.videoHearingsService.hasUnsavedChanges()) {
+        if (this.videoHearingsService.hasUnsavedChanges() || this.videoHearingsService.hasUnsavedVhoNonAvailabilityChanges()) {
             this.showSignOutConfirmation = true;
         } else {
             this.handleSignOut();
