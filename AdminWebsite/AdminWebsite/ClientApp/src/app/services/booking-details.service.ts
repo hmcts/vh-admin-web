@@ -34,7 +34,8 @@ export class BookingDetailsService {
             hearingResponse.cancel_reason,
             hearingResponse.case_type_name,
             '',
-            ''
+            '',
+            hearingResponse.allocated_vho
         );
 
         model.OtherInformation = hearingResponse.other_information;

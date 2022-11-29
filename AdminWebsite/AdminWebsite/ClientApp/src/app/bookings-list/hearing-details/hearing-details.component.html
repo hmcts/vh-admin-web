@@ -45,6 +45,18 @@
       </div>
     </div>
   </div>
+  <div class="govuk-grid-row" *ngIf="hearing?.AllocatedVho && hearing?.AllocatedVho.length > 0">
+    <div class="govuk-grid-column-one-third">
+      <span class="vh-xsml">Allocated to:</span>
+    </div>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="edit-by">
+          <strong>{{ hearing?.AllocatedVho }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Hearing details</h2>
