@@ -326,6 +326,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     addNewNonAvailabilityRow() {
+        this.switchToEditMode();
+
         const editVhoNonAvailabilityWorkHoursModel = new EditVhoNonAvailabilityWorkHoursModel();
         editVhoNonAvailabilityWorkHoursModel.end_date = new Date().toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
@@ -335,7 +337,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
-        this.switchToEditMode();
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
