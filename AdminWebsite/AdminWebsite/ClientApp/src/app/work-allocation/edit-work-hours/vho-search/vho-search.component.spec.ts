@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { VhoSearchComponent } from './vho-search.component';
 import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
@@ -54,6 +54,23 @@ describe('VhoSearchComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    describe('ngOnInit', () => {
+        it('should reload non work hours when fetchNonWorkHours event streamed', fakeAsync(() => {
+            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            component.ngOnInit();
+            component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
+            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
+            fixture.detectChanges();
+
+            service.fetchNonWorkHours$.next();
+            tick();
+
+            expect(component).toBeTruthy();
+            expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
+            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
+        }));
     });
 
     describe('search tests working hours', () => {
