@@ -30,7 +30,7 @@ describe('VhoSearchComponent', () => {
             providers: [
                 FormBuilder,
                 { provide: Logger, useValue: logger },
-                { provide: EditWorkHoursService, useValue: service},
+                { provide: EditWorkHoursService, useValue: service },
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();

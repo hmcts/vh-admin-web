@@ -53,7 +53,7 @@ export class VhoSearchComponent implements OnInit {
         });
         this.service.fetchNonWorkHours$.subscribe(async x => {
             await this.search();
-        })
+        });
     }
 
     async search(): Promise<void> {
