@@ -21,12 +21,12 @@
     </div>
     <div class="govuk-grid-column-two-thirds vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
-        <div class="vh-xsml" id="edit-by">
+        <div class="vh-xsml" id="last-edit-by">
           <strong>{{ hearing?.LastEditBy }}</strong>
         </div>
       </div>
       <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0 }">
-        <div class="vh-xsml" id="edit-date">{{ hearing?.LastEditDate | appLongDatetime }}</div>
+        <div class="vh-xsml" id="last-edit-date">{{ hearing?.LastEditDate | appLongDatetime }}</div>
       </div>
     </div>
   </div>
@@ -36,12 +36,12 @@
     </div>
     <div class="govuk-grid-column-two-thirds vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
-        <div class="vh-xsml" id="edit-by">
+        <div class="vh-xsml" id="confirmed-by">
           <strong>{{ hearing?.ConfirmedBy }}</strong>
         </div>
       </div>
-      <div class="govuk-grid-row">
-        <div class="vh-xsml" id="edit-date">{{ hearing?.ConfirmedDate | appLongDatetime }}</div>
+      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedDate }">
+        <div class="vh-xsml" id="confirmed-date">{{ hearing?.ConfirmedDate | appLongDatetime }}</div>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
     </div>
     <div class="govuk-grid-column-two-thirds vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
-        <div class="vh-xsml" id="edit-by">
+        <div class="vh-xsml" id="allocated-to">
           <strong>{{ hearing?.AllocatedVho }}</strong>
         </div>
       </div>
