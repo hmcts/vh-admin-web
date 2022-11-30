@@ -76,6 +76,7 @@ export class VhoSearchComponent implements OnInit {
                         result = result
                             .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
                             .slice(0, this.filterSize);
+                        break;
                 }
                 if (result) {
                     this.vhoSearchEmitter.emit(result);
