@@ -14,6 +14,7 @@ import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
+import { EditWorkHoursService } from 'src/app/services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
@@ -26,7 +27,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         private bhClient: BHClient,
         private logger: Logger,
         private fb: FormBuilder,
-        private videoHearingsService: VideoHearingsService
+        private videoHearingsService: VideoHearingsService,
+        private editWorkHoursService: EditWorkHoursService
     ) {
         this.filterForm = fb.group({
             startDate: ['', Validators.required],
@@ -89,6 +91,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             if (success) {
                 this.isEditing = false;
                 this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
+                this.editWorkHoursService.fetchNonWorkHours$.next();
             }
         });
     }
@@ -323,6 +326,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     addNewNonAvailabilityRow() {
+        this.switchToEditMode();
+
         const editVhoNonAvailabilityWorkHoursModel = new EditVhoNonAvailabilityWorkHoursModel();
         editVhoNonAvailabilityWorkHoursModel.end_date = new Date().toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
@@ -332,7 +337,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
-        this.switchToEditMode();
     }
 
     addValidationError(nonWorkHourId: number, error: string) {

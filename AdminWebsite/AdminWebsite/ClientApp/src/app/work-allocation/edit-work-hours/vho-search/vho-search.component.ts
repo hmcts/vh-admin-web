@@ -51,6 +51,9 @@ export class VhoSearchComponent implements OnInit {
                 this.cancelEditing();
             }
         });
+        this.service.fetchNonWorkHours$.subscribe(async x => {
+            await this.search();
+        });
     }
 
     async search(): Promise<void> {
