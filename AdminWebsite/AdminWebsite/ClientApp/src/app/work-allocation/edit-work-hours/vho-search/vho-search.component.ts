@@ -69,8 +69,13 @@ export class VhoSearchComponent implements OnInit {
                         result = await this.service.getWorkAvailabilityForVho(this.username.value);
                         break;
                     case HoursType.NonWorkingHours:
-                        result = await this.fetchNonWorkHours(this.username.value);
-                        break;
+                        result = await this.service.getNonWorkAvailabilityForVho(this.username.value);
+                        if (!result) {
+                            break;
+                        }
+                        result = result
+                            .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
+                            .slice(0, this.filterSize);
                 }
                 if (result) {
                     this.vhoSearchEmitter.emit(result);
@@ -83,18 +88,6 @@ export class VhoSearchComponent implements OnInit {
                 this.error = error.message;
             }
         }
-    }
-
-    async fetchNonWorkHours(username: string) : Promise<VhoNonAvailabilityWorkHoursResponse[]> {
-        let result = await this.service.getNonWorkAvailabilityForVho(username);
-        if (!result) {
-            return null;
-        }
-        result = result
-            .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime())
-            .slice(0, this.filterSize);
-
-        return result;
     }
 
     clear() {
