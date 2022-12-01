@@ -45,14 +45,14 @@
       </div>
     </div>
   </div>
-  <div class="govuk-grid-row" *ngIf="hearing?.AllocatedVho && hearing?.AllocatedVho.length > 0">
+  <div class="govuk-grid-row" *ngIf="hearing?.AllocatedTo && hearing?.AllocatedTo.length > 0">
     <div class="govuk-grid-column-one-third">
       <span class="vh-xsml">Allocated to:</span>
     </div>
     <div class="govuk-grid-column-two-thirds vh-xsml">
       <div class="govuk-grid-row vh_panel-r">
         <div class="vh-xsml" id="allocated-to">
-          <strong>{{ hearing?.AllocatedVho }}</strong>
+          <strong>{{ hearing?.AllocatedTo }}</strong>
         </div>
       </div>
     </div>
