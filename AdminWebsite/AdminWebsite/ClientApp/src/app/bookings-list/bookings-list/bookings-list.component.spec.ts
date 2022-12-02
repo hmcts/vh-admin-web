@@ -1031,7 +1031,7 @@ describe('BookingsListComponent', () => {
             component.ngOnInit();
             expect(component.endOfData).toBeFalsy();
             fixture.detectChanges();
-            component.scrollHandler(null);
+            component.scrollHandler();
             expect(component.bookings.length).toBe(2);
             expect(component.recordsLoaded).toBeTruthy();
         })
@@ -1043,9 +1043,9 @@ describe('BookingsListComponent', () => {
             component.ngOnInit();
             expect(component.endOfData).toBeFalsy();
             fixture.detectChanges();
-            component.scrollHandler(null);
+            component.scrollHandler();
 
-            component.scrollHandler(null);
+            component.scrollHandler();
             expect(component.bookings.length).toBe(2);
         })
     );
