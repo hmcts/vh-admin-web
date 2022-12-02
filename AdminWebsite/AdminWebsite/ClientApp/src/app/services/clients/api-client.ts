@@ -3981,7 +3981,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     cancel_reason?: string | undefined;
     group_id?: string | undefined;
     court_room_account?: string | undefined;
-    allocated_vho?: string | undefined;
+    allocated_to?: string | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -4016,7 +4016,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.cancel_reason = _data['cancel_reason'];
             this.group_id = _data['group_id'];
             this.court_room_account = _data['court_room_account'];
-            this.allocated_vho = _data['allocated_vho'];
+            this.allocated_to = _data['allocated_to'];
         }
     }
 
@@ -4052,7 +4052,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data['cancel_reason'] = this.cancel_reason;
         data['group_id'] = this.group_id;
         data['court_room_account'] = this.court_room_account;
-        data['allocated_vho'] = this.allocated_vho;
+        data['allocated_to'] = this.allocated_to;
         return data;
     }
 }
@@ -4081,7 +4081,7 @@ export interface IBookingsHearingResponse {
     cancel_reason?: string | undefined;
     group_id?: string | undefined;
     court_room_account?: string | undefined;
-    allocated_vho?: string | undefined;
+    allocated_to?: string | undefined;
 }
 
 export class BookingsByDateResponse implements IBookingsByDateResponse {
@@ -5204,7 +5204,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
     hearing_type_code?: string | undefined;
-    allocated_vho?: string | undefined;
+    allocated_to?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -5253,7 +5253,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             }
             this.group_id = _data['group_id'];
             this.hearing_type_code = _data['hearing_type_code'];
-            this.allocated_vho = _data['allocated_vho'];
+            this.allocated_to = _data['allocated_to'];
         }
     }
 
@@ -5302,7 +5302,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         }
         data['group_id'] = this.group_id;
         data['hearing_type_code'] = this.hearing_type_code;
-        data['allocated_vho'] = this.allocated_vho;
+        data['allocated_to'] = this.allocated_to;
         return data;
     }
 }
@@ -5332,7 +5332,7 @@ export interface IHearingDetailsResponse {
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
     hearing_type_code?: string | undefined;
-    allocated_vho?: string | undefined;
+    allocated_to?: string | undefined;
 }
 
 /** Case request */

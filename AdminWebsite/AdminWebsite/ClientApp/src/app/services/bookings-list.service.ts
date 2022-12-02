@@ -171,7 +171,7 @@ export class BookingsListService {
             hearing.case_type_name,
             hearing.court_room_account,
             '',
-            hearing.allocated_vho
+            hearing.allocated_to
         );
     }
 }

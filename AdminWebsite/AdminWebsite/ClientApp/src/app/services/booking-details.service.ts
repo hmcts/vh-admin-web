@@ -35,7 +35,7 @@ export class BookingDetailsService {
             hearingResponse.case_type_name,
             '',
             '',
-            hearingResponse.allocated_vho
+            hearingResponse.allocated_to
         );
 
         model.OtherInformation = hearingResponse.other_information;
