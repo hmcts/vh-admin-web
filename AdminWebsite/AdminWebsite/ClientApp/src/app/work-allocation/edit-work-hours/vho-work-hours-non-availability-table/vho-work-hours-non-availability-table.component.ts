@@ -30,14 +30,15 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            if (this.nonAvailabilityWorkHoursResponses.length > 20) {
+
+                this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
+
+            }
         } else {
             this.nonWorkHours = null;
         }
-        if (this.nonAvailabilityWorkHoursResponses.length > 20) {
 
-            this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
-
-        }
 
     }
 
