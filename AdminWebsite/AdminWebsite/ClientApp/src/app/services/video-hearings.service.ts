@@ -44,6 +44,7 @@ export class VideoHearingsService {
     private readonly bookingHasChangesKey: string;
     private readonly conferencePhoneNumberKey: string;
     private readonly conferencePhoneNumberWelshKey: string;
+    private readonly vhoNonAvailabiltiesHaveChangesKey: string;
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
@@ -54,6 +55,7 @@ export class VideoHearingsService {
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
         this.conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
+        this.vhoNonAvailabiltiesHaveChangesKey = 'vhoNonAvailabiltiesHaveChangesKey';
 
         this.checkForExistingHearing();
     }
@@ -81,12 +83,29 @@ export class VideoHearingsService {
         return (request !== null && !existingHearing) || keyChanges === 'true';
     }
 
+    hasUnsavedVhoNonAvailabilityChanges(): boolean {
+        const request = sessionStorage.getItem(this.vhoNonAvailabiltiesHaveChangesKey);
+        return !!request;
+    }
+
     setBookingHasChanged(isChanged: boolean) {
         if (isChanged) {
             sessionStorage.setItem(this.bookingHasChangesKey, 'true');
         } else {
             sessionStorage.removeItem(this.bookingHasChangesKey);
         }
+    }
+
+    setVhoNonAvailabiltiesHaveChanged(isChanged: boolean) {
+        if (isChanged) {
+            sessionStorage.setItem(this.vhoNonAvailabiltiesHaveChangesKey, 'true');
+        } else {
+            sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
+        }
+    }
+
+    cancelVhoNonAvailabiltiesRequest() {
+        sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
     getHearingTypes(): Observable<HearingTypeResponse[]> {

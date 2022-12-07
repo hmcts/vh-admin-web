@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { BHClient } from './clients/api-client';
 import { Logger } from './logger';
 
@@ -6,6 +7,8 @@ import { Logger } from './logger';
     providedIn: 'root'
 })
 export class EditWorkHoursService {
+    fetchNonWorkHours$ = new Subject<void>();
+
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
     async getWorkAvailabilityForVho(username: string) {

@@ -128,3 +128,6 @@
   [slotToDelete]="slotToDelete"
   [userName]="userName"
 ></app-confirm-delete-hours-popup>
+<div *ngIf="showSaveConfirmation">
+  <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditingNonWorkingHours()"></app-cancel-popup>
+</div>

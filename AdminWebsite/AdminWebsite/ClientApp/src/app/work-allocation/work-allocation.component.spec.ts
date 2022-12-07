@@ -39,6 +39,7 @@ describe('WorkAllocationComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(WorkAllocationComponent);
         component = fixture.componentInstance;
+        component.dataChangedBroadcast = jasmine.createSpyObj('dataChangedBroadcast', ['emit']);
         fixture.detectChanges();
     });
 
@@ -601,6 +602,27 @@ Allocate hearings`);
 
             expect(isValid).toBeTruthy();
             expect(component.workingHoursFileValidationErrors[0]).toBeUndefined();
+        });
+
+        it('should call handleContinue and click on non working Option', async () => {
+            await component.handleContinue();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChangedBroadcast.emit).toHaveBeenCalledWith(false);
+        });
+
+        it('should call cancelEditing and emit dataChange', async () => {
+            await component.cancelEditing();
+
+            expect(component).toBeTruthy();
+            expect(component.dataChangedBroadcast.emit).toHaveBeenCalledWith(true);
+        });
+
+        it('should call onDataChange and emit dataChange', async () => {
+            await component.onDataChange(true);
+
+            expect(component).toBeTruthy();
+            expect(component.showSaveConfirmation).toBeTruthy();
         });
     });
 });
