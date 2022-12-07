@@ -70,9 +70,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
-
                 this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
-
             }
         } else {
             this.nonWorkHours = null;
@@ -403,10 +401,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    displayMessageAndFade(message: string, fade: boolean= true) {
+    displayMessageAndFade(message: string, fade: boolean = true) {
         this.displayMessage = true;
         this.message = message;
-        if (fade) { this.fadeOutLink(); }
+        if (fade) {
+            this.fadeOutLink();
+        }
     }
 
     fadeOutLink() {

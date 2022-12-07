@@ -73,8 +73,7 @@ export class VhoSearchComponent implements OnInit {
                         if (!result) {
                             break;
                         }
-                        result = result
-                            .sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime());
+                        result = result.sort((objA, objB) => objA.start_time.getTime() - objB.start_time.getTime());
                         break;
                 }
                 if (result) {
