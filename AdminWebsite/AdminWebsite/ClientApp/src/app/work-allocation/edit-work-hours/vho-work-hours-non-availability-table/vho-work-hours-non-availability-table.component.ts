@@ -73,11 +73,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
                 this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
             }
-
         } else {
             this.nonWorkHours = null;
         }
-
     }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
