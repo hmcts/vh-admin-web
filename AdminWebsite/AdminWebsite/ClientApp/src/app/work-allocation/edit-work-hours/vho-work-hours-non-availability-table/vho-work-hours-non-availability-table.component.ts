@@ -22,6 +22,7 @@ import { EditWorkHoursService } from 'src/app/services/edit-work-hours.service';
     styleUrls: ['./vho-work-hours-non-availability-table.component.css']
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
+    private filterSize: number = 20;
     constructor(
         private datePipe: DatePipe,
         private bhClient: BHClient,
@@ -68,11 +69,15 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
+            this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            if (this.nonAvailabilityWorkHoursResponses.length > 20) {
+                this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
+            }
+
         } else {
             this.nonWorkHours = null;
         }
 
-        this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date');
     }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
@@ -397,10 +402,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    displayMessageAndFade(message: string) {
+    displayMessageAndFade(message: string, fade: boolean = true) {
         this.displayMessage = true;
         this.message = message;
-        this.fadeOutLink();
+        if (fade) {
+            this.fadeOutLink();
+        }
     }
 
     fadeOutLink() {
