@@ -131,27 +131,6 @@ describe('VhoSearchComponent', () => {
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
         });
-        it('should  emit maximum twenty  search results ', async () => {
-            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
-            const startTime = new Date('2022-01-01');
-            for (let i = 1; i <= 21; i++) {
-                vhoSearchResult.push(
-                    new VhoNonAvailabilityWorkHoursResponse({
-                        id: i,
-                        start_time: startTime
-                    })
-                );
-                startTime.setDate(startTime.getDate() + i);
-            }
-            component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
-
-            await component.search();
-            const expectedVhoSearchResult = vhoSearchResult.slice(0, -1);
-            expect(component).toBeTruthy();
-            expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
-            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(expectedVhoSearchResult);
-        });
         it('should  sort the dates in chronological order ', async () => {
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
