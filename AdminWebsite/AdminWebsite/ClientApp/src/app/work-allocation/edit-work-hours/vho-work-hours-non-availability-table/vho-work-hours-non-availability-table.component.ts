@@ -35,6 +35,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             endDate: ['']
         });
     }
+    @Input() set result(value) {
+        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
+            this.nonAvailabilityWorkHoursResponses = value;
+            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
+            this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            if (this.nonAvailabilityWorkHoursResponses.length > 20) {
+                this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
+            }
+        } else {
+            this.nonWorkHours = null;
+        }
+    }
 
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
@@ -43,6 +55,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
     public static readonly ErrorStartTimeRequired = 'Start time is required';
     public static readonly ErrorEndTimeRequired = 'End time is required';
+    private filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
     faCalendarPlus = faCalendarPlus;
@@ -64,16 +77,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     filterForm: FormGroup;
 
     @Input() userName: string;
-    @Input() set result(value) {
-        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
-            this.nonAvailabilityWorkHoursResponses = value;
-            this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
-        } else {
-            this.nonWorkHours = null;
-        }
-
-        this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date');
-    }
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
@@ -397,10 +400,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    displayMessageAndFade(message: string) {
+    displayMessageAndFade(message: string, fade: boolean = true) {
         this.displayMessage = true;
         this.message = message;
-        this.fadeOutLink();
+        if (fade) {
+            this.fadeOutLink();
+        }
     }
 
     fadeOutLink() {
