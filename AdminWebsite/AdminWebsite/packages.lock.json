@@ -237,9 +237,9 @@
       },
       "TimeZoneConverter": {
         "type": "Direct",
-        "requested": "[3.4.0, )",
-        "resolved": "3.4.0",
-        "contentHash": "4rqXd06uLqaLPGpO+whrZnSTJyG3SG5DEbeldMTvaGit0+gI6XLVb9YMnfM+5wtV0DDM1QPd/QhbE6j5vJCWDw=="
+        "requested": "[6.0.1, )",
+        "resolved": "6.0.1",
+        "contentHash": "vvhLOgRSOvfq5fBv0/Dd1S3N7K2ibO5wp06B5AkuxUpXkgv2aDHw9jB5ZvPg83y9sy+jF9qE7qWybMK46BXBuw=="
       },
       "UserApi.Client": {
         "type": "Direct",
@@ -266,12 +266,11 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.38.10, )",
-        "resolved": "1.38.10",
-        "contentHash": "8ewDerAGPjz7j+PXcRSLVFxUMJqUebyHUSb4LOeHbcuNuAGCX57eJZJNj8JlmavgqKiVgexuUdjXAeCqcrAKJQ==",
+        "requested": "[1.41.5, )",
+        "resolved": "1.41.5",
+        "contentHash": "GXq/N+pZNJsMs8DKMF8rp4a1V78qPxQy2DU4m++A4AGfW7UorVeuCPiKN1SNSmUmgRRaF5yWqmdePfB8DK/Kow==",
         "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
-          "Newtonsoft.Json": "12.0.3"
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
       },
       "FluentValidation": {
