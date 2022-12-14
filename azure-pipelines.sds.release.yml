@@ -1,7 +1,6 @@
-name: $(Date:yyyyMMddhhmm)-$(Rev:r)
+name: $(Date:yyyyMMddHHmm)-$(Rev:r)
 
-trigger:
-  - master
+trigger: none
 
 pr: none
 
@@ -21,6 +20,8 @@ parameters:
   - Staging
   - Prod
 
+pool: 
+  vmImage: ubuntu-22.04
 
 stages:
 
@@ -29,8 +30,6 @@ stages:
   - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
     - stage: Approve_Helm_Release
       displayName: 'Approve Helm Release'
-      pool:
-        vmImage: 'ubuntu-latest'
       jobs:
         - job: waitForValidation
           displayName: 'Approve Helm Release'

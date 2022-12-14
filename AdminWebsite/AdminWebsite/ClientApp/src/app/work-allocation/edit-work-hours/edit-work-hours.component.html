@@ -7,6 +7,8 @@
       (vhoSearchEmitter)="setSearchResult($event)"
       (hoursTypeEmitter)="setHoursType($event)"
       (usernameEmitter)="setUsername($event)"
+      (dataChange)="dataChanged($event)"
+      [dataChangedBroadcast]="dataChangedBroadcast"
     ></app-vho-search>
     <app-vho-work-hours-table *ngIf="showWorkHoursTable" (saveWorkHours)="onSaveWorkHours($event)" [result]="result">
     </app-vho-work-hours-table>

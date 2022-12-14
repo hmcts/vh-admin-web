@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import {
@@ -19,7 +19,7 @@ import { HoursType } from 'src/app/common/model/hours-type';
     selector: 'app-edit-work-hours',
     templateUrl: './edit-work-hours.component.html'
 })
-export class EditWorkHoursComponent {
+export class EditWorkHoursComponent implements OnInit {
     loggerPrefix = 'EditWorkHoursComponent';
     workHours: VhoWorkHoursResponse[];
     nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
@@ -38,10 +38,18 @@ export class EditWorkHoursComponent {
     showNonWorkHoursTable = false;
 
     @Input() isVhTeamLeader: boolean;
+    @Input() dataChangedBroadcast = new EventEmitter<boolean>();
+    @Output() dataChange = new EventEmitter<boolean>();
 
     @ViewChild(VhoWorkHoursTableComponent) vhoWorkHoursTableComponent!: VhoWorkHoursTableComponent;
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
+
+    ngOnInit(): void {
+        this.dataChangedBroadcast.subscribe(x => {
+            this.dataChanged(x);
+        });
+    }
 
     onSaveWorkHours($event: VhoWorkHoursResponse[]) {
         this.workHours = $event;
@@ -166,5 +174,9 @@ export class EditWorkHoursComponent {
     clearConfirmationMessagesForSaveNonWorkHours() {
         this.showSaveNonWorkHoursFailedPopup = false;
         this.isUploadNonWorkHoursSuccessful = false;
+    }
+
+    dataChanged($event: boolean) {
+        this.dataChange.emit($event);
     }
 }

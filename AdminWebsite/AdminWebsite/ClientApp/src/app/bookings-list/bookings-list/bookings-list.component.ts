@@ -302,7 +302,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.loaded = true;
     }
 
-    scrollHandler(e) {
+    scrollHandler() {
         this.getList();
     }
 

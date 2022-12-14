@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import {
     BHClient,
     UploadWorkHoursRequest,
@@ -9,6 +9,7 @@ import {
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 import { FileType } from '../common/model/file-type';
+import { VideoHearingsService } from '../services/video-hearings.service';
 
 @Component({
     selector: 'app-work-allocation',
@@ -40,8 +41,10 @@ export class WorkAllocationComponent {
     private incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
 
     maxFileUploadSize = 200000;
+    showSaveConfirmation = false;
+    dataChangedBroadcast = new EventEmitter<boolean>();
 
-    constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService) {
+    constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService, private videoService: VideoHearingsService) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
             this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
         });
@@ -353,5 +356,19 @@ export class WorkAllocationComponent {
         }
 
         return true;
+    }
+
+    onDataChange($event: boolean) {
+        this.showSaveConfirmation = $event;
+    }
+
+    handleContinue() {
+        this.showSaveConfirmation = false;
+        this.dataChangedBroadcast.emit(false);
+    }
+
+    cancelEditing() {
+        this.showSaveConfirmation = false;
+        this.dataChangedBroadcast.emit(true);
     }
 }

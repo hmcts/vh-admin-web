@@ -15,6 +15,9 @@ import { EditParticipantComponent } from './edit-participant/edit-participant/ed
 import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
+import { VhoWorkHoursNonAvailabilityTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
+import { ChangesGuard } from './common/guards/changes.guard';
+import { VhoWorkHoursTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -30,6 +33,8 @@ export const routes: Routes = [
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
     { path: 'work-allocation', component: WorkAllocationComponent, canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard] },
+    { path: 'work-allocation', component: VhoWorkHoursNonAvailabilityTableComponent, canDeactivate: [ChangesGuard] },
+    { path: 'work-allocation', component: VhoWorkHoursTableComponent, canDeactivate: [ChangesGuard] },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 

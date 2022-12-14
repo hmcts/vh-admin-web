@@ -62,3 +62,6 @@
     </button>
   </div>
 </ng-template>
+<div *ngIf="showSaveConfirmation">
+  <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditingWorkingHours()"></app-cancel-popup>
+</div>

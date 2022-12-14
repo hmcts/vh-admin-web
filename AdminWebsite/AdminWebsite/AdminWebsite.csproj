@@ -32,7 +32,7 @@
   </PropertyGroup>
   <PropertyGroup><ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles></PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="BookingsApi.Client" Version="1.39.36" />
+	<PackageReference Include="BookingsApi.Client" Version="1.39.53" />
 	<PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
@@ -58,10 +58,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TimeZoneConverter" Version="3.4.0" />
+    <PackageReference Include="TimeZoneConverter" Version="6.0.1" />
     <PackageReference Include="UserApi.Client" Version="1.39.4" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.12" />
-    <PackageReference Include="VideoApi.Client" Version="1.38.10" />
+    <PackageReference Include="VideoApi.Client" Version="1.41.5" />
   </ItemGroup>
 
   <ItemGroup>
