@@ -101,11 +101,17 @@ export class EditWorkHoursComponent implements OnInit {
         this.result = $event;
         this.showWorkHoursTable = false;
         this.showNonWorkHoursTable = false;
-        if (this.result[0] instanceof VhoWorkHoursResponse) {
-            this.showWorkHoursTable = true;
-        } else if (this.hoursType === HoursType.NonWorkingHours) {
-            this.showNonWorkHoursTable = true;
+        switch (this.hoursType) {
+            case HoursType.WorkingHours:
+                this.showWorkHoursTable = true;
+                this.showNonWorkHoursTable = false;
+                break;
+            case HoursType.NonWorkingHours:
+                this.showNonWorkHoursTable = true;
+                this.showWorkHoursTable = false;
+                break;
         }
+
         this.clearConfirmationMessagesForSaveNonWorkHours();
     }
 
