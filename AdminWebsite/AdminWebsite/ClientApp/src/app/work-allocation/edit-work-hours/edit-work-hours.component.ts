@@ -104,11 +104,9 @@ export class EditWorkHoursComponent implements OnInit {
         switch (this.hoursType) {
             case HoursType.WorkingHours:
                 this.showWorkHoursTable = true;
-                this.showNonWorkHoursTable = false;
                 break;
             case HoursType.NonWorkingHours:
                 this.showNonWorkHoursTable = true;
-                this.showWorkHoursTable = false;
                 break;
         }
 
