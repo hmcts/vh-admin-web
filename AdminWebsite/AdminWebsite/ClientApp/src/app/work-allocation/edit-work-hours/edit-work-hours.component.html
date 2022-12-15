@@ -5,6 +5,7 @@
   <div *ngIf="isVhTeamLeader">
     <app-vho-search
       (vhoSearchEmitter)="setSearchResult($event)"
+      (hoursTypeEmitter)="setHoursType($event)"
       (usernameEmitter)="setUsername($event)"
       (dataChange)="dataChanged($event)"
       [dataChangedBroadcast]="dataChangedBroadcast"
