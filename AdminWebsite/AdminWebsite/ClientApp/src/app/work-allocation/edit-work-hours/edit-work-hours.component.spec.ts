@@ -1,13 +1,13 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EditWorkHoursComponent } from './edit-work-hours.component';
 import {
     BHClient,
-    UploadWorkHoursRequest,
-    VhoWorkHoursResponse,
-    WorkingHours,
     NonWorkingHours,
     UpdateNonWorkingHoursRequest,
-    VhoNonAvailabilityWorkHoursResponse
+    UploadWorkHoursRequest,
+    VhoNonAvailabilityWorkHoursResponse,
+    VhoWorkHoursResponse,
+    WorkingHours
 } from '../../services/clients/api-client';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -95,6 +95,7 @@ describe('EditWorkHoursComponent', () => {
     describe('setSearchResult', () => {
         it('should assign event to results property', () => {
             const parameter: Array<VhoWorkHoursResponse> = [];
+            component.hoursType = HoursType.WorkingHours;
             component.setSearchResult(parameter);
             expect(component).toBeTruthy();
             expect(component.result).toBe(parameter);
@@ -103,6 +104,7 @@ describe('EditWorkHoursComponent', () => {
         it('should show work hours table when work hours results found', () => {
             const parameter: Array<VhoWorkHoursResponse> = [];
             parameter.push(new VhoWorkHoursResponse());
+            component.hoursType = HoursType.WorkingHours;
             component.setSearchResult(parameter);
             expect(component.showWorkHoursTable).toBe(true);
             expect(component.showNonWorkHoursTable).toBe(false);
