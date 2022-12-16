@@ -36,12 +36,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value) {
-        if (value && value[0] instanceof VhoNonAvailabilityWorkHoursResponse) {
+        if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
                 this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
+            } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
+                this.displayMessageAndFade('There are no non-availability hours uploaded for this team member', false);
             }
         } else {
             this.nonWorkHours = null;
@@ -77,11 +79,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     filterForm: FormGroup;
 
     @Input() userName: string;
+
     @Input() saveNonWorkHoursCompleted$: Subject<boolean>;
     @Output() saveNonWorkHours: EventEmitter<EditVhoNonAvailabilityWorkHoursModel[]> = new EventEmitter();
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
     @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
     showSaveConfirmation = false;
+
+    checkType(myArray: any[], type: any): boolean {
+        return myArray.every(item => {
+            return item instanceof type;
+        });
+    }
 
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {
@@ -330,7 +339,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     addNewNonAvailabilityRow() {
         this.switchToEditMode();
-
         const editVhoNonAvailabilityWorkHoursModel = new EditVhoNonAvailabilityWorkHoursModel();
         editVhoNonAvailabilityWorkHoursModel.end_date = new Date().toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];

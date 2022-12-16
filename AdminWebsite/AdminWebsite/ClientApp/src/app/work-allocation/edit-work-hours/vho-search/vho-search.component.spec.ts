@@ -40,6 +40,7 @@ describe('VhoSearchComponent', () => {
         fixture = TestBed.createComponent(VhoSearchComponent);
         component = fixture.componentInstance;
         spyOn(component, 'clear');
+        component.hoursTypeEmitter = jasmine.createSpyObj('hoursTypeEmitter', ['emit']);
         component.vhoSearchEmitter = jasmine.createSpyObj('vhoSearchEmitter', ['emit']);
         component.dataChange = jasmine.createSpyObj('dataChange', ['emit']);
         component.usernameEmitter = jasmine.createSpyObj('usernameEmitter', ['emit']);
@@ -120,7 +121,7 @@ describe('VhoSearchComponent', () => {
     });
 
     describe('search tests non working hours', () => {
-        it('should call searchForVho and emit vhoSearchResult', async () => {
+        it('should call searchForVho and emit events', async () => {
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
@@ -129,6 +130,7 @@ describe('VhoSearchComponent', () => {
 
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
+            expect(component.hoursTypeEmitter.emit).toHaveBeenCalledWith(HoursType.NonWorkingHours);
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
         });
         it('should  sort the dates in chronological order ', async () => {

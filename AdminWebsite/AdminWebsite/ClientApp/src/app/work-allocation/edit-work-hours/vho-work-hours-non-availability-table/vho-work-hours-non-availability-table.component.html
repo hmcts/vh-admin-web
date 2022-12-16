@@ -1,8 +1,8 @@
-<span *ngIf="nonWorkHours?.length > 0">
+<span *ngIf="nonWorkHours">
   <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="filterForm">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third">
-        <label class="govuk-label govuk-radios__label" for="start-date">Start Date</label>
+        <label class="govuk-label" for="start-date">Start Date</label>
         <input
           class="govuk-input"
           id="start-date"
@@ -13,7 +13,7 @@
         />
       </div>
       <div class="govuk-grid-column-one-third" *ngIf="filterForm.valid">
-        <label class="govuk-label govuk-radios__label" for="end-date">End Date</label>
+        <label class="govuk-label" for="end-date">End Date</label>
         <input
           class="govuk-input"
           id="end-date"
