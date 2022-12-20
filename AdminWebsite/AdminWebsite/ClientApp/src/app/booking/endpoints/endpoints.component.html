@@ -29,7 +29,7 @@
       <div formArrayName="endpoints" *ngFor="let endpoint of endpoints.controls; let i = index; let lst = last">
         <div [formGroupName]="i">
           <div class="govuk-form-group" [ngClass]="{ 'has-error': endpoints.controls[i].invalid && endpoints.controls[i].touched }">
-            <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayNameLabel' + i"> Display name </label>
+            <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayName' + i"> Display name </label>
             <input [id]="'displayName' + i" class="govuk-input govuk-!-width-three-quarters" type="text" formControlName="displayName" />
             <a
               *ngIf="endpoints.length > 1"
