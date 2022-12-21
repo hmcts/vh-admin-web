@@ -249,6 +249,7 @@ describe('VhoWorkHoursTableComponent', () => {
             validationFailure.id = 1;
             validationFailure.errorMessage = VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime;
             component.validationFailures = [validationFailure];
+            component.validationSummary = [VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime];
 
             const workHourDay = new VhoWorkHoursResponse({
                 day_of_week_id: 1,
@@ -297,6 +298,7 @@ describe('VhoWorkHoursTableComponent', () => {
             validationFailure.id = 1;
             validationFailure.errorMessage = VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired;
             component.validationFailures = [validationFailure];
+            component.validationSummary = [VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired];
 
             const workHourDay = new VhoWorkHoursResponse({
                 day_of_week_id: 1,
