@@ -24,7 +24,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         }
     }
 
-    public static readonly ErrorStartAndEndTimeBothRequired = 'Both Start Time and End Time must be populated or empty';
+    public static readonly ErrorStartAndEndTimeBothRequired = 'Both Start Time and End Time must be filled in or empty';
     public static readonly ErrorEndTimeBeforeStartTime = 'End Time cannot be before Start Time';
     workHours: VhoWorkHoursResponse[] = [];
     validationFailures: ValidationFailure[] = [];
