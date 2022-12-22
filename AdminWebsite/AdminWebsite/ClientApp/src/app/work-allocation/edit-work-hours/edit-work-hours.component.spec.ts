@@ -308,6 +308,26 @@ describe('EditWorkHoursComponent', () => {
         });
     });
 
+    describe('onEditWorkHours', () => {
+        it('should clear update working hour confirmation messages', () => {
+            component.isUploadWorkHoursFailure = true;
+            component.isUploadWorkHoursSuccessful = true;
+            component.onEditWorkHours();
+
+            assertConfirmationMessagesForSaveWorkHoursAreCleared();
+        });
+    });
+
+    describe('onCancelSaveWorkHours', () => {
+        it('should clear update working hour confirmation messages', () => {
+            component.isUploadWorkHoursFailure = true;
+            component.isUploadWorkHoursSuccessful = true;
+            component.onCancelSaveWorkHours();
+
+            assertConfirmationMessagesForSaveWorkHoursAreCleared();
+        });
+    });
+
     describe('dataChange', () => {
         it('should clear update non-working hour confirmation messages', () => {
             component.dataChanged(true);
@@ -319,5 +339,10 @@ describe('EditWorkHoursComponent', () => {
     function assertConfirmationMessagesForSaveNonWorkHoursAreCleared() {
         expect(component.showSaveNonWorkHoursFailedPopup).toBe(false);
         expect(component.isUploadNonWorkHoursSuccessful).toBe(false);
+    }
+
+    function assertConfirmationMessagesForSaveWorkHoursAreCleared() {
+        expect(component.isUploadWorkHoursFailure).toBe(false);
+        expect(component.isUploadWorkHoursSuccessful).toBe(false);
     }
 });

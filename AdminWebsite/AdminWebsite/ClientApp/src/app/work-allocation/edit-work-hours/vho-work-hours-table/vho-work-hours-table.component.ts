@@ -34,6 +34,8 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     showSaveConfirmation = false;
 
     @Output() saveWorkHours: EventEmitter<VhoWorkHoursResponse[]> = new EventEmitter();
+    @Output() editWorkHours: EventEmitter<void> = new EventEmitter();
+    @Output() cancelSaveWorkHours: EventEmitter<void> = new EventEmitter();
 
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {
@@ -50,6 +52,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         this.validationSummary = [];
         this.workHours = this.originalWorkHours;
         this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+        this.cancelSaveWorkHours.emit();
     }
 
     saveWorkingHours() {
@@ -68,6 +71,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         this.isEditing = true;
 
         this.originalWorkHours = JSON.parse(JSON.stringify(this.workHours));
+        this.editWorkHours.emit();
     }
 
     validateTimes(day: VhoWorkHoursResponse) {

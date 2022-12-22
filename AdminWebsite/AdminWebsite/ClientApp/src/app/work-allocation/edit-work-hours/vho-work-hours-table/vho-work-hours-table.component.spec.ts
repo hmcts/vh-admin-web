@@ -112,6 +112,15 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.validationFailures.length).toBe(0);
         });
 
+        it('should emit event', () => {
+            component.isEditing = true;
+            spyOn(component.cancelSaveWorkHours, 'emit');
+
+            component.cancelEditingWorkingHours();
+
+            expect(component.cancelSaveWorkHours.emit).toHaveBeenCalledTimes(1);
+        });
+
         it('should set work hours back to original values', () => {
             const originalMondayWorkHours = new VhoWorkHoursResponse();
             originalMondayWorkHours.day_of_week_id = 1;
@@ -201,6 +210,20 @@ describe('VhoWorkHoursTableComponent', () => {
             component.switchToEditMode();
 
             expect(JSON.stringify(component.originalWorkHours)).toEqual(JSON.stringify(component.workHours));
+        });
+
+        it('should emit event when work hours are not empty', () => {
+            const mondayWorkHours = new VhoWorkHoursResponse();
+            mondayWorkHours.day_of_week_id = 1;
+            mondayWorkHours.end_time = '17:00';
+            mondayWorkHours.start_time = '09:00';
+
+            spyOn(component.editWorkHours, 'emit');
+            component.workHours = [mondayWorkHours];
+
+            component.switchToEditMode();
+
+            expect(component.editWorkHours.emit).toHaveBeenCalledTimes(1);
         });
     });
 

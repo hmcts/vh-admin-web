@@ -10,7 +10,13 @@
       (dataChange)="dataChanged($event)"
       [dataChangedBroadcast]="dataChangedBroadcast"
     ></app-vho-search>
-    <app-vho-work-hours-table *ngIf="showWorkHoursTable" (saveWorkHours)="onSaveWorkHours($event)" [result]="result">
+    <app-vho-work-hours-table
+      *ngIf="showWorkHoursTable"
+      (saveWorkHours)="onSaveWorkHours($event)"
+      [result]="result"
+      (editWorkHours)="onEditWorkHours()"
+      (cancelSaveWorkHours)="onCancelSaveWorkHours()"
+    >
     </app-vho-work-hours-table>
     <app-vho-work-hours-non-availability-table
       *ngIf="showNonWorkHoursTable"
