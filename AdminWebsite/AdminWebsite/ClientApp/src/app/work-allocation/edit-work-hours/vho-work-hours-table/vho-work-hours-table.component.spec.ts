@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
+import { ValidationFailure, VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
 import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
@@ -72,7 +72,10 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should disable save button when errors exist', () => {
             component.isEditing = true;
-            component.workHoursEndTimeBeforeStartTimeErrors = [0];
+            const validationFailure = new ValidationFailure();
+            validationFailure.id = 1;
+            validationFailure.errorMessage = 'Error';
+            component.validationFailures = [validationFailure];
             fixture.detectChanges();
 
             const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
@@ -106,7 +109,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
             component.cancelEditingWorkingHours();
 
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
+            expect(component.validationFailures.length).toBe(0);
         });
 
         it('should emit event', () => {
@@ -173,7 +176,7 @@ describe('VhoWorkHoursTableComponent', () => {
             component.saveWorkingHours();
 
             expect(component.isEditing).toBe(false);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
+            expect(component.validationFailures.length).toBe(0);
         });
     });
 
@@ -243,6 +246,11 @@ describe('VhoWorkHoursTableComponent', () => {
     });
 
     describe('validateTimes', () => {
+        beforeEach(() => {
+            component.validationFailures = [];
+            component.validationSummary = [];
+        });
+
         it('should add end time before start time error', () => {
             const workHourDay = new VhoWorkHoursResponse({
                 day_of_week_id: 1,
@@ -252,12 +260,19 @@ describe('VhoWorkHoursTableComponent', () => {
 
             component.validateTimes(workHourDay);
 
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(1);
-            expect(component.workHoursEndTimeBeforeStartTimeErrors[0]).toBe(0);
+            expect(component.validationFailures.length).toBe(1);
+            expect(component.validationFailures[0].id).toBe(1);
+            expect(component.validationFailures[0].errorMessage).toBe(VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toBe(VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime);
         });
 
         it('should remove end time before start time error when fixed', () => {
-            component.workHoursEndTimeBeforeStartTimeErrors = [0];
+            const validationFailure = new ValidationFailure();
+            validationFailure.id = 1;
+            validationFailure.errorMessage = VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime;
+            component.validationFailures = [validationFailure];
+            component.validationSummary = [VhoWorkHoursTableComponent.ErrorEndTimeBeforeStartTime];
 
             const workHourDay = new VhoWorkHoursResponse({
                 day_of_week_id: 1,
@@ -267,7 +282,93 @@ describe('VhoWorkHoursTableComponent', () => {
 
             component.validateTimes(workHourDay);
 
-            expect(component.workHoursEndTimeBeforeStartTimeErrors.length).toBe(0);
+            expect(component.validationFailures.length).toBe(0);
+            expect(component.validationSummary.length).toBe(0);
+        });
+
+        it('should add start and end time both required error when start time is empty', () => {
+            const workHourDay = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                end_time: '09:00'
+            });
+
+            component.validateTimes(workHourDay);
+
+            expect(component.validationFailures.length).toBe(1);
+            expect(component.validationFailures[0].id).toBe(1);
+            expect(component.validationFailures[0].errorMessage).toBe(VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toBe(VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired);
+        });
+
+        it('should add start and end time both required error when end time is empty', () => {
+            const workHourDay = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                start_time: '09:00'
+            });
+
+            component.validateTimes(workHourDay);
+
+            expect(component.validationFailures.length).toBe(1);
+            expect(component.validationFailures[0].id).toBe(1);
+            expect(component.validationFailures[0].errorMessage).toBe(VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired);
+            expect(component.validationSummary.length).toBe(1);
+            expect(component.validationSummary[0]).toBe(VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired);
+        });
+
+        it('should remove start and end time both required error when fixed', () => {
+            const validationFailure = new ValidationFailure();
+            validationFailure.id = 1;
+            validationFailure.errorMessage = VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired;
+            component.validationFailures = [validationFailure];
+            component.validationSummary = [VhoWorkHoursTableComponent.ErrorStartAndEndTimeBothRequired];
+
+            const workHourDay = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                end_time: '12:00',
+                start_time: '09:00'
+            });
+
+            component.validateTimes(workHourDay);
+
+            expect(component.validationFailures.length).toBe(0);
+            expect(component.validationSummary.length).toBe(0);
+        });
+    });
+
+    describe('workHourIsValid', () => {
+        it('should return true when work hour is valid', () => {
+            const workHour = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                start_time: '09:00',
+                end_time: '12:00'
+            });
+            component.validateTimes(workHour);
+            const result = component.workHourIsValid(workHour.day_of_week_id);
+            expect(result).toBe(true);
+        });
+
+        it('should return false when work hour is not valid', () => {
+            const workHour = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                start_time: '09:00'
+            });
+            component.validateTimes(workHour);
+            const result = component.workHourIsValid(workHour.day_of_week_id);
+            expect(result).toBe(false);
+        });
+    });
+
+    describe('onWorkHourFieldBlur', () => {
+        it('should validate', () => {
+            const workHour = new VhoWorkHoursResponse({
+                day_of_week_id: 1,
+                start_time: '09:00'
+            });
+            component.onWorkHourFieldBlur(workHour);
+            const result = component.workHourIsValid(workHour.day_of_week_id);
+            expect(result).toBe(false);
+            expect(videoServiceSpy.setVhoNonAvailabiltiesHaveChanged).toHaveBeenCalledTimes(1);
         });
     });
 });
