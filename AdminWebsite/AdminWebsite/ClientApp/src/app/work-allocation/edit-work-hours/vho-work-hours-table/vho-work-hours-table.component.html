@@ -13,25 +13,25 @@
     </tr>
   </thead>
   <tbody class="govuk-table__body">
-    <tr class="govuk-table__row" *ngFor="let day of workHours; index as i">
-      <td
-        [ngClass]="{ 'govuk-form-group--error': workHoursEndTimeBeforeStartTimeErrors.includes(i) }"
-        class="govuk-table__cell govuk-!-padding-left-2"
-      >
+    <tr class="govuk-table__row" *ngFor="let day of workHours">
+      <td [ngClass]="{ 'govuk-form-group--error': !workHourIsValid(day.day_of_week_id) }" class="govuk-table__cell govuk-!-padding-left-2">
         {{ day.day_of_week }}
       </td>
       <td class="govuk-table__cell">
-        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.start_time" />
+        <input [disabled]="!isEditing" type="time" (blur)="onWorkHourFieldBlur(day)" [(ngModel)]="day.start_time" />
       </td>
       <td class="govuk-table__cell">
-        <input [disabled]="!isEditing" type="time" (blur)="validateTimes(day)" [(ngModel)]="day.end_time" />
+        <input [disabled]="!isEditing" type="time" (blur)="onWorkHourFieldBlur(day)" [(ngModel)]="day.end_time" />
       </td>
     </tr>
   </tbody>
-  <div *ngIf="workHoursEndTimeBeforeStartTimeErrors.length > 0">
-    <p class="govuk-error-message">Error: End Time cannot be before Start Time</p>
-  </div>
 </table>
+<div *ngIf="validationSummary.length > 0">
+  <p class="govuk-error-message">Error:</p>
+  <div *ngFor="let error of validationSummary">
+    <p class="govuk-error-message">{{ error }}</p>
+  </div>
+</div>
 <button
   *ngIf="!isEditing; else editingButtonsBlock"
   id="edit-individual-work-hours-button"
@@ -48,7 +48,7 @@
       class="govuk-button govuk-!-margin-right-6"
       data-module="govuk-button"
       (click)="saveWorkingHours()"
-      [disabled]="workHoursEndTimeBeforeStartTimeErrors.length > 0"
+      [disabled]="validationFailures.length > 0"
     >
       Save
     </button>

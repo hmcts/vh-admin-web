@@ -111,6 +111,11 @@ export class EditWorkHoursComponent implements OnInit {
         }
 
         this.clearConfirmationMessagesForSaveNonWorkHours();
+        this.clearConfirmationMessagesForSaveWorkHours();
+    }
+
+    setHoursType($event: HoursType) {
+        this.hoursType = $event;
     }
 
     setHoursType($event: HoursType) {
@@ -175,9 +180,22 @@ export class EditWorkHoursComponent implements OnInit {
         this.clearConfirmationMessagesForSaveNonWorkHours();
     }
 
+    onEditWorkHours() {
+        this.clearConfirmationMessagesForSaveWorkHours();
+    }
+
+    onCancelSaveWorkHours() {
+        this.clearConfirmationMessagesForSaveWorkHours();
+    }
+
     clearConfirmationMessagesForSaveNonWorkHours() {
         this.showSaveNonWorkHoursFailedPopup = false;
         this.isUploadNonWorkHoursSuccessful = false;
+    }
+
+    clearConfirmationMessagesForSaveWorkHours() {
+        this.isUploadWorkHoursFailure = false;
+        this.isUploadWorkHoursSuccessful = false;
     }
 
     dataChanged($event: boolean) {

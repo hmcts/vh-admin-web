@@ -115,6 +115,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         this.nonWorkHours.forEach(slot => {
             slot.new_row = false;
         });
+        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
     }
 
     cancelEditingNonWorkingHours() {
