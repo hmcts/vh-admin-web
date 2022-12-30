@@ -26,7 +26,7 @@ If the interface for either the MVC or the Bookings API is updated these can be 
 
 In the `AdmniWebsite/ClientApp` folder:
 ```
-npx nswag run --/runtime:NetCore31 api-ts.nswag
+npx nswag run --/runtime:Net60 api-ts.nswag
 ```
 
 # Running accessibility linting
@@ -44,6 +44,8 @@ The commit message will be validated by prepare-commit-msg hook.
 The commit message format should start with : 'feature/VIH-XXXX : ' folowing by 8 or more characters description of commit, otherwise the warning message will be presented.
 
 ## Run Stryker
+
+(Will be removed post SDS migration, as it isn't supported in this architecture)
 
 To run stryker mutation test, go to UnitTest folder under command prompt and run the following command
 
