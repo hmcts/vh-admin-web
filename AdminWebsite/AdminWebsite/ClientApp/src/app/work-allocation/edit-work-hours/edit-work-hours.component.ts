@@ -118,10 +118,6 @@ export class EditWorkHoursComponent implements OnInit {
         this.hoursType = $event;
     }
 
-    setHoursType($event: HoursType) {
-        this.hoursType = $event;
-    }
-
     setUsername($event: string) {
         this.username = $event;
     }
