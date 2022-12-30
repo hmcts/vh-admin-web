@@ -26,7 +26,7 @@ If the interface for either the MVC or the Bookings API is updated these can be 
 
 In the `AdmniWebsite/ClientApp` folder:
 ```
-npx nswag run --/runtime:NetCore31 api-ts.nswag
+npx nswag run --/runtime:Net60 api-ts.nswag
 ```
 
 # Running accessibility linting
@@ -46,6 +46,8 @@ The commit message format should start with : 'feature/VIH-XXXX : ' folowing by 
 ## Run Stryker
 
 To run stryker mutation test, go to UnitTest folder under command prompt and run the following command
+
+(Stryker will be removed in SDS as it is not supported)
 
 ```bash
 dotnet stryker
