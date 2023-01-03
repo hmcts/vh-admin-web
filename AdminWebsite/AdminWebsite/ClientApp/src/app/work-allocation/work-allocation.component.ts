@@ -10,6 +10,7 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 import { FileType } from '../common/model/file-type';
 import { VideoHearingsService } from '../services/video-hearings.service';
+import groupBy from 'lodash.groupby';
 
 @Component({
     selector: 'app-work-allocation',
@@ -147,6 +148,9 @@ export class WorkAllocationComponent {
 
         this.numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
 
+        const userWorkAvailabilityRowsSplit = userWorkAvailabilityRows.map(x => x.split(this.csvDelimiter));
+        this.checkWorkAvailabilityForDuplicateUsers(userWorkAvailabilityRowsSplit);
+
         userWorkAvailabilityRows.forEach((row, index) => {
             const values = row.split(this.csvDelimiter);
 
@@ -218,6 +222,21 @@ export class WorkAllocationComponent {
         this.bhClient.uploadWorkHours(workAvailabilities).subscribe(result => {
             this.isWorkingHoursUploadComplete = true;
             this.workingHoursFileUploadUsernameErrors = result.failed_usernames;
+        });
+    }
+
+    checkWorkAvailabilityForDuplicateUsers(rows: Array<Array<string>>) {
+        const groupedByUsername = groupBy(rows, row => {
+            return row[0];
+        });
+
+        const usernames = Object.keys(groupedByUsername);
+
+        usernames.forEach(username => {
+            const hours = groupedByUsername[username];
+            if (hours.length > 1) {
+                this.workingHoursFileValidationErrors.push(`${username} - Multiple entries for user. Only one row per user required`);
+            }
         });
     }
 

@@ -91,6 +91,20 @@ Allocate hearings`);
             );
         });
 
+        it('should show file upload duplicate user errors', () => {
+            component.readWorkAvailability(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                    ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                    'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                    'first.second@xyz.com,10:00,17:00,11:00,17:30,12:30,18:00,13:00,18:00,14:00,17:00,,,,\n' +
+                    'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,'
+            );
+            fixture.detectChanges();
+
+            const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
+            expect(error).toContain('Error: first.second@xyz.com - Multiple entries for user. Only one row per user required');
+        });
+
         it('should show non-working hours file upload max size error', () => {
             component.nonWorkingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
