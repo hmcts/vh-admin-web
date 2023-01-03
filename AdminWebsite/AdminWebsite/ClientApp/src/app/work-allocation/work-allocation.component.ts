@@ -226,9 +226,7 @@ export class WorkAllocationComponent {
     }
 
     checkWorkAvailabilityForDuplicateUsers(rows: Array<Array<string>>) {
-        const groupedByUsername = groupBy(rows, row => {
-            return row[0];
-        });
+        const groupedByUsername = groupBy(rows, row => row[0]);
 
         const usernames = Object.keys(groupedByUsername);
 
