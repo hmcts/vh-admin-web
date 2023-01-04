@@ -575,5 +575,27 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+
+        [HttpGet("/unallocated")]
+        [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
+        [ProducesResponseType(typeof(List<HearingDetailsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetUnallocatedHearings()
+        {
+            try
+            {
+                return Ok(await _bookingsApiClient.GetUnallocatedHearingsAsync());
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NoContent();
+                    default:
+                        throw;
+                }
+            }
+        }
     }
 }

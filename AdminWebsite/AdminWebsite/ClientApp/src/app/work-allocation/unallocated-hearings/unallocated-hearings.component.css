@@ -1,0 +1,16 @@
+p {
+    margin: 0;
+}
+
+.hearing-number {
+    color: #0666b4 !important;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: larger;
+}
+.govuk-panel {
+    padding-block: 20px;
+}
+.govuk-heading-s {
+    text-align: left;
+}
