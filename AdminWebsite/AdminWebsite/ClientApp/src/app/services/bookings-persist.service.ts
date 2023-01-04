@@ -12,10 +12,12 @@ export class BookingPersistService {
     private _caseNumber: string;
     private _selectedVenueIds: number[] = [];
     private _selectedCaseTypes: string[] = [];
+    private _selectedUsers: string[] = [];
     private _startDate: Date;
     private _endDate: Date;
     private _participantLastName: string;
     private _noJudgeInHearings: boolean;
+    private _noAllocatedHearings: boolean;
     private _showSearch = false;
     private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
@@ -116,6 +118,14 @@ export class BookingPersistService {
         this._noJudgeInHearings = value;
     }
 
+    get noAllocatedHearings(): boolean {
+        return this._noAllocatedHearings;
+    }
+
+    set noAllocatedHearings(value) {
+        this._noAllocatedHearings = value;
+    }
+
     get selectedVenueIds(): number[] {
         return this._selectedVenueIds;
     }
@@ -130,6 +140,14 @@ export class BookingPersistService {
 
     set selectedCaseTypes(value) {
         this._selectedCaseTypes = value;
+    }
+
+    get selectedUsers(): string[] {
+        return this._selectedUsers;
+    }
+
+    set selectedUsers(value) {
+        this._selectedUsers = value;
     }
 
     get startDate(): Date {

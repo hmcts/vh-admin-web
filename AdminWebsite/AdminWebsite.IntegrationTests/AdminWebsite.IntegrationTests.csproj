@@ -28,7 +28,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="BookingsApi.Client" Version="1.39.53" />
+    <PackageReference Include="BookingsApi.Client" Version="1.41.6-pullrequest0560-0007" />
     <PackageReference Include="coverlet.msbuild" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

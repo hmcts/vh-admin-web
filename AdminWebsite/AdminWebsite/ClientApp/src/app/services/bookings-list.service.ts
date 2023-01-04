@@ -25,10 +25,12 @@ export class BookingsListService {
         caseNumber?: string,
         venueIds?: number[],
         caseTypes?: string[],
+        selectedUsers?: string[],
         startDate?: Date,
         endDate?: Date,
         lastName?: string,
-        noJudge?: boolean
+        noJudge?: boolean,
+        noAllocated?: boolean
     ): Observable<BookingsResponse> {
         const searchRequest = {
             cursor,
@@ -36,10 +38,12 @@ export class BookingsListService {
             caseNumber,
             venueIds,
             caseTypes,
+            selectedUsers,
             startDate,
             endDate,
             lastName,
-            noJudge
+            noJudge,
+            noAllocated
         } as IBookingSearchRequest;
         const model = new BookingSearchRequest(searchRequest);
         return this.bhClient.bookingsList(model);
