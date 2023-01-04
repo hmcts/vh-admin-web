@@ -110,6 +110,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     saveNonWorkingHours() {
         this.isSaving = true;
+        this.displayMessage = false;
 
         this.saveNonWorkHours.emit(this.nonWorkHours);
         this.nonWorkHours.forEach(slot => {
