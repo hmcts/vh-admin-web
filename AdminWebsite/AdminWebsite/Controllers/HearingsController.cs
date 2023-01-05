@@ -122,22 +122,7 @@ namespace AdminWebsite.Controllers
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
 
-            List<DateTime> hearingDates;
-            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
-            {
-                hearingDates = hearingRequest.HearingDates.Skip(1).ToList();
-            }
-            else
-            {
-                if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
-                {
-                    hearingDates = DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
-                }
-                else
-                {
-                    hearingDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
-                }
-            }
+            var hearingDates = GetDatesForClonedHearings(hearingRequest);
             
             if (!hearingDates.Any())
             {
@@ -170,6 +155,21 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private static List<DateTime> GetDatesForClonedHearings(MultiHearingRequest hearingRequest)
+        {
+            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
+            {
+                return hearingRequest.HearingDates.Skip(1).ToList();
+            }
+            
+            if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
+            {
+                return DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
+            }
+            
+            return DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
         }
 
         /// <summary>
