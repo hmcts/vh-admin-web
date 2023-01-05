@@ -94,48 +94,48 @@
               (blur)="onEndDateBlur()"
             />
           </div>
-            <div class="govuk-grid-column-one-half">
-                <label class="govuk-label" for="user-list">Allocated CSO</label>
-                <ng-select
-                    id="user-list"
-                    class="custom"
-                    labelForId="users"
-                    [items]="users"
-                    bindLabel="full_name"
-                    bindValue="id"
-                    formControlName="selectedUserIds"
-                    [placeholder]="'Select Users'"
-                    [multiple]="true"
-                    [attr.aria-label]="'User list'"
-                    [closeOnSelect]="false"
-                    [clearSearchOnAdd]="true"
-                    [selectOnTab]="true"
-                >
-                    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                        <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />
-                        {{ getFullName(item) }}
-                    </ng-template>
-                </ng-select>
-            </div>
-        </div>
-          <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">
-              <div class="govuk-grid-column-one-half">
-                  <div *ngIf="ejudFeatureFlag" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                      <div class="govuk-checkboxes__item">
-                          <input class="govuk-checkboxes__input" id="noJudge" name="noJudge" type="checkbox" formControlName="noJudge" />
-                          <label class="govuk-label govuk-checkboxes__label" for="noJudge"> Hearings with no judge </label>
-                      </div>
-                  </div>
-              </div>
-              <div class="govuk-grid-column-one-half vh-right-align">
-                  <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                      <div class="govuk-checkboxes__item">
-                          <input class="govuk-checkboxes__input" id="noAllocated" name="noAllocated" type="checkbox" formControlName="noAllocated" />
-                          <label class="govuk-label govuk-checkboxes__label" for="noAllocated"> Unallocated hearings </label>
-                      </div>
-                  </div>
-              </div>
+          <div class="govuk-grid-column-one-half">
+            <label class="govuk-label" for="user-list">Allocated CSO</label>
+            <ng-select
+              id="user-list"
+              class="custom"
+              labelForId="users"
+              [items]="users"
+              bindLabel="full_name"
+              bindValue="id"
+              formControlName="selectedUserIds"
+              [placeholder]="'Select Users'"
+              [multiple]="true"
+              [attr.aria-label]="'User list'"
+              [closeOnSelect]="false"
+              [clearSearchOnAdd]="true"
+              [selectOnTab]="true"
+            >
+              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />
+                {{ getFullName(item) }}
+              </ng-template>
+            </ng-select>
           </div>
+        </div>
+        <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">
+          <div class="govuk-grid-column-one-half">
+            <div *ngIf="ejudFeatureFlag" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="noJudge" name="noJudge" type="checkbox" formControlName="noJudge" />
+                <label class="govuk-label govuk-checkboxes__label" for="noJudge"> Hearings with no judge </label>
+              </div>
+            </div>
+          </div>
+          <div class="govuk-grid-column-one-half vh-right-align">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="noAllocated" name="noAllocated" type="checkbox" formControlName="noAllocated" />
+                <label class="govuk-label govuk-checkboxes__label" for="noAllocated"> Unallocated hearings </label>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-3 govuk-!-margin-right-6">
           <div class="govuk-grid-column-one-half">
             <button

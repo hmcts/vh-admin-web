@@ -8,11 +8,7 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import {
-    BookingsResponse,
-    HearingTypeResponse,
-    HearingVenueResponse, JusticeUserResponse
-} from '../../services/clients/api-client';
+import { BookingsResponse, HearingTypeResponse, HearingVenueResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -251,7 +247,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
             this.bookingPersistService.noJugdeInHearings = noJudge ?? false;
-            this.bookingPersistService.noAllocatedHearings = (noAllocated) ? noAllocated : false;
+            this.bookingPersistService.noAllocatedHearings = noAllocated ? noAllocated : false;
             this.bookingPersistService.selectedUsers = selectedUserIds;
             this.cursor = undefined;
             this.clearSelectedRow();
@@ -462,8 +458,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
 
         return startDate > endDate;
-
-
     }
 
     isStartDateInPast() {
@@ -476,8 +470,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const todayDate = moment().startOf('day').toDate();
 
         return startDate < todayDate;
-
-
     }
 
     isEndDateInPast() {
@@ -490,8 +482,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const todayDate = moment().startOf('day').toDate();
 
         return endDate < todayDate;
-
-
     }
 
     formatDateToIsoString(date?: Date) {
@@ -508,6 +498,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     getFullName(item: JusticeUserResponse) {
-        return item.first_name + " " + item.lastname;
+        return item.first_name + ' ' + item.lastname;
     }
 }

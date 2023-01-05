@@ -25,7 +25,9 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    HearingRole, UserProfileResponse, JusticeUserResponse
+    HearingRole,
+    UserProfileResponse,
+    JusticeUserResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -113,8 +115,7 @@ export class VideoHearingsService {
     }
 
     getUsers(): Observable<JusticeUserResponse[]> {
-        var tmp = this.bhClient.getUserList();
-        return tmp;
+        return this.bhClient.getUserList();
     }
 
     getCurrentRequest(): HearingModel {
