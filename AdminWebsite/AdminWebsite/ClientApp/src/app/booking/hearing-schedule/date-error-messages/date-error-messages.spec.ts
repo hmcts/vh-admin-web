@@ -9,7 +9,6 @@ describe('Date error message test suite', () => {
     let debugElement: DebugElement;
 
     const pastErrorId = '#hearingDate-past-error';
-    const weekendErrorId = '#hearingDate-weekend-error';
     const requiredErrorId = '#hearingDate-required-error';
 
     beforeEach(
@@ -33,12 +32,6 @@ describe('Date error message test suite', () => {
         expect(debugElement.query(By.css(requiredErrorId))).toBeTruthy();
     });
 
-    it('should show Please enter a working day (Monday to Friday) error message when weekend date is selected', () => {
-        component.weekend = true;
-        fixture.detectChanges();
-        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
-    });
-
     it('should show Select a date in the future error message when past date is selected', () => {
         component.pastDate = true;
         fixture.detectChanges();
@@ -46,17 +39,8 @@ describe('Date error message test suite', () => {
     });
 
     it('should not show any error messages when all the properties are false', () => {
-        component.required = component.pastDate = component.weekend = false;
+        component.required = component.pastDate = false;
         expect(debugElement.query(By.css(requiredErrorId))).toBeFalsy();
-        expect(debugElement.query(By.css(weekendErrorId))).toBeFalsy();
         expect(debugElement.query(By.css(pastErrorId))).toBeFalsy();
-    });
-
-    it('should show both past and weekend messages when the selected date was in weekend of past', () => {
-        component.required = false;
-        component.pastDate = component.weekend = true;
-        fixture.detectChanges();
-        expect(debugElement.query(By.css(weekendErrorId))).toBeTruthy();
-        expect(debugElement.query(By.css(pastErrorId))).toBeTruthy();
     });
 });

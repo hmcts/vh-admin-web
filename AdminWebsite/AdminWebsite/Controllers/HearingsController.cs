@@ -122,8 +122,23 @@ namespace AdminWebsite.Controllers
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
 
-            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
-
+            List<DateTime> hearingDates;
+            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
+            {
+                hearingDates = hearingRequest.HearingDates.Skip(1).ToList();
+            }
+            else
+            {
+                if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
+                {
+                    hearingDates = DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
+                }
+                else
+                {
+                    hearingDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
+                }
+            }
+            
             if (!hearingDates.Any())
             {
                 _logger.LogWarning("No working dates provided to clone to");
