@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -575,23 +576,24 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
-        [HttpGet("/unallocated")]
+        
+        [HttpGet("unallocated")]
         [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
-        [ProducesResponseType(typeof(List<HearingDetailsResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(UnallocatedHearingsForVHOResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetUnallocatedHearings()
         {
             try
             {
-                return Ok(await _bookingsApiClient.GetUnallocatedHearingsAsync());
+                var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
+                return Ok(UnallocatedHearingsForVHOMapper.MapFrom(unallocatedHearings.ToList()));
             }
             catch(BookingsApiException ex)
             {
                 switch (ex.StatusCode)
                 {
                     case (int)HttpStatusCode.NotFound:
-                        return NoContent();
+                        return NotFound();
                     default:
                         throw;
                 }
