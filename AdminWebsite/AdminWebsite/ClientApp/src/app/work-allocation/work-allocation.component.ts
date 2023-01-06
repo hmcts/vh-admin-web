@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import {
     BHClient,
     UploadWorkHoursRequest,
@@ -9,15 +9,15 @@ import {
 import { UserIdentityService } from '../services/user-identity.service';
 import { convertToNumberArray } from '../common/helpers/array-helper';
 import { FileType } from '../common/model/file-type';
-import { VideoHearingsService } from '../services/video-hearings.service';
 import groupBy from 'lodash.groupby';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-work-allocation',
     templateUrl: './work-allocation.component.html',
     styleUrls: ['./work-allocation.component.scss']
 })
-export class WorkAllocationComponent {
+export class WorkAllocationComponent implements OnInit {
     public isWorkingHoursUploadComplete = false;
     public isNonWorkingHoursUploadComplete = false;
     public isVhTeamLeader = false;
@@ -44,10 +44,20 @@ export class WorkAllocationComponent {
     maxFileUploadSize = 200000;
     showSaveConfirmation = false;
     dataChangedBroadcast = new EventEmitter<boolean>();
+    allocateHearingsDetailOpen: boolean;
 
-    constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService, private videoService: VideoHearingsService) {
+    constructor(private bhClient: BHClient, private userIdentityService: UserIdentityService, private route: ActivatedRoute) {
         this.userIdentityService.getUserInformation().subscribe((userProfileResponse: UserProfileResponse) => {
             this.isVhTeamLeader = userProfileResponse.is_vh_team_leader;
+        });
+    }
+
+    ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            const unallocated = params['unallocated'];
+            if (unallocated) {
+                this.searchUnallocatedHearings(unallocated);
+            }
         });
     }
 
@@ -387,5 +397,18 @@ export class WorkAllocationComponent {
     cancelEditing() {
         this.showSaveConfirmation = false;
         this.dataChangedBroadcast.emit(true);
+    }
+
+    searchUnallocatedHearings(search: string) {
+        this.allocateHearingsDetailOpen = true;
+        switch (search) {
+            // TBD:  once allocate hearings VIH-9366 implemented with hearing date range. Set date range and invoke search
+            case 'today':
+            case 'tomorrow':
+            case 'week':
+            case 'month':
+            default:
+                break;
+        }
     }
 }

@@ -165,7 +165,7 @@
       </div>
     </div>
   </details>
-  <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
+  <details [attr.open]="allocateHearingsDetailOpen ? '' : null" *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
       <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
     </summary>

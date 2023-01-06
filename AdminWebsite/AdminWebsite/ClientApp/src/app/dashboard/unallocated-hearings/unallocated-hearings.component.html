@@ -1,0 +1,29 @@
+<div class="govuk-panel" *ngIf="isLoaded && isVhTeamLeader">
+  <h1 class="govuk-heading-s">Upcoming unallocated hearings:</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'today' }">
+        {{ unallocatedHearings.today }}</a
+      >
+      <p>Today</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'tomorrow' }">
+        {{ unallocatedHearings.tomorrow }}</a
+      >
+      <p>Tomorrow</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'week' }">
+        {{ unallocatedHearings.this_week }}</a
+      >
+      <p>This Week</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'month' }">
+        {{ unallocatedHearings.this_month }}</a
+      >
+      <p>This Month</p>
+    </div>
+  </div>
+</div>

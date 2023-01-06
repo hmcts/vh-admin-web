@@ -46,6 +46,7 @@ import { VhoSearchComponent } from './work-allocation/edit-work-hours/vho-search
 import { VhoWorkHoursTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 import { VhoWorkHoursNonAvailabilityTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 import { ConfirmDeleteHoursPopupComponent } from './popups/confirm-delete-popup/confirm-delete-popup.component';
+import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -66,7 +67,8 @@ export function loadConfig(configService: ConfigService) {
         VhoSearchComponent,
         VhoWorkHoursTableComponent,
         VhoWorkHoursNonAvailabilityTableComponent,
-        ConfirmDeleteHoursPopupComponent
+        ConfirmDeleteHoursPopupComponent,
+        UnallocatedHearingsComponent
     ],
     imports: [
         MomentModule,

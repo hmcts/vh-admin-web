@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -588,6 +589,29 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
+            }
+        }
+        
+        [HttpGet("unallocated")]
+        [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
+        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetUnallocatedHearings()
+        {
+            try
+            {
+                var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
+                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
+                    default:
+                        throw;
+                }
             }
         }
     }
