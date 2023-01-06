@@ -36,6 +36,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value) {
+        this.hideMessage();
         if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
@@ -110,7 +111,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     saveNonWorkingHours() {
         this.isSaving = true;
-        this.displayMessage = false;
+        this.hideMessage();
 
         this.saveNonWorkHours.emit(this.nonWorkHours);
         this.nonWorkHours.forEach(slot => {
@@ -420,7 +421,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     fadeOutLink() {
         setTimeout(() => {
-            this.displayMessage = false;
+            this.hideMessage();
         }, this.timeMessageDuration);
     }
 
@@ -471,5 +472,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     handleContinue() {
         this.showSaveConfirmation = false;
+    }
+
+    hideMessage() {
+        this.displayMessage = false;
     }
 }
