@@ -497,6 +497,47 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Exactly(1));
         }
 
+        [Test]
+        public async Task Should_clone_hearings_using_hearing_dates()
+        {
+            var hearingDates = new List<DateTime>
+            {
+                new DateTime(2023, 1, 6),
+                new DateTime(2023, 1, 7),
+                new DateTime(2023, 1, 8)
+            };
+            var request = new MultiHearingRequest { HearingDates = hearingDates };
+            var groupedHearings = new List<HearingDetailsResponse>
+            {
+                new()
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                }
+            };
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+
+            var expectedDates = new List<DateTime>
+            {
+                new DateTime(2023, 1, 6),
+                new DateTime(2023, 1, 7),
+                new DateTime(2023, 1, 8)
+            };
+            
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), 
+                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                Times.Exactly(1));
+        }
+
         private static MultiHearingRequest GetMultiHearingRequest()
         {
             var startDate = new DateTime(2020, 10, 1);
