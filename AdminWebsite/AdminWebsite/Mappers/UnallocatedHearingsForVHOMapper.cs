@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,17 +7,16 @@ using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Mappers;
 
-public class UnallocatedHearingsForVHOMapper
+public static class UnallocatedHearingsForVhoMapper
 {
     private static readonly Calendar Calendar = DateTimeFormatInfo.CurrentInfo.Calendar;
-
-    public static UnallocatedHearingsForVHOResponse MapFrom(List<HearingDetailsResponse> unallocatedHearings)
+    public static UnallocatedHearingsForVhoResponse MapFrom(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
     {
-        return new UnallocatedHearingsForVHOResponse
+        return new UnallocatedHearingsForVhoResponse
         {
-            Today = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == DateTime.Today),
-            Tomorrow = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == DateTime.Today.AddDays(1)),
-            ThisWeek = unallocatedHearings.Count(e => GetWeekOfYear(e.ScheduledDateTime.Date) == GetWeekOfYear(DateTime.Today)),
+            Today = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == today),
+            Tomorrow = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == today.AddDays(1)),
+            ThisWeek = unallocatedHearings.Count(e => GetWeekOfYear(e.ScheduledDateTime.Date) == GetWeekOfYear(today)),
             ThisMonth = unallocatedHearings.Count(e 
                 => e.ScheduledDateTime.Month == DateTime.Today.Month 
                 && e.ScheduledDateTime.Year == DateTime.Today.Year)

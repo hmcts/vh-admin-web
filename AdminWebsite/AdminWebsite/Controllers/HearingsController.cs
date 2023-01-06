@@ -579,14 +579,14 @@ namespace AdminWebsite.Controllers
         
         [HttpGet("unallocated")]
         [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
-        [ProducesResponseType(typeof(UnallocatedHearingsForVHOResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetUnallocatedHearings()
         {
             try
             {
                 var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
-                return Ok(UnallocatedHearingsForVHOMapper.MapFrom(unallocatedHearings.ToList()));
+                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
             }
             catch(BookingsApiException ex)
             {

@@ -1,6 +1,6 @@
 namespace AdminWebsite.Contracts.Responses;
 
-public class UnallocatedHearingsForVHOResponse
+public class UnallocatedHearingsForVhoResponse
 {
     public int Today { get; set; }
     public int Tomorrow { get; set; }
