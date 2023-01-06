@@ -669,7 +669,13 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
         });
-
+        it('it should reset the start date and end date ', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: null, enfDate: null });
+            // act
+            component.resetStartDateAndEndDate();
+            // assert
+            expect(component.nonWorkHours.values).toBe(null);
         it('no dates selected, filter is click', () => {
             // arrange
             component.filterForm.setValue({ startDate: '', endDate: '' });
