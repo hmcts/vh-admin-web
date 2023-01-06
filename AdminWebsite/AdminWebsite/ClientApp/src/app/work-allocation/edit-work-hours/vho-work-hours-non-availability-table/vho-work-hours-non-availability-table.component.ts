@@ -468,7 +468,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.showSaveConfirmation = true;
         }
     }
-
     handleContinue() {
         this.showSaveConfirmation = false;
     }
