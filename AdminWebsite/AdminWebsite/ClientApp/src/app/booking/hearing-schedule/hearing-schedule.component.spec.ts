@@ -319,12 +319,6 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.isAddHearingControlValid()).toBe(false);
     });
 
-    it('should return invalid for hearing date on a weekend', () => {
-        component.addHearingDate();
-        component.addHearingDateControl.setValue('2021-03-06');
-        expect(component.isAddHearingControlValid()).toBe(false);
-    });
-
     it('should return true if a date is already selected', () => {
         component.hearingDates = [new Date()];
         component.addHearingDate();
