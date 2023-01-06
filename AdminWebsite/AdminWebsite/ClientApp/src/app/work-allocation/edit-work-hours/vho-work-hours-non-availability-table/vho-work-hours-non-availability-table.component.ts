@@ -36,6 +36,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value) {
+        this.hideMessage();
         if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
@@ -471,5 +472,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     handleContinue() {
         this.showSaveConfirmation = false;
+    }
+
+    hideMessage() {
+        this.displayMessage = false;
     }
 }
