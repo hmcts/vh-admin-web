@@ -402,29 +402,12 @@ export class WorkAllocationComponent implements OnInit {
     searchUnallocatedHearings(search: string) {
         this.allocateHearingsDetailOpen = true;
         switch (search) {
+            // TBD:  once allocate hearings VIH-9366 implemented with hearing date range. Set date range and invoke search
             case 'today':
-                {
-                    // TBD:  once allocate hearings VIH-9366 implemented with hearing date range
-                    //      Set date range and invoke search
-                }
-                break;
             case 'tomorrow':
-                {
-                    // TBD:  once allocate hearings VIH-9366 implemented with hearing date range
-                    //      Set date range and invoke search
-                }
-                break;
             case 'week':
-                {
-                    // TBD:  once allocate hearings VIH-9366 implemented with hearing date range
-                    //      Set date range and invoke search
-                }
-                break;
             case 'month':
-                {
-                    // TBD:  once allocate hearings VIH-9366 implemented with hearing date range
-                    //      Set date range and invoke search
-                }
+            default:
                 break;
         }
     }
