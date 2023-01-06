@@ -111,7 +111,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     saveNonWorkingHours() {
         this.isSaving = true;
-        this.displayMessage = false;
+        this.hideMessage();
 
         this.saveNonWorkHours.emit(this.nonWorkHours);
         this.nonWorkHours.forEach(slot => {
@@ -421,7 +421,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     fadeOutLink() {
         setTimeout(() => {
-            this.displayMessage = false;
+            this.hideMessage();
         }, this.timeMessageDuration);
     }
 
