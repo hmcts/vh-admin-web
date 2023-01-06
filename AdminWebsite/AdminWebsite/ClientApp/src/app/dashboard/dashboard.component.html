@@ -1,4 +1,4 @@
-<app-unallocated-hearings></app-unallocated-hearings>
+<app-unallocated-hearings *ngIf="showWorkAllocation"></app-unallocated-hearings>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-third" *ngIf="showBooking">
     <a class="vhpanel-link" [routerLink]="['/book-hearing']">
