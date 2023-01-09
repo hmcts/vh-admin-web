@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BHClient, UserProfileResponse, UnallocatedHearingsForVhoResponse } from '../../services/clients/api-client';
+import { BHClient, UnallocatedHearingsForVHOResponse, UserProfileResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 
