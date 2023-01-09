@@ -7,6 +7,8 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
 import { FileType } from '../common/model/file-type';
+import { ActivatedRoute } from '@angular/router';
+import { ActivatedRouteStub } from '../testing/stubs/activated-route-stub';
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
@@ -14,6 +16,8 @@ describe('WorkAllocationComponent', () => {
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
+    let activatedRoute: ActivatedRouteStub;
+
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
@@ -25,13 +29,15 @@ describe('WorkAllocationComponent', () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+        activatedRoute = new ActivatedRouteStub();
 
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
             declarations: [WorkAllocationComponent],
             providers: [
                 { provide: BHClient, useValue: bHClientSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy }
+                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+                { provide: ActivatedRoute, useValue: activatedRoute }
             ]
         }).compileComponents();
     });
@@ -41,6 +47,37 @@ describe('WorkAllocationComponent', () => {
         component = fixture.componentInstance;
         component.dataChangedBroadcast = jasmine.createSpyObj('dataChangedBroadcast', ['emit']);
         fixture.detectChanges();
+    });
+
+    describe('ngOnInit', () => {
+        it('should be called with unallocated "today" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'today' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('today');
+        });
+        it('should be called with unallocated "tomorrow" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'tomorrow' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('tomorrow');
+        });
+        it('should be called with unallocated "week" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'week' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('week');
+        });
+        it('should be called with unallocated "month" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'month' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('month');
+        });
     });
 
     describe('rendering', () => {
@@ -89,6 +126,20 @@ Allocate hearings`);
                     '  Error: Row 3, Entry 9 - Minutes value (-1) is not within 0-59' +
                     '  Error: Row 3, Entry 10-11 - End time is blank'
             );
+        });
+
+        it('should show file upload duplicate user errors', () => {
+            component.readWorkAvailability(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                    ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                    'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                    'first.second@xyz.com,10:00,17:00,11:00,17:30,12:30,18:00,13:00,18:00,14:00,17:00,,,,\n' +
+                    'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,'
+            );
+            fixture.detectChanges();
+
+            const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
+            expect(error).toContain('Error: first.second@xyz.com - Multiple entries for user. Only one row per user required');
         });
 
         it('should show non-working hours file upload max size error', () => {

@@ -9,7 +9,7 @@
     "test": "ng test --code-coverage",
     "test-once": "ng test --watch=false --code-coverage",
     "test-once-ci": "ng test --browsers=ChromeHeadlessNoPrompt --watch=false --code-coverage",
-    "lint": "ng lint && npm run prettify",
+    "lint": "ng lint --fix && npm run prettify-fix",
     "prettify": "run-script-os",
     "prettify:nix": "npx prettier -c 'src/app/**/*.*'",
     "prettify:default": "npx prettier -c \"src\\app\\**\\*.*\"",
@@ -18,7 +18,7 @@
     "prettify-fix:default": "npx prettier --write \"src\\app\\**\\*.*\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "update-api-client": "nswag run /runtime:NetCore31"
+    "update-api-client": "nswag run /runtime:Net60 & run prettify"
   },
   "private": true,
   "dependencies": {

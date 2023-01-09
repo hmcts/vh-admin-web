@@ -1,7 +1,8 @@
+<h1 class="govuk-heading-l">Manage work allocation</h1>
 <div class="govuk-!-margin-top-7">
   <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="citizen-contact-details"> Upload working hours / non-availability </span>
+      <span class="govuk-details__summary-text" id="upload-availability"> Upload working hours / non-availability </span>
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-5">
       <div
@@ -24,7 +25,9 @@
           <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload"> Select .CSV file to upload </label>
           <input
             (change)="handleFileInput($event.target.files[0], 'UploadWorkingHours')"
+            (click)="workingHoursFileUpload.value = null"
             class="govuk-file-upload"
+            #workingHoursFileUpload
             id="working-hours-file-upload"
             name="working-hours-file-upload"
             type="file"
@@ -115,7 +118,9 @@
           <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
           <input
             (change)="handleFileInput($event.target.files[0], 'UploadNonWorkingHours')"
+            (click)="nonWorkingHoursFileUpload.value = null"
             class="govuk-file-upload"
+            #nonWorkingHoursFileUpload
             id="non-availability-hours-file-upload"
             name="non-availability-hours-file-upload"
             type="file"
@@ -160,9 +165,9 @@
       </div>
     </div>
   </details>
-  <details *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
+  <details [attr.open]="allocateHearingsDetailOpen ? '' : null" *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="citizen-contact-details"> Allocate hearings </span>
+      <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
     </summary>
     <div class="govuk-form-group govuk-!-margin-left-6">
       <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">Search hearings</p>
@@ -215,7 +220,7 @@
         <thead class="govuk-table__head">
           <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">
-              <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true" />
+              <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true" aria-label="Select all hearings" />
             </th>
             <th scope="col" class="govuk-table__header">Hearing date</th>
             <th scope="col" class="govuk-table__header">Start time</th>

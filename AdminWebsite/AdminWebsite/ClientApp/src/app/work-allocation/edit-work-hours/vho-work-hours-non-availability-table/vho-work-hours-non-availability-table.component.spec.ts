@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { BHClient, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
 import { ConfirmDeleteHoursPopupComponent } from '../../../popups/confirm-delete-popup/confirm-delete-popup.component';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
-import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { HoursType } from '../../../common/model/hours-type';
 import { FormBuilder } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 
@@ -43,6 +41,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         fixture = TestBed.createComponent(VhoWorkHoursNonAvailabilityTableComponent);
         component = fixture.componentInstance;
         component.saveNonWorkHoursCompleted$ = new Subject<boolean>();
+        videoServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
         fixture.detectChanges();
     });
 
@@ -112,6 +111,13 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
         fixture.detectChanges();
         expect(component.nonWorkHours).toBe(null);
+    });
+
+    it('check results input hides existing messages', () => {
+        component.displayMessage = true;
+        component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
+        fixture.detectChanges();
+        expect(component.displayMessage).toBe(false);
     });
 
     it('check remove slot from result when confirm deletion', () => {
@@ -227,7 +233,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         });
 
         describe('save button clicked', () => {
-            it('should emit save event', () => {
+            it('should save correctly', () => {
                 component.switchToEditMode();
                 fixture.detectChanges();
                 spyOn(component.saveNonWorkHours, 'emit');
@@ -239,6 +245,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(component.isSaving).toBe(true);
                 expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(1);
                 expect(component.saveNonWorkHours.emit).toHaveBeenCalledWith(component.nonWorkHours);
+                expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
             });
         });
 
