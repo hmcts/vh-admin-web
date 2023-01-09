@@ -26,7 +26,8 @@ import {
     BookingsResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    HearingTypeResponse, JusticeUserResponse
+    HearingTypeResponse,
+    JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
