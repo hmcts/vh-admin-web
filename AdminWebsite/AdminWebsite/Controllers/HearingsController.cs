@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -122,8 +123,8 @@ namespace AdminWebsite.Controllers
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
 
-            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
-
+            var hearingDates = GetDatesForClonedHearings(hearingRequest);
+            
             if (!hearingDates.Any())
             {
                 _logger.LogWarning("No working dates provided to clone to");
@@ -155,6 +156,21 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private static List<DateTime> GetDatesForClonedHearings(MultiHearingRequest hearingRequest)
+        {
+            if (hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any())
+            {
+                return hearingRequest.HearingDates.Skip(1).ToList();
+            }
+            
+            if (DateListMapper.IsWeekend(hearingRequest.StartDate) || DateListMapper.IsWeekend(hearingRequest.EndDate))
+            {
+                return DateListMapper.GetListOfDates(hearingRequest.StartDate, hearingRequest.EndDate);
+            }
+            
+            return DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
         }
 
         /// <summary>
@@ -573,6 +589,29 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
+            }
+        }
+        
+        [HttpGet("unallocated")]
+        [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
+        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetUnallocatedHearings()
+        {
+            try
+            {
+                var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
+                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
+                    default:
+                        throw;
+                }
             }
         }
     }

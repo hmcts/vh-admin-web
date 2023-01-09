@@ -7,6 +7,8 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
 import { FileType } from '../common/model/file-type';
+import { ActivatedRoute } from '@angular/router';
+import { ActivatedRouteStub } from '../testing/stubs/activated-route-stub';
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
@@ -14,6 +16,8 @@ describe('WorkAllocationComponent', () => {
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
+    let activatedRoute: ActivatedRouteStub;
+
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
         of({
@@ -25,13 +29,15 @@ describe('WorkAllocationComponent', () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours']);
         bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
         bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+        activatedRoute = new ActivatedRouteStub();
 
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
             declarations: [WorkAllocationComponent],
             providers: [
                 { provide: BHClient, useValue: bHClientSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy }
+                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+                { provide: ActivatedRoute, useValue: activatedRoute }
             ]
         }).compileComponents();
     });
@@ -41,6 +47,37 @@ describe('WorkAllocationComponent', () => {
         component = fixture.componentInstance;
         component.dataChangedBroadcast = jasmine.createSpyObj('dataChangedBroadcast', ['emit']);
         fixture.detectChanges();
+    });
+
+    describe('ngOnInit', () => {
+        it('should be called with unallocated "today" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'today' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('today');
+        });
+        it('should be called with unallocated "tomorrow" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'tomorrow' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('tomorrow');
+        });
+        it('should be called with unallocated "week" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'week' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('week');
+        });
+        it('should be called with unallocated "month" parameter', () => {
+            activatedRoute.testParams = { unallocated: 'month' };
+            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(componentSpy).toHaveBeenCalledWith('month');
+        });
     });
 
     describe('rendering', () => {
