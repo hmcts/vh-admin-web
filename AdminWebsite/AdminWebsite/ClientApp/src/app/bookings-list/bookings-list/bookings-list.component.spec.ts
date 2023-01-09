@@ -26,7 +26,7 @@ import {
     BookingsResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    HearingTypeResponse
+    HearingTypeResponse, JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -49,7 +49,8 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'cancelRequest',
     'getHearingById',
     'mapHearingDetailsResponseToHearingModel',
-    'getHearingTypes'
+    'getHearingTypes',
+    'getUsers'
 ]);
 let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
@@ -565,6 +566,7 @@ describe('BookingsListComponent', () => {
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
+            videoHearingServiceSpy.getUsers.and.returnValue(of(new Array<JusticeUserResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new ReplaySubject();
             launchDarklyServiceSpy.flagChange.next({ admin_search: true });
@@ -611,10 +613,12 @@ describe('BookingsListComponent', () => {
         component.searchForm.controls['caseNumber'].setValue('');
         component.searchForm.controls['selectedVenueIds'].setValue([]);
         component.searchForm.controls['selectedCaseTypes'].setValue([]);
+        component.searchForm.controls['selectedUserIds'].setValue([]);
         component.searchForm.controls['startDate'].setValue(null);
         component.searchForm.controls['endDate'].setValue(null);
         component.searchForm.controls['participantLastName'].setValue('');
         component.searchForm.controls['noJudge'].setValue(false);
+        component.searchForm.controls['noAllocated'].setValue(false);
     }
 
     it('should create bookings list component', () => {
@@ -663,10 +667,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -689,10 +695,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.endDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -715,10 +723,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
-            moment(bookingPersistService.startDate).startOf('day').toDate(),
-            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.selectedUsers,
+            moment(bookingPersistService.endDate).startOf('day').toDate(),
+            moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -735,10 +745,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
-            moment(bookingPersistService.startDate).startOf('day').toDate(),
-            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.selectedUsers,
+            moment(bookingPersistService.endDate).startOf('day').toDate(),
+            moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
