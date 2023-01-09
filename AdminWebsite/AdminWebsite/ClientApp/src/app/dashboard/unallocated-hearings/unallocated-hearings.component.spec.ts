@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UnallocatedHearingsComponent } from './unallocated-hearings.component';
-import { BHClient, UnallocatedHearingsForVHOResponse } from '../../services/clients/api-client';
+import { BHClient, UnallocatedHearingsForVhoResponse } from '../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
@@ -12,7 +12,7 @@ describe('UnallocatedHearingsComponent', () => {
     let bHClientSpy: jasmine.SpyObj<BHClient>;
     let logger: jasmine.SpyObj<Logger>;
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    const unallocatedHearings = new UnallocatedHearingsForVHOResponse({
+    const unallocatedHearings = new UnallocatedHearingsForVhoResponse({
         today: 1,
         tomorrow: 2,
         this_week: 3,
@@ -60,7 +60,7 @@ describe('UnallocatedHearingsComponent', () => {
             bHClientSpy.getUnallocatedHearings.and.returnValue(throwError(new Error()));
             component.ngOnInit();
             expect(logger.error).toHaveBeenCalled();
-            expect(component.unallocatedHearings).toEqual(new UnallocatedHearingsForVHOResponse());
+            expect(component.unallocatedHearings).toEqual(new UnallocatedHearingsForVhoResponse());
             expect(component.isLoaded).toBe(true);
         });
     });

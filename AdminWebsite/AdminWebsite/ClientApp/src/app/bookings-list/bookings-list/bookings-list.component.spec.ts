@@ -725,8 +725,8 @@ describe('BookingsListComponent', () => {
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
             bookingPersistService.selectedUsers,
-            moment(bookingPersistService.endDate).startOf('day').toDate(),
-            moment(bookingPersistService.endDate).endOf('day').toDate(),
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
             bookingPersistService.noJugdeInHearings,
             bookingPersistService.noAllocatedHearings
@@ -747,8 +747,8 @@ describe('BookingsListComponent', () => {
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
             bookingPersistService.selectedUsers,
-            moment(bookingPersistService.endDate).startOf('day').toDate(),
-            moment(bookingPersistService.endDate).endOf('day').toDate(),
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
             bookingPersistService.noJugdeInHearings,
             bookingPersistService.noAllocatedHearings
