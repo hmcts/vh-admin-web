@@ -94,7 +94,7 @@
               (blur)="onEndDateBlur()"
             />
           </div>
-          <div class="govuk-grid-column-one-half">
+          <div class="govuk-grid-column-one-half" *ngIf="showWorkAllocation">
             <label class="govuk-label" for="user-list">Allocated CSO</label>
             <ng-select
               id="user-list"
@@ -110,6 +110,7 @@
               [closeOnSelect]="false"
               [clearSearchOnAdd]="true"
               [selectOnTab]="true"
+              (change)="onSelectUserChange()"
             >
               <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
                 <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />
@@ -127,10 +128,17 @@
               </div>
             </div>
           </div>
-          <div class="govuk-grid-column-one-half vh-right-align">
+          <div class="govuk-grid-column-one-half vh-right-align" *ngIf="showWorkAllocation">
             <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="noAllocated" name="noAllocated" type="checkbox" formControlName="noAllocated" />
+                <input
+                  class="govuk-checkboxes__input"
+                  id="noAllocated"
+                  name="noAllocated"
+                  type="checkbox"
+                  formControlName="noAllocated"
+                  (change)="onChangeNoAllocated()"
+                />
                 <label class="govuk-label govuk-checkboxes__label" for="noAllocated"> Unallocated hearings </label>
               </div>
             </div>

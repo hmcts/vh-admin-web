@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -52,6 +52,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     showSearch = false;
     today = new Date();
     ejudFeatureFlag: boolean;
+    showWorkAllocation = false;
+    vhoWorkAllocationFeature = false;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -70,6 +72,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
             if (value) {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
+                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
                 console.log('Feature toggle is', this.enableSearchFeature);
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
@@ -90,7 +93,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
-
+        this.showWorkAllocation = this.vhoWorkAllocationFeature;
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
             this.cursor = this.bookingPersistService.nextCursor;
@@ -499,5 +502,23 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     getFullName(item: JusticeUserResponse) {
         return item.first_name + ' ' + item.lastname;
+    }
+
+    onSelectUserChange() {
+        const selectedUserIds = this.searchForm.value['selectedUserIds'];
+        if (selectedUserIds.length > 0) {
+            this.searchForm.controls['noAllocated'].disable();
+        } else {
+            this.searchForm.controls['noAllocated'].enable();
+        }
+    }
+
+    onChangeNoAllocated() {
+        const noAllocated = this.searchForm.value['noAllocated'];
+        if (noAllocated) {
+            this.searchForm.controls['selectedUserIds'].disable();
+        } else {
+            this.searchForm.controls['selectedUserIds'].enable();
+        }
     }
 }
