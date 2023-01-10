@@ -136,6 +136,30 @@ describe('BookingsPersistService', () => {
         });
     });
 
+    describe('#noAllocated', () => {
+        it('should set noAllocatedHearings', () => {
+            service.noAllocatedHearings = true;
+            expect(service.noAllocatedHearings).toEqual(true);
+        });
+
+        it('should handle false noAllocatedHearings', () => {
+            service.noAllocatedHearings = false;
+            expect(service.noAllocatedHearings).toBeFalsy();
+        });
+    });
+
+    describe('#selectedUsers', () => {
+        it('should set selectedUsers', () => {
+            service.selectedUsers = ['guid1', 'guid2'];
+            expect(service.selectedUsers.length).toBe(2);
+        });
+
+        it('should handle empty selectedUsers', () => {
+            service.selectedUsers = [];
+            expect(service.selectedUsers).toEqual([]);
+        });
+    });
+
     describe('#showSearch', () => {
         it('should set showSearch when false', () => {
             const showSearch = false;

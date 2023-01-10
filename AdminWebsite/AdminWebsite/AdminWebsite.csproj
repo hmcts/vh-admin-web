@@ -32,7 +32,7 @@
   </PropertyGroup>
   <PropertyGroup><ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles></PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="BookingsApi.Client" Version="1.41.6-pullrequest0560-0007" />
+	<PackageReference Include="BookingsApi.Client" Version="1.41.6" />
 	<PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
 	<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />

@@ -58,7 +58,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList()
         {
-            ICollection<JusticeUserResponse> justiceUserList = null;
+            ICollection<JusticeUserResponse> justiceUserList = new List<JusticeUserResponse>();
             
             try
             {
