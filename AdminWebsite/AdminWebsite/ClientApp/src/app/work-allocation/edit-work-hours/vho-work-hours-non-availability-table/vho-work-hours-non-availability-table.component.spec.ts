@@ -676,6 +676,12 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
         });
+        it('should check non work hours are empty', () => {
+            component.nonWorkHours =  [new EditVhoNonAvailabilityWorkHoursModel()];
+            let temp = component.nonWorkHours;
+            component.checkVhoHasWorkHours();
+            expect(component.checkVhoHasWorkHours()).toBe(true);
+        });
         it('it should reset the start date and end date ', () => {
             // arrange
             let startD = null;

@@ -88,7 +88,7 @@
     </div>
   </div>
   <button
-    *ngIf="!isEditing; else editingButtonsBlock"
+    *ngIf="!isEditing && checkVhoHasWorkHours(); else editingButtonsBlock"
     id="edit-individual-non-work-hours-button"
     class="govuk-button"
     data-module="govuk-button"
@@ -97,7 +97,7 @@
     Edit
   </button>
   <ng-template #editingButtonsBlock>
-    <div class="govuk-button-group">
+    <div class="govuk-button-group" *ngif="checkVhoHasWorkHours()">
       <button
         id="save-individual-non-work-hours-button"
         class="govuk-button govuk-!-margin-right-6"

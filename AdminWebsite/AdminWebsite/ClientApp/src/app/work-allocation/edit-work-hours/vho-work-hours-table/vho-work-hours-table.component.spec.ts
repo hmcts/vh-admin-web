@@ -47,6 +47,12 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(workHoursTable).toBeNull();
         });
+        it('should check work hours are empty', () => {
+            component.workHours = [new VhoWorkHoursResponse()];
+            let temp = component.workHours;
+            component.checkVhoHasWorkHours();
+            expect(component.checkVhoHasWorkHours()).toBe(true);
+        });
 
         it('should switch to edit mode when edit button is clicked', () => {
             component.isEditing = false;
