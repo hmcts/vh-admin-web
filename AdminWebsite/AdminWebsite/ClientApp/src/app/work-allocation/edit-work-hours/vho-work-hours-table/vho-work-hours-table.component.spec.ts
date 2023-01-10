@@ -49,7 +49,7 @@ describe('VhoWorkHoursTableComponent', () => {
         });
         it('should check work hours are empty', () => {
             component.workHours = [new VhoWorkHoursResponse()];
-            let temp = component.workHours;
+            const temp = component.workHours;
             component.checkVhoHasWorkHours();
             expect(component.checkVhoHasWorkHours()).toBe(true);
         });

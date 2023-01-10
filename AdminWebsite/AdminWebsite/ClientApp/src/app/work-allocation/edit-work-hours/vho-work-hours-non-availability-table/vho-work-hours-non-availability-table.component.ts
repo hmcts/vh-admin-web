@@ -481,8 +481,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     resetStartDateAndEndDate() {
         this.filterForm.setValue({ startDate: null, endDate: null });
     }
-    checkVhoHasWorkHours () : boolean{
-        return this.nonWorkHours?.length > 0
+    checkVhoHasWorkHours (): boolean {
+        return this.nonWorkHours?.length > 0;
 
     }
 }

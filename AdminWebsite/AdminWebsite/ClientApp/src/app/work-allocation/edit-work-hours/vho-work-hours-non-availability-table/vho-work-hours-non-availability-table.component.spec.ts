@@ -678,7 +678,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         });
         it('should check non work hours are empty', () => {
             component.nonWorkHours =  [new EditVhoNonAvailabilityWorkHoursModel()];
-            let temp = component.nonWorkHours;
+            const temp = component.nonWorkHours;
             component.checkVhoHasWorkHours();
             expect(component.checkVhoHasWorkHours()).toBe(true);
         });
