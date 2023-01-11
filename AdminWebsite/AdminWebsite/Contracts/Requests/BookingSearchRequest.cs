@@ -22,6 +22,9 @@ namespace AdminWebsite.Contracts.Requests
 
         [JsonProperty("caseTypes")]
         public List<string> CaseTypes { get; set; } = null;
+        
+        [JsonProperty("selectedUsers")]
+        public List<Guid> SelectedUsers { get; set; } = null;
 
         [JsonProperty("startDate")]
         public DateTime? StartDate { get; set; } = null;
@@ -34,5 +37,8 @@ namespace AdminWebsite.Contracts.Requests
 
         [JsonProperty("noJudge")]
         public bool Nojudge { get; set; } = false;
+        
+        [JsonProperty("noAllocated")]
+        public bool NoAllocated { get; set; } = false;
     }
 }

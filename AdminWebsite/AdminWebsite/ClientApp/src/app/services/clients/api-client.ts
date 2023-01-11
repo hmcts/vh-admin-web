@@ -1808,7 +1808,7 @@ export class BHClient extends ApiClientBase {
     /**
      * @return Success
      */
-    getUnallocatedHearings(): Observable<UnallocatedHearingsForVHOResponse> {
+    getUnallocatedHearings(): Observable<UnallocatedHearingsForVhoResponse> {
         let url_ = this.baseUrl + '/api/hearings/unallocated';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -1837,14 +1837,14 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetUnallocatedHearings(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UnallocatedHearingsForVHOResponse>;
+                            return (_observableThrow(e) as any) as Observable<UnallocatedHearingsForVhoResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UnallocatedHearingsForVHOResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<UnallocatedHearingsForVhoResponse>;
                 })
             );
     }
 
-    protected processGetUnallocatedHearings(response: HttpResponseBase): Observable<UnallocatedHearingsForVHOResponse> {
+    protected processGetUnallocatedHearings(response: HttpResponseBase): Observable<UnallocatedHearingsForVhoResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -1864,7 +1864,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = UnallocatedHearingsForVHOResponse.fromJS(resultData200);
+                    result200 = UnallocatedHearingsForVhoResponse.fromJS(resultData200);
                     return _observableOf(result200);
                 })
             );
@@ -1890,7 +1890,7 @@ export class BHClient extends ApiClientBase {
                 })
             );
         }
-        return _observableOf<UnallocatedHearingsForVHOResponse>(null as any);
+        return _observableOf<UnallocatedHearingsForVhoResponse>(null as any);
     }
 
     /**
@@ -3497,6 +3497,90 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * @return Success
+     */
+    getUserList(): Observable<JusticeUserResponse[]> {
+        let url_ = this.baseUrl + '/api/user/list';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetUserList(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetUserList(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse[]>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse[]>;
+                })
+            );
+    }
+
+    protected processGetUserList(response: HttpResponseBase): Observable<JusticeUserResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(JusticeUserResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<JusticeUserResponse[]>(null as any);
+    }
+
+    /**
      * @param body (optional)
      * @return Success
      */
@@ -4095,10 +4179,12 @@ export class BookingSearchRequest implements IBookingSearchRequest {
     caseNumber?: string | undefined;
     venueIds?: number[] | undefined;
     caseTypes?: string[] | undefined;
+    selectedUsers?: string[] | undefined;
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
     noJudge?: boolean;
+    noAllocated?: boolean;
 
     constructor(data?: IBookingSearchRequest) {
         if (data) {
@@ -4121,10 +4207,15 @@ export class BookingSearchRequest implements IBookingSearchRequest {
                 this.caseTypes = [] as any;
                 for (let item of _data['caseTypes']) this.caseTypes!.push(item);
             }
+            if (Array.isArray(_data['selectedUsers'])) {
+                this.selectedUsers = [] as any;
+                for (let item of _data['selectedUsers']) this.selectedUsers!.push(item);
+            }
             this.startDate = _data['startDate'] ? new Date(_data['startDate'].toString()) : <any>undefined;
             this.endDate = _data['endDate'] ? new Date(_data['endDate'].toString()) : <any>undefined;
             this.lastName = _data['lastName'];
             this.noJudge = _data['noJudge'];
+            this.noAllocated = _data['noAllocated'];
         }
     }
 
@@ -4148,10 +4239,15 @@ export class BookingSearchRequest implements IBookingSearchRequest {
             data['caseTypes'] = [];
             for (let item of this.caseTypes) data['caseTypes'].push(item);
         }
+        if (Array.isArray(this.selectedUsers)) {
+            data['selectedUsers'] = [];
+            for (let item of this.selectedUsers) data['selectedUsers'].push(item);
+        }
         data['startDate'] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data['endDate'] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data['lastName'] = this.lastName;
         data['noJudge'] = this.noJudge;
+        data['noAllocated'] = this.noAllocated;
         return data;
     }
 }
@@ -4162,10 +4258,12 @@ export interface IBookingSearchRequest {
     caseNumber?: string | undefined;
     venueIds?: number[] | undefined;
     caseTypes?: string[] | undefined;
+    selectedUsers?: string[] | undefined;
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
     noJudge?: boolean;
+    noAllocated?: boolean;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -4479,13 +4577,13 @@ export interface IPublicHolidayResponse {
     date?: Date;
 }
 
-export class UnallocatedHearingsForVHOResponse implements IUnallocatedHearingsForVHOResponse {
+export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsForVhoResponse {
     today?: number;
     tomorrow?: number;
     this_week?: number;
     this_month?: number;
 
-    constructor(data?: IUnallocatedHearingsForVHOResponse) {
+    constructor(data?: IUnallocatedHearingsForVhoResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -4502,9 +4600,9 @@ export class UnallocatedHearingsForVHOResponse implements IUnallocatedHearingsFo
         }
     }
 
-    static fromJS(data: any): UnallocatedHearingsForVHOResponse {
+    static fromJS(data: any): UnallocatedHearingsForVhoResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new UnallocatedHearingsForVHOResponse();
+        let result = new UnallocatedHearingsForVhoResponse();
         result.init(data);
         return result;
     }
@@ -4519,7 +4617,7 @@ export class UnallocatedHearingsForVHOResponse implements IUnallocatedHearingsFo
     }
 }
 
-export interface IUnallocatedHearingsForVHOResponse {
+export interface IUnallocatedHearingsForVhoResponse {
     today?: number;
     tomorrow?: number;
     this_week?: number;
@@ -6829,6 +6927,81 @@ export interface IHearingsByUsernameForDeletionResponse {
     case_name?: string | undefined;
     case_number?: string | undefined;
     venue?: string | undefined;
+}
+
+export class JusticeUserResponse implements IJusticeUserResponse {
+    id?: string;
+    first_name?: string | undefined;
+    lastname?: string | undefined;
+    contact_email?: string | undefined;
+    username?: string | undefined;
+    telephone?: string | undefined;
+    user_role_id?: number;
+    user_role_name?: string | undefined;
+    is_vh_team_leader?: boolean;
+    created_by?: string | undefined;
+    full_name?: string | undefined;
+
+    constructor(data?: IJusticeUserResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.first_name = _data['first_name'];
+            this.lastname = _data['lastname'];
+            this.contact_email = _data['contact_email'];
+            this.username = _data['username'];
+            this.telephone = _data['telephone'];
+            this.user_role_id = _data['user_role_id'];
+            this.user_role_name = _data['user_role_name'];
+            this.is_vh_team_leader = _data['is_vh_team_leader'];
+            this.created_by = _data['created_by'];
+            this.full_name = _data['full_name'];
+        }
+    }
+
+    static fromJS(data: any): JusticeUserResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new JusticeUserResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['first_name'] = this.first_name;
+        data['lastname'] = this.lastname;
+        data['contact_email'] = this.contact_email;
+        data['username'] = this.username;
+        data['telephone'] = this.telephone;
+        data['user_role_id'] = this.user_role_id;
+        data['user_role_name'] = this.user_role_name;
+        data['is_vh_team_leader'] = this.is_vh_team_leader;
+        data['created_by'] = this.created_by;
+        data['full_name'] = this.full_name;
+        return data;
+    }
+}
+
+export interface IJusticeUserResponse {
+    id?: string;
+    first_name?: string | undefined;
+    lastname?: string | undefined;
+    contact_email?: string | undefined;
+    username?: string | undefined;
+    telephone?: string | undefined;
+    user_role_id?: number;
+    user_role_name?: string | undefined;
+    is_vh_team_leader?: boolean;
+    created_by?: string | undefined;
+    full_name?: string | undefined;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {

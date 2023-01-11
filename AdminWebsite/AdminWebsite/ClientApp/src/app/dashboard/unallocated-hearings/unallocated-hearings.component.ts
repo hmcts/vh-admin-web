@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BHClient, UnallocatedHearingsForVHOResponse, UserProfileResponse } from '../../services/clients/api-client';
+import { BHClient, UnallocatedHearingsForVhoResponse, UserProfileResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 
@@ -10,7 +10,7 @@ import { UserIdentityService } from '../../services/user-identity.service';
 })
 export class UnallocatedHearingsComponent implements OnInit {
     private loggerPrefix = 'UnallocatedHearingsComponent';
-    unallocatedHearings: UnallocatedHearingsForVHOResponse;
+    unallocatedHearings: UnallocatedHearingsForVhoResponse;
     isLoaded: boolean;
     isVhTeamLeader: boolean;
     constructor(private client: BHClient, private logger: Logger, private userIdentityService: UserIdentityService) {
@@ -27,7 +27,7 @@ export class UnallocatedHearingsComponent implements OnInit {
             },
             error => {
                 this.logger.error(`${this.loggerPrefix} Could not get unallocated hearings`, error);
-                this.unallocatedHearings = new UnallocatedHearingsForVHOResponse();
+                this.unallocatedHearings = new UnallocatedHearingsForVhoResponse();
                 this.isLoaded = true;
             }
         );
