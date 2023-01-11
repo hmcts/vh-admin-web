@@ -33,7 +33,8 @@ describe('Video hearing service', () => {
             'bookNewHearing',
             'cloneHearing',
             'getTelephoneConferenceIdById',
-            'getConfigSettings'
+            'getConfigSettings',
+            'getUserList'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -89,6 +90,11 @@ describe('Video hearing service', () => {
     it('should returns invalid hearing request', () => {
         const currentRequest = service.validCurrentRequest();
         expect(currentRequest).toBeFalsy();
+    });
+
+    it('should get Justice User list', () => {
+        service.getUsers();
+        expect(clientApiSpy.getUserList).toHaveBeenCalled();
     });
 
     it('should cache current hearing request', () => {

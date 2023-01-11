@@ -680,7 +680,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // arrange
             let startD = null;
             let endD = null;
-            component.filterForm.setValue({ startDate: '2022/10/20' , endDate: '2022/10/20' });
+            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/10/20' });
             // act
             component.resetStartDateAndEndDate();
             startD = component.filterForm.value.startDate;

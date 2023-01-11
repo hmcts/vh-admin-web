@@ -8,7 +8,7 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, HearingTypeResponse, HearingVenueResponse } from '../../services/clients/api-client';
+import { BookingsResponse, HearingTypeResponse, HearingVenueResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -16,7 +16,6 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
-import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-bookings-list',
@@ -45,11 +44,15 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     title = this.initialTitle;
     venues: HearingVenueResponse[];
     caseTypes: string[];
+    users: JusticeUserResponse[];
     selectedVenueIds: [];
     selectedCaseTypes: [];
+    selectedUserIds: [];
     showSearch = false;
     today = new Date();
     ejudFeatureFlag: boolean;
+    showWorkAllocation = false;
+    vhoWorkAllocationFeature = false;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -68,26 +71,22 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
             if (value) {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
+                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
+                this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
                 console.log('Feature toggle is', this.enableSearchFeature);
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
                     this.loadCaseTypeList();
+                    if (this.vhoWorkAllocationFeature) this.loadUsersList();
                 }
             }
         });
 
-        this.featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
     }
 
     async ngOnInit() {
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
-
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
             this.cursor = this.bookingPersistService.nextCursor;
@@ -163,10 +162,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
             selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
+            selectedUserIds: [this.bookingPersistService.selectedUsers || []],
             startDate: [this.formatDateToIsoString(this.bookingPersistService.startDate)],
             endDate: [this.formatDateToIsoString(this.bookingPersistService.endDate)],
             participantLastName: [this.bookingPersistService.participantLastName || null],
-            noJudge: [this.bookingPersistService.noJugdeInHearings]
+            noJudge: [this.bookingPersistService.noJugdeInHearings],
+            noAllocated: [this.bookingPersistService.noAllocatedHearings]
         });
     }
 
@@ -176,10 +177,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const caseNumber = this.bookingPersistService.caseNumber || '';
         const venueIds = this.bookingPersistService.selectedVenueIds;
         const caseTypes = this.bookingPersistService.selectedCaseTypes;
+        const users = this.bookingPersistService.selectedUsers;
         let startDate = this.bookingPersistService.startDate;
         let endDate = this.bookingPersistService.endDate;
         const lastName = this.bookingPersistService.participantLastName;
         const noJudge = this.bookingPersistService.noJugdeInHearings;
+        const noAllocated = this.bookingPersistService.noAllocatedHearings;
         if (startDate) {
             startDate = moment(startDate).startOf('day').toDate();
         }
@@ -202,10 +205,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 caseNumber,
                 venueIds,
                 caseTypes,
+                users,
                 startDate,
                 endDate,
                 lastName,
-                noJudge
+                noJudge,
+                noAllocated
             );
         } else {
             // previous implementation
@@ -225,10 +230,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.searchForm.value['selectedVenueIds'];
             const caseTypes = this.searchForm.value['selectedCaseTypes'];
+            const selectedUserIds = this.searchForm.value['selectedUserIds'];
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
             const lastName = this.searchForm.value['participantLastName'];
             const noJudge = this.searchForm.value['noJudge'];
+            const noAllocated = this.searchForm.value['noAllocated'];
             this.bookingPersistService.caseNumber = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
             this.bookingPersistService.selectedCaseTypes = caseTypes;
@@ -236,6 +243,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
             this.bookingPersistService.noJugdeInHearings = noJudge ?? false;
+            this.bookingPersistService.noAllocatedHearings = noAllocated ? noAllocated : false;
+            this.bookingPersistService.selectedUsers = selectedUserIds;
             this.cursor = undefined;
             this.clearSelectedRow();
             this.bookings = [];
@@ -250,23 +259,29 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.caseNumber ||
             (this.bookingPersistService.selectedVenueIds && this.bookingPersistService.selectedVenueIds.length > 0) ||
             (this.bookingPersistService.selectedCaseTypes && this.bookingPersistService.selectedCaseTypes.length > 0) ||
+            (this.bookingPersistService.selectedUsers && this.bookingPersistService.selectedUsers.length > 0) ||
             this.bookingPersistService.startDate ||
             this.bookingPersistService.endDate ||
             this.bookingPersistService.participantLastName ||
-            this.bookingPersistService.noJugdeInHearings;
+            this.bookingPersistService.noJugdeInHearings ||
+            this.bookingPersistService.noAllocatedHearings;
         if (searchCriteriaEntered) {
             this.bookings = [];
             this.cursor = undefined;
             this.bookingPersistService.caseNumber = '';
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.selectedCaseTypes = [];
+            this.bookingPersistService.selectedUsers = [];
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
             this.bookingPersistService.noJugdeInHearings = false;
+            this.bookingPersistService.noAllocatedHearings = false;
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
+            this.searchForm.controls['selectedUserIds'].enable();
+            this.searchForm.controls['noAllocated'].enable();
         }
     }
 
@@ -400,6 +415,17 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         );
     }
 
+    private loadUsersList(): void {
+        const self = this;
+        this.videoHearingService.getUsers().subscribe(
+            (data: JusticeUserResponse[]) => {
+                this.users = data;
+                this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
+            },
+            error => self.handleListError(error, 'users')
+        );
+    }
+
     openSearchPanel() {
         this.showSearch = true;
     }
@@ -429,11 +455,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             return false;
         }
 
-        if (startDate > endDate) {
-            return true;
-        }
-
-        return false;
+        return startDate > endDate;
     }
 
     isStartDateInPast() {
@@ -445,11 +467,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
         const todayDate = moment().startOf('day').toDate();
 
-        if (startDate < todayDate) {
-            return true;
-        }
-
-        return false;
+        return startDate < todayDate;
     }
 
     isEndDateInPast() {
@@ -461,11 +479,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
         const todayDate = moment().startOf('day').toDate();
 
-        if (endDate < todayDate) {
-            return true;
-        }
-
-        return false;
+        return endDate < todayDate;
     }
 
     formatDateToIsoString(date?: Date) {
@@ -479,5 +493,33 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.$subcription?.unsubscribe();
         this.$ldSubcription?.unsubscribe();
+    }
+
+    getFullName(item: JusticeUserResponse) {
+        return item.first_name + ' ' + item.lastname;
+    }
+
+    onSelectUserChange() {
+        const selectedUserIds = this.searchForm.value['selectedUserIds'];
+        if (selectedUserIds.length > 0) {
+            this.searchForm.controls['noAllocated'].disable();
+            this.bookingPersistService.noAllocatedHearings = false;
+        } else {
+            this.searchForm.controls['noAllocated'].enable();
+        }
+    }
+
+    onChangeNoAllocated() {
+        const noAllocated = this.searchForm.value['noAllocated'];
+        if (noAllocated) {
+            this.searchForm.controls['selectedUserIds'].disable();
+            this.bookingPersistService.selectedUsers = [];
+        } else {
+            this.searchForm.controls['selectedUserIds'].enable();
+        }
+    }
+
+    workAllocationEnabled(): boolean {
+        return this.vhoWorkAllocationFeature;
     }
 }

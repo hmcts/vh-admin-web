@@ -83,7 +83,9 @@ namespace AdminWebsite.Controllers
                         CaseNumber = request.CaseNumber,
                         VenueIds = request.VenueIds,
                         LastName = request.LastName,
-                        NoJudge = request.Nojudge
+                        NoJudge = request.Nojudge,
+                        Users = request.SelectedUsers,
+                        NoAllocated = request.NoAllocated
                     });
 
                 return Ok(bookingsResponse);

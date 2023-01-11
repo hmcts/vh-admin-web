@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using AdminWebsite.Helper;
 using System;
+using System.Collections.Generic;
 using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
@@ -50,6 +51,31 @@ namespace AdminWebsite.Controllers
             };
 
             return Ok(profile);
+        }
+        
+        /// <summary>
+        /// Get the Justice User list from the JusticeUser table
+        /// </summary>
+        /// <returns>List of the Justice User</returns>
+        [HttpGet("list")]
+        [SwaggerOperation(OperationId = "GetUserList")]
+        [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList()
+        {
+            ICollection<JusticeUserResponse> justiceUserList = new List<JusticeUserResponse>();
+            
+            try
+            {
+                justiceUserList = await _bookingsApiClient
+                    .GetJusticeUserListAsync();
+            }
+            catch(BookingsApiException e)
+            {
+                if (e.StatusCode != 404)
+                    return StatusCode(e.StatusCode, e.Response);
+            }
+            
+            return Ok(justiceUserList);
         }
     }
 }
