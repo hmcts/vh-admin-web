@@ -16,7 +16,6 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
-import { first } from 'rxjs/operators';
 
 @Component({
     selector: 'app-bookings-list',
