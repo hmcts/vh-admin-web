@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BHClient, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
+import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
 import { ConfirmDeleteHoursPopupComponent } from '../../../popups/confirm-delete-popup/confirm-delete-popup.component';
 import { of, throwError, Subject } from 'rxjs';
@@ -190,6 +190,10 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('edit button clicked', () => {
             it('should switch to edit mode', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+                const x = component.checkVhoHasWorkHours;
+
                 spyOn(component.editNonWorkHours, 'emit');
                 const editButton = fixture.debugElement.query(By.css('#edit-individual-non-work-hours-button')).nativeElement;
                 editButton.click();
@@ -203,6 +207,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('cancel button clicked', () => {
             it('should switch to read mode', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+
                 spyOn(component.cancelSaveNonWorkHours, 'emit');
                 component.switchToEditMode();
                 fixture.detectChanges();
@@ -217,6 +224,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('should revert non work hour changes', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+
                 component.switchToEditMode();
                 const originalNonWorkHours = JSON.parse(JSON.stringify(component.nonWorkHours));
                 const updatedWorkHour = component.nonWorkHours[0];
@@ -234,6 +244,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('save button clicked', () => {
             it('should save correctly', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+
                 component.switchToEditMode();
                 fixture.detectChanges();
                 spyOn(component.saveNonWorkHours, 'emit');
@@ -299,6 +312,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('fails validation when start date is empty', () => {
                 const nonWorkHour = component.nonWorkHours[0];
                 nonWorkHour.start_date = '';
+                fixture.detectChanges();
 
                 const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
                 triggerBlurEvent(elementId);
@@ -483,6 +497,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = '2022-01-01';
             nonWorkHour.end_time = '06:00:00';
+            fixture.detectChanges();
 
             const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
             triggerBlurEvent(elementId);
@@ -676,17 +691,19 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
         });
+        it('should check non work hours are populated', () => {
+            component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+            expect(component.checkVhoHasWorkHours).toBe(true);
+        });
         it('should check non work hours are empty', () => {
-            component.nonWorkHours =  [new EditVhoNonAvailabilityWorkHoursModel()];
-            const temp = component.nonWorkHours;
-            component.checkVhoHasWorkHours();
-            expect(component.checkVhoHasWorkHours()).toBe(true);
+            component.nonWorkHours = null;
+            expect(component.checkVhoHasWorkHours).toBe(false);
         });
         it('it should reset the start date and end date ', () => {
             // arrange
             let startD = null;
             let endD = null;
-            component.filterForm.setValue({ startDate: '2022/10/20' , endDate: '2022/10/20' });
+            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/10/20' });
             // act
             component.resetStartDateAndEndDate();
             startD = component.filterForm.value.startDate;

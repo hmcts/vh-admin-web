@@ -87,37 +87,39 @@
       <p class="govuk-error-message">{{ error }}</p>
     </div>
   </div>
-  <button
-    *ngIf="!isEditing && checkVhoHasWorkHours(); else editingButtonsBlock"
-    id="edit-individual-non-work-hours-button"
-    class="govuk-button"
-    data-module="govuk-button"
-    (click)="switchToEditMode()"
-  >
-    Edit
-  </button>
-  <ng-template #editingButtonsBlock>
-    <div class="govuk-button-group" *ngif="checkVhoHasWorkHours()">
-      <button
-        id="save-individual-non-work-hours-button"
-        class="govuk-button govuk-!-margin-right-6"
-        data-module="govuk-button"
-        (click)="saveNonWorkingHours()"
-        [disabled]="isSaving || validationFailures.length > 0"
-      >
-        Save
-      </button>
-      <button
-        id="cancel-editing-individual-non-work-hours-button"
-        class="govuk-button govuk-button--secondary"
-        data-module="govuk-button"
-        (click)="cancelEditingNonWorkingHours()"
-        [disabled]="isSaving"
-      >
-        Cancel
-      </button>
-    </div>
-  </ng-template>
+  <div *ngIf="checkVhoHasWorkHours">
+    <button
+      *ngIf="!isEditing; else editingButtonsBlock"
+      id="edit-individual-non-work-hours-button"
+      class="govuk-button"
+      data-module="govuk-button"
+      (click)="switchToEditMode()"
+    >
+      Edit
+    </button>
+    <ng-template #editingButtonsBlock>
+      <div class="govuk-button-group">
+        <button
+          id="save-individual-non-work-hours-button"
+          class="govuk-button govuk-!-margin-right-6"
+          data-module="govuk-button"
+          (click)="saveNonWorkingHours()"
+          [disabled]="isSaving || validationFailures.length > 0"
+        >
+          Save
+        </button>
+        <button
+          id="cancel-editing-individual-non-work-hours-button"
+          class="govuk-button govuk-button--secondary"
+          data-module="govuk-button"
+          (click)="cancelEditingNonWorkingHours()"
+          [disabled]="isSaving"
+        >
+          Cancel
+        </button>
+      </div>
+    </ng-template>
+  </div>
 </span>
 <div id="successMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-weight-bold">
   <fa-icon [icon]="faExclamation"></fa-icon> {{ message }}

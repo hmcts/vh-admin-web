@@ -50,7 +50,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         } else {
             this.nonWorkHours = null;
         }
-
     }
 
     public static readonly ErrorStartDateRequired = 'Start date is required';
@@ -481,8 +480,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     resetStartDateAndEndDate() {
         this.filterForm.setValue({ startDate: null, endDate: null });
     }
-    checkVhoHasWorkHours (): boolean {
+    get checkVhoHasWorkHours(): boolean {
         return this.nonWorkHours?.length > 0;
-
     }
 }
