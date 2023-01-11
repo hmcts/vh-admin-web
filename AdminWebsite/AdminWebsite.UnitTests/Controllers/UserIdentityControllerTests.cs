@@ -32,31 +32,10 @@ namespace AdminWebsite.UnitTests.Controllers
                 IsVhTeamLeader = true
             };
 
-            _justiceUserListResponse = new List<JusticeUserResponse>();
-            var user = new JusticeUserResponse
-            {
-                ContactEmail = "userName0@mail.com",
-                Username = "userName0@mail.com",
-                CreatedBy = "integration.test@test.com",
-                FirstName = "firstName0",
-                Lastname = "lastName0"
-            };
-            _justiceUserListResponse.Add(user);
-            user = new JusticeUserResponse
-            {
-                ContactEmail = "userName1@mail.com",
-                Username = "userName1@mail.com",
-                CreatedBy = "integration.test@test.com",
-                FirstName = "firstName1",
-                Lastname = "lastName1"
-            };
-            _justiceUserListResponse.Add(user);
-
             
 
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.GetJusticeUserByUsernameAsync(It.IsAny<string>())).ReturnsAsync(_justiceUserResponse);
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync()).ReturnsAsync(_justiceUserListResponse);
         }
 
         [Test]
@@ -168,10 +147,30 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task should_get_user_list()
         {
+            _justiceUserListResponse = new List<JusticeUserResponse>();
+            var user = new JusticeUserResponse
+            {
+                ContactEmail = "userName0@mail.com",
+                Username = "userName0@mail.com",
+                CreatedBy = "integration.test@test.com",
+                FirstName = "firstName0",
+                Lastname = "lastName0"
+            };
+            _justiceUserListResponse.Add(user);
+            user = new JusticeUserResponse
+            {
+                ContactEmail = "userName1@mail.com",
+                Username = "userName1@mail.com",
+                CreatedBy = "integration.test@test.com",
+                FirstName = "firstName1",
+                Lastname = "lastName1"
+            };
+            _justiceUserListResponse.Add(user);
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync()).ReturnsAsync(_justiceUserListResponse);
+            
             _claimsPrincipal = new ClaimsPrincipalBuilder()
                 .WithRole(AppRoles.CaseAdminRole)
                 .Build();
-
 
             _controller = SetupControllerWithClaims(_claimsPrincipal);
             var response = await _controller.GetUserList();
@@ -184,7 +183,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        public async Task should_get_empty_user_list_for_exception()
+        public async Task should_get_empty_user_list_for_exception_404()
         {
             _claimsPrincipal = new ClaimsPrincipalBuilder()
                 .WithRole(AppRoles.CaseAdminRole)
@@ -201,6 +200,26 @@ namespace AdminWebsite.UnitTests.Controllers
             var userList = (List<JusticeUserResponse>) result.Value;
 
             userList.Count.Should().Be(0);
+        }
+        
+        [Test]
+        public async Task should_get_resultwith_message_for_exception_not_404()
+        {
+            _claimsPrincipal = new ClaimsPrincipalBuilder()
+                .WithRole(AppRoles.CaseAdminRole)
+                .Build();
+
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync())
+                .ThrowsAsync(new BookingsApiException("not found message", 400, "not found response", null, null));
+            
+            _controller = SetupControllerWithClaims(_claimsPrincipal);
+            var response = await _controller.GetUserList();
+            var result = response.Result.As<ObjectResult>();
+
+            result.Should().NotBeNull();
+            var message = (string) result.Value;
+
+            message.Should().NotBeEmpty();
         }
                 
         

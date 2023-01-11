@@ -53,6 +53,10 @@ namespace AdminWebsite.Controllers
             return Ok(profile);
         }
         
+        /// <summary>
+        /// Get the Justice User list from the JusticeUser table
+        /// </summary>
+        /// <returns>List of the Justice User</returns>
         [HttpGet("list")]
         [SwaggerOperation(OperationId = "GetUserList")]
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]

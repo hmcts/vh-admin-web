@@ -94,7 +94,7 @@
               (blur)="onEndDateBlur()"
             />
           </div>
-          <div class="govuk-grid-column-one-half" *ngIf="showWorkAllocation">
+          <div class="govuk-grid-column-one-half" *ngIf="workAllocationEnabled()">
             <label class="govuk-label" for="user-list">Allocated CSO</label>
             <ng-select
               id="user-list"
@@ -128,7 +128,7 @@
               </div>
             </div>
           </div>
-          <div class="govuk-grid-column-one-half vh-right-align" *ngIf="showWorkAllocation">
+          <div class="govuk-grid-column-one-half vh-right-align" *ngIf="workAllocationEnabled()">
             <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input

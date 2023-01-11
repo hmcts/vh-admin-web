@@ -33,6 +33,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { v4 as uuid } from 'uuid';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -62,6 +63,27 @@ let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
 export class ResponseTestData {
+    getUserData(): Array<JusticeUserResponse> {
+        const list: Array<JusticeUserResponse> = [];
+        let user = new JusticeUserResponse();
+        user.id = uuid();
+        user.username = 'username1@mail.com';
+        user.contact_email = 'username1@mail.com';
+        user.first_name = 'firstName1';
+        user.lastname = 'lastName1';
+        list.push(user);
+
+        user = new JusticeUserResponse();
+        user.id = uuid();
+        user.username = 'username2@mail.com';
+        user.contact_email = 'username2@mail.com';
+        user.first_name = 'firstName2';
+        user.lastname = 'lastName2';
+        list.push(user);
+
+        return list;
+    }
+
     getTestData(): BookingsResponse {
         const fixedDate = new Date('2019-10-22 13:58:40.3730067');
         const response = new BookingsResponse();
@@ -1193,6 +1215,38 @@ describe('BookingsListComponent', () => {
             expect(component.selectedHearingId).toBe('');
             expect(component.selectedGroupIndex).toBe(-1);
             expect(component.selectedItemIndex).toBe(-1);
+        });
+    });
+
+    describe('onSelectUserChange', () => {
+        it('should disable noAllocated if any selected user', () => {
+            component.users = new ResponseTestData().getUserData();
+            component.searchForm.controls['selectedUserIds'].setValue([component.users[0].id.toString(),component.users[1].id.toString()]);
+            component.onSelectUserChange();
+            expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
+        });
+
+        it('should enable noAllocated if no selected user', () => {
+            component.users = new ResponseTestData().getUserData();
+            component.searchForm.controls['selectedUserIds'].setValue([]);
+            component.onSelectUserChange();
+            expect(component.searchForm.controls['noAllocated'].disabled).toBeFalsy();
+        });
+    });
+
+    describe('onChangeNoAllocated', () => {
+        it('should disable selectedUsers if noAllocated is checked', () => {
+            component.users = new ResponseTestData().getUserData();
+            component.searchForm.controls['noAllocated'].setValue(true);
+            component.onChangeNoAllocated();
+            expect(component.searchForm.controls['selectedUserIds'].disabled).toBeTruthy();
+        });
+
+        it('should enable selectedUsers if noAllocated is not checked', () => {
+            component.users = [];
+            component.searchForm.controls['noAllocated'].setValue(false);
+            component.onChangeNoAllocated();
+            expect(component.searchForm.controls['selectedUserIds'].disabled).toBeFalsy();
         });
     });
 });

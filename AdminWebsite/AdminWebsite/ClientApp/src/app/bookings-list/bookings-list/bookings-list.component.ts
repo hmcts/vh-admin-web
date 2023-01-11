@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -73,27 +73,21 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             if (value) {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
+                this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
                 console.log('Feature toggle is', this.enableSearchFeature);
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
                     this.loadCaseTypeList();
-                    this.loadUsersList();
+                    if (this.vhoWorkAllocationFeature) this.loadUsersList();
                 }
             }
         });
 
-        this.featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
     }
 
     async ngOnInit() {
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
-        this.showWorkAllocation = this.vhoWorkAllocationFeature;
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
             this.cursor = this.bookingPersistService.nextCursor;
@@ -287,6 +281,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.resetAll();
             this.loadBookingsList();
             this.title = this.initialTitle;
+            this.searchForm.controls['selectedUserIds'].enable();
+            this.searchForm.controls['noAllocated'].enable();
         }
     }
 
@@ -508,6 +504,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const selectedUserIds = this.searchForm.value['selectedUserIds'];
         if (selectedUserIds.length > 0) {
             this.searchForm.controls['noAllocated'].disable();
+            this.bookingPersistService.noAllocatedHearings = false;
         } else {
             this.searchForm.controls['noAllocated'].enable();
         }
@@ -517,8 +514,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         const noAllocated = this.searchForm.value['noAllocated'];
         if (noAllocated) {
             this.searchForm.controls['selectedUserIds'].disable();
+            this.bookingPersistService.selectedUsers = [];
         } else {
             this.searchForm.controls['selectedUserIds'].enable();
         }
+    }
+
+    workAllocationEnabled(): boolean {
+        return this.vhoWorkAllocationFeature;
     }
 }
