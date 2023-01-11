@@ -141,6 +141,14 @@ export class WorkAllocationComponent implements OnInit {
         this.workingHoursFileValidationErrors = [];
     }
 
+    resetFileUploadErrors() {
+        this.isWorkingHoursUploadComplete = false;
+        this.nonWorkingHoursFileUploadUsernameErrors = [];
+        this.nonWorkingHoursFileValidationErrors = [];
+        this.workingHoursFileUploadUsernameErrors = [];
+        this.workingHoursFileValidationErrors = [];
+    }
+
     readFile(file: File): FileReader {
         const reader = new FileReader();
         reader.readAsText(file);
