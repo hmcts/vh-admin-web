@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -46,13 +46,14 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     caseTypes: string[];
     users: JusticeUserResponse[];
     selectedVenueIds: [];
-    selectedCaseTypes: [];
+    selectedCaseTypes: string[];
     selectedUserIds: [];
     showSearch = false;
     today = new Date();
     ejudFeatureFlag: boolean;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
+    caseTypeClear = new EventEmitter();
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -76,7 +77,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 console.log('Feature toggle is', this.enableSearchFeature);
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
-                    this.loadCaseTypeList();
                     if (this.vhoWorkAllocationFeature) this.loadUsersList();
                 }
             }
@@ -161,7 +161,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
-            selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
             selectedUserIds: [this.bookingPersistService.selectedUsers || []],
             startDate: [this.formatDateToIsoString(this.bookingPersistService.startDate)],
             endDate: [this.formatDateToIsoString(this.bookingPersistService.endDate)],
@@ -229,7 +228,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.searchForm.value['selectedVenueIds'];
-            const caseTypes = this.searchForm.value['selectedCaseTypes'];
+            const caseTypes = this.bookingPersistService.selectedCaseTypes;
             const selectedUserIds = this.searchForm.value['selectedUserIds'];
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
@@ -238,7 +237,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             const noAllocated = this.searchForm.value['noAllocated'];
             this.bookingPersistService.caseNumber = caseNumber;
             this.bookingPersistService.selectedVenueIds = venueIds;
-            this.bookingPersistService.selectedCaseTypes = caseTypes;
             this.bookingPersistService.startDate = startDate;
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
@@ -271,6 +269,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.caseNumber = '';
             this.bookingPersistService.selectedVenueIds = [];
             this.bookingPersistService.selectedCaseTypes = [];
+            this.caseTypeClear.emit();
             this.bookingPersistService.selectedUsers = [];
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
@@ -283,6 +282,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.searchForm.controls['selectedUserIds'].enable();
             this.searchForm.controls['noAllocated'].enable();
         }
+
     }
 
     private handleListError(err, type) {
@@ -396,24 +396,24 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         );
     }
 
-    private loadCaseTypeList(): void {
-        const self = this;
-        const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes().subscribe(
-            (data: HearingTypeResponse[]) => {
-                this.caseTypes = [
-                    ...Array.from(
-                        data
-                            .map(item => item.group)
-                            .filter(distinct)
-                            .sort()
-                    )
-                ];
-                this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
-            },
-            error => self.handleListError(error, 'case types')
-        );
-    }
+    // private loadCaseTypeList(): void {
+    //     const self = this;
+    //     const distinct = (value, index, array) => array.indexOf(value) === index;
+    //     this.videoHearingService.getHearingTypes().subscribe(
+    //         (data: HearingTypeResponse[]) => {
+    //             this.caseTypes = [
+    //                 ...Array.from(
+    //                     data
+    //                         .map(item => item.group)
+    //                         .filter(distinct)
+    //                         .sort()
+    //                 )
+    //             ];
+    //             this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
+    //         },
+    //         error => self.handleListError(error, 'case types')
+    //     );
+    // }
 
     private loadUsersList(): void {
         const self = this;
@@ -521,5 +521,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     workAllocationEnabled(): boolean {
         return this.vhoWorkAllocationFeature;
+    }
+
+    selectedCaseTypesEmitter($event: string[]) {
+        this.bookingPersistService.selectedCaseTypes = $event;
     }
 }

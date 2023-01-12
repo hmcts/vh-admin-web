@@ -14,10 +14,12 @@ import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { CaseTypesMenuComponent } from './menus/case-types-menu/case-types-menu/case-types-menu.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
-    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule, NgSelectModule],
+    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe, CaseTypesMenuComponent],
     providers: [WindowRef, WindowScrolling],
     exports: [
         HeaderComponent,
@@ -29,7 +31,8 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
         ReactiveFormsModule,
         HttpClientModule,
         ScrollTriggerDirective,
-        LongDatetimePipe
+        LongDatetimePipe,
+        CaseTypesMenuComponent
     ]
 })
 export class SharedModule {

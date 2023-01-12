@@ -989,7 +989,7 @@ describe('BookingsListComponent', () => {
     it('should enable search button if selectedCaseTypes field is valid', () => {
         component.openSearchPanel();
         clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
+        component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal']);
         component.enableSearchFeature = true;
         fixture.detectChanges();
         const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
