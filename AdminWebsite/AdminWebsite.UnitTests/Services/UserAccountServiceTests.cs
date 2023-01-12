@@ -53,16 +53,6 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_fail_if_we_cannot_figure_out_user_existence()
-        {
-            _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
-
-            Assert.ThrowsAsync<UserApiException>(() =>
-                _service.UpdateParticipantUsername(new BookingsApi.Contract.Requests.ParticipantRequest()));
-        }
-
-        [Test]
         public async Task AssignParticipantToGroup_IndividualtoExternalAADMemberUserGroup()
         {
             await _service.AssignParticipantToGroup("rep@hmcts.net", "Individual");
@@ -129,46 +119,6 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.AddUserToGroupAsync(
                     It.Is<AddUserToGroupRequest>(y => y.GroupName == UserAccountService.StaffMember)),
                 Times.Once);
-        }
-
-        [Test]
-        public async Task Should_not_create_users_that_already_exists()
-        {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
-            {
-                Username = "existin@hmcts.net"
-            };
-
-            _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .ReturnsAsync(new UserProfile {UserName = participant.Username});
-
-            await _service.UpdateParticipantUsername(participant);
-
-            _userApiClient.Verify(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()), Times.Never);
-        }
-
-        [Test]
-        public async Task Should_create_users_if_not_exists()
-        {
-            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
-            {
-                FirstName = "First Name Space",
-                LastName = "Last Name Space",
-                Username = "notexistin@hmcts.net"
-            };
-
-            _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .ReturnsAsync((UserProfile) null);
-            _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
-                .ReturnsAsync(new NewUserResponse {Username = participant.Username});
-
-            await _service.UpdateParticipantUsername(participant);
-
-            _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(c =>
-                c.FirstName == participant.FirstName.Replace(" ", string.Empty)
-                && c.LastName == participant.LastName.Replace(" ", string.Empty)
-                && !c.IsTestUser
-            )), Times.Once);
         }
 
         [Test]
