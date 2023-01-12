@@ -1,6 +1,6 @@
 <label class="govuk-label" for="case-type-list">Case types</label>
 <div [formGroup]="form">
-<ng-select
+  <ng-select
     id="case-type-list"
     class="custom"
     labelForId="caseTypes"
@@ -15,10 +15,10 @@
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
     (add)="onSelect($event)"
->
+  >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-        <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Case type ' + item" />
-        {{ item }}
+      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Case type ' + item" />
+      {{ item }}
     </ng-template>
-</ng-select>
+  </ng-select>
 </div>

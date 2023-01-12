@@ -3,9 +3,9 @@
 @import '~@hmcts/frontend/all';
 
 #case-type-list {
-    @extend .govuk-body;
+  @extend .govuk-body;
 }
 
 .ng-select.custom ::ng-deep .ng-placeholder {
-    color: govuk-colour('black');
+  color: govuk-colour('black');
 }

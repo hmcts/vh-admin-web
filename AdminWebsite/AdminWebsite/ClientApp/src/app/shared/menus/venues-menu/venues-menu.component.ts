@@ -7,9 +7,9 @@ import { Logger } from '../../../services/logger';
 import { ReferenceDataService } from '../../../services/reference-data.service';
 
 @Component({
-  selector: 'app-venues-menu',
-  templateUrl: './venues-menu.component.html',
-  styleUrls: ['./venues-menu.component.scss']
+    selector: 'app-venues-menu',
+    templateUrl: './venues-menu.component.html',
+    styleUrls: ['./venues-menu.component.scss']
 })
 export class VenuesMenuComponent extends MenuBase {
     loggerPrefix = '[MenuVenues] -';
@@ -18,20 +18,20 @@ export class VenuesMenuComponent extends MenuBase {
     selectedItems: [];
     persistentItems = this.bookingPersistService.selectedVenueIds;
     formConfiguration = {
-        selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],
+        selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<number[]>();
     @Input() clearEmitter = new EventEmitter();
-
-
 
     constructor(
         private bookingPersistService: BookingPersistService,
         private refDataService: ReferenceDataService,
         formBuilder: FormBuilder,
         logger: Logger
-    ) { super(formBuilder, logger)}
+    ) {
+        super(formBuilder, logger);
+    }
 
     loadItems(): void {
         const self = this;
@@ -43,5 +43,4 @@ export class VenuesMenuComponent extends MenuBase {
             error => self.handleListError(error, 'venues')
         );
     }
-
 }

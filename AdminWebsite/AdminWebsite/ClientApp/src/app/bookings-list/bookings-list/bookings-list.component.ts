@@ -76,7 +76,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 console.log('Feature toggle is', this.enableSearchFeature);
             }
         });
-
     }
 
     async ngOnInit() {
@@ -279,7 +278,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.searchForm.controls['selectedUserIds'].enable();
             this.searchForm.controls['noAllocated'].enable();
         }
-
     }
 
     private handleListError(err, type) {

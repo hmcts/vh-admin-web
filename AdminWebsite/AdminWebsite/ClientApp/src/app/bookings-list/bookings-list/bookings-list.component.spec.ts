@@ -1221,7 +1221,7 @@ describe('BookingsListComponent', () => {
     describe('onSelectUserChange', () => {
         it('should disable noAllocated if any selected user', () => {
             component.users = new ResponseTestData().getUserData();
-            component.searchForm.controls['selectedUserIds'].setValue([component.users[0].id.toString(),component.users[1].id.toString()]);
+            component.searchForm.controls['selectedUserIds'].setValue([component.users[0].id.toString(), component.users[1].id.toString()]);
             component.onSelectUserChange();
             expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
         });

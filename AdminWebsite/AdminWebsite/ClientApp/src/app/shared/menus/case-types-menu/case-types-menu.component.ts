@@ -7,9 +7,9 @@ import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 
 @Component({
-  selector: 'app-case-types-menu',
-  templateUrl: './case-types-menu.component.html',
-  styleUrls: ['./case-types-menu.component.scss']
+    selector: 'app-case-types-menu',
+    templateUrl: './case-types-menu.component.html',
+    styleUrls: ['./case-types-menu.component.scss']
 })
 export class CaseTypesMenuComponent extends MenuBase {
     loggerPrefix = '[MenuCaseTypes] -';
@@ -18,20 +18,20 @@ export class CaseTypesMenuComponent extends MenuBase {
     selectedItems: string[];
     persistentItems = this.bookingPersistService.selectedCaseTypes;
     formConfiguration = {
-        selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []],
+        selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
     @Input() clearEmitter = new EventEmitter();
-
 
     constructor(
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
         formBuilder: FormBuilder,
         logger: Logger
-    ) { super(formBuilder, logger)}
-
+    ) {
+        super(formBuilder, logger);
+    }
 
     loadItems(): void {
         const self = this;

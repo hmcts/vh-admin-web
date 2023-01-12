@@ -7,11 +7,10 @@ import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 
 @Component({
-  selector: 'app-justice-users-menu',
-  templateUrl: './justice-users-menu.component.html',
-  styleUrls: ['./justice-users-menu.component.scss']
+    selector: 'app-justice-users-menu',
+    templateUrl: './justice-users-menu.component.html',
+    styleUrls: ['./justice-users-menu.component.scss']
 })
-
 export class JusticeUsersMenuComponent extends MenuBase {
     loggerPrefix = '[MenuJusticeUser] -';
     formGroupName = 'selectedUserIds';
@@ -19,21 +18,20 @@ export class JusticeUsersMenuComponent extends MenuBase {
     selectedItems: [];
     persistentItems = this.bookingPersistService.selectedUsers;
     formConfiguration = {
-        selectedUserIds: [this.bookingPersistService.selectedUsers || []],
+        selectedUserIds: [this.bookingPersistService.selectedUsers || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
     @Input() clearEmitter = new EventEmitter();
 
-
-
-  constructor(
-      private bookingPersistService: BookingPersistService,
-      private videoHearingService: VideoHearingsService,
-      formBuilder: FormBuilder,
-      logger: Logger
-  ) { super(formBuilder, logger)}
-
+    constructor(
+        private bookingPersistService: BookingPersistService,
+        private videoHearingService: VideoHearingsService,
+        formBuilder: FormBuilder,
+        logger: Logger
+    ) {
+        super(formBuilder, logger);
+    }
 
     loadItems(): void {
         const self = this;

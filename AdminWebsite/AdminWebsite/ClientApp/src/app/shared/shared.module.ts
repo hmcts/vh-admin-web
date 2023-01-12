@@ -21,7 +21,17 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule, NgSelectModule],
-    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe, CaseTypesMenuComponent, JusticeUsersMenuComponent, VenuesMenuComponent],
+    declarations: [
+        HeaderComponent,
+        FooterComponent,
+        PaginationComponent,
+        ScrollTriggerDirective,
+        BookingEditComponent,
+        LongDatetimePipe,
+        CaseTypesMenuComponent,
+        JusticeUsersMenuComponent,
+        VenuesMenuComponent
+    ],
     providers: [WindowRef, WindowScrolling],
     exports: [
         HeaderComponent,

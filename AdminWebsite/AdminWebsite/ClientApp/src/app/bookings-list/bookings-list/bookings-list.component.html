@@ -16,10 +16,7 @@
             <input id="caseNumber" placeholder="Please enter a case number" class="govuk-input" type="text" formControlName="caseNumber" />
           </div>
           <div class="govuk-grid-column-one-half">
-              <app-venues-menu
-                  [clearEmitter]="venuesClear"
-                  (selectedEmitter)="selectedVenueEmitter($event)"
-              ></app-venues-menu>
+            <app-venues-menu [clearEmitter]="venuesClear" (selectedEmitter)="selectedVenueEmitter($event)"></app-venues-menu>
           </div>
           <div class="govuk-grid-column-one-half">
             <label class="govuk-label" for="participantLastName">Participant's last name</label>
@@ -32,10 +29,7 @@
             />
           </div>
           <div class="govuk-grid-column-one-half">
-              <app-case-types-menu
-                  (selectedEmitter)="selectedCaseTypesEmitter($event)"
-                  [clearEmitter]="caseTypeClear"
-              ></app-case-types-menu>
+            <app-case-types-menu (selectedEmitter)="selectedCaseTypesEmitter($event)" [clearEmitter]="caseTypeClear"></app-case-types-menu>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <label class="govuk-label" for="startDate">Single/Start date</label>
@@ -61,10 +55,7 @@
             />
           </div>
           <div class="govuk-grid-column-one-half" *ngIf="workAllocationEnabled()">
-              <app-justice-users-menu
-                (selectedEmitter)="selectedUsersEmitter($event)"
-                [clearEmitter]="userClear"
-              ></app-justice-users-menu>
+            <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)" [clearEmitter]="userClear"></app-justice-users-menu>
           </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">

@@ -1,23 +1,23 @@
 <div [formGroup]="form">
-    <label class="govuk-label" for="venue-list">Venues</label>
-    <ng-select
-        id="venue-list"
-        class="custom"
-        labelForId="venues"
-        [items]="venues"
-        bindLabel="name"
-        bindValue="id"
-        formControlName="selectedVenueIds"
-        [placeholder]="'Select venues'"
-        [multiple]="true"
-        [attr.aria-label]="'Venue list'"
-        [closeOnSelect]="false"
-        [clearSearchOnAdd]="true"
-        [selectOnTab]="true"
-    >
-        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-            <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
-            {{ item.name }}
-        </ng-template>
-    </ng-select>
+  <label class="govuk-label" for="venue-list">Venues</label>
+  <ng-select
+    id="venue-list"
+    class="custom"
+    labelForId="venues"
+    [items]="venues"
+    bindLabel="name"
+    bindValue="id"
+    formControlName="selectedVenueIds"
+    [placeholder]="'Select venues'"
+    [multiple]="true"
+    [attr.aria-label]="'Venue list'"
+    [closeOnSelect]="false"
+    [clearSearchOnAdd]="true"
+    [selectOnTab]="true"
+  >
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
+      {{ item.name }}
+    </ng-template>
+  </ng-select>
 </div>

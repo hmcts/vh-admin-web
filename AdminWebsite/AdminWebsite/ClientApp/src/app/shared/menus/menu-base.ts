@@ -5,29 +5,25 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 
 export abstract class MenuBase implements OnInit {
+    constructor(formBuilder: FormBuilder, logger: Logger) {
+        this.logger = logger;
+        this.formBuilder = formBuilder;
+    }
     logger: Logger;
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;
     form: FormGroup;
     error = false;
     abstract selectedItems: Array<any>;
-    abstract loadItems(): void;
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<Array<any>>();
     @Input() clearEmitter = new EventEmitter();
 
-    abstract persistentItems : Array<any>;
-
-    constructor(
-        formBuilder: FormBuilder,
-        logger: Logger
-    ) {
-        this.logger = logger;
-        this.formBuilder = formBuilder;
-    }
+    abstract persistentItems: Array<any>;
+    abstract loadItems(): void;
 
     ngOnInit(): void {
         this.form = this.initializeForm();
@@ -47,8 +43,7 @@ export abstract class MenuBase implements OnInit {
     }
 
     onClear(): void {
-        const searchCriteriaEntered =
-            (this.selectedItems && this.selectedItems.length > 0);
+        const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
         if (searchCriteriaEntered) {
             this.selectedItems = [];
             this.form.reset();
