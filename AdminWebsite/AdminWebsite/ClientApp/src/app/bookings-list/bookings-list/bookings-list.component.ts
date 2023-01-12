@@ -42,9 +42,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     searchForm: FormGroup;
     enableSearchFeature: boolean;
     title = this.initialTitle;
-    venues: HearingVenueResponse[];
-    caseTypes: string[];
-    users: JusticeUserResponse[];
     selectedVenueIds: [];
     selectedCaseTypes: string[];
     selectedUserIds: [];
@@ -54,6 +51,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
     caseTypeClear = new EventEmitter();
+    userClear = new EventEmitter();
+    venuesClear = new EventEmitter();
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -75,10 +74,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
                 this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
                 console.log('Feature toggle is', this.enableSearchFeature);
-                if (this.enableSearchFeature) {
-                    this.loadVenuesList();
-                    if (this.vhoWorkAllocationFeature) this.loadUsersList();
-                }
             }
         });
 
@@ -227,9 +222,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onSearch(): void {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
-            const venueIds = this.searchForm.value['selectedVenueIds'];
+            const venueIds = this.bookingPersistService.selectedVenueIds;
             const caseTypes = this.bookingPersistService.selectedCaseTypes;
-            const selectedUserIds = this.searchForm.value['selectedUserIds'];
+            const selectedUserIds = this.bookingPersistService.selectedUsers;
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
             const lastName = this.searchForm.value['participantLastName'];
@@ -268,9 +263,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.cursor = undefined;
             this.bookingPersistService.caseNumber = '';
             this.bookingPersistService.selectedVenueIds = [];
+            this.venuesClear.emit();
             this.bookingPersistService.selectedCaseTypes = [];
             this.caseTypeClear.emit();
             this.bookingPersistService.selectedUsers = [];
+            this.userClear.emit();
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
@@ -384,48 +381,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }, 500);
     }
 
-    private loadVenuesList(): void {
-        const self = this;
-
-        this.refDataService.getCourts().subscribe(
-            (data: HearingVenueResponse[]) => {
-                this.venues = data;
-                this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
-            },
-            error => self.handleListError(error, 'venues')
-        );
-    }
-
-    // private loadCaseTypeList(): void {
-    //     const self = this;
-    //     const distinct = (value, index, array) => array.indexOf(value) === index;
-    //     this.videoHearingService.getHearingTypes().subscribe(
-    //         (data: HearingTypeResponse[]) => {
-    //             this.caseTypes = [
-    //                 ...Array.from(
-    //                     data
-    //                         .map(item => item.group)
-    //                         .filter(distinct)
-    //                         .sort()
-    //                 )
-    //             ];
-    //             this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
-    //         },
-    //         error => self.handleListError(error, 'case types')
-    //     );
-    // }
-
-    private loadUsersList(): void {
-        const self = this;
-        this.videoHearingService.getUsers().subscribe(
-            (data: JusticeUserResponse[]) => {
-                this.users = data;
-                this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-            },
-            error => self.handleListError(error, 'users')
-        );
-    }
-
     openSearchPanel() {
         this.showSearch = true;
     }
@@ -499,8 +454,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         return item.first_name + ' ' + item.lastname;
     }
 
+    selectedUsersEmitter($event: string[]) {
+        this.bookingPersistService.selectedUsers = $event;
+        this.onSelectUserChange();
+    }
+
     onSelectUserChange() {
-        const selectedUserIds = this.searchForm.value['selectedUserIds'];
+        const selectedUserIds = this.bookingPersistService.selectedUsers;
         if (selectedUserIds.length > 0) {
             this.searchForm.controls['noAllocated'].disable();
             this.bookingPersistService.noAllocatedHearings = false;
@@ -525,5 +485,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     selectedCaseTypesEmitter($event: string[]) {
         this.bookingPersistService.selectedCaseTypes = $event;
+    }
+
+    selectedVenueEmitter($event: number[]) {
+        this.bookingPersistService.selectedVenueIds = $event;
     }
 }
