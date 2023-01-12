@@ -38,15 +38,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     @Input() set result(value) {
         this.resetStartDateAndEndDate();
         this.hideMessage();
+        debugger
         if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
-            if (this.nonAvailabilityWorkHoursResponses.length > 20) {
-                this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
-            } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
-                this.displayMessageAndFade('There are no non-availability hours uploaded for this team member', false);
-            }
+            this.checkResultsLength();
         } else {
             this.nonWorkHours = null;
         }
@@ -59,6 +56,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
     public static readonly ErrorStartTimeRequired = 'Start time is required';
     public static readonly ErrorEndTimeRequired = 'End time is required';
+    public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
+    public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
     private filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
@@ -469,6 +468,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         } else {
             this.showSaveConfirmation = true;
         }
+        this.checkResultsLength();
     }
     handleContinue() {
         this.showSaveConfirmation = false;
@@ -482,5 +482,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
     get checkVhoHasWorkHours(): boolean {
         return this.nonWorkHours?.length > 0;
+    }
+    private checkResultsLength() {
+        if (this.nonWorkHours.length >= 20) {
+            this.displayMessageAndFade(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded, false);
+        } else if (this.nonWorkHours.length < 20 && this.nonWorkHours.length > 0) {
+            this.hideMessage();
+        } else if (this.nonWorkHours.length === 0) {
+            this.displayMessageAndFade(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho, false);
+        }
     }
 }

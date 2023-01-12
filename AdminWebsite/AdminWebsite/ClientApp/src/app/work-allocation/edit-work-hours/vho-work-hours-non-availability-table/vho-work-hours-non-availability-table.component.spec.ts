@@ -9,6 +9,7 @@ import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-mod
 import { By } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import {MockWorkAllocationValues} from "../../../testing/data/work-allocation-test-data";
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
@@ -743,6 +744,43 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
             expect(component.showSaveConfirmation).toBe(true);
+        });
+    });
+
+    fdescribe('displaying messages for results', () =>{
+        it('should display a message when results length exceeds 20', () => {
+            // arrange
+            const testData =MockWorkAllocationValues.NonAvailabilityWorkHoursResponses;
+            // act
+            component.result = testData;
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+        });
+
+        it('should display a message when there are zero results', () => {
+            // arrange
+            const testData = new Array<VhoNonAvailabilityWorkHoursResponse>();
+            // act
+            component.result = testData;
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should display a message when results length exceeds 20 after filter', () => {
+            // arrange
+            const testData =MockWorkAllocationValues.NonAvailabilityWorkHoursResponses;
+            const startDate = new Date();
+            const endDate = new Date();
+            component.result = testData;
+            component.filterForm.controls['startDate'].setValue(startDate);
+            component.filterForm.controls['endDate'].setValue(endDate);
+            // act
+            component.filterByDate()
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
         });
     });
 });
