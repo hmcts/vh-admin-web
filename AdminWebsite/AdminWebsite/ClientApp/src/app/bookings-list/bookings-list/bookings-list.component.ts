@@ -53,6 +53,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     caseTypeClear = new EventEmitter();
     userClear = new EventEmitter();
     venuesClear = new EventEmitter();
+    enableUserEmitter= new EventEmitter<boolean>();
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -470,10 +471,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onChangeNoAllocated() {
         const noAllocated = this.searchForm.value['noAllocated'];
         if (noAllocated) {
-            this.searchForm.controls['selectedUserIds'].disable();
+            this.enableUserEmitter.emit(false);
             this.bookingPersistService.selectedUsers = [];
         } else {
-            this.searchForm.controls['selectedUserIds'].enable();
+            this.enableUserEmitter.emit(true);
         }
     }
 
