@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseTypesMenuComponent } from './case-types-menu.component';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
+import { MockLogger } from '../../testing/mock-logger';
+import { Logger } from '../../../services/logger';
 
 describe('CaseTypesMenuComponent', () => {
     let component: CaseTypesMenuComponent;
@@ -8,7 +12,9 @@ describe('CaseTypesMenuComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [CaseTypesMenuComponent]
+            declarations: [CaseTypesMenuComponent],
+            providers: [HttpClient, HttpHandler, FormBuilder,
+                {provide: Logger, useValue: new MockLogger}]
         }).compileComponents();
     });
 

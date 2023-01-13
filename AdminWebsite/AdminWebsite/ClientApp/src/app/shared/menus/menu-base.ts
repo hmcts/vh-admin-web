@@ -1,7 +1,5 @@
 import { EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { BookingPersistService } from '../../services/bookings-persist.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 
 export abstract class MenuBase implements OnInit {

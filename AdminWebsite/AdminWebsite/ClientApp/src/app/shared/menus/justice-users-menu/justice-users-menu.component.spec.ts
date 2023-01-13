@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { JusticeUsersMenuComponent } from './justice-users-menu.component';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
+import { MockLogger } from '../../testing/mock-logger';
+import { Logger } from '../../../services/logger';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
@@ -8,7 +12,9 @@ describe('JusticeUsersMenuComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [JusticeUsersMenuComponent]
+            declarations: [JusticeUsersMenuComponent],
+            providers: [HttpClient, HttpHandler, FormBuilder,
+                {provide: Logger, useValue: new MockLogger}]
         }).compileComponents();
     });
 
@@ -21,4 +27,5 @@ describe('JusticeUsersMenuComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
 });
