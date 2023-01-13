@@ -35,11 +35,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             endDate: ['']
         });
     }
-    @Input() set result(value) {
+    @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
         this.resetStartDateAndEndDate();
         this.hideMessage();
-        debugger
-        if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
+        if (value) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
@@ -444,7 +443,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             const calenderStartDate = this.retrieveDate(this.filterForm.value.startDate);
             const calenderEndDate = this.retrieveDate(this.filterForm.value.endDate);
             let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
-
             if (calenderStartDate && calenderEndDate) {
                 if (calenderEndDate < calenderStartDate) {
                     this.filterForm.setValue({ startDate: null, endDate: null });
