@@ -1894,6 +1894,128 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * @param fromDate (optional)
+     * @param toDate (optional)
+     * @param csoUserName (optional)
+     * @param caseType (optional)
+     * @param caseNumber (optional)
+     * @return Success
+     */
+    getAllocationHearings(
+        fromDate: Date | undefined,
+        toDate: Date | undefined,
+        csoUserName: string[] | undefined,
+        caseType: string[] | undefined,
+        caseNumber: string | undefined
+    ): Observable<AllocationHearingsResponse[]> {
+        let url_ = this.baseUrl + '/api/hearings/allocation/search?';
+        if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
+        else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
+        if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
+        else if (toDate !== undefined) url_ += 'ToDate=' + encodeURIComponent(toDate ? '' + toDate.toISOString() : '') + '&';
+        if (csoUserName === null) throw new Error("The parameter 'csoUserName' cannot be null.");
+        else if (csoUserName !== undefined)
+            csoUserName &&
+                csoUserName.forEach(item => {
+                    url_ += 'CsoUserName=' + encodeURIComponent('' + item) + '&';
+                });
+        if (caseType === null) throw new Error("The parameter 'caseType' cannot be null.");
+        else if (caseType !== undefined)
+            caseType &&
+                caseType.forEach(item => {
+                    url_ += 'CaseType=' + encodeURIComponent('' + item) + '&';
+                });
+        if (caseNumber === null) throw new Error("The parameter 'caseNumber' cannot be null.");
+        else if (caseNumber !== undefined) url_ += 'CaseNumber=' + encodeURIComponent('' + caseNumber) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetAllocationHearings(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetAllocationHearings(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
+                })
+            );
+    }
+
+    protected processGetAllocationHearings(response: HttpResponseBase): Observable<AllocationHearingsResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(AllocationHearingsResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<AllocationHearingsResponse[]>(null as any);
+    }
+
+    /**
      * Find judges and court rooms accounts list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
@@ -3497,6 +3619,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Get the Justice User list from the JusticeUser table
      * @return Success
      */
     getUserList(): Observable<JusticeUserResponse[]> {
@@ -4309,6 +4432,65 @@ export interface IUpdateAccountDetailsRequest {
     current_username?: string | undefined;
 }
 
+export class AllocationHearingsResponse implements IAllocationHearingsResponse {
+    hearing_id?: string;
+    hearing_date?: Date;
+    start_time?: string;
+    duration?: number;
+    case_number?: string | undefined;
+    case_type?: string | undefined;
+    allocated_cso?: string | undefined;
+
+    constructor(data?: IAllocationHearingsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hearing_id = _data['hearing_id'];
+            this.hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
+            this.start_time = _data['start_time'];
+            this.duration = _data['duration'];
+            this.case_number = _data['case_number'];
+            this.case_type = _data['case_type'];
+            this.allocated_cso = _data['allocated_cso'];
+        }
+    }
+
+    static fromJS(data: any): AllocationHearingsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AllocationHearingsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['hearing_id'] = this.hearing_id;
+        data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
+        data['start_time'] = this.start_time;
+        data['duration'] = this.duration;
+        data['case_number'] = this.case_number;
+        data['case_type'] = this.case_type;
+        data['allocated_cso'] = this.allocated_cso;
+        return data;
+    }
+}
+
+export interface IAllocationHearingsResponse {
+    hearing_id?: string;
+    hearing_date?: Date;
+    start_time?: string;
+    duration?: number;
+    case_number?: string | undefined;
+    case_type?: string | undefined;
+    allocated_cso?: string | undefined;
+}
+
 /** Configuration to initialise the UI application */
 export class ClientSettingsResponse implements IClientSettingsResponse {
     /** The Azure Tenant Id */
@@ -4412,6 +4594,49 @@ export interface IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     launch_darkly_client_id?: string | undefined;
+}
+
+export class DateForUnallocatedHearings implements IDateForUnallocatedHearings {
+    count?: number;
+    date_start?: Date;
+    date_end?: Date | undefined;
+
+    constructor(data?: IDateForUnallocatedHearings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.count = _data['count'];
+            this.date_start = _data['date_start'] ? new Date(_data['date_start'].toString()) : <any>undefined;
+            this.date_end = _data['date_end'] ? new Date(_data['date_end'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): DateForUnallocatedHearings {
+        data = typeof data === 'object' ? data : {};
+        let result = new DateForUnallocatedHearings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['count'] = this.count;
+        data['date_start'] = this.date_start ? this.date_start.toISOString() : <any>undefined;
+        data['date_end'] = this.date_end ? this.date_end.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IDateForUnallocatedHearings {
+    count?: number;
+    date_start?: Date;
+    date_end?: Date | undefined;
 }
 
 /** Defines a type of hearing based on case */
@@ -4578,10 +4803,10 @@ export interface IPublicHolidayResponse {
 }
 
 export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsForVhoResponse {
-    today?: number;
-    tomorrow?: number;
-    this_week?: number;
-    this_month?: number;
+    today?: DateForUnallocatedHearings;
+    tomorrow?: DateForUnallocatedHearings;
+    this_week?: DateForUnallocatedHearings;
+    this_month?: DateForUnallocatedHearings;
 
     constructor(data?: IUnallocatedHearingsForVhoResponse) {
         if (data) {
@@ -4593,10 +4818,10 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
 
     init(_data?: any) {
         if (_data) {
-            this.today = _data['today'];
-            this.tomorrow = _data['tomorrow'];
-            this.this_week = _data['this_week'];
-            this.this_month = _data['this_month'];
+            this.today = _data['today'] ? DateForUnallocatedHearings.fromJS(_data['today']) : <any>undefined;
+            this.tomorrow = _data['tomorrow'] ? DateForUnallocatedHearings.fromJS(_data['tomorrow']) : <any>undefined;
+            this.this_week = _data['this_week'] ? DateForUnallocatedHearings.fromJS(_data['this_week']) : <any>undefined;
+            this.this_month = _data['this_month'] ? DateForUnallocatedHearings.fromJS(_data['this_month']) : <any>undefined;
         }
     }
 
@@ -4609,19 +4834,19 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['today'] = this.today;
-        data['tomorrow'] = this.tomorrow;
-        data['this_week'] = this.this_week;
-        data['this_month'] = this.this_month;
+        data['today'] = this.today ? this.today.toJSON() : <any>undefined;
+        data['tomorrow'] = this.tomorrow ? this.tomorrow.toJSON() : <any>undefined;
+        data['this_week'] = this.this_week ? this.this_week.toJSON() : <any>undefined;
+        data['this_month'] = this.this_month ? this.this_month.toJSON() : <any>undefined;
         return data;
     }
 }
 
 export interface IUnallocatedHearingsForVhoResponse {
-    today?: number;
-    tomorrow?: number;
-    this_week?: number;
-    this_month?: number;
+    today?: DateForUnallocatedHearings;
+    tomorrow?: DateForUnallocatedHearings;
+    this_week?: DateForUnallocatedHearings;
+    this_month?: DateForUnallocatedHearings;
 }
 
 export class UserProfileResponse implements IUserProfileResponse {
@@ -5967,6 +6192,7 @@ export interface IEndpointRequest {
 }
 
 export enum UpdateBookingStatus {
+    Booked = 'Booked',
     Created = 'Created',
     Cancelled = 'Cancelled',
     Failed = 'Failed'

@@ -614,5 +614,37 @@ namespace AdminWebsite.Controllers
                 }
             }
         }
+        
+             
+        [HttpGet("allocation/search")]
+        [SwaggerOperation(OperationId = "GetAllocationHearings")]
+        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SearchAllocationHearings([FromQuery] SearchForAllocationHearingsRequest searchRequest)
+        {
+            try
+            {
+                var hearings = await _bookingsApiClient.
+                    SearchForAllocationHearingsAsync(
+                        fromDate: searchRequest.FromDate, 
+                        toDate:   searchRequest.ToDate,
+                        caseNumber: searchRequest.CaseNumber,
+                        caseType:   searchRequest.CaseType,
+                        csoUserName:searchRequest.CsoUserName);
+
+                return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
+            }
+            catch(BookingsApiException ex)
+            {
+                switch (ex.StatusCode)
+                {
+                    case (int)HttpStatusCode.NotFound:
+                        // return empty data set rather than 404
+                        return Ok(new List<AllocationHearingsResponse>());
+                    default:
+                        throw;
+                }
+            }
+        }
     }
 }

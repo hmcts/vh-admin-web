@@ -1,27 +1,27 @@
-<div class="govuk-panel" *ngIf="isLoaded && isVhTeamLeader">
+<div class="govuk-panel" *ngIf="isVhTeamLeader">
   <h1 class="govuk-heading-s">Upcoming unallocated hearings:</h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'today' }">
-        {{ unallocatedHearings.today }}</a
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.todayDate">
+        {{ unallocatedHearings.today.count }}</a
       >
       <p>Today</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'tomorrow' }">
-        {{ unallocatedHearings.tomorrow }}</a
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.tomorrowDate">
+        {{ unallocatedHearings.tomorrow.count }}</a
       >
       <p>Tomorrow</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'week' }">
-        {{ unallocatedHearings.this_week }}</a
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.weekDate">
+        {{ unallocatedHearings.this_week.count }}</a
       >
       <p>This Week</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="{ unallocated: 'month' }">
-        {{ unallocatedHearings.this_month }}</a
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.monthDate">
+        {{ unallocatedHearings.this_month.count }}</a
       >
       <p>This Month</p>
     </div>
