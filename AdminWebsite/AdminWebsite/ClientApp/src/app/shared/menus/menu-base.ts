@@ -1,7 +1,8 @@
-import { EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { EventEmitter, Injectable, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Logger } from '../../services/logger';
 
+@Injectable()
 export abstract class MenuBase implements OnInit {
     constructor(formBuilder: FormBuilder, logger: Logger) {
         this.logger = logger;
@@ -19,6 +20,7 @@ export abstract class MenuBase implements OnInit {
 
     @Output() selectedEmitter = new EventEmitter<Array<any>>();
     @Input() clearEmitter = new EventEmitter();
+    @Input() enableEmitter = new EventEmitter<boolean>();
 
     abstract persistentItems: Array<any>;
     abstract loadItems(): void;
@@ -28,6 +30,14 @@ export abstract class MenuBase implements OnInit {
         this.loadItems();
         this.clearEmitter.subscribe(x => {
             this.onClear();
+        });
+        this.enableEmitter.subscribe(enable => {
+            if (enable) {
+                this.form.controls[this.formGroupName].enable();
+            }
+            else {
+                this.form.controls[this.formGroupName].disable();
+            }
         });
     }
 

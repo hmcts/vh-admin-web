@@ -23,6 +23,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
     @Input() clearEmitter = new EventEmitter();
+    @Input() enableEmitter = new EventEmitter<boolean>();
 
     constructor(
         private bookingPersistService: BookingPersistService,
