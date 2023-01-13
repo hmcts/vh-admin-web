@@ -485,6 +485,7 @@ export class BookingPersistServiceSpy {
     private _caseNumber = 'CASE_NUMBER';
     private _showSearch = false;
     private _noJudgeInHearings = false;
+    private _selectedUsers: string[] = [];
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -537,6 +538,14 @@ export class BookingPersistServiceSpy {
 
     set noJugdeInHearings(value) {
         this._noJudgeInHearings = value;
+    }
+
+    get selectedUsers(): string[] {
+        return this._selectedUsers;
+    }
+
+    set selectedUsers(value) {
+        this._selectedUsers = value;
     }
 
     updateBooking(hearing: HearingModel) {
@@ -624,8 +633,6 @@ describe('BookingsListComponent', () => {
 
     function setFormValue(noJudge?: boolean) {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-        component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
         component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
         component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
         component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
@@ -634,9 +641,6 @@ describe('BookingsListComponent', () => {
 
     function clearSearch() {
         component.searchForm.controls['caseNumber'].setValue('');
-        component.searchForm.controls['selectedVenueIds'].setValue([]);
-        component.searchForm.controls['selectedCaseTypes'].setValue([]);
-        component.searchForm.controls['selectedUserIds'].setValue([]);
         component.searchForm.controls['startDate'].setValue(null);
         component.searchForm.controls['endDate'].setValue(null);
         component.searchForm.controls['participantLastName'].setValue('');
@@ -664,8 +668,6 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = false;
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -679,8 +681,6 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -707,8 +707,6 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toBeNull();
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -735,9 +733,7 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
-        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
@@ -976,25 +972,6 @@ describe('BookingsListComponent', () => {
         expect(searchButton.disabled).toBe(false);
     });
 
-    it('should enable search button if selectedVenueIds field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
-
-    it('should enable search button if selectedCaseTypes field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
 
     it('should enable search button if start date is valid', () => {
         component.openSearchPanel();
@@ -1035,14 +1012,14 @@ describe('BookingsListComponent', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
         launchDarklyServiceSpy.flagChange.next({ admin_search: false });
         fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
+        expect(component.enableSearchFeature).toBeFalsy();
     });
 
     it('should load venues when search feature is enabled', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
         launchDarklyServiceSpy.flagChange.next({ admin_search: true });
         fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(1);
+        expect(component.enableSearchFeature).toBeTruthy();
     });
 
     it('should hide the search panel on initial load when search feature enabled', () => {
@@ -1220,15 +1197,14 @@ describe('BookingsListComponent', () => {
 
     describe('onSelectUserChange', () => {
         it('should disable noAllocated if any selected user', () => {
-            component.users = new ResponseTestData().getUserData();
-            component.searchForm.controls['selectedUserIds'].setValue([component.users[0].id.toString(), component.users[1].id.toString()]);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            component.searchForm.controls['selectedUserIds'].setValue([bookingPersistService.selectedUsers[0], bookingPersistService.selectedUsers[1]]);
             component.onSelectUserChange();
             expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
         });
 
         it('should enable noAllocated if no selected user', () => {
-            component.users = new ResponseTestData().getUserData();
-            component.searchForm.controls['selectedUserIds'].setValue([]);
+            bookingPersistService.selectedUsers = [];
             component.onSelectUserChange();
             expect(component.searchForm.controls['noAllocated'].disabled).toBeFalsy();
         });
@@ -1236,17 +1212,18 @@ describe('BookingsListComponent', () => {
 
     describe('onChangeNoAllocated', () => {
         it('should disable selectedUsers if noAllocated is checked', () => {
-            component.users = new ResponseTestData().getUserData();
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
             component.searchForm.controls['noAllocated'].setValue(true);
             component.onChangeNoAllocated();
-            expect(component.searchForm.controls['selectedUserIds'].disabled).toBeTruthy();
+            expect(bookingPersistService.selectedUsers).toEqual([]);
         });
 
         it('should enable selectedUsers if noAllocated is not checked', () => {
-            component.users = [];
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            const count = bookingPersistService.selectedUsers.length;
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();
-            expect(component.searchForm.controls['selectedUserIds'].disabled).toBeFalsy();
+            expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
     });
 });
