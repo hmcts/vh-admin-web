@@ -108,19 +108,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         expect(component.nonWorkHours).toBe(null);
     });
 
-    // it('check results input parameter, when wrong type sets to null', () => {
-    //     component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
-    //     fixture.detectChanges();
-    //     expect(component.nonWorkHours).toBe(null);
-    // });
-
-    // it('check results input hides existing messages', () => {
-    //     component.displayMessage = true;
-    //     component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
-    //     fixture.detectChanges();
-    //     expect(component.displayMessage).toBe(false);
-    // });
-
     it('check remove slot from result when confirm deletion', () => {
         const slot = new VhoNonAvailabilityWorkHoursResponse();
         component.result = [slot];
