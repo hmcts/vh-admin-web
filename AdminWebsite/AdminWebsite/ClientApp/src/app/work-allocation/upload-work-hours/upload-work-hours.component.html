@@ -45,17 +45,6 @@
     >
     </ng-container>
 
-    <ng-container
-      *ngIf="isNonWorkingHoursUploadComplete"
-      [ngTemplateOutlet]="fileUploadResult"
-      [ngTemplateOutletContext]="{
-        isWorkingHoursUpload: false,
-        usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
-        numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
-      }"
-    >
-    </ng-container>
-
     <ng-template
       let-isWorkingHoursUpload="isWorkingHoursUpload"
       let-errors="usernameErrors"
@@ -136,5 +125,16 @@
         <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
       </div>
     </div>
+
+    <ng-container
+      *ngIf="isNonWorkingHoursUploadComplete"
+      [ngTemplateOutlet]="fileUploadResult"
+      [ngTemplateOutletContext]="{
+        isWorkingHoursUpload: false,
+        usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
+        numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
+      }"
+    >
+    </ng-container>
   </div>
 </details>
