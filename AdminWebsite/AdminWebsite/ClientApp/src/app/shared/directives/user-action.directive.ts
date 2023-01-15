@@ -6,10 +6,8 @@ import { Directive, ElementRef, EventEmitter, HostListener, Output } from '@angu
 export class UserActionDirective {
     @Output() userActionDetected = new EventEmitter();
 
-    @HostListener('document:keydown')
-    @HostListener('document:click')
+    @HostListener('click')
     onMouseClick() {
-        console.warn('event detected');
         this.userActionDetected.emit();
     }
 }
