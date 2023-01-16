@@ -53,7 +53,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     caseTypeClear = new EventEmitter();
     userClear = new EventEmitter();
     venuesClear = new EventEmitter();
-    enableUserEmitter= new EventEmitter<boolean>();
+    enableUserEmitter = new EventEmitter<boolean>();
 
     constructor(
         private bookingsListService: BookingsListService,

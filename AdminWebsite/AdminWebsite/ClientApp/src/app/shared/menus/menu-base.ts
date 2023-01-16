@@ -34,8 +34,7 @@ export abstract class MenuBase implements OnInit {
         this.enableEmitter.subscribe(enable => {
             if (enable) {
                 this.form.controls[this.formGroupName].enable();
-            }
-            else {
+            } else {
                 this.form.controls[this.formGroupName].disable();
             }
         });

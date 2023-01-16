@@ -733,7 +733,7 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
@@ -972,7 +972,6 @@ describe('BookingsListComponent', () => {
         expect(searchButton.disabled).toBe(false);
     });
 
-
     it('should enable search button if start date is valid', () => {
         component.openSearchPanel();
         clearSearch();
@@ -1197,8 +1196,11 @@ describe('BookingsListComponent', () => {
 
     describe('onSelectUserChange', () => {
         it('should disable noAllocated if any selected user', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
-            component.searchForm.controls['selectedUserIds'].setValue([bookingPersistService.selectedUsers[0], bookingPersistService.selectedUsers[1]]);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
+            component.searchForm.controls['selectedUserIds'].setValue([
+                bookingPersistService.selectedUsers[0],
+                bookingPersistService.selectedUsers[1]
+            ]);
             component.onSelectUserChange();
             expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
         });
@@ -1212,14 +1214,14 @@ describe('BookingsListComponent', () => {
 
     describe('onChangeNoAllocated', () => {
         it('should disable selectedUsers if noAllocated is checked', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
             component.searchForm.controls['noAllocated'].setValue(true);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers).toEqual([]);
         });
 
         it('should enable selectedUsers if noAllocated is not checked', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
             const count = bookingPersistService.selectedUsers.length;
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();

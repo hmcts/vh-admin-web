@@ -13,8 +13,7 @@ describe('CaseTypesMenuComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [CaseTypesMenuComponent],
-            providers: [HttpClient, HttpHandler, FormBuilder,
-                {provide: Logger, useValue: new MockLogger}]
+            providers: [HttpClient, HttpHandler, FormBuilder, { provide: Logger, useValue: new MockLogger() }]
         }).compileComponents();
     });
 
