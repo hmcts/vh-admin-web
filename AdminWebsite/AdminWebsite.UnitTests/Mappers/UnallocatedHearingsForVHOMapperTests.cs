@@ -54,9 +54,9 @@ public class UnallocatedHearingsForVhoMapperTests
 
         var response = UnallocatedHearingsForVhoMapper.MapFrom(hearingDetailsResponse, _testDate);
 
-        response.Today.Should().Be(0);
-        response.Tomorrow.Should().Be(0);
-        response.ThisWeek.Should().Be(0);
-        response.ThisMonth.Should().Be(0);
+        response.Today.Count.Should().Be(0);
+        response.Tomorrow.Count.Should().Be(0);
+        response.ThisWeek.Count.Should().Be(0);
+        response.ThisMonth.Count.Should().Be(0);
     }
 }

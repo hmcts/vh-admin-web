@@ -2,27 +2,19 @@
   <h1 class="govuk-heading-s">Upcoming unallocated hearings:</h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.todayDate">
-        {{ unallocatedHearings.today.count }}</a
-      >
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.todayDate">{{ getTodayCount }}</a>
       <p>Today</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.tomorrowDate">
-        {{ unallocatedHearings.tomorrow.count }}</a
-      >
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.tomorrowDate">{{ getTomorrowsCount }}</a>
       <p>Tomorrow</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.weekDate">
-        {{ unallocatedHearings.this_week.count }}</a
-      >
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.weekDate">{{ getThisWeeksCount }}</a>
       <p>This Week</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.monthDate">
-        {{ unallocatedHearings.this_month.count }}</a
-      >
+      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.monthDate">{{ getThisMonthsCount }}</a>
       <p>This Month</p>
     </div>
   </div>
