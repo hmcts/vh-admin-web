@@ -27,39 +27,46 @@ export class UploadWorkHoursComponent {
     constructor(private workHoursProcessor: WorkHoursFileProcessorService) {}
 
     handleFileInput(file: File, fileType: FileType) {
-        this.resetProgress();
-        this.resetErrors();
-
         if (!file) {
+            this.handleFileInputCancel(fileType);
             return;
         }
 
         if (this.workHoursProcessor.isFileTooBig(file)) {
+            const message = `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`;
             if (fileType === FileType.UploadNonWorkingHours) {
-                this.nonWorkingHoursFileValidationErrors.push(
-                    `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`
-                );
+                this.nonWorkingHoursFileValidationErrors.push(message);
             } else {
-                this.workingHoursFileValidationErrors.push(
-                    `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`
-                );
+                this.workingHoursFileValidationErrors.push(message);
             }
+            return;
         }
 
         if (fileType === FileType.UploadWorkingHours) {
+            this.resetWorkingHoursMessages();
             this.workingHoursFile = file;
         } else {
+            this.resetNonWorkingHoursMessages();
             this.nonWorkingHoursFile = file;
         }
     }
 
-    resetErrors() {
-        this.nonWorkingHoursFileValidationErrors = [];
-        this.workingHoursFileValidationErrors = [];
+    handleFileInputCancel(fileType: FileType) {
+        if (fileType === FileType.UploadWorkingHours) {
+            this.resetWorkingHoursMessages();
+        } else {
+            this.resetNonWorkingHoursMessages();
+        }
     }
 
-    resetProgress() {
-        this.isWorkingHoursUploadComplete = this.isNonWorkingHoursUploadComplete = false;
+    resetWorkingHoursMessages() {
+        this.workingHoursFileValidationErrors = [];
+        this.isWorkingHoursUploadComplete = false;
+    }
+
+    resetNonWorkingHoursMessages() {
+        this.nonWorkingHoursFileValidationErrors = [];
+        this.isNonWorkingHoursUploadComplete = false;
     }
 
     readFile(file: File): FileReader {
@@ -107,7 +114,7 @@ export class UploadWorkHoursComponent {
     }
 
     uploadWorkingHours() {
-        this.resetErrors();
+        this.resetWorkingHoursMessages();
 
         if (!this.workingHoursFile) {
             return;
@@ -118,7 +125,7 @@ export class UploadWorkHoursComponent {
     }
 
     uploadNonWorkingHours() {
-        this.resetErrors();
+        this.resetNonWorkingHoursMessages();
 
         if (!this.nonWorkingHoursFile) {
             return;

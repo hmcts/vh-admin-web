@@ -340,7 +340,7 @@ describe('UploadWorkHoursComponent', () => {
 
     describe('handleFileInput', () => {
         it('should reset file upload errors', () => {
-            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
             const file = new File([''], 'filename', { type: 'text/html' });
 
             component.handleFileInput(file, FileType.UploadNonWorkingHours);
@@ -349,23 +349,25 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should not assign working hours file if file is null', () => {
-            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const resetErrorsSpy = spyOn(component, 'resetWorkingHoursMessages');
             const file = new File([''], 'filename', { type: 'text/html' });
             component.workingHoursFile = file;
 
-            component.handleFileInput(null, FileType.UploadNonWorkingHours);
+            component.handleFileInput(null, FileType.UploadWorkingHours);
 
             expect(component.workingHoursFile).not.toBeNull();
+            expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
         it('should not assign non-working hours file if file is null', () => {
-            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
             const file = new File([''], 'filename', { type: 'text/html' });
             component.nonWorkingHoursFile = file;
 
             component.handleFileInput(null, FileType.UploadNonWorkingHours);
 
             expect(component.nonWorkingHoursFile).not.toBeNull();
+            expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
         it(`should set errors when maximum working hours file size is exceeded`, () => {
@@ -390,13 +392,19 @@ describe('UploadWorkHoursComponent', () => {
     });
 
     describe('resetErrors', () => {
-        it('should reset errors', () => {
+        it('should reset working hour errors', () => {
             component.workingHoursFileValidationErrors.push('error message');
-            component.nonWorkingHoursFileValidationErrors.push('error message');
 
-            component.resetErrors();
+            component.resetWorkingHoursMessages();
 
             expect(component.workingHoursFileValidationErrors).toEqual([]);
+        });
+
+        it('should reset non-working hour errors', () => {
+            component.nonWorkingHoursFileValidationErrors.push('error message');
+
+            component.resetNonWorkingHoursMessages();
+
             expect(component.nonWorkingHoursFileValidationErrors).toEqual([]);
         });
     });
@@ -502,7 +510,7 @@ describe('UploadWorkHoursComponent', () => {
 
     describe('uploadWorkingHours', () => {
         it('should reset file upload errors', () => {
-            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const resetErrorsSpy = spyOn(component, 'resetWorkingHoursMessages');
 
             component.uploadWorkingHours();
 
@@ -510,7 +518,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should not read file if file does not exist', () => {
-            spyOn(component, 'resetErrors');
+            spyOn(component, 'resetWorkingHoursMessages');
             const readFileSpy = spyOn(component, 'readFile');
 
             component.uploadWorkingHours();
@@ -519,7 +527,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should read file', () => {
-            spyOn(component, 'resetErrors');
+            spyOn(component, 'resetWorkingHoursMessages');
 
             const readFileSpy = spyOn(component, 'readFile').and.returnValue({
                 onload: () => 'fileContents'
@@ -535,7 +543,7 @@ describe('UploadWorkHoursComponent', () => {
 
     describe('uploadNonWorkingHours', () => {
         it('should reset file upload errors', () => {
-            const resetErrorsSpy = spyOn(component, 'resetErrors');
+            const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
 
             component.uploadNonWorkingHours();
 
@@ -543,7 +551,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should not read file if file does not exist', () => {
-            spyOn(component, 'resetErrors');
+            spyOn(component, 'resetNonWorkingHoursMessages');
             const readFileSpy = spyOn(component, 'readFile');
 
             component.uploadNonWorkingHours();
@@ -552,7 +560,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should read file', () => {
-            spyOn(component, 'resetErrors');
+            spyOn(component, 'resetNonWorkingHoursMessages');
 
             const readFileSpy = spyOn(component, 'readFile').and.returnValue({
                 onload: () => 'fileContents'
