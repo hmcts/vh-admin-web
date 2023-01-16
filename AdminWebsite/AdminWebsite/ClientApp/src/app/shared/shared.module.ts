@@ -14,19 +14,10 @@ import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import { UserActionDirective } from './directives/user-action.directive';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
-    declarations: [
-        HeaderComponent,
-        FooterComponent,
-        PaginationComponent,
-        ScrollTriggerDirective,
-        BookingEditComponent,
-        LongDatetimePipe,
-        UserActionDirective
-    ],
+    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe],
     providers: [WindowRef, WindowScrolling],
     exports: [
         HeaderComponent,
@@ -38,8 +29,7 @@ import { UserActionDirective } from './directives/user-action.directive';
         ReactiveFormsModule,
         HttpClientModule,
         ScrollTriggerDirective,
-        LongDatetimePipe,
-        UserActionDirective
+        LongDatetimePipe
     ]
 })
 export class SharedModule {
