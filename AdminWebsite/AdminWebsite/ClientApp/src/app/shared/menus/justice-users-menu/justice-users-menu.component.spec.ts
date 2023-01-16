@@ -13,8 +13,7 @@ describe('JusticeUsersMenuComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
-            providers: [HttpClient, HttpHandler, FormBuilder,
-                {provide: Logger, useValue: new MockLogger}]
+            providers: [HttpClient, HttpHandler, FormBuilder, { provide: Logger, useValue: new MockLogger() }]
         }).compileComponents();
     });
 
@@ -27,5 +26,4 @@ describe('JusticeUsersMenuComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
-
 });

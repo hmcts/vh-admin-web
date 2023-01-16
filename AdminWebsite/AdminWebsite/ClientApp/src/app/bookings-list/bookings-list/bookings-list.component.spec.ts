@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Directive, EventEmitter, Output } from '@angular/core';
+import {Component, Directive, EventEmitter, Output, ViewChild} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -34,6 +34,9 @@ import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { v4 as uuid } from 'uuid';
+import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
+import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
+import {VenuesMenuComponent} from "../../shared/menus/venues-menu/venues-menu.component";
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -606,7 +609,7 @@ describe('BookingsListComponent', () => {
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
-                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
+                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe, JusticeUsersMenuComponent, CaseTypesMenuComponent, VenuesMenuComponent],
                 imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
                     FormBuilder,
@@ -733,7 +736,7 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
@@ -972,7 +975,6 @@ describe('BookingsListComponent', () => {
         expect(searchButton.disabled).toBe(false);
     });
 
-
     it('should enable search button if start date is valid', () => {
         component.openSearchPanel();
         clearSearch();
@@ -1197,8 +1199,11 @@ describe('BookingsListComponent', () => {
 
     describe('onSelectUserChange', () => {
         it('should disable noAllocated if any selected user', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
-            component.searchForm.controls['selectedUserIds'].setValue([bookingPersistService.selectedUsers[0], bookingPersistService.selectedUsers[1]]);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
+            component.searchForm.controls['selectedUserIds'].setValue([
+                bookingPersistService.selectedUsers[0],
+                bookingPersistService.selectedUsers[1]
+            ]);
             component.onSelectUserChange();
             expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
         });
@@ -1212,14 +1217,14 @@ describe('BookingsListComponent', () => {
 
     describe('onChangeNoAllocated', () => {
         it('should disable selectedUsers if noAllocated is checked', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
             component.searchForm.controls['noAllocated'].setValue(true);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers).toEqual([]);
         });
 
         it('should enable selectedUsers if noAllocated is not checked', () => {
-            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x=>x.id);
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
             const count = bookingPersistService.selectedUsers.length;
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();

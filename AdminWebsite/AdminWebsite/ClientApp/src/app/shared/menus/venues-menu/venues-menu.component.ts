@@ -16,13 +16,11 @@ export class VenuesMenuComponent extends MenuBase {
     formGroupName = 'selectedVenueIds';
     venues: HearingVenueResponse[];
     selectedItems: [];
-    persistentItems = this.bookingPersistService.selectedVenueIds;
     formConfiguration = {
         selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<number[]>();
-    @Input() clearEmitter = new EventEmitter();
 
     constructor(
         private bookingPersistService: BookingPersistService,

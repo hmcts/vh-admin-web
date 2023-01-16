@@ -13,8 +13,7 @@ describe('VenuesMenuComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [VenuesMenuComponent],
-            providers: [HttpClient, HttpHandler, FormBuilder,
-                {provide: Logger, useValue: new MockLogger}]
+            providers: [HttpClient, HttpHandler, FormBuilder, { provide: Logger, useValue: new MockLogger() }]
         }).compileComponents();
     });
 

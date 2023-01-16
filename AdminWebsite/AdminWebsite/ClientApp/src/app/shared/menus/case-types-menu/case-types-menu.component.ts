@@ -16,13 +16,11 @@ export class CaseTypesMenuComponent extends MenuBase {
     formGroupName = 'selectedCaseTypes';
     caseTypes: string[];
     selectedItems: string[];
-    persistentItems = this.bookingPersistService.selectedCaseTypes;
     formConfiguration = {
         selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
-    @Input() clearEmitter = new EventEmitter();
 
     constructor(
         private bookingPersistService: BookingPersistService,

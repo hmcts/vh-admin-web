@@ -19,38 +19,31 @@ export abstract class MenuBase implements OnInit {
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<Array<any>>();
-    @Input() clearEmitter = new EventEmitter();
-    @Input() enableEmitter = new EventEmitter<boolean>();
-
-    abstract persistentItems: Array<any>;
+    @Input() set enabled(value) {
+        if(value == false)
+            this.form.controls[this.formGroupName].disable();
+        else
+            this.form.controls[this.formGroupName].enable();
+    }
     abstract loadItems(): void;
+
+
 
     ngOnInit(): void {
         this.form = this.initializeForm();
         this.loadItems();
-        this.clearEmitter.subscribe(x => {
-            this.onClear();
-        });
-        this.enableEmitter.subscribe(enable => {
-            if (enable) {
-                this.form.controls[this.formGroupName].enable();
-            }
-            else {
-                this.form.controls[this.formGroupName].disable();
-            }
-        });
     }
 
     private initializeForm(): FormGroup {
         return this.formBuilder.group(this.formConfiguration);
     }
 
-    onSelect($event: string[]) {
+    onSelect() {
         this.selectedItems = this.form.value[this.formGroupName];
         this.selectedEmitter.emit(this.selectedItems);
     }
 
-    onClear(): void {
+    clear(): void {
         const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
         if (searchCriteriaEntered) {
             this.selectedItems = [];

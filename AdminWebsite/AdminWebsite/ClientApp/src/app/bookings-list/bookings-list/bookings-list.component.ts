@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/core';
+import {Component, EventEmitter, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, HearingTypeResponse, HearingVenueResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { BookingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -16,6 +16,9 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
+import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
+import {VenuesMenuComponent} from "../../shared/menus/venues-menu/venues-menu.component";
 
 @Component({
     selector: 'app-bookings-list',
@@ -50,10 +53,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ejudFeatureFlag: boolean;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
-    caseTypeClear = new EventEmitter();
-    userClear = new EventEmitter();
-    venuesClear = new EventEmitter();
-    enableUserEmitter= new EventEmitter<boolean>();
+
+    @ViewChild(JusticeUsersMenuComponent) csoMenu:JusticeUsersMenuComponent;
+    @ViewChild(CaseTypesMenuComponent) caseTypeMenu:CaseTypesMenuComponent;
+    @ViewChild(VenuesMenuComponent) venueMenu:VenuesMenuComponent;
+    enableUser: boolean;
 
     constructor(
         private bookingsListService: BookingsListService,
@@ -263,11 +267,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.cursor = undefined;
             this.bookingPersistService.caseNumber = '';
             this.bookingPersistService.selectedVenueIds = [];
-            this.venuesClear.emit();
+            this.venueMenu.clear();
             this.bookingPersistService.selectedCaseTypes = [];
-            this.caseTypeClear.emit();
+            this.caseTypeMenu.clear();
             this.bookingPersistService.selectedUsers = [];
-            this.userClear.emit();
+            this.csoMenu.clear();
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
@@ -471,10 +475,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onChangeNoAllocated() {
         const noAllocated = this.searchForm.value['noAllocated'];
         if (noAllocated) {
-            this.enableUserEmitter.emit(false);
+            this.enableUser = false;
             this.bookingPersistService.selectedUsers = [];
         } else {
-            this.enableUserEmitter.emit(true);
+            this.enableUser = true;
         }
     }
 
