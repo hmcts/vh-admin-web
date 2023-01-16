@@ -77,11 +77,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 if (this.enableSearchFeature) {
                     this.loadVenuesList();
                     this.loadCaseTypeList();
-                    if (this.vhoWorkAllocationFeature) this.loadUsersList();
+                    if (this.vhoWorkAllocationFeature) {
+                        this.loadUsersList();
+                    }
                 }
             }
         });
-
     }
 
     async ngOnInit() {

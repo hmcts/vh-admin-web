@@ -48,7 +48,7 @@ export class WorkHoursFileProcessorService {
                 const rowNumber = index + 3;
                 const entryNumber = i + 1;
 
-                let [isNonWorkingDayError, isNonWorkingDayErrorMessage] = this.isNonWorkingDayError(
+                const [isNonWorkingDayError, isNonWorkingDayErrorMessage] = this.isNonWorkingDayError(
                     values[i],
                     values[i + 1],
                     `Row ${rowNumber}, Entry ${entryNumber}-${entryNumber + 1} -`
@@ -268,7 +268,7 @@ export class WorkHoursFileProcessorService {
         }
 
         let hasError = false;
-        let errorMessage: string = undefined;
+        let errorMessage: string;
         if (isNaN(hour) || isNaN(minutes)) {
             errorMessage = `${errorLocationMessage}Value is not a valid time`;
             hasError = true;
