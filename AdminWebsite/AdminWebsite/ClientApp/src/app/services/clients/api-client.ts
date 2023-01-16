@@ -1868,15 +1868,6 @@ export class BHClient extends ApiClientBase {
                     return _observableOf(result200);
                 })
             );
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result404: any = null;
-                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result404 = ProblemDetails.fromJS(resultData404);
-                    return throwException('Not Found', status, _responseText, _headers, result404);
-                })
-            );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
@@ -1908,7 +1899,7 @@ export class BHClient extends ApiClientBase {
         caseType: string[] | undefined,
         caseNumber: string | undefined
     ): Observable<AllocationHearingsResponse[]> {
-        let url_ = this.baseUrl + '/api/hearings/allocation/search?';
+        let url_ = this.baseUrl + '/api/hearings/allocation?';
         if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
         else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
         if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
@@ -1988,15 +1979,6 @@ export class BHClient extends ApiClientBase {
                         result200 = <any>null;
                     }
                     return _observableOf(result200);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
         } else if (status === 401) {

@@ -22,15 +22,6 @@
           "System.ComponentModel.TypeConverter": "4.1.0"
         }
       },
-      "BookingsApi.Client": {
-        "type": "Direct",
-        "requested": "[1.41.9-pullrequest0562-0007, )",
-        "resolved": "1.41.9-pullrequest0562-0007",
-        "contentHash": "w2MrHTnqm2UHN3SPGgao5xDDwxfpQtN0PjQeFn48OGu20IL3s4ZcklJ7Hxi9Q90lKhv14mfXKzfrIIu5YuWPFQ==",
-        "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
-        }
-      },
       "coverlet.msbuild": {
         "type": "Direct",
         "requested": "[3.2.0, )",
@@ -112,6 +103,14 @@
         "requested": "[1.41.5, )",
         "resolved": "1.41.5",
         "contentHash": "GXq/N+pZNJsMs8DKMF8rp4a1V78qPxQy2DU4m++A4AGfW7UorVeuCPiKN1SNSmUmgRRaF5yWqmdePfB8DK/Kow==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
+        }
+      },
+      "BookingsApi.Client": {
+        "type": "Transitive",
+        "resolved": "1.41.9",
+        "contentHash": "9E2TNap5GpKMiZV4q9ZQgFK+/b7l57r2Jqwws/rEdgfILynYWhOoJNo50w+Ax2zQD93Cc5KyKj0b82mBVW9jWw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -2511,7 +2510,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "BookingsApi.Client": "[1.41.9-pullrequest0562-0007, )",
+          "BookingsApi.Client": "[1.41.9, )",
           "FluentValidation.AspNetCore": "[8.6.1, )",
           "LaunchDarkly.ServerSdk": "[6.3.2, )",
           "MicroElements.Swashbuckle.FluentValidation": "[5.7.0, )",

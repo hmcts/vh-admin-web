@@ -6,10 +6,10 @@
     <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">Search hearings</p>
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-        <label class="govuk-label" for="hearing-date-entry">Hearing date (range start)</label>
+        <label class="govuk-label" for="from-date-entry">Hearing date (range start)</label>
         <input
-          class="govuk-input"
-          id="hearing-date-entry"
+          class="govuk-input custom"
+          id="from-date-entry"
           type="date"
           formControlName="fromDate"
           name="fromDate"
@@ -18,17 +18,22 @@
       </div>
       <div class="govuk-grid-column-one-third" *ngIf="form.valid">
         <label class="govuk-label" for="to-date-entry">Hearing Date (range end)</label>
-        <input class="govuk-input" id="to-date-entry" type="date" formControlName="toDate" name="toDate" min="{{ form.value.fromDate }}" />
+        <input
+          class="govuk-input custom"
+          id="to-date-entry"
+          type="date"
+          formControlName="toDate"
+          name="toDate"
+          min="{{ form.value.fromDate }}"
+        />
       </div>
       <div class="govuk-grid-column-one-third">
-        <label class="govuk-label" for="Ctsc-officer-user-name-entry">CSO user name</label>
-        <input class="govuk-input" id="Ctsc-officer-user-name-entry" formControlName="userName" type="text" />
+        <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)"></app-justice-users-menu>
       </div>
     </div>
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-        <label class="govuk-label" for="case-type-selection">Case type</label>
-        <select class="govuk-select" id="case-type-selection" name="case-type-selection"></select>
+        <app-case-types-menu (selectedEmitter)="selectedCaseTypesEmitter($event)"></app-case-types-menu>
       </div>
       <div class="govuk-grid-column-one-third">
         <label class="govuk-label" for="case-number-entry">Case number</label>
@@ -54,7 +59,7 @@
     </div>
     <div class="govuk-!-margin-bottom-2">
       <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="searchForHearings()">Search</button>
-      <button class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear</button>
+      <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">Clear</button>
     </div>
 
     <table class="govuk-table">
@@ -79,7 +84,7 @@
           <td class="govuk-table__cell">
             <input id="{{ hearing.hearing_id }}" name="select-hearing" type="checkbox" value="true" aria-label="Select hearing" />
           </td>
-          <td class="govuk-table__cell">{{ hearing.hearing_date }}</td>
+          <td class="govuk-table__cell">{{ hearing.hearing_date.toLocaleDateString("en-GB") }}</td>
           <td class="govuk-table__cell">{{ hearing.start_time }}</td>
           <td class="govuk-table__cell">{{ hearing.duration }}</td>
           <td class="govuk-table__cell">{{ hearing.case_number }}</td>

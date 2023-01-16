@@ -5,17 +5,29 @@ import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import {FormBuilder} from "@angular/forms";
+import {AllocateHearingsService} from "../../services/allocate-hearings.service";
+import {Logger} from "../../services/logger";
+import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
+import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
     let fixture: ComponentFixture<AllocateHearingsComponent>;
     let activatedRoute: ActivatedRouteStub;
+    let allocateServiceMock: jasmine.SpyObj<AllocateHearingsService>;
 
     beforeEach(async () => {
         activatedRoute = new ActivatedRouteStub();
+        allocateServiceMock = jasmine.createSpyObj('AllocateHearingsService',['getAllocationHearings']);
+
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent],
-            providers: [{ provide: ActivatedRoute, useValue: activatedRoute }]
+            declarations: [AllocateHearingsComponent, JusticeUsersMenuComponent, CaseTypesMenuComponent],
+            providers: [
+                FormBuilder,
+                { provide: ActivatedRoute, useValue: activatedRoute },
+                { provide: AllocateHearingsService, useValue: allocateServiceMock}
+            ]
         }).compileComponents();
     });
 
@@ -25,36 +37,72 @@ describe('AllocateHearingsComponent', () => {
         fixture.detectChanges();
     });
 
-    /*
     describe('ngOnInit', () => {
-        it('should be called with unallocated "today" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'today' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('today');
-        });
-        it('should be called with unallocated "tomorrow" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'tomorrow' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('tomorrow');
-        });
-        it('should be called with unallocated "week" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'week' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('week');
-        });
-        it('should be called with unallocated "month" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'month' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('month');
+        let searchForHearingsSpy;
+        beforeEach(() => {
+            searchForHearingsSpy = spyOn(component, 'searchForHearings');
+            searchForHearingsSpy.calls.reset();
+            component.form.reset();
         });
 
-    }); */
+        it('should be called with unallocated "today" parameters', () => {
+            activatedRoute.testParams = { fromDt: '2023-01-13'};
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(searchForHearingsSpy).toHaveBeenCalled()
+            expect(component.form.controls['fromDate'].value).toBe( '2023-01-13');
+            expect(component.form.controls['toDate'].value).toBeNull();
+        });
+        it('should be called with unallocated "tomorrow" parameters', () => {
+            activatedRoute.testParams = { fromDt: '2023-01-14'};
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(searchForHearingsSpy).toHaveBeenCalled();
+            expect(component.form.controls['fromDate'].value).toBe( '2023-01-14');
+            expect(component.form.controls['toDate'].value).toBeNull();
+        });
+        it('should be called with unallocated "week" parameters', () => {
+            activatedRoute.testParams = { fromDt: '2023-01-01', toDt: '2023-01-07'};
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(searchForHearingsSpy).toHaveBeenCalled();
+            expect(component.form.controls['fromDate'].value).toBe( '2023-01-01');
+            expect(component.form.controls['toDate'].value).toBe( '2023-01-07');
+        });
+        it('should be called with unallocated "month" parameters', () => {
+            activatedRoute.testParams = { fromDt: '2023-01-01', toDt: '2023-01-31'};
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(searchForHearingsSpy).toHaveBeenCalled();
+            expect(component.form.controls['fromDate'].value).toBe( '2023-01-01');
+            expect(component.form.controls['toDate'].value).toBe( '2023-01-31');
+        });
+        it('should be called with no parameter', () => {
+            activatedRoute.testParams = {};
+            component.ngOnInit();
+            expect(component).toBeTruthy();
+            expect(searchForHearingsSpy).toHaveBeenCalledTimes(0);
+            expect(component.form.controls['fromDate'].value).toBeNull();
+            expect(component.form.controls['toDate'].value).toBeNull();
+        });
+    });
+
+    describe('searchForHearings', () => {
+
+        it('should call the allocate service and return response', () => {
+            component.form.controls['fromDate'].setValue('2023-01-13');
+            component.form.controls['toDate'].setValue('2023-01-14');
+            component.form.controls['userName'].setValue(['test','user']);
+            component.form.controls['caseType'].setValue(['test','case','type']);
+            component.form.controls['caseNumber'].setValue('testCaseNumber1234');
+
+            component.searchForHearings();
+
+            expect(allocateServiceMock.getAllocationHearings).toHaveBeenCalledWith(
+                new Date('2023-01-13'), new Date('2023-01-13'), ['test','user'], ['test','case','type'], 'testCaseNumber1234');
+
+        });
+    });
+
+
 });

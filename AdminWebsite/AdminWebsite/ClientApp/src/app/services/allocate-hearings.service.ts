@@ -10,11 +10,19 @@ export class AllocateHearingsService {
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
     getAllocationHearings(fromDate, toDate, csoUserName, caseType, caseNumber): Observable<AllocationHearingsResponse[]> {
+
+        //remove empty query parameters from url. must be 'undefined', null will throw error.
+        const cleanQuery = parameter => (parameter === null || parameter === '') ? undefined : parameter
         try {
-            return this.bhClient.getAllocationHearings(fromDate, toDate, csoUserName, caseType, caseNumber);
+            return this.bhClient.getAllocationHearings(
+                cleanQuery(fromDate),
+                cleanQuery(toDate),
+                cleanQuery(csoUserName),
+                cleanQuery(caseType),
+                cleanQuery(caseNumber));
         } catch (error) {
             this.logger.error(`${error.response}`, error);
-            return null;
+            return new Observable<AllocationHearingsResponse[]>();
         }
     }
 }
