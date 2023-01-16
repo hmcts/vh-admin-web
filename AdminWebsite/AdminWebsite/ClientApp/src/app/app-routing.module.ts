@@ -33,8 +33,8 @@ export const routes: Routes = [
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
     { path: 'work-allocation', component: WorkAllocationComponent, canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard] },
-    { path: 'work-allocation', component: VhoWorkHoursNonAvailabilityTableComponent, canDeactivate: [ChangesGuard] },
-    { path: 'work-allocation', component: VhoWorkHoursTableComponent, canDeactivate: [ChangesGuard] },
+    // { path: 'work-allocation', component: VhoWorkHoursNonAvailabilityTableComponent, canDeactivate: [ChangesGuard] },
+    // { path: 'work-allocation', component: VhoWorkHoursTableComponent, canDeactivate: [ChangesGuard] },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
