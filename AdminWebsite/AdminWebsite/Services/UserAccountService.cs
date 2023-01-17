@@ -102,60 +102,12 @@ namespace AdminWebsite.Services
             _notificationApiClient = notificationApiClient;
         }
 
-        /// <inheritdoc />
-        public async Task<User> UpdateParticipantUsername(ParticipantRequest participant)
-        {
-            // create user in AD if users email does not exist in AD.
-            _logger.LogDebug("Checking for username with contact email {contactEmail}.", participant.ContactEmail);
-            var userProfile = await GetUserByContactEmail(participant.ContactEmail);
-            if (userProfile == null)
-            {
-                _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.ContactEmail);
-                // create the user in AD.
-                var newUser = await CreateNewUserInAD(participant);
-                return new User
-                {  
-                    UserId = newUser.UserId,
-                    UserName = newUser.Username,
-                    Password = newUser.OneTimePassword
-                };
-            }
-
-            return new User
-            { 
-                UserId = userProfile.UserId ,
-                UserName = userProfile.UserName
-            };
-        }
-
         public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
             Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult);
 
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.CaseType };
-        }
-
-        private async Task<UserProfile> GetUserByContactEmail(string emailAddress)
-        {
-            _logger.LogDebug("Attempt to get username by contact email {contactEmail}.", emailAddress);
-            try
-            {
-                var user = await _userApiClient.GetUserByEmailAsync(emailAddress);
-                _logger.LogDebug("User with contact email {contactEmail} found.", emailAddress);
-                return user;
-            }
-            catch (UserApiException e)
-            {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning("User with contact email {contactEmail} not found.", emailAddress);
-                    return null;
-                }
-
-                _logger.LogError(e, "Unhandled error getting a user with contact email {contactEmail}.", emailAddress);
-                throw;
-            }
         }
 
         public async Task<string> GetAdUserIdForUsername(string username)
@@ -183,24 +135,6 @@ namespace AdminWebsite.Services
                 _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user with username {username}.", username);
                 throw;
             }
-        }
-
-        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
-        {
-            const string BLANK = " ";
-            _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.ContactEmail);
-            var createUserRequest = new CreateUserRequest
-            {
-                FirstName = participant.FirstName?.Replace(BLANK, string.Empty),
-                LastName = participant.LastName?.Replace(BLANK, string.Empty),
-                RecoveryEmail = participant.ContactEmail,
-                IsTestUser = false
-            };
-
-            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-            _logger.LogDebug("Successfully created an AD user with contact email {contactEmail}.", participant.ContactEmail);
-            participant.Username = newUserResponse.Username;
-            return newUserResponse;
         }
 
         /// <inheritdoc />
