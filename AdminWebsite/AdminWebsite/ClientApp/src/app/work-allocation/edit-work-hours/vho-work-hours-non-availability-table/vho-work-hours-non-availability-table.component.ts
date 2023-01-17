@@ -43,9 +43,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
-                this.showMessage('Showing only 20 Records, For more records please use filter by date', false);
+                this.showMessage('Showing only 20 Records, For more records please use filter by date');
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
-                this.showMessage('There are no non-availability hours uploaded for this team member', false);
+                this.showMessage('There are no non-availability hours uploaded for this team member');
             }
         } else {
             this.nonWorkHours = null;
@@ -412,7 +412,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    showMessage(message: string, fade: boolean = true) {
+    showMessage(message: string) {
         this.displayMessage = true;
         this.message = message;
     }
