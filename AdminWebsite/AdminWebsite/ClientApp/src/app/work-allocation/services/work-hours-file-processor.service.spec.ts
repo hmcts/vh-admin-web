@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { BHClient } from 'src/app/services/clients/api-client';
+import { BHClient, UploadWorkHoursRequest, UploadNonWorkingHoursRequest, WorkingHours } from 'src/app/services/clients/api-client';
 
 import { WorkHoursFileProcessorService } from './work-hours-file-processor.service';
 
@@ -38,18 +38,6 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.numberOfUserNameToUpload).toBe(1);
         });
 
-        it('should show non-working hours file upload formatting errors', () => {
-            const input =
-                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
-                'first.second@xyz.com,2022-01-01,10#00,2022-01-07,17:00\n' +
-                'first.second2@xyz.com,2022-01-01,10:100,2022-01-07,17:00';
-
-            const result = service.processWorkHours(input);
-
-            expect(result.fileValidationErrors.length).toBeGreaterThan(0);
-            expect(result.fileValidationErrors[0]).toContain('Incorrect delimiter used');
-        });
-
         it('should successfully parse valid input', () => {
             const input =
                 'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
@@ -58,13 +46,41 @@ describe('WorkHoursFileProcessorService', () => {
                 'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
 
             const result = service.processWorkHours(input);
-            console.log(result);
             expect(result.fileValidationErrors.length).toBe(0);
             expect(result.numberOfUserNameToUpload).toBe(2);
             expect(result.uploadWorkHoursRequest[0].username).toBe('first.second@xyz.com');
             expect(result.uploadWorkHoursRequest[0].working_hours.length).toBe(7);
             expect(result.uploadWorkHoursRequest[1].username).toBe('first.second.2@xyz.com');
             expect(result.uploadWorkHoursRequest[1].working_hours.length).toBe(7);
+        });
+    });
+
+    describe('processNonWorkHour', () => {
+        it('should show non-working hours file upload formatting errors', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'invalid.delimeter1@xyz.com,2022-01-01,10#00,2022-01-07,17:00\n' +
+                'invalid.delimeter2@xyz.com,2022-01-01,10:100,2022-01-07,17#00\n' +
+                'invalid.date@xyz.com,2022-01-01,a0:00,2022-01-07,17:00\n' +
+                'enddatebefore.startdate@xyz.com,2022-02-01,10:00,2022-01-07,09:00';
+
+            const result = service.processNonWorkHours(input);
+
+            expect(result.fileValidationErrors.length).toBe(4);
+            expect(result.fileValidationErrors[0]).toContain('Incorrect delimiter used');
+            expect(result.fileValidationErrors[1]).toContain('Incorrect delimiter used');
+            expect(result.fileValidationErrors[2]).toContain('Contains an invalid date');
+            expect(result.fileValidationErrors[3]).toContain('End date time is before start date time');
+        });
+
+        it('should succesfully parse valid input', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00';
+
+            const result = service.processNonWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(0);
         });
     });
 
@@ -180,6 +196,26 @@ describe('WorkHoursFileProcessorService', () => {
         });
     });
 
+    describe('isFileTooBig', () => {
+        it('should return true when file size exceeds max size limit', () => {
+            const file = new File([''], 'filename', { type: 'text/csv' });
+            Object.defineProperty(file, 'size', { value: 2000001 });
+
+            const result = service.isFileTooBig(file);
+
+            expect(result).toBeTruthy();
+        });
+
+        it('should return false when file size is below the max size limit', () => {
+            const file = new File([''], 'filename', { type: 'text/csv' });
+            Object.defineProperty(file, 'size', { value: 19999 });
+
+            const result = service.isFileTooBig(file);
+
+            expect(result).toBeFalsy();
+        });
+    });
+
     describe('validateTimeCell', () => {
         const testCases = [
             { case: 'hour is not a number', timeCell: [NaN, 30], errorMessage: 'Value is not a valid time' },
@@ -254,6 +290,65 @@ describe('WorkHoursFileProcessorService', () => {
 
             expect(isValid).toBeTruthy();
             expect(error).toBeUndefined();
+        });
+    });
+
+    describe('calling the API', () => {
+        it(
+            'should call the api to upload work hours',
+            waitForAsync(() => {
+                const requests: UploadWorkHoursRequest[] = [
+                    new UploadWorkHoursRequest({
+                        username: 'spoc@test.com',
+                        working_hours: [
+                            new WorkingHours({
+                                day_of_week_id: 1,
+                                start_time_hour: 10,
+                                start_time_minutes: 0,
+                                end_time_hour: 15,
+                                end_time_minutes: 0
+                            })
+                        ]
+                    })
+                ];
+
+                service.uploadWorkingHours(requests).subscribe(result => {
+                    expect(result.failed_usernames.length).toBe(0);
+                });
+            })
+        );
+
+        it(
+            'should call the api to upload non-work hours',
+            waitForAsync(() => {
+                const requests: UploadNonWorkingHoursRequest[] = [
+                    new UploadNonWorkingHoursRequest({
+                        username: 'john@doe.com',
+                        start_time: new Date(2023, 1, 1, 10, 30, 0, 0),
+                        end_time: new Date(2023, 1, 5, 10, 30, 0, 0)
+                    })
+                ];
+
+                service.uploadNonWorkingHours(requests).subscribe(result => {
+                    expect(result.failed_usernames.length).toBe(0);
+                });
+            })
+        );
+    });
+
+    describe('check for duplicate users', () => {
+        it('should return validation error when duplicate username is found', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                'first.second@xyz.com,10:00,17:00,11:00,17:30,12:30,18:00,13:00,18:00,14:00,17:00,,,,\n' +
+                'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+            const rows = input.split('\n');
+            const userWorkAvailabilityRowsSplit = rows.map(x => x.split(','));
+            const result = service.checkWorkAvailabilityForDuplicateUsers(userWorkAvailabilityRowsSplit);
+
+            expect(result[0]).toBe('first.second@xyz.com - Multiple entries for user. Only one row per user required');
         });
     });
 });

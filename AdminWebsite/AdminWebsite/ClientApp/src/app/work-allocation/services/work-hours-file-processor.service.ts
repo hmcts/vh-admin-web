@@ -214,10 +214,6 @@ export class WorkHoursFileProcessorService {
         return reader;
     }
 
-    cleanRowData(row: string) {
-        return row.replace(/\r/g, '').split(this.csvDelimiter);
-    }
-
     checkWorkAvailabilityForDuplicateUsers(rows: Array<Array<string>>) {
         const workingHoursFileValidationErrors: string[] = [];
 
