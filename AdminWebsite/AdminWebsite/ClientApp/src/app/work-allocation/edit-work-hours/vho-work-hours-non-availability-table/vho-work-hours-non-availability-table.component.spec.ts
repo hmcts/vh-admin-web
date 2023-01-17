@@ -762,7 +762,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
         });
 
-        it('should not display a message when results are between 0 and 20 after filter', () => {
+        it('should not display a message when results are between 0 and  less than 20 after filter', () => {
             // arrange
             const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
             const startDate = new Date(2022, 1, 1);
