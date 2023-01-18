@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Logger } from '../../../services/logger';

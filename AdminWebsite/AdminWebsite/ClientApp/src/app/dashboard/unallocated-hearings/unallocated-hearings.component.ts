@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BHClient, UnallocatedHearingsForVhoResponse, UserProfileResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-unallocated-hearings',

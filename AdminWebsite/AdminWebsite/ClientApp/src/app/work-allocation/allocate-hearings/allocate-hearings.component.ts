@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../../services/allocate-hearings.service';

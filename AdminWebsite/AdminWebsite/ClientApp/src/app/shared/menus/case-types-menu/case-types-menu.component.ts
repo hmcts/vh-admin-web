@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { HearingTypeResponse, JusticeUserResponse } from '../../../services/clients/api-client';
+import { FormBuilder } from '@angular/forms';
+import { HearingTypeResponse } from '../../../services/clients/api-client';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';

@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import { Component, EventEmitter, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -227,7 +227,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.bookingPersistService.selectedVenueIds;
-            const caseTypes = this.bookingPersistService.selectedCaseTypes;
+            this.bookingPersistService.selectedCaseTypes;
             const selectedUserIds = this.bookingPersistService.selectedUsers;
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
