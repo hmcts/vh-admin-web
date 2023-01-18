@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import { AllocateHearingsService } from './allocate-hearings.service';
 import { AllocationHearingsResponse, BHClient } from './clients/api-client';
@@ -28,19 +28,20 @@ describe('AllocateHearingsService', () => {
 
     describe('getAllocationHearings', () => {
         it('Should attempt to retrieve unallocated hearings, and throw error', () => {
-            bHClientSpy.getAllocationHearings.and.returnValue(throwError(new Error()));
+            bHClientSpy.getAllocationHearings.and.throwError('404');
             const result = service.getAllocationHearings(null, null, null, null, null, null);
             expect(bHClientSpy.getAllocationHearings).toHaveBeenCalled();
             expect(logger.error).toHaveBeenCalled();
-            expect(result).toEqual(of([]));
         });
 
         it('Should return results', () => {
-            bHClientSpy.getAllocationHearings.and.returnValue(of([new AllocationHearingsResponse()]));
-            const result = service.getAllocationHearings(null, null, null, null, null, null);
+            const allocationResponse = [new AllocationHearingsResponse()];
+            bHClientSpy.getAllocationHearings.and.returnValue(of(allocationResponse));
+            let result;
+            service.getAllocationHearings(null, null, null, null, null, null)
+                   .subscribe(e => result = e);
             expect(bHClientSpy.getAllocationHearings).toHaveBeenCalled();
-            expect(logger.error).toHaveBeenCalled();
-            expect(result).toEqual(of([new AllocationHearingsResponse()]));
+            expect(result).toEqual(allocationResponse);
         });
     });
 });

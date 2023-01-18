@@ -1024,6 +1024,12 @@ describe('BookingsListComponent', () => {
     });
 
     it('should close search panel when close search button clicked', () => {
+        component.openSearchPanel();
+        component.enableSearchFeature = true;
+        fixture.detectChanges();
+        let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
+        expect(searchPanel).not.toBeNull();
+
         const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
             'selectedUsers',
@@ -1034,11 +1040,6 @@ describe('BookingsListComponent', () => {
         component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
         component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
 
-        component.openSearchPanel();
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
-        expect(searchPanel).not.toBeNull();
         component.closeSearchPanel();
         fixture.detectChanges();
         searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
