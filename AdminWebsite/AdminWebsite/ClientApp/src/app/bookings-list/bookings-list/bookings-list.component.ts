@@ -227,7 +227,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (this.searchForm.valid) {
             const caseNumber = this.searchForm.value['caseNumber'];
             const venueIds = this.bookingPersistService.selectedVenueIds;
-            this.bookingPersistService.selectedCaseTypes;
             const selectedUserIds = this.bookingPersistService.selectedUsers;
             const startDate = this.searchForm.value['startDate'];
             const endDate = this.searchForm.value['endDate'];
