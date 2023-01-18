@@ -1,11 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ValidationFailure, VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
-import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
-import { Logger } from '../../../services/logger';
+import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
-import { DatePipe } from '@angular/common';
-import { FormBuilder } from '@angular/forms';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -48,8 +45,20 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(workHoursTable).toBeNull();
         });
 
+        it('should check work hours are empty', () => {
+            component.workHours = [new VhoWorkHoursResponse()];
+            expect(component.checkVhoHasWorkHours).toBe(true);
+        });
+
+        it('should check work hours are empty', () => {
+            component.workHours = null;
+            expect(component.checkVhoHasWorkHours).toBe(false);
+        });
+
         it('should switch to edit mode when edit button is clicked', () => {
             component.isEditing = false;
+            component.workHours = [new VhoWorkHoursResponse()];
+            fixture.detectChanges();
             const spy = spyOn(component, 'switchToEditMode');
             const editButton = fixture.debugElement.query(By.css('#edit-individual-work-hours-button')).nativeElement;
 
@@ -61,6 +70,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should save when save button is clicked', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             fixture.detectChanges();
             const spy = spyOn(component, 'saveWorkingHours');
             const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
@@ -72,6 +82,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should disable save button when errors exist', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             const validationFailure = new ValidationFailure();
             validationFailure.id = 1;
             validationFailure.errorMessage = 'Error';
@@ -85,6 +96,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should cancel editing mode when cancel button is clicked', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             fixture.detectChanges();
             const spy = spyOn(component, 'cancelEditingWorkingHours');
             const cancelButton = fixture.debugElement.query(By.css('#cancel-editing-individual-work-hours-button')).nativeElement;
