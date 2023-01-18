@@ -81,13 +81,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
+        debugger;
         const newParticipant = new ParticipantModel();
         newParticipant.title = 'Judge';
         newParticipant.first_name = judge.first_name;
         newParticipant.middle_names = '';
         newParticipant.last_name = judge.last_name;
         newParticipant.display_name = judge.display_name;
-        newParticipant.email = judge.email;
+        newParticipant.email = judge.contact_email;
         newParticipant.is_judge = true;
         newParticipant.phone = '';
         newParticipant.id = null;
@@ -314,6 +315,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             return;
         }
 
+        debugger;
         if (this.judge && this.judge.email) {
             if (!this.judge.display_name) {
                 this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);

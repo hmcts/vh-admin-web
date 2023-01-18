@@ -15,7 +15,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 FirstName = "Sam",
                 LastName = "Smith",
                 Title = "Mr",
-                Username = "email.sam@judiciary.net"
+                Username = "email.sam@judiciary.net",
+                ContactEmail = "judge@personal.com"
             };
 
             var judgeResponse = JudgeResponseMapper.MapTo(personResponse);
@@ -23,6 +24,7 @@ namespace AdminWebsite.UnitTests.Mappers
             judgeResponse.FirstName.Should().Be(personResponse.FirstName);
             judgeResponse.LastName.Should().Be(personResponse.LastName);
             judgeResponse.Email.Should().Be(personResponse.Username);
+            judgeResponse.ContactEmail.Should().Be(personResponse.ContactEmail);
         }
     }
 }
