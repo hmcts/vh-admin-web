@@ -1,4 +1,4 @@
-import {fakeAsync, TestBed, tick} from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { AllocateHearingsService } from './allocate-hearings.service';
 import { AllocationHearingsResponse, BHClient } from './clients/api-client';
@@ -38,8 +38,7 @@ describe('AllocateHearingsService', () => {
             const allocationResponse = [new AllocationHearingsResponse()];
             bHClientSpy.getAllocationHearings.and.returnValue(of(allocationResponse));
             let result;
-            service.getAllocationHearings(null, null, null, null, null, null)
-                   .subscribe(e => result = e);
+            service.getAllocationHearings(null, null, null, null, null, null).subscribe(e => (result = e));
             expect(bHClientSpy.getAllocationHearings).toHaveBeenCalled();
             expect(result).toEqual(allocationResponse);
         });
