@@ -33,7 +33,7 @@ describe('UploadWorkHoursComponent', () => {
         } as jasmine.SpyObj<WorkHoursFileProcessorService>;
 
         workHoursProcessorSpy.isFileTooBig.and.returnValue(false);
-        await TestBed.configureTestingModule({
+        TestBed.configureTestingModule({
             declarations: [UploadWorkHoursComponent],
             providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
         }).compileComponents();
