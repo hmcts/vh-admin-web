@@ -31,15 +31,15 @@ public class GetAllocationHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.SearchForAllocationHearingsAsync(
-               It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string[]>(), It.IsAny<string[]>(), It.IsAny<string>()))
+               It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<Guid[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<bool>()))
             .ReturnsAsync(new List<HearingDetailsResponse>{new ()});
         // Act
         var response = await _controller.GetAllocationHearings(new SearchForAllocationHearingsRequest());
         
         // Assert
         var result = response as OkObjectResult;
-        result.StatusCode.Should().Be(StatusCodes.Status200OK);
-        result.Value.Should().NotBeNull().And.BeAssignableTo<List<AllocationHearingsResponse>>();
+        result?.StatusCode.Should().Be(StatusCodes.Status200OK);
+        result?.Value.Should().NotBeNull().And.BeAssignableTo<List<AllocationHearingsResponse>>();
     }
 
     [Test]
@@ -47,14 +47,14 @@ public class GetAllocationHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.SearchForAllocationHearingsAsync(
-                It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<string[]>(), It.IsAny<string[]>(), It.IsAny<string>()))
+                It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<Guid[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<bool>()))
             .ReturnsAsync(new List<HearingDetailsResponse>());   
         // Act
         var response = await _controller.GetAllocationHearings(new SearchForAllocationHearingsRequest());
 
         // Assert
         var result = response as OkObjectResult;
-        result.StatusCode.Should().Be(StatusCodes.Status200OK);
-        result.Value.Should().NotBeNull().And.BeAssignableTo<List<AllocationHearingsResponse>>();
+        result?.StatusCode.Should().Be(StatusCodes.Status200OK);
+        result?.Value.Should().NotBeNull().And.BeAssignableTo<List<AllocationHearingsResponse>>();
     }
 }

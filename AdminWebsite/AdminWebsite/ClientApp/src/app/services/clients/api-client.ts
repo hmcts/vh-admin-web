@@ -1887,28 +1887,30 @@ export class BHClient extends ApiClientBase {
     /**
      * @param fromDate (optional)
      * @param toDate (optional)
-     * @param csoUserName (optional)
+     * @param cso (optional)
      * @param caseType (optional)
      * @param caseNumber (optional)
+     * @param isUnallocated (optional)
      * @return Success
      */
     getAllocationHearings(
         fromDate: Date | undefined,
         toDate: Date | undefined,
-        csoUserName: string[] | undefined,
+        cso: string[] | undefined,
         caseType: string[] | undefined,
-        caseNumber: string | undefined
+        caseNumber: string | undefined,
+        isUnallocated: boolean | undefined
     ): Observable<AllocationHearingsResponse[]> {
         let url_ = this.baseUrl + '/api/hearings/allocation?';
         if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
         else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
         if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
         else if (toDate !== undefined) url_ += 'ToDate=' + encodeURIComponent(toDate ? '' + toDate.toISOString() : '') + '&';
-        if (csoUserName === null) throw new Error("The parameter 'csoUserName' cannot be null.");
-        else if (csoUserName !== undefined)
-            csoUserName &&
-                csoUserName.forEach(item => {
-                    url_ += 'CsoUserName=' + encodeURIComponent('' + item) + '&';
+        if (cso === null) throw new Error("The parameter 'cso' cannot be null.");
+        else if (cso !== undefined)
+            cso &&
+                cso.forEach(item => {
+                    url_ += 'Cso=' + encodeURIComponent('' + item) + '&';
                 });
         if (caseType === null) throw new Error("The parameter 'caseType' cannot be null.");
         else if (caseType !== undefined)
@@ -1918,6 +1920,8 @@ export class BHClient extends ApiClientBase {
                 });
         if (caseNumber === null) throw new Error("The parameter 'caseNumber' cannot be null.");
         else if (caseNumber !== undefined) url_ += 'CaseNumber=' + encodeURIComponent('' + caseNumber) + '&';
+        if (isUnallocated === null) throw new Error("The parameter 'isUnallocated' cannot be null.");
+        else if (isUnallocated !== undefined) url_ += 'IsUnallocated=' + encodeURIComponent('' + isUnallocated) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {

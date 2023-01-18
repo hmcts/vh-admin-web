@@ -1,5 +1,5 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
-import {Component, EventEmitter, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -16,9 +16,9 @@ import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
-import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
-import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
-import {VenuesMenuComponent} from "../../shared/menus/venues-menu/venues-menu.component";
+import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
+import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
+import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
 
 @Component({
     selector: 'app-bookings-list',
@@ -54,9 +54,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
 
-    @ViewChild(JusticeUsersMenuComponent) csoMenu:JusticeUsersMenuComponent;
-    @ViewChild(CaseTypesMenuComponent) caseTypeMenu:CaseTypesMenuComponent;
-    @ViewChild(VenuesMenuComponent) venueMenu:VenuesMenuComponent;
+    @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
+    @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
+    @ViewChild(VenuesMenuComponent) venueMenu: VenuesMenuComponent;
     enableUser: boolean;
 
     constructor(

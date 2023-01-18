@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
-import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
-import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
+import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
+import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -13,21 +14,25 @@ import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-ty
 })
 export class AllocateHearingsComponent implements OnInit {
     @Input() isVhTeamLeader: boolean;
-    @ViewChild(JusticeUsersMenuComponent) csoMenu:JusticeUsersMenuComponent;
-    @ViewChild(CaseTypesMenuComponent) caseTypeMenu:CaseTypesMenuComponent;
+    @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
+    @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
     hearings: AllocationHearingsResponse[];
     caseTypeDropDownValues: string[];
     csoDropDownValues: string[];
-
+    displayMessage = false;
+    message: string;
+    faExclamation = faCircleExclamation;
+    private filterSize = 20;
     constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],
             userName: [''],
             caseType: [''],
-            caseNumber: ['']
+            caseNumber: [''],
+            isUnallocated: [false]
         });
     }
 
@@ -37,7 +42,14 @@ export class AllocateHearingsComponent implements OnInit {
             const toDt = params['toDt'] ?? null;
             if (fromDt) {
                 this.allocateHearingsDetailOpen = true;
-                this.form.setValue({ fromDate: fromDt, toDate: toDt, userName: null, caseType: null, caseNumber: null });
+                this.form.setValue({
+                    fromDate: fromDt,
+                    toDate: toDt,
+                    userName: null,
+                    caseType: null,
+                    caseNumber: null,
+                    isUnallocated: true
+                });
                 this.searchForHearings();
             }
         });
@@ -51,15 +63,23 @@ export class AllocateHearingsComponent implements OnInit {
         const caseNumber = this.form.value.caseNumber;
         const cso = this.csoDropDownValues;
         const caseType = this.caseTypeDropDownValues;
+        const isUnallocated = this.form.value.isUnallocated;
 
         this.allocateService
-            .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber)
-            .subscribe(result => this.hearings = result);
+            .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
+            .subscribe(result => this.filterResults(result));
     }
 
-    clear(){
+    clear() {
         this.caseTypeDropDownValues = [];
         this.csoDropDownValues = [];
+
+        this.form.controls['fromDate'].setValue('');
+        this.form.controls['toDate'].setValue('');
+        this.form.controls['userName'].setValue('');
+        this.form.controls['caseType'].setValue('');
+        this.form.controls['caseNumber'].setValue('');
+        this.form.controls['isUnallocated'].setValue(false);
 
         this.csoMenu.clear();
         this.caseTypeMenu.clear();
@@ -71,5 +91,18 @@ export class AllocateHearingsComponent implements OnInit {
 
     selectedUsersEmitter($event: string[]) {
         this.csoDropDownValues = $event;
+    }
+
+    private filterResults(result: AllocationHearingsResponse[]) {
+        this.hearings = result.slice(0, this.filterSize);
+        if (result.length > this.filterSize) {
+            this.displayMessage = true;
+            this.message = `Showing only ${this.filterSize} Records, For more records please apply filter`;
+        } else if (result.length === 0) {
+            this.displayMessage = true;
+            this.message = 'There are no records found';
+        } else {
+            this.displayMessage = false;
+        }
     }
 }
