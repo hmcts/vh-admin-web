@@ -73,7 +73,6 @@ export class SearchService {
         const allResults: ParticipantModel[] = [];
         if (term.length >= this.minimumSearchLength) {
             if (hearingRole === Constants.HearingRoles.Judge) {
-                debugger;
                 return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
             } else {
                 let persons$: Observable<Array<PersonResponse>>;

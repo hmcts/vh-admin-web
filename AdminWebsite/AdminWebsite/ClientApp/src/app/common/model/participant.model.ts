@@ -32,7 +32,6 @@ export class ParticipantModel {
     }
 
     static fromPersonResponse(person: PersonResponse): ParticipantModel {
-        debugger;
         return person
             ? {
                   ...person,

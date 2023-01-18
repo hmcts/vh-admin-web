@@ -135,7 +135,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     selectItemClick(result: ParticipantModel) {
         this.email = result.email;
 
-        debugger;
         const selectedResult = new ParticipantModel();
         selectedResult.email = result.email;
         selectedResult.first_name = result.first_name;
