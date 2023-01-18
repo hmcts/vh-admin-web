@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { AllocationHearingsResponse, BHClient } from './clients/api-client';
+import { Logger } from './logger';
+import { Observable } from 'rxjs';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AllocateHearingsService {
+    constructor(private bhClient: BHClient, private logger: Logger) {}
+
+    getAllocationHearings(fromDate, toDate, csoUserName, caseType, caseNumber): Observable<AllocationHearingsResponse[]> {
+
+        //remove empty query parameters from url. must be 'undefined', null will throw error.
+        const cleanQuery = parameter => (parameter === null || parameter === '') ? undefined : parameter
+        try {
+            return this.bhClient.getAllocationHearings(
+                cleanQuery(fromDate),
+                cleanQuery(toDate),
+                cleanQuery(csoUserName),
+                cleanQuery(caseType),
+                cleanQuery(caseNumber));
+        } catch (error) {
+            this.logger.error(`${error.response}`, error);
+            return new Observable<AllocationHearingsResponse[]>();
+        }
+    }
+}

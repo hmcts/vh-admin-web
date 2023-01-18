@@ -164,75 +164,7 @@
       </div>
     </div>
   </details>
-  <details [attr.open]="allocateHearingsDetailOpen ? '' : null" *ngIf="isVhTeamLeader" class="govuk-details" data-module="govuk-details">
-    <summary class="govuk-details__summary" tabindex="0" role="button">
-      <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
-    </summary>
-    <div class="govuk-form-group govuk-!-margin-left-6">
-      <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">Search hearings</p>
-      <div class="govuk-grid-row govuk-!-margin-bottom-4">
-        <div class="govuk-grid-column-one-third">
-          <label class="govuk-label" for="hearing-date-entry">Hearing date</label>
-          <input class="govuk-input" id="hearing-date-entry" name="hearing-date-entry" type="date" />
-        </div>
-        <div class="govuk-grid-column-one-third">
-          <label class="govuk-label" for="Ctsc-officer-user-name-entry">CTSC officer user name</label>
-          <input class="govuk-input" id="Ctsc-officer-user-name-entry" name="Ctsc-officer-user-name-entry" type="text" />
-        </div>
-      </div>
-
-      <div class="govuk-grid-row govuk-!-margin-bottom-4">
-        <div class="govuk-grid-column-one-third">
-          <label class="govuk-label" for="case-type-selection">Case type</label>
-          <select class="govuk-select" id="case-type-selection" name="case-type-selection"></select>
-        </div>
-        <div class="govuk-grid-column-one-third">
-          <label class="govuk-label" for="case-number-entry">Case number</label>
-          <input class="govuk-input" id="case-number-entry" name="case-number-entry" type="text" />
-        </div>
-      </div>
-
-      <div class="govuk-checkboxes govuk-!-margin-bottom-4" data-module="govuk-checkboxes">
-        <div class="govuk-checkboxes__item">
-          <input
-            class="govuk-checkboxes__input"
-            id="show-unallocated-hearings-only-checkbox"
-            name="show-unallocated-hearings-only-checkbox"
-            type="checkbox"
-            value="true"
-          />
-          <label class="govuk-label govuk-checkboxes__label" for="show-unallocated-hearings-only-checkbox">
-            Only show unallocated hearings
-          </label>
-        </div>
-      </div>
-
-      <div class="govuk-!-margin-bottom-2">
-        <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button">Search</button>
-        <button class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear</button>
-      </div>
-
-      <table class="govuk-table">
-        <caption class="govuk-table__caption govuk-table__caption--m">
-          Hearings
-        </caption>
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">
-              <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true" aria-label="Select all hearings" />
-            </th>
-            <th scope="col" class="govuk-table__header">Hearing date</th>
-            <th scope="col" class="govuk-table__header">Start time</th>
-            <th scope="col" class="govuk-table__header">Estimated duration</th>
-            <th scope="col" class="govuk-table__header">Case number</th>
-            <th scope="col" class="govuk-table__header">Case Type</th>
-            <th scope="col" class="govuk-table__header">Allocated officer</th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body"></tbody>
-      </table>
-    </div>
-  </details>
+  <app-allocate-hearings [isVhTeamLeader]="isVhTeamLeader"></app-allocate-hearings>
 </div>
 <div *ngIf="showSaveConfirmation">
   <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditing()"></app-cancel-popup>

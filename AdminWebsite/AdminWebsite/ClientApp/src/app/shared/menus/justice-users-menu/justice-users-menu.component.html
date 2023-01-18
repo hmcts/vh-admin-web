@@ -14,8 +14,8 @@
     [closeOnSelect]="false"
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
-    (add)="onSelect($event)"
-    (change)="onSelect($event)"
+    (add)="onSelect()"
+    (change)="onSelect()"
   >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
       <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />

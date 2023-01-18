@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Directive, EventEmitter, Output } from '@angular/core';
+import {Component, Directive, EventEmitter, Output, ViewChild} from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -34,6 +34,9 @@ import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { v4 as uuid } from 'uuid';
+import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
+import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
+import {VenuesMenuComponent} from "../../shared/menus/venues-menu/venues-menu.component";
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -606,7 +609,7 @@ describe('BookingsListComponent', () => {
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
-                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
+                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe, JusticeUsersMenuComponent, CaseTypesMenuComponent, VenuesMenuComponent],
                 imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
                     FormBuilder,

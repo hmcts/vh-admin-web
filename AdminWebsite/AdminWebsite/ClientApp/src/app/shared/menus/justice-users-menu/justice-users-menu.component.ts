@@ -16,14 +16,11 @@ export class JusticeUsersMenuComponent extends MenuBase {
     formGroupName = 'selectedUserIds';
     users: JusticeUserResponse[];
     selectedItems: [];
-    persistentItems = this.bookingPersistService.selectedUsers;
     formConfiguration = {
         selectedUserIds: [this.bookingPersistService.selectedUsers || []]
     };
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
-    @Input() clearEmitter = new EventEmitter();
-    @Input() enableEmitter = new EventEmitter<boolean>();
 
     constructor(
         private bookingPersistService: BookingPersistService,
