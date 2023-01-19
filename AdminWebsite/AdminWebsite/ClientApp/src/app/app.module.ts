@@ -40,7 +40,6 @@ import { DeleteParticipantModule } from './delete-participant/delete-participant
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -55,8 +54,7 @@ export function loadConfig(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent,
-        UnallocatedHearingsComponent
+        ChangePasswordComponent
     ],
     imports: [
         MomentModule,
