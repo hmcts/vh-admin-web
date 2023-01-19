@@ -5,7 +5,7 @@ import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../..
 import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { SearchResults } from '../search-results-model';
-import {EditWorkHoursService} from '../../services/edit-work-hours.service';
+import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-search',

@@ -4,9 +4,9 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import {HearingVenueResponse} from '../../../services/clients/api-client';
-import {of, throwError} from 'rxjs';
-import {ReferenceDataService} from '../../../services/reference-data.service';
+import { HearingVenueResponse } from '../../../services/clients/api-client';
+import { of, throwError } from 'rxjs';
+import { ReferenceDataService } from '../../../services/reference-data.service';
 
 describe('VenuesMenuComponent', () => {
     let component: VenuesMenuComponent;
@@ -19,11 +19,13 @@ describe('VenuesMenuComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [VenuesMenuComponent],
-            providers: [HttpClient,
+            providers: [
+                HttpClient,
                 HttpHandler,
                 FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: ReferenceDataService, useValue: refDataServiceSpy}]
+                { provide: ReferenceDataService, useValue: refDataServiceSpy }
+            ]
         }).compileComponents();
     });
 
@@ -50,9 +52,9 @@ describe('VenuesMenuComponent', () => {
         });
 
         it('should call reference data service, and catch thrown exception', () => {
-            refDataServiceSpy.getCourts.and.returnValue(throwError({status: 404}));
+            refDataServiceSpy.getCourts.and.returnValue(throwError({ status: 404 }));
 
-            const handleListErrorSpy = spyOn(component, 'handleListError' );
+            const handleListErrorSpy = spyOn(component, 'handleListError');
             component.loadItems();
             expect(refDataServiceSpy.getCourts).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();

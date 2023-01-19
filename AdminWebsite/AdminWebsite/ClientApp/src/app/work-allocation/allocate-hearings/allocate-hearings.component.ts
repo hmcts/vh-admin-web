@@ -5,7 +5,7 @@ import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import {AllocateHearingsService} from '../services/allocate-hearings.service';
+import { AllocateHearingsService } from '../services/allocate-hearings.service';
 
 @Component({
     selector: 'app-allocate-hearings',

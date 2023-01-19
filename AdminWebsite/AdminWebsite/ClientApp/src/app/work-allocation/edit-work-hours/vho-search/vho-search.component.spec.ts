@@ -8,7 +8,7 @@ import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Subject } from 'rxjs';
 import { SearchResults } from '../search-results-model';
-import {EditWorkHoursService} from '../../services/edit-work-hours.service';
+import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 describe('VhoSearchComponent', () => {
     let component: VhoSearchComponent;

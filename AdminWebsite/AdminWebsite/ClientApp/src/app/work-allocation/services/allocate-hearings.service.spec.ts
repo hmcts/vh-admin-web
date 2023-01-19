@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { AllocateHearingsService } from './allocate-hearings.service';
 import { of } from 'rxjs';
-import {AllocationHearingsResponse, BHClient} from '../../services/clients/api-client';
-import {Logger} from '../../services/logger';
+import { AllocationHearingsResponse, BHClient } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 
 describe('AllocateHearingsService', () => {
     let service: AllocateHearingsService;
@@ -53,12 +53,12 @@ describe('AllocateHearingsService', () => {
                     case_number: 'case_number2',
                     duration: 360,
                     hearing_date: new Date('2023-01-02')
-                }), ];
+                })
+            ];
 
             bHClientSpy.getAllocationHearings.and.returnValue(of(allocationResponse));
             let result;
-            service.getAllocationHearings(null, null, null, null, null, null)
-                   .subscribe(e => (result = e));
+            service.getAllocationHearings(null, null, null, null, null, null).subscribe(e => (result = e));
             expect(bHClientSpy.getAllocationHearings).toHaveBeenCalled();
             expect(result).toEqual(allocationResponse);
         });

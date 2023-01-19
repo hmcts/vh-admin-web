@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import {BHClient} from '../../services/clients/api-client';
-import {Logger} from '../../services/logger';
+import { BHClient } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 @Injectable({
     providedIn: 'root'
 })

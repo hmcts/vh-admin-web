@@ -1,8 +1,8 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { EditWorkHoursService } from './edit-work-hours.service';
 import { of, throwError } from 'rxjs';
-import {BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse} from "../../services/clients/api-client";
-import {Logger} from "../../services/logger";
+import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 
 describe('EditWorkHoursService', () => {
     let service: EditWorkHoursService;

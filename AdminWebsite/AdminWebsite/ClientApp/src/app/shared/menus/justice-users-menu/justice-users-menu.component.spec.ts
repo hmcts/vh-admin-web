@@ -4,9 +4,9 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import {VideoHearingsService} from '../../../services/video-hearings.service';
-import {of, throwError} from 'rxjs';
-import {JusticeUserResponse} from '../../../services/clients/api-client';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { of, throwError } from 'rxjs';
+import { JusticeUserResponse } from '../../../services/clients/api-client';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
@@ -19,11 +19,12 @@ describe('JusticeUsersMenuComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
-            providers: [HttpClient,
+            providers: [
+                HttpClient,
                 HttpHandler,
                 FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy}
+                { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
             ]
         }).compileComponents();
     });
@@ -52,9 +53,9 @@ describe('JusticeUsersMenuComponent', () => {
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            videoHearingServiceSpy.getUsers.and.returnValue(throwError({status: 404}));
+            videoHearingServiceSpy.getUsers.and.returnValue(throwError({ status: 404 }));
 
-            const handleListErrorSpy = spyOn(component, 'handleListError' );
+            const handleListErrorSpy = spyOn(component, 'handleListError');
             component.loadItems();
             expect(videoHearingServiceSpy.getUsers).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();

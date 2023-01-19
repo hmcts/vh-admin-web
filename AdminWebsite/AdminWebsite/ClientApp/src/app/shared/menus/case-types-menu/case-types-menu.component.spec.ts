@@ -4,9 +4,9 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import {VideoHearingsService} from '../../../services/video-hearings.service';
-import {of, throwError} from 'rxjs';
-import {HearingTypeResponse} from '../../../services/clients/api-client';
+import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { of, throwError } from 'rxjs';
+import { HearingTypeResponse } from '../../../services/clients/api-client';
 
 describe('CaseTypesMenuComponent', () => {
     let component: CaseTypesMenuComponent;
@@ -15,14 +15,15 @@ describe('CaseTypesMenuComponent', () => {
 
     beforeEach(async () => {
         videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getHearingTypes']);
-        videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({group: 'caseType1'})]));
+        videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: 'caseType1' })]));
         await TestBed.configureTestingModule({
             declarations: [CaseTypesMenuComponent],
-            providers: [HttpClient,
+            providers: [
+                HttpClient,
                 HttpHandler,
                 FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy}
+                { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
             ]
         }).compileComponents();
     });
@@ -50,9 +51,9 @@ describe('CaseTypesMenuComponent', () => {
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            videoHearingServiceSpy.getHearingTypes.and.returnValue(throwError({status: 404}));
+            videoHearingServiceSpy.getHearingTypes.and.returnValue(throwError({ status: 404 }));
 
-            const handleListErrorSpy = spyOn(component, 'handleListError' );
+            const handleListErrorSpy = spyOn(component, 'handleListError');
             component.loadItems();
             expect(videoHearingServiceSpy.getHearingTypes).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();

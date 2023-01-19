@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
-import {BHClient, UserProfileResponse} from '../services/clients/api-client';
+import { BHClient, UserProfileResponse } from '../services/clients/api-client';
 
 @Component({
     selector: 'app-upload-work-hours',
@@ -36,7 +36,6 @@ describe('WorkAllocationComponent', () => {
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    let bHClientSpy: jasmine.SpyObj<BHClient>;
 
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
@@ -50,11 +49,14 @@ describe('WorkAllocationComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
-            declarations: [WorkAllocationComponent, UploadWorkHoursStubComponent, EditWorkHoursStubComponent, ManageTeamStubComponent, AllocateHearingsStubComponent],
-            providers: [
-                { provide: BHClient, useValue: bHClientSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy }
-            ]
+            declarations: [
+                WorkAllocationComponent,
+                UploadWorkHoursStubComponent,
+                EditWorkHoursStubComponent,
+                ManageTeamStubComponent,
+                AllocateHearingsStubComponent
+            ],
+            providers: [{ provide: UserIdentityService, useValue: userIdentityServiceSpy }]
         }).compileComponents();
     });
 

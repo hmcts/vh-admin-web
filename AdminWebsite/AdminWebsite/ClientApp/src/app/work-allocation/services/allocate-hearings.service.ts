@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {AllocationHearingsResponse, BHClient} from '../../services/clients/api-client';
-import {Logger} from '../../services/logger';
+import { AllocationHearingsResponse, BHClient } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 
 @Injectable({
     providedIn: 'root'

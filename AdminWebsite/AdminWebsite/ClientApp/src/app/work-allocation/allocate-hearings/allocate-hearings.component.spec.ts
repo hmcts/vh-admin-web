@@ -10,7 +10,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 import { of } from 'rxjs';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
-import {AllocateHearingsService} from '../services/allocate-hearings.service';
+import { AllocateHearingsService } from '../services/allocate-hearings.service';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
