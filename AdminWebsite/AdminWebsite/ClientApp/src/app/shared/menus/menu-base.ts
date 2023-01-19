@@ -4,7 +4,7 @@ import { Logger } from '../../services/logger';
 
 @Injectable()
 export abstract class MenuBase implements OnInit {
-    constructor(formBuilder: FormBuilder, logger: Logger) {
+    protected constructor(formBuilder: FormBuilder, logger: Logger) {
         this.logger = logger;
         this.formBuilder = formBuilder;
     }

@@ -30,7 +30,7 @@ public class GetUnallocatedHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
-            .ReturnsAsync(new List<HearingDetailsResponse>(){new ()});
+            .ReturnsAsync(Mock.Of<List<HearingDetailsResponse>>());
         // Act
         var response = await _controller.GetUnallocatedHearings();
         

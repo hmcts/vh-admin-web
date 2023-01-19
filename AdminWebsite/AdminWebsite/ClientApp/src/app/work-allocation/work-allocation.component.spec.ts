@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
-import { UserProfileResponse } from '../services/clients/api-client';
+import {BHClient, UserProfileResponse} from '../services/clients/api-client';
 
 @Component({
     selector: 'app-upload-work-hours',
@@ -24,6 +24,12 @@ class EditWorkHoursStubComponent {}
     template: '<span class="govuk-details__summary-text" id="manage-team">  Manage team  </span>'
 })
 class ManageTeamStubComponent {}
+
+@Component({
+    selector: 'app-allocate-hearings',
+    template: '<span class="govuk-details__summary-text" id="allocate-hearings">  Allocate hearings  </span>'
+})
+class AllocateHearingsStubComponent {}
 
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
@@ -44,7 +50,7 @@ describe('WorkAllocationComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
-            declarations: [WorkAllocationComponent, UploadWorkHoursStubComponent, EditWorkHoursStubComponent, ManageTeamStubComponent],
+            declarations: [WorkAllocationComponent, UploadWorkHoursStubComponent, EditWorkHoursStubComponent, ManageTeamStubComponent, AllocateHearingsStubComponent],
             providers: [
                 { provide: BHClient, useValue: bHClientSpy },
                 { provide: UserIdentityService, useValue: userIdentityServiceSpy }

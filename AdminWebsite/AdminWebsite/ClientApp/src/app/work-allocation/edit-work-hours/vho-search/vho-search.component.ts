@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
-import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { SearchResults } from '../search-results-model';
+import {EditWorkHoursService} from '../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-search',

@@ -1,7 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { VhoSearchComponent } from './vho-search.component';
-import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
-import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 
 import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
@@ -9,6 +8,7 @@ import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Subject } from 'rxjs';
 import { SearchResults } from '../search-results-model';
+import {EditWorkHoursService} from '../../services/edit-work-hours.service';
 
 describe('VhoSearchComponent', () => {
     let component: VhoSearchComponent;

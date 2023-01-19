@@ -3,7 +3,6 @@ import { AllocateHearingsComponent } from './allocate-hearings.component';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { FormBuilder } from '@angular/forms';
-import { AllocateHearingsService } from '../../services/allocate-hearings.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -11,6 +10,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 import { of } from 'rxjs';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
+import {AllocateHearingsService} from '../services/allocate-hearings.service';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
