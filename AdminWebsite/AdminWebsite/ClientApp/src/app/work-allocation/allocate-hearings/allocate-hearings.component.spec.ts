@@ -6,8 +6,8 @@ import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { JusticeUserMenuStub } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub';
-import { CaseTypeMenuStub } from '../../testing/stubs/dropdown-menu/case-type-menu-stub';
+import { JusticeUserMenuStubComponent } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub.component';
+import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/case-type-menu-stub.component';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 
@@ -22,7 +22,7 @@ describe('AllocateHearingsComponent', () => {
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
 
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUserMenuStub, CaseTypeMenuStub],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -35,8 +35,8 @@ describe('AllocateHearingsComponent', () => {
         fixture = TestBed.createComponent(AllocateHearingsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        component.csoMenu = TestBed.createComponent(JusticeUserMenuStub).componentInstance as JusticeUsersMenuComponent;
-        component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStub).componentInstance as CaseTypesMenuComponent;
+        component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
+        component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
     });
 
     describe('ngOnInit', () => {
