@@ -3497,6 +3497,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Get the Justice User list from the JusticeUser table
      * @return Success
      */
     getUserList(): Observable<JusticeUserResponse[]> {
@@ -4481,6 +4482,8 @@ export class JudgeResponse implements IJudgeResponse {
     display_name?: string | undefined;
     /** Judge username/email */
     email?: string | undefined;
+    /** Judge contact email */
+    contact_email?: string | undefined;
     account_type?: JudgeAccountType;
 
     constructor(data?: IJudgeResponse) {
@@ -4497,6 +4500,7 @@ export class JudgeResponse implements IJudgeResponse {
             this.last_name = _data['last_name'];
             this.display_name = _data['display_name'];
             this.email = _data['email'];
+            this.contact_email = _data['contact_email'];
             this.account_type = _data['account_type'];
         }
     }
@@ -4514,6 +4518,7 @@ export class JudgeResponse implements IJudgeResponse {
         data['last_name'] = this.last_name;
         data['display_name'] = this.display_name;
         data['email'] = this.email;
+        data['contact_email'] = this.contact_email;
         data['account_type'] = this.account_type;
         return data;
     }
@@ -4529,6 +4534,8 @@ export interface IJudgeResponse {
     display_name?: string | undefined;
     /** Judge username/email */
     email?: string | undefined;
+    /** Judge contact email */
+    contact_email?: string | undefined;
     account_type?: JudgeAccountType;
 }
 
@@ -5967,6 +5974,7 @@ export interface IEndpointRequest {
 }
 
 export enum UpdateBookingStatus {
+    Booked = 'Booked',
     Created = 'Created',
     Cancelled = 'Cancelled',
     Failed = 'Failed'

@@ -165,19 +165,22 @@ namespace AdminWebsite.UnitTests.Controllers
                     {
                         FirstName = "FirstName1",
                         LastName = "FirstName2",
-                        Email = "judge.1@judiciary.net"
+                        Email = "judge.1@judiciary.net",
+                        ContactEmail = "judge1@personal.com"
                     },
                     new JudgeResponse
                     {
                         FirstName = "FirstName3",
                         LastName = "LastName3",
-                        Email = "judge.3@judiciary.net"
+                        Email = "judge.3@judiciary.net",
+                        ContactEmail = "judge3@personal.com"
                     },
                     new JudgeResponse
                     {
                         FirstName = "FirstName2",
                         LastName = "LastName2",
-                        Email = "judge.2@judiciary.net" // Out of order to test order
+                        Email = "judge.2@judiciary.net", // Out of order to test order
+                        ContactEmail = "judge2@personal.com"
                     }
                 };
 

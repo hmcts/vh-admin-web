@@ -35,17 +35,17 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             endDate: ['']
         });
     }
-    @Input() set result(value) {
+    @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
         this.resetStartDateAndEndDate();
         this.hideMessage();
-        if (value && this.checkType(value, VhoNonAvailabilityWorkHoursResponse)) {
+        if (value) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
-                this.displayMessageAndFade('Showing only 20 Records, For more records please use filter by date', false);
+                this.showMessage('Showing only 20 Records, For more records please use filter by date');
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
-                this.displayMessageAndFade('There are no non-availability hours uploaded for this team member', false);
+                this.showMessage('There are no non-availability hours uploaded for this team member');
             }
         } else {
             this.nonWorkHours = null;
@@ -105,7 +105,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             if (success) {
                 this.isEditing = false;
                 this.originalNonWorkHours = JSON.parse(JSON.stringify(this.nonWorkHours));
-                this.editWorkHoursService.fetchNonWorkHours$.next();
+                this.editWorkHoursService.fetchNonWorkHours$.next(success);
             }
         });
     }
@@ -401,29 +401,20 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
                 res => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
-                    this.displayMessageAndFade('Non-availability hours changes saved successfully');
+                    this.showMessage('Non-availability hours changes saved successfully');
                     this.removeSlot();
                 },
                 error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
-                    this.displayMessageAndFade('Non-availability hours changes could not be saved successfully');
+                    this.showMessage('Non-availability hours changes could not be saved successfully');
                 }
             );
         }
     }
 
-    displayMessageAndFade(message: string, fade: boolean = true) {
+    showMessage(message: string) {
         this.displayMessage = true;
         this.message = message;
-        if (fade) {
-            this.fadeOutLink();
-        }
-    }
-
-    fadeOutLink() {
-        setTimeout(() => {
-            this.hideMessage();
-        }, this.timeMessageDuration);
     }
 
     private removeSlot() {
@@ -470,6 +461,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.showSaveConfirmation = true;
         }
     }
+
     handleContinue() {
         this.showSaveConfirmation = false;
     }
@@ -477,9 +469,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     hideMessage() {
         this.displayMessage = false;
     }
+
     resetStartDateAndEndDate() {
         this.filterForm.setValue({ startDate: null, endDate: null });
     }
+
     get checkVhoHasWorkHours(): boolean {
         return this.nonWorkHours?.length > 0;
     }

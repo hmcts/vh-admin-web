@@ -146,6 +146,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         selectedResult.username = result.username;
         selectedResult.display_name = result.display_name;
         selectedResult.is_courtroom_account = result.is_courtroom_account;
+        selectedResult.contact_email = result.contact_email;
         this.isShowResult = false;
         this.findParticipant.emit(selectedResult);
     }
