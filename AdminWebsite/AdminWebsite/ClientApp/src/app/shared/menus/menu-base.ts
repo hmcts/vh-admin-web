@@ -8,26 +8,25 @@ export abstract class MenuBase implements OnInit {
         this.logger = logger;
         this.formBuilder = formBuilder;
     }
+    @Input() set enabled(value) {
+        if (value !== false) {
+            this.form.controls[this.formGroupName].enable();
+        } else {
+            this.form.controls[this.formGroupName].disable();
+        }
+    }
     logger: Logger;
+    form: FormGroup;
+    error = false;
     private formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;
-    form: FormGroup;
-    error = false;
     abstract selectedItems: Array<any>;
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<Array<any>>();
-    @Input() set enabled(value) {
-        if(value == false)
-            this.form.controls[this.formGroupName].disable();
-        else
-            this.form.controls[this.formGroupName].enable();
-    }
     abstract loadItems(): void;
-
-
 
     ngOnInit(): void {
         this.form = this.initializeForm();

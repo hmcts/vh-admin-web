@@ -580,18 +580,17 @@ namespace AdminWebsite.Controllers
         {
             var hearings = await _bookingsApiClient.
                 SearchForAllocationHearingsAsync(
-                    fromDate: searchRequest.FromDate, 
-                    toDate:   searchRequest.ToDate,
-                    caseNumber: searchRequest.CaseNumber,
-                    caseType:   searchRequest.CaseType,
-                    csoUserName:searchRequest.CsoUserName
-                    );
+                    fromDate:   searchRequest.FromDate, 
+                    toDate:     searchRequest.ToDate,
+                    caseNumber:   searchRequest.CaseNumber,
+                    caseType:     searchRequest.CaseType,
+                    cso:          searchRequest.Cso,
+                    isUnallocated:searchRequest.IsUnallocated); 
             
             if(hearings == null || !hearings.Any())
                 return Ok(new List<AllocationHearingsResponse>());
             
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
-
         }
     }
 }

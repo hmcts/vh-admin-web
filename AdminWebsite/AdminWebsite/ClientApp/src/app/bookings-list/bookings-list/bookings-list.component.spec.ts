@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import {Component, Directive, EventEmitter, Output, ViewChild} from '@angular/core';
+import { Component, Directive, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -34,9 +34,9 @@ import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { v4 as uuid } from 'uuid';
-import {JusticeUsersMenuComponent} from "../../shared/menus/justice-users-menu/justice-users-menu.component";
-import {CaseTypesMenuComponent} from "../../shared/menus/case-types-menu/case-types-menu.component";
-import {VenuesMenuComponent} from "../../shared/menus/venues-menu/venues-menu.component";
+import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
+import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
+import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -609,7 +609,15 @@ describe('BookingsListComponent', () => {
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
-                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe, JusticeUsersMenuComponent, CaseTypesMenuComponent, VenuesMenuComponent],
+                declarations: [
+                    BookingsListComponent,
+                    ScrollableDirective,
+                    BookingDetailsComponent,
+                    LongDatetimePipe,
+                    JusticeUsersMenuComponent,
+                    CaseTypesMenuComponent,
+                    VenuesMenuComponent
+                ],
                 imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
                     FormBuilder,
@@ -911,6 +919,16 @@ describe('BookingsListComponent', () => {
     });
 
     it('should onClear', () => {
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         const searchFormSpy = component.searchForm;
         spyOn(searchFormSpy, 'reset');
         spyOn(bookingPersistService, 'resetAll');
@@ -938,6 +956,16 @@ describe('BookingsListComponent', () => {
     });
 
     it('should reset title after search is cleared', () => {
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         setFormValue();
         component.enableSearchFeature = true;
         component.onSearch();
@@ -1001,6 +1029,17 @@ describe('BookingsListComponent', () => {
         fixture.detectChanges();
         let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
         expect(searchPanel).not.toBeNull();
+
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         component.closeSearchPanel();
         fixture.detectChanges();
         searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
