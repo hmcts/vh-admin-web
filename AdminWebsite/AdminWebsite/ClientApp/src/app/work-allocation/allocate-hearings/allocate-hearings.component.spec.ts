@@ -3,30 +3,26 @@ import { AllocateHearingsComponent } from './allocate-hearings.component';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { FormBuilder } from '@angular/forms';
-import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
-import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { BookingPersistService } from '../../services/bookings-persist.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { Logger } from '../../services/logger';
 import { of } from 'rxjs';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
+import { JusticeUserMenuStub } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub';
+import { CaseTypeMenuStub } from '../../testing/stubs/dropdown-menu/case-type-menu-stub';
+import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
+import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
     let fixture: ComponentFixture<AllocateHearingsComponent>;
     let activatedRoute: ActivatedRouteStub;
     let allocateServiceSpy: jasmine.SpyObj<AllocateHearingsService>;
-    const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
-    const hearingServiceMock = jasmine.createSpyObj('VideoHearingsService', ['getUsers', 'getHearingTypes']);
-    const bookingPersistMock = jasmine.createSpyObj('BookingPersistService', ['selectedUsers', 'selectedCaseTypes']);
 
     beforeEach(async () => {
         activatedRoute = new ActivatedRouteStub();
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
 
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUsersMenuComponent, CaseTypesMenuComponent],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStub, CaseTypeMenuStub],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -39,6 +35,8 @@ describe('AllocateHearingsComponent', () => {
         fixture = TestBed.createComponent(AllocateHearingsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        component.csoMenu = TestBed.createComponent(JusticeUserMenuStub).componentInstance as JusticeUsersMenuComponent;
+        component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStub).componentInstance as CaseTypesMenuComponent;
     });
 
     describe('ngOnInit', () => {
@@ -161,9 +159,6 @@ describe('AllocateHearingsComponent', () => {
             component.form.controls['caseType'].setValue(['test', 'case', 'type']);
             component.form.controls['caseNumber'].setValue('testCaseNumber1234');
             component.form.controls['isUnallocated'].setValue(true);
-            const formBuilder = new FormBuilder();
-            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-            component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
 
             const caseMenuSpy = spyOn(component.caseTypeMenu, 'clear');
             const csoMenuSpy = spyOn(component.csoMenu, 'clear');

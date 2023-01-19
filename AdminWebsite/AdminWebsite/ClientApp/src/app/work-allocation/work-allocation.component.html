@@ -7,7 +7,7 @@
     [dataChangedBroadcast]="dataChangedBroadcast"
   ></app-edit-work-hours>
   <app-manage-team *ngIf="isVhTeamLeader"></app-manage-team>
-  <app-allocate-hearings [isVhTeamLeader]="isVhTeamLeader"></app-allocate-hearings>
+  <app-allocate-hearings *ngIf="isVhTeamLeader"></app-allocate-hearings>
 </div>
 <div *ngIf="showSaveConfirmation">
   <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditing()"></app-cancel-popup>

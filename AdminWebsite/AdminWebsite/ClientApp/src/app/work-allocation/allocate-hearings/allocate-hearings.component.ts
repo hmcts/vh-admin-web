@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
@@ -13,7 +13,6 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
-    @Input() isVhTeamLeader: boolean;
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
