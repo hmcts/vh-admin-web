@@ -13,7 +13,8 @@ namespace AdminWebsite.Mappers
                 FirstName = personResponse.FirstName,
                 LastName = personResponse.LastName,
                 Email = personResponse.Username,
-                AccountType = JudgeAccountType.Judiciary
+                AccountType = JudgeAccountType.Judiciary,
+                ContactEmail = personResponse.ContactEmail
             };
 
         }

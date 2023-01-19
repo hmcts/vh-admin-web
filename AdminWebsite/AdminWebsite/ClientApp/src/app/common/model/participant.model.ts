@@ -25,6 +25,7 @@ export class ParticipantModel {
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
     is_staff_member?: boolean;
+    contact_email?: string;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
@@ -46,6 +47,7 @@ export class ParticipantModel {
         return judge
             ? {
                   ...judge,
+                  email: judge.contact_email,
                   username: judge.email,
                   is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
               }

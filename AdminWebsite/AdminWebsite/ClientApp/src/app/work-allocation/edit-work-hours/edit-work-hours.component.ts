@@ -14,6 +14,7 @@ import { VhoWorkHoursTableComponent } from './vho-work-hours-table/vho-work-hour
 import { EditVhoNonAvailabilityWorkHoursModel } from './edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
 import { HoursType } from 'src/app/common/model/hours-type';
+import { SearchResults } from './search-results-model';
 
 @Component({
     selector: 'app-edit-work-hours',
@@ -97,8 +98,8 @@ export class EditWorkHoursComponent implements OnInit {
         );
     }
 
-    setSearchResult($event: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]) {
-        this.result = $event;
+    setSearchResult($event: SearchResults) {
+        this.result = $event.result;
         this.showWorkHoursTable = false;
         this.showNonWorkHoursTable = false;
         switch (this.hoursType) {
@@ -110,8 +111,10 @@ export class EditWorkHoursComponent implements OnInit {
                 break;
         }
 
-        this.clearConfirmationMessagesForSaveNonWorkHours();
-        this.clearConfirmationMessagesForSaveWorkHours();
+        if (!$event.refresh) {
+            this.clearConfirmationMessagesForSaveNonWorkHours();
+            this.clearConfirmationMessagesForSaveWorkHours();
+        }
     }
 
     setHoursType($event: HoursType) {

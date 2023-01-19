@@ -7,7 +7,7 @@ import { Logger } from './logger';
     providedIn: 'root'
 })
 export class EditWorkHoursService {
-    fetchNonWorkHours$ = new Subject<void>();
+    fetchNonWorkHours$ = new Subject<boolean>();
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
 

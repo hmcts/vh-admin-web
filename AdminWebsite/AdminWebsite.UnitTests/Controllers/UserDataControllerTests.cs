@@ -44,7 +44,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Email = "Test.Judge01@hmcts.net",
                 DisplayName = "Test Judge01",
                 FirstName = "Test",
-                LastName = "Judge01"
+                LastName = "Judge01",
+                ContactEmail = "judge@personal.com"
             };
             _judgeResponse.Add(judgeData);
             judgeData = new JudgeResponse()
@@ -52,7 +53,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Email = "Test.Judge02@hmcts.net",
                 DisplayName = "Test Judge02",
                 FirstName = "Test",
-                LastName = "Judge021"
+                LastName = "Judge021",
+                ContactEmail = "judge2@personal.com"
             };
             _judgeResponse.Add(judgeData);
         }
@@ -75,6 +77,7 @@ namespace AdminWebsite.UnitTests.Controllers
             testJudge.LastName.Should().Be("Judge01");
             testJudge.FirstName.Should().Be("Test");
             testJudge.DisplayName.Should().Be("Test Judge01");
+            testJudge.ContactEmail.Should().Be("judge@personal.com");
         }
 
         [Test]
@@ -96,6 +99,7 @@ namespace AdminWebsite.UnitTests.Controllers
             testJudge.LastName.Should().Be("Judge01");
             testJudge.FirstName.Should().Be("Test");
             testJudge.DisplayName.Should().Be("Test Judge01");
+            testJudge.ContactEmail.Should().Be("judge@personal.com");
         }
 
         [Test]
