@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { Logger } from 'src/app/services/logger';
@@ -13,7 +13,7 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
     @Output() cancelBooking: EventEmitter<any> = new EventEmitter<string>();
     @Output() keepBooking: EventEmitter<any> = new EventEmitter<any>();
 
-    cancelHearingForm: FormGroup;
+    cancelHearingForm: UntypedFormGroup;
     failedSubmission: boolean;
     selectedCancelReason: string;
     $subscriptions: Subscription[] = [];
@@ -33,7 +33,7 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
         'Other (please provide details)'
     ];
 
-    constructor(private fb: FormBuilder, private logger: Logger) {}
+    constructor(private fb: UntypedFormBuilder, private logger: Logger) {}
 
     ngOnInit() {
         this.failedSubmission = false;

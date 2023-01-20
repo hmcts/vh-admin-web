@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
@@ -15,7 +15,7 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 export class AllocateHearingsComponent implements OnInit {
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
-    form: FormGroup;
+    form: UntypedFormGroup;
     allocateHearingsDetailOpen: boolean;
     hearings: AllocationHearingsResponse[];
     caseTypeDropDownValues: string[];
@@ -24,7 +24,7 @@ export class AllocateHearingsComponent implements OnInit {
     message: string;
     faExclamation = faCircleExclamation;
     private filterSize = 20;
-    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
+    constructor(private route: ActivatedRoute, private fb: UntypedFormBuilder, private allocateService: AllocateHearingsService) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],

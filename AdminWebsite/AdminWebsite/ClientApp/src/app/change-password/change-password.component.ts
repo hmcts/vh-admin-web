@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ClipboardService } from 'ngx-clipboard';
 import { Subscription } from 'rxjs';
 import { Logger } from '../services/logger';
@@ -11,7 +11,7 @@ import { UserDataService } from '../services/user-data.service';
 })
 export class ChangePasswordComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[ChangePassword] -';
-    form: FormGroup;
+    form: UntypedFormGroup;
     failedSubmission: boolean;
     isValidEmail: boolean;
     showUpdateSuccess: boolean;
@@ -20,7 +20,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     $subcription: Subscription;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private userDataService: UserDataService,
         private clipboardService: ClipboardService,
         private logger: Logger

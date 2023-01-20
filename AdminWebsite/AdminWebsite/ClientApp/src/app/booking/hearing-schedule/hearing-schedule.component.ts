@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { ErrorService } from 'src/app/services/error.service';
@@ -35,16 +35,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     isStartHoursInPast = false;
     isStartMinutesInPast = false;
     multiDaysHearing = false;
-    durationHourControl: FormControl;
-    durationMinuteControl: FormControl;
+    durationHourControl: UntypedFormControl;
+    durationMinuteControl: UntypedFormControl;
     isBookedHearing = false;
-    addHearingDateControl: FormControl = null;
+    addHearingDateControl: UntypedFormControl = null;
     hearingDates: Date[] = [];
 
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         protected router: Router,
         private datePipe: DatePipe,
         protected bookingService: BookingService,
@@ -131,11 +131,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         if (this.multiDaysHearing) {
-            this.durationHourControl = new FormControl(durationHour);
-            this.durationMinuteControl = new FormControl(durationMinute);
+            this.durationHourControl = new UntypedFormControl(durationHour);
+            this.durationMinuteControl = new UntypedFormControl(durationMinute);
         } else {
-            this.durationHourControl = new FormControl(durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
-            this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
+            this.durationHourControl = new UntypedFormControl(durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
+            this.durationMinuteControl = new UntypedFormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
 
         this.form = this.formBuilder.group({
@@ -166,7 +166,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     addHearingDate() {
-        this.addHearingDateControl = new FormControl(null, [Validators.required, pastDateValidator()]);
+        this.addHearingDateControl = new UntypedFormControl(null, [Validators.required, pastDateValidator()]);
     }
 
     hearingDateChanged(event: any) {

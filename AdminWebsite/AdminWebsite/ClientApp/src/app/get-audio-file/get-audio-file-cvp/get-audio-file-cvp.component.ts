@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
 import { AudioLinkService, ICvpAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
@@ -10,7 +10,7 @@ import { Logger } from 'src/app/services/logger';
 })
 export class GetAudioFileCvpComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileCvp] -';
-    cvpAudioFileForm: FormGroup;
+    cvpAudioFileForm: UntypedFormGroup;
     today = new Date();
     loadingData: boolean;
 
@@ -21,7 +21,7 @@ export class GetAudioFileCvpComponent implements OnInit {
         this.results = searchResult?.result?.map(x => new CvpAudioSearchModel(x)) ?? [];
     }
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private fb: UntypedFormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
 
     ngOnInit(): void {
         const hearingDateParsed = null;

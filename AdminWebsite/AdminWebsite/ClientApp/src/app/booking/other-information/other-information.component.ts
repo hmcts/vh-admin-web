@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
@@ -24,7 +24,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
     canNavigate = true;
-    audioChoice: FormControl;
+    audioChoice: UntypedFormControl;
 
     otherInformationDetails: OtherInformationModel;
 
@@ -33,10 +33,10 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     disableAudioRecording = false;
     interpreterPresent = false;
     otherInformationText: string;
-    otherInformation: FormControl;
+    otherInformation: UntypedFormControl;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         protected videoHearingService: VideoHearingsService,
         protected router: Router,
         protected bookingService: BookingService,
@@ -57,9 +57,9 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     private initForm() {
         this.audioRecording = this.setInitialAudio();
-        this.audioChoice = new FormControl(this.audioRecording, Validators.required);
+        this.audioChoice = new UntypedFormControl(this.audioRecording, Validators.required);
 
-        this.otherInformation = new FormControl(
+        this.otherInformation = new UntypedFormControl(
             this.otherInformationText ? this.otherInformationText : '',
             Validators.pattern(Constants.TextInputPattern)
         );

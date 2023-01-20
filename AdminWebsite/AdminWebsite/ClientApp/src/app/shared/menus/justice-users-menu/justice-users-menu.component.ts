@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Logger } from '../../../services/logger';
@@ -25,7 +25,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
     constructor(
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
-        formBuilder: FormBuilder,
+        formBuilder: UntypedFormBuilder,
         logger: Logger
     ) {
         super(formBuilder, logger);

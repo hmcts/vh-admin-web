@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormControl } from '@angular/forms';
 import { AudioLinkService, ICvpAudioRecordingResult } from '../services/audio-link-service';
 import { Logger } from '../services/logger';
 
@@ -10,10 +10,10 @@ import { Logger } from '../services/logger';
 })
 export class GetAudioFileComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFile] -';
-    form: FormGroup;
+    form: UntypedFormGroup;
     today = new Date();
 
-    constructor(private fb: FormBuilder, private logger: Logger) {}
+    constructor(private fb: UntypedFormBuilder, private logger: Logger) {}
 
     async ngOnInit(): Promise<void> {
         this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);

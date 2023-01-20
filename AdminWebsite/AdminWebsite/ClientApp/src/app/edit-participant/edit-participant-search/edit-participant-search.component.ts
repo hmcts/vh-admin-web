@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
 import { Logger } from 'src/app/services/logger';
@@ -11,13 +11,13 @@ import { ParticipantEditService } from '../../services/participant-edit-service.
 })
 export class EditParticipantSearchComponent implements OnInit {
     private readonly loggerPrefix = '[EditParticipant] -';
-    form: FormGroup;
+    form: UntypedFormGroup;
     hasSearched: boolean;
     unauthorisedParticipant: boolean;
     loadingData: boolean;
     result: ParticipantEditResultModel;
     subscriptions$ = new Subscription();
-    constructor(private fb: FormBuilder, private service: ParticipantEditService, private logger: Logger) {}
+    constructor(private fb: UntypedFormBuilder, private service: ParticipantEditService, private logger: Logger) {}
 
     ngOnInit(): void {
         this.form = this.fb.group({

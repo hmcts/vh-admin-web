@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -34,7 +34,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     constructor(
         protected hearingService: VideoHearingsService,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         protected router: Router,
         protected bookingService: BookingService,
         protected logger: Logger,

@@ -1,5 +1,5 @@
 import { fakeAsync, flushMicrotasks, tick, waitForAsync } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { HearingsByUsernameForDeletionResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
@@ -32,7 +32,7 @@ const hearings = [
 
 let component: DeleteParticipantSearchComponent;
 let service: jasmine.SpyObj<ParticipantDeleteService>;
-let formBuilder: FormBuilder;
+let formBuilder: UntypedFormBuilder;
 const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
 describe('DeleteParticipantComponent user exists in query params', () => {
@@ -41,7 +41,7 @@ describe('DeleteParticipantComponent user exists in query params', () => {
 
     beforeAll(async () => {
         service = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
-        formBuilder = new FormBuilder();
+        formBuilder = new UntypedFormBuilder();
     });
 
     beforeEach(fakeAsync(() => {
@@ -68,7 +68,7 @@ describe('DeleteParticipantComponent no user in query params', () => {
 
     beforeAll(async () => {
         service = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
-        formBuilder = new FormBuilder();
+        formBuilder = new UntypedFormBuilder();
     });
 
     beforeEach(() => {

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JusticeUsersMenuComponent } from './justice-users-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
@@ -22,7 +22,7 @@ describe('JusticeUsersMenuComponent', () => {
             providers: [
                 HttpClient,
                 HttpHandler,
-                FormBuilder,
+                UntypedFormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
             ]

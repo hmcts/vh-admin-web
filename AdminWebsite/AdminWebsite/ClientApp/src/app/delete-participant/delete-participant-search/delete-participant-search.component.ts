@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
@@ -12,13 +12,13 @@ import { ParticipantDeleteService } from '../../services/participant-delete-serv
 })
 export class DeleteParticipantSearchComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[DeleteParticipant] -';
-    form: FormGroup;
+    form: UntypedFormGroup;
     hasSearched: boolean;
     loadingData: boolean;
     results: ParticipantHearingDeleteResultModel[] = [];
     subscriptions$ = new Subscription();
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private service: ParticipantDeleteService,
         private route: ActivatedRoute,
         private logger: Logger

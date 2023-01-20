@@ -1,5 +1,5 @@
 import { Directive, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
@@ -41,18 +41,18 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
     showDetails = false;
     emailDisabled = false;
-    companyName: FormControl;
-    companyNameIndividual: FormControl;
-    displayName: FormControl;
-    email: FormControl;
-    firstName: FormControl;
-    role: FormControl;
-    interpreterFor: FormControl;
-    lastName: FormControl;
-    party: FormControl;
-    phone: FormControl;
-    representing: FormControl;
-    title: FormControl;
+    companyName: UntypedFormControl;
+    companyNameIndividual: UntypedFormControl;
+    displayName: UntypedFormControl;
+    email: UntypedFormControl;
+    firstName: UntypedFormControl;
+    role: UntypedFormControl;
+    interpreterFor: UntypedFormControl;
+    lastName: UntypedFormControl;
+    party: UntypedFormControl;
+    phone: UntypedFormControl;
+    representing: UntypedFormControl;
+    title: UntypedFormControl;
 
     protected constants = Constants;
 
@@ -110,38 +110,38 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     initialiseForm() {
-        this.role = new FormControl(this.constants.PleaseSelect, [
+        this.role = new UntypedFormControl(this.constants.PleaseSelect, [
             Validators.required,
             Validators.pattern(this.constants.PleaseSelectPattern)
         ]);
-        this.party = new FormControl(this.constants.PleaseSelect);
-        this.title = new FormControl(this.constants.PleaseSelect);
-        this.firstName = new FormControl('', [
+        this.party = new UntypedFormControl(this.constants.PleaseSelect);
+        this.title = new UntypedFormControl(this.constants.PleaseSelect);
+        this.firstName = new UntypedFormControl('', [
             Validators.required,
             Validators.pattern(Constants.TextInputPatternName),
             Validators.maxLength(255)
         ]);
-        this.lastName = new FormControl('', [
+        this.lastName = new UntypedFormControl('', [
             Validators.required,
             Validators.pattern(Constants.TextInputPatternName),
             Validators.maxLength(255)
         ]);
-        this.email = new FormControl('', [Validators.required, Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]);
-        this.phone = new FormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
-        this.displayName = new FormControl('', [
+        this.email = new UntypedFormControl('', [Validators.required, Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]);
+        this.phone = new UntypedFormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
+        this.displayName = new UntypedFormControl('', [
             Validators.required,
             Validators.pattern(Constants.TextInputPatternDisplayName),
             Validators.maxLength(255)
         ]);
-        this.companyName = new FormControl('');
-        this.companyNameIndividual = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-        this.representing = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-        this.interpreterFor = new FormControl(this.constants.PleaseSelect, [
+        this.companyName = new UntypedFormControl('');
+        this.companyNameIndividual = new UntypedFormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+        this.representing = new UntypedFormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+        this.interpreterFor = new UntypedFormControl(this.constants.PleaseSelect, [
             Validators.required,
             Validators.pattern(this.constants.PleaseSelectPattern)
         ]);
 
-        this.form = new FormGroup({
+        this.form = new UntypedFormGroup({
             role: this.role,
             party: this.party,
             title: this.title,

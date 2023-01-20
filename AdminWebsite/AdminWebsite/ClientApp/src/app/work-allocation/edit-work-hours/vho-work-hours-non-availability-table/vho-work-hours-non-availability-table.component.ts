@@ -3,7 +3,7 @@ import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@a
 import { Observable, Subject } from 'rxjs';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 export class ValidationFailure {
     id: number;
@@ -26,7 +26,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         private datePipe: DatePipe,
         private bhClient: BHClient,
         private logger: Logger,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private videoHearingsService: VideoHearingsService,
         private editWorkHoursService: EditWorkHoursService
     ) {
@@ -81,7 +81,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
-    filterForm: FormGroup;
+    filterForm: UntypedFormGroup;
 
     @Input() userName: string;
 

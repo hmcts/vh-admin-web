@@ -1,6 +1,6 @@
 import { DOCUMENT, DatePipe } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
@@ -42,7 +42,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     bookingResponse: BookingsModel;
     $subcription: Subscription;
     $ldSubcription: Subscription;
-    searchForm: FormGroup;
+    searchForm: UntypedFormGroup;
     enableSearchFeature: boolean;
     title = this.initialTitle;
     selectedVenueIds: [];
@@ -63,7 +63,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private bookingsListService: BookingsListService,
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
         private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
@@ -156,7 +156,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         return this.bookingPersistService.noJugdeInHearings;
     }
 
-    private initializeForm(): FormGroup {
+    private initializeForm(): UntypedFormGroup {
         return this.formBuilder.group({
             caseNumber: [this.bookingPersistService.caseNumber || null],
             selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []],

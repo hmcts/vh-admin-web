@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
 import { BookHearingException } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
@@ -10,12 +10,12 @@ const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', '
 describe('EditParticipantSearchComponent', () => {
     let component: EditParticipantSearchComponent;
     let service: jasmine.SpyObj<ParticipantEditService>;
-    let formBuilder: FormBuilder;
+    let formBuilder: UntypedFormBuilder;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeAll(() => {
         service = jasmine.createSpyObj<ParticipantEditService>('ParticipantEditService', ['searchForPerson']);
-        formBuilder = new FormBuilder();
+        formBuilder = new UntypedFormBuilder();
     });
 
     beforeEach(() => {
