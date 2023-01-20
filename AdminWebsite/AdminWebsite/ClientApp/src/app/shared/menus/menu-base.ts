@@ -8,13 +8,6 @@ export abstract class MenuBase implements OnInit {
         this.logger = logger;
         this.formBuilder = formBuilder;
     }
-    @Input() set enabled(value) {
-        if (value !== false) {
-            this.form.controls[this.formGroupName].enable();
-        } else {
-            this.form.controls[this.formGroupName].disable();
-        }
-    }
     logger: Logger;
     form: FormGroup;
     error = false;
@@ -26,6 +19,13 @@ export abstract class MenuBase implements OnInit {
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<Array<any>>();
+    enabled(value) {
+        if (value !== false) {
+            this.form.controls[this.formGroupName].enable();
+        } else {
+            this.form.controls[this.formGroupName].disable();
+        }
+    }
     abstract loadItems(): void;
 
     ngOnInit(): void {

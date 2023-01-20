@@ -1255,6 +1255,12 @@ describe('BookingsListComponent', () => {
     });
 
     describe('onChangeNoAllocated', () => {
+        beforeEach(() => {
+            const formBuilder = new FormBuilder();
+            const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
+            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+            spyOn(component.csoMenu, 'enabled');
+        });
         it('should disable selectedUsers if noAllocated is checked', () => {
             bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
             component.searchForm.controls['noAllocated'].setValue(true);
