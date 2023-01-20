@@ -44,6 +44,17 @@ describe('JusticeUsersMenuComponent', () => {
         expect(compiled.querySelector('.govuk-label').textContent).toContain('Allocated CSO');
     });
 
+    describe('enable', () => {
+        it('should call base enable function, to enable this component', () => {
+            component.enabled(true);
+            expect(component.form.controls[component.formGroupName].enabled).toEqual(true);
+        });
+        it('should call base enable function, to disable this component', () => {
+            component.enabled(false);
+            expect(component.form.controls[component.formGroupName].enabled).toEqual(false);
+        });
+    });
+
     describe('loadItems', () => {
         it('should call video hearing service', () => {
             const expectedResponse = [new JusticeUserResponse()];
