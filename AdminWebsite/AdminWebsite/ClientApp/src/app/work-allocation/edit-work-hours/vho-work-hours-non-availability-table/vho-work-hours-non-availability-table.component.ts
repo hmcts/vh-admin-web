@@ -14,7 +14,7 @@ import { faTrash, faCalendarPlus, faCircleExclamation } from '@fortawesome/free-
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
-import { EditWorkHoursService } from 'src/app/services/edit-work-hours.service';
+import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',

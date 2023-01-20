@@ -5,9 +5,7 @@ import { of } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
-import { ActivatedRoute } from '@angular/router';
-import { ActivatedRouteStub } from '../testing/stubs/activated-route-stub';
-import { UserProfileResponse } from '../services/clients/api-client';
+import { BHClient, UserProfileResponse } from '../services/clients/api-client';
 
 @Component({
     selector: 'app-upload-work-hours',
@@ -27,12 +25,17 @@ class EditWorkHoursStubComponent {}
 })
 class ManageTeamStubComponent {}
 
+@Component({
+    selector: 'app-allocate-hearings',
+    template: '<span class="govuk-details__summary-text" id="allocate-hearings">  Allocate hearings  </span>'
+})
+class AllocateHearingsStubComponent {}
+
 describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    let activatedRoute: ActivatedRouteStub;
 
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     userIdentityServiceSpy.getUserInformation.and.returnValue(
@@ -44,15 +47,16 @@ describe('WorkAllocationComponent', () => {
     );
 
     beforeEach(() => {
-        activatedRoute = new ActivatedRouteStub();
-
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
-            declarations: [WorkAllocationComponent, UploadWorkHoursStubComponent, EditWorkHoursStubComponent, ManageTeamStubComponent],
-            providers: [
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-                { provide: ActivatedRoute, useValue: activatedRoute }
-            ]
+            declarations: [
+                WorkAllocationComponent,
+                UploadWorkHoursStubComponent,
+                EditWorkHoursStubComponent,
+                ManageTeamStubComponent,
+                AllocateHearingsStubComponent
+            ],
+            providers: [{ provide: UserIdentityService, useValue: userIdentityServiceSpy }]
         }).compileComponents();
     });
 
@@ -61,37 +65,6 @@ describe('WorkAllocationComponent', () => {
         component = fixture.componentInstance;
         component.dataChangedBroadcast = jasmine.createSpyObj('dataChangedBroadcast', ['emit']);
         fixture.detectChanges();
-    });
-
-    describe('ngOnInit', () => {
-        it('should be called with unallocated "today" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'today' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('today');
-        });
-        it('should be called with unallocated "tomorrow" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'tomorrow' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('tomorrow');
-        });
-        it('should be called with unallocated "week" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'week' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('week');
-        });
-        it('should be called with unallocated "month" parameter', () => {
-            activatedRoute.testParams = { unallocated: 'month' };
-            const componentSpy = spyOn(component, 'searchUnallocatedHearings');
-            component.ngOnInit();
-            expect(component).toBeTruthy();
-            expect(componentSpy).toHaveBeenCalledWith('month');
-        });
     });
 
     describe('rendering', () => {

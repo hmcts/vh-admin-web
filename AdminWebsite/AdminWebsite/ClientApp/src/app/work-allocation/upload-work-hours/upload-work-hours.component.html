@@ -54,7 +54,7 @@
       <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
         <p *ngSwitchCase="0">
           <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
-          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully
+          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successful
         </p>
 
         <ng-container *ngSwitchCase="numberOfUploads">
@@ -70,7 +70,7 @@
         <ng-container *ngSwitchDefault>
           <p>
             <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
-            Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successfully. Below user(s) could not be
+            Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successful. Below user(s) could not be
             found:
           </p>
 

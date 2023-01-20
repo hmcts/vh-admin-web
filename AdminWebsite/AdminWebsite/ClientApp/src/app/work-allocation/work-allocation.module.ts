@@ -10,6 +10,7 @@ import { VhoWorkHoursTableComponent } from './edit-work-hours/vho-work-hours-tab
 import { VhoWorkHoursNonAvailabilityTableComponent } from './edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 import { UploadWorkHoursComponent } from './upload-work-hours/upload-work-hours.component';
 import { ManageTeamComponent } from './manage-team/manage-team.component';
+import { AllocateHearingsComponent } from './allocate-hearings/allocate-hearings.component';
 import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup
         VhoWorkHoursNonAvailabilityTableComponent,
         UploadWorkHoursComponent,
         ManageTeamComponent,
+        AllocateHearingsComponent,
         ConfirmDeleteHoursPopupComponent
     ],
     imports: [SharedModule, WorkAllocationRoutingModule]
