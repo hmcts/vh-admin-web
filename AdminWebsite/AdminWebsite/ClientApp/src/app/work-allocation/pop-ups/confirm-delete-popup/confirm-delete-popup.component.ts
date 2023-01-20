@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { Logger } from 'src/app/services/logger';
-import { EditVhoNonAvailabilityWorkHoursModel } from '../../work-allocation/edit-work-hours/edit-non-work-hours-model';
-import { CombineDateAndTime } from '../../common/formatters/combine-date-and-time';
+import { EditVhoNonAvailabilityWorkHoursModel } from '../../edit-work-hours/edit-non-work-hours-model';
+import { CombineDateAndTime } from '../../../common/formatters/combine-date-and-time';
 
 @Component({
     selector: 'app-confirm-delete-hours-popup',
