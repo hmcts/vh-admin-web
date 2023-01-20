@@ -16,27 +16,7 @@
             <input id="caseNumber" placeholder="Please enter a case number" class="govuk-input" type="text" formControlName="caseNumber" />
           </div>
           <div class="govuk-grid-column-one-half">
-            <label class="govuk-label" for="venue-list">Venues</label>
-            <ng-select
-              id="venue-list"
-              class="custom"
-              labelForId="venues"
-              [items]="venues"
-              bindLabel="name"
-              bindValue="id"
-              formControlName="selectedVenueIds"
-              [placeholder]="'Select venues'"
-              [multiple]="true"
-              [attr.aria-label]="'Venue list'"
-              [closeOnSelect]="false"
-              [clearSearchOnAdd]="true"
-              [selectOnTab]="true"
-            >
-              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Venue name ' + item.name" />
-                {{ item.name }}
-              </ng-template>
-            </ng-select>
+            <app-venues-menu (selectedEmitter)="selectedVenueEmitter($event)"></app-venues-menu>
           </div>
           <div class="govuk-grid-column-one-half">
             <label class="govuk-label" for="participantLastName">Participant's last name</label>
@@ -49,27 +29,7 @@
             />
           </div>
           <div class="govuk-grid-column-one-half">
-            <label class="govuk-label" for="case-type-list">Case types</label>
-            <ng-select
-              id="case-type-list"
-              class="custom"
-              labelForId="caseTypes"
-              [items]="caseTypes"
-              bindLabel="item"
-              bindValue="item"
-              formControlName="selectedCaseTypes"
-              [placeholder]="'Select case types'"
-              [multiple]="true"
-              [attr.aria-label]="'Case type list'"
-              [closeOnSelect]="false"
-              [clearSearchOnAdd]="true"
-              [selectOnTab]="true"
-            >
-              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'Case type ' + item" />
-                {{ item }}
-              </ng-template>
-            </ng-select>
+            <app-case-types-menu (selectedEmitter)="selectedCaseTypesEmitter($event)"></app-case-types-menu>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <label class="govuk-label" for="startDate">Single/Start date</label>
@@ -95,28 +55,7 @@
             />
           </div>
           <div class="govuk-grid-column-one-half" *ngIf="workAllocationEnabled()">
-            <label class="govuk-label" for="user-list">Allocated CSO</label>
-            <ng-select
-              id="user-list"
-              class="custom"
-              labelForId="users"
-              [items]="users"
-              bindLabel="full_name"
-              bindValue="id"
-              formControlName="selectedUserIds"
-              [placeholder]="'Select Users'"
-              [multiple]="true"
-              [attr.aria-label]="'User list'"
-              [closeOnSelect]="false"
-              [clearSearchOnAdd]="true"
-              [selectOnTab]="true"
-              (change)="onSelectUserChange()"
-            >
-              <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-                <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />
-                {{ getFullName(item) }}
-              </ng-template>
-            </ng-select>
+            <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)" [enabled]="enableUser"></app-justice-users-menu>
           </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">

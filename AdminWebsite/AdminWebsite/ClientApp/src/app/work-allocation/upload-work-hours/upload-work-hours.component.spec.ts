@@ -172,7 +172,7 @@ describe('UploadWorkHoursComponent', () => {
 
             workHoursProcessorSpy.uploadWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
-                expect(result).toBe(' Team working hours uploaded successfully ');
+                expect(result).toBe(' Team working hours uploaded successful ');
                 done();
             });
         });
@@ -204,7 +204,7 @@ describe('UploadWorkHoursComponent', () => {
             workHoursProcessorSpy.uploadWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                 expect(result).toBe(
-                    ' Team working hours upload partially successfully. Below user(s) could ' +
+                    ' Team working hours upload partially successful. Below user(s) could ' +
                         'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
                         'If the problem persists, please raise a ticket in ServiceNow. '
                 );
@@ -268,7 +268,7 @@ describe('UploadWorkHoursComponent', () => {
             fixture.detectChanges();
             workHoursProcessorSpy.uploadNonWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
-                expect(result).toBe(' Team non-availability hours uploaded successfully ');
+                expect(result).toBe(' Team non-availability hours uploaded successful ');
                 done();
             });
         });
@@ -296,7 +296,7 @@ describe('UploadWorkHoursComponent', () => {
             workHoursProcessorSpy.uploadNonWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
                 expect(result).toBe(
-                    ' Team non-availability hours upload partially successfully. Below user(s) could ' +
+                    ' Team non-availability hours upload partially successful. Below user(s) could ' +
                         'not be found: first.second@xyz.com Please check that these user names have been entered correctly. ' +
                         'If the problem persists, please raise a ticket in ServiceNow. '
                 );
