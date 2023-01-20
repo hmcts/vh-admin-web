@@ -40,6 +40,7 @@ import { DeleteParticipantModule } from './delete-participant/delete-participant
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {UnallocatedHearingsComponent} from "./dashboard/unallocated-hearings/unallocated-hearings.component";
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -54,7 +55,8 @@ export function loadConfig(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        UnallocatedHearingsComponent
     ],
     imports: [
         MomentModule,
@@ -75,12 +77,12 @@ export function loadConfig(configService: ConfigService) {
         HttpClientModule,
         ReactiveFormsModule,
         AppRoutingModule,
-        { provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true },
-        { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
-        { provide: BH_API_BASE_URL, useFactory: () => '.' },
-        { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
-        { provide: LOG_ADAPTER, useClass: AppInsightsLogger, multi: true },
-        { provide: Logger, useClass: LoggerService },
+        {provide: APP_INITIALIZER, useFactory: loadConfig, deps: [ConfigService], multi: true},
+        {provide: Config, useFactory: () => ENVIRONMENT_CONFIG},
+        {provide: BH_API_BASE_URL, useFactory: () => '.'},
+        {provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true},
+        {provide: LOG_ADAPTER, useClass: AppInsightsLogger, multi: true},
+        {provide: Logger, useClass: LoggerService},
         ConfigService,
         AuthGuard,
         ChangesGuard,
@@ -89,13 +91,16 @@ export function loadConfig(configService: ConfigService) {
         AdminGuard,
         LastMinuteAmendmentsGuard,
         VhOfficerAdminGuard,
-        { provide: ErrorHandler, useClass: ErrorService },
+        {provide: ErrorHandler, useClass: ErrorService},
         LoggerService,
         ErrorService,
         PageTrackerService,
         AppInsightsLogger,
         WindowRef,
         WorkAllocationFeatureGuard
+    ],
+    exports: [
+        UnallocatedHearingsComponent
     ],
     bootstrap: [AppComponent]
 })
