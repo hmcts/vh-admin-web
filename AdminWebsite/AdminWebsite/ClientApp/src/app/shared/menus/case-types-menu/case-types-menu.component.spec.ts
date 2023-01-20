@@ -43,6 +43,17 @@ describe('CaseTypesMenuComponent', () => {
         expect(compiled.querySelector('.govuk-label').textContent).toContain('Case types');
     });
 
+    describe('enable', () => {
+        it('should call base enable function, to enable this component', () => {
+            component.enabled(true);
+            expect(component.form.controls[component.formGroupName].enabled).toEqual(true);
+        });
+        it('should call base enable function, to disable this component', () => {
+            component.enabled(false);
+            expect(component.form.controls[component.formGroupName].enabled).toEqual(false);
+        });
+    });
+
     describe('loadItems', () => {
         it('should call video hearing service', () => {
             component.loadItems();
