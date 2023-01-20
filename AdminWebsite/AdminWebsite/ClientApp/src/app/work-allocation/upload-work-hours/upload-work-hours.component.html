@@ -54,7 +54,7 @@
       <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
         <p *ngSwitchCase="0">
           <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
-          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successful
+          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully
         </p>
 
         <ng-container *ngSwitchCase="numberOfUploads">
