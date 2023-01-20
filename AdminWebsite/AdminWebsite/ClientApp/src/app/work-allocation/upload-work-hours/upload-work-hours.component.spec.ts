@@ -172,7 +172,7 @@ describe('UploadWorkHoursComponent', () => {
 
             workHoursProcessorSpy.uploadWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
-                expect(result).toBe(' Team working hours uploaded successfully ');
+                expect(result).toBe(' Team working hours uploaded successful ');
                 done();
             });
         });
@@ -268,7 +268,7 @@ describe('UploadWorkHoursComponent', () => {
             fixture.detectChanges();
             workHoursProcessorSpy.uploadNonWorkingHours().subscribe(() => {
                 const result = fixture.debugElement.query(By.css('#file-upload-result')).nativeElement.innerText;
-                expect(result).toBe(' Team non-availability hours uploaded successfully ');
+                expect(result).toBe(' Team non-availability hours uploaded successful ');
                 done();
             });
         });
