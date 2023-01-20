@@ -8,6 +8,7 @@ namespace AdminWebsite.Extensions
     {
         private static readonly TimeZoneInfo BritishZone = TZConvert.GetTimeZoneInfo("Europe/London");
         private static readonly CultureInfo CultureInfo = new CultureInfo("en-GB");
+        private static readonly Calendar Calendar = DateTimeFormatInfo.CurrentInfo.Calendar;
         public static string ToEmailDateGbLocale(this DateTime datetime)
         {
             var gmtDate = TimeZoneInfo.ConvertTimeFromUtc(datetime, BritishZone);
@@ -20,5 +21,10 @@ namespace AdminWebsite.Extensions
             return gmtDate.ToString("h:mm tt", CultureInfo)
                 .ToUpper();
         }
+        
+        public static int GetWeekOfYear(this DateTime date) => Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday);
+        
+        public static DateTime FirstDayOfWeek(this DateTime date) => date.AddDays(-(int)date.DayOfWeek + 1); //first day of week is sunday so +1
+        
     }
 }

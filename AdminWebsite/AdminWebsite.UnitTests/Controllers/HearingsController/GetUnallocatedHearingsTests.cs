@@ -29,8 +29,8 @@ public class GetUnallocatedHearingsTests
     public async Task Should_get_unallocated_hearings()
     {
         // Arrange
-        _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetUnallocatedHearingsAsync())
-            .ReturnsAsync(new List<HearingDetailsResponse>());
+        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
+            .ReturnsAsync(Mock.Of<List<HearingDetailsResponse>>());
         // Act
         var response = await _controller.GetUnallocatedHearings();
         
@@ -42,17 +42,19 @@ public class GetUnallocatedHearingsTests
     }
 
     [Test]
-    public async Task Should_try_get_unallocated_hearings_and_return_404()
+    public async Task Should_try_get_unallocated_hearings_and_return_empty_list()
     {
         // Arrange
-        _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetUnallocatedHearingsAsync())
-            .Throws(new BookingsApiException("error",404,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
+        _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
+            .ReturnsAsync(new List<HearingDetailsResponse>());
             
         // Act
         var response = await _controller.GetUnallocatedHearings();
         
         // Assert
-        var result = response as NotFoundResult;
-        result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var result = response as OkObjectResult;
+        result.StatusCode.Should().Be(StatusCodes.Status200OK);
+        result.Value.Should().NotBeNull()
+            .And.BeAssignableTo<UnallocatedHearingsForVhoResponse>();
     }
 }

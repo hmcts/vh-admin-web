@@ -128,7 +128,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.WebConfig.SauceLabsConfiguration = RunOnSauceLabsFromLocal() ?  Options.Create(_configRoot.GetSection("LocalSaucelabs").Get<SauceLabsSettingsConfig>()).Value
                 : Options.Create(_configRoot.GetSection("Saucelabs").Get<SauceLabsSettingsConfig>()).Value;
-            if (!context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()) return;
+            if (!context.WebConfig.SauceLabsConfiguration!.RunningOnSauceLabs()) return;
             context.WebConfig.SauceLabsConfiguration.SetRemoteServerUrlForDesktop(context.Test.CommonData.CommonConfig.SauceLabsServerUrl);
             context.WebConfig.SauceLabsConfiguration.AccessKey.Should().NotBeNullOrWhiteSpace();
             context.WebConfig.SauceLabsConfiguration.Username.Should().NotBeNullOrWhiteSpace();
