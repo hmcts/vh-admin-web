@@ -47,6 +47,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
                 this.showMessage('There are no non-availability hours uploaded for this team member');
             }
+            this.checkResultsLength();
         } else {
             this.nonWorkHours = null;
         }
@@ -59,6 +60,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
     public static readonly ErrorStartTimeRequired = 'Start time is required';
     public static readonly ErrorEndTimeRequired = 'End time is required';
+    public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
+    public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
     private filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
@@ -436,7 +439,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             const calenderStartDate = this.retrieveDate(this.filterForm.value.startDate);
             const calenderEndDate = this.retrieveDate(this.filterForm.value.endDate);
             let tempWorkHours = this.nonAvailabilityWorkHoursResponses;
-
             if (calenderStartDate && calenderEndDate) {
                 if (calenderEndDate < calenderStartDate) {
                     this.filterForm.setValue({ startDate: null, endDate: null });
@@ -460,6 +462,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         } else {
             this.showSaveConfirmation = true;
         }
+        this.checkResultsLength();
     }
 
     handleContinue() {
@@ -476,5 +479,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     get checkVhoHasWorkHours(): boolean {
         return this.nonWorkHours?.length > 0;
+    }
+    private checkResultsLength() {
+        if (this.nonWorkHours.length >= 20) {
+            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+        } else if (this.nonWorkHours.length < 20 && this.nonWorkHours.length > 0) {
+            this.hideMessage();
+        } else if (this.nonWorkHours.length === 0) {
+            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+        }
     }
 }
