@@ -482,11 +482,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
     private checkResultsLength() {
         if (this.nonWorkHours.length >= 20) {
-            this.displayMessageAndFade(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded, false);
+            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
         } else if (this.nonWorkHours.length < 20 && this.nonWorkHours.length > 0) {
             this.hideMessage();
         } else if (this.nonWorkHours.length === 0) {
-            this.displayMessageAndFade(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho, false);
+            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
         }
     }
 }
