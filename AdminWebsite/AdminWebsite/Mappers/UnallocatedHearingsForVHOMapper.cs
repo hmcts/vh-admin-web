@@ -34,7 +34,7 @@ public static class UnallocatedHearingsForVhoMapper
         var tomorrow = today.AddDays(1);
         return new DateForUnallocatedHearings
         {
-            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == today),
+            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Date == tomorrow),
             DateStart = tomorrow
         };
     }
