@@ -252,7 +252,7 @@ describe('VhoWorkHoursTableComponent', () => {
     });
 
     it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new VhoNonAvailabilityWorkHoursResponse()];
+        component.result = [new VhoWorkHoursResponse()];
         fixture.detectChanges();
         expect(component.workHours).toBeNull();
     });
@@ -381,6 +381,16 @@ describe('VhoWorkHoursTableComponent', () => {
             const result = component.workHourIsValid(workHour.day_of_week_id);
             expect(result).toBe(false);
             expect(videoServiceSpy.setVhoNonAvailabiltiesHaveChanged).toHaveBeenCalledTimes(1);
+        });
+
+        fit('should display a message when there are zero results for work hours', () => {
+            // arrange
+            const testData = new Array<VhoWorkHoursResponse>();
+            // act
+            component.result = testData;
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         });
     });
 });
