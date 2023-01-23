@@ -20,6 +20,7 @@ import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-summary',
@@ -227,6 +228,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseNumber: this.hearing.cases[0].number
             });
             this.updateHearing();
+            // Wait to try to get the latest user data. This is only needed until we implement the contact email as username.
+            await timer(5000).pipe(take(1)).toPromise();
         } else {
             this.setDurationOfMultiHearing();
             try {
@@ -244,7 +247,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
                 if (this.judgeAssigned) {
-                    // Poll Video-Api for booking confirmation
+                    // Poll for the status update for booking confirmation
                     const schedule = timer(0, 5000).subscribe(async counter => {
                         const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
                         if (hearingStatusResponse?.success || counter === 10) {
