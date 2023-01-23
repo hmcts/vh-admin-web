@@ -1256,7 +1256,7 @@ describe('BookingsListComponent', () => {
 
     describe('onChangeNoAllocated', () => {
         beforeEach(() => {
-            const formBuilder = new FormBuilder();
+            const formBuilder = new UntypedFormBuilder();
             const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
             component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
             spyOn(component.csoMenu, 'enabled');
