@@ -20,7 +20,17 @@ import { JusticeUsersMenuComponent } from './menus/justice-users-menu/justice-us
 import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule, NgSelectModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule.withConfig({
+            callSetDisabledState: 'whenDisabledForLegacyCode'
+        }),
+        HttpClientModule,
+        SharedRoutingModule,
+        ClipboardModule,
+        NgSelectModule
+    ],
     declarations: [
         HeaderComponent,
         FooterComponent,
