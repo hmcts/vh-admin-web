@@ -343,7 +343,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     bookingsList(body: BookingSearchRequest | undefined): Observable<BookingsResponse> {
@@ -478,7 +478,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * returns the FeatureToggles
-     * @param featureName (optional) 
+     * @param featureName (optional)
      * @return Success
      */
     getFeatureFlag(featureName: string | undefined): Observable<boolean> {
@@ -980,7 +980,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Update the hearing status.
      * @param hearingId The hearing id
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     updateBookingStatus(hearingId: string, body: UpdateBookingStatusRequest | undefined): Observable<UpdateBookingStatusResponse> {
@@ -1423,12 +1423,12 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param fromDate (optional) 
-     * @param toDate (optional) 
-     * @param cso (optional) 
-     * @param caseType (optional) 
-     * @param caseNumber (optional) 
-     * @param isUnallocated (optional) 
+     * @param fromDate (optional)
+     * @param toDate (optional)
+     * @param cso (optional)
+     * @param caseType (optional)
+     * @param caseNumber (optional)
+     * @param isUnallocated (optional)
      * @return Success
      */
     getAllocationHearings(fromDate: Date | undefined, toDate: Date | undefined, cso: string[] | undefined, caseType: string[] | undefined, caseNumber: string | undefined, isUnallocated: boolean | undefined): Observable<AllocationHearingsResponse[]> {
@@ -1515,7 +1515,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Update the hearing status.
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     allocateHearingsToCso(body: UpdateHearingAllocationToCsoRequest | undefined): Observable<AllocationHearingsResponse[]> {
@@ -1811,7 +1811,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Search for non judge persons by contact email
-     * @param contactEmail (optional) 
+     * @param contactEmail (optional)
      * @return Success
      */
     getPersonForUpdateByContactEmail(contactEmail: string | undefined): Observable<PersonResponse> {
@@ -1881,7 +1881,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get all hearings for a person by username
-     * @param username (optional) 
+     * @param username (optional)
      * @return Success
      */
     getHearingsByUsernameForDeletion(username: string | undefined): Observable<HearingsByUsernameForDeletionResponse[]> {
@@ -2166,7 +2166,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get available participant roles
-     * @param caseTypeName (optional) 
+     * @param caseTypeName (optional)
      * @return Success
      */
     getParticipantRoles(caseTypeName: string | undefined): Observable<CaseAndHearingRolesResponse[]> {
@@ -2593,7 +2593,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Search Judges by email
-     * @param term (optional) 
+     * @param term (optional)
      * @return Success
      */
     searchJudgesByEmail(term: string | undefined): Observable<JudgeResponse[]> {
@@ -2664,7 +2664,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Updates the users AAD password.
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     resetPassword(body: string | undefined): Observable<void> {
@@ -2849,7 +2849,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     uploadWorkHours(body: UploadWorkHoursRequest[] | undefined): Observable<UploadWorkHoursResponse> {
@@ -2911,7 +2911,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     uploadNonWorkingHours(body: UploadNonWorkingHoursRequest[] | undefined): Observable<UploadNonWorkingHoursResponse> {
@@ -2973,7 +2973,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param vho (optional) 
+     * @param vho (optional)
      * @return Success
      */
     getWorkAvailabilityHours(vho: string | undefined): Observable<VhoWorkHoursResponse[]> {
@@ -3047,7 +3047,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param vho (optional) 
+     * @param vho (optional)
      * @return Success
      */
     getNonAvailabilityWorkHours(vho: string | undefined): Observable<VhoNonAvailabilityWorkHoursResponse[]> {
@@ -3122,7 +3122,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Updates non availability hours for a vho
-     * @param body (optional) 
+     * @param body (optional)
      * @return No Content
      */
     updateNonAvailabilityWorkHours(username: string, body: UpdateNonWorkingHoursRequest | undefined): Observable<void> {
@@ -3183,7 +3183,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param id (optional) 
+     * @param id (optional)
      * @return Success
      */
     deleteNonAvailabilityWorkHours(id: number | undefined): Observable<void> {
@@ -3291,7 +3291,7 @@ export class BookHearingRequest implements IBookHearingRequest {
         data["is_multi_day"] = this.is_multi_day;
         data["multi_hearing_details"] = this.multi_hearing_details ? this.multi_hearing_details.toJSON() : <any>undefined;
         data["other_information_details"] = this.other_information_details;
-        return data; 
+        return data;
     }
 }
 
@@ -3384,7 +3384,7 @@ export class BookingSearchRequest implements IBookingSearchRequest {
         data["lastName"] = this.lastName;
         data["noJudge"] = this.noJudge;
         data["noAllocated"] = this.noAllocated;
-        return data; 
+        return data;
     }
 }
 
@@ -3436,7 +3436,7 @@ export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest
         data["first_name"] = this.first_name;
         data["last_name"] = this.last_name;
         data["current_username"] = this.current_username;
-        return data; 
+        return data;
     }
 }
 
@@ -3492,7 +3492,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
         data["case_number"] = this.case_number;
         data["case_type"] = this.case_type;
         data["allocated_cso"] = this.allocated_cso;
-        return data; 
+        return data;
     }
 }
 
@@ -3580,7 +3580,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data["join_by_phone_from_date"] = this.join_by_phone_from_date;
         data["video_web_url"] = this.video_web_url;
         data["launch_darkly_client_id"] = this.launch_darkly_client_id;
-        return data; 
+        return data;
     }
 }
 
@@ -3646,7 +3646,7 @@ export class DateForUnallocatedHearings implements IDateForUnallocatedHearings {
         data["count"] = this.count;
         data["date_start"] = this.date_start ? this.date_start.toISOString() : <any>undefined;
         data["date_end"] = this.date_end ? this.date_end.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -3698,7 +3698,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
         data["group"] = this.group;
         data["id"] = this.id;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -3759,7 +3759,7 @@ export class JudgeResponse implements IJudgeResponse {
         data["display_name"] = this.display_name;
         data["email"] = this.email;
         data["account_type"] = this.account_type;
-        return data; 
+        return data;
     }
 }
 
@@ -3810,7 +3810,7 @@ export class PublicHolidayResponse implements IPublicHolidayResponse {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -3859,7 +3859,7 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
         data["tomorrow"] = this.tomorrow ? this.tomorrow.toJSON() : <any>undefined;
         data["this_week"] = this.this_week ? this.this_week.toJSON() : <any>undefined;
         data["this_month"] = this.this_month ? this.this_month.toJSON() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -3904,7 +3904,7 @@ export class UserProfileResponse implements IUserProfileResponse {
         data["is_vh_officer_administrator_role"] = this.is_vh_officer_administrator_role;
         data["is_vh_team_leader"] = this.is_vh_team_leader;
         data["is_case_administrator"] = this.is_case_administrator;
-        return data; 
+        return data;
     }
 }
 
@@ -3945,7 +3945,7 @@ export class ApplicationVersion implements IApplicationVersion {
         data = typeof data === 'object' ? data : {};
         data["file_version"] = this.file_version;
         data["information_version"] = this.information_version;
-        return data; 
+        return data;
     }
 }
 
@@ -3993,7 +3993,7 @@ export class CaseAndHearingRolesResponse implements ICaseAndHearingRolesResponse
             for (let item of this.hearing_roles)
                 data["hearing_roles"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4033,7 +4033,7 @@ export class CvpForAudioFileResponse implements ICvpForAudioFileResponse {
         data = typeof data === 'object' ? data : {};
         data["file_name"] = this.file_name;
         data["sas_token_uri"] = this.sas_token_uri;
-        return data; 
+        return data;
     }
 }
 
@@ -4076,7 +4076,7 @@ export class EditCaseRequest implements IEditCaseRequest {
         data = typeof data === 'object' ? data : {};
         data["number"] = this.number;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -4125,7 +4125,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data["id"] = this.id;
         data["display_name"] = this.display_name;
         data["defence_advocate_contact_email"] = this.defence_advocate_contact_email;
-        return data; 
+        return data;
     }
 }
 
@@ -4230,7 +4230,7 @@ export class EditHearingRequest implements IEditHearingRequest {
             for (let item of this.endpoints)
                 data["endpoints"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4344,7 +4344,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             for (let item of this.linked_participants)
                 data["linked_participants"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4452,7 +4452,7 @@ export class EditTelephoneParticipantRequest implements IEditTelephoneParticipan
             for (let item of this.linked_participants)
                 data["linked_participants"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4526,7 +4526,7 @@ export class HealthCheck implements IHealthCheck {
                     data["data"][key] = this.data[key];
             }
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4576,7 +4576,7 @@ export class HealthCheckResponse implements IHealthCheckResponse {
         data["video_api_health"] = this.video_api_health ? this.video_api_health.toJSON() : <any>undefined;
         data["notification_api_health"] = this.notification_api_health ? this.notification_api_health.toJSON() : <any>undefined;
         data["app_version"] = this.app_version ? this.app_version.toJSON() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -4624,7 +4624,7 @@ export class HearingAudioRecordingResponse implements IHearingAudioRecordingResp
             for (let item of this.audio_file_links)
                 data["audio_file_links"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 
@@ -4663,7 +4663,7 @@ export class HearingRole implements IHearingRole {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["user_role"] = this.user_role;
-        return data; 
+        return data;
     }
 }
 
@@ -4729,7 +4729,7 @@ export class HearingsForAudioFileSearchResponse implements IHearingsForAudioFile
         data["courtroom_account"] = this.courtroom_account;
         data["courtroom_account_name"] = this.courtroom_account_name;
         data["hearing_room_name"] = this.hearing_room_name;
-        return data; 
+        return data;
     }
 }
 
@@ -4795,7 +4795,7 @@ export class LinkedParticipant implements ILinkedParticipant {
         data["type"] = this.type;
         data["participant_contact_email"] = this.participant_contact_email;
         data["linked_participant_contact_email"] = this.linked_participant_contact_email;
-        return data; 
+        return data;
     }
 }
 
@@ -4853,7 +4853,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
                 data["hearing_dates"].push(item.toISOString());
         }
         data["is_individual_dates"] = this.is_individual_dates;
-        return data; 
+        return data;
     }
 }
 
@@ -4892,7 +4892,7 @@ export class PhoneConferenceResponse implements IPhoneConferenceResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["telephone_conference_id"] = this.telephone_conference_id;
-        return data; 
+        return data;
     }
 }
 
@@ -4934,7 +4934,7 @@ export class UpdateBookingStatusResponse implements IUpdateBookingStatusResponse
         data["success"] = this.success;
         data["message"] = this.message;
         data["telephone_conference_id"] = this.telephone_conference_id;
-        return data; 
+        return data;
     }
 }
 
@@ -4980,7 +4980,7 @@ export class UploadNonWorkingHoursResponse implements IUploadNonWorkingHoursResp
             for (let item of this.failed_usernames)
                 data["failed_usernames"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5024,7 +5024,7 @@ export class UploadWorkHoursResponse implements IUploadWorkHoursResponse {
             for (let item of this.failed_usernames)
                 data["failed_usernames"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5154,7 +5154,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             for (let item of this.linked_participants)
                 data["linked_participants"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5212,7 +5212,7 @@ export class CaseRequest implements ICaseRequest {
         data["number"] = this.number;
         data["name"] = this.name;
         data["is_lead_case"] = this.is_lead_case;
-        return data; 
+        return data;
     }
 }
 
@@ -5253,7 +5253,7 @@ export class EndpointRequest implements IEndpointRequest {
         data = typeof data === 'object' ? data : {};
         data["display_name"] = this.display_name;
         data["defence_advocate_contact_email"] = this.defence_advocate_contact_email;
-        return data; 
+        return data;
     }
 }
 
@@ -5303,7 +5303,7 @@ export class LinkedParticipantRequest implements ILinkedParticipantRequest {
         data["participant_contact_email"] = this.participant_contact_email;
         data["linked_participant_contact_email"] = this.linked_participant_contact_email;
         data["type"] = this.type;
-        return data; 
+        return data;
     }
 }
 
@@ -5347,7 +5347,7 @@ export class NonWorkingHours implements INonWorkingHours {
         data["id"] = this.id;
         data["start_time"] = this.start_time ? this.start_time.toISOString() : <any>undefined;
         data["end_time"] = this.end_time ? this.end_time.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -5418,7 +5418,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["representee"] = this.representee;
         data["organisation_name"] = this.organisation_name;
-        return data; 
+        return data;
     }
 }
 
@@ -5471,7 +5471,7 @@ export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
         data["updated_by"] = this.updated_by;
         data["status"] = this.status;
         data["cancel_reason"] = this.cancel_reason;
-        return data; 
+        return data;
     }
 }
 
@@ -5520,7 +5520,7 @@ export class UpdateHearingAllocationToCsoRequest implements IUpdateHearingAlloca
                 data["hearings"].push(item);
         }
         data["cso_id"] = this.cso_id;
-        return data; 
+        return data;
     }
 }
 
@@ -5565,7 +5565,7 @@ export class UpdateNonWorkingHoursRequest implements IUpdateNonWorkingHoursReque
             for (let item of this.hours)
                 data["hours"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5607,7 +5607,7 @@ export class UploadNonWorkingHoursRequest implements IUploadNonWorkingHoursReque
         data["username"] = this.username;
         data["end_time"] = this.end_time ? this.end_time.toISOString() : <any>undefined;
         data["start_time"] = this.start_time ? this.start_time.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -5656,7 +5656,7 @@ export class UploadWorkHoursRequest implements IUploadWorkHoursRequest {
             for (let item of this.working_hours)
                 data["working_hours"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5705,7 +5705,7 @@ export class WorkingHours implements IWorkingHours {
         data["end_time_minutes"] = this.end_time_minutes;
         data["start_time_hour"] = this.start_time_hour;
         data["start_time_minutes"] = this.start_time_minutes;
-        return data; 
+        return data;
     }
 }
 
@@ -5756,7 +5756,7 @@ export class BookingsByDateResponse implements IBookingsByDateResponse {
             for (let item of this.hearings)
                 data["hearings"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -5862,7 +5862,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["group_id"] = this.group_id;
         data["court_room_account"] = this.court_room_account;
         data["allocated_to"] = this.allocated_to;
-        return data; 
+        return data;
     }
 }
 
@@ -5941,7 +5941,7 @@ export class BookingsResponse implements IBookingsResponse {
         data["limit"] = this.limit;
         data["prev_page_url"] = this.prev_page_url;
         data["next_page_url"] = this.next_page_url;
-        return data; 
+        return data;
     }
 }
 
@@ -5987,7 +5987,7 @@ export class CaseResponse implements ICaseResponse {
         data["number"] = this.number;
         data["name"] = this.name;
         data["is_lead_case"] = this.is_lead_case;
-        return data; 
+        return data;
     }
 }
 
@@ -6037,7 +6037,7 @@ export class EndpointResponse implements IEndpointResponse {
         data["sip"] = this.sip;
         data["pin"] = this.pin;
         data["defence_advocate_id"] = this.defence_advocate_id;
-        return data; 
+        return data;
     }
 }
 
@@ -6181,7 +6181,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["group_id"] = this.group_id;
         data["hearing_type_code"] = this.hearing_type_code;
         data["allocated_to"] = this.allocated_to;
-        return data; 
+        return data;
     }
 }
 
@@ -6244,7 +6244,7 @@ export class HearingVenueResponse implements IHearingVenueResponse {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -6293,7 +6293,7 @@ export class HearingsByUsernameForDeletionResponse implements IHearingsByUsernam
         data["case_name"] = this.case_name;
         data["case_number"] = this.case_number;
         data["venue"] = this.venue;
-        return data; 
+        return data;
     }
 }
 
@@ -6363,7 +6363,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
         data["is_vh_team_leader"] = this.is_vh_team_leader;
         data["created_by"] = this.created_by;
         data["full_name"] = this.full_name;
-        return data; 
+        return data;
     }
 }
 
@@ -6412,7 +6412,7 @@ export class LinkedParticipantResponse implements ILinkedParticipantResponse {
         data = typeof data === 'object' ? data : {};
         data["linked_id"] = this.linked_id;
         data["type"] = this.type;
-        return data; 
+        return data;
     }
 }
 
@@ -6499,7 +6499,7 @@ export class ParticipantResponse implements IParticipantResponse {
             for (let item of this.linked_participants)
                 data["linked_participants"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -6581,7 +6581,7 @@ export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabi
             for (let item of this.answers)
                 data["answers"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -6649,7 +6649,7 @@ export class PersonResponse implements IPersonResponse {
         data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
         data["organisation"] = this.organisation;
-        return data; 
+        return data;
     }
 }
 
@@ -6699,7 +6699,7 @@ export class SuitabilityAnswerResponse implements ISuitabilityAnswerResponse {
         data["key"] = this.key;
         data["answer"] = this.answer;
         data["extended_answer"] = this.extended_answer;
-        return data; 
+        return data;
     }
 }
 
@@ -6757,7 +6757,7 @@ export class SuitabilityAnswersResponse implements ISuitabilityAnswersResponse {
         data["limit"] = this.limit;
         data["prev_page_url"] = this.prev_page_url;
         data["next_page_url"] = this.next_page_url;
-        return data; 
+        return data;
     }
 }
 
@@ -6832,7 +6832,7 @@ export class TelephoneParticipantResponse implements ITelephoneParticipantRespon
             for (let item of this.linked_participants)
                 data["linked_participants"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -6883,7 +6883,7 @@ export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityW
         data["id"] = this.id;
         data["end_time"] = this.end_time ? this.end_time.toISOString() : <any>undefined;
         data["start_time"] = this.start_time ? this.start_time.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -6930,7 +6930,7 @@ export class VhoWorkHoursResponse implements IVhoWorkHoursResponse {
         data["day_of_week"] = this.day_of_week;
         data["start_time"] = this.start_time;
         data["end_time"] = this.end_time;
-        return data; 
+        return data;
     }
 }
 
@@ -6981,7 +6981,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data; 
+        return data;
     }
 }
 

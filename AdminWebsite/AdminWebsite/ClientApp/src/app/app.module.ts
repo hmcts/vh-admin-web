@@ -39,7 +39,6 @@ import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
-import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EditWorkHoursComponent } from './work-allocation/edit-work-hours/edit-work-hours.component';
 import { VhoSearchComponent } from './work-allocation/edit-work-hours/vho-search/vho-search.component';
@@ -71,6 +70,7 @@ export function loadConfig(configService: ConfigService) {
         ConfirmDeleteHoursPopupComponent,
         UnallocatedHearingsComponent,
         AllocateHearingsComponent
+        UnallocatedHearingsComponent
     ],
     imports: [
         MomentModule,
@@ -113,6 +113,7 @@ export function loadConfig(configService: ConfigService) {
         WindowRef,
         WorkAllocationFeatureGuard
     ],
+    exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]
 })
 export class AppModule {}

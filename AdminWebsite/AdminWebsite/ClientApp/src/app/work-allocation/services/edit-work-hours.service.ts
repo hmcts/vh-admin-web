@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { BHClient } from './clients/api-client';
-import { Logger } from './logger';
-
+import { BHClient } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 @Injectable({
     providedIn: 'root'
 })
 export class EditWorkHoursService {
-    fetchNonWorkHours$ = new Subject<void>();
+    fetchNonWorkHours$ = new Subject<boolean>();
 
     constructor(private bhClient: BHClient, private logger: Logger) {}
 

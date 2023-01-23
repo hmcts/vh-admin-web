@@ -147,7 +147,8 @@ namespace AdminWebsite.Services
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 DisplayName = x.DisplayName,
-                Email = x.Email
+                Email = x.Email,
+                ContactEmail = x.ContactEmail
             }).ToList();
         }
 
@@ -161,6 +162,7 @@ namespace AdminWebsite.Services
                 LastName = x.LastName,
                 DisplayName = x.DisplayName,
                 Email = x.Email,
+                ContactEmail = x.ContactEmail
             }).ToList();
 
             return judgesList;

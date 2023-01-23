@@ -47,7 +47,8 @@ describe('ParticipantModel', () => {
             display_name: 'JudgeDisplayName',
             email: 'JudgeEmail',
             first_name: 'JudgeFirstName',
-            last_name: 'JudgeLastName'
+            last_name: 'JudgeLastName',
+            contact_email: 'judge@contact.com'
         });
 
         participant = ParticipantModel.fromJudgeResponse(judge);
@@ -55,8 +56,9 @@ describe('ParticipantModel', () => {
         expect(participant.display_name).toEqual(judge.display_name);
         expect(participant.first_name).toEqual(judge.first_name);
         expect(participant.last_name).toEqual(judge.last_name);
-        expect(participant.email).toEqual(judge.email);
+        expect(participant.email).toEqual(judge.contact_email);
         expect(participant.username).toEqual(judge.email);
+        expect(participant.contact_email).toEqual(judge.contact_email);
     });
 
     it('should map isCourtroom as true if account_type is Courtroom', () => {

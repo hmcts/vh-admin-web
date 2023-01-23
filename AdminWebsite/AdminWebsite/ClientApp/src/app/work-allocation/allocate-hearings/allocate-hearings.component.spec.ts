@@ -10,6 +10,8 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 import { of } from 'rxjs';
+import { JusticeUserMenuStubComponent } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub.component';
+import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/case-type-menu-stub.component';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 
 describe('AllocateHearingsComponent', () => {
@@ -26,7 +28,7 @@ describe('AllocateHearingsComponent', () => {
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
 
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUsersMenuComponent, CaseTypesMenuComponent],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -39,6 +41,8 @@ describe('AllocateHearingsComponent', () => {
         fixture = TestBed.createComponent(AllocateHearingsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
+        component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
     });
 
     describe('ngOnInit', () => {

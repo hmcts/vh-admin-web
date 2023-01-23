@@ -1,0 +1,140 @@
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary" tabindex="0" role="button">
+    <span class="govuk-details__summary-text" id="upload-availability"> Upload working hours / non-availability </span>
+  </summary>
+  <div class="govuk-form-group govuk-!-margin-left-5">
+    <div
+      [ngClass]="{ 'govuk-form-group--error': workingHoursFileValidationErrors.length > 0 }"
+      id="working-hours-file-upload-error"
+      class="govuk-grid-row"
+    >
+      <div *ngIf="workingHoursFileValidationErrors.length > 0">
+        <p
+          *ngFor="let workingHoursFileValidationError of workingHoursFileValidationErrors; index as i"
+          class="govuk-error-message govuk-!-margin-left-3"
+        >
+          Error: {{ workingHoursFileValidationError }}
+        </p>
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <p>Upload working hours:</p>
+      </div>
+      <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
+        <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload"> Select .CSV file to upload </label>
+        <input
+          (change)="handleFileInput($event.target.files[0], fileType.UploadWorkingHours)"
+          (click)="workingHoursFileUpload.value = null"
+          class="govuk-file-upload"
+          #workingHoursFileUpload
+          id="working-hours-file-upload"
+          name="working-hours-file-upload"
+          type="file"
+          accept=".CSV"
+        />
+        <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
+      </div>
+    </div>
+    <ng-container
+      *ngIf="isWorkingHoursUploadComplete"
+      [ngTemplateOutlet]="fileUploadResult"
+      [ngTemplateOutletContext]="{
+        isWorkingHoursUpload: true,
+        usernameErrors: workingHoursFileUploadUsernameErrors,
+        numberOfUsernamesUploaded: numberOfUsernamesToUploadWorkHours
+      }"
+    >
+    </ng-container>
+
+    <ng-template
+      let-isWorkingHoursUpload="isWorkingHoursUpload"
+      let-errors="usernameErrors"
+      let-numberOfUploads="numberOfUsernamesUploaded"
+      #fileUploadResult
+    >
+      <div id="file-upload-result" class="govuk-body govuk-!-font-weight-bold upload-result" [ngSwitch]="errors.length">
+        <p *ngSwitchCase="0">
+          <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
+          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours uploaded successfully
+        </p>
+
+        <ng-container *ngSwitchCase="numberOfUploads">
+          <p>
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
+            Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found.
+          </p>
+          <p>
+            Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
+          </p>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <p>
+            <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
+            Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours upload partially successful. Below user(s) could not be
+            found:
+          </p>
+
+          <ul class="govuk-body govuk-!-font-weight-normal">
+            <li *ngFor="let username of errors">{{ username }}</li>
+          </ul>
+          <p>
+            Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.
+          </p>
+        </ng-container>
+      </div>
+    </ng-template>
+
+    <ng-template #workingHoursUploadFailedMessage class="govuk-body upload-result">
+      <div class="govuk-!-font-weight-bold">
+        <p>
+          <fa-icon icon="circle-exclamation" aria-hidden="true"></fa-icon>
+          Team {{ isWorkingHoursUpload ? 'working' : 'non-availability' }} hours not uploaded. No users found
+        </p>
+        <p>Please check that these user names have been entered correctly. If the problem persists, please raise a ticket in ServiceNow.</p>
+      </div>
+    </ng-template>
+
+    <div
+      [ngClass]="{ 'govuk-form-group--error': nonWorkingHoursFileValidationErrors.length > 0 }"
+      id="non-working-hours-file-upload-error"
+      class="govuk-grid-row"
+    >
+      <div *ngIf="nonWorkingHoursFileValidationErrors.length > 0">
+        <p
+          *ngFor="let nonWorkingHoursFileValidationError of nonWorkingHoursFileValidationErrors; index as i"
+          class="govuk-error-message govuk-!-margin-left-3"
+        >
+          Error: {{ nonWorkingHoursFileValidationError }}
+        </p>
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <p>Upload non-availability hours:</p>
+      </div>
+      <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
+        <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
+        <input
+          (change)="handleFileInput($event.target.files[0], fileType.UploadNonWorkingHours)"
+          (click)="nonWorkingHoursFileUpload.value = null"
+          class="govuk-file-upload"
+          #nonWorkingHoursFileUpload
+          id="non-availability-hours-file-upload"
+          name="non-availability-hours-file-upload"
+          type="file"
+          accept=".CSV"
+        />
+        <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
+      </div>
+    </div>
+
+    <ng-container
+      *ngIf="isNonWorkingHoursUploadComplete"
+      [ngTemplateOutlet]="fileUploadResult"
+      [ngTemplateOutletContext]="{
+        isWorkingHoursUpload: false,
+        usernameErrors: nonWorkingHoursFileUploadUsernameErrors,
+        numberOfUsernamesUploaded: numberOfUsernamesToUploadNonWorkHours
+      }"
+    >
+    </ng-container>
+  </div>
+</details>

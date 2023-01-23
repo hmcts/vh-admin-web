@@ -13,6 +13,7 @@ using AdminWebsite.AcceptanceTests.Pages;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using TechTalk.SpecFlow;
 using TestApi.Contract.Enums;
 
@@ -162,6 +163,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetParty(string party)
         {
+            var el = _browsers[_c.CurrentUser].Driver.FindElement(AddParticipantsPage.PartyDropdown);
+            var partyList = new SelectElement(el);
+            var waiter = new WebDriverWait(_browsers[_c.CurrentUser].Driver, TimeSpan.FromSeconds(5));
+            waiter.Until(_ => partyList.Options.Count > 0);
+                
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, AddParticipantsPage.PartyDropdown, Party.FromString(party).Name);
         }
 

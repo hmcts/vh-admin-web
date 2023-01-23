@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
-import { ConfirmDeleteHoursPopupComponent } from '../../../popups/confirm-delete-popup/confirm-delete-popup.component';
+import { ConfirmDeleteHoursPopupComponent } from '../../pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 import { of, throwError, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
@@ -9,6 +9,7 @@ import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-mod
 import { By } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { MockWorkAllocationValues } from '../../../testing/data/work-allocation-test-data';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
@@ -105,19 +106,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         component.result = null;
         fixture.detectChanges();
         expect(component.nonWorkHours).toBe(null);
-    });
-
-    it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
-        fixture.detectChanges();
-        expect(component.nonWorkHours).toBe(null);
-    });
-
-    it('check results input hides existing messages', () => {
-        component.displayMessage = true;
-        component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
-        fixture.detectChanges();
-        expect(component.displayMessage).toBe(false);
     });
 
     it('check remove slot from result when confirm deletion', () => {
@@ -743,6 +731,51 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
             expect(component.showSaveConfirmation).toBe(true);
+        });
+    });
+
+    describe('displaying messages for results', () => {
+        it('should display a message when there are zero results', () => {
+            // arrange
+            const testData = new Array<VhoNonAvailabilityWorkHoursResponse>();
+            // act
+            component.result = testData;
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should display a message when results length exceeds 20 after filter', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            const startDate = new Date(2022, 1, 1);
+            const endDate = new Date(2023, 4, 1);
+            component.result = testData;
+            component.switchToEditMode();
+            component.originalNonWorkHours = component.nonWorkHours;
+            component.filterForm.controls['startDate'].setValue(startDate);
+            component.filterForm.controls['endDate'].setValue(endDate);
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+        });
+
+        it('should not display a message when results are between 0 and  less than 20 after filter', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            const startDate = new Date(2022, 1, 1);
+            const endDate = new Date(2023, 1, 0);
+            component.result = testData;
+            component.switchToEditMode();
+            component.originalNonWorkHours = component.nonWorkHours;
+            component.filterForm.controls['startDate'].setValue(startDate);
+            component.filterForm.controls['endDate'].setValue(endDate);
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.displayMessage).toBeFalsy();
         });
     });
 });

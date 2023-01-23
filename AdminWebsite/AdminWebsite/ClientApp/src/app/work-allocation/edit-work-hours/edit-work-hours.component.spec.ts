@@ -96,7 +96,7 @@ describe('EditWorkHoursComponent', () => {
         it('should assign event to results property', () => {
             const parameter: Array<VhoWorkHoursResponse> = [];
             component.hoursType = HoursType.WorkingHours;
-            component.setSearchResult(parameter);
+            component.setSearchResult({ result: parameter, refresh: false });
             expect(component).toBeTruthy();
             expect(component.result).toBe(parameter);
         });
@@ -105,7 +105,7 @@ describe('EditWorkHoursComponent', () => {
             const parameter: Array<VhoWorkHoursResponse> = [];
             parameter.push(new VhoWorkHoursResponse());
             component.hoursType = HoursType.WorkingHours;
-            component.setSearchResult(parameter);
+            component.setSearchResult({ result: parameter, refresh: false });
             expect(component.showWorkHoursTable).toBe(true);
             expect(component.showNonWorkHoursTable).toBe(false);
         });
@@ -114,7 +114,7 @@ describe('EditWorkHoursComponent', () => {
             const parameter: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             parameter.push(new VhoNonAvailabilityWorkHoursResponse());
             component.hoursType = HoursType.NonWorkingHours;
-            component.setSearchResult(parameter);
+            component.setSearchResult({ result: parameter, refresh: false });
             expect(component.showWorkHoursTable).toBe(false);
             expect(component.showNonWorkHoursTable).toBe(true);
         });
@@ -124,7 +124,7 @@ describe('EditWorkHoursComponent', () => {
             component.isUploadNonWorkHoursSuccessful = true;
             const parameter: Array<VhoWorkHoursResponse> = [];
             parameter.push(new VhoWorkHoursResponse());
-            component.setSearchResult(parameter);
+            component.setSearchResult({ result: parameter, refresh: false });
             assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
         });
 
@@ -133,7 +133,7 @@ describe('EditWorkHoursComponent', () => {
             component.isUploadNonWorkHoursSuccessful = true;
             const parameter: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             parameter.push(new VhoNonAvailabilityWorkHoursResponse());
-            component.setSearchResult(parameter);
+            component.setSearchResult({ result: parameter, refresh: false });
             assertConfirmationMessagesForSaveNonWorkHoursAreCleared();
         });
     });
