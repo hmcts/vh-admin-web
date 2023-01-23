@@ -27,4 +27,12 @@ export class AllocateHearingsService {
             return new Observable<AllocationHearingsResponse[]>();
         }
     }
+
+    setAllocationToHearings(selectedHearings: string[]) {
+        try {
+
+        } catch (error) {
+            this.logger.error(`${error.response}`, error);
+        }
+    }
 }

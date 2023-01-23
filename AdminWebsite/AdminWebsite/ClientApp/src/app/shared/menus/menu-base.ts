@@ -15,17 +15,20 @@ export abstract class MenuBase implements OnInit {
             this.form.controls[this.formGroupName].disable();
         }
     }
+
     logger: Logger;
     form: FormGroup;
     error = false;
+    selectedLabel: any;
+    items: any;
     private formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;
-    abstract selectedItems: Array<any>;
+    abstract selectedItems: any;
     abstract formConfiguration: any;
 
-    @Output() selectedEmitter = new EventEmitter<Array<any>>();
+    @Output() selectedEmitter = new EventEmitter<any>();
     abstract loadItems(): void;
 
     ngOnInit(): void {
@@ -40,6 +43,7 @@ export abstract class MenuBase implements OnInit {
     onSelect() {
         this.selectedItems = this.form.value[this.formGroupName];
         this.selectedEmitter.emit(this.selectedItems);
+        this.selectedLabel = this.items.filter(x=>x.id == this.selectedItems).map(y=>y.full_name)[0];
     }
 
     clear(): void {

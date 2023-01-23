@@ -15,16 +15,21 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 export class AllocateHearingsComponent implements OnInit {
     @Input() isVhTeamLeader: boolean;
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoAllocatedMenu',{static:false,read:JusticeUsersMenuComponent}) csoAllocatedMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
     hearings: AllocationHearingsResponse[];
     caseTypeDropDownValues: string[];
     csoDropDownValues: string[];
+    selectedHearings: string[] = [];
+    csoUserToAllocate: string;
     displayMessage = false;
     message: string;
     faExclamation = faCircleExclamation;
     private filterSize = 20;
+    dropDownUserLabelAllocateTo: string = 'Allocate to';
+
     constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
@@ -93,6 +98,18 @@ export class AllocateHearingsComponent implements OnInit {
         this.csoDropDownValues = $event;
     }
 
+    selectedAllocatedUsersEmitter($event: string) {
+        this.csoUserToAllocate = $event;
+        if ($event) {
+            this.checkAllocationForCso(this.csoUserToAllocate);
+            // change the label
+            if (this.csoAllocatedMenu.selectedLabel) this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
+        }
+        else {
+            this.updateSelectedHearingsWithCso('Not Allocated');
+        }
+    }
+
     private filterResults(result: AllocationHearingsResponse[]) {
         this.hearings = result.slice(0, this.filterSize);
         if (result.length > this.filterSize) {
@@ -104,5 +121,42 @@ export class AllocateHearingsComponent implements OnInit {
         } else {
             this.displayMessage = false;
         }
+    }
+
+    cancelAllocation() {
+
+    }
+
+    checkAllocationForCso(guid: string) {
+        //TODO: send a request to api to check the user against the list of hearings selected for warnings
+        // passing selectedHearings and guid for selected cso
+    }
+
+    confirmAllocation() {
+        this.allocateService.setAllocationToHearings(this.selectedHearings);
+    }
+
+    selectAllocateUser($event, hearing_id: string) {
+        const checkBoxChecked = $event.target.checked
+        const index: number = this.selectedHearings.indexOf(hearing_id);
+        if (checkBoxChecked) {
+            if (index === -1) {
+                this.selectedHearings.push(hearing_id);
+            }
+        }
+        else {
+            if (index !== -1) {
+                this.selectedHearings.splice(index, 1);
+            }
+        }
+
+
+    }
+
+    private updateSelectedHearingsWithCso(selectedLabel: string) {
+        this.selectedHearings.forEach(id => {
+            var cell = document.querySelector('#cso_' + id);
+            cell.innerHTML = selectedLabel;
+        });
     }
 }

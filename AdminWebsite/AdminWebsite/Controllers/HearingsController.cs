@@ -592,5 +592,32 @@ namespace AdminWebsite.Controllers
             
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
         }
+        
+        /// <summary>
+        ///     Update the hearing status.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns>Success status</returns>
+        [HttpPatch("allocations")]
+        [SwaggerOperation(OperationId = "AllocateHearingsToCso")]
+        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AllocateHearingsToCso(UpdateHearingAllocationToCsoRequest request)
+        {
+            try
+            {
+                var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);
+            
+                if(hearings == null || !hearings.Any())
+                    return Ok(new List<AllocationHearingsResponse>());
+            
+                return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There was an unknown error allocating the list of hearing");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
