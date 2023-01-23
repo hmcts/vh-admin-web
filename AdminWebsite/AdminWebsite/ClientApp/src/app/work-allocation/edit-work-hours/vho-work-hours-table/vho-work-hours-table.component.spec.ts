@@ -383,7 +383,7 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(videoServiceSpy.setVhoNonAvailabiltiesHaveChanged).toHaveBeenCalledTimes(1);
         });
 
-        fit('should display a message when there are zero results for work hours', () => {
+        it('should display a message when there are zero results for work hours', () => {
             // arrange
             const testData = new Array<VhoWorkHoursResponse>();
             // act

@@ -1,7 +1,5 @@
 import { VhoWorkHoursResponse } from '../../services/clients/api-client';
-import {
-    VhoWorkHoursTableComponent
-} from "../../work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component";
+import { VhoWorkHoursTableComponent } from '../../work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 export class MockWorkAllocationValuesWorkHours {
     static VhoWorkHoursResponse(): VhoWorkHoursResponse[] {
         const jsonObj: [] = JSON.parse(

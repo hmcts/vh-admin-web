@@ -3,7 +3,7 @@ import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { Observable } from 'rxjs';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
-import {faCircleExclamation} from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 export class ValidationFailure {
     id: number;
@@ -17,7 +17,7 @@ export class ValidationFailure {
 export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     constructor(private videoHearingsService: VideoHearingsService) {}
 
-    @Input() set result(value: VhoWorkHoursResponse []) {
+    @Input() set result(value: VhoWorkHoursResponse[]) {
         if (value) {
             this.workHours = value;
         } else {
@@ -27,10 +27,10 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     }
     public static readonly ErrorStartAndEndTimeBothRequired = 'Both Start Time and End Time must be filled in or empty';
     public static readonly ErrorEndTimeBeforeStartTime = 'End Time cannot be before Start Time';
-    public static readonly WarningNoWorkingHoursForVho = 'There are no working hours available to edit for this user. Please upload this user\'s working hours before they can be edited.';
+    public static readonly WarningNoWorkingHoursForVho =
+        "There are no working hours available to edit for this user. Please upload this user's working hours before they can be edited.";
 
     displayMessage = false;
-
 
     message: string;
     showSaveConfirmation = false;
@@ -179,6 +179,5 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         if (this.workHours?.length <= 0) {
             this.showMessage(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         }
-
     }
 }
