@@ -392,5 +392,13 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.displayMessage).toBeTruthy();
             expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         });
+        fit('should display a message', () => {
+            // arrange
+            const Message = 'Tesing';
+            // act
+            component.message = Message;
+            // assert
+            expect(component.message).toBe('Tesing');
+        });
     });
 });
