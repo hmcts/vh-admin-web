@@ -337,7 +337,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private delay(ms: number) {
-      return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     updateHearing() {
