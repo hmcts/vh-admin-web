@@ -12,6 +12,8 @@ import { UploadWorkHoursComponent } from './upload-work-hours/upload-work-hours.
 import { ManageTeamComponent } from './manage-team/manage-team.component';
 import { AllocateHearingsComponent } from './allocate-hearings/allocate-hearings.component';
 import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup/confirm-delete-popup.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { PopupModule } from '../popups/popup.module';
 
 @NgModule({
     declarations: [
@@ -25,6 +27,6 @@ import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup
         AllocateHearingsComponent,
         ConfirmDeleteHoursPopupComponent
     ],
-    imports: [SharedModule, WorkAllocationRoutingModule]
+    imports: [SharedModule, WorkAllocationRoutingModule, FontAwesomeModule, PopupModule]
 })
 export class WorkAllocationModule {}
