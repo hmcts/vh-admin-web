@@ -15,11 +15,11 @@ describe('DateAndTimeService', () => {
     });
 
     describe('minutesToHours', () => {
-        it('should correctly pass 520 minutes to 8 hours and 40', () => {
+        it('should correctly parse 520 minutes to 8 hours and 40', () => {
             const result = service.minutesToHours(520);
             expect(result).toEqual({ hours: 8, minutes: 40 });
         });
-        it('should correctly pass 120 minutes to 2 hours and 0', () => {
+        it('should correctly parse 120 minutes to 2 hours and 0', () => {
             const result = service.minutesToHours(120);
             expect(result).toEqual({ hours: 2, minutes: 0 });
         });
