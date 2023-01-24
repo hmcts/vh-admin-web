@@ -78,7 +78,7 @@
         </td>
         <td class="govuk-table__cell">{{ hearing.hearing_date.toLocaleDateString('en-GB') }}</td>
         <td class="govuk-table__cell">{{ hearing.start_time }}</td>
-        <td class="govuk-table__cell">{{ hearing.duration }}</td>
+        <td class="govuk-table__cell">{{ dateAndTimeService.minutesToHoursDisplay(hearing.duration) }}</td>
         <td class="govuk-table__cell">{{ hearing.case_number }}</td>
         <td class="govuk-table__cell">{{ hearing.case_type }}</td>
         <td class="govuk-table__cell">{{ hearing.allocated_cso }}</td>
