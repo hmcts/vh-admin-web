@@ -175,7 +175,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         this.message = message;
     }
 
-    checkVhoHasNWorkHoursToEdit() {
+    checkVhoHasWorkHoursToEdit() {
         if (this.workHours?.length <= 0) {
             this.showMessage(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         }
