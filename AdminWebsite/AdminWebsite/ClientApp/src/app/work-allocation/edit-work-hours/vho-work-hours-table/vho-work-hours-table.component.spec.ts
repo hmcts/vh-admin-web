@@ -105,6 +105,39 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(spy).toHaveBeenCalledTimes(1);
         });
+        it('should display a message when Vho has no working hours', () => {
+            // arrange
+            component.result = [];
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBe(true);
+            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should display a message when Vho  working hours are null', () => {
+            // arrange
+            component.result = null;
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBeTruthy(true);
+            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should not display a message when Vho  has no working hours', () => {
+            // arrange
+            const mondayWorkHours = new VhoWorkHoursResponse();
+            mondayWorkHours.day_of_week_id = 1;
+            mondayWorkHours.end_time = '17:00';
+            mondayWorkHours.start_time = '09:00';
+            component.result = [mondayWorkHours];
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBe(false);
+            expect(component.message).toBe(undefined);
+        });
     });
 
     describe('cancelEditingWorkingHours', () => {
@@ -145,7 +178,6 @@ describe('VhoWorkHoursTableComponent', () => {
             originalMondayWorkHours.start_time = '09:00';
 
             component.originalWorkHours = [originalMondayWorkHours];
-
             component.workHours = [editedMondayWorkHours];
 
             component.switchToEditMode();
