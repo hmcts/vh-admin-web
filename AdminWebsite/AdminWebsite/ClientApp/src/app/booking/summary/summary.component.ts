@@ -20,7 +20,6 @@ import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
-import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-summary',
@@ -228,8 +227,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseNumber: this.hearing.cases[0].number
             });
             this.updateHearing();
-            // Wait to try to get the latest user data. This is only needed until we implement the contact email as username.
-            await timer(5000).pipe(take(1)).toPromise();
         } else {
             this.setDurationOfMultiHearing();
             try {
@@ -343,6 +340,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe(
                 (hearingDetailsResponse: HearingDetailsResponse) => {
+                    // Wait to try to get the latest user data. This is only needed until we implement the contact email as username.
+                    async () => {await new Promise(resolve => setTimeout(resolve, 5000)) }
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
