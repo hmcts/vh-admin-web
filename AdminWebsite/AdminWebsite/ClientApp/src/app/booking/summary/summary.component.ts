@@ -20,7 +20,6 @@ import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
-import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-summary',
