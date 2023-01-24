@@ -9,11 +9,4 @@ export class DateAndTimeService {
         const minutes = totalMinutes % 60;
         return { hours, minutes };
     }
-
-    minutesToHoursDisplay(totalMinutes: number): string {
-        const time = this.minutesToHours(totalMinutes);
-        const hours = `${time.hours}${time.hours > 1 ? 'hrs' : 'hr'}`;
-        const minutes = time.minutes !== 0 ? ` ${time.minutes}min` : '';
-        return hours + minutes;
-    }
 }

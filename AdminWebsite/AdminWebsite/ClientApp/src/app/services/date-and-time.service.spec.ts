@@ -24,19 +24,4 @@ describe('DateAndTimeService', () => {
             expect(result).toEqual({ hours: 2, minutes: 0 });
         });
     });
-
-    describe('minutesToHoursDisplay', () => {
-        it('should correctly display 60 minutes to "1hr"', () => {
-            const result = service.minutesToHoursDisplay(60);
-            expect(result).toBe('1hr');
-        });
-        it('should correctly display 90 minutes to "1hr 30min"', () => {
-            const result = service.minutesToHoursDisplay(90);
-            expect(result).toBe('1hr 30min');
-        });
-        it('should correctly display 145 minutes to 1hr', () => {
-            const result = service.minutesToHoursDisplay(145);
-            expect(result).toBe('2hrs 25min');
-        });
-    });
 });

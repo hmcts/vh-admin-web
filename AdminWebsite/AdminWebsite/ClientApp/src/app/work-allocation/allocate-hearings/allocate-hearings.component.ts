@@ -6,7 +6,6 @@ import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { DateAndTimeService } from '../../services/date-and-time.service';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -25,12 +24,7 @@ export class AllocateHearingsComponent implements OnInit {
     message: string;
     faExclamation = faCircleExclamation;
     private filterSize = 20;
-    constructor(
-        private route: ActivatedRoute,
-        private fb: FormBuilder,
-        private allocateService: AllocateHearingsService,
-        public dateAndTimeService: DateAndTimeService
-    ) {
+    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],
