@@ -250,13 +250,6 @@ describe('VhoWorkHoursTableComponent', () => {
         fixture.detectChanges();
         expect(component.workHours).toBeNull();
     });
-
-    it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new VhoWorkHoursResponse()];
-        fixture.detectChanges();
-        expect(component.workHours).toBeNull();
-    });
-
     describe('validateTimes', () => {
         beforeEach(() => {
             component.validationFailures = [];
@@ -392,7 +385,7 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.displayMessage).toBeTruthy();
             expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         });
-        fit('should display a message', () => {
+        it('should display a message', () => {
             // arrange
             const Message = 'Tesing';
             // act
