@@ -227,8 +227,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseNumber: this.hearing.cases[0].number
             });
             this.updateHearing();
-            // Wait to try to get the latest user data. This is only needed until we implement the contact email as username.
-            await timer(5000).pipe(take(1)).toPromise();
         } else {
             this.setDurationOfMultiHearing();
             try {
