@@ -28,7 +28,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     public static readonly ErrorStartAndEndTimeBothRequired = 'Both Start Time and End Time must be filled in or empty';
     public static readonly ErrorEndTimeBeforeStartTime = 'End Time cannot be before Start Time';
     public static readonly WarningNoWorkingHoursForVho =
-        "There are no working hours available to edit for this user. Please upload this user's working hours before they can be edited.";
+        'There are no working hours available to edit for this user. Please upload this user\'s working hours before they can be edited.';
 
     displayMessage = false;
 
