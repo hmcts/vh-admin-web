@@ -335,11 +335,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.scheduled_duration = 480;
         }
     }
-    
+
     private delay(ms: number) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
-  
+
     updateHearing() {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe(
