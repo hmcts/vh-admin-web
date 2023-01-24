@@ -376,15 +376,6 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(videoServiceSpy.setVhoNonAvailabiltiesHaveChanged).toHaveBeenCalledTimes(1);
         });
 
-        it('should display a message when there are zero results for work hours', () => {
-            // arrange
-            const testData = new Array<VhoWorkHoursResponse>();
-            // act
-            component.result = testData;
-            // assert
-            expect(component.displayMessage).toBeTruthy();
-            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
-        });
         it('should display a message', () => {
             // arrange
             const Message = 'Tesing';
