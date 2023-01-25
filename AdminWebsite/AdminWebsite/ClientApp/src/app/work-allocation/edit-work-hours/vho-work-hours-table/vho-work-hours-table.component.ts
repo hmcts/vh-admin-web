@@ -3,6 +3,7 @@ import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { Observable } from 'rxjs';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 
 export class ValidationFailure {
     id: number;
@@ -16,22 +17,31 @@ export class ValidationFailure {
 export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     constructor(private videoHearingsService: VideoHearingsService) {}
 
-    @Input() set result(value) {
-        if (value && value[0] instanceof VhoWorkHoursResponse) {
+    @Input() set result(value: VhoWorkHoursResponse[]) {
+        if (value) {
             this.workHours = value;
         } else {
             this.workHours = null;
         }
+        this.checkVhoHasWorkHoursToEdit();
     }
-
     public static readonly ErrorStartAndEndTimeBothRequired = 'Both Start Time and End Time must be filled in or empty';
     public static readonly ErrorEndTimeBeforeStartTime = 'End Time cannot be before Start Time';
+    public static readonly WarningNoWorkingHoursForVho =
+        // tslint:disable-next-line: quotemark
+        "There are no working hours available to edit for this user. Please upload this user's working hours before they can be edited.";
+
+    displayMessage = false;
+
+    message: string;
+    showSaveConfirmation = false;
     workHours: VhoWorkHoursResponse[] = [];
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     originalWorkHours: VhoWorkHoursResponse[] = [];
     isEditing = false;
-    showSaveConfirmation = false;
+
+    faExclamation = faCircleExclamation;
 
     @Output() saveWorkHours: EventEmitter<VhoWorkHoursResponse[]> = new EventEmitter();
     @Output() editWorkHours: EventEmitter<void> = new EventEmitter();
@@ -160,5 +170,15 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
 
     get checkVhoHasWorkHours(): boolean {
         return this.workHours?.length > 0;
+    }
+    showMessage(message: string) {
+        this.displayMessage = true;
+        this.message = message;
+    }
+
+    checkVhoHasWorkHoursToEdit() {
+        if (!this.workHours || this.workHours.length === 0) {
+            this.showMessage(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
+        }
     }
 }
