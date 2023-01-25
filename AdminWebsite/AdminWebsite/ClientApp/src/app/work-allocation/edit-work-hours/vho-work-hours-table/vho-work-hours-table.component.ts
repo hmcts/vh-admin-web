@@ -31,7 +31,6 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
         // tslint:disable-next-line: quotemark
         "There are no working hours available to edit for this user. Please upload this user's working hours before they can be edited.";
 
-
     displayMessage = false;
 
     message: string;
@@ -178,7 +177,7 @@ export class VhoWorkHoursTableComponent implements CanDeactiveComponent {
     }
 
     checkVhoHasWorkHoursToEdit() {
-        if ( !this.workHours || this.workHours.length == 0) {
+        if (!this.workHours || this.workHours.length === 0) {
             this.showMessage(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
         }
     }
