@@ -336,22 +336,18 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
 
-    private delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
     updateHearing() {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe(
-                async (hearingDetailsResponse: HearingDetailsResponse) => {
-                    // Wait to try to get the latest user data. This is only needed until we implement the contact email as username.
-                    await this.delay(5000);
-                    this.showWaitSaving = false;
-                    this.hearingService.setBookingHasChanged(false);
-                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
-                        hearingId: hearingDetailsResponse.id
+                (hearingDetailsResponse: HearingDetailsResponse) => {
+                    const schedule = timer(5000).subscribe(() => {
+                        this.showWaitSaving = false;
+                        this.hearingService.setBookingHasChanged(false);
+                        schedule.unsubscribe();
+                        this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
+                            hearingId: hearingDetailsResponse.id
+                        });
                     });
-
                     if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
                         this.hearing.hearing_id = hearingDetailsResponse.id;
                         this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
