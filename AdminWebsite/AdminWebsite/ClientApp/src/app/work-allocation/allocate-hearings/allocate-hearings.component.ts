@@ -76,6 +76,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     clear() {
+        this.hearings = [];
         this.caseTypeDropDownValues = [];
         this.csoDropDownValues = [];
 

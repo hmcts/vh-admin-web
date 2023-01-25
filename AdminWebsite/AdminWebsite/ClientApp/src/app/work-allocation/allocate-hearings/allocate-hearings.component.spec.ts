@@ -159,6 +159,7 @@ describe('AllocateHearingsComponent', () => {
 
     describe('clear', () => {
         it('Should call clear functions and clear drop down values', () => {
+            component.hearings = [new AllocationHearingsResponse(), new AllocationHearingsResponse()];
             component.form.controls['fromDate'].setValue('2023-01-13');
             component.form.controls['toDate'].setValue('2023-01-14');
             component.form.controls['userName'].setValue(['test', 'user']);
@@ -174,6 +175,7 @@ describe('AllocateHearingsComponent', () => {
 
             component.clear();
 
+            expect(component.hearings.length).toBe(0);
             expect(caseMenuSpy).toHaveBeenCalled();
             expect(csoMenuSpy).toHaveBeenCalled();
             expect(component.form.controls['fromDate'].value).toBe('');
