@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { AllocationHearingsResponse, BHClient } from './clients/api-client';
+import { AllocationHearingsResponse, BHClient, UpdateHearingAllocationToCsoRequest } from './clients/api-client';
 import { Logger } from './logger';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -28,11 +28,16 @@ export class AllocateHearingsService {
         }
     }
 
-    setAllocationToHearings(selectedHearings: string[]) {
-        try {
+    setAllocationToHearings(selectedHearings: string[], csoUserId: string): Observable<AllocationHearingsResponse[]> {
+        //try {
+            var request = new UpdateHearingAllocationToCsoRequest();
+            request.hearings = selectedHearings;
+            request.cso_id = csoUserId;
+            return this.bhClient.allocateHearingsToCso(request);
 
-        } catch (error) {
-            this.logger.error(`${error.response}`, error);
-        }
+        // } catch (error) {
+        //     this.logger.error(`${error.response}`, error);
+        //
+        // }
     }
 }

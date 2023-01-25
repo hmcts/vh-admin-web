@@ -601,13 +601,16 @@ namespace AdminWebsite.Controllers
         [HttpPatch("allocations")]
         [SwaggerOperation(OperationId = "AllocateHearingsToCso")]
         [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AllocateHearingsToCso(UpdateHearingAllocationToCsoRequest request)
         {
             try
             {
+               
                 var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);
             
+                
+                
                 if(hearings == null || !hearings.Any())
                     return Ok(new List<AllocationHearingsResponse>());
             

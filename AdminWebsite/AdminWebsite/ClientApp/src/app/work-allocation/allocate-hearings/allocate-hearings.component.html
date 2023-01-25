@@ -1,4 +1,4 @@
-<details [attr.open]="allocateHearingsDetailOpen ? '' : null" *ngIf="isVhTeamLeader" class="govuk-details"
+<details [attr.open]="allocateHearingsDetailOpen ? '' : null" class="govuk-details"
          data-module="govuk-details">
     <summary class="govuk-details__summary" tabindex="0" role="button">
         <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
@@ -90,7 +90,7 @@
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">
                 <input id="select-all-hearings" name="select-all-hearings" type="checkbox" value="true"
-                       aria-label="Select all hearings" />
+                       aria-label="Select all hearings" (change)="checkUncheckAll(!allChecked)" />
             </th>
             <th scope="col" class="govuk-table__header">Hearing date</th>
             <th scope="col" class="govuk-table__header">Start time</th>
@@ -101,9 +101,9 @@
         </tr>
         </thead>
         <tbody class="govuk-table__body">
-        <tr class="govuk-table__row" *ngFor="let hearing of hearings">
+        <tr class="govuk-table__row" *ngFor="let hearing of hearings; let i=index">
             <td class="govuk-table__cell">
-                <input id="{{ hearing.hearing_id }}" name="select-hearing" type="checkbox"
+                <input id="hearing_{{ hearing.hearing_id }}" [name]="'select-hearing_' + i" type="checkbox" [checked]="false"
                        aria-label="Select hearing" (click)="selectAllocateUser($event, hearing.hearing_id)"/>
             </td>
             <td class="govuk-table__cell">{{ hearing.hearing_date.toLocaleDateString('en-GB') }}</td>

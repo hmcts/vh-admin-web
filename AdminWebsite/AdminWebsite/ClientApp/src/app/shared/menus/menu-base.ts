@@ -43,7 +43,7 @@ export abstract class MenuBase implements OnInit {
     onSelect() {
         this.selectedItems = this.form.value[this.formGroupName];
         this.selectedEmitter.emit(this.selectedItems);
-        this.selectedLabel = this.items.filter(x=>x.id == this.selectedItems).map(y=>y.full_name)[0];
+        this.selectedLabel = this.items.filter(x=>x.id == this.selectedItems).map(y=>y.username)[0];
     }
 
     clear(): void {

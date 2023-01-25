@@ -40,13 +40,7 @@ import { DeleteParticipantModule } from './delete-participant/delete-participant
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { EditWorkHoursComponent } from './work-allocation/edit-work-hours/edit-work-hours.component';
-import { VhoSearchComponent } from './work-allocation/edit-work-hours/vho-search/vho-search.component';
-import { VhoWorkHoursTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
-import { VhoWorkHoursNonAvailabilityTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
-import { ConfirmDeleteHoursPopupComponent } from './popups/confirm-delete-popup/confirm-delete-popup.component';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
-import { AllocateHearingsComponent } from './work-allocation/allocate-hearings/allocate-hearings.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -62,14 +56,6 @@ export function loadConfig(configService: ConfigService) {
         ErrorComponent,
         UnsupportedBrowserComponent,
         ChangePasswordComponent,
-        WorkAllocationComponent,
-        EditWorkHoursComponent,
-        VhoSearchComponent,
-        VhoWorkHoursTableComponent,
-        VhoWorkHoursNonAvailabilityTableComponent,
-        ConfirmDeleteHoursPopupComponent,
-        UnallocatedHearingsComponent,
-        AllocateHearingsComponent
         UnallocatedHearingsComponent
     ],
     imports: [
