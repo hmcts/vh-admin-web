@@ -18,6 +18,7 @@ import { CaseTypesMenuComponent } from './menus/case-types-menu/case-types-menu.
 import { NgSelectModule } from '@ng-select/ng-select';
 import { JusticeUsersMenuComponent } from './menus/justice-users-menu/justice-users-menu.component';
 import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
+import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule, NgSelectModule],
@@ -30,7 +31,8 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
         LongDatetimePipe,
         CaseTypesMenuComponent,
         JusticeUsersMenuComponent,
-        VenuesMenuComponent
+        VenuesMenuComponent,
+        MinutesToHoursPipe
     ],
     providers: [WindowRef, WindowScrolling],
     exports: [
@@ -46,7 +48,8 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
         LongDatetimePipe,
         CaseTypesMenuComponent,
         JusticeUsersMenuComponent,
-        VenuesMenuComponent
+        VenuesMenuComponent,
+        MinutesToHoursPipe
     ]
 })
 export class SharedModule {
