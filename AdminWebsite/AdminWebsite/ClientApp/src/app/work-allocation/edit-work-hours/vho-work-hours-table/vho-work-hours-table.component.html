@@ -64,6 +64,9 @@
     </div>
   </ng-template>
 </div>
+<div id="workHoursTableMessage" *ngIf="displayMessage" class="govuk-body govuk-!-font-weight-bold">
+  <fa-icon [icon]="faExclamation"></fa-icon> {{ message }}
+</div>
 <div *ngIf="showSaveConfirmation">
   <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="cancelEditingWorkingHours()"></app-cancel-popup>
 </div>
