@@ -13,8 +13,18 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
+    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
+        this.form = fb.group({
+            fromDate: ['', Validators.required],
+            toDate: [''],
+            userName: [''],
+            caseType: [''],
+            caseNumber: [''],
+            isUnallocated: [false]
+        });
+    }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
-    @ViewChild('csoAllocatedMenu',{static:false,read:JusticeUsersMenuComponent}) csoAllocatedMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
@@ -28,18 +38,9 @@ export class AllocateHearingsComponent implements OnInit {
     message: string;
     faExclamation = faCircleExclamation;
     private filterSize = 20;
-    dropDownUserLabelAllocateTo: string = 'Allocate to';
+    dropDownUserLabelAllocateTo = 'Allocate to';
 
-    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
-        this.form = fb.group({
-            fromDate: ['', Validators.required],
-            toDate: [''],
-            userName: [''],
-            caseType: [''],
-            caseNumber: [''],
-            isUnallocated: [false]
-        });
-    }
+    allChecked = false;
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -104,9 +105,10 @@ export class AllocateHearingsComponent implements OnInit {
         if ($event) {
             this.checkAllocationForCso(this.csoUserToAllocate);
             // change the label
-            if (this.csoAllocatedMenu?.selectedLabel) this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
-        }
-        else {
+            if (this.csoAllocatedMenu?.selectedLabel) {
+                this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
+            }
+        } else {
             // reload the table
             this.searchForHearings();
             this.checkUncheckAll(false);
@@ -132,27 +134,24 @@ export class AllocateHearingsComponent implements OnInit {
         this.clearSelectedHearings();
     }
 
-    cancelAllocation() {
-
-    }
+    cancelAllocation() {}
 
     checkAllocationForCso(guid: string) {
-        //TODO: send a request to api to check the user against the list of hearings selected for warnings
+        // TODO: send a request to api to check the user against the list of hearings selected for warnings
         // passing selectedHearings and guid for selected cso
     }
 
     confirmAllocation() {
-         this.allocateService.setAllocationToHearings(this.selectedHearings, this.csoUserToAllocate)
-             .subscribe(
-                 (result) => { this.updateTableWithAllocatedCso(result) },
-                 (error) => {
-                     this.displayMessage = true;
-                     this.message = error;
-                 }
-             );
+        this.allocateService.setAllocationToHearings(this.selectedHearings, this.csoUserToAllocate).subscribe(
+            result => {
+                this.updateTableWithAllocatedCso(result);
+            },
+            error => {
+                this.displayMessage = true;
+                this.message = error;
+            }
+        );
     }
-
-    allChecked = false;
 
     checkUncheckAll(value: boolean) {
         this.allChecked = value;
@@ -160,9 +159,8 @@ export class AllocateHearingsComponent implements OnInit {
             const index: number = this.selectedHearings.indexOf(h.hearing_id);
             document.getElementById('hearing_' + h.hearing_id).checked = value;
             if (value && index === -1) {
-               this.selectedHearings.push(h.hearing_id);
-            }
-            else {
+                this.selectedHearings.push(h.hearing_id);
+            } else {
                 this.revertHearingRow(h.hearing_id);
             }
         });
@@ -172,13 +170,12 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     private updateTableWithAllocatedCso(allocatedHearings: AllocationHearingsResponse[]) {
-        let list: AllocationHearingsResponse[] = [];
+        const list: AllocationHearingsResponse[] = [];
         this.hearings.forEach(hearing => {
-            const hrg = allocatedHearings.find(x=>x.hearing_id === hearing.hearing_id);
+            const hrg = allocatedHearings.find(x => x.hearing_id === hearing.hearing_id);
             if (hrg) {
                 list.push(hrg);
-            }
-            else {
+            } else {
                 list.push(hearing);
             }
         });
@@ -189,27 +186,26 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     selectAllocateUser($event, hearing_id: string) {
-        const checkBoxChecked = $event.target.checked
+        const checkBoxChecked = $event.target.checked;
         const index: number = this.selectedHearings.indexOf(hearing_id);
         if (checkBoxChecked) {
             if (index === -1) {
                 this.selectedHearings.push(hearing_id);
             }
-            if (this.csoAllocatedMenu?.selectedLabel) this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
-        }
-        else {
+            if (this.csoAllocatedMenu?.selectedLabel) {
+                this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
+            }
+        } else {
             if (index !== -1) {
                 this.selectedHearings.splice(index, 1);
             }
             this.revertHearingRow(hearing_id);
         }
-
-
     }
 
     private updateSelectedHearingsWithCso(selectedLabel: string) {
         this.selectedHearings.forEach(id => {
-            var cell = document.querySelector('#cso_' + id);
+            const cell = document.querySelector('#cso_' + id);
             cell.innerHTML = selectedLabel;
         });
     }
@@ -217,7 +213,7 @@ export class AllocateHearingsComponent implements OnInit {
     private revertHearingRow(hearing_id: string) {
         const hearing = this.hearings.find(h => h.hearing_id === hearing_id);
         if (hearing) {
-            var cell = document.querySelector('#cso_' + hearing_id);
+            const cell = document.querySelector('#cso_' + hearing_id);
             cell.innerHTML = hearing.allocated_cso;
         }
     }

@@ -20,10 +20,9 @@ export class JusticeUsersMenuComponent extends MenuBase {
         selectedUserIds: [this.bookingPersistService.selectedUsers || []]
     };
 
-
     @Output() selectedEmitter = new EventEmitter<string[] | string>();
-    @Input() dropDownLabel: string = 'Allocated CSO';
-    @Input() multiSelect: boolean = true;
+    @Input() dropDownLabel = 'Allocated CSO';
+    @Input() multiSelect = true;
     constructor(
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,

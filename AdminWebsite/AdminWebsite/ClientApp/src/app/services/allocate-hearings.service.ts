@@ -29,11 +29,11 @@ export class AllocateHearingsService {
     }
 
     setAllocationToHearings(selectedHearings: string[], csoUserId: string): Observable<AllocationHearingsResponse[]> {
-        //try {
-            var request = new UpdateHearingAllocationToCsoRequest();
-            request.hearings = selectedHearings;
-            request.cso_id = csoUserId;
-            return this.bhClient.allocateHearingsToCso(request);
+        // try {
+        const request = new UpdateHearingAllocationToCsoRequest();
+        request.hearings = selectedHearings;
+        request.cso_id = csoUserId;
+        return this.bhClient.allocateHearingsToCso(request);
 
         // } catch (error) {
         //     this.logger.error(`${error.response}`, error);
