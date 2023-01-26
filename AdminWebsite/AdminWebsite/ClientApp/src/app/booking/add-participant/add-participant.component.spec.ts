@@ -212,7 +212,7 @@ const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['
 
 featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
+let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
     'removeParticipant',
     'mapParticipantsRoles'
