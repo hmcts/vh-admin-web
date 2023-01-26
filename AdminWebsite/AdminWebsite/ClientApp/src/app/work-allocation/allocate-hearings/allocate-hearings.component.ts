@@ -118,6 +118,7 @@ export class AllocateHearingsComponent implements OnInit {
 
     private clearSelectedHearings() {
         this.selectedHearings = [];
+        this.uncheckAllCheckbox();
     }
 
     private filterResults(result: AllocationHearingsResponse[]) {
@@ -137,6 +138,7 @@ export class AllocateHearingsComponent implements OnInit {
     cancelAllocation() {
         this.csoAllocatedMenu.clear();
         this.clearSelectedHearings();
+        this.checkUncheckAll(false);
     }
 
     checkAllocationForCso(guid: string) {
