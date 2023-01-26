@@ -68,9 +68,7 @@ export class DeleteParticipantSearchComponent implements OnInit, OnDestroy {
         const response = await this.service.getHearingsForUsername(username);
         if (response) {
             this.logger.debug(`${this.loggerPrefix} Found hearings for user`, { username: this.username.value });
-            return response.map(x => {
-                return new ParticipantHearingDeleteResultModel(x);
-            });
+            return response.map(x => new ParticipantHearingDeleteResultModel(x));
         } else {
             this.logger.warn(`${this.loggerPrefix} Username not found`, { username: this.username.value });
             return null;

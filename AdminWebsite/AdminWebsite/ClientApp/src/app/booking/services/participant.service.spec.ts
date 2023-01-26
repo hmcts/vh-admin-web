@@ -7,8 +7,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { Logger } from '../../services/logger';
 
 describe('ParticipantService', () => {
-    let loggerSpy: jasmine.SpyObj<Logger>;
-    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({

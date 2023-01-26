@@ -43,7 +43,7 @@ module.exports = {
                 accessibility: 'explicit'
             }
         ],
-        '@typescript-eslint/indent': 'error',
+        '@typescript-eslint/indent': 'off',
         '@typescript-eslint/member-delimiter-style': [
             'error',
             {
@@ -57,16 +57,8 @@ module.exports = {
                 }
             }
         ],
-        '@typescript-eslint/member-ordering': 'error',
-        '@typescript-eslint/naming-convention': [
-            'error',
-            {
-                selector: 'variable',
-                format: ['camelCase', 'UPPER_CASE'],
-                leadingUnderscore: 'forbid',
-                trailingUnderscore: 'forbid'
-            }
-        ],
+        '@typescript-eslint/member-ordering': 'off',
+        '@typescript-eslint/naming-convention': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-empty-interface': 'error',
         '@typescript-eslint/no-inferrable-types': [
@@ -86,7 +78,7 @@ module.exports = {
         '@typescript-eslint/no-unused-expressions': 'error',
         '@typescript-eslint/no-use-before-define': 'off',
         '@typescript-eslint/prefer-function-type': 'error',
-        '@typescript-eslint/quotes': ['error', 'single'],
+        '@typescript-eslint/quotes': 'off',
         '@typescript-eslint/semi': ['error', 'always'],
         '@typescript-eslint/type-annotation-spacing': 'error',
         '@typescript-eslint/unified-signatures': 'error',
@@ -102,12 +94,7 @@ module.exports = {
         'id-match': 'off',
         'import/no-deprecated': 'warn',
         indent: 'off',
-        'max-len': [
-            'error',
-            {
-                code: 140
-            }
-        ],
+        'max-len': 'off',
         'no-bitwise': 'error',
         'no-caller': 'error',
         'no-console': [
@@ -144,7 +131,7 @@ module.exports = {
         'no-new-wrappers': 'error',
         'no-restricted-imports': ['error', 'rxjs/Rx'],
         'no-shadow': 'off',
-        'no-throw-literal': 'error',
+        'no-throw-literal': 'off',
         'no-trailing-spaces': 'error',
         'no-undef-init': 'error',
         'no-underscore-dangle': 'off',
@@ -156,13 +143,7 @@ module.exports = {
         quotes: 'off',
         radix: 'error',
         semi: 'off',
-        'spaced-comment': [
-            'error',
-            'always',
-            {
-                markers: ['/']
-            }
-        ],
+        'spaced-comment': 'off',
         '@typescript-eslint/tslint/config': [
             'error',
             {

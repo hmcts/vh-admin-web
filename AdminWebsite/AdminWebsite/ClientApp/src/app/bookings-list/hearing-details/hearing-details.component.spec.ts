@@ -17,7 +17,6 @@ describe('HearingDetailsComponent', () => {
     let component: HearingDetailsComponent;
     let fixture: ComponentFixture<HearingDetailsComponent>;
     let debugElement: DebugElement;
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
         client_id: 'clientid',
@@ -25,7 +24,7 @@ describe('HearingDetailsComponent', () => {
         redirect_uri: '/dashboard',
         join_by_phone_from_date: '2019-10-22 13:58:40.3730067'
     });
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
     configServiceSpy.getConfig.and.returnValue(of(clientSettings));
     const h1 = new BookingsDetailsModel(
         '1',
@@ -144,7 +143,6 @@ describe('HearingDetailsComponent', () => {
     });
 });
 describe('HearingDetailsComponent join by phone', () => {
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
         client_id: 'clientid',
@@ -153,7 +151,7 @@ describe('HearingDetailsComponent join by phone', () => {
         join_by_phone_from_date: ''
     });
     const activatedRoute = new ActivatedRoute();
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
     configServiceSpy.getConfig.and.returnValue(clientSettings);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
     const hearing = new BookingsDetailsModel(

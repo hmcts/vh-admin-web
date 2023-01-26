@@ -246,17 +246,15 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('judge display name field validity required', () => {
-            let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('');
             const judge_display_name = component.form.controls['judgeDisplayNameFld'];
-            errors = judge_display_name.errors || {};
+            const errors = judge_display_name.errors || {};
             expect(errors['required']).toBeTruthy();
         });
         it('judge display name field validity pattern', () => {
-            let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('%');
             const judge_display_name = component.form.controls['judgeDisplayNameFld'];
-            errors = judge_display_name.errors || {};
+            const errors = judge_display_name.errors || {};
             expect(errors['pattern']).toBeTruthy();
         });
         it('should fail validation if a judge display name is not entered', () => {

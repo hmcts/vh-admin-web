@@ -22,8 +22,8 @@ export class AdminGuard implements CanActivate {
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         this.logger.debug(`${this.loggerPrefix} Checking if user is vho or case admin.`);
         return this.configService.getClientSettings().pipe(
-            mergeMap(clientSettings => {
-                return this.oidcSecurityService.checkAuth().pipe(
+            mergeMap(clientSettings =>
+                this.oidcSecurityService.checkAuth().pipe(
                     mergeMap(response => {
                         if (response.isAuthenticated) {
                             return this.userIdentityService.getUserInformation().pipe(
@@ -45,8 +45,8 @@ export class AdminGuard implements CanActivate {
                             return of(false);
                         }
                     })
-                );
-            })
+                )
+            )
         );
     }
 }

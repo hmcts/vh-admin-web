@@ -7,8 +7,7 @@ const activatedRouteSnapshot: ActivatedRouteSnapshot = new ActivatedRouteSnapsho
 
 describe('change-guard', () => {
     let changeGuard: ChangesGuard;
-    let component: jasmine.SpyObj<VhoWorkHoursNonAvailabilityTableComponent>;
-    component = jasmine.createSpyObj('CanDeactiveComponent', ['canDeactive']);
+    const component = jasmine.createSpyObj('CanDeactiveComponent', ['canDeactive']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({

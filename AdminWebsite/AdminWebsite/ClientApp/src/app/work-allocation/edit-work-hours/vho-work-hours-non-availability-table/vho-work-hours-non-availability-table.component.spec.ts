@@ -16,8 +16,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let fixture: ComponentFixture<VhoWorkHoursNonAvailabilityTableComponent>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+    const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
         'setVhoNonAvailabiltiesHaveChanged'
     ]);

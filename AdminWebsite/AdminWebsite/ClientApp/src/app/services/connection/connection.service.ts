@@ -73,8 +73,8 @@ export class ConnectionService implements OnDestroy {
     }
 }
 
-const retryStrategy = (config: { maxRetryAttempts?: number; retryInterval?: number }) => (errors: Observable<any>) => {
-    return errors.pipe(
+const retryStrategy = (config: { maxRetryAttempts?: number; retryInterval?: number }) => (errors: Observable<any>) =>
+    errors.pipe(
         mergeMap((error, i) => {
             const retryAttempt = i + 1;
             if (retryAttempt > config.maxRetryAttempts) {
@@ -83,4 +83,3 @@ const retryStrategy = (config: { maxRetryAttempts?: number; retryInterval?: numb
             return timer(config.retryInterval);
         })
     );
-};

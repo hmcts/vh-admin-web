@@ -11,9 +11,7 @@ describe('booking service', () => {
 
         service = TestBed.inject(BookingService);
         const mockSessionStorage = {
-            getItem: (key: string): string => {
-                return 'true';
-            },
+            getItem: (key: string): string => 'true',
             setItem: (key: string, value: string) => {},
             removeItem: (key: string) => {},
             clear: () => {}

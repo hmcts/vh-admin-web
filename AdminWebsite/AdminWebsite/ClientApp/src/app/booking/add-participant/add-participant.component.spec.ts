@@ -204,17 +204,15 @@ const routerSpy: jasmine.SpyObj<Router> = {
 } as jasmine.SpyObj<Router>;
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
-let loggerSpy: jasmine.SpyObj<Logger>;
 let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
 featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
     'removeParticipant',
     'mapParticipantsRoles'

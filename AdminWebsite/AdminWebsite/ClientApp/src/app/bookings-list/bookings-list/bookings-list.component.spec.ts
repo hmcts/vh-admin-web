@@ -41,15 +41,13 @@ import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
 let fixture: ComponentFixture<BookingsListComponent>;
-let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
-bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
+const bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
     'getBookingsList',
     'mapBookingsResponse',
     'addBookings',
     'replaceBookingRecord'
 ]);
-let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
+const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getCurrentRequest',
     'cancelRequest',
     'getHearingById',
@@ -57,13 +55,10 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getHearingTypes',
     'getUsers'
 ]);
-let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
-let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
-launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 let returnUrlService: ReturnUrlService;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
+const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
 export class ResponseTestData {
     getUserData(): Array<JusticeUserResponse> {

@@ -92,9 +92,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     showSaveConfirmation = false;
 
     checkType(myArray: any[], type: any): boolean {
-        return myArray.every(item => {
-            return item instanceof type;
-        });
+        return myArray.every(item => item instanceof type);
     }
 
     @HostListener('window:beforeunload', ['$event'])

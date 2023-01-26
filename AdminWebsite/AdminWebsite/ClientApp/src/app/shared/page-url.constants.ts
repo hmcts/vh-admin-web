@@ -1,4 +1,4 @@
-export let PageUrls = {
+export const PageUrls = {
     PageNotFound: '/page-not-found',
     Unauthorised: '/unauthorised',
     ServiceProblem: '/error',
