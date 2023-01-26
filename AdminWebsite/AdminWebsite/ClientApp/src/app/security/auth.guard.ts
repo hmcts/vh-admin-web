@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { AuthenticatedResult, OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PageUrls } from '../shared/page-url.constants';
@@ -11,9 +11,9 @@ export class AuthGuard implements CanActivate {
 
     canActivate(): Observable<boolean> {
         return this.oidcSecurityService.isAuthenticated$.pipe(
-            map((isAuthorized: boolean) => {
-                console.log('[AuthorizationGuard] - canActivate isAuthorized: ' + isAuthorized);
-                if (!isAuthorized) {
+            map((result: AuthenticatedResult) => {
+                console.log('[AuthorizationGuard] - canActivate isAuthorized: ' + result.isAuthenticated);
+                if (!result.isAuthenticated) {
                     this.router.navigate([`/${PageUrls.Login}`]);
                     return false;
                 }

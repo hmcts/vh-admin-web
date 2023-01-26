@@ -24,8 +24,8 @@ export class AdminGuard implements CanActivate {
         return this.configService.getClientSettings().pipe(
             mergeMap(clientSettings => {
                 return this.oidcSecurityService.checkAuth().pipe(
-                    mergeMap(loggedIn => {
-                        if (loggedIn) {
+                    mergeMap(response => {
+                        if (response.isAuthenticated) {
                             return this.userIdentityService.getUserInformation().pipe(
                                 map(userProfile => {
                                     if (userProfile?.is_vh_officer_administrator_role || userProfile?.is_case_administrator) {

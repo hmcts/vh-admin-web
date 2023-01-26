@@ -59,8 +59,8 @@ export class AppComponent implements OnInit {
         this.checkBrowser();
         const currentUrl = this.window.getLocation().href;
         this.configService.getClientSettings().subscribe(clientSettings => {
-            this.oidcSecurityService.checkAuth().subscribe(loggedIn => {
-                this.loggedIn = loggedIn;
+            this.oidcSecurityService.checkAuth().subscribe(response => {
+                this.loggedIn = response.isAuthenticated;
                 if (!this.loggedIn) {
                     this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
                     return;

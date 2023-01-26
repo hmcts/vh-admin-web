@@ -11,8 +11,8 @@ export class LogoutComponent implements OnInit {
 
     ngOnInit() {
         this.oidcSecurityService.isAuthenticated$.subscribe(auth => {
-            if (auth) {
-                this.oidcSecurityService.logoffAndRevokeTokens();
+            if (auth.isAuthenticated) {
+                this.oidcSecurityService.logoffAndRevokeTokens().subscribe();
             }
         });
     }
