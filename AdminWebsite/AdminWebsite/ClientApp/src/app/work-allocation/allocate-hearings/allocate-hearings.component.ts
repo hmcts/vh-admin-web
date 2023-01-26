@@ -157,7 +157,8 @@ export class AllocateHearingsComponent implements OnInit {
         this.allChecked = value;
         this.hearings.forEach(h => {
             const index: number = this.selectedHearings.indexOf(h.hearing_id);
-            document.getElementById('hearing_' + h.hearing_id).checked = value;
+            const checkbox = document.getElementById('hearing_' + h.hearing_id) as HTMLInputElement;
+            checkbox.checked = value;
             if (value && index === -1) {
                 this.selectedHearings.push(h.hearing_id);
             } else {
@@ -219,6 +220,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     private uncheckAllCheckbox() {
-        document.getElementById('select-all-hearings').checked = false;
+        const checkbox = document.getElementById('select-all-hearings') as HTMLInputElement;
+        checkbox.checked = false;
     }
 }
