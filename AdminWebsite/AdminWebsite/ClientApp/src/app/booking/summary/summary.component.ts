@@ -344,7 +344,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe(
                 (hearingDetailsResponse: HearingDetailsResponse) => {
-                    async () => await this.delay(5000);
+                    (async () => await this.delay(5000))();
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
