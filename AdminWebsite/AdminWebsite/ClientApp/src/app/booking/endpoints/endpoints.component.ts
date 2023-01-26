@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -33,7 +33,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     duplicateDa = false;
 
     constructor(
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         protected bookingService: BookingService,
         protected router: Router,
         protected videoHearingService: VideoHearingsService,
@@ -58,8 +58,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         });
     }
 
-    get endpoints(): UntypedFormArray {
-        return <UntypedFormArray>this.form.get('endpoints');
+    get endpoints(): FormArray {
+        return <FormArray>this.form.get('endpoints');
     }
 
     addEndpoint(): void {
@@ -169,8 +169,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             })
         );
     }
-    private setExistingEndpoints(endpoints: EndpointModel[]): UntypedFormArray {
-        const formArray = new UntypedFormArray([]);
+    private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
+        const formArray = new FormArray([]);
         endpoints.forEach(e => {
             formArray.push(
                 this.fb.group({
@@ -215,7 +215,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         }
         return participantId;
     }
-    private addEndpointsFormGroup(): UntypedFormGroup {
+    private addEndpointsFormGroup(): FormGroup {
         return this.fb.group({
             displayName: ['', [blankSpaceValidator]],
             defenceAdvocate: ['None'],

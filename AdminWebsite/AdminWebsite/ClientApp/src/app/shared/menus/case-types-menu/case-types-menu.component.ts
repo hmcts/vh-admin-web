@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { HearingTypeResponse } from '../../../services/clients/api-client';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Logger } from '../../../services/logger';
@@ -25,7 +25,7 @@ export class CaseTypesMenuComponent extends MenuBase {
     constructor(
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
-        formBuilder: UntypedFormBuilder,
+        formBuilder: FormBuilder,
         logger: Logger
     ) {
         super(formBuilder, logger);

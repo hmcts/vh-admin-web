@@ -1,5 +1,5 @@
 import { fakeAsync, flush } from '@angular/core/testing';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
 import { AudioLinkService } from 'src/app/services/audio-link-service';
 import { CvpForAudioFileResponse } from 'src/app/services/clients/api-client';
@@ -9,7 +9,7 @@ import { GetAudioFileCvpComponent } from './get-audio-file-cvp.component';
 describe('GetAudioFileCvpComponent', () => {
     let component: GetAudioFileCvpComponent;
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
-    let formBuilder: UntypedFormBuilder;
+    let formBuilder: FormBuilder;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeEach(async () => {
@@ -19,7 +19,7 @@ describe('GetAudioFileCvpComponent', () => {
             'getCvpAudioRecordings',
             'getCvpAudioRecordings'
         ]);
-        formBuilder = new UntypedFormBuilder();
+        formBuilder = new FormBuilder();
         component = new GetAudioFileCvpComponent(formBuilder, audioLinkService, logger);
         await component.ngOnInit();
     });

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { MenuBase } from '../menu-base';
 import { HearingVenueResponse } from '../../../services/clients/api-client';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { ReferenceDataService } from '../../../services/reference-data.service';
 
@@ -25,7 +25,7 @@ export class VenuesMenuComponent extends MenuBase {
     constructor(
         private bookingPersistService: BookingPersistService,
         private refDataService: ReferenceDataService,
-        formBuilder: UntypedFormBuilder,
+        formBuilder: FormBuilder,
         logger: Logger
     ) {
         super(formBuilder, logger);

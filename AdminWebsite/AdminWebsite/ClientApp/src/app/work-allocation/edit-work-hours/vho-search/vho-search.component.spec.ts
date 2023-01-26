@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { VhoSearchComponent } from './vho-search.component';
 import { VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
@@ -29,7 +29,7 @@ describe('VhoSearchComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [VhoSearchComponent],
             providers: [
-                UntypedFormBuilder,
+                FormBuilder,
                 { provide: Logger, useValue: logger },
                 { provide: EditWorkHoursService, useValue: service },
                 { provide: VideoHearingsService, useValue: videoServiceSpy }

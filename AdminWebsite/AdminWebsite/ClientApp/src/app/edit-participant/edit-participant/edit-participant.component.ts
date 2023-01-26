@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
 import { Logger } from 'src/app/services/logger';
@@ -13,11 +13,11 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 })
 export class EditParticipantComponent implements OnInit {
     private readonly loggerPrefix = '[EditParticipant] -';
-    form: UntypedFormGroup;
+    form: FormGroup;
     person: ParticipantEditResultModel;
     updateComplete: boolean;
     showSpinner: boolean;
-    constructor(private service: ParticipantEditService, private router: Router, private fb: UntypedFormBuilder, private logger: Logger) {}
+    constructor(private service: ParticipantEditService, private router: Router, private fb: FormBuilder, private logger: Logger) {}
 
     ngOnInit(): void {
         this.person = this.service.retrieveParticipantToEdit();

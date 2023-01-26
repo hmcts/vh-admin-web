@@ -1,15 +1,15 @@
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { AudioLinkService } from '../services/audio-link-service';
 import { Logger } from '../services/logger';
 import { GetAudioFileComponent } from './get-audio-file.component';
 
 describe('GetAudioFileComponent', () => {
-    let formBuilder: UntypedFormBuilder;
+    let formBuilder: FormBuilder;
     let component: GetAudioFileComponent;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeAll(async () => {
-        formBuilder = new UntypedFormBuilder();
+        formBuilder = new FormBuilder();
         component = new GetAudioFileComponent(formBuilder, logger);
         await component.ngOnInit();
     });

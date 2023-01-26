@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-search-model';
 import { AudioLinkService } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
@@ -10,7 +10,7 @@ describe('GetAudioFileVhComponent', () => {
     let component: GetAudioFileVhComponent;
 
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
-    let formBuilder: UntypedFormBuilder;
+    let formBuilder: FormBuilder;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeEach(async () => {
@@ -20,7 +20,7 @@ describe('GetAudioFileVhComponent', () => {
             'getCvpAudioRecordings',
             'getCvpAudioRecordings'
         ]);
-        formBuilder = new UntypedFormBuilder();
+        formBuilder = new FormBuilder();
         component = new GetAudioFileVhComponent(formBuilder, audioLinkService, logger);
 
         await component.ngOnInit();

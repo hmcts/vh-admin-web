@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -31,15 +31,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     otherInformationDetails: OtherInformationModel;
 
-    showAddStaffMemberFld: UntypedFormControl;
+    showAddStaffMemberFld: FormControl;
     isStaffMemberValid = false;
     staffMember: ParticipantModel;
     showStaffMemberErrorSummary = false;
     isStaffMemberExisting = false;
 
-    judgeDisplayNameFld: UntypedFormControl;
-    judgeEmailFld: UntypedFormControl;
-    judgePhoneFld: UntypedFormControl;
+    judgeDisplayNameFld: FormControl;
+    judgeEmailFld: FormControl;
+    judgePhoneFld: FormControl;
 
     failedSubmission: boolean;
     attemptingCancellation = false;
@@ -61,7 +61,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     ejudFeatureFlag = false;
 
     constructor(
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         protected router: Router,
         protected hearingService: VideoHearingsService,
         protected bookingService: BookingService,
@@ -142,16 +142,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     private initFormFields() {
         const staffMemberExists = this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
 
-        this.showAddStaffMemberFld = new UntypedFormControl(!!staffMemberExists);
-        this.judgeDisplayNameFld = new UntypedFormControl(this.judge?.display_name, {
+        this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
+        this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgeEmailFld = new UntypedFormControl(this.otherInformationDetails.JudgeEmail, {
+        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail, {
             validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgePhoneFld = new UntypedFormControl(this.otherInformationDetails.JudgePhone, {
+        this.judgePhoneFld = new FormControl(this.otherInformationDetails.JudgePhone, {
             validators: [Validators.pattern(Constants.PhonePattern)],
             updateOn: 'blur'
         });

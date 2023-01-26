@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VenuesMenuComponent } from './venues-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { HearingVenueResponse } from '../../../services/clients/api-client';
@@ -22,7 +22,7 @@ describe('VenuesMenuComponent', () => {
             providers: [
                 HttpClient,
                 HttpHandler,
-                UntypedFormBuilder,
+                FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
                 { provide: ReferenceDataService, useValue: refDataServiceSpy }
             ]

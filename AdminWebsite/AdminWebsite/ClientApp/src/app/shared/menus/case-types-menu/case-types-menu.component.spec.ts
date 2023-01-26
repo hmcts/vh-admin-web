@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CaseTypesMenuComponent } from './case-types-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
@@ -21,7 +21,7 @@ describe('CaseTypesMenuComponent', () => {
             providers: [
                 HttpClient,
                 HttpHandler,
-                UntypedFormBuilder,
+                FormBuilder,
                 { provide: Logger, useValue: new MockLogger() },
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
             ]

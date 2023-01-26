@@ -1,17 +1,17 @@
 import { EventEmitter, Injectable, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Logger } from '../../services/logger';
 
 @Injectable()
 export abstract class MenuBase implements OnInit {
-    protected constructor(formBuilder: UntypedFormBuilder, logger: Logger) {
+    protected constructor(formBuilder: FormBuilder, logger: Logger) {
         this.logger = logger;
         this.formBuilder = formBuilder;
     }
     logger: Logger;
-    form: UntypedFormGroup;
+    form: FormGroup;
     error = false;
-    private formBuilder: UntypedFormBuilder;
+    private formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;
@@ -33,7 +33,7 @@ export abstract class MenuBase implements OnInit {
         this.loadItems();
     }
 
-    private initializeForm(): UntypedFormGroup {
+    private initializeForm(): FormGroup {
         return this.formBuilder.group(this.formConfiguration);
     }
 

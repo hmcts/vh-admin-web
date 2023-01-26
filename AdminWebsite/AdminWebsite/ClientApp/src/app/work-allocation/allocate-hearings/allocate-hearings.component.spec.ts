@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AllocateHearingsComponent } from './allocate-hearings.component';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
@@ -24,7 +24,7 @@ describe('AllocateHearingsComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
             providers: [
-                UntypedFormBuilder,
+                FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
                 { provide: AllocateHearingsService, useValue: allocateServiceSpy }
             ]

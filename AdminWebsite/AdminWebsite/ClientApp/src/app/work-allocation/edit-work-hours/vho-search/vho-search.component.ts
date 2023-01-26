@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
@@ -12,7 +12,7 @@ import { EditWorkHoursService } from '../../services/edit-work-hours.service';
     templateUrl: './vho-search.component.html'
 })
 export class VhoSearchComponent implements OnInit {
-    form: UntypedFormGroup;
+    form: FormGroup;
     error: string = null;
 
     private loggerPrefix = 'vho-search';
@@ -35,7 +35,7 @@ export class VhoSearchComponent implements OnInit {
     }
 
     constructor(
-        private formBuilder: UntypedFormBuilder,
+        private formBuilder: FormBuilder,
         private logger: Logger,
         private service: EditWorkHoursService,
         private videoService: VideoHearingsService

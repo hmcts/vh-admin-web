@@ -1,5 +1,5 @@
 import { Directive, OnInit } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
@@ -13,7 +13,7 @@ export abstract class BookingBaseComponentDirective implements OnInit {
 
     buttonAction: string;
     editMode = false;
-    form: UntypedFormGroup;
+    form: FormGroup;
 
     protected constructor(
         protected bookingService: BookingService,

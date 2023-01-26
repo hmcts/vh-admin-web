@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { By } from '@angular/platform-browser';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { MockWorkAllocationValues } from '../../../testing/data/work-allocation-test-data';
 
@@ -32,7 +32,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 { provide: BHClient, useValue: bHClientSpy },
                 { provide: VideoHearingsService, useValue: videoServiceSpy },
                 DatePipe,
-                UntypedFormBuilder
+                FormBuilder
             ],
             declarations: [VhoWorkHoursNonAvailabilityTableComponent, ConfirmDeleteHoursPopupComponent]
         }).compileComponents();

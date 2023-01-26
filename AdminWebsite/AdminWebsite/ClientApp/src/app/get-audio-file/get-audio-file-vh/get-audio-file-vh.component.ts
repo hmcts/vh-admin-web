@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-search-model';
 import { AudioLinkService, IVhAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
@@ -10,12 +10,12 @@ import { Logger } from 'src/app/services/logger';
 })
 export class GetAudioFileVhComponent implements OnInit {
     private readonly loggerPrefix = '[GetAudioFileVh] -';
-    vhAudioFileForm: UntypedFormGroup;
+    vhAudioFileForm: FormGroup;
     searchResult: IVhAudioRecordingResult;
     results: HearingAudioSearchModel[];
     today = new Date();
 
-    constructor(private fb: UntypedFormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {}
 
     get caseNumber() {
         return this.vhAudioFileForm.get('caseNumber');

@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -620,7 +620,7 @@ describe('BookingsListComponent', () => {
                 ],
                 imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
-                    UntypedFormBuilder,
+                    FormBuilder,
                     ConfigService,
                     { provide: BookingsListService, useValue: bookingsListServiceSpy },
                     { provide: Router, useValue: routerSpy },
@@ -919,7 +919,7 @@ describe('BookingsListComponent', () => {
     });
 
     it('should onClear', () => {
-        const formBuilder = new UntypedFormBuilder();
+        const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
             'selectedUsers',
             'selectedCaseTypes',
@@ -956,7 +956,7 @@ describe('BookingsListComponent', () => {
     });
 
     it('should reset title after search is cleared', () => {
-        const formBuilder = new UntypedFormBuilder();
+        const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
             'selectedUsers',
             'selectedCaseTypes',
@@ -1030,7 +1030,7 @@ describe('BookingsListComponent', () => {
         let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
         expect(searchPanel).not.toBeNull();
 
-        const formBuilder = new UntypedFormBuilder();
+        const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
             'selectedUsers',
             'selectedCaseTypes',
@@ -1256,7 +1256,7 @@ describe('BookingsListComponent', () => {
 
     describe('onChangeNoAllocated', () => {
         beforeEach(() => {
-            const formBuilder = new UntypedFormBuilder();
+            const formBuilder = new FormBuilder();
             const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
             component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
             spyOn(component.csoMenu, 'enabled');

@@ -1,4 +1,4 @@
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
 import { Logger } from 'src/app/services/logger';
@@ -11,12 +11,12 @@ describe('EditParticipantComponent', () => {
     const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hmcts.net');
 
     let service: jasmine.SpyObj<ParticipantEditService>;
-    let formBuilder: UntypedFormBuilder;
+    let formBuilder: FormBuilder;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
     let router: jasmine.SpyObj<Router>;
 
     beforeAll(async () => {
-        formBuilder = new UntypedFormBuilder();
+        formBuilder = new FormBuilder();
         service = jasmine.createSpyObj<ParticipantEditService>('ParticipantEditService', [
             'updateParticipantName',
             'retrieveParticipantToEdit'
