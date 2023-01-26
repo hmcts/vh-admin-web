@@ -29,8 +29,14 @@
                 "output": "assets/fonts/"
               }
             ],
-            "styles": ["src/styles.css", "src/styles.scss"],
-            "scripts": ["node_modules/govuk-frontend/govuk/all.js", "src/scripts/init-script.js"],
+            "styles": [
+              "src/styles.css",
+              "src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/govuk-frontend/govuk/all.js",
+              "src/scripts/init-script.js"
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -87,8 +93,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "codeCoverageExclude": ["src/app/services/clients/api-client.ts", "src/app/testing/**"],
-            "styles": ["src/styles.css", "src/styles.scss"],
+            "codeCoverageExclude": [
+              "src/app/services/clients/api-client.ts",
+              "src/app/testing/**"
+            ],
+            "styles": [
+              "src/styles.css",
+              "src/styles.scss"
+            ],
             "scripts": [],
             "assets": [
               "src/favicon.ico",
@@ -101,11 +113,23 @@
               }
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653"
+    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
