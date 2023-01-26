@@ -8,8 +8,7 @@ export class ErrorService implements ErrorHandler {
     // unfortunately, being an implementation of the ErrorHandler, if we try to
     // inject the dependencies in the constructor we get a cyclic resolution error
     // instead we have to get the injector and resolve the classes when using them
-    constructor(private injector: Injector, private zone: NgZone) {
-    }
+    constructor(private injector: Injector, private zone: NgZone) {}
 
     handleError(err: any) {
         const router: Router = this.injector.get(Router);
