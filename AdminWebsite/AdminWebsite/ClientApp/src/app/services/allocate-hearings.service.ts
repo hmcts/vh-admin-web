@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AllocationHearingsResponse, BHClient, UpdateHearingAllocationToCsoRequest } from './clients/api-client';
 import { Logger } from './logger';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -34,10 +34,5 @@ export class AllocateHearingsService {
         request.hearings = selectedHearings;
         request.cso_id = csoUserId;
         return this.bhClient.allocateHearingsToCso(request);
-
-        // } catch (error) {
-        //     this.logger.error(`${error.response}`, error);
-        //
-        // }
     }
 }

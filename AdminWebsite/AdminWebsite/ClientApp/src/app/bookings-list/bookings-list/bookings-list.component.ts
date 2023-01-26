@@ -8,7 +8,7 @@ import { BookingsDetailsModel, BookingsListModel } from '../../common/model/book
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, HearingTypeResponse, HearingVenueResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { BookingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';

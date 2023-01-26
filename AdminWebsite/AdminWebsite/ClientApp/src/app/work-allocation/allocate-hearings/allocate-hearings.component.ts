@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../../services/allocate-hearings.service';
-import { AllocationHearingsResponse, ProblemDetails } from '../../services/clients/api-client';
+import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
@@ -134,7 +134,10 @@ export class AllocateHearingsComponent implements OnInit {
         this.clearSelectedHearings();
     }
 
-    cancelAllocation() {}
+    cancelAllocation() {
+        this.csoAllocatedMenu.clear();
+        this.clearSelectedHearings();
+    }
 
     checkAllocationForCso(guid: string) {
         // TODO: send a request to api to check the user against the list of hearings selected for warnings
