@@ -336,17 +336,19 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
 
+    delay(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     updateHearing() {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe(
                 (hearingDetailsResponse: HearingDetailsResponse) => {
-                    const schedule = timer(5000).subscribe(() => {
-                        this.showWaitSaving = false;
-                        this.hearingService.setBookingHasChanged(false);
-                        schedule.unsubscribe();
-                        this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
-                            hearingId: hearingDetailsResponse.id
-                        });
+                    async () => await this.delay(5000);
+                    this.showWaitSaving = false;
+                    this.hearingService.setBookingHasChanged(false);
+                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
+                        hearingId: hearingDetailsResponse.id
                     });
                     if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
                         this.hearing.hearing_id = hearingDetailsResponse.id;
