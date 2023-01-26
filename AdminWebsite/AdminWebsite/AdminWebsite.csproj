@@ -33,7 +33,7 @@
   <PropertyGroup><ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles></PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="BookingsApi.Client" Version="1.41.15" />
-	<PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
+	<PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.3" />
 	<PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
