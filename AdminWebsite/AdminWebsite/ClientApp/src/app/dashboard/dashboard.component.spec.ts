@@ -105,12 +105,11 @@ describe('DashboardComponent', () => {
         expect(component.showWorkAllocation).toBeFalsy();
     });
 
-    it('should show work allocation tile if feature is switched on and user is VHO', async () => {
+    it('should show work allocation tile if feature is switched on and user is Team Leader', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
                 new UserProfileResponse({
-                    is_case_administrator: true,
-                    is_vh_officer_administrator_role: true
+                    is_vh_team_leader: true
                 })
             )
         );
@@ -127,5 +126,18 @@ describe('DashboardComponent', () => {
         component.ngOnDestroy();
 
         expect(unsubscribeSpy).toHaveBeenCalled();
+    });
+
+    it('should not show work allocation toggle if user is not Team Leader', async () => {
+        userIdentitySpy.getUserInformation.and.returnValue(
+            of(
+                new UserProfileResponse({
+                    is_vh_team_leader: false,
+                    is_vh_officer_administrator_role: true
+                })
+            )
+        );
+        await component.ngOnInit();
+        expect(component.showWorkAllocation).toBeFalsy();
     });
 });

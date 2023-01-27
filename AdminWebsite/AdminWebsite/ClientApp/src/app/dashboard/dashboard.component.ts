@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 .toPromise()
                 .then(profile => {
                     this.showCheckList = profile.is_vh_officer_administrator_role;
-                    this.showWorkAllocation = profile.is_vh_officer_administrator_role && this.vhoWorkAllocationFeature;
+                    this.showWorkAllocation = profile.is_vh_team_leader && this.vhoWorkAllocationFeature;
                     this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
                     this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
                         showCheckList: this.showCheckList,
