@@ -92,6 +92,18 @@ export class AllocateHearingsComponent implements OnInit {
         this.caseTypeMenu.clear();
     }
 
+    messageCanBeDisplayed(): boolean {
+        if (!this.displayMessage || this.selectedHearings.length !== 0) {
+            this.clearMessage();
+        }
+        return this.displayMessage && this.selectedHearings.length === 0;
+    }
+
+    clearMessage() {
+        this.displayMessage = false;
+        this.message = '';
+    }
+
     selectedCaseTypesEmitter($event: string[]) {
         this.caseTypeDropDownValues = $event;
     }
@@ -191,15 +203,15 @@ export class AllocateHearingsComponent implements OnInit {
         this.message = `Hearings have been updated.`;
     }
 
-    selectAllocateUser($event, hearing_id: string) {
+    selectHearing($event, hearing_id: string) {
         const checkBoxChecked = $event.target.checked;
         const index: number = this.selectedHearings.indexOf(hearing_id);
         if (checkBoxChecked) {
             if (index === -1) {
                 this.selectedHearings.push(hearing_id);
-            }
-            if (this.csoAllocatedMenu?.selectedLabel) {
-                this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
+                if (this.csoAllocatedMenu?.selectedLabel) {
+                    this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
+                }
             }
         } else {
             if (index !== -1) {

@@ -72,7 +72,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="displayMessage" class="govuk-body govuk-!-font-weight-bold">
+  <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold">
     <fa-icon [icon]="faExclamation"></fa-icon>
     {{ message }}
   </div>
@@ -109,7 +109,7 @@
             type="checkbox"
             [checked]="false"
             aria-label="Select hearing"
-            (click)="selectAllocateUser($event, hearing.hearing_id)"
+            (click)="selectHearing($event, hearing.hearing_id)"
           />
         </td>
         <td class="govuk-table__cell">{{ hearing.hearing_date.toLocaleDateString('en-GB') }}</td>
