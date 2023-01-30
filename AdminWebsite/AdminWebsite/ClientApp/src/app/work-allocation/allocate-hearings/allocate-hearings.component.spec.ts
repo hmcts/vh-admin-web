@@ -13,10 +13,28 @@ import { of } from 'rxjs';
 import { JusticeUserMenuStubComponent } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub.component';
 import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/case-type-menu-stub.component';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
+import { Component, DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+
+@Component({
+    selector: 'table',
+    template: '<td id="cso_1" class="govuk-table__cell">Not Allocated</td>' +
+        '<input\n' +
+        '            id="select-all-hearings"\n' +
+        '            name="select-all-hearings"\n' +
+        '            type="checkbox"\n' +
+        '            value="true"\n' +
+        '            aria-label="Select all hearings"\n' +
+        '            (change)="checkUncheckAll(!allChecked)"\n' +
+        '          />'
+})
+class TableStubComponent {}
+
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
     let fixture: ComponentFixture<AllocateHearingsComponent>;
+    let debugElement: DebugElement;
     let activatedRoute: ActivatedRouteStub;
     let allocateServiceSpy: jasmine.SpyObj<AllocateHearingsService>;
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
@@ -27,8 +45,9 @@ describe('AllocateHearingsComponent', () => {
         activatedRoute = new ActivatedRouteStub();
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
 
+
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent, TableStubComponent],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -43,6 +62,7 @@ describe('AllocateHearingsComponent', () => {
         fixture.detectChanges();
         component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
         component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
+        component.csoAllocatedMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
     });
 
     describe('ngOnInit', () => {
@@ -187,5 +207,64 @@ describe('AllocateHearingsComponent', () => {
             expect(component.csoDropDownValues).toEqual([]);
             expect(component.caseTypeDropDownValues).toEqual([]);
         });
+    });
+    describe('Manual allocation', () => {
+
+        it('Should display message when no hearings are selected and message is ready', () => {
+            const formBuilder = new FormBuilder();
+            component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            component.displayMessage = true;
+            component.selectedHearings = [];
+            component.message = 'this is a message';
+
+            component.messageCanBeDisplayed();
+
+            expect(component.message).toBe('this is a message');
+        });
+
+        it('Should not display message and clear message when hearings are selected', () => {
+            const formBuilder = new FormBuilder();
+            component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            component.displayMessage = true;
+            component.selectedHearings = ['1','2','3','4'];
+            component.message = 'this is a message';
+
+            component.messageCanBeDisplayed();
+
+            expect(component.message).toBe('');
+            expect(component.displayMessage).toBe(false);
+        });
+
+        it('Should change label if allocated cso user selected', () => {
+            const formBuilder = new FormBuilder();
+
+            const responseObj: AllocationHearingsResponse[] = [];
+
+            for (let i = 0; i < 30; i++) {
+                const allocation = new AllocationHearingsResponse();
+                allocation.hearing_id = i.toString();
+                responseObj.push(allocation);
+            }
+
+            const id = '1';
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
+            fixture.detectChanges();
+
+
+            component.searchForHearings();
+
+            component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
+            component.selectedHearings = ['1'];
+
+            component.selectedAllocatedUsersEmitter('user@mail.com');
+            const componentDebugElement: DebugElement = fixture.debugElement;
+            const selectAll = componentDebugElement.query(By.css('#select-all-hearings')).nativeElement as HTMLInputElement;
+            const cell = componentDebugElement.query(By.css('#cso_1')).nativeElement as HTMLInputElement;
+            expect(selectAll.checked).toBeFalsy();
+            expect(cell.innerHTML).toBe('user@mail.com');
+
+        });
+
     });
 });
