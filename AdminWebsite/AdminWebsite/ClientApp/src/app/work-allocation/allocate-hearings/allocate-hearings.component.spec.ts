@@ -15,26 +15,11 @@ import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/cas
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-
-@Component({
-    selector: 'table',
-    template: '<td id="cso_1" class="govuk-table__cell">Not Allocated</td>' +
-        '<input\n' +
-        '            id="select-all-hearings"\n' +
-        '            name="select-all-hearings"\n' +
-        '            type="checkbox"\n' +
-        '            value="true"\n' +
-        '            aria-label="Select all hearings"\n' +
-        '            (change)="checkUncheckAll(!allChecked)"\n' +
-        '          />'
-})
-class TableStubComponent {}
-
+import {MinutesToHoursPipe} from "../../shared/pipes/minutes-to-hours.pipe";
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
     let fixture: ComponentFixture<AllocateHearingsComponent>;
-    let debugElement: DebugElement;
     let activatedRoute: ActivatedRouteStub;
     let allocateServiceSpy: jasmine.SpyObj<AllocateHearingsService>;
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
@@ -44,10 +29,8 @@ describe('AllocateHearingsComponent', () => {
     beforeEach(async () => {
         activatedRoute = new ActivatedRouteStub();
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
-
-
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent, TableStubComponent],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -237,26 +220,14 @@ describe('AllocateHearingsComponent', () => {
 
         it('Should change label if allocated cso user selected', () => {
             const formBuilder = new FormBuilder();
-
-            const responseObj: AllocationHearingsResponse[] = [];
-
-            for (let i = 0; i < 30; i++) {
-                const allocation = new AllocationHearingsResponse();
-                allocation.hearing_id = i.toString();
-                responseObj.push(allocation);
-            }
-
-            const id = '1';
-            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
-            fixture.detectChanges();
-
-
-            component.searchForHearings();
-
             component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
             component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
             component.selectedHearings = ['1'];
-
+            component.hearings = [
+                new AllocationHearingsResponse({hearing_id: '1'}),
+                new AllocationHearingsResponse({hearing_id: '2'}),
+                new AllocationHearingsResponse({hearing_id: '3'})];
+            fixture.detectChanges();
             component.selectedAllocatedUsersEmitter('user@mail.com');
             const componentDebugElement: DebugElement = fixture.debugElement;
             const selectAll = componentDebugElement.query(By.css('#select-all-hearings')).nativeElement as HTMLInputElement;
