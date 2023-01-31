@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
     template: ''
 })
 export class JusticeUserMenuStubComponent {
+    selectedLabel: string;
     loadItems() {
         console.log('stub method');
     }

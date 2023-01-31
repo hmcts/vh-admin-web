@@ -13,9 +13,9 @@ import { of } from 'rxjs';
 import { JusticeUserMenuStubComponent } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub.component';
 import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/case-type-menu-stub.component';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
-import { Component, DebugElement } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import {MinutesToHoursPipe} from "../../shared/pipes/minutes-to-hours.pipe";
+import { MinutesToHoursPipe } from "../../shared/pipes/minutes-to-hours.pipe";
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -30,7 +30,7 @@ describe('AllocateHearingsComponent', () => {
         activatedRoute = new ActivatedRouteStub();
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings']);
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent],
+            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent, MinutesToHoursPipe],
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
@@ -220,14 +220,25 @@ describe('AllocateHearingsComponent', () => {
 
         it('Should change label if allocated cso user selected', () => {
             const formBuilder = new FormBuilder();
-            component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-            component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
-            component.selectedHearings = ['1'];
+            const responseObj: AllocationHearingsResponse[] = [];
+
+            for (let i = 0; i < 30; i++) {
+                const allocation = new AllocationHearingsResponse();
+                allocation.hearing_id = i.toString();
+                allocation.hearing_date = new Date('2023-01-14');
+                responseObj.push(allocation);
+            }
+
             component.hearings = [
-                new AllocationHearingsResponse({hearing_id: '1'}),
-                new AllocationHearingsResponse({hearing_id: '2'}),
-                new AllocationHearingsResponse({hearing_id: '3'})];
+                new AllocationHearingsResponse({hearing_id: '1', hearing_date: new Date('2023-01-30')}),
+                new AllocationHearingsResponse({hearing_id: '2', hearing_date: new Date('2023-02-30')}),
+                new AllocationHearingsResponse({hearing_id: '3', hearing_date: new Date('2023-03-30')})];
+
+            component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
+            component.selectedHearings = ['5'];
+            component.allocateHearingsDetailOpen = true;
             fixture.detectChanges();
+
             component.selectedAllocatedUsersEmitter('user@mail.com');
             const componentDebugElement: DebugElement = fixture.debugElement;
             const selectAll = componentDebugElement.query(By.css('#select-all-hearings')).nativeElement as HTMLInputElement;
