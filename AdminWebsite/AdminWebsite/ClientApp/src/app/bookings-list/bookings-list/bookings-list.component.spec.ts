@@ -918,7 +918,19 @@ describe('BookingsListComponent', () => {
         });
     });
 
-    it('should onClear', () => {
+    it('should onClear (if workAllocation feature on)', () => {
+        spyOn(component, 'workAllocationEnabled').and.returnValue(true);
+        const csoMenu = onClearTest();
+        expect(csoMenu).toHaveBeenCalledTimes(1);
+    });
+
+    it('should onClear (if workAllocation feature off)', () => {
+        spyOn(component, 'workAllocationEnabled').and.returnValue(false);
+        const csoMenu = onClearTest();
+        expect(csoMenu).toHaveBeenCalledTimes(0);
+    });
+
+    function onClearTest() {
         const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
             'selectedUsers',
@@ -932,6 +944,8 @@ describe('BookingsListComponent', () => {
         const searchFormSpy = component.searchForm;
         spyOn(searchFormSpy, 'reset');
         spyOn(bookingPersistService, 'resetAll');
+        const csoMenuSpy = spyOn(component.csoMenu, 'clear');
+
         component.onClear();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingPersistService.caseNumber).toEqual('');
@@ -942,8 +956,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.noJugdeInHearings).toBeFalsy();
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
-    });
-
+        return csoMenuSpy;
+    }
     it('should display correct title upon inital load', () => {
         component.ngOnInit();
         expect(component.title).toEqual('Booking List');
