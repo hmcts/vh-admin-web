@@ -27,7 +27,8 @@ import {
     HearingDetailsResponse,
     HearingVenueResponse,
     HearingTypeResponse,
-    JusticeUserResponse
+    JusticeUserResponse,
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -1274,6 +1275,22 @@ describe('BookingsListComponent', () => {
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
+        });
+
+        it('should not show allocated to if work allocation feature flat is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divTohide = fixture.debugElement.query(By.css('allocated-to'));
+            expect(divTohide).toBeFalsy();
+        });
+
+        it('should  show allocated to if work allocation feature flat is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divTohide = fixture.debugElement.query(By.css('allocated-to'));
+            expect(divTohide).toBeTruthy();
         });
     });
 });

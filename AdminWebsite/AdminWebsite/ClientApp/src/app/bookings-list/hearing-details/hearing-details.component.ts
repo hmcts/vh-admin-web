@@ -1,26 +1,51 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
+import { Subscription } from 'rxjs';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
     selector: 'app-hearing-details',
     templateUrl: 'hearing-details.component.html',
     styleUrls: ['hearing-details.component.css']
 })
-export class HearingDetailsComponent {
+export class HearingDetailsComponent implements OnInit {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
+
     @Input() set phoneDetails(value: string) {
         this.phoneConferenceDetails = value;
     }
 
     private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
-    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
+
+    vhoWorkAllocationFeature = false;
+    $subcription: Subscription;
+
+    $ldSubcription: Subscription;
+    enableSearchFeature: boolean;
+    ejudFeatureFlag: boolean;
+
+    constructor(
+        private route: ActivatedRoute,
+        private logger: Logger,
+        private configService: ConfigService,
+        private lanchDarklyService: LaunchDarklyService
+    ) {}
+
+    ngOnInit() {
+        this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
+            if (value) {
+                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
+            }
+        });
+    }
 
     getParticipantInfo(participantId: string): string {
         let represents = '';

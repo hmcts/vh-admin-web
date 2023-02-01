@@ -1,4 +1,4 @@
-import { DebugElement } from '@angular/core';
+import { AfterViewInit, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -11,9 +11,17 @@ import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { of } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
+import { LaunchDarklyService } from '../../services/launch-darkly.service';
+import { ReturnUrlService } from '../../services/return-url.service';
+import { FeatureFlagService } from '../../services/feature-flag.service';
+
+let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
+launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 
 describe('HearingDetailsComponent', () => {
+    launchDarklyServiceSpy.flagChange = new ReplaySubject();
+    launchDarklyServiceSpy.flagChange.next({ admin_search: true });
     let component: HearingDetailsComponent;
     let fixture: ComponentFixture<HearingDetailsComponent>;
     let debugElement: DebugElement;
@@ -49,14 +57,19 @@ describe('HearingDetailsComponent', () => {
         'reason1',
         'Financial Remedy',
         'judge.green@hmcts.net',
-        '1234567'
+        '1234567',
+        'test'
     );
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
                 declarations: [HearingDetailsComponent, LongDatetimePipe],
                 imports: [RouterTestingModule],
-                providers: [Logger, { provide: ConfigService, useValue: configServiceSpy }]
+                providers: [
+                    Logger,
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                ]
             }).compileComponents();
         })
     );
@@ -142,6 +155,23 @@ describe('HearingDetailsComponent', () => {
         const result = component.getParticipantInfo('123-1234');
         expect(result).toBe('');
     });
+    fdescribe('feature flag turn on and off ', () => {
+        fit('should not show allocated to if work allocation feature flat is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divTohide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            expect(divTohide).toBeFalsy();
+        });
+
+        it('should  show allocated to if work allocation feature flat is on', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divTohide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            expect(divTohide).toBeTruthy();
+        });
+    });
 });
 describe('HearingDetailsComponent join by phone', () => {
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
@@ -181,7 +211,8 @@ describe('HearingDetailsComponent join by phone', () => {
         '1234567'
     );
     it('should display option to join by phone if config has not the set date', () => {
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
+        // @ts-ignore
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy, launchDarklyServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(true);
@@ -189,7 +220,7 @@ describe('HearingDetailsComponent join by phone', () => {
     it('should not display option to join by phone if booking has not confirmation date', () => {
         clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = null;
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy, launchDarklyServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(false);
@@ -197,7 +228,7 @@ describe('HearingDetailsComponent join by phone', () => {
     it('should not display option to join by phone if booking confirmation date less than config date', () => {
         clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = new Date('2020-10-21');
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy, launchDarklyServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(false);
@@ -205,7 +236,7 @@ describe('HearingDetailsComponent join by phone', () => {
     it('should display option to join by phone if booking confirmation date greater than config date', () => {
         clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = new Date('2020-10-23');
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy, launchDarklyServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(true);
