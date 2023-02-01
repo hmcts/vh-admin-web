@@ -242,8 +242,8 @@ describe('AllocateHearingsComponent', () => {
 
             var mockedDocElement = document.createElement('div');
             var mockedTdElement = document.createElement('td');
-            document.getElementById = jasmine.createSpy('select-all-hearings').and.returnValue(mockedDocElement );
-            document.querySelector = jasmine.createSpy('#cso_5').and.returnValue(mockedTdElement );
+            document.getElementById = jasmine.createSpy('select-all-hearings').and.returnValue(mockedDocElement);
+            document.querySelector = jasmine.createSpy('#cso_5').and.returnValue(mockedTdElement);
 
 
             component.selectedAllocatedUsersEmitter('10');
