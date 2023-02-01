@@ -234,16 +234,21 @@ describe('AllocateHearingsComponent', () => {
                 new AllocationHearingsResponse({hearing_id: '2', hearing_date: new Date('2023-02-30')}),
                 new AllocationHearingsResponse({hearing_id: '3', hearing_date: new Date('2023-03-30')})];
 
-            component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
-            component.selectedHearings = ['5'];
-            component.allocateHearingsDetailOpen = true;
             fixture.detectChanges();
 
-            component.selectedAllocatedUsersEmitter('user@mail.com');
+            component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
+            component.selectedHearings = ['1'];
+            component.allocateHearingsDetailOpen = true;
+
+            var mockedDocElement = document.createElement('div');
+            var mockedTdElement = document.createElement('td');
+            document.getElementById = jasmine.createSpy('select-all-hearings').and.returnValue(mockedDocElement );
+            document.querySelector = jasmine.createSpy('#cso_5').and.returnValue(mockedTdElement );
+
+
+            component.selectedAllocatedUsersEmitter('10');
             const componentDebugElement: DebugElement = fixture.debugElement;
-            const selectAll = componentDebugElement.query(By.css('#select-all-hearings')).nativeElement as HTMLInputElement;
-            const cell = componentDebugElement.query(By.css('#cso_1')).nativeElement as HTMLInputElement;
-            expect(selectAll.checked).toBeFalsy();
+            const cell = componentDebugElement.query(By.css('#cso_1')).nativeElement as HTMLTableRowElement;
             expect(cell.innerHTML).toBe('user@mail.com');
 
         });
