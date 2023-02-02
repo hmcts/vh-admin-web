@@ -211,7 +211,6 @@ describe('HearingDetailsComponent join by phone', () => {
         '1234567'
     );
     it('should display option to join by phone if config has not the set date', () => {
-        // @ts-ignore
         const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy, launchDarklyServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
