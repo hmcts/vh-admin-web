@@ -155,21 +155,21 @@ describe('HearingDetailsComponent', () => {
         const result = component.getParticipantInfo('123-1234');
         expect(result).toBe('');
     });
-    fdescribe('feature flag turn on and off ', () => {
-        fit('should not show allocated to if work allocation feature flat is off', async () => {
+    describe('feature flag turn on and off ', () => {
+        fit('should not show allocated to if work allocation feature flag is off', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divTohide = fixture.debugElement.query(By.css('hearing-allocated-to'));
-            expect(divTohide).toBeFalsy();
+            const divToHide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            expect(divToHide).toBeFalsy();
         });
 
-        it('should  show allocated to if work allocation feature flat is on', async () => {
+        it('should show allocated to if work allocation feature flag is on', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divTohide = fixture.debugElement.query(By.css('hearing-allocated-to'));
-            expect(divTohide).toBeTruthy();
+            const divToHide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            expect(divToHide).toBeTruthy();
         });
     });
 });

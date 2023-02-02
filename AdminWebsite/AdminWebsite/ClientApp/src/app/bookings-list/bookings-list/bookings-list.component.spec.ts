@@ -1277,20 +1277,20 @@ describe('BookingsListComponent', () => {
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
 
-        it('should not show allocated to if work allocation feature flat is off', async () => {
+        it('should not show allocated to if work allocation feature flag is off', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divTohide = fixture.debugElement.query(By.css('allocated-to'));
-            expect(divTohide).toBeFalsy();
+            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            expect(divToHide).toBeFalsy();
         });
 
-        it('should  show allocated to if work allocation feature flat is on', async () => {
+        it('should  show allocated to if work allocation feature flag is on', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divTohide = fixture.debugElement.query(By.css('allocated-to'));
-            expect(divTohide).toBeTruthy();
+            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            expect(divToHide).toBeTruthy();
         });
     });
 });
