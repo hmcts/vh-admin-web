@@ -156,7 +156,7 @@ describe('HearingDetailsComponent', () => {
         expect(result).toBe('');
     });
     describe('feature flag turn on and off ', () => {
-        fit('should not show allocated to if work allocation feature flag is off', async () => {
+        it('should not show allocated to if work allocation feature flag is off', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
