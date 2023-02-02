@@ -7,7 +7,6 @@ import { OtherInformationModel } from '../../common/model/other-information.mode
 import { ConfigService } from 'src/app/services/config.service';
 import { Subscription } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
     selector: 'app-hearing-details',
@@ -41,9 +40,7 @@ export class HearingDetailsComponent implements OnInit {
 
     ngOnInit() {
         this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
-            if (value) {
-                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-            }
+            this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
         });
     }
 
