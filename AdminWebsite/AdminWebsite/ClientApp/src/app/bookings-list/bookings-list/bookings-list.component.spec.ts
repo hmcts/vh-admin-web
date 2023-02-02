@@ -1285,7 +1285,7 @@ describe('BookingsListComponent', () => {
             expect(divTohide).toBeFalsy();
         });
 
-        it('should  show allocated to if work allocation feature flat is off', async () => {
+        it('should  show allocated to if work allocation feature flat is on', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
