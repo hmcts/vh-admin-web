@@ -87,7 +87,7 @@
             id="select-all-hearings"
             name="select-all-hearings"
             type="checkbox"
-            value="true"
+            [checked]="allChecked"
             aria-label="Select all hearings"
             (change)="checkUncheckAll(!allChecked)"
           />

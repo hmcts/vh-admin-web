@@ -42,8 +42,8 @@ export abstract class MenuBase implements OnInit {
 
     onSelect() {
         this.selectedItems = this.form.value[this.formGroupName];
-        this.selectedEmitter.emit(this.selectedItems);
         this.selectedLabel = this.items.filter(x => x.id === this.selectedItems).map(y => y.username)[0];
+        this.selectedEmitter.emit(this.selectedItems);
     }
 
     clear(): void {
