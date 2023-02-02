@@ -27,7 +27,8 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options =>
+                options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"]));
             

@@ -66,12 +66,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
-        
-        [SetUp]
-        public void Setup2()
-        {
-        }
-
 
         [Test]
         public async Task Should_create_a_hearing_with_endpoints()
