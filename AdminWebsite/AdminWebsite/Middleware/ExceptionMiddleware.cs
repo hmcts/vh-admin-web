@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using BookingsApi.Client;
 
@@ -28,24 +29,33 @@ namespace AdminWebsite.Middleware
             }
             catch (BookingsApiException apiException)
             {
-                var properties = new Dictionary<string, string> { { "response", apiException.Response } };
-                ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "Bookings API Client Exception", apiException, null, properties);
-                await HandleExceptionAsync(httpContext, apiException);
+                var properties = new Dictionary<string, string> {{"response", apiException.Response}};
+                ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "Bookings API Client Exception",
+                    apiException, null, properties);
+                await HandleExceptionAsync(httpContext, apiException, apiException.StatusCode);
             }
             catch (Exception ex)
             {
-                ApplicationLogger.TraceException(TraceCategory.UnhandledError.ToString(), "AdminWeb Unhandled Exception", ex, null,
+                ApplicationLogger.TraceException(TraceCategory.UnhandledError.ToString(),
+                    "AdminWeb Unhandled Exception", ex, null,
                     null);
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception,
+            int statusCode = (int) HttpStatusCode.InternalServerError)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = statusCode;
+            var sb = new StringBuilder(exception.Message);
+            var innerException = exception.InnerException;
+            while (innerException != null)
+            {
+                sb.Append($" {innerException.Message}");
+                innerException = innerException.InnerException;
+            }
 
-            return context.Response.WriteAsync(exception.Message);
+            return context.Response.WriteAsJsonAsync(sb.ToString());
         }
     }
 }
