@@ -93,7 +93,7 @@ describe('Video hearing service', () => {
     });
 
     it('should get Justice User list', () => {
-        service.getUsers();
+        service.getUsers(null);
         expect(clientApiSpy.getUserList).toHaveBeenCalled();
     });
 

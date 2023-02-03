@@ -1,16 +1,106 @@
 <details class="govuk-details" data-module="govuk-details">
-  <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
-    <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
-  </summary>
-  <div class="govuk-form-group govuk-!-margin-left-6">
-    <div class="govuk-form-group">
-      <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member"> Search for team member </label>
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-          <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" />
+    <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
+        <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
+    </summary>
+    <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="form">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member"> Search
+                for team member </label>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-third">
+                    <input class="govuk-input" id="search-team-member" name="search-team-member" type="text"
+                           formControlName="inputSearch"/>
+                </div>
+                <div class="govuk-grid-column-one-third">
+                    <div class="govuk-grid-column-one-third">
+                        <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+                    </div>
+                    <div class="govuk-grid-column-one" *ngIf="displayAddButton">
+                        <button class="govuk-button" data-module="govuk-button" (click)="addUsers()">Add a team member
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button class="govuk-button" data-module="govuk-button">Search</button>
-      </div>
     </div>
-  </div>
+    <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="(errorMessage) ?  'vh-text-color-red'  : ''">
+        <fa-icon [icon]="(errorMessage) ? faError : faExclamation"></fa-icon>
+        {{ message }}</div>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Username</th>
+            <th scope="col" class="govuk-table__header">First name</th>
+            <th scope="col" class="govuk-table__header">Last name</th>
+            <th scope="col" class="govuk-table__header">Contact email</th>
+            <th scope="col" class="govuk-table__header">Role</th>
+            <th scope="col" class="govuk-table__header action-cell"></th>
+            <th scope="col" class="govuk-table__header action-cell"></th>
+        </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        <tr class="govuk-table__row" *ngFor="let user of users">
+            <td class="govuk-table__cell">
+                <input
+                    id="username_{{ user.id }}"
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="user.username"
+                    class="{{ user.id }}"
+                    required="true"
+                />
+            </td>
+            <td class="govuk-table__cell">
+                <input
+                    id="firstname_{{ user.id }}"
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="user.first_name"
+                    class="{{ user.id }}"
+                    required="true"
+                />
+            </td>
+            <td class="govuk-table__cell">
+                <input
+                    id="lastname_{{ user.id }}"
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="user.lastname"
+                    class="{{ user.id }}"
+                    required="true"
+                />
+            </td>
+            <td class="govuk-table__cell">
+                <input
+                    id="contact_email_{{ user.id }}"
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="user.contact_email"
+                    class="{{ user.id }}"
+                    required="true"
+                />
+            </td>
+            <td class="govuk-table__cell">
+                <input
+                    id="role_{{ user.id }}"
+                    [disabled]="true"
+                    type="text"
+                    [(ngModel)]="user.user_role_name"
+                    class="{{ user.id }}"
+                    required="true"
+                />
+            </td>
+            <td class="govuk-table__cell">
+                <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" id="editButton_{{ user.id }}"
+                        (click)="editUser(user.id)">Edit
+                </button>
+            </td>
+            <td class="govuk-table__cell">
+                <button class="govuk-button govuk-!-margin-right-6 red-button" data-module="govuk-button"
+                        (click)="deleteUser(user.id)">Delete
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </details>

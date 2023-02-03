@@ -32,7 +32,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
     }
 
     loadItems(): void {
-        this.videoHearingService.getUsers().subscribe(
+        this.videoHearingService.getUsers(null).subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
