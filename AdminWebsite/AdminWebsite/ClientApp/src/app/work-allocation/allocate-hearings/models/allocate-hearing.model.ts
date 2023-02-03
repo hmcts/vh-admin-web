@@ -5,7 +5,16 @@ import { AllocationHearingsResponse } from '../../../services/clients/api-client
 export class AllocateHearingItemModel {
     public allocatedOfficerId: string;
 
-    constructor(public hearingId?: string, public allocatedOfficerUsername?: string, public checked: boolean = false) {}
+    constructor(
+        public hearingId: string,
+        public hearingDate: Date,
+        public startTime: string,
+        public duration: number,
+        public caseNumber: string,
+        public caseType: string,
+        public allocatedOfficerUsername?: string,
+        public checked: boolean = false
+    ) {}
 
     setChecked(isChecked: boolean) {
         this.checked = isChecked;
@@ -24,7 +33,19 @@ export class AllocateHearingModel {
     public hearings: AllocateHearingItemModel[];
 
     constructor(public originalState: AllocationHearingsResponse[]) {
-        this.hearings = this.originalState.map(val => new AllocateHearingItemModel(val.hearing_id, val.allocated_cso, false));
+        this.hearings = this.originalState.map(
+            val =>
+                new AllocateHearingItemModel(
+                    val.hearing_id,
+                    val.hearing_date,
+                    val.start_time,
+                    val.duration,
+                    val.case_number,
+                    val.case_type,
+                    val.allocated_cso,
+                    false
+                )
+        );
     }
 
     get selectedHearingIds(): string[] {
@@ -33,6 +54,15 @@ export class AllocateHearingModel {
 
     get hasSelectedHearings(): boolean {
         return this.hearings.some(h => h.checked);
+    }
+
+    get hasPendingChanges(): boolean {
+        const original = this.originalState.map(h => <any>{ id: h.hearing_id, cso: h.allocated_cso }).sort();
+        const current = this.hearings.map(h => <any>{ id: h.hearingId, cso: h.allocatedOfficerUsername }).sort();
+
+        const stringMatch = JSON.stringify(original) === JSON.stringify(current);
+        const match = arraysEqual(original, current);
+        return !stringMatch;
     }
 
     get areAllChecked(): boolean {
@@ -66,14 +96,19 @@ export class AllocateHearingModel {
 
     revertHearing(hearingId: string) {
         const index = this.hearings.findIndex(h => h.hearingId === hearingId);
-        const original = this.originalState.find(h => h.hearing_id === hearingId);
-        this.hearings[index] = new AllocateHearingItemModel(original.hearing_id, original.allocated_cso, false);
+        const originalHearing = this.originalState.find(h => h.hearing_id === hearingId);
+        this.hearings[index] = new AllocateHearingItemModel(
+            originalHearing.hearing_id,
+            originalHearing.hearing_date,
+            originalHearing.start_time,
+            originalHearing.duration,
+            originalHearing.case_number,
+            originalHearing.case_type,
+            originalHearing.allocated_cso,
+            false
+        );
         this.originalState.find(h => h.hearing_id === hearingId);
     }
-
-    // updateCsoForHearing(hearingId: string, csoId: string, csoUsername: string): void {
-    //     this.hearings.find(h => h.hearingId === hearingId)?.updateAssignedCso(csoUsername, csoId);
-    // }
 
     updateHearings(updatedHearings: AllocationHearingsResponse[]) {
         updatedHearings.forEach(updatedHearing => {
@@ -81,6 +116,34 @@ export class AllocateHearingModel {
             this.originalState[index] = updatedHearing;
         });
 
-        this.hearings = this.originalState.map(val => new AllocateHearingItemModel(val.hearing_id, val.allocated_cso, false));
+        this.hearings = this.originalState.map(
+            val =>
+                new AllocateHearingItemModel(
+                    val.hearing_id,
+                    val.hearing_date,
+                    val.start_time,
+                    val.duration,
+                    val.case_number,
+                    val.case_type,
+                    val.allocated_cso,
+                    false
+                )
+        );
     }
+}
+
+export function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
+
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
 }
