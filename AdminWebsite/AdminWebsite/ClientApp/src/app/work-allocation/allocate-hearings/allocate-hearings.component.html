@@ -53,7 +53,7 @@
       <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">Clear</button>
     </div>
   </div>
-  <div id="user-allocation" class="govuk-grid-column-one-third" *ngIf="selectedHearings.length > 0">
+  <div id="user-allocation" class="govuk-grid-column-one-third" *ngIf="allocationHearingViewModel.hearings.length > 0">
     <div id="user-menu">
       <app-justice-users-menu
         #csoAllocatedMenu
@@ -64,7 +64,7 @@
       </app-justice-users-menu>
     </div>
     <div id="user-allocation-button">
-      <div *ngIf="csoUserToAllocate">
+      <div *ngIf="allocationHearingViewModel.hasPendingChanges">
         <div class="govuk-!-margin-bottom-2">
           <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="confirmAllocation()">Confirm</button>
           <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelAllocation()">Cancel</button>
@@ -101,23 +101,23 @@
       </tr>
     </thead>
     <tbody class="govuk-table__body">
-      <tr class="govuk-table__row" *ngFor="let hearing of hearings; let i = index">
+      <tr class="govuk-table__row" *ngFor="let hearing of allocationHearingViewModel.hearings; let i = index">
         <td class="govuk-table__cell">
           <input
-            id="hearing_{{ hearing.hearing_id }}"
+            id="hearing_{{ hearing.hearingId }}"
             [name]="'select-hearing_' + i"
             type="checkbox"
-            [checked]="false"
+            [checked]="hearing.checked"
             aria-label="Select hearing"
-            (click)="selectHearing($event, hearing.hearing_id)"
+            (click)="selectHearing(!hearing.checked, hearing.hearingId)"
           />
         </td>
-        <td class="govuk-table__cell">{{ hearing.hearing_date.toLocaleDateString('en-GB') }}</td>
-        <td class="govuk-table__cell">{{ hearing.start_time }}</td>
+        <td class="govuk-table__cell">{{ hearing.hearingDate.toLocaleDateString('en-GB') }}</td>
+        <td class="govuk-table__cell">{{ hearing.startTime }}</td>
         <td class="govuk-table__cell">{{ hearing.duration | minutesToHours }}</td>
-        <td class="govuk-table__cell">{{ hearing.case_number }}</td>
-        <td class="govuk-table__cell">{{ hearing.case_type }}</td>
-        <td id="cso_{{ hearing.hearing_id }}" class="govuk-table__cell">{{ hearing.allocated_cso }}</td>
+        <td class="govuk-table__cell">{{ hearing.caseNumber }}</td>
+        <td class="govuk-table__cell">{{ hearing.caseType }}</td>
+        <td id="cso_{{ hearing.hearingId }}" class="govuk-table__cell">{{ hearing.allocatedOfficerUsername }}</td>
       </tr>
     </tbody>
   </table>

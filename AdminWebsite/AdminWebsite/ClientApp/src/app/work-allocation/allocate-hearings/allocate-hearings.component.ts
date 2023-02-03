@@ -6,6 +6,7 @@ import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { AllocateHearingModel } from './models/allocate-hearing.model';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -29,11 +30,9 @@ export class AllocateHearingsComponent implements OnInit {
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
     originalHearings: AllocationHearingsResponse[];
-    hearings: AllocationHearingsResponse[];
+    allocationHearingViewModel: AllocateHearingModel = new AllocateHearingModel([]);
     caseTypeDropDownValues: string[];
     csoDropDownValues: string[];
-    selectedHearings: string[] = [];
-    csoUserToAllocate: string;
     displayMessage = false;
     message: string;
     faExclamation = faCircleExclamation;
@@ -73,25 +72,32 @@ export class AllocateHearingsComponent implements OnInit {
 
         this.allocateService
             .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
-            .subscribe(result => this.filterResults(result));
+            .subscribe(result => this.displayResults(result));
     }
 
     clear() {
-        this.hearings = this.originalHearings = [];
+        this.allocationHearingViewModel = new AllocateHearingModel([]);
         this.caseTypeDropDownValues = [];
         this.csoDropDownValues = [];
 
-        this.form.reset();
+        this.form.reset({
+            fromDate: '',
+            toDate: '',
+            userName: '',
+            caseType: '',
+            caseNumber: '',
+            isUnallocated: false
+        });
 
         this.csoMenu.clear();
         this.caseTypeMenu.clear();
     }
 
     messageCanBeDisplayed(): boolean {
-        if (!this.displayMessage || this.selectedHearings.length !== 0) {
+        if (!this.displayMessage || this.allocationHearingViewModel.hasSelectedHearings) {
             this.clearMessage();
         }
-        return this.displayMessage && this.selectedHearings.length === 0;
+        return this.displayMessage && !this.allocationHearingViewModel.hasSelectedHearings;
     }
 
     clearMessage() {
@@ -108,27 +114,24 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     selectedAllocatedUsersEmitter(justiceUserId: string) {
-        this.csoUserToAllocate = justiceUserId;
-        if (this.csoUserToAllocate) {
-            if (this.csoAllocatedMenu?.selectedLabel) {
-                this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
-            }
+        if (justiceUserId) {
+            // should find a better way to pull in the username because first emit doesn't have it
+            const username = this.csoAllocatedMenu?.selectedLabel;
+            this.allocationHearingViewModel.assignCsoToSelectedHearings(username, justiceUserId);
         } else {
             // reload the table
             this.searchForHearings();
-            this.checkUncheckAll(false);
-            this.uncheckAllCheckbox();
         }
     }
 
     private clearSelectedHearings() {
-        this.selectedHearings = [];
-        // this.uncheckAllCheckbox();
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
     }
 
-    private filterResults(result: AllocationHearingsResponse[]) {
+    private displayResults(result: AllocationHearingsResponse[]) {
         this.originalHearings = result.slice(0, this.filterSize);
-        this.hearings = this.originalHearings.map(val => Object.assign({}, val));
+        this.allocationHearingViewModel = new AllocateHearingModel(this.originalHearings);
+
         if (result.length > this.filterSize) {
             this.displayMessage = true;
             this.message = `Showing only ${this.filterSize} Records, For more records please apply filter`;
@@ -142,13 +145,15 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     cancelAllocation() {
+        debugger;
         this.checkUncheckAll(false);
         this.csoAllocatedMenu.clear();
         this.clearSelectedHearings();
     }
 
     confirmAllocation() {
-        this.allocateService.setAllocationToHearings(this.selectedHearings, this.csoUserToAllocate).subscribe(
+        const csoId = this.csoAllocatedMenu?.selectedItems as string;
+        this.allocateService.setAllocationToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => {
                 this.updateTableWithAllocatedCso(result);
             },
@@ -159,85 +164,40 @@ export class AllocateHearingsComponent implements OnInit {
         );
     }
 
-    checkUncheckAll(value: boolean) {
-        this.allChecked = value;
-        this.hearings.forEach(h => {
-            const index: number = this.selectedHearings.indexOf(h.hearing_id);
-            const checkbox = document.getElementById('hearing_' + h.hearing_id) as HTMLInputElement;
-            checkbox.checked = value;
-            debugger;
-            if (value && index === -1) {
-                this.selectedHearings.push(h.hearing_id);
-            } else {
-                this.revertHearingRow(h.hearing_id);
-            }
-        });
-        if (!value) {
-            this.clearSelectedHearings();
+    checkUncheckAll(checkAll: boolean) {
+        if (checkAll) {
+            this.allocationHearingViewModel.checkAllHearings();
+            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+            // safe to cast to string
+            const csoId = this.csoAllocatedMenu?.selectedItems as string;
+            this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
+        } else {
+            this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         }
+        this.allChecked = this.allocationHearingViewModel.areAllChecked;
     }
 
-    private updateTableWithAllocatedCso(allocatedHearings: AllocationHearingsResponse[]) {
-        debugger;
-        const list: AllocationHearingsResponse[] = [];
-        this.hearings.forEach(hearing => {
-            const hrg = allocatedHearings.find(x => x.hearing_id === hearing.hearing_id);
-            if (hrg) {
-                list.push(hrg);
-            } else {
-                list.push(hearing);
-            }
-        });
-        this.hearings = list;
+    private updateTableWithAllocatedCso(updatedHearings: AllocationHearingsResponse[]) {
+        this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.clearSelectedHearings();
         this.displayMessage = true;
         this.message = `Hearings have been updated.`;
     }
 
-    selectHearing($event, hearing_id: string) {
-        const checkBoxChecked = $event.target.checked;
-        const index: number = this.selectedHearings.indexOf(hearing_id);
-        if (checkBoxChecked) {
-            if (index === -1) {
-                this.selectedHearings.push(hearing_id);
-                if (this.csoAllocatedMenu?.selectedLabel) {
-                    this.updateSelectedHearingsWithCso(this.csoAllocatedMenu.selectedLabel);
-                }
+    selectHearing(checked: boolean, hearing_id: string) {
+        const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+        // safe to cast to string
+        const csoId = this.csoAllocatedMenu?.selectedItems as string;
+
+        if (checked) {
+            this.allocationHearingViewModel.checkHearing(hearing_id);
+            if (csoUsername) {
+                this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
             }
         } else {
-            if (index !== -1) {
-                this.selectedHearings.splice(index, 1);
-            }
-            this.revertHearingRow(hearing_id);
+            this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
 
-        this.allChecked = this.selectedHearings.length === this.hearings.length;
-    }
-
-    private updateSelectedHearingsWithCso(selectedLabel: string) {
-        for (const hearing of this.hearings) {
-            if (this.selectedHearings.includes(hearing.hearing_id)) {
-                hearing.allocated_cso = selectedLabel;
-            }
-        }
-        // this.selectedHearings.forEach(id => {
-        //     const cell = document.querySelector('#cso_' + id);
-        //     cell.innerHTML = selectedLabel;
-        // });
-    }
-
-    private revertHearingRow(hearing_id: string) {
-        const index = this.hearings.findIndex(x => x.hearing_id === hearing_id);
-        this.hearings[index] = this.originalHearings.find(x => x.hearing_id === hearing_id);
-        // const hearing = this.hearings.find(h => h.hearing_id === hearing_id);
-        // if (hearing) {
-        //     const cell = document.querySelector('#cso_' + hearing_id);
-        //     cell.innerHTML = hearing.allocated_cso;
-        // }
-    }
-
-    private uncheckAllCheckbox() {
-        const checkbox = document.getElementById('select-all-hearings') as HTMLInputElement;
-        checkbox.checked = false;
+        this.allChecked = this.allocationHearingViewModel.areAllChecked;
     }
 }
