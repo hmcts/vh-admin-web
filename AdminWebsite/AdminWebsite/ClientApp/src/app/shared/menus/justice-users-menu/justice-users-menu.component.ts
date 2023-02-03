@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
 import { FormBuilder } from '@angular/forms';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
-import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { JusticeUsersService } from '../../../services/justice-users.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 
@@ -25,7 +25,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
     @Input() multiSelect = true;
     constructor(
         private bookingPersistService: BookingPersistService,
-        private videoHearingService: VideoHearingsService,
+        private justiceUserService: JusticeUsersService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {
@@ -34,7 +34,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
 
     loadItems(): void {
         const self = this;
-        this.videoHearingService.getUsers().subscribe(
+        this.justiceUserService.retrieveJusticeUserAccounts().subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.items = data;
