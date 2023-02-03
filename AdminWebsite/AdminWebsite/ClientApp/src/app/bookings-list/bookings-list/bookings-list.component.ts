@@ -270,7 +270,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.selectedCaseTypes = [];
             this.caseTypeMenu.clear();
             this.bookingPersistService.selectedUsers = [];
-            this.csoMenu.clear();
+            if (this.workAllocationEnabled()) {
+                this.csoMenu.clear();
+            }
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
