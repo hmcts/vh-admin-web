@@ -1291,7 +1291,7 @@ describe('BookingsListComponent', () => {
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
 
-        it('should not show allocated to if work allocation feature flag is off', async () => {
+        it('should not show allocated to label if work allocation feature flag is off', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
@@ -1299,7 +1299,7 @@ describe('BookingsListComponent', () => {
             expect(divToHide).toBeFalsy();
         });
 
-        it('should show allocated to if work allocation feature flag is on', async () => {
+        it('should show allocated label to if work allocation feature flag is on', async () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
