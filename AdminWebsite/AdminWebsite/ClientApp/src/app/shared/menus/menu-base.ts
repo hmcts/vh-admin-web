@@ -50,6 +50,7 @@ export abstract class MenuBase implements OnInit {
         const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
         if (searchCriteriaEntered) {
             this.selectedItems = [];
+            this.selectedLabel = undefined;
             this.form.reset();
         }
     }
