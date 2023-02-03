@@ -19,7 +19,7 @@
     "prettify-fix:default": "npx prettier --write \"src\\app\\**\\*.*\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
-    "update-api-client": "nswag run /runtime:Net60 & run prettify-fix"
+    "update-api-client": "nswag run /runtime:Net60 && run prettify-fix"
   },
   "private": true,
   "dependencies": {
