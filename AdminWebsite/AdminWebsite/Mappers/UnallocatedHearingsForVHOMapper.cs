@@ -59,7 +59,7 @@ public static class UnallocatedHearingsForVhoMapper
         
         return new DateForUnallocatedHearings
         {
-            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Month == DateTime.Today.Month && e.ScheduledDateTime.Year == DateTime.Today.Year),
+            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Month == today.Month && e.ScheduledDateTime.Year == today.Year),
             DateStart = firstDayOfMonth,
             DateEnd = lastDayOfMonth
         };
