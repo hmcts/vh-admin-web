@@ -121,8 +121,8 @@ export class AllocateHearingsComponent implements OnInit {
             const username = this.csoAllocatedMenu?.selectedLabel;
             this.allocationHearingViewModel.assignCsoToSelectedHearings(username, justiceUserId);
         } else {
-            // reload the table
-            this.searchForHearings();
+            // without a selected CSO, unset selection
+            this.toggleAll(false);
         }
     }
 
