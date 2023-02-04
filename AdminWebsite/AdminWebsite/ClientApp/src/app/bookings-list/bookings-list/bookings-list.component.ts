@@ -78,7 +78,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
                 this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
-                console.log('Feature toggle is', this.enableSearchFeature);
             }
         });
     }

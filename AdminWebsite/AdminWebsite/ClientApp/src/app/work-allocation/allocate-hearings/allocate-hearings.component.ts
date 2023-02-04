@@ -2,11 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../../services/allocate-hearings.service';
-import { AllocationHearingsResponse } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
+import { catchError } from 'rxjs/operators';
+import { of, throwError } from 'rxjs';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -145,8 +147,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     cancelAllocation() {
-        debugger;
-        this.checkUncheckAll(false);
+        this.toggleAll(false);
         this.csoAllocatedMenu.clear();
         this.clearSelectedHearings();
     }
@@ -154,17 +155,15 @@ export class AllocateHearingsComponent implements OnInit {
     confirmAllocation() {
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.setAllocationToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
-            result => {
-                this.updateTableWithAllocatedCso(result);
-            },
+            result => this.updateTableWithAllocatedCso(result),
             error => {
                 this.displayMessage = true;
-                this.message = error;
+                this.message = error.response;
             }
         );
     }
 
-    checkUncheckAll(checkAll: boolean) {
+    toggleAll(checkAll: boolean) {
         if (checkAll) {
             this.allocationHearingViewModel.checkAllHearings();
             const csoUsername = this.csoAllocatedMenu?.selectedLabel;

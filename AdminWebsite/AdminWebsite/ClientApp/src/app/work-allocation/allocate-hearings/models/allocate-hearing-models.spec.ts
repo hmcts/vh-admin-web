@@ -9,12 +9,24 @@ describe('AllocateHearingItemModel', () => {
         testData = new AllocationHearingsResponse({
             hearing_id: '1',
             allocated_cso: null,
-            hearing_date: new Date()
+            hearing_date: new Date(),
+            case_number: 'case1',
+            case_type: 'generic',
+            duration: 30,
+            start_time: '10:30:00'
         });
     });
 
     it('should default to unchecked', () => {
-        const model = new AllocateHearingItemModel(testData.hearing_id, testData.allocated_cso);
+        const model = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.hearing_date,
+            testData.start_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
 
         expect(model.checked).toBeFalsy();
         expect(model.allocatedOfficerUsername).toBe(testData.allocated_cso);
@@ -22,7 +34,15 @@ describe('AllocateHearingItemModel', () => {
     });
 
     it('should update checked value', () => {
-        const model = new AllocateHearingItemModel(testData.hearing_id, testData.allocated_cso);
+        const model = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.hearing_date,
+            testData.start_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
 
         model.setChecked(true);
         expect(model.checked).toBeTruthy();
@@ -34,7 +54,15 @@ describe('AllocateHearingItemModel', () => {
     it('should update assigned cso', () => {
         const username = 'newcso@test.com';
         const id = newGuid();
-        const model = new AllocateHearingItemModel(testData.hearing_id, testData.allocated_cso);
+        const model = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.hearing_date,
+            testData.start_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
 
         model.updateAssignedCso(username, id);
 
