@@ -16,18 +16,11 @@ describe('ManageTeamComponent', () => {
     const users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
-        videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
-            'getUsers'
-        ]);
+        videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getUsers']);
 
-        logger = jasmine.createSpyObj('Logger', [
-            'debug'
-        ]);
+        logger = jasmine.createSpyObj('Logger', ['debug']);
 
-
-
-
-        let user:JusticeUserResponse = new JusticeUserResponse();
+        const user: JusticeUserResponse = new JusticeUserResponse();
 
         user.id = '1';
         user.username = 'username1@mail.com';
@@ -37,9 +30,11 @@ describe('ManageTeamComponent', () => {
         videoServiceSpy.getUsers.and.returnValue(of(users));
 
         await TestBed.configureTestingModule({
-            declarations: [ ManageTeamComponent ],
+            declarations: [ManageTeamComponent],
             providers: [
-                FormBuilder, HttpClient, HttpHandler,
+                FormBuilder,
+                HttpClient,
+                HttpHandler,
                 { provide: Logger, useValue: logger },
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
@@ -80,8 +75,7 @@ describe('ManageTeamComponent', () => {
         it('should enable all inputs in the selected row ', () => {
             const expectedResponse = [new JusticeUserResponse()];
             component.editUser('1');
-            //component.elRef.nativeElement.getElementsByClassName(id)
+            // component.elRef.nativeElement.getElementsByClassName(id)
         });
-
     });
 });

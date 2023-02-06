@@ -13,8 +13,12 @@ import { Logger } from '../../services/logger';
 export class ManageTeamComponent {
     private filterSize = 20;
 
-    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService,
-                private logger: Logger, private elRef:ElementRef) {
+    constructor(
+        private fb: FormBuilder,
+        private videoHearingService: VideoHearingsService,
+        private logger: Logger,
+        private elRef: ElementRef
+    ) {
         this.form = fb.group({
             inputSearch: ['']
         });
@@ -39,7 +43,6 @@ export class ManageTeamComponent {
         for (let i = 0; i < row.length; i++) {
             (<HTMLElement>row[i]).removeAttribute('disabled');
         }
-
     }
 
     deleteUser(id) {}
