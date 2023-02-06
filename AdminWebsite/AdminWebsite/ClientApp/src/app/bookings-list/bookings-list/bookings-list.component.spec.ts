@@ -604,7 +604,6 @@ describe('BookingsListComponent', () => {
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
-            videoHearingServiceSpy.getUsers.and.returnValue(of(new Array<JusticeUserResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new ReplaySubject();
             launchDarklyServiceSpy.flagChange.next({ admin_search: true });
