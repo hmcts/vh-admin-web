@@ -58,7 +58,7 @@ describe('HearingDetailsComponent', () => {
         'Financial Remedy',
         'judge.green@hmcts.net',
         '1234567',
-        'test'
+        'true'
     );
     beforeEach(
         waitForAsync(() => {
@@ -160,7 +160,7 @@ describe('HearingDetailsComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#hearing-allocated-to'));
             expect(divToHide).toBeFalsy();
         });
 
@@ -168,7 +168,7 @@ describe('HearingDetailsComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('hearing-allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#hearing-allocated-to'));
             expect(divToHide).toBeTruthy();
         });
     });

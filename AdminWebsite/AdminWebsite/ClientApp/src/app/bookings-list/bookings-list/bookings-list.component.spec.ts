@@ -154,7 +154,8 @@ export class BookingslistTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567'
+            '1234567',
+            'true'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -1295,7 +1296,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
             expect(divToHide).toBeFalsy();
         });
 
@@ -1303,7 +1304,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
             expect(divToHide).toBeTruthy();
         });
     });
