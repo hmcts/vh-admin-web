@@ -32,13 +32,12 @@ export class VenuesMenuComponent extends MenuBase {
     }
 
     loadItems(): void {
-        const self = this;
         this.refDataService.getCourts().subscribe(
             (data: HearingVenueResponse[]) => {
                 this.venues = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
             },
-            error => self.handleListError(error, 'venues')
+            error => this.handleListError(error, 'venues')
         );
     }
 }

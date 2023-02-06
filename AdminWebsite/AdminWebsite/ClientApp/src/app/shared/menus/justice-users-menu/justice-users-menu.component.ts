@@ -33,14 +33,13 @@ export class JusticeUsersMenuComponent extends MenuBase {
     }
 
     loadItems(): void {
-        const self = this;
         this.justiceUserService.retrieveJusticeUserAccounts().subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.items = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
             },
-            error => self.handleListError(error, 'users')
+            error => this.handleListError(error, 'users')
         );
     }
 }
