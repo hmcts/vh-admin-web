@@ -53,29 +53,35 @@
       <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">Clear</button>
     </div>
   </div>
-  <div id="user-allocation" class="govuk-grid-column-one-third" *ngIf="allocationHearingViewModel.hearings.length > 0">
-    <div id="user-menu">
-      <app-justice-users-menu
-        #csoAllocatedMenu
-        [multiSelect]="false"
-        [dropDownLabel]="dropDownUserLabelAllocateTo"
-        (selectedEmitter)="selectedAllocatedUsersEmitter($event)"
-      >
-      </app-justice-users-menu>
-    </div>
-    <div id="user-allocation-button">
-      <div *ngIf="allocationHearingViewModel.hasPendingChanges">
-        <div class="govuk-!-margin-bottom-2">
-          <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="confirmAllocation()">Confirm</button>
-          <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelAllocation()">Cancel</button>
+  <div id="user-allocation" class="govuk-grid-row" *ngIf="allocationHearingViewModel.hearings.length > 0">
+    <div class="actions-and-message">
+      <div>
+        <div id="user-menu" class="govuk-grid-column-one-half">
+          <app-justice-users-menu
+            #csoAllocatedMenu
+            [multiSelect]="false"
+            [dropDownLabel]="dropDownUserLabelAllocateTo"
+            (selectedEmitter)="selectedAllocatedUsersEmitter($event)"
+          >
+          </app-justice-users-menu>
+        </div>
+
+        <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold govuk-grid-column-one-half govuk-!-padding-top-6">
+          <fa-icon [icon]="faExclamation"></fa-icon>
+          {{ message }}
+        </div>
+      </div>
+      <div id="user-allocation-button" class="govuk-grid-column-full">
+        <div *ngIf="allocationHearingViewModel.hasPendingChanges">
+          <div class="govuk-!-margin-bottom-2">
+            <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="confirmAllocation()">Confirm</button>
+            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelAllocation()">Cancel</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold">
-    <fa-icon [icon]="faExclamation"></fa-icon>
-    {{ message }}
-  </div>
+
   <table class="govuk-table">
     <caption class="govuk-table__caption govuk-table__caption--m">
       Hearings

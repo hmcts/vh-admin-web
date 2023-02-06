@@ -2,13 +2,11 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../../services/allocate-hearings.service';
-import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
+import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
-import { catchError } from 'rxjs/operators';
-import { of, throwError } from 'rxjs';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -158,7 +156,7 @@ export class AllocateHearingsComponent implements OnInit {
             result => this.updateTableWithAllocatedCso(result),
             error => {
                 this.displayMessage = true;
-                this.message = error.response;
+                this.message = error?.response ?? 'There was an unknown error.';
             }
         );
     }
@@ -169,7 +167,9 @@ export class AllocateHearingsComponent implements OnInit {
             const csoUsername = this.csoAllocatedMenu?.selectedLabel;
             // safe to cast to string
             const csoId = this.csoAllocatedMenu?.selectedItems as string;
-            this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
+            if (csoUsername && csoId) {
+                this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
+            }
         } else {
             this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         }
@@ -179,6 +179,7 @@ export class AllocateHearingsComponent implements OnInit {
     private updateTableWithAllocatedCso(updatedHearings: AllocationHearingsResponse[]) {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.clearSelectedHearings();
+        this.csoAllocatedMenu.clear();
         this.displayMessage = true;
         this.message = `Hearings have been updated.`;
     }
