@@ -60,7 +60,8 @@ export class ManageTeamComponent {
                     this.displayMessage = true;
                     this.errorMessage = true;
                     this.message =
-                        'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.';
+                        'No users matching this search criteria were found. ' +
+                        'Please check the search and try again. Or, add the team member.';
                 }
                 this.displayAddButton = true;
             },
