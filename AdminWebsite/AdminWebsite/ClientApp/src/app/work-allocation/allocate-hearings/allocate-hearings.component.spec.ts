@@ -232,7 +232,7 @@ describe('AllocateHearingsComponent', () => {
             component.selectHearing(true, hearingId);
 
             // mimic cso selection
-            component.selectedAllocatedUsersEmitter(csoId);
+            component.onJusticeUserForAllocationSelected(csoId);
 
             // assert
             const postUpdateHearing = component.allocationHearingViewModel.hearings.find(x => x.hearingId === hearingId);
@@ -300,7 +300,7 @@ describe('AllocateHearingsComponent', () => {
             component.selectHearing(true, hearingId);
 
             // mimic cso selection
-            component.selectedAllocatedUsersEmitter(csoId);
+            component.onJusticeUserForAllocationSelected(csoId);
 
             component.confirmAllocation();
             tick();
@@ -346,7 +346,7 @@ describe('AllocateHearingsComponent', () => {
             component.selectHearing(true, hearingId);
 
             // mimic cso selection
-            component.selectedAllocatedUsersEmitter(csoId);
+            component.onJusticeUserForAllocationSelected(csoId);
 
             component.cancelAllocation();
 

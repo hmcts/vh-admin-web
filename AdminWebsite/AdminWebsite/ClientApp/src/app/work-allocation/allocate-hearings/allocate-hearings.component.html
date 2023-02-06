@@ -28,12 +28,12 @@
         />
       </div>
       <div class="govuk-grid-column-one-third">
-        <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)"></app-justice-users-menu>
+        <app-justice-users-menu (selectedEmitter)="onJusticeUserForFilterSelected($event)"></app-justice-users-menu>
       </div>
     </div>
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-        <app-case-types-menu (selectedEmitter)="selectedCaseTypesEmitter($event)"></app-case-types-menu>
+        <app-case-types-menu (selectedEmitter)="onCaseTypeSelected($event)"></app-case-types-menu>
       </div>
       <div class="govuk-grid-column-one-third">
         <label class="govuk-label" for="case-number-entry">Case number</label>
@@ -61,7 +61,7 @@
             #csoAllocatedMenu
             [multiSelect]="false"
             [dropDownLabel]="dropDownUserLabelAllocateTo"
-            (selectedEmitter)="selectedAllocatedUsersEmitter($event)"
+            (selectedEmitter)="onJusticeUserForAllocationSelected($event)"
           >
           </app-justice-users-menu>
         </div>

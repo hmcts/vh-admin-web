@@ -104,15 +104,15 @@ export class AllocateHearingsComponent implements OnInit {
         this.message = '';
     }
 
-    selectedCaseTypesEmitter($event: string[]) {
+    onCaseTypeSelected($event: string[]) {
         this.caseTypeDropDownValues = $event;
     }
 
-    selectedUsersEmitter($event: string[]) {
+    onJusticeUserForFilterSelected($event: string[]) {
         this.csoDropDownValues = $event;
     }
 
-    selectedAllocatedUsersEmitter(justiceUserId: string) {
+    onJusticeUserForAllocationSelected(justiceUserId: string) {
         if (justiceUserId) {
             const username = this.csoAllocatedMenu?.selectedLabel;
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
