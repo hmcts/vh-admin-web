@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
@@ -13,7 +13,8 @@ import { Logger } from '../../services/logger';
 export class ManageTeamComponent {
     private filterSize = 20;
 
-    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService, private logger: Logger) {
+    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService,
+                private logger: Logger, private elRef:ElementRef) {
         this.form = fb.group({
             inputSearch: ['']
         });
@@ -34,10 +35,11 @@ export class ManageTeamComponent {
 
     editUser(id) {
         // this.isEditing = true;
-        const row = document.getElementsByClassName(id) as HTMLCollection;
+        const row = this.elRef.nativeElement.getElementsByClassName(id) as HTMLCollection;
         for (let i = 0; i < row.length; i++) {
             (<HTMLElement>row[i]).removeAttribute('disabled');
         }
+
     }
 
     deleteUser(id) {}
@@ -45,6 +47,7 @@ export class ManageTeamComponent {
     searchUsers() {
         const term = this.form.value.inputSearch;
         this.errorMessage = false;
+        this.displayAddButton = false;
         this.displayMessage = false;
         this.message = '';
         this.isEditing = false;
