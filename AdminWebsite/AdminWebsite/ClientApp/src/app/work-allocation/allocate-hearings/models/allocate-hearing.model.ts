@@ -94,7 +94,7 @@ export class AllocateHearingModel {
         this.hearings.forEach(h => this.uncheckHearingAndRevert(h.hearingId));
     }
 
-    revertHearing(hearingId: string) {
+    revertHearing(hearingId: string): void {
         const index = this.hearings.findIndex(h => h.hearingId === hearingId);
         const originalHearing = this.originalState.find(h => h.hearing_id === hearingId);
         this.hearings[index] = new AllocateHearingItemModel(
@@ -107,13 +107,12 @@ export class AllocateHearingModel {
             originalHearing.allocated_cso,
             false
         );
-        this.originalState.find(h => h.hearing_id === hearingId);
     }
 
     /**
      * Update the original state field with the newly updated hearings
      */
-    updateHearings(updatedHearings: AllocationHearingsResponse[]) {
+    updateHearings(updatedHearings: AllocationHearingsResponse[]): void {
         updatedHearings.forEach(updatedHearing => {
             const index = this.originalState.findIndex(x => x.hearing_id === updatedHearing.hearing_id);
             this.originalState[index] = updatedHearing;
@@ -135,7 +134,7 @@ export class AllocateHearingModel {
     }
 }
 
-export function arraysEqual(a, b) {
+export function arraysEqual(a, b): boolean {
     if (a === b) {
         return true;
     }
