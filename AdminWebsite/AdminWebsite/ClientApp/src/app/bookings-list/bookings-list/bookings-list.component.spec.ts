@@ -1295,7 +1295,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
             expect(divToHide).toBeFalsy();
         });
 
@@ -1303,7 +1303,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
             expect(divToHide).toBeTruthy();
         });
     });
