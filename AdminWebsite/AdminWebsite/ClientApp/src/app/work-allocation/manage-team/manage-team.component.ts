@@ -11,16 +11,11 @@ import { Logger } from '../../services/logger';
     styleUrls: ['./manage-team.component.scss']
 })
 export class ManageTeamComponent {
-
     private filterSize = 20;
 
-    constructor(
-        private fb: FormBuilder,
-        private videoHearingService: VideoHearingsService,
-        private logger: Logger
-        ) {
+    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService, private logger: Logger) {
         this.form = fb.group({
-            'inputSearch': ['']
+            inputSearch: ['']
         });
     }
 
@@ -33,21 +28,19 @@ export class ManageTeamComponent {
     form: FormGroup;
     isEditing = false;
     isSaving = false;
-    error:boolean = false;
-    displayAddButton: boolean = false;
-    errorMessage: boolean = false;
+    error = false;
+    displayAddButton = false;
+    errorMessage = false;
 
     editUser(id) {
-        //this.isEditing = true;
+        // this.isEditing = true;
         const row = document.getElementsByClassName(id) as HTMLCollection;
-        for (var i = 0; i < row.length; i++) {
-            (<HTMLElement>row[i]).removeAttribute("disabled");
+        for (let i = 0; i < row.length; i++) {
+            (<HTMLElement>row[i]).removeAttribute('disabled');
         }
     }
 
-    deleteUser(id) {
-
-    }
+    deleteUser(id) {}
 
     searchUsers() {
         const term = this.form.value.inputSearch;
@@ -63,11 +56,11 @@ export class ManageTeamComponent {
                     this.users = this.users.slice(0, this.filterSize);
                     this.displayMessage = true;
                     this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
-                }
-                else if (this.users.length === 0) {
+                } else if (this.users.length === 0) {
                     this.displayMessage = true;
                     this.errorMessage = true;
-                    this.message = 'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.';
+                    this.message =
+                        'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.';
                 }
                 this.displayAddButton = true;
             },
@@ -77,9 +70,7 @@ export class ManageTeamComponent {
         );
     }
 
-    addUsers() {
-
-    }
+    addUsers() {}
 
     handleListError(err, type) {
         this.logger.error(`${this.loggerPrefix} Error getting ${type} list`, err, type);

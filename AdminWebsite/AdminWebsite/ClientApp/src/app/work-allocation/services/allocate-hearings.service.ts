@@ -11,7 +11,6 @@ export class AllocateHearingsService {
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
     getAllocationHearings(fromDate, toDate, csoUserName, caseType, caseNumber, isAllocated): Observable<AllocationHearingsResponse[]> {
-
         try {
             return this.bhClient.getAllocationHearings(
                 cleanQuery(fromDate),
