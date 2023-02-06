@@ -27,7 +27,8 @@ import {
     HearingDetailsResponse,
     HearingVenueResponse,
     HearingTypeResponse,
-    JusticeUserResponse
+    JusticeUserResponse,
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -153,7 +154,8 @@ export class BookingslistTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567'
+            '1234567',
+            'true'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -1290,6 +1292,22 @@ describe('BookingsListComponent', () => {
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
+        });
+
+        it('should not show allocated to label if work allocation feature flag is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
+            expect(divToHide).toBeFalsy();
+        });
+
+        it('should show allocated label to if work allocation feature flag is on', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
+            expect(divToHide).toBeTruthy();
         });
     });
 });

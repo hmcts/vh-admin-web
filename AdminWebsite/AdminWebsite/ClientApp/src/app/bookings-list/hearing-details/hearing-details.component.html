@@ -45,7 +45,11 @@
       </div>
     </div>
   </div>
-  <div class="govuk-grid-row" *ngIf="hearing?.AllocatedTo && hearing?.AllocatedTo.length > 0">
+  <div
+    id="hearing-allocated-to"
+    class="govuk-grid-row"
+    *ngIf="hearing?.AllocatedTo && hearing?.AllocatedTo.length && vhoWorkAllocationFeature"
+  >
     <div class="govuk-grid-column-one-third">
       <span class="vh-xsml">Allocated to:</span>
     </div>
