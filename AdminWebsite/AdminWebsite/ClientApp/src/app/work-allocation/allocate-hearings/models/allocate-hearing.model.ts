@@ -61,7 +61,6 @@ export class AllocateHearingModel {
         const current = this.hearings.map(h => <any>{ id: h.hearingId, cso: h.allocatedOfficerUsername }).sort();
 
         const stringMatch = JSON.stringify(original) === JSON.stringify(current);
-        const match = arraysEqual(original, current);
         return !stringMatch;
     }
 

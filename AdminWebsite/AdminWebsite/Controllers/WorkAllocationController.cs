@@ -9,7 +9,6 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace AdminWebsite.Controllers
@@ -24,12 +23,10 @@ namespace AdminWebsite.Controllers
     public class WorkAllocationController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly ILogger<WorkAllocationController> _logger;
 
-        public WorkAllocationController(IBookingsApiClient bookingsApiClient, ILogger<WorkAllocationController> logger)
+        public WorkAllocationController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _logger = logger;
         }
 
         [HttpGet("unallocated")]
