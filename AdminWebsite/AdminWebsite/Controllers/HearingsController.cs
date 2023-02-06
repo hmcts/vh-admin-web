@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -556,70 +555,6 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
-            }
-        }
-        
-        [HttpGet("unallocated")]
-        [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
-        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUnallocatedHearings()
-        {
-            var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
-            
-            if(unallocatedHearings == null || !unallocatedHearings.Any()) 
-                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponse>(), DateTime.Today));
-            
-            return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
-        }
-        
-             
-        [HttpGet("allocation")]
-        [SwaggerOperation(OperationId = "GetAllocationHearings")]
-        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetAllocationHearings([FromQuery] SearchForAllocationHearingsRequest searchRequest)
-        {
-            var hearings = await _bookingsApiClient.
-                SearchForAllocationHearingsAsync(
-                    fromDate:   searchRequest.FromDate, 
-                    toDate:     searchRequest.ToDate,
-                    caseNumber:   searchRequest.CaseNumber,
-                    caseType:     searchRequest.CaseType,
-                    cso:          searchRequest.Cso,
-                    isUnallocated:searchRequest.IsUnallocated); 
-            
-            if(hearings == null || !hearings.Any())
-                return Ok(new List<AllocationHearingsResponse>());
-            
-            return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
-        }
-        
-        /// <summary>
-        ///     Update the hearing status.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns>Success status</returns>
-        [HttpPatch("allocations")]
-        [SwaggerOperation(OperationId = "AllocateHearingsToCso")]
-        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AllocateHearingsToCso(UpdateHearingAllocationToCsoRequest request)
-        {
-            try
-            {
-               
-                var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);
-            
-                
-                
-                if(hearings == null || !hearings.Any())
-                    return Ok(new List<AllocationHearingsResponse>());
-            
-                return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "There was an unknown error allocating the list of hearing");
-                return BadRequest(ex.Message);
             }
         }
     }
