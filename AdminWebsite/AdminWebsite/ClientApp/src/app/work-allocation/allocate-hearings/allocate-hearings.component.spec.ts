@@ -3,7 +3,7 @@ import { AllocateHearingsComponent } from './allocate-hearings.component';
 import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { FormBuilder } from '@angular/forms';
-import { AllocateHearingsService } from '../../services/allocate-hearings.service';
+import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { of, throwError } from 'rxjs';

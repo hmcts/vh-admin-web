@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AllocationHearingsResponse, BHClient } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, BHClient, UpdateHearingAllocationToCsoRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 
 @Injectable({
@@ -26,5 +26,12 @@ export class AllocateHearingsService {
             this.logger.error(`${error.response}`, error);
             return new Observable<AllocationHearingsResponse[]>();
         }
+    }
+
+    setAllocationToHearings(selectedHearings: string[], csoUserId: string): Observable<AllocationHearingsResponse[]> {
+        const request = new UpdateHearingAllocationToCsoRequest();
+        request.hearings = selectedHearings;
+        request.cso_id = csoUserId;
+        return this.bhClient.allocateHearingsToCso(request);
     }
 }
