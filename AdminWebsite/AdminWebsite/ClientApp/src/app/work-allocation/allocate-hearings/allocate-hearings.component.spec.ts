@@ -14,7 +14,6 @@ import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
-import { SharedModule } from 'src/app/shared/shared.module';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -222,7 +221,6 @@ describe('AllocateHearingsComponent', () => {
     describe('Manual allocation', () => {
         it('should assign cso to selected hearings when cso has been selected', () => {
             // arrange
-            component.originalHearings = testData;
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
@@ -246,7 +244,6 @@ describe('AllocateHearingsComponent', () => {
 
         it('should reset hearing when hearing has been unchecked', () => {
             // arrange
-            component.originalHearings = testData;
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
@@ -284,7 +281,6 @@ describe('AllocateHearingsComponent', () => {
 
         it('should update original data when allocation has been confirmed', fakeAsync(() => {
             // arrange
-            component.originalHearings = testData;
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
@@ -331,7 +327,6 @@ describe('AllocateHearingsComponent', () => {
 
         it('should reset whe allocation has been cancelled', fakeAsync(() => {
             // arrange
-            component.originalHearings = testData;
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
@@ -353,55 +348,8 @@ describe('AllocateHearingsComponent', () => {
 
             component.cancelAllocation();
 
-            expect(component.allChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
-            expect(component.originalHearings).toEqual(testData);
+            expect(component.allocationHearingViewModel.originalState).toEqual(testData);
         }));
-
-        // it('Should display message when no hearings are selected and message is ready', () => {
-        //     const formBuilder = new FormBuilder();
-        //     component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-        //     component.displayMessage = true;
-        //     component.selectedHearings = [];
-        //     component.message = 'this is a message';
-        //     component.messageCanBeDisplayed();
-        //     expect(component.message).toBe('this is a message');
-        // });
-        // it('Should not display message and clear message when hearings are selected', () => {
-        //     const formBuilder = new FormBuilder();
-        //     component.csoAllocatedMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-        //     component.displayMessage = true;
-        //     component.selectedHearings = ['1', '2', '3', '4'];
-        //     component.message = 'this is a message';
-        //     component.messageCanBeDisplayed();
-        //     expect(component.message).toBe('');
-        //     expect(component.displayMessage).toBe(false);
-        // });
-        // it('Should change label if allocated cso user selected', () => {
-        //     const formBuilder = new FormBuilder();
-        //     const responseObj: AllocationHearingsResponse[] = [];
-        //     for (let i = 0; i < 30; i++) {
-        //         const allocation = new AllocationHearingsResponse();
-        //         allocation.hearing_id = i.toString();
-        //         allocation.hearing_date = new Date('2023-01-14');
-        //         responseObj.push(allocation);
-        //     }
-        //     component.hearings = [
-        //         new AllocationHearingsResponse({hearing_id: '1', hearing_date: new Date('2023-01-30')}),
-        //         new AllocationHearingsResponse({hearing_id: '2', hearing_date: new Date('2023-02-30')}),
-        //         new AllocationHearingsResponse({hearing_id: '3', hearing_date: new Date('2023-03-30')})];
-        //     fixture.detectChanges();
-        //     component.csoAllocatedMenu.selectedLabel = 'user@mail.com';
-        //     component.selectedHearings = ['1'];
-        //     component.allocateHearingsDetailOpen = true;
-        //     var mockedDocElement = document.createElement('div');
-        //     var mockedTdElement = document.createElement('td');
-        //     document.getElementById = jasmine.createSpy('select-all-hearings').and.returnValue(mockedDocElement);
-        //     document.querySelector = jasmine.createSpy('#cso_5').and.returnValue(mockedTdElement);
-        //     component.selectedAllocatedUsersEmitter('10');
-        //     const componentDebugElement: DebugElement = fixture.debugElement;
-        //     const cell = componentDebugElement.query(By.css('#cso_1')).nativeElement as HTMLTableRowElement;
-        //     expect(cell.innerHTML).toBe('user@mail.com');
-        // });
     });
 });

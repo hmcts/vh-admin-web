@@ -93,9 +93,9 @@
             id="select-all-hearings"
             name="select-all-hearings"
             type="checkbox"
-            [checked]="allChecked"
+            [checked]="allocationHearingViewModel.areAllChecked"
             aria-label="Select all hearings"
-            (change)="toggleAll(!allChecked)"
+            (change)="toggleAll(!allocationHearingViewModel.areAllChecked)"
           />
         </th>
         <th scope="col" class="govuk-table__header">Hearing date</th>

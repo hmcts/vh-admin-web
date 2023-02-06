@@ -110,6 +110,9 @@ export class AllocateHearingModel {
         this.originalState.find(h => h.hearing_id === hearingId);
     }
 
+    /**
+     * Update the original state field with the newly updated hearings
+     */
     updateHearings(updatedHearings: AllocationHearingsResponse[]) {
         updatedHearings.forEach(updatedHearing => {
             const index = this.originalState.findIndex(x => x.hearing_id === updatedHearing.hearing_id);
