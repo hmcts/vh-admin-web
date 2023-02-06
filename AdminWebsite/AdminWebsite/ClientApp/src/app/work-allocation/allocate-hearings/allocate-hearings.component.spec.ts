@@ -312,6 +312,8 @@ describe('AllocateHearingsComponent', () => {
         }));
 
         it('should display error when confirmation fails', fakeAsync(() => {
+            const responseObj = [new AllocationHearingsResponse()];
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
             const csoId = newGuid();
             component.csoAllocatedMenu['selectedItems'] = csoId;
 
@@ -322,7 +324,7 @@ describe('AllocateHearingsComponent', () => {
             tick();
 
             expect(component.displayMessage).toBeTruthy();
-            expect(component.message).toBe(error.response);
+            expect(component.message).toBe('One or more hearings could not be allocated successfully.');
         }));
 
         it('should reset whe allocation has been cancelled', fakeAsync(() => {

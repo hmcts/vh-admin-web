@@ -57,7 +57,7 @@ export class AllocateHearingsComponent implements OnInit {
         });
     }
 
-    searchForHearings() {
+    searchForHearings(keepExistingMessage: boolean = false) {
         const retrieveDate = (date: any): Date => (date === null || date === '' ? null : new Date(date));
 
         const fromDate = retrieveDate(this.form.value.fromDate);
@@ -69,7 +69,7 @@ export class AllocateHearingsComponent implements OnInit {
 
         this.allocateService
             .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
-            .subscribe(result => this.displayResults(result));
+            .subscribe(result => this.displayResults(result, keepExistingMessage));
     }
 
     clear() {
@@ -91,10 +91,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     messageCanBeDisplayed(): boolean {
-        if (!this.displayMessage || this.allocationHearingViewModel.hasSelectedHearings) {
-            this.clearMessage();
-        }
-        return this.displayMessage && !this.allocationHearingViewModel.hasSelectedHearings;
+        return this.displayMessage;
     }
 
     updateMessageAndDisplay(message: string) {
@@ -121,6 +118,7 @@ export class AllocateHearingsComponent implements OnInit {
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
         } else {
             // without a selected CSO, unset selection
+            this.clearMessage();
             this.toggleAll(false);
         }
     }
@@ -132,10 +130,15 @@ export class AllocateHearingsComponent implements OnInit {
         this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
     }
 
-    private displayResults(result: AllocationHearingsResponse[]) {
+    private displayResults(result: AllocationHearingsResponse[], keepExistingMessage: boolean = false) {
         const originalHearings = result.slice(0, this.filterSize);
         this.allocationHearingViewModel = new AllocateHearingModel(originalHearings);
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
 
+        // if there is an error, refresh the data to capture partial updates but keep error message on screen
+        if (keepExistingMessage) {
+            return;
+        }
         if (result.length > this.filterSize) {
             this.updateMessageAndDisplay(`Showing only ${this.filterSize} Records, For more records please apply filter`);
         } else if (result.length === 0) {
@@ -143,12 +146,12 @@ export class AllocateHearingsComponent implements OnInit {
         } else {
             this.displayMessage = false;
         }
-        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
     }
 
     cancelAllocation() {
         this.toggleAll(false);
         this.csoAllocatedMenu.clear();
+        this.clearMessage();
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
     }
 
@@ -156,8 +159,9 @@ export class AllocateHearingsComponent implements OnInit {
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.setAllocationToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
-            error => {
-                this.updateMessageAndDisplay(error?.response ?? 'There was an unknown error.');
+            () => {
+                this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
+                this.searchForHearings(true);
             }
         );
     }

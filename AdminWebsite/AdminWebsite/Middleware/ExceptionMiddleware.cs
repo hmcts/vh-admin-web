@@ -47,6 +47,10 @@ namespace AdminWebsite.Middleware
             int statusCode = (int) HttpStatusCode.InternalServerError)
         {
             context.Response.StatusCode = statusCode;
+            if (exception is BookingsApiException bookingsException)
+            {
+                return context.Response.WriteAsJsonAsync(bookingsException.Response);
+            }
             var sb = new StringBuilder(exception.Message);
             var innerException = exception.InnerException;
             while (innerException != null)

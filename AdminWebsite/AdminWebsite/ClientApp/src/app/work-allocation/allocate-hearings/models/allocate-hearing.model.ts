@@ -65,7 +65,7 @@ export class AllocateHearingModel {
     }
 
     get areAllChecked(): boolean {
-        return this.hearings.every(h => h.checked);
+        return this.hearings.length > 0 && this.hearings.every(h => h.checked);
     }
 
     assignCsoToSelectedHearings(csoUsername: string, csoId: string): void {
