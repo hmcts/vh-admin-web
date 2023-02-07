@@ -1,7 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { UserIdentityService } from './user-identity.service';
 import { HttpClientModule } from '@angular/common/http';
-import { Constants } from '../common/constants';
 import { BHClient, UserProfileResponse } from './clients/api-client';
 import { of } from 'rxjs';
 
@@ -26,7 +25,7 @@ describe('UserIdentityService', () => {
             is_vh_team_leader: true
         });
 
-        sessionStorage.setItem(Constants.SessionStorageKeys.userProfile, JSON.stringify(userProfile));
+        service.profile = userProfile;
 
         service.getUserInformation().subscribe(result => {
             expect(result.is_case_administrator).toEqual(userProfile.is_case_administrator);
