@@ -14,7 +14,7 @@
             <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
           </div>
           <div class="govuk-grid-column-one" *ngIf="displayAddButton">
-            <button class="govuk-button" data-module="govuk-button" (click)="addUsers()">Add a team member</button>
+            <button class="govuk-button" data-module="govuk-button">Add a team member</button>
           </div>
         </div>
       </div>
@@ -93,13 +93,12 @@
             class="govuk-button govuk-!-margin-right-6"
             data-module="govuk-button"
             id="editButton_{{ user.id }}"
-            (click)="editUser(user.id)"
           >
             Edit
           </button>
         </td>
         <td class="govuk-table__cell">
-          <button class="govuk-button govuk-!-margin-right-6 red-button" data-module="govuk-button" (click)="deleteUser(user.id)">
+          <button class="govuk-button govuk-!-margin-right-6 red-button" data-module="govuk-button">
             Delete
           </button>
         </td>

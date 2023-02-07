@@ -54,7 +54,7 @@ namespace AdminWebsite.Controllers
         }
         
         /// <summary>
-        /// Get list of Justice User filtered by passed term. If term is null then not filter applied.
+        /// Get list of Justice User filtered by term. If term is null then no filter applied.
         /// </summary>
         /// <param name="term">term to filter result</param>
         /// <returns>List of the Justice User</returns>

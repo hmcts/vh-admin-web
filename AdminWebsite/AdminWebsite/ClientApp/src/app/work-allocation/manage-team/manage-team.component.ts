@@ -32,16 +32,6 @@ export class ManageTeamComponent {
     displayAddButton = false;
     errorMessage = false;
 
-    editUser(id) {
-        // TODO: edit will enable all the inputs in a row.
-        // const row = this.elRef.nativeElement.getElementsByClassName(id) as HTMLCollection;
-        // for (let i = 0; i < row.length; i++) {
-        //     (<HTMLElement>row[i]).removeAttribute('disabled');
-        // }
-    }
-
-    deleteUser(id) {}
-
     searchUsers() {
         const term = this.form.value.inputSearch;
         this.errorMessage = false;
@@ -53,7 +43,7 @@ export class ManageTeamComponent {
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-                if (this.users.length > 20) {
+                if (this.users.length > this.filterSize) {
                     this.users = this.users.slice(0, this.filterSize);
                     this.displayMessage = true;
                     this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
@@ -71,8 +61,6 @@ export class ManageTeamComponent {
             }
         );
     }
-
-    addUsers() {}
 
     handleListError(err, type) {
         this.logger.error(`${this.loggerPrefix} Error getting ${type} list`, err, type);
