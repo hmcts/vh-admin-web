@@ -78,7 +78,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.enableSearchFeature = value[FeatureFlags.adminSearch];
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
                 this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
-                console.log('Feature toggle is', this.enableSearchFeature);
             }
         });
     }
@@ -476,10 +475,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     onChangeNoAllocated() {
         const noAllocated = this.searchForm.value['noAllocated'];
         if (noAllocated) {
+            this.enableUser = false;
             this.bookingPersistService.selectedUsers = [];
-            this.csoMenu.enabled(false);
         } else {
-            this.csoMenu.enabled(true);
+            this.enableUser = true;
         }
     }
 
