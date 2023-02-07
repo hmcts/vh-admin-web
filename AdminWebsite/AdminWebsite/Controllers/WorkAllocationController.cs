@@ -13,7 +13,6 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace AdminWebsite.Controllers
 {
-
     /// <summary>
     ///     Responsible for retrieving and storing work allocation information
     /// </summary>
@@ -31,7 +30,7 @@ namespace AdminWebsite.Controllers
 
         [HttpGet("unallocated")]
         [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
-        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUnallocatedHearings()
         {
             var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
@@ -44,7 +43,7 @@ namespace AdminWebsite.Controllers
 
         [HttpGet("allocation")]
         [SwaggerOperation(OperationId = "GetAllocationHearings")]
-        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllocationHearings(
             [FromQuery] SearchForAllocationHearingsRequest searchRequest)
         {
@@ -69,8 +68,8 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("allocations")]
         [SwaggerOperation(OperationId = "AllocateHearingsToCso")]
-        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AllocateHearingsToCso(UpdateHearingAllocationToCsoRequest request)
         {
             var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);
