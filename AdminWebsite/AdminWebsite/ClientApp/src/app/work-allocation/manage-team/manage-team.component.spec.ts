@@ -6,7 +6,7 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { JusticeUserResponse } from '../../services/clients/api-client';
-import { of, Subject, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('ManageTeamComponent', () => {
     let component: ManageTeamComponent;

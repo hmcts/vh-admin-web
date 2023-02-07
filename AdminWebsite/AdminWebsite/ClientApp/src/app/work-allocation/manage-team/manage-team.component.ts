@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
@@ -16,8 +16,7 @@ export class ManageTeamComponent {
     constructor(
         private fb: FormBuilder,
         private videoHearingService: VideoHearingsService,
-        private logger: Logger,
-        private elRef: ElementRef
+        private logger: Logger
     ) {
         this.form = fb.group({
             inputSearch: ['']
