@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -557,40 +556,6 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
-        }
-        
-        [HttpGet("unallocated")]
-        [SwaggerOperation(OperationId = "GetUnallocatedHearings")]
-        [ProducesResponseType(typeof(UnallocatedHearingsForVhoResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUnallocatedHearings()
-        {
-            var unallocatedHearings = await _bookingsApiClient.GetUnallocatedHearingsAsync();
-            
-            if(unallocatedHearings == null || !unallocatedHearings.Any()) 
-                return Ok(UnallocatedHearingsForVhoMapper.MapFrom(new List<HearingDetailsResponse>(), DateTime.Today));
-            
-            return Ok(UnallocatedHearingsForVhoMapper.MapFrom(unallocatedHearings.ToList(), DateTime.Today));
-        }
-        
-             
-        [HttpGet("allocation")]
-        [SwaggerOperation(OperationId = "GetAllocationHearings")]
-        [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetAllocationHearings([FromQuery] SearchForAllocationHearingsRequest searchRequest)
-        {
-            var hearings = await _bookingsApiClient.
-                SearchForAllocationHearingsAsync(
-                    fromDate:   searchRequest.FromDate, 
-                    toDate:     searchRequest.ToDate,
-                    caseNumber:   searchRequest.CaseNumber,
-                    caseType:     searchRequest.CaseType,
-                    cso:          searchRequest.Cso,
-                    isUnallocated:searchRequest.IsUnallocated); 
-            
-            if(hearings == null || !hearings.Any())
-                return Ok(new List<AllocationHearingsResponse>());
-            
-            return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
         }
     }
 }

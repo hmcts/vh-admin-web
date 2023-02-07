@@ -1966,222 +1966,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
-     */
-    getUnallocatedHearings(): Observable<UnallocatedHearingsForVhoResponse> {
-        let url_ = this.baseUrl + '/api/hearings/unallocated';
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processGetUnallocatedHearings(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processGetUnallocatedHearings(response_ as any);
-                        } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UnallocatedHearingsForVhoResponse>;
-                        }
-                    } else return (_observableThrow(response_) as any) as Observable<UnallocatedHearingsForVhoResponse>;
-                })
-            );
-    }
-
-    protected processGetUnallocatedHearings(response: HttpResponseBase): Observable<UnallocatedHearingsForVhoResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = UnallocatedHearingsForVhoResponse.fromJS(resultData200);
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf<UnallocatedHearingsForVhoResponse>(null as any);
-    }
-
-    /**
-     * @param fromDate (optional)
-     * @param toDate (optional)
-     * @param cso (optional)
-     * @param caseType (optional)
-     * @param caseNumber (optional)
-     * @param isUnallocated (optional)
-     * @return Success
-     */
-    getAllocationHearings(
-        fromDate: Date | undefined,
-        toDate: Date | undefined,
-        cso: string[] | undefined,
-        caseType: string[] | undefined,
-        caseNumber: string | undefined,
-        isUnallocated: boolean | undefined
-    ): Observable<AllocationHearingsResponse[]> {
-        let url_ = this.baseUrl + '/api/hearings/allocation?';
-        if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
-        else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
-        if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
-        else if (toDate !== undefined) url_ += 'ToDate=' + encodeURIComponent(toDate ? '' + toDate.toISOString() : '') + '&';
-        if (cso === null) throw new Error("The parameter 'cso' cannot be null.");
-        else if (cso !== undefined)
-            cso &&
-                cso.forEach(item => {
-                    url_ += 'Cso=' + encodeURIComponent('' + item) + '&';
-                });
-        if (caseType === null) throw new Error("The parameter 'caseType' cannot be null.");
-        else if (caseType !== undefined)
-            caseType &&
-                caseType.forEach(item => {
-                    url_ += 'CaseType=' + encodeURIComponent('' + item) + '&';
-                });
-        if (caseNumber === null) throw new Error("The parameter 'caseNumber' cannot be null.");
-        else if (caseNumber !== undefined) url_ += 'CaseNumber=' + encodeURIComponent('' + caseNumber) + '&';
-        if (isUnallocated === null) throw new Error("The parameter 'isUnallocated' cannot be null.");
-        else if (isUnallocated !== undefined) url_ += 'IsUnallocated=' + encodeURIComponent('' + isUnallocated) + '&';
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processGetAllocationHearings(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processGetAllocationHearings(response_ as any);
-                        } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
-                        }
-                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
-                })
-            );
-    }
-
-    protected processGetAllocationHearings(response: HttpResponseBase): Observable<AllocationHearingsResponse[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    if (Array.isArray(resultData200)) {
-                        result200 = [] as any;
-                        for (let item of resultData200) result200!.push(AllocationHearingsResponse.fromJS(item));
-                    } else {
-                        result200 = <any>null;
-                    }
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf<AllocationHearingsResponse[]>(null as any);
-    }
-
-    /**
      * Find judges and court rooms accounts list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
@@ -4050,6 +3834,332 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * @return Success
+     */
+    getUnallocatedHearings(): Observable<UnallocatedHearingsForVhoResponse> {
+        let url_ = this.baseUrl + '/api/hearings/unallocated';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetUnallocatedHearings(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetUnallocatedHearings(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<UnallocatedHearingsForVhoResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<UnallocatedHearingsForVhoResponse>;
+                })
+            );
+    }
+
+    protected processGetUnallocatedHearings(response: HttpResponseBase): Observable<UnallocatedHearingsForVhoResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
+
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UnallocatedHearingsForVhoResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<UnallocatedHearingsForVhoResponse>(null as any);
+    }
+
+    /**
+     * @param fromDate (optional)
+     * @param toDate (optional)
+     * @param cso (optional)
+     * @param caseType (optional)
+     * @param caseNumber (optional)
+     * @param isUnallocated (optional)
+     * @return Success
+     */
+    getAllocationHearings(
+        fromDate: Date | undefined,
+        toDate: Date | undefined,
+        cso: string[] | undefined,
+        caseType: string[] | undefined,
+        caseNumber: string | undefined,
+        isUnallocated: boolean | undefined
+    ): Observable<AllocationHearingsResponse[]> {
+        let url_ = this.baseUrl + '/api/hearings/allocation?';
+        if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
+        else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
+        if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
+        else if (toDate !== undefined) url_ += 'ToDate=' + encodeURIComponent(toDate ? '' + toDate.toISOString() : '') + '&';
+        if (cso === null) throw new Error("The parameter 'cso' cannot be null.");
+        else if (cso !== undefined)
+            cso &&
+                cso.forEach(item => {
+                    url_ += 'Cso=' + encodeURIComponent('' + item) + '&';
+                });
+        if (caseType === null) throw new Error("The parameter 'caseType' cannot be null.");
+        else if (caseType !== undefined)
+            caseType &&
+                caseType.forEach(item => {
+                    url_ += 'CaseType=' + encodeURIComponent('' + item) + '&';
+                });
+        if (caseNumber === null) throw new Error("The parameter 'caseNumber' cannot be null.");
+        else if (caseNumber !== undefined) url_ += 'CaseNumber=' + encodeURIComponent('' + caseNumber) + '&';
+        if (isUnallocated === null) throw new Error("The parameter 'isUnallocated' cannot be null.");
+        else if (isUnallocated !== undefined) url_ += 'IsUnallocated=' + encodeURIComponent('' + isUnallocated) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetAllocationHearings(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetAllocationHearings(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
+                })
+            );
+    }
+
+    protected processGetAllocationHearings(response: HttpResponseBase): Observable<AllocationHearingsResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
+
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(AllocationHearingsResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<AllocationHearingsResponse[]>(null as any);
+    }
+
+    /**
+     * Update the hearing status.
+     * @param body (optional)
+     * @return Success
+     */
+    allocateHearingsToCso(body: UpdateHearingAllocationToCsoRequest | undefined): Observable<AllocationHearingsResponse[]> {
+        let url_ = this.baseUrl + '/api/hearings/allocations';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processAllocateHearingsToCso(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processAllocateHearingsToCso(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
+                })
+            );
+    }
+
+    protected processAllocateHearingsToCso(response: HttpResponseBase): Observable<AllocationHearingsResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
+
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(AllocationHearingsResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = resultData400 !== undefined ? resultData400 : <any>null;
+
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<AllocationHearingsResponse[]>(null as any);
+    }
+
+    /**
      * @param body (optional)
      * @return Success
      */
@@ -4839,12 +4949,20 @@ export interface IUpdateAccountDetailsRequest {
 }
 
 export class AllocationHearingsResponse implements IAllocationHearingsResponse {
+    /** The hearing id */
     hearing_id?: string;
+    /** The date of the hearing */
     hearing_date?: Date;
+    /** The start time for a hearing */
     start_time?: string;
+    /** The duration of a hearing in minutes */
     duration?: number;
+    /** The hearing case number */
     case_number?: string | undefined;
+    /** The hearing case type */
     case_type?: string | undefined;
+    /** The allocated CSO. Can be one of following:
+<list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
@@ -4888,12 +5006,20 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
 }
 
 export interface IAllocationHearingsResponse {
+    /** The hearing id */
     hearing_id?: string;
+    /** The date of the hearing */
     hearing_date?: Date;
+    /** The start time for a hearing */
     start_time?: string;
+    /** The duration of a hearing in minutes */
     duration?: number;
+    /** The hearing case number */
     case_number?: string | undefined;
+    /** The hearing case type */
     case_type?: string | undefined;
+    /** The allocated CSO. Can be one of following:
+<list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
 }
 
@@ -6819,6 +6945,51 @@ export interface IUpdateBookingStatusRequest {
     updated_by?: string | undefined;
     status?: UpdateBookingStatus;
     cancel_reason?: string | undefined;
+}
+
+export class UpdateHearingAllocationToCsoRequest implements IUpdateHearingAllocationToCsoRequest {
+    hearings?: string[] | undefined;
+    cso_id?: string;
+
+    constructor(data?: IUpdateHearingAllocationToCsoRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['hearings'])) {
+                this.hearings = [] as any;
+                for (let item of _data['hearings']) this.hearings!.push(item);
+            }
+            this.cso_id = _data['cso_id'];
+        }
+    }
+
+    static fromJS(data: any): UpdateHearingAllocationToCsoRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateHearingAllocationToCsoRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.hearings)) {
+            data['hearings'] = [];
+            for (let item of this.hearings) data['hearings'].push(item);
+        }
+        data['cso_id'] = this.cso_id;
+        return data;
+    }
+}
+
+export interface IUpdateHearingAllocationToCsoRequest {
+    hearings?: string[] | undefined;
+    cso_id?: string;
 }
 
 export class UpdateNonWorkingHoursRequest implements IUpdateNonWorkingHoursRequest {

@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { AllocateHearingsService } from '../services/allocate-hearings.service';
+import { AllocateHearingModel } from './models/allocate-hearing.model';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -13,17 +14,6 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
-    @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
-    @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
-    form: FormGroup;
-    allocateHearingsDetailOpen: boolean;
-    hearings: AllocationHearingsResponse[];
-    caseTypeDropDownValues: string[];
-    csoDropDownValues: string[];
-    displayMessage = false;
-    message: string;
-    faExclamation = faCircleExclamation;
-    private filterSize = 20;
     constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
@@ -34,6 +24,19 @@ export class AllocateHearingsComponent implements OnInit {
             isUnallocated: [false]
         });
     }
+    @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
+    @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
+    form: FormGroup;
+    allocateHearingsDetailOpen: boolean;
+    allocationHearingViewModel: AllocateHearingModel = new AllocateHearingModel([]);
+    caseTypeDropDownValues: string[];
+    csoDropDownValues: string[];
+    displayMessage = false;
+    message: string;
+    faExclamation = faCircleExclamation;
+    private filterSize = 20;
+    dropDownUserLabelAllocateTo = 'Allocate to';
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -54,7 +57,7 @@ export class AllocateHearingsComponent implements OnInit {
         });
     }
 
-    searchForHearings() {
+    searchForHearings(keepExistingMessage: boolean = false) {
         const retrieveDate = (date: any): Date => (date === null || date === '' ? null : new Date(date));
 
         const fromDate = retrieveDate(this.form.value.fromDate);
@@ -66,43 +69,132 @@ export class AllocateHearingsComponent implements OnInit {
 
         this.allocateService
             .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
-            .subscribe(result => this.filterResults(result));
+            .subscribe(result => this.displayResults(result, keepExistingMessage));
     }
 
     clear() {
-        this.hearings = [];
+        this.allocationHearingViewModel = new AllocateHearingModel([]);
         this.caseTypeDropDownValues = [];
         this.csoDropDownValues = [];
 
-        this.form.controls['fromDate'].setValue('');
-        this.form.controls['toDate'].setValue('');
-        this.form.controls['userName'].setValue('');
-        this.form.controls['caseType'].setValue('');
-        this.form.controls['caseNumber'].setValue('');
-        this.form.controls['isUnallocated'].setValue(false);
+        this.form.reset({
+            fromDate: '',
+            toDate: '',
+            userName: '',
+            caseType: '',
+            caseNumber: '',
+            isUnallocated: false
+        });
 
         this.csoMenu.clear();
         this.caseTypeMenu.clear();
     }
 
-    selectedCaseTypesEmitter($event: string[]) {
+    messageCanBeDisplayed(): boolean {
+        return this.displayMessage;
+    }
+
+    updateMessageAndDisplay(message: string) {
+        this.message = message;
+        this.displayMessage = true;
+    }
+
+    clearMessage() {
+        this.displayMessage = false;
+        this.message = '';
+    }
+
+    onCaseTypeSelected($event: string[]) {
         this.caseTypeDropDownValues = $event;
     }
 
-    selectedUsersEmitter($event: string[]) {
+    onJusticeUserForFilterSelected($event: string[]) {
         this.csoDropDownValues = $event;
     }
 
-    private filterResults(result: AllocationHearingsResponse[]) {
-        this.hearings = result.slice(0, this.filterSize);
+    onJusticeUserForAllocationSelected(justiceUserId: string) {
+        if (justiceUserId) {
+            const username = this.csoAllocatedMenu?.selectedLabel;
+            this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
+        } else {
+            // without a selected CSO, unset selection
+            this.clearMessage();
+            this.toggleAll(false);
+        }
+    }
+
+    private attemptToAssignCsoToSelectedHearings(csoId: string, csoUsername: string) {
+        if (!csoId || !csoUsername) {
+            return;
+        }
+        this.allocationHearingViewModel.assignCsoToSelectedHearings(csoUsername, csoId);
+    }
+
+    private displayResults(result: AllocationHearingsResponse[], keepExistingMessage: boolean = false) {
+        const originalHearings = result.slice(0, this.filterSize);
+        this.allocationHearingViewModel = new AllocateHearingModel(originalHearings);
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
+
+        // if there is an error, refresh the data to capture partial updates but keep error message on screen
+        if (keepExistingMessage) {
+            return;
+        }
         if (result.length > this.filterSize) {
-            this.displayMessage = true;
-            this.message = `Showing only ${this.filterSize} Records, For more records please apply filter`;
+            this.updateMessageAndDisplay(`Showing only ${this.filterSize} Records, For more records please apply filter`);
         } else if (result.length === 0) {
-            this.displayMessage = true;
-            this.message = 'There are no records found';
+            this.updateMessageAndDisplay('There are no records found');
         } else {
             this.displayMessage = false;
+        }
+    }
+
+    cancelAllocation() {
+        this.toggleAll(false);
+        this.csoAllocatedMenu.clear();
+        this.clearMessage();
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
+    }
+
+    confirmAllocation() {
+        const csoId = this.csoAllocatedMenu?.selectedItems as string;
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
+            result => this.updateTableWithAllocatedCso(result),
+            () => {
+                this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
+                this.searchForHearings(true);
+            }
+        );
+    }
+
+    toggleAll(checkAll: boolean) {
+        if (checkAll) {
+            this.allocationHearingViewModel.checkAllHearings();
+            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+            // safe to cast to string
+            const csoId = this.csoAllocatedMenu?.selectedItems as string;
+            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+        } else {
+            this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
+        }
+    }
+
+    private updateTableWithAllocatedCso(updatedHearings: AllocationHearingsResponse[]) {
+        this.allocationHearingViewModel.updateHearings(updatedHearings);
+        this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
+        this.csoAllocatedMenu.clear();
+        this.updateMessageAndDisplay('Hearings have been updated.');
+    }
+
+    selectHearing(checked: boolean, hearing_id: string) {
+        const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+        // safe to cast to string
+        const csoId = this.csoAllocatedMenu?.selectedItems as string;
+
+        if (checked) {
+            this.allocationHearingViewModel.checkHearing(hearing_id);
+            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+        } else {
+            this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
     }
 }

@@ -1,5 +1,5 @@
 <div [formGroup]="form">
-  <label class="govuk-label" for="user-list">Allocated CSO</label>
+  <label class="govuk-label" for="user-list">{{ dropDownLabel }}</label>
   <ng-select
     id="user-list"
     class="custom"
@@ -9,12 +9,11 @@
     bindValue="id"
     formControlName="selectedUserIds"
     [placeholder]="'Select Users'"
-    [multiple]="true"
+    [multiple]="multiSelect"
     [attr.aria-label]="'User list'"
     [closeOnSelect]="false"
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
-    (add)="onSelect()"
     (change)="onSelect()"
   >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
