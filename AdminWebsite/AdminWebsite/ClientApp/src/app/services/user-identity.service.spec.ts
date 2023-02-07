@@ -14,10 +14,6 @@ describe('UserIdentityService', () => {
         });
     });
 
-    afterEach(() => {
-        sessionStorage.clear();
-    });
-
     it('should retrieve user profile from memory when it exists', inject([UserIdentityService], (service: UserIdentityService) => {
         const userProfile = new UserProfileResponse({
             is_case_administrator: false,
