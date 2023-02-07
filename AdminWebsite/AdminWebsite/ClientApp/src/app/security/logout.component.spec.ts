@@ -1,8 +1,8 @@
-import { fakeAsync, flush } from "@angular/core/testing";
-import { OidcSecurityService } from "angular-auth-oidc-client";
-import { Subject } from "rxjs";
-import { UserIdentityService } from "../services/user-identity.service";
-import { LogoutComponent } from "./logout.component";
+import { fakeAsync } from '@angular/core/testing';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Subject } from 'rxjs';
+import { UserIdentityService } from '../services/user-identity.service';
+import { LogoutComponent } from './logout.component';
 
 describe('LogoutComponent', () => {
     let component: LogoutComponent;
@@ -10,7 +10,10 @@ describe('LogoutComponent', () => {
     let securityServiceSpy;
 
     beforeAll(() => {
-        securityServiceSpy = jasmine.createSpyObj<OidcSecurityService>('OidcSecurityService', ['logoffAndRevokeTokens', 'isAuthenticated$'])
+        securityServiceSpy = jasmine.createSpyObj<OidcSecurityService>('OidcSecurityService', [
+            'logoffAndRevokeTokens',
+            'isAuthenticated$'
+        ]);
         userIdentityServiceSpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['clearUserProfile']);
     });
 
@@ -38,4 +41,3 @@ describe('LogoutComponent', () => {
         expect(securityServiceSpy.logoffAndRevokeTokens).toHaveBeenCalledTimes(0);
     }));
 });
-
