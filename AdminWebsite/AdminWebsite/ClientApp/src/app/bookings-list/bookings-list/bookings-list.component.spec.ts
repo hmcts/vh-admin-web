@@ -1271,6 +1271,8 @@ describe('BookingsListComponent', () => {
     });
 
     describe('onChangeNoAllocated', () => {
+        const bookingList = new BookingslistTestData();
+        const bookinData = bookingList.getTestData();
         beforeEach(() => {
             const formBuilder = new FormBuilder();
             const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
@@ -1296,7 +1298,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookinData.BookingsDetails[0].HearingId));
             expect(divToHide).toBeFalsy();
         });
 
@@ -1304,7 +1306,7 @@ describe('BookingsListComponent', () => {
             launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
             await component.ngOnInit();
             fixture.detectChanges();
-            const divToHide = fixture.debugElement.query(By.css('#allocated-to'));
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookinData.BookingsDetails[0].HearingId));
             expect(divToHide).toBeTruthy();
         });
     });
