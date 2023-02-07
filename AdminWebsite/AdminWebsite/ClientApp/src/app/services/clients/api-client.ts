@@ -4949,12 +4949,20 @@ export interface IUpdateAccountDetailsRequest {
 }
 
 export class AllocationHearingsResponse implements IAllocationHearingsResponse {
+    /** The hearing id */
     hearing_id?: string;
+    /** The date of the hearing */
     hearing_date?: Date;
+    /** The start time for a hearing */
     start_time?: string;
+    /** The duration of a hearing in minutes */
     duration?: number;
+    /** The hearing case number */
     case_number?: string | undefined;
+    /** The hearing case type */
     case_type?: string | undefined;
+    /** The allocated CSO. Can be one of following:
+<list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
@@ -4998,12 +5006,20 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
 }
 
 export interface IAllocationHearingsResponse {
+    /** The hearing id */
     hearing_id?: string;
+    /** The date of the hearing */
     hearing_date?: Date;
+    /** The start time for a hearing */
     start_time?: string;
+    /** The duration of a hearing in minutes */
     duration?: number;
+    /** The hearing case number */
     case_number?: string | undefined;
+    /** The hearing case type */
     case_type?: string | undefined;
+    /** The allocated CSO. Can be one of following:
+<list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
 }
 

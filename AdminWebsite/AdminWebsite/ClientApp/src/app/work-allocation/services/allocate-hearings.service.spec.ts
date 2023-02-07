@@ -65,20 +65,58 @@ describe('AllocateHearingsService', () => {
         });
     });
 
-    describe('setAllocationToHearings', () => {
+    describe('allocateCsoToHearings', () => {
         it('should call the api and return updated hearings with allocated users', fakeAsync(() => {
-            const selectedHearingIds = [newGuid(), newGuid(), newGuid()];
             const csoId = newGuid();
+            const csoUsername = 'test@cso.com';
+            const allocationResponse = [
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time1',
+                    case_type: 'case_type1',
+                    case_number: 'case_number1',
+                    duration: 480,
+                    hearing_date: new Date('2023-01-01')
+                }),
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time2',
+                    case_type: 'case_type1',
+                    case_number: 'case_number2',
+                    duration: 360,
+                    hearing_date: new Date('2023-01-02')
+                }),
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time2',
+                    case_type: 'case_type1',
+                    case_number: 'case_number2',
+                    duration: 360,
+                    hearing_date: new Date('2023-01-02')
+                })
+            ];
+
+            const selectedHearingIds = [
+                allocationResponse[0].hearing_id,
+                allocationResponse[1].hearing_id,
+                allocationResponse[2].hearing_id
+            ];
+
+            bHClientSpy.allocateHearingsToCso.and.returnValue(of(allocationResponse));
 
             const request = new UpdateHearingAllocationToCsoRequest({
                 cso_id: csoId,
                 hearings: selectedHearingIds
             });
-
-            service.setAllocationToHearings(selectedHearingIds, csoId);
+            let result: AllocationHearingsResponse[];
+            service.allocateCsoToHearings(selectedHearingIds, csoId).subscribe(response => (result = response));
             tick();
 
             expect(bHClientSpy.allocateHearingsToCso).toHaveBeenCalledWith(request);
+            expect(result.every(x => x.allocated_cso === csoUsername)).toBeTruthy();
         }));
     });
 });

@@ -294,7 +294,7 @@ describe('AllocateHearingsComponent', () => {
                 hearing_date: new Date()
             });
 
-            allocateServiceSpy.setAllocationToHearings.and.returnValue(of([updatedAllocation]));
+            allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
 
             // act
             component.selectHearing(true, hearingId);
@@ -318,7 +318,7 @@ describe('AllocateHearingsComponent', () => {
             component.csoAllocatedMenu['selectedItems'] = csoId;
 
             const error = new BookHearingException('Bad Request', 500, 'invalid id', null, null);
-            allocateServiceSpy.setAllocationToHearings.and.returnValue(throwError(error));
+            allocateServiceSpy.allocateCsoToHearings.and.returnValue(throwError(error));
 
             component.confirmAllocation();
             tick();

@@ -157,7 +157,7 @@ export class AllocateHearingsComponent implements OnInit {
 
     confirmAllocation() {
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
-        this.allocateService.setAllocationToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
             () => {
                 this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');

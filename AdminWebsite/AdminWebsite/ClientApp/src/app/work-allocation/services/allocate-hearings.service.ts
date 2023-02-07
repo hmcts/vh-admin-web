@@ -28,7 +28,7 @@ export class AllocateHearingsService {
         }
     }
 
-    setAllocationToHearings(selectedHearings: string[], csoUserId: string): Observable<AllocationHearingsResponse[]> {
+    allocateCsoToHearings(selectedHearings: string[], csoUserId: string): Observable<AllocationHearingsResponse[]> {
         const request = new UpdateHearingAllocationToCsoRequest();
         request.hearings = selectedHearings;
         request.cso_id = csoUserId;
