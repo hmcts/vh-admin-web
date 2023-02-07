@@ -38,7 +38,7 @@ export class ManageTeamComponent {
     errorMessage = false;
 
     editUser(id) {
-        //TODO: edit will enable all the inputs in a row.
+        // TODO: edit will enable all the inputs in a row.
         // const row = this.elRef.nativeElement.getElementsByClassName(id) as HTMLCollection;
         // for (let i = 0; i < row.length; i++) {
         //     (<HTMLElement>row[i]).removeAttribute('disabled');

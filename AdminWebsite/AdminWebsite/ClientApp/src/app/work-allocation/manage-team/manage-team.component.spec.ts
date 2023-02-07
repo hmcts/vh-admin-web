@@ -7,9 +7,6 @@ import { Logger } from '../../services/logger';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { of, Subject, throwError } from 'rxjs';
-import {
-    VhoWorkHoursNonAvailabilityTableComponent
-} from '../edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 
 describe('ManageTeamComponent', () => {
     let component: ManageTeamComponent;
@@ -23,7 +20,6 @@ describe('ManageTeamComponent', () => {
         users = [];
         logger = jasmine.createSpyObj('Logger', ['debug']);
 
-
         await TestBed.configureTestingModule({
             declarations: [ManageTeamComponent],
             providers: [
@@ -34,8 +30,6 @@ describe('ManageTeamComponent', () => {
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();
-
-
     });
 
     beforeEach(() => {
@@ -51,12 +45,10 @@ describe('ManageTeamComponent', () => {
     });
 
     describe('searchUsers', () => {
-
         it('should call video hearing service and return empty list', () => {
-            const emptyList:JusticeUserResponse[] = [];
+            const emptyList: JusticeUserResponse[] = [];
 
             videoServiceSpy.getUsers.and.returnValue(of(emptyList));
-
 
             component.searchUsers();
             expect(videoServiceSpy.getUsers).toHaveBeenCalled();
@@ -83,7 +75,6 @@ describe('ManageTeamComponent', () => {
             expect(component.message).toContain('please refine your search to see more results.');
             expect(component.displayAddButton).toBeTruthy();
         });
-
 
         it('should call video hearing service, and catch thrown exception', () => {
             videoServiceSpy.getUsers.and.returnValue(throwError({ status: 404 }));
