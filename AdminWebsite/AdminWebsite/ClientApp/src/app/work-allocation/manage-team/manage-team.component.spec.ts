@@ -6,28 +6,23 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { JusticeUserResponse } from '../../services/clients/api-client';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
+import {
+    VhoWorkHoursNonAvailabilityTableComponent
+} from '../edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 
 describe('ManageTeamComponent', () => {
     let component: ManageTeamComponent;
     let fixture: ComponentFixture<ManageTeamComponent>;
     let logger: jasmine.SpyObj<Logger>;
     let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    const users: JusticeUserResponse[] = [];
+    let users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getUsers']);
-
+        users = [];
         logger = jasmine.createSpyObj('Logger', ['debug']);
 
-        const user: JusticeUserResponse = new JusticeUserResponse();
-
-        user.id = '1';
-        user.username = 'username1@mail.com';
-
-        users.push(user);
-
-        videoServiceSpy.getUsers.and.returnValue(of(users));
 
         await TestBed.configureTestingModule({
             declarations: [ManageTeamComponent],
@@ -39,11 +34,15 @@ describe('ManageTeamComponent', () => {
                 { provide: VideoHearingsService, useValue: videoServiceSpy }
             ]
         }).compileComponents();
+
+
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ManageTeamComponent);
         component = fixture.componentInstance;
+
+        videoServiceSpy.getUsers.calls.reset();
         fixture.detectChanges();
     });
 
@@ -52,13 +51,39 @@ describe('ManageTeamComponent', () => {
     });
 
     describe('searchUsers', () => {
-        it('should call video hearing service', () => {
-            const expectedResponse = users;
+
+        it('should call video hearing service and return empty list', () => {
+            const emptyList:JusticeUserResponse[] = [];
+
+            videoServiceSpy.getUsers.and.returnValue(of(emptyList));
+
+
             component.searchUsers();
             expect(videoServiceSpy.getUsers).toHaveBeenCalled();
-            expect(component.users).toEqual(expectedResponse);
+            expect(component.message).toContain('No users matching this search criteria were found.');
             expect(component.displayAddButton).toBeTruthy();
         });
+
+        it('should call video hearing service and return 20 result', () => {
+            for (let i = 0; i < 30; i++) {
+                const user: JusticeUserResponse = new JusticeUserResponse();
+
+                user.id = i.toString();
+                user.username = `username${i}@mail.com`;
+
+                users.push(user);
+            }
+
+            videoServiceSpy.getUsers.and.returnValue(of(users));
+
+            const expectedResponse = users.slice(0, 20);
+            component.searchUsers();
+            expect(videoServiceSpy.getUsers).toHaveBeenCalled();
+            expect(component.users.length).toEqual(expectedResponse.length);
+            expect(component.message).toContain('please refine your search to see more results.');
+            expect(component.displayAddButton).toBeTruthy();
+        });
+
 
         it('should call video hearing service, and catch thrown exception', () => {
             videoServiceSpy.getUsers.and.returnValue(throwError({ status: 404 }));
@@ -68,14 +93,6 @@ describe('ManageTeamComponent', () => {
             expect(videoServiceSpy.getUsers).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
             expect(component.displayAddButton).toBeFalsy();
-        });
-    });
-
-    describe('editUser', () => {
-        it('should enable all inputs in the selected row ', () => {
-            const expectedResponse = [new JusticeUserResponse()];
-            component.editUser('1');
-            // component.elRef.nativeElement.getElementsByClassName(id)
         });
     });
 });
