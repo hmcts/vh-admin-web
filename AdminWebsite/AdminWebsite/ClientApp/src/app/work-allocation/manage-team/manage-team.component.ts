@@ -13,11 +13,7 @@ import { Logger } from '../../services/logger';
 export class ManageTeamComponent {
     private filterSize = 20;
 
-    constructor(
-        private fb: FormBuilder,
-        private videoHearingService: VideoHearingsService,
-        private logger: Logger
-    ) {
+    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService, private logger: Logger) {
         this.form = fb.group({
             inputSearch: ['']
         });
