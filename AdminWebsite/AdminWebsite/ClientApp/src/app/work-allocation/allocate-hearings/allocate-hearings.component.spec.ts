@@ -51,7 +51,7 @@ describe('AllocateHearingsComponent', () => {
         ];
 
         activatedRoute = new ActivatedRouteStub();
-        allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings', 'setAllocationToHearings']);
+        allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings', 'allocateCsoToHearings']);
         await TestBed.configureTestingModule({
             declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent, MinutesToHoursPipe],
             providers: [
