@@ -54,20 +54,21 @@ namespace AdminWebsite.Controllers
         }
         
         /// <summary>
-        /// Get the Justice User list from the JusticeUser table
+        /// Get list of Justice User filtered by term. If term is null then no filter applied.
         /// </summary>
+        /// <param name="term">term to filter result</param>
         /// <returns>List of the Justice User</returns>
         [HttpGet("list")]
         [SwaggerOperation(OperationId = "GetUserList")]
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList()
+        public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList([FromQuery] string term)
         {
             ICollection<JusticeUserResponse> justiceUserList = new List<JusticeUserResponse>();
             
             try
             {
                 justiceUserList = await _bookingsApiClient
-                    .GetJusticeUserListAsync();
+                    .GetJusticeUserListAsync(term);
             }
             catch(BookingsApiException e)
             {

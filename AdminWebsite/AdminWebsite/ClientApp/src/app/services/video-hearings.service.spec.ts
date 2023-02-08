@@ -92,9 +92,14 @@ describe('Video hearing service', () => {
         expect(currentRequest).toBeFalsy();
     });
 
-    it('should get Justice User list', () => {
-        service.getUsers();
-        expect(clientApiSpy.getUserList).toHaveBeenCalled();
+    it('should get Justice User list with null search term', () => {
+        service.getUsers(null);
+        expect(clientApiSpy.getUserList).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should get Justice User list with search term', () => {
+        service.getUsers('searchTerm');
+        expect(clientApiSpy.getUserList).toHaveBeenCalledWith('searchTerm');
     });
 
     it('should cache current hearing request', () => {

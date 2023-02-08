@@ -1,9 +1,10 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { AllocateHearingsService } from './allocate-hearings.service';
 import { of } from 'rxjs';
-import { AllocationHearingsResponse, BHClient } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, BHClient, UpdateHearingAllocationToCsoRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
+import { newGuid } from '@microsoft/applicationinsights-core-js';
 
 describe('AllocateHearingsService', () => {
     let service: AllocateHearingsService;
@@ -11,7 +12,7 @@ describe('AllocateHearingsService', () => {
     let logger: jasmine.SpyObj<Logger>;
 
     beforeEach(() => {
-        bHClientSpy = jasmine.createSpyObj('BHClient', ['getAllocationHearings']);
+        bHClientSpy = jasmine.createSpyObj('BHClient', ['getAllocationHearings', 'allocateHearingsToCso']);
         logger = jasmine.createSpyObj('Logger', ['error']);
         TestBed.configureTestingModule({
             providers: [
@@ -62,5 +63,60 @@ describe('AllocateHearingsService', () => {
             expect(bHClientSpy.getAllocationHearings).toHaveBeenCalled();
             expect(result).toEqual(allocationResponse);
         });
+    });
+
+    describe('allocateCsoToHearings', () => {
+        it('should call the api and return updated hearings with allocated users', fakeAsync(() => {
+            const csoId = newGuid();
+            const csoUsername = 'test@cso.com';
+            const allocationResponse = [
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time1',
+                    case_type: 'case_type1',
+                    case_number: 'case_number1',
+                    duration: 480,
+                    hearing_date: new Date('2023-01-01')
+                }),
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time2',
+                    case_type: 'case_type1',
+                    case_number: 'case_number2',
+                    duration: 360,
+                    hearing_date: new Date('2023-01-02')
+                }),
+                new AllocationHearingsResponse({
+                    allocated_cso: csoUsername,
+                    hearing_id: newGuid(),
+                    start_time: 'start_time2',
+                    case_type: 'case_type1',
+                    case_number: 'case_number2',
+                    duration: 360,
+                    hearing_date: new Date('2023-01-02')
+                })
+            ];
+
+            const selectedHearingIds = [
+                allocationResponse[0].hearing_id,
+                allocationResponse[1].hearing_id,
+                allocationResponse[2].hearing_id
+            ];
+
+            bHClientSpy.allocateHearingsToCso.and.returnValue(of(allocationResponse));
+
+            const request = new UpdateHearingAllocationToCsoRequest({
+                cso_id: csoId,
+                hearings: selectedHearingIds
+            });
+            let result: AllocationHearingsResponse[];
+            service.allocateCsoToHearings(selectedHearingIds, csoId).subscribe(response => (result = response));
+            tick();
+
+            expect(bHClientSpy.allocateHearingsToCso).toHaveBeenCalledWith(request);
+            expect(result.every(x => x.allocated_cso === csoUsername)).toBeTruthy();
+        }));
     });
 });
