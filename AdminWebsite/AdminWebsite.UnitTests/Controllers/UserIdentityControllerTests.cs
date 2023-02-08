@@ -166,14 +166,14 @@ namespace AdminWebsite.UnitTests.Controllers
                 Lastname = "lastName1"
             };
             _justiceUserListResponse.Add(user);
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync()).ReturnsAsync(_justiceUserListResponse);
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null)).ReturnsAsync(_justiceUserListResponse);
             
             _claimsPrincipal = new ClaimsPrincipalBuilder()
                 .WithRole(AppRoles.CaseAdminRole)
                 .Build();
 
             _controller = SetupControllerWithClaims(_claimsPrincipal);
-            var response = await _controller.GetUserList();
+            var response = await _controller.GetUserList(null);
             var result = response.Result.As<OkObjectResult>();
 
             result.Should().NotBeNull();
@@ -189,11 +189,11 @@ namespace AdminWebsite.UnitTests.Controllers
                 .WithRole(AppRoles.CaseAdminRole)
                 .Build();
 
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync())
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null))
                 .ThrowsAsync(new BookingsApiException("not found message", 404, "not found response", null, null));
             
             _controller = SetupControllerWithClaims(_claimsPrincipal);
-            var response = await _controller.GetUserList();
+            var response = await _controller.GetUserList(null);
             var result = response.Result.As<OkObjectResult>();
 
             result.Should().NotBeNull();
@@ -209,11 +209,11 @@ namespace AdminWebsite.UnitTests.Controllers
                 .WithRole(AppRoles.CaseAdminRole)
                 .Build();
 
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync())
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null))
                 .ThrowsAsync(new BookingsApiException("not found message", 400, "not found response", null, null));
             
             _controller = SetupControllerWithClaims(_claimsPrincipal);
-            var response = await _controller.GetUserList();
+            var response = await _controller.GetUserList(null);
             var result = response.Result.As<ObjectResult>();
 
             result.Should().NotBeNull();

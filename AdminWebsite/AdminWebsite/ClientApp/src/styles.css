@@ -92,6 +92,10 @@
     color: #0b0c0c;
 }
 
+.vh-text-color-red {
+    color: red;
+}
+
 .vh-btn-cancel {
     color: #ffffff;
     background-color: #d4351c;

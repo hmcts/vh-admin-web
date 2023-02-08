@@ -4,21 +4,24 @@ import { Logger } from '../../services/logger';
 
 @Injectable()
 export abstract class MenuBase implements OnInit {
-    protected constructor(formBuilder: FormBuilder, logger: Logger) {
+    constructor(formBuilder: FormBuilder, logger: Logger) {
         this.logger = logger;
         this.formBuilder = formBuilder;
     }
+
     logger: Logger;
     form: FormGroup;
     error = false;
+    selectedLabel: any;
+    items: any;
     private formBuilder: FormBuilder;
 
     abstract loggerPrefix: string;
     abstract formGroupName: string;
-    abstract selectedItems: Array<any>;
+    abstract selectedItems: any;
     abstract formConfiguration: any;
 
-    @Output() selectedEmitter = new EventEmitter<Array<any>>();
+    @Output() selectedEmitter = new EventEmitter<any>();
     enabled(value) {
         if (value !== false) {
             this.form.controls[this.formGroupName].enable();
@@ -39,6 +42,7 @@ export abstract class MenuBase implements OnInit {
 
     onSelect() {
         this.selectedItems = this.form.value[this.formGroupName];
+        this.selectedLabel = this.items.filter(x => x.id === this.selectedItems).map(y => y.username)[0];
         this.selectedEmitter.emit(this.selectedItems);
     }
 
@@ -46,6 +50,7 @@ export abstract class MenuBase implements OnInit {
         const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
         if (searchCriteriaEntered) {
             this.selectedItems = [];
+            this.selectedLabel = undefined;
             this.form.reset();
         }
     }
