@@ -19,6 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { JusticeUsersMenuComponent } from './menus/justice-users-menu/justice-users-menu.component';
 import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
+import { TooltipDirective } from './directives/tooltip.directive';
 
 @NgModule({
     imports: [
@@ -42,7 +43,8 @@ import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
         CaseTypesMenuComponent,
         JusticeUsersMenuComponent,
         VenuesMenuComponent,
-        MinutesToHoursPipe
+        MinutesToHoursPipe,
+        TooltipDirective
     ],
     providers: [WindowRef, WindowScrolling],
     exports: [
@@ -59,7 +61,8 @@ import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
         CaseTypesMenuComponent,
         JusticeUsersMenuComponent,
         VenuesMenuComponent,
-        MinutesToHoursPipe
+        MinutesToHoursPipe,
+        TooltipDirective
     ]
 })
 export class SharedModule {
