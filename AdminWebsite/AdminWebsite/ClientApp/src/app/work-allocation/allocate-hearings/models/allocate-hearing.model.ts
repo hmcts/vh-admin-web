@@ -13,6 +13,7 @@ export class AllocateHearingItemModel {
         public caseNumber: string,
         public caseType: string,
         public allocatedOfficerUsername?: string,
+        public hasWorkHoursClash?: boolean,
         public checked: boolean = false
     ) {}
 
@@ -43,6 +44,7 @@ export class AllocateHearingModel {
                     val.case_number,
                     val.case_type,
                     val.allocated_cso,
+                    val.has_work_hours_clash,
                     false
                 )
         );
@@ -104,6 +106,7 @@ export class AllocateHearingModel {
             originalHearing.case_number,
             originalHearing.case_type,
             originalHearing.allocated_cso,
+            originalHearing.has_work_hours_clash,
             false
         );
     }

@@ -36,7 +36,7 @@ public class AllocateHearingsToCsoTests
             Hearings = new List<Guid>() {Guid.NewGuid(), Guid.NewGuid()}
         };
         
-        var mockResponse = new List<HearingDetailsResponse>();
+        var mockResponse = new List<HearingAllocationsResponse>();
         
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.AllocateHearingsToCsoAsync(request))
             .ReturnsAsync(mockResponse);
@@ -62,15 +62,14 @@ public class AllocateHearingsToCsoTests
             Hearings = new List<Guid>() {Guid.NewGuid(), Guid.NewGuid()}
         };
         
-        var mockResponse = Builder<HearingDetailsResponse>.CreateListOfSize(2)
+        var mockResponse = Builder<HearingAllocationsResponse>.CreateListOfSize(2)
             .All()
             .With(x => x.ScheduledDateTime, DateTime.Today.AddHours(10).AddMinutes(30))
-            .With(x => x.ScheduledDuration, 40)
-            .With(x => x.Cases = new List<CaseResponse> { Builder<CaseResponse>.CreateNew().Build() })
-            .With(x => x.CaseTypeName, "Generic")
-            .With(x => x.AllocatedTo = request.CsoId.ToString())
-            .TheFirst(1).With(x => x.Id, request.Hearings[0])
-            .TheNext(1).With(x => x.Id, request.Hearings[1])
+            .With(x => x.Duration, 40)
+            .With(x => x.CaseType, "Generic")
+            .With(x => x.AllocatedCso = request.CsoId.ToString())
+            .TheFirst(1).With(x => x.HearingId, request.Hearings[0])
+            .TheNext(1).With(x => x.HearingId, request.Hearings[1])
             .Build();
         
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.AllocateHearingsToCsoAsync(request))
@@ -86,11 +85,11 @@ public class AllocateHearingsToCsoTests
             .And.BeAssignableTo<List<AllocationHearingsResponse>>();
 
         var hearings = okObjectResult.Value.As<List<AllocationHearingsResponse>>();
-        hearings[0].HearingId.Should().Be(mockResponse[0].Id);
-        hearings[0].AllocatedCso.Should().Be(mockResponse[0].AllocatedTo);
+        hearings[0].HearingId.Should().Be(mockResponse[0].HearingId);
+        hearings[0].AllocatedCso.Should().Be(mockResponse[0].AllocatedCso);
         
-        hearings[1].HearingId.Should().Be(mockResponse[1].Id);
-        hearings[1].AllocatedCso.Should().Be(mockResponse[1].AllocatedTo);
+        hearings[1].HearingId.Should().Be(mockResponse[1].HearingId);
+        hearings[1].AllocatedCso.Should().Be(mockResponse[1].AllocatedCso);
     }
 
     [Test]

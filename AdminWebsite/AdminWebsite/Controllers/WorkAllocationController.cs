@@ -47,16 +47,48 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> GetAllocationHearings(
             [FromQuery] SearchForAllocationHearingsRequest searchRequest)
         {
-            var hearings = await _bookingsApiClient.SearchForAllocationHearingsAsync(
-                fromDate: searchRequest.FromDate,
-                toDate: searchRequest.ToDate,
-                caseNumber: searchRequest.CaseNumber,
-                caseType: searchRequest.CaseType,
-                cso: searchRequest.Cso,
-                isUnallocated: searchRequest.IsUnallocated);
+            // var hearings = await _bookingsApiClient.SearchForAllocationHearingsAsync(
+            //     fromDate: searchRequest.FromDate,
+            //     toDate: searchRequest.ToDate,
+            //     caseNumber: searchRequest.CaseNumber,
+            //     caseType: searchRequest.CaseType,
+            //     cso: searchRequest.Cso,
+            //     isUnallocated: searchRequest.IsUnallocated);
+            //
+            // if (hearings == null || !hearings.Any())
+            //     return Ok(new List<AllocationHearingsResponse>());
 
-            if (hearings == null || !hearings.Any())
-                return Ok(new List<AllocationHearingsResponse>());
+            var hearings = new List<HearingAllocationsResponse>()
+            {
+                new()
+                {
+                    HearingId = Guid.NewGuid(),
+                    ScheduledDateTime = DateTime.Today.AddHours(9),
+                    Duration = 130,
+                    CaseNumber = "23456",
+                    CaseType = "Family",
+                    AllocatedCso = "shaed.parkar@hearings.reform.hmcts.net",
+                    HasWorkHoursClash = true
+                },
+                new()
+                {
+                    HearingId = Guid.NewGuid(),
+                    ScheduledDateTime = DateTime.Today.AddHours(10),
+                    Duration = 130,
+                    CaseNumber = "1234",
+                    CaseType = "Family",
+                    AllocatedCso = "shaed.parkar@hearings.reform.hmcts.net",
+                    HasWorkHoursClash = false
+                },
+                new()
+                {
+                    HearingId = Guid.NewGuid(),
+                    ScheduledDateTime = DateTime.Today.AddHours(11),
+                    Duration = 130,
+                    CaseNumber = "098765",
+                    CaseType = "Family",
+                }
+            };
 
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map));
         }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using AdminWebsite.Mappers;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
@@ -20,14 +19,14 @@ public class AllocationHearingsResponseMapperTests
         var caseType = "caseType";
         var cso = "WilliamCraig";
         
-        var source = new HearingDetailsResponse()
+        var source = new HearingAllocationsResponse()
         {
-            Id = id,
+            HearingId = id,
             ScheduledDateTime = hearingDate,
-            ScheduledDuration = length,
-            Cases = new List<CaseResponse>{ new() {Number = caseNumber}},
-            CaseTypeName = caseType,
-            AllocatedTo = cso
+            Duration = length,
+            CaseNumber = caseNumber,
+            CaseType = caseType,
+            AllocatedCso = cso
         };
 
         var result = AllocationHearingsResponseMapper.Map(source);

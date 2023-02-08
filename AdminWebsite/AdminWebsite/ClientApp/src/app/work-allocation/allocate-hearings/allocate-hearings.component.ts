@@ -5,7 +5,7 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 
 @Component({
@@ -35,6 +35,7 @@ export class AllocateHearingsComponent implements OnInit {
     displayMessage = false;
     message: string;
     faExclamation = faCircleExclamation;
+    triangleExclamation = faTriangleExclamation;
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
 

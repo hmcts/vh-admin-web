@@ -4967,6 +4967,8 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    has_work_hours_clash?: boolean | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
         if (data) {
@@ -4985,6 +4987,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
             this.case_number = _data['case_number'];
             this.case_type = _data['case_type'];
             this.allocated_cso = _data['allocated_cso'];
+            this.has_work_hours_clash = _data['has_work_hours_clash'];
         }
     }
 
@@ -5004,6 +5007,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
         data['case_number'] = this.case_number;
         data['case_type'] = this.case_type;
         data['allocated_cso'] = this.allocated_cso;
+        data['has_work_hours_clash'] = this.has_work_hours_clash;
         return data;
     }
 }
@@ -5024,6 +5028,8 @@ export interface IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    has_work_hours_clash?: boolean | undefined;
 }
 
 /** Configuration to initialise the UI application */

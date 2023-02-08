@@ -43,4 +43,9 @@ public class AllocationHearingsResponse
     /// </list>
     /// </summary>
     public string AllocatedCso { get; set; }
+    
+    /// <summary>
+    /// True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso
+    /// </summary>
+    public bool? HasWorkHoursClash { get; set; }
 }
