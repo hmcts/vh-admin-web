@@ -24,8 +24,7 @@ import {
     LinkedParticipantRequest,
     LinkedParticipantResponse,
     LinkedParticipant,
-    BookingStatus,
-    JusticeUserResponse
+    BookingStatus
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -34,8 +33,6 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
-import { HearingRoles } from '../common/model/hearing-roles.model';
-import { cleanQuery } from '../common/helpers/api-helper';
 
 @Injectable({
     providedIn: 'root'
@@ -111,10 +108,6 @@ export class VideoHearingsService {
 
     getHearingTypes(): Observable<HearingTypeResponse[]> {
         return this.bhClient.getHearingTypes();
-    }
-
-    getUsers(term: string): Observable<JusticeUserResponse[]> {
-        return this.bhClient.getUserList(cleanQuery(term));
     }
 
     getCurrentRequest(): HearingModel {
