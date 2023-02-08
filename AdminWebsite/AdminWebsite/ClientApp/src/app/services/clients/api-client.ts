@@ -3739,11 +3739,14 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Get the Justice User list from the JusticeUser table
+     * Get list of Justice User filtered by term. If term is null then no filter applied.
+     * @param term (optional) term to filter result
      * @return Success
      */
-    getUserList(): Observable<JusticeUserResponse[]> {
-        let url_ = this.baseUrl + '/api/user/list';
+    getUserList(term: string | undefined): Observable<JusticeUserResponse[]> {
+        let url_ = this.baseUrl + '/api/user/list?';
+        if (term === null) throw new Error("The parameter 'term' cannot be null.");
+        else if (term !== undefined) url_ += 'term=' + encodeURIComponent('' + term) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
