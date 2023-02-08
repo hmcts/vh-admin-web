@@ -11,15 +11,15 @@ export class JusticeUsersService {
 
     constructor(private apiClient: BHClient) {}
 
-    retrieveJusticeUserAccounts() {
+    retrieveJusticeUserAccounts(term: string) {
         if (!this.cache$) {
-            this.cache$ = this.requestJusticeUsers().pipe(shareReplay(1));
+            this.cache$ = this.requestJusticeUsers(term).pipe(shareReplay(1));
         }
 
         return this.cache$;
     }
 
-    private requestJusticeUsers() {
-        return this.apiClient.getUserList();
+    private requestJusticeUsers(term: string) {
+        return this.apiClient.getUserList(term);
     }
 }

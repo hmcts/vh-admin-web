@@ -4,19 +4,19 @@ import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { VideoHearingsService } from '../../services/video-hearings.service';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
+import { JusticeUsersService } from '../../services/justice-users.service';
 
 describe('ManageTeamComponent', () => {
     let component: ManageTeamComponent;
     let fixture: ComponentFixture<ManageTeamComponent>;
     let logger: jasmine.SpyObj<Logger>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
     let users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
-        videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getUsers']);
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
         users = [];
         logger = jasmine.createSpyObj('Logger', ['debug']);
 
@@ -27,7 +27,7 @@ describe('ManageTeamComponent', () => {
                 HttpClient,
                 HttpHandler,
                 { provide: Logger, useValue: logger },
-                { provide: VideoHearingsService, useValue: videoServiceSpy }
+                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy }
             ]
         }).compileComponents();
     });
@@ -36,7 +36,7 @@ describe('ManageTeamComponent', () => {
         fixture = TestBed.createComponent(ManageTeamComponent);
         component = fixture.componentInstance;
 
-        videoServiceSpy.getUsers.calls.reset();
+        justiceUsersServiceSpy.retrieveJusticeUserAccounts.calls.reset();
         fixture.detectChanges();
     });
 
@@ -48,10 +48,10 @@ describe('ManageTeamComponent', () => {
         it('should call video hearing service and return empty list', () => {
             const emptyList: JusticeUserResponse[] = [];
 
-            videoServiceSpy.getUsers.and.returnValue(of(emptyList));
+            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of(emptyList));
 
             component.searchUsers();
-            expect(videoServiceSpy.getUsers).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
             expect(component.message).toContain('No users matching this search criteria were found.');
             expect(component.displayAddButton).toBeTruthy();
         });
@@ -66,22 +66,22 @@ describe('ManageTeamComponent', () => {
                 users.push(user);
             }
 
-            videoServiceSpy.getUsers.and.returnValue(of(users));
+            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of(users));
 
             const expectedResponse = users.slice(0, 20);
             component.searchUsers();
-            expect(videoServiceSpy.getUsers).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
             expect(component.users.length).toEqual(expectedResponse.length);
             expect(component.message).toContain('please refine your search to see more results.');
             expect(component.displayAddButton).toBeTruthy();
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            videoServiceSpy.getUsers.and.returnValue(throwError({ status: 404 }));
+            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(throwError({ status: 404 }));
 
             const handleListErrorSpy = spyOn(component, 'handleListError');
             component.searchUsers();
-            expect(videoServiceSpy.getUsers).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
             expect(component.displayAddButton).toBeFalsy();
         });

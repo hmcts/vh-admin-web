@@ -33,7 +33,7 @@ export class JusticeUsersMenuComponent extends MenuBase {
     }
 
     loadItems(): void {
-        this.justiceUserService.retrieveJusticeUserAccounts().subscribe(
+        this.justiceUserService.retrieveJusticeUserAccounts(null).subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.items = data;

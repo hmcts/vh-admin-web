@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
+import { JusticeUsersService } from '../../services/justice-users.service';
 
 @Component({
     selector: 'app-manage-team',
@@ -13,7 +14,7 @@ import { Logger } from '../../services/logger';
 export class ManageTeamComponent {
     private filterSize = 20;
 
-    constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService, private logger: Logger) {
+    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = fb.group({
             inputSearch: ['']
         });
@@ -39,7 +40,7 @@ export class ManageTeamComponent {
         this.displayMessage = false;
         this.message = '';
         this.isEditing = false;
-        this.videoHearingService.getUsers(term).subscribe(
+        this.justiceUserService.retrieveJusticeUserAccounts(term).subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
