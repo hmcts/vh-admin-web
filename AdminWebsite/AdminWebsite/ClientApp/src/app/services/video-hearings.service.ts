@@ -113,10 +113,6 @@ export class VideoHearingsService {
         return this.bhClient.getHearingTypes();
     }
 
-    getUsers(term: string): Observable<JusticeUserResponse[]> {
-        return this.bhClient.getUserList(cleanQuery(term));
-    }
-
     getCurrentRequest(): HearingModel {
         return this.modelHearing;
     }
