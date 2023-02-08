@@ -16,8 +16,7 @@ parameters:
 - name: environment
   type: object
   default:
-  - Dev
-  - Staging
+  - Demo
   - Prod
 
 pool: 
