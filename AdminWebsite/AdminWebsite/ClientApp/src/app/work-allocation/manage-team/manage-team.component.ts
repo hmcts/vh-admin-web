@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
-import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 
