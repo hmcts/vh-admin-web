@@ -11,7 +11,6 @@ export class JusticeUsersService {
     private cache$: Observable<JusticeUserResponse[]>;
 
     constructor(private apiClient: BHClient) {}
-    s;
     retrieveJusticeUserAccounts() {
         if (!this.cache$) {
             this.cache$ = this.requestJusticeUsers(cleanQuery(null)).pipe(shareReplay(1));

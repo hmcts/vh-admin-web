@@ -18,6 +18,8 @@ java:
       secrets:
         - applicationinsights--instrumentationkey
         - azuread--tenantid
+        - name: launchdarkly-client-id
+          alias: VHSERVICES--LAUNCHDARKLYCLIENTID
     vh-admin-web:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -35,8 +37,6 @@ java:
         - name: FeatureToggles--SDK-Key
           alias: FeatureToggles--SdkKey
         - NotifyConfiguration--ApiKey
-        - name: launchdarkly-client-id
-          alias: VHSERVICES--LAUNCHDARKLYCLIENTID
         - TestUserSecrets--TestUsernameStem
     vh-bookings-api:
       excludeEnvironmentSuffix: false
