@@ -12,13 +12,6 @@ resources:
       ref: master
       endpoint: hmcts
 
-parameters:
-- name: environment
-  type: object
-  default:
-  - Demo
-  - Prod
-
 pool: 
   vmImage: ubuntu-22.04
 
