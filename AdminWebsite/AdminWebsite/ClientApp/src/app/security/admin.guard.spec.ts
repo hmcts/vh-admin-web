@@ -31,8 +31,7 @@ describe('admin-guard', () => {
         post_logout_redirect_uri: '/dashboard',
         redirect_uri: '/dashboard'
     });
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
     configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
     beforeEach(() => {
         TestBed.configureTestingModule({

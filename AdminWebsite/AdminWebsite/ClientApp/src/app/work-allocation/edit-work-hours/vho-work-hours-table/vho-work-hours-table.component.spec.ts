@@ -7,8 +7,7 @@ import { VideoHearingsService } from '../../../services/video-hearings.service';
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+    const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
         'setVhoNonAvailabiltiesHaveChanged'
     ]);

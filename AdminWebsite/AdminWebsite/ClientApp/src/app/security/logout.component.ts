@@ -12,9 +12,9 @@ export class LogoutComponent implements OnInit {
 
     ngOnInit() {
         this.oidcSecurityService.isAuthenticated$.subscribe(auth => {
-            if (auth) {
+            if (auth.isAuthenticated) {
                 this.userIdentityService.clearUserProfile();
-                this.oidcSecurityService.logoffAndRevokeTokens();
+                this.oidcSecurityService.logoffAndRevokeTokens().subscribe();
             }
         });
     }

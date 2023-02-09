@@ -1,4 +1,4 @@
-import { PublicConfiguration } from 'angular-auth-oidc-client';
+import { OpenIdConfiguration, LoginResponse, AuthenticatedResult, ConfigAuthenticatedResult } from 'angular-auth-oidc-client';
 import { Observable, of, throwError } from 'rxjs';
 interface UserData {
     preferred_username?: string;
@@ -10,15 +10,35 @@ interface UserData {
     amr?: string;
 }
 
+class MockLoginResponse implements LoginResponse {
+    constructor(isAuthenticated: boolean) {
+        this.isAuthenticated = isAuthenticated;
+    }
+
+    isAuthenticated: boolean;
+    userData: any;
+    accessToken: string;
+    idToken: string;
+    configId: string;
+    errorMessage?: string;
+}
+
+export class MockAuthenticatedResult implements AuthenticatedResult {
+    constructor(isAuthenticated: boolean) {
+        this.isAuthenticated = isAuthenticated;
+    }
+
+    isAuthenticated: boolean;
+    allConfigsAuthenticated: ConfigAuthenticatedResult[];
+}
+
 export class MockOidcSecurityService {
     userData: UserData;
     authenticated: boolean;
     throwsError: boolean;
     configuration = {
-        configuration: {
-            scope: 'openid profile offline_access'
-        }
-    } as PublicConfiguration;
+        scope: 'openid profile offline_access'
+    } as OpenIdConfiguration;
 
     setAuthenticated(authenticated: boolean) {
         this.authenticated = authenticated;
@@ -36,23 +56,27 @@ export class MockOidcSecurityService {
         return of(this.userData);
     }
 
-    get isAuthenticated$(): Observable<boolean> {
+    get isAuthenticated$(): Observable<AuthenticatedResult> {
         if (this.throwsError) {
             return throwError('error');
         }
-        return of(this.authenticated);
+        return of(new MockAuthenticatedResult(this.authenticated));
     }
 
     getToken(): string {
         return 'MockToken';
     }
 
-    checkAuth(url?: string): Observable<boolean> {
-        return of(this.authenticated);
+    checkAuth(url?: string): Observable<LoginResponse> {
+        return of(new MockLoginResponse(this.authenticated));
     }
 
     logoffAndRevokeTokens() {
         this.setAuthenticated(false);
         this.setUserData(null);
+    }
+
+    getConfiguration(): Observable<OpenIdConfiguration> {
+        return of(this.configuration);
     }
 }

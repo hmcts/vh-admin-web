@@ -12,8 +12,7 @@ describe('DashboardComponent', () => {
     let fixture: ComponentFixture<DashboardComponent>;
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
 
-    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
-    launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+    const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
     launchDarklyServiceSpy.flagChange = new ReplaySubject();
     launchDarklyServiceSpy.flagChange.next({ admin_search: true });
 
