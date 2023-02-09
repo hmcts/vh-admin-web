@@ -26,6 +26,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoFilterMenu', { static: false, read: JusticeUsersMenuComponent }) csoFilterMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
@@ -111,6 +112,7 @@ export class AllocateHearingsComponent implements OnInit {
 
     onJusticeUserForFilterSelected($event: string[]) {
         this.csoDropDownValues = $event;
+        this.form.get('isUnallocated').setValue(false);
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {

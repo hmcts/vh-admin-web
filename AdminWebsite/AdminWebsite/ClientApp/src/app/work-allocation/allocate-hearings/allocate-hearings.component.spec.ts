@@ -219,6 +219,12 @@ describe('AllocateHearingsComponent', () => {
     });
 
     describe('Manual allocation', () => {
+        it('should unset isAllocated when cso filter is selected', () => {
+            component.form.get('isUnallocated').setValue(true);
+            component.onJusticeUserForFilterSelected(['1234']);
+            expect(component.form.get('isUnallocated').value).toBeFalsy();
+        });
+
         it('should assign cso to selected hearings when cso has been selected', () => {
             // arrange
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
