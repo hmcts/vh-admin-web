@@ -81,6 +81,8 @@ stages:
     variables:
       - ${{ if contains(variables['Build.SourceBranch'], 'refs/heads/release') }}:
         - template: variables/production.yaml
+      - ${{ else }}:
+        - template: variables/staging.yaml
       - template: variables/shared.yaml
       - group: vh-github-app-credentials
     jobs:
