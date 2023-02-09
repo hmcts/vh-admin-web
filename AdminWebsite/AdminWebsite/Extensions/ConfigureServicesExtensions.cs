@@ -11,6 +11,7 @@ using AdminWebsite.Swagger;
 using AdminWebsite.Validators;
 using BookingsApi.Client;
 using FluentValidation;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -34,12 +35,11 @@ namespace AdminWebsite.Extensions
 
             var contractsXmlFile = $"{typeof(ClientSettingsResponse).Assembly.GetName().Name}.xml";
             var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
-
+            serviceCollection.AddFluentValidationRulesToSwagger();
             serviceCollection.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds((type) => type.FullName);
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Book A Hearing Client", Version = "v1" });
-                c.AddFluentValidationRules();
                 c.IncludeXmlComments(xmlPath);
                 c.IncludeXmlComments(contractsXmlPath);
                 c.EnableAnnotations();

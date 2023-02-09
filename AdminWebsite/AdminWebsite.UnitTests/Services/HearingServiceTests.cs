@@ -617,7 +617,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_Invoke_BookingAPI_UpdateBookingStatusAsync_when_UpdateFailedBookingStatus_called()
         {
             // Arrange
-            var hearingId = new Guid();
+            var hearingId = Guid.NewGuid();
             // Act
             await _service.UpdateFailedBookingStatus(hearingId);
 

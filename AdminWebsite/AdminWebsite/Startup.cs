@@ -2,6 +2,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Middleware;
 using AdminWebsite.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +27,8 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry(options =>
+                options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"]));
             
@@ -37,7 +39,10 @@ namespace AdminWebsite
             services.AddCustomTypes();
 
             services.RegisterAuthSchemes(Configuration);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc(opt =>
+            {
+                opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
+            }).AddFluentValidation();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });

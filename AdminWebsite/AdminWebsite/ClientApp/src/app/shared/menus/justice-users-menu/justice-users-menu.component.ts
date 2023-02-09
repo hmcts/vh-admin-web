@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
 import { FormBuilder } from '@angular/forms';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
-import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { JusticeUsersService } from '../../../services/justice-users.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 
@@ -15,16 +15,17 @@ export class JusticeUsersMenuComponent extends MenuBase {
     loggerPrefix = '[MenuJusticeUser] -';
     formGroupName = 'selectedUserIds';
     users: JusticeUserResponse[];
-    selectedItems: [];
+    selectedItems: [] | string;
     formConfiguration = {
         selectedUserIds: [this.bookingPersistService.selectedUsers || []]
     };
 
-    @Output() selectedEmitter = new EventEmitter<string[]>();
-
+    @Output() selectedEmitter = new EventEmitter<string[] | string>();
+    @Input() dropDownLabel = 'Allocated CSO';
+    @Input() multiSelect = true;
     constructor(
         private bookingPersistService: BookingPersistService,
-        private videoHearingService: VideoHearingsService,
+        private justiceUserService: JusticeUsersService,
         formBuilder: FormBuilder,
         logger: Logger
     ) {
@@ -32,14 +33,13 @@ export class JusticeUsersMenuComponent extends MenuBase {
     }
 
     loadItems(): void {
-        this.videoHearingService.getUsers().subscribe(
+        this.justiceUserService.retrieveJusticeUserAccounts(null).subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
+                this.items = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
             },
-            error => {
-                this.handleListError(error, 'users');
-            }
+            error => this.handleListError(error, 'users')
         );
     }
 }
