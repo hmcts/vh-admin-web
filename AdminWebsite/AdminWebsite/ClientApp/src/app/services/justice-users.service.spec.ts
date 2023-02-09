@@ -26,7 +26,7 @@ describe('JusticeUsersService', () => {
             new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' })
         ];
         clientApiSpy.getUserList.and.returnValue(of(users));
-        service.retrieveJusticeUserAccounts(null).subscribe(result => {
+        service.retrieveJusticeUserAccounts().subscribe(result => {
             expect(result).toEqual(users);
             done();
         });
@@ -40,7 +40,7 @@ describe('JusticeUsersService', () => {
         ];
         service['cache$'] = of(users);
         clientApiSpy.getUserList.and.returnValue(of(users));
-        service.retrieveJusticeUserAccounts(null).subscribe(result => {
+        service.retrieveJusticeUserAccounts().subscribe(result => {
             expect(result).toEqual(users);
             expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(0);
             done();

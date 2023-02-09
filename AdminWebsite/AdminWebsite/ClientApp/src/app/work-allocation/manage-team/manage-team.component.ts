@@ -39,7 +39,7 @@ export class ManageTeamComponent {
         this.displayMessage = false;
         this.message = '';
         this.isEditing = false;
-        this.justiceUserService.retrieveJusticeUserAccounts(term).subscribe(
+        this.justiceUserService.retrieveJusticeUserAccountsNoCache(term).subscribe(
             (data: JusticeUserResponse[]) => {
                 this.users = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });

@@ -11,13 +11,17 @@ export class JusticeUsersService {
     private cache$: Observable<JusticeUserResponse[]>;
 
     constructor(private apiClient: BHClient) {}
-
-    retrieveJusticeUserAccounts(term: string) {
+    s;
+    retrieveJusticeUserAccounts() {
         if (!this.cache$) {
-            this.cache$ = this.requestJusticeUsers(cleanQuery(term)).pipe(shareReplay(1));
+            this.cache$ = this.requestJusticeUsers(cleanQuery(null)).pipe(shareReplay(1));
         }
 
         return this.cache$;
+    }
+
+    retrieveJusticeUserAccountsNoCache(term: string) {
+        return this.requestJusticeUsers(cleanQuery(term)).pipe(shareReplay(1));
     }
 
     private requestJusticeUsers(term: string) {
