@@ -514,7 +514,7 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.courtRoomControl.value).toBe('text');
     });
 
-    it('should unsibscribe subcription on destroy', () => {
+    afterAll(() => {
         component.ngOnDestroy();
     });
 });
