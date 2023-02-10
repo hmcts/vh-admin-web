@@ -111,7 +111,7 @@ describe('VhoSearchComponent', () => {
 
             service.getWorkAvailabilityForVho.and.throwError('bad request');
 
-            await component.search().catch(err => {
+            await component.search().then(() => {
                 expect(component).toBeTruthy();
                 expect(service.getWorkAvailabilityForVho).toHaveBeenCalled();
 
@@ -192,7 +192,7 @@ describe('VhoSearchComponent', () => {
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.throwError('bad request');
 
-            await component.search().catch(err => {
+            await component.search().then(() => {
                 expect(component).toBeTruthy();
                 expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
 
