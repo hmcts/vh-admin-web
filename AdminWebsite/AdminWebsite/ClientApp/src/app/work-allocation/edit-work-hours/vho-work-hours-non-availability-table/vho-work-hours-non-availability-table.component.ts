@@ -91,10 +91,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
     showSaveConfirmation = false;
 
-    checkType(myArray: any[], type: any): boolean {
-        return myArray.every(item => item instanceof type);
-    }
-
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {
         return !this.isDataChangedAndUnsaved();
