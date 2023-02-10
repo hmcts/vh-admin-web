@@ -777,4 +777,12 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.displayMessage).toBeFalsy();
         });
     });
+
+    describe('handleContinue', () => {
+        it('hides save confirmation', () => {
+            component.showSaveConfirmation = true;
+            component.handleContinue();
+            expect(component.showSaveConfirmation).toBeFalsy();
+        })
+    });
 });
