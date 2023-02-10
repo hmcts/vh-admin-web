@@ -16,7 +16,7 @@ describe('ManageTeamComponent', () => {
     let users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccountsNoCache']);
         users = [];
         logger = jasmine.createSpyObj('Logger', ['debug']);
 
