@@ -92,11 +92,6 @@ describe('Video hearing service', () => {
         expect(currentRequest).toBeFalsy();
     });
 
-    it('should get Justice User list', () => {
-        service.getUsers();
-        expect(clientApiSpy.getUserList).toHaveBeenCalled();
-    });
-
     it('should cache current hearing request', () => {
         const model = new HearingModel();
         model.hearing_id = 'hearingId';

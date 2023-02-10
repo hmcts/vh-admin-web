@@ -33,10 +33,10 @@ export class LoginComponent implements OnInit {
                         return NEVER;
                     })
                 )
-                .subscribe(loggedIn => {
-                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + loggedIn);
+                .subscribe(response => {
+                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + response.isAuthenticated);
                     const returnUrl = this.returnUrlService.popUrl() || '/';
-                    if (loggedIn) {
+                    if (response.isAuthenticated) {
                         try {
                             this.logger.debug(`${this.loggerPrefix} Return url: ${returnUrl}`);
                             this.router.navigateByUrl(returnUrl);

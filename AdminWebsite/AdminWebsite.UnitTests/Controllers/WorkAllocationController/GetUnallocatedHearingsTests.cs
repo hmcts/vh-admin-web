@@ -1,28 +1,27 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using Autofac.Extras.Moq;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using BookingsApi.Client;
-using AdminWebsite.Contracts.Responses;
-using Autofac.Extras.Moq;
-using BookingsApi.Contract.Responses;
 
-namespace AdminWebsite.UnitTests.Controllers.HearingsController;
+namespace AdminWebsite.UnitTests.Controllers.WorkAllocationController;
 
 public class GetUnallocatedHearingsTests
 {
     private AutoMock _mocker;
-    private AdminWebsite.Controllers.HearingsController _controller;
+    private AdminWebsite.Controllers.WorkAllocationController _controller;
 
     [SetUp]
     public void Setup()
     {
         _mocker = AutoMock.GetLoose();
-        _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
+        _controller = _mocker.Create<AdminWebsite.Controllers.WorkAllocationController>();
     }
 
     [Test]
@@ -30,7 +29,7 @@ public class GetUnallocatedHearingsTests
     {
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.GetUnallocatedHearingsAsync())
-            .ReturnsAsync(Mock.Of<List<HearingDetailsResponse>>());
+            .ReturnsAsync(new List<HearingDetailsResponse> {new ()});
         // Act
         var response = await _controller.GetUnallocatedHearings();
         

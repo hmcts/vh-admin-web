@@ -27,7 +27,8 @@ import {
     HearingDetailsResponse,
     HearingVenueResponse,
     HearingTypeResponse,
-    JusticeUserResponse
+    JusticeUserResponse,
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -41,15 +42,13 @@ import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
 let fixture: ComponentFixture<BookingsListComponent>;
-let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
-bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
+const bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
     'getBookingsList',
     'mapBookingsResponse',
     'addBookings',
     'replaceBookingRecord'
 ]);
-let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
+const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getCurrentRequest',
     'cancelRequest',
     'getHearingById',
@@ -57,13 +56,10 @@ videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getHearingTypes',
     'getUsers'
 ]);
-let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
-let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
-launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 let returnUrlService: ReturnUrlService;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
+const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
 export class ResponseTestData {
     getUserData(): Array<JusticeUserResponse> {
@@ -153,7 +149,8 @@ export class BookingslistTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567'
+            '1234567',
+            'true'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -585,6 +582,7 @@ export class BookingPersistServiceSpy {
 let routerSpy: jasmine.SpyObj<Router>;
 const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
+const justiceUserServiceSpy = jasmine.createSpyObj(['JusticeUsersService', ['retrieveJusticeUserAccounts']]);
 
 describe('BookingsListComponent', () => {
     beforeEach(
@@ -601,7 +599,6 @@ describe('BookingsListComponent', () => {
 
             videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
             videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
-            videoHearingServiceSpy.getUsers.and.returnValue(of(new Array<JusticeUserResponse>()));
             configServiceSpy.getConfig.and.returnValue({});
             launchDarklyServiceSpy.flagChange = new ReplaySubject();
             launchDarklyServiceSpy.flagChange.next({ admin_search: true });
@@ -937,7 +934,8 @@ describe('BookingsListComponent', () => {
             'selectedCaseTypes',
             'selectedVenueIds'
         ]);
-        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
         component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
         component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
 
@@ -976,7 +974,7 @@ describe('BookingsListComponent', () => {
             'selectedCaseTypes',
             'selectedVenueIds'
         ]);
-        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
         component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
         component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
 
@@ -1050,7 +1048,7 @@ describe('BookingsListComponent', () => {
             'selectedCaseTypes',
             'selectedVenueIds'
         ]);
-        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
         component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
         component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
 
@@ -1269,10 +1267,12 @@ describe('BookingsListComponent', () => {
     });
 
     describe('onChangeNoAllocated', () => {
+        const bookingList = new BookingslistTestData();
+        const bookingData = bookingList.getTestData();
         beforeEach(() => {
             const formBuilder = new FormBuilder();
             const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
-            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
             spyOn(component.csoMenu, 'enabled');
         });
         it('should disable selectedUsers if noAllocated is checked', () => {
@@ -1288,6 +1288,22 @@ describe('BookingsListComponent', () => {
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
+        });
+
+        it('should not show allocated to label if work allocation feature flag is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            expect(divToHide).toBeFalsy();
+        });
+
+        it('should show allocated label to if work allocation feature flag is on', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            expect(divToHide).toBeTruthy();
         });
     });
 });

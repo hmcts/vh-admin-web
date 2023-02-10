@@ -94,14 +94,11 @@ function initBadHearingRequest(): HearingModel {
 }
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-let routerSpy: jasmine.SpyObj<Router>;
-let loggerSpy: jasmine.SpyObj<Logger>;
 let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
-let featureFlagSpy: jasmine.SpyObj<FeatureFlagService>;
 const stringifier = new PipeStringifierService();
 
-routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
+const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
 recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
     'switchOffRecording',
     'mandatoryRecordingForHearingRole'
@@ -121,7 +118,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'getStatus',
     'updateFailedStatus'
 ]);
-featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
+const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
@@ -646,9 +643,7 @@ describe('SummaryComponent  with existing request', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
         const mockSessionStorage = {
-            getItem: (key: string): string => {
-                return 'true';
-            },
+            getItem: (key: string): string => 'true',
             setItem: (key: string, value: string) => {},
             removeItem: (key: string) => {},
             clear: () => {}
@@ -804,28 +799,22 @@ describe('SummaryComponent  with existing request', () => {
 });
 
 describe('SummaryComponent  with multi days request', () => {
-    let component: SummaryComponent;
-    let existingRequest: HearingModel;
-    let bookingServiceSpy: jasmine.SpyObj<BookingService>;
-    let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
-    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-
-    bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
+    const bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
         'switchOffRecording',
         'mandatoryRecordingForHearingRole'
     ]);
-    existingRequest = initExistingHearingRequest();
+    const existingRequest = initExistingHearingRequest();
     existingRequest.multiDays = true;
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
-    participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
-    featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
+    const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
+    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
     featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-    component = new SummaryComponent(
+    const component = new SummaryComponent(
         videoHearingsServiceSpy,
         routerSpy,
         bookingServiceSpy,

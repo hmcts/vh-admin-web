@@ -43,7 +43,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
-                this.showMessage('Showing only 20 Records, For more records please use filter by date');
+                this.showMessage(`Showing only ${this.filterSize} Records, For more records please use filter by date`);
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
                 this.showMessage('There are no non-availability hours uploaded for this team member');
             }
@@ -90,12 +90,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     @Output() editNonWorkHours: EventEmitter<void> = new EventEmitter();
     @Output() cancelSaveNonWorkHours: EventEmitter<void> = new EventEmitter();
     showSaveConfirmation = false;
-
-    checkType(myArray: any[], type: any): boolean {
-        return myArray.every(item => {
-            return item instanceof type;
-        });
-    }
 
     @HostListener('window:beforeunload', ['$event'])
     canDeactive(): Observable<boolean> | boolean {

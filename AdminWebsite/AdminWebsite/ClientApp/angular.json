@@ -13,7 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -30,8 +29,20 @@
                 "output": "assets/fonts/"
               }
             ],
-            "styles": ["src/styles.css", "src/styles.scss"],
-            "scripts": ["node_modules/govuk-frontend/govuk/all.js", "src/scripts/init-script.js"]
+            "styles": [
+              "src/styles.css",
+              "src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/govuk-frontend/govuk/all.js",
+              "src/scripts/init-script.js"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -50,14 +61,13 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -83,8 +93,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
-            "codeCoverageExclude": ["src/app/services/clients/api-client.ts", "src/app/testing/**"],
-            "styles": ["src/styles.css", "src/styles.scss"],
+            "codeCoverageExclude": [
+              "src/app/services/clients/api-client.ts",
+              "src/app/testing/**"
+            ],
+            "styles": [
+              "src/styles.css",
+              "src/styles.scss"
+            ],
             "scripts": [],
             "assets": [
               "src/favicon.ico",
@@ -99,17 +115,21 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
-  "defaultProject": "AdminWebsite",
   "cli": {
-    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653"
+    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

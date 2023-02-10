@@ -563,8 +563,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
-            var userName = _addNewParticipantRequest.Participants.Last().ContactEmail;
-
             //Act
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
 

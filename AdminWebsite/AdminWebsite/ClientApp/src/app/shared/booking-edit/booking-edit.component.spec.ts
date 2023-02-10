@@ -10,12 +10,10 @@ describe('BookingEditComponent', () => {
     let component: BookingEditComponent;
     let fixture: ComponentFixture<BookingEditComponent>;
     let debugElement: DebugElement;
-    let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 
-    videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', ['isConferenceClosed', 'isHearingAboutToStart']);
+    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', ['isConferenceClosed', 'isHearingAboutToStart']);
 
-    bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
+    const bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
 
     beforeEach(
         waitForAsync(() => {
