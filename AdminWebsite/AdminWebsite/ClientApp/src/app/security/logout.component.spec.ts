@@ -3,6 +3,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Subject } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { LogoutComponent } from './logout.component';
+import { MockAuthenticatedResult } from '../testing/mocks/MockOidcSecurityService';
 
 describe('LogoutComponent', () => {
     let component: LogoutComponent;
@@ -14,11 +15,12 @@ describe('LogoutComponent', () => {
             'logoffAndRevokeTokens',
             'isAuthenticated$'
         ]);
+        securityServiceSpy.logoffAndRevokeTokens.and.returnValue({ subscribe: () => {} });
         userIdentityServiceSpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['clearUserProfile']);
     });
 
     beforeEach(() => {
-        securityServiceSpy.isAuthenticated$ = new Subject<boolean>();
+        securityServiceSpy.isAuthenticated$ = new Subject<MockAuthenticatedResult>();
         userIdentityServiceSpy.clearUserProfile.calls.reset();
         securityServiceSpy.logoffAndRevokeTokens.calls.reset();
 
@@ -27,7 +29,9 @@ describe('LogoutComponent', () => {
 
     it('should call logout if authenticated', fakeAsync(() => {
         component.ngOnInit();
-        securityServiceSpy.isAuthenticated$.next(true);
+        const isAuthenticated = true;
+        const authenticatedResult = new MockAuthenticatedResult(isAuthenticated);
+        securityServiceSpy.isAuthenticated$.next(authenticatedResult);
 
         expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalled();
         expect(securityServiceSpy.logoffAndRevokeTokens).toHaveBeenCalled();
@@ -35,7 +39,9 @@ describe('LogoutComponent', () => {
 
     it('should not call logout if unauthenticated', fakeAsync(() => {
         component.ngOnInit();
-        securityServiceSpy.isAuthenticated$.next(false);
+        const isAuthenticated = false;
+        const authenticatedResult = new MockAuthenticatedResult(isAuthenticated);
+        securityServiceSpy.isAuthenticated$.next(authenticatedResult);
 
         expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalledTimes(0);
         expect(securityServiceSpy.logoffAndRevokeTokens).toHaveBeenCalledTimes(0);

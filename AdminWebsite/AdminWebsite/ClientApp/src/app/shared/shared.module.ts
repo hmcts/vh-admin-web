@@ -21,7 +21,17 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule, NgSelectModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule.withConfig({
+            callSetDisabledState: 'whenDisabledForLegacyCode'
+        }),
+        HttpClientModule,
+        SharedRoutingModule,
+        ClipboardModule,
+        NgSelectModule
+    ],
     declarations: [
         HeaderComponent,
         FooterComponent,

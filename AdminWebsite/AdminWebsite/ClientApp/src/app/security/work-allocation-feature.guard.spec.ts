@@ -7,8 +7,7 @@ import { WorkAllocationFeatureGuard } from './work-allocation-feature.guard';
 describe('WorkAllocationFeatureGuard', () => {
     let workAllocationFeatureGuard: WorkAllocationFeatureGuard;
 
-    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
-    launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+    const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 
     const routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
 

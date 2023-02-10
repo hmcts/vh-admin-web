@@ -9,18 +9,15 @@ describe('CopyJoinLinkComponent', () => {
     let component: CopyJoinLinkComponent;
     let fixture: ComponentFixture<CopyJoinLinkComponent>;
     let debugElement: DebugElement;
-    let clipboardServiceSpy: jasmine.SpyObj<ClipboardService>;
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    let element: HTMLDivElement;
     let mouseEvent: MouseEvent;
     const vh_video_uri = 'vh-video-web';
     const clientSettingsResponse = new ClientSettingsResponse();
     clientSettingsResponse.video_web_url = vh_video_uri;
 
-    element = document.createElement('div');
-    clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
+    const element = document.createElement('div');
+    const clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
     clipboardServiceSpy.copyFromContent.and.returnValue(true);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', {
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', {
         getConfig: clientSettingsResponse
     });
 

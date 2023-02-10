@@ -9,11 +9,9 @@ describe('CopyConferencePhoneComponent', () => {
     let debugElement: DebugElement;
     let component: CopyConferencePhoneComponent;
     let mouseEvent: MouseEvent;
-    let clipboardServiceSpy: jasmine.SpyObj<ClipboardService>;
-    let element: HTMLDivElement;
 
-    element = document.createElement('div');
-    clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
+    const element = document.createElement('div');
+    const clipboardServiceSpy = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
     clipboardServiceSpy.copyFromContent.and.returnValue(true);
 
     beforeEach(async () => {

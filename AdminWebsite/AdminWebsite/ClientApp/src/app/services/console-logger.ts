@@ -1,6 +1,6 @@
 import { LogAdapter } from './log-adapter';
 import { Injectable } from '@angular/core';
-// tslint:disable: no-console
+/* eslint-disable no-console*/
 @Injectable()
 export class ConsoleLogger implements LogAdapter {
     debug(message: string, properties: any = null): void {

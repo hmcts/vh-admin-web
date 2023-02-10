@@ -16,8 +16,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let fixture: ComponentFixture<VhoWorkHoursNonAvailabilityTableComponent>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+    const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
         'setVhoNonAvailabiltiesHaveChanged'
     ]);
@@ -776,6 +775,14 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.filterByDate();
             // assert
             expect(component.displayMessage).toBeFalsy();
+        });
+    });
+
+    describe('handleContinue', () => {
+        it('hides save confirmation', () => {
+            component.showSaveConfirmation = true;
+            component.handleContinue();
+            expect(component.showSaveConfirmation).toBeFalsy();
         });
     });
 });

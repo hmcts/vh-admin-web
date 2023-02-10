@@ -1,4 +1,4 @@
-@import '~govuk-frontend/govuk/base';
+@import 'govuk-frontend/govuk/base';
 
 .sipAddressBox {
   @include govuk-font(14, $weight: 'regular', $tabular: false, $line-height: false);
