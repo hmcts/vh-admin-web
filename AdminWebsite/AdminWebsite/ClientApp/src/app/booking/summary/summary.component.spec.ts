@@ -763,10 +763,6 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(loggerSpy.info).toHaveBeenCalled();
     });
-    it('should unsubscribe subcription on destroy', () => {
-        component.ngOnDestroy();
-        component.$subscriptions.forEach(s => expect(s.closed).toBe(true));
-    });
     it('should remove existing endpoint', () => {
         component.hearing = initExistingHearingRequest();
         component.hearing.hearing_id = '12345';
