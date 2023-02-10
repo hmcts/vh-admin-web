@@ -783,6 +783,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.showSaveConfirmation = true;
             component.handleContinue();
             expect(component.showSaveConfirmation).toBeFalsy();
-        })
+        });
     });
 });
