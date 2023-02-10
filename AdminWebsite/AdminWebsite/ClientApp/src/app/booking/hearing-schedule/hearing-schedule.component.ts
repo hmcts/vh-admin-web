@@ -177,9 +177,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     addValidHearingDate(value: string) {
         this.hearingDates.push(new Date(value));
-        this.hearingDates.sort((a, b) => {
-            return a.valueOf() < b.valueOf() ? -1 : 1;
-        });
+        this.hearingDates.sort((a, b) => (a.valueOf() < b.valueOf() ? -1 : 1));
         this.addHearingDateControl = null;
     }
 

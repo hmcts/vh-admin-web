@@ -55,8 +55,7 @@ describe('app routing', () => {
         redirect_uri: '/dashboard',
         launch_darkly_client_id: 'launchDarklyClientId'
     });
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig', 'getConfig']);
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig', 'getConfig']);
     configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
     const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
     beforeEach(() => {

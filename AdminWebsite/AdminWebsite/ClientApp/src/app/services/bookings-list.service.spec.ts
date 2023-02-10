@@ -378,8 +378,7 @@ describe('bookings list service', () => {
 });
 
 describe('Booking list service functionality', () => {
-    let bhClientSpy: jasmine.SpyObj<BHClient>;
-    bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
+    const bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
     const bookingsResponse = new ResponseTestData().getTestData();
 
     bhClientSpy.bookingsList.and.returnValue(of(bookingsResponse));

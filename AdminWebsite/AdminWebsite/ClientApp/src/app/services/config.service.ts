@@ -6,7 +6,7 @@ import { Config } from '../common/model/config';
 import { filter, map } from 'rxjs/operators';
 import { SessionStorage } from './session-storage';
 
-export let ENVIRONMENT_CONFIG: Config = new Config();
+export const ENVIRONMENT_CONFIG: Config = new Config();
 
 @Injectable()
 export class ConfigService {

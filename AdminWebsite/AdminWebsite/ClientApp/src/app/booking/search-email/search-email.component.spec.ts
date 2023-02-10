@@ -397,24 +397,18 @@ describe('SearchEmailComponent', () => {
 });
 
 describe('SearchEmailComponent email validate', () => {
-    let component: SearchEmailComponent;
     const configSettings = new ClientSettingsResponse();
     configSettings.test_username_stem = '@hmcts.net';
 
-    let searchServiceSpy: jasmine.SpyObj<SearchService>;
-    let configServiceSpy: jasmine.SpyObj<ConfigService>;
-    let loggerSpy: jasmine.SpyObj<Logger>;
-    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-
-    featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-    searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+    const searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
-    component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+    const component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, featureFlagServiceSpy);
     it('should config service return email pattern for validation', fakeAsync(() => {
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         component.getEmailPattern();
