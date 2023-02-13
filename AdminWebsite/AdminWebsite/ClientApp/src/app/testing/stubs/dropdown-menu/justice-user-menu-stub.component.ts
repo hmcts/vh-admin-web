@@ -14,4 +14,7 @@ export class JusticeUserMenuStubComponent {
     clear() {
         console.log('stub method');
     }
+    enabled(enabled: boolean) {
+        console.log(`Justice User Menu component enabled state changed to : ${enabled}`);
+    }
 }

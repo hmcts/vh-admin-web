@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BHClient, UploadNonWorkingHoursRequest, UploadWorkHoursRequest, WorkingHours } from 'src/app/services/clients/api-client';
 import { convertToNumberArray } from 'src/app/common/helpers/array-helper';
-import groupBy from 'lodash.groupby';
+import groupBy from 'lodash/groupby';
 
 @Injectable({
     providedIn: 'root'
