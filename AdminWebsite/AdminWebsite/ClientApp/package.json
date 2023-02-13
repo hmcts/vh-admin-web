@@ -17,8 +17,6 @@
     "prettify-fix": "run-script-os",
     "prettify-fix:nix": "npx prettier --write 'src/app/**/*.*'",
     "prettify-fix:default": "npx prettier --write \"src\\app\\**\\*.*\"",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
     "update-api-client": "nswag run /runtime:Net60 && npm run prettify-fix"
   },
   "private": true,
@@ -43,7 +41,7 @@
     "@ministryofjustice/frontend": "^1.4.0",
     "@ng-select/ng-select": "^10.0.3",
     "angular-auth-oidc-client": "^15.0.3",
-    "core-js": "^3.10.1",
+    "core-js": "^3.27.2",
     "govuk-frontend": "^3.11.0",
     "launchdarkly-js-client-sdk": "^2.20.2",
     "moment": "^2.29.1",
@@ -52,7 +50,6 @@
     "ngx-device-detector": "^5.0.1",
     "ngx-moment": "^5.0.0",
     "rxjs": "^6.6.7",
-    "snyk": "^1.1101.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
   },
@@ -101,6 +98,5 @@
   "optionalDependencies": {
     "fsevents": "^2.3.2",
     "ts-node": "~5.0.1"
-  },
-  "snyk": true
+  }
 }
