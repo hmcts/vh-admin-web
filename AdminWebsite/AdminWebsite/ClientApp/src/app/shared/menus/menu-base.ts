@@ -52,6 +52,7 @@ export abstract class MenuBase implements OnInit {
             this.selectedItems = [];
             this.selectedLabel = undefined;
             this.form.reset();
+            this.selectedEmitter.next(this.selectedItems);
         }
     }
 
