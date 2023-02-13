@@ -57,6 +57,10 @@ export class AllocateHearingsComponent implements OnInit {
                 this.searchForHearings();
             }
         });
+
+        this.form.get('isUnallocated').valueChanges.subscribe(val => {
+            this.onIsAllocatedCheckboxChanged(val);
+        });
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {
@@ -110,9 +114,20 @@ export class AllocateHearingsComponent implements OnInit {
         this.caseTypeDropDownValues = $event;
     }
 
-    onJusticeUserForFilterSelected($event: string[]) {
-        this.csoDropDownValues = $event;
-        this.form.get('isUnallocated').setValue(false);
+    onJusticeUserForFilterSelected(selectedCsoIds: string[]) {
+        this.csoDropDownValues = selectedCsoIds;
+        if (selectedCsoIds.length > 0) {
+            this.form.get('isUnallocated').setValue(false);
+        }
+    }
+
+    onIsAllocatedCheckboxChanged(checked: boolean) {
+        if (checked) {
+            this.csoFilterMenu.clear();
+            this.csoFilterMenu.enabled(false);
+        } else {
+            this.csoFilterMenu.enabled(true);
+        }
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {

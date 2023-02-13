@@ -69,6 +69,7 @@ describe('AllocateHearingsComponent', () => {
         component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
         component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
         component.csoAllocatedMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
+        component.csoFilterMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
     });
 
     describe('ngOnInit', () => {
@@ -215,6 +216,30 @@ describe('AllocateHearingsComponent', () => {
             expect(component.form.controls['isUnallocated'].value).toBe(false);
             expect(component.csoDropDownValues).toEqual([]);
             expect(component.caseTypeDropDownValues).toEqual([]);
+        });
+
+        it('should clear and disable cso menu when IsAllocated filter checkbox is checked', () => {
+            const formBuilder = new FormBuilder();
+            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
+            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+
+            component.form.get('isUnallocated').setValue(true);
+
+            expect(csoFilterClearSpy).toHaveBeenCalled();
+            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(false);
+        });
+
+        it('should enable cso menu when IsAllocated filter checkbox is not checked', () => {
+            const formBuilder = new FormBuilder();
+            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
+            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+
+            component.form.get('isUnallocated').setValue(false);
+
+            expect(csoFilterClearSpy).toHaveBeenCalledTimes(0);
+            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(true);
         });
     });
 
