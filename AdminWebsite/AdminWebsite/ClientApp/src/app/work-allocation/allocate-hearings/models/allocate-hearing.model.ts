@@ -4,6 +4,7 @@ import { AllocationHearingsResponse } from '../../../services/clients/api-client
  */
 export class AllocateHearingItemModel {
     public allocatedOfficerId: string;
+    public hasChanged = false;
 
     constructor(
         public hearingId: string,
@@ -24,6 +25,8 @@ export class AllocateHearingItemModel {
     updateAssignedCso(username: string, id: string) {
         this.allocatedOfficerUsername = username;
         this.allocatedOfficerId = id;
+        this.hasChanged = true;
+        this.hasWorkHoursClash = false;
     }
 }
 

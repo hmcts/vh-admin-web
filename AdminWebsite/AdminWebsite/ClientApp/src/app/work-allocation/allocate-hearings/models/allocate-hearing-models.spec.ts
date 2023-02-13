@@ -61,13 +61,16 @@ describe('AllocateHearingItemModel', () => {
             testData.duration,
             testData.case_number,
             testData.case_type,
-            testData.allocated_cso
+            testData.allocated_cso,
+            true
         );
 
         model.updateAssignedCso(username, id);
 
         expect(model.allocatedOfficerUsername).toBe(username);
         expect(model.allocatedOfficerId).toBe(id);
+        expect(model.hasChanged).toBeTruthy();
+        expect(model.hasWorkHoursClash).toBeFalsy();
     });
 });
 
