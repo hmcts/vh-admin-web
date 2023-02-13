@@ -5,9 +5,9 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import {faCircleExclamation, faHourglassStart, faTriangleExclamation} from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faHourglassStart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
-import {Transform} from '@fortawesome/fontawesome-svg-core';
+import { Transform } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -39,7 +39,7 @@ export class AllocateHearingsComponent implements OnInit {
     faExclamation = faCircleExclamation;
     triangleExclamation = faTriangleExclamation;
     hourGlassStart = faHourglassStart;
-    customIconTransform: Transform= {rotate:45};
+    customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
 
