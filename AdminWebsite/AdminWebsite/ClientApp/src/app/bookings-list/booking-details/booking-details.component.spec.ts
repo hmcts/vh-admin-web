@@ -503,6 +503,7 @@ CY: 54321 (ID: 7777)`);
 
         component.booking.status = BookingStatus.Failed;
         component.booking.scheduled_date_time = date;
+        expect(component.canRetryConfirmation).toBeFalsy();
     });
 
     it('should be able to see retry confirmation when booking is scheduled in the future', () => {

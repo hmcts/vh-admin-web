@@ -477,10 +477,6 @@ describe('AssignJudgeComponent', () => {
             expect(component.isJudgeSelected).toBe(true);
         });
 
-        it('should set correct validation errors if cannot add judge', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
-        });
-
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
