@@ -39,7 +39,7 @@ export class AllocateHearingsComponent implements OnInit {
     faExclamation = faCircleExclamation;
     triangleExclamation = faTriangleExclamation;
     hourGlassStart = faHourglassStart;
-    customIconTransform :Transform= {rotate:45}
+    customIconTransform: Transform= {rotate:45};
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
 
