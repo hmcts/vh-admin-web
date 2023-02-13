@@ -4,7 +4,7 @@ import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { JusticeUserResponse } from '../../services/clients/api-client';
+import { BHClient, JusticeUserResponse } from '../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 
@@ -16,7 +16,7 @@ describe('ManageTeamComponent', () => {
     let users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccountsNoCache']);
         users = [];
         logger = jasmine.createSpyObj('Logger', ['debug']);
 
@@ -36,7 +36,7 @@ describe('ManageTeamComponent', () => {
         fixture = TestBed.createComponent(ManageTeamComponent);
         component = fixture.componentInstance;
 
-        justiceUsersServiceSpy.retrieveJusticeUserAccounts.calls.reset();
+        justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.calls.reset();
         fixture.detectChanges();
     });
 
@@ -48,10 +48,10 @@ describe('ManageTeamComponent', () => {
         it('should call video hearing service and return empty list', () => {
             const emptyList: JusticeUserResponse[] = [];
 
-            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of(emptyList));
+            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(emptyList));
 
             component.searchUsers();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
             expect(component.message).toContain('No users matching this search criteria were found.');
             expect(component.displayAddButton).toBeTruthy();
         });
@@ -66,22 +66,22 @@ describe('ManageTeamComponent', () => {
                 users.push(user);
             }
 
-            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of(users));
+            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(users));
 
             const expectedResponse = users.slice(0, 20);
             component.searchUsers();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
             expect(component.users.length).toEqual(expectedResponse.length);
             expect(component.message).toContain('please refine your search to see more results.');
             expect(component.displayAddButton).toBeTruthy();
         });
 
         it('should call video hearing service, and catch thrown exception', () => {
-            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(throwError({ status: 404 }));
+            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(throwError({ status: 404 }));
 
             const handleListErrorSpy = spyOn(component, 'handleListError');
             component.searchUsers();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
+            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
             expect(component.displayAddButton).toBeFalsy();
         });
