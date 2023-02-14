@@ -75,7 +75,7 @@ export class TooltipDirective implements OnDestroy {
     updatePosition($event: MouseEvent) {
         const x = $event.clientX;
         const y = $event.clientY;
-        const scrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const scrollPos = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
         if (y < window.innerHeight / 2) {
             this.tooltip.style.top = y + scrollPos + 'px';
         } else {
