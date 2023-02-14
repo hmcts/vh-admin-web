@@ -32,7 +32,7 @@ public class GetAllocationHearingsTests
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.SearchForAllocationHearingsAsync(
                It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<Guid[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<HearingDetailsResponse>{new ()});
+            .ReturnsAsync(new List<HearingAllocationsResponse>{new ()});
         // Act
         var response = await _controller.GetAllocationHearings(new SearchForAllocationHearingsRequest());
         
@@ -48,7 +48,7 @@ public class GetAllocationHearingsTests
         // Arrange
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.SearchForAllocationHearingsAsync(
                 It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<Guid[]>(), It.IsAny<string[]>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .ReturnsAsync(new List<HearingDetailsResponse>());   
+            .ReturnsAsync(new List<HearingAllocationsResponse>());   
         // Act
         var response = await _controller.GetAllocationHearings(new SearchForAllocationHearingsRequest());
 

@@ -69,6 +69,7 @@ describe('AllocateHearingsComponent', () => {
         component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
         component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
         component.csoAllocatedMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
+        component.csoFilterMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
     });
 
     describe('ngOnInit', () => {
@@ -216,9 +217,39 @@ describe('AllocateHearingsComponent', () => {
             expect(component.csoDropDownValues).toEqual([]);
             expect(component.caseTypeDropDownValues).toEqual([]);
         });
+
+        it('should clear and disable cso menu when IsAllocated filter checkbox is checked', () => {
+            const formBuilder = new FormBuilder();
+            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
+            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+
+            component.form.get('isUnallocated').setValue(true);
+
+            expect(csoFilterClearSpy).toHaveBeenCalled();
+            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(false);
+        });
+
+        it('should enable cso menu when IsAllocated filter checkbox is not checked', () => {
+            const formBuilder = new FormBuilder();
+            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
+            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+
+            component.form.get('isUnallocated').setValue(false);
+
+            expect(csoFilterClearSpy).toHaveBeenCalledTimes(0);
+            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(true);
+        });
     });
 
     describe('Manual allocation', () => {
+        it('should unset isAllocated when cso filter is selected', () => {
+            component.form.get('isUnallocated').setValue(true);
+            component.onJusticeUserForFilterSelected(['1234']);
+            expect(component.form.get('isUnallocated').value).toBeFalsy();
+        });
+
         it('should assign cso to selected hearings when cso has been selected', () => {
             // arrange
             component.allocationHearingViewModel = new AllocateHearingModel(testData);

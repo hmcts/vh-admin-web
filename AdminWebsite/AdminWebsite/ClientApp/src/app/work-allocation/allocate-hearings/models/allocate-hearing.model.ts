@@ -4,6 +4,7 @@ import { AllocationHearingsResponse } from '../../../services/clients/api-client
  */
 export class AllocateHearingItemModel {
     public allocatedOfficerId: string;
+    public hasChanged = false;
 
     constructor(
         public hearingId: string,
@@ -13,6 +14,7 @@ export class AllocateHearingItemModel {
         public caseNumber: string,
         public caseType: string,
         public allocatedOfficerUsername?: string,
+        public hasWorkHoursClash?: boolean,
         public checked: boolean = false
     ) {}
 
@@ -23,6 +25,8 @@ export class AllocateHearingItemModel {
     updateAssignedCso(username: string, id: string) {
         this.allocatedOfficerUsername = username;
         this.allocatedOfficerId = id;
+        this.hasChanged = true;
+        this.hasWorkHoursClash = false;
     }
 }
 
@@ -43,6 +47,7 @@ export class AllocateHearingModel {
                     val.case_number,
                     val.case_type,
                     val.allocated_cso,
+                    val.has_work_hours_clash,
                     false
                 )
         );
@@ -104,6 +109,7 @@ export class AllocateHearingModel {
             originalHearing.case_number,
             originalHearing.case_type,
             originalHearing.allocated_cso,
+            originalHearing.has_work_hours_clash,
             false
         );
     }

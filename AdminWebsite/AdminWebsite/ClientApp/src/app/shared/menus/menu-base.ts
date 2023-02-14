@@ -22,7 +22,7 @@ export abstract class MenuBase implements OnInit {
     abstract formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<any>();
-    enabled(value) {
+    enabled(value: boolean) {
         if (value !== false) {
             this.form.controls[this.formGroupName].enable();
         } else {
@@ -52,6 +52,7 @@ export abstract class MenuBase implements OnInit {
             this.selectedItems = [];
             this.selectedLabel = undefined;
             this.form.reset();
+            this.selectedEmitter.next(this.selectedItems);
         }
     }
 

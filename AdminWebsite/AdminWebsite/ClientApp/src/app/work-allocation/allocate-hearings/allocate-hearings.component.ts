@@ -5,8 +5,9 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faHourglassStart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
+import { Transform } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -26,6 +27,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoFilterMenu', { static: false, read: JusticeUsersMenuComponent }) csoFilterMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
@@ -35,6 +37,9 @@ export class AllocateHearingsComponent implements OnInit {
     displayMessage = false;
     message: string;
     faExclamation = faCircleExclamation;
+    triangleExclamation = faTriangleExclamation;
+    hourGlassStart = faHourglassStart;
+    customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
 
@@ -54,6 +59,10 @@ export class AllocateHearingsComponent implements OnInit {
                 });
                 this.searchForHearings();
             }
+        });
+
+        this.form.get('isUnallocated').valueChanges.subscribe(val => {
+            this.onIsAllocatedCheckboxChanged(val);
         });
     }
 
@@ -108,8 +117,20 @@ export class AllocateHearingsComponent implements OnInit {
         this.caseTypeDropDownValues = $event;
     }
 
-    onJusticeUserForFilterSelected($event: string[]) {
-        this.csoDropDownValues = $event;
+    onJusticeUserForFilterSelected(selectedCsoIds: string[]) {
+        this.csoDropDownValues = selectedCsoIds;
+        if (selectedCsoIds.length > 0) {
+            this.form.get('isUnallocated').setValue(false);
+        }
+    }
+
+    onIsAllocatedCheckboxChanged(checked: boolean) {
+        if (checked) {
+            this.csoFilterMenu.clear();
+            this.csoFilterMenu.enabled(false);
+        } else {
+            this.csoFilterMenu.enabled(true);
+        }
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {
