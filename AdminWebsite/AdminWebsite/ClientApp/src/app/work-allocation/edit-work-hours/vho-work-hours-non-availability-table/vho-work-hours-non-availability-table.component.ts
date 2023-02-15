@@ -19,7 +19,7 @@ import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
     templateUrl: './vho-work-hours-non-availability-table.component.html',
-    styleUrls: ['./vho-work-hours-non-availability-table.component.css']
+    styleUrls: ['./vho-work-hours-non-availability-table.component.scss']
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
     constructor(
