@@ -110,14 +110,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     saveNonWorkingHours() {
         this.nonWorkHours.forEach(x => this.validateNonWorkHour(x));
         if (this.validationFailures.length === 0) {
-        this.isSaving = true;
-        this.hideMessage();
+            this.isSaving = true;
+            this.hideMessage();
 
-        this.saveNonWorkHours.emit(this.nonWorkHours);
-        this.nonWorkHours.forEach(slot => {
-            slot.new_row = false;
-        });
-        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+            this.saveNonWorkHours.emit(this.nonWorkHours);
+            this.nonWorkHours.forEach(slot => {
+                slot.new_row = false;
+            });
+            this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
         }
     }
 
@@ -421,7 +421,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     isDataChangedAndUnsaved() {
-        return this.isEditing && this.nonWorkHours !== this.originalNonWorkHours;
+        return this.isEditing && JSON.stringify(this.nonWorkHours) != JSON.stringify(this.originalNonWorkHours);
     }
 
     retrieveDate(date: any): Date {

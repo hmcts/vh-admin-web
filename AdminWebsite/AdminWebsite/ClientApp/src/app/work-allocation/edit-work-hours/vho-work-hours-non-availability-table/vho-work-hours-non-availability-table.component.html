@@ -96,7 +96,7 @@
           class="govuk-button govuk-!-margin-right-6"
           data-module="govuk-button"
           (click)="saveNonWorkingHours()"
-          [disabled]="isSaving || validationFailures.length > 0"
+          [disabled]="isSaving || !isDataChangedAndUnsaved()"
         >
           Save
         </button>
