@@ -56,12 +56,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorStartDateRequired = 'Start date is required';
     public static readonly ErrorEndDateRequired = 'End date is required';
     public static readonly ErrorEndTimeCannotBeBeforeStartTime = 'End time cannot be before Start time';
-    public static readonly ErrorEndDatetimeMustBeAfterStartDatetime = 'End datetime must be after Start datetime';
+    public static readonly ErrorEndDatetimeMustBeAfterStartDatetime = ' End datetime must be after Start datetime';
     public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
     public static readonly ErrorStartTimeRequired = 'Start time is required';
     public static readonly ErrorEndTimeRequired = 'End time is required';
     public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
-    public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
+    public static readonly WarningNoWorkingHoursForVho = 'There are no non-availa   bility hours uploaded for this team member';
     private filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
@@ -340,14 +340,20 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     addNewNonAvailabilityRow() {
         this.switchToEditMode();
+
+        const  todayDate = new Date();
+        const tomorrowDate=new Date();
+        tomorrowDate.setDate(todayDate.getDate()+ 1);
+
         const editVhoNonAvailabilityWorkHoursModel = new EditVhoNonAvailabilityWorkHoursModel();
-        editVhoNonAvailabilityWorkHoursModel.end_date = new Date().toISOString().split('T')[0];
-        editVhoNonAvailabilityWorkHoursModel.start_date = new Date().toISOString().split('T')[0];
+        editVhoNonAvailabilityWorkHoursModel.end_date =  tomorrowDate.toISOString().split('T')[0];
+        editVhoNonAvailabilityWorkHoursModel.start_date = todayDate.toISOString().split('T')[0];
         editVhoNonAvailabilityWorkHoursModel.end_time = '00:00:00';
         editVhoNonAvailabilityWorkHoursModel.start_time = '00:00:00';
         editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
+        debugger
         this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
     }
 
