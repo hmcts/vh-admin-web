@@ -50,7 +50,6 @@
             [(ngModel)]="day.start_date"
             max="{{ day.end_date }}"
             required="true"
-            (blur)="onStartDateBlur(day)"
           />
         </td>
         <td class="govuk-table__cell">
@@ -61,20 +60,13 @@
             [(ngModel)]="day.end_date"
             min="{{ day.start_date }}"
             required="true"
-            (blur)="onEndDateBlur(day)"
           />
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="start-time_{{ day.id }}"
-            [disabled]="!isEditing"
-            type="time"
-            [(ngModel)]="day.start_time"
-            (blur)="onStartTimeBlur(day)"
-          />
+          <input id="start-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.start_time" />
         </td>
         <td class="govuk-table__cell">
-          <input id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" (blur)="onEndTimeBlur(day)" />
+          <input id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" />
         </td>
         <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
       </tr>

@@ -108,6 +108,8 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     saveNonWorkingHours() {
+        this.nonWorkHours.forEach(x => this.validateNonWorkHour(x));
+        if (this.validationFailures.length === 0) {
         this.isSaving = true;
         this.hideMessage();
 
@@ -116,6 +118,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             slot.new_row = false;
         });
         this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+        }
     }
 
     cancelEditingNonWorkingHours() {
@@ -348,7 +351,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
-        this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
