@@ -384,7 +384,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     isDataChangedAndUnsaved() {
-        return this.isEditing && JSON.stringify(this.nonWorkHours) != JSON.stringify(this.originalNonWorkHours);
+        return this.isEditing && JSON.stringify(this.nonWorkHours) !== JSON.stringify(this.originalNonWorkHours);
     }
 
     retrieveDate(date: any): Date {
