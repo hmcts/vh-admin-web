@@ -193,7 +193,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             return acc;
         }, true);
 
-        if (!timeDateErrors) return;
+        if (!timeDateErrors) {
+            return;
+        }
 
         if (!this.validateEndTimeBeforeStartTime(nonWorkHour)) {
             return;
