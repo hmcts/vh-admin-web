@@ -229,7 +229,12 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
-        describe('save button clicked', () => {
+        describe('saveNonWorkingHours', () => {
+            beforeEach(() => {
+                component.switchToEditMode();
+                fixture.detectChanges();
+                spyOn(component.saveNonWorkHours, 'emit');
+            });
             it('should save correctly', () => {
                 const nonWorkHours = {
                     id: 1,
@@ -242,10 +247,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours = [nonWorkHours];
 
                 fixture.detectChanges();
-
-                component.switchToEditMode();
-                fixture.detectChanges();
-                spyOn(component.saveNonWorkHours, 'emit');
 
                 component.saveNonWorkingHours();
                 fixture.detectChanges();
@@ -268,16 +269,30 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
                 fixture.detectChanges();
 
-                component.switchToEditMode();
-                fixture.detectChanges();
-                spyOn(component.saveNonWorkHours, 'emit');
-
                 component.saveNonWorkingHours();
                 fixture.detectChanges();
 
                 expect(component.isSaving).toBe(false);
                 expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(0);
                 expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(0);
+            });
+            it('should save if there are no validation failures', () => {
+                component.nonWorkHours = [
+                    {
+                        id: 1,
+                        start_date: '2022-01-01',
+                        start_time: '06:00',
+                        end_date: '2022-01-01',
+                        end_time: '08:00'
+                    } as any
+                ];
+
+                component.saveNonWorkingHours();
+
+                expect(component.isSaving).toBe(true);
+                expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(1);
+                expect(component.saveNonWorkHours.emit).toHaveBeenCalledWith(component.nonWorkHours);
+                expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -399,6 +414,100 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(component.removeValidationError).toHaveBeenCalledTimes(4);
             });
         });
+
+        describe('validateNonWorkHour', () => {
+            beforeEach(() => {
+                component.switchToEditMode();
+                fixture.detectChanges();
+            });
+
+            it('should not call validateEndTimeBeforeStartTime if any date value is missing', () => {
+                spyOn(component, 'validateEndTimeBeforeStartTime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndTimeBeforeStartTime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateEndDatetimeAfterStartDatetime if any date value is missing', () => {
+                spyOn(component, 'validateEndDatetimeAfterStartDatetime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndDatetimeAfterStartDatetime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateOverlappingDates if any date value is missing', () => {
+                spyOn(component, 'validateOverlappingDates');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateOverlappingDates).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateEndDatetimeAfterStartDatetime if end time is before start time', () => {
+                spyOn(component, 'validateEndDatetimeAfterStartDatetime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '08:00',
+                    end_date: '2022-01-01',
+                    end_time: '06:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndDatetimeAfterStartDatetime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateOverlappingDates if end date time is before start date time', () => {
+                spyOn(component, 'validateOverlappingDates');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-03',
+                    start_time: '08:00',
+                    end_date: '2022-01-01',
+                    end_time: '06:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateOverlappingDates).toHaveBeenCalledTimes(0);
+            });
+        });
+
+        describe('saveNonWorkingHours', () => {});
 
         describe('start date validation', () => {
             const elementPrefix = 'start-date';
