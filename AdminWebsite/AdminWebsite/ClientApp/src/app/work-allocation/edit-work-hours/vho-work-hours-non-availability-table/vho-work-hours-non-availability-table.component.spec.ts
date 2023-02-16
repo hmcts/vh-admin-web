@@ -507,8 +507,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
-        describe('saveNonWorkingHours', () => {});
-
         describe('start date validation', () => {
             const elementPrefix = 'start-date';
 
