@@ -16,10 +16,13 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
+const requiredFieldNames = ['start_date', 'end_date', 'start_time', 'end_time'] as const;
+type RequiredField = typeof requiredFieldNames[number];
+
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
     templateUrl: './vho-work-hours-non-availability-table.component.html',
-    styleUrls: ['./vho-work-hours-non-availability-table.component.css']
+    styleUrls: ['./vho-work-hours-non-availability-table.component.scss']
 })
 export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDeactiveComponent {
     constructor(
@@ -62,6 +65,14 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorEndTimeRequired = 'End time is required';
     public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
     public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
+
+    private static DateTimeErrors = {
+        start_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired,
+        end_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired,
+        start_time: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired,
+        end_time: VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired
+    };
+
     private filterSize = 20;
     loggerPrefix = '[WorkHoursNonAvailabilityTable] -';
     faTrash = faTrash;
@@ -108,14 +119,17 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     saveNonWorkingHours() {
-        this.isSaving = true;
-        this.hideMessage();
+        this.nonWorkHours.forEach(x => this.validateNonWorkHour(x));
+        if (this.validationFailures.length === 0) {
+            this.isSaving = true;
+            this.hideMessage();
 
-        this.saveNonWorkHours.emit(this.nonWorkHours);
-        this.nonWorkHours.forEach(slot => {
-            slot.new_row = false;
-        });
-        this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+            this.saveNonWorkHours.emit(this.nonWorkHours);
+            this.nonWorkHours.forEach(slot => {
+                slot.new_row = false;
+            });
+            this.videoHearingsService.cancelVhoNonAvailabiltiesRequest();
+        }
     }
 
     cancelEditingNonWorkingHours() {
@@ -167,43 +181,22 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         return CombineDateAndTime(date, time);
     }
 
-    onStartDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
-    }
-
-    onEndDateBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
-    }
-
-    onStartTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
-    }
-
-    onEndTimeBlur(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        this.validateNonWorkHour(nonWorkHour);
-        this.registerUnsavedChanges();
-    }
-
     registerUnsavedChanges() {
         this.videoHearingsService.setVhoNonAvailabiltiesHaveChanged(true);
     }
 
     validateNonWorkHour(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        if (!this.validateStartDateRequired(nonWorkHour)) {
+        const timeDateErrors = requiredFieldNames.reduce((acc: any, field: RequiredField) => {
+            if (acc) {
+                acc = this.validateRequiredField(nonWorkHour, field);
+            }
+            return acc;
+        }, true);
+
+        if (!timeDateErrors) {
             return;
         }
-        if (!this.validateEndDateRequired(nonWorkHour)) {
-            return;
-        }
-        if (!this.validateStartTimeRequired(nonWorkHour)) {
-            return;
-        }
-        if (!this.validateEndTimeRequired(nonWorkHour)) {
-            return;
-        }
+
         if (!this.validateEndTimeBeforeStartTime(nonWorkHour)) {
             return;
         }
@@ -215,43 +208,16 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    validateStartDateRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired;
-        if (nonWorkHour.start_date === '') {
-            this.addValidationError(nonWorkHour.id, error);
-            return false;
-        }
-        this.removeValidationError(nonWorkHour.id, error);
-        return true;
-    }
+    validateRequiredField(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel, fieldName: RequiredField) {
+        const error = VhoWorkHoursNonAvailabilityTableComponent.DateTimeErrors[fieldName];
 
-    validateEndDateRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired;
-        if (nonWorkHour.end_date === '') {
-            this.addValidationError(nonWorkHour.id, error);
-            return false;
+        if (error) {
+            if (nonWorkHour[fieldName] === '') {
+                this.addValidationError(nonWorkHour.id, error);
+                return false;
+            }
+            this.removeValidationError(nonWorkHour.id, error);
         }
-        this.removeValidationError(nonWorkHour.id, error);
-        return true;
-    }
-
-    validateStartTimeRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired;
-        if (nonWorkHour.start_time === '') {
-            this.addValidationError(nonWorkHour.id, error);
-            return false;
-        }
-        this.removeValidationError(nonWorkHour.id, error);
-        return true;
-    }
-
-    validateEndTimeRequired(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired;
-        if (nonWorkHour.end_time === '') {
-            this.addValidationError(nonWorkHour.id, error);
-            return false;
-        }
-        this.removeValidationError(nonWorkHour.id, error);
         return true;
     }
 
@@ -348,7 +314,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         editVhoNonAvailabilityWorkHoursModel.new_row = true;
 
         this.nonWorkHours.push(editVhoNonAvailabilityWorkHoursModel);
-        this.onStartDateBlur(editVhoNonAvailabilityWorkHoursModel);
     }
 
     addValidationError(nonWorkHourId: number, error: string) {
@@ -419,7 +384,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     isDataChangedAndUnsaved() {
-        return this.isEditing && this.nonWorkHours !== this.originalNonWorkHours;
+        return this.isEditing && JSON.stringify(this.nonWorkHours) !== JSON.stringify(this.originalNonWorkHours);
     }
 
     retrieveDate(date: any): Date {

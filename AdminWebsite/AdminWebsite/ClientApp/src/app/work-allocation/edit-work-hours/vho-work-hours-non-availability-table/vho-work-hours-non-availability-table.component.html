@@ -36,7 +36,7 @@
         <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">
-          <fa-icon [icon]="faCalendarPlus" (click)="addNewNonAvailabilityRow()"></fa-icon>
+          <fa-icon [icon]="faCalendarPlus" class="pointer" (click)="addNewNonAvailabilityRow()"></fa-icon>
         </th>
       </tr>
     </thead>
@@ -44,39 +44,33 @@
       <tr class="govuk-table__row" *ngFor="let day of nonWorkHours">
         <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': !nonWorkHourIsValid(day) }">
           <input
+            class="govuk-input"
             id="start-date_{{ day.id }}"
             [disabled]="!isEditing"
             type="date"
             [(ngModel)]="day.start_date"
             max="{{ day.end_date }}"
             required="true"
-            (blur)="onStartDateBlur(day)"
           />
         </td>
         <td class="govuk-table__cell">
           <input
+            class="govuk-input"
             id="end-date_{{ day.id }}"
             [disabled]="!isEditing"
             type="date"
             [(ngModel)]="day.end_date"
             min="{{ day.start_date }}"
             required="true"
-            (blur)="onEndDateBlur(day)"
           />
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="start-time_{{ day.id }}"
-            [disabled]="!isEditing"
-            type="time"
-            [(ngModel)]="day.start_time"
-            (blur)="onStartTimeBlur(day)"
-          />
+          <input class="govuk-input" id="start-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.start_time" />
         </td>
         <td class="govuk-table__cell">
-          <input id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" (blur)="onEndTimeBlur(day)" />
+          <input class="govuk-input" id="end-time_{{ day.id }}" [disabled]="!isEditing" type="time" [(ngModel)]="day.end_time" />
         </td>
-        <td class="govuk-table__cell"><fa-icon style="color: red" [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
+        <td class="govuk-table__cell table-cell-delete"><fa-icon [icon]="faTrash" (click)="delete(day)"></fa-icon></td>
       </tr>
     </tbody>
   </table>
@@ -104,7 +98,7 @@
           class="govuk-button govuk-!-margin-right-6"
           data-module="govuk-button"
           (click)="saveNonWorkingHours()"
-          [disabled]="isSaving || validationFailures.length > 0"
+          [disabled]="isSaving || !isDataChangedAndUnsaved()"
         >
           Save
         </button>
