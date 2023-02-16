@@ -318,6 +318,88 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
+        describe('validateRequiredField', () => {
+            beforeEach(() => {
+                component.switchToEditMode();
+                fixture.detectChanges();
+            });
+
+            it('should return false and add an error when any required value is missing', () => {
+                spyOn(component, 'addValidationError');
+                spyOn(component, 'removeValidationError');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+                const workHour2 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+                const workHour3 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '',
+                    end_time: '08:00'
+                } as any;
+                const workHour4 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: ''
+                } as any;
+
+                const result = [
+                    [workHour1, 'start_date'],
+                    [workHour2, 'start_time'],
+                    [workHour3, 'end_date'],
+                    [workHour4, 'end_time']
+                ]
+                    .map(([workHour, field]) => component.validateRequiredField(workHour, field))
+                    .filter(Boolean);
+
+                expect(result.length).toBe(0);
+                expect(component.addValidationError).toHaveBeenCalledTimes(4);
+                expect(component.removeValidationError).toHaveBeenCalledTimes(0);
+            });
+
+            it('should return true and not add an error when no value is missing', () => {
+                spyOn(component, 'addValidationError');
+                spyOn(component, 'removeValidationError');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                const result = [
+                    [workHour1, 'start_date'],
+                    [workHour1, 'start_time'],
+                    [workHour1, 'end_date'],
+                    [workHour1, 'end_time']
+                ]
+                    .map(([workHour, field]) => component.validateRequiredField(workHour, field))
+                    .filter(Boolean);
+
+                expect(result.length).toBe(4);
+                expect(component.addValidationError).toHaveBeenCalledTimes(0);
+                expect(component.removeValidationError).toHaveBeenCalledTimes(4);
+            });
+        });
+
         describe('start date validation', () => {
             const elementPrefix = 'start-date';
 
