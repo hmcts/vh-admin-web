@@ -79,5 +79,25 @@ namespace AdminWebsite.Controllers
 
             return Ok(hearings.Select(AllocationHearingsResponseMapper.Map).ToList());
         }
+        
+        
+        /// <summary>
+        /// Get allocation for hearing Id
+        /// </summary>
+        /// <param name="hearingId">Guid</param>
+        /// <returns>AllocatedCsoResponse</returns>
+        [HttpGet("allocations/cso")]
+        [SwaggerOperation(OperationId = "GetAllocationForHearing")]
+        [ProducesResponseType(typeof(AllocatedCsoResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAllocatedCsoForHearing(Guid hearingId)
+        {
+            var result = await _bookingsApiClient.GetAllocationsForHearingsAsync(new []{hearingId});
+            var allocatedCso = result.FirstOrDefault();
+            if (allocatedCso == null)
+                return BadRequest();
+
+            return Ok(allocatedCso);
+        }
     }
 }
