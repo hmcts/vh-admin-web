@@ -93,7 +93,7 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> GetAllocatedCsoForHearing(Guid hearingId)
         {
             var result = await _bookingsApiClient.GetAllocationsForHearingsAsync(new []{hearingId});
-            var allocatedCso = result.FirstOrDefault();
+            var allocatedCso = result?.FirstOrDefault();
             if (allocatedCso == null)
                 return BadRequest();
 
