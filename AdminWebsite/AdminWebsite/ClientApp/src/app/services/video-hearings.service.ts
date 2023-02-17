@@ -501,7 +501,7 @@ export class VideoHearingsService {
         }
     }
 
-    getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse>{
+    getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
         return this.bhClient.getAllocationForHearing(hearingId);
     }
 }

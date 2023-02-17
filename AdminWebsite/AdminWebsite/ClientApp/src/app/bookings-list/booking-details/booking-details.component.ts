@@ -139,7 +139,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.participants = participants_and_judges.participants;
         this.judges = participants_and_judges.judges;
         this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
-        allocatedCso.subscribe(response => this.hearing.AllocatedTo = response?.cso?.username ?? 'Unallocated'); }
+        allocatedCso.subscribe(response => (this.hearing.AllocatedTo = response?.cso?.username ?? 'Unallocated'));
+    }
 
     mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingResponse);
