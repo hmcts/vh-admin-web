@@ -20,7 +20,6 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
-import { Mock } from 'ng-mocks';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
