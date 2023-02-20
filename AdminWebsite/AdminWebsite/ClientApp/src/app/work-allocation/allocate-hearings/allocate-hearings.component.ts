@@ -1,13 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { AllocationHearingsResponse } from '../../services/clients/api-client';
+import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
+import { MenuComponent, MenuItem } from 'src/app/shared/menus/menu/menu.component';
+import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -15,7 +18,13 @@ import { Transform } from '@fortawesome/fontawesome-svg-core';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
-    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
+    constructor(
+        private route: ActivatedRoute,
+        private fb: FormBuilder,
+        private allocateService: AllocateHearingsService,
+        private justiceUserService: JusticeUsersService,
+        private videoHearingService: VideoHearingsService
+    ) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],
@@ -27,7 +36,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
-    @ViewChild('csoFilterMenu', { static: false, read: JusticeUsersMenuComponent }) csoFilterMenu: JusticeUsersMenuComponent;
+    @ViewChild('csoFilterMenu', { static: false, read: MenuComponent }) csoFilterMenu: MenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
@@ -42,6 +51,9 @@ export class AllocateHearingsComponent implements OnInit {
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
+
+    justiceUsersMenuItems: MenuItem[];
+    caseTypesMenuItems: MenuItem[];
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -64,6 +76,32 @@ export class AllocateHearingsComponent implements OnInit {
         this.form.get('isUnallocated').valueChanges.subscribe(val => {
             this.onIsAllocatedCheckboxChanged(val);
         });
+
+        this.justiceUserService.retrieveJusticeUserAccounts().subscribe(
+            (data: JusticeUserResponse[]) => {
+                this.justiceUsersMenuItems = data.map(item => ({
+                    label: item.full_name,
+                    id: item.id,
+                    data: item.username,
+                    ariaLabel: item.first_name
+                }));
+                // this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
+            }
+            //error => this.handleListError(error, 'users')
+        );
+
+        const distinct = (value, index, array) => array.indexOf(value) === index;
+        this.videoHearingService.getHearingTypes().subscribe(
+            (data: HearingTypeResponse[]) => {
+                this.caseTypesMenuItems = data
+                    .map(item => item.group)
+                    .filter(distinct)
+                    .sort()
+                    .map(group => ({ id: group, label: group }));
+                // this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
+            }
+            // error => this.handleListError(error, 'case types')
+        );
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {
@@ -114,10 +152,12 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     onCaseTypeSelected($event: string[]) {
+        console.log($event);
         this.caseTypeDropDownValues = $event;
     }
 
     onJusticeUserForFilterSelected(selectedCsoIds: string[]) {
+        console.log('onJusticeUserForFilterSelected', selectedCsoIds);
         this.csoDropDownValues = selectedCsoIds;
         if (selectedCsoIds.length > 0) {
             this.form.get('isUnallocated').setValue(false);
@@ -127,15 +167,17 @@ export class AllocateHearingsComponent implements OnInit {
     onIsAllocatedCheckboxChanged(checked: boolean) {
         if (checked) {
             this.csoFilterMenu.clear();
-            this.csoFilterMenu.enabled(false);
+            this.csoFilterMenu.disable();
         } else {
-            this.csoFilterMenu.enabled(true);
+            this.csoFilterMenu.enable();
         }
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {
+        console.log('onJusticeUserForAllocationSelected', justiceUserId);
         if (justiceUserId) {
             const username = this.csoAllocatedMenu?.selectedLabel;
+            console.log('USER', username);
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
         } else {
             // without a selected CSO, unset selection

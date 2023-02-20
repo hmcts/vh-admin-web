@@ -28,12 +28,25 @@
         />
       </div>
       <div class="govuk-grid-column-one-third">
-        <app-justice-users-menu #csoFilterMenu (selectedEmitter)="onJusticeUserForFilterSelected($event)"></app-justice-users-menu>
+        <app-menu
+          #csoFilterMenu
+          (selectedEmitter)="onJusticeUserForFilterSelected($event)"
+          [items]="justiceUsersMenuItems"
+          ariaLabel="User list"
+          placeholder="Select users"
+          title="Allocated CSO"
+        ></app-menu>
       </div>
     </div>
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-        <app-case-types-menu (selectedEmitter)="onCaseTypeSelected($event)"></app-case-types-menu>
+        <app-menu
+          (selectedEmitter)="onCaseTypeSelected($event)"
+          [items]="caseTypesMenuItems"
+          ariaLabel="Case types list"
+          placeholder="Select case types"
+          title="Case types"
+        ></app-menu>
       </div>
       <div class="govuk-grid-column-one-third">
         <label class="govuk-label" for="case-number-entry">Case number</label>
