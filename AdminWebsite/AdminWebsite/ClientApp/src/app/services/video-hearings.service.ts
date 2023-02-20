@@ -24,7 +24,8 @@ import {
     LinkedParticipantRequest,
     LinkedParticipantResponse,
     LinkedParticipant,
-    BookingStatus
+    BookingStatus,
+    AllocatedCsoResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -498,5 +499,9 @@ export class VideoHearingsService {
         } else {
             return false;
         }
+    }
+
+    getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
+        return this.bhClient.getAllocationForHearing(hearingId);
     }
 }
