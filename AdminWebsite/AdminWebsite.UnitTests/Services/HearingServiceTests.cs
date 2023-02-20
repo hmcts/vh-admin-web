@@ -47,7 +47,7 @@ namespace AdminWebsite.UnitTests.Services
             });
 
             _mocker.Mock<IConferenceDetailsService>()
-                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
