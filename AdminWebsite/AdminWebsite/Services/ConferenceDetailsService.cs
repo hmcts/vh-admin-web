@@ -15,7 +15,7 @@ namespace AdminWebsite.Services
     {
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
 
-        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
+        Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId, bool includeClosed = false);
     }
     
     public class ConferenceDetailsService : IConferenceDetailsService
@@ -54,9 +54,9 @@ namespace AdminWebsite.Services
             return new ConferenceDetailsResponse();
         }
 
-        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
+        public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId, bool includeClosed = false)
         {
-            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
+            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, includeClosed);
         }
     }
 }

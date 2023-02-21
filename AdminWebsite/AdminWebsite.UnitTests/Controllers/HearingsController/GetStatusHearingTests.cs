@@ -105,7 +105,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             AdminUri = "AdminUri", ParticipantUri = "ParticipantUri", JudgeUri = "JudgeUri", PexipNode = "PexipNode"} };
 
             // Arrange
-            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid))
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
                 .ReturnsAsync(conferenceResponse);
             _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
 
@@ -118,7 +118,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(true);
-            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()), Times.Once);
+            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
             _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
@@ -128,7 +128,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ConferenceDetailsResponse conferenceResponse = new() { MeetingRoom = new MeetingRoomResponse() };
 
             // Arrange
-            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(conferenceResponse);
             _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
 
@@ -141,7 +141,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(false);
-            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()), Times.Once);
+            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
             _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
@@ -151,7 +151,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ConferenceDetailsResponse conferenceResponse = new() { MeetingRoom = new MeetingRoomResponse() };
 
             // Arrange
-            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(conferenceResponse);
             _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Booked);
 
@@ -164,7 +164,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(false);
-            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()), Times.Never);
+            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Never);
             _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
@@ -211,7 +211,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             // Arrange
             _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
-            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>())).Throws(new VideoApiException("Error", 400, null, null, null));
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false)).Throws(new VideoApiException("Error", 400, null, null, null));
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
 
