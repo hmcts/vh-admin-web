@@ -35,7 +35,7 @@ export class CaseTypesMenuComponent extends MenuBase {
         const distinct = (value, index, array) => array.indexOf(value) === index;
         this.videoHearingService.getHearingTypes().subscribe(
             (data: HearingTypeResponse[]) => {
-                this.caseTypes = [
+                this.caseTypes = this.items = [
                     ...Array.from(
                         data
                             .map(item => item.group)
