@@ -13,10 +13,11 @@ describe('CaseTypesMenuComponent', () => {
     let component: CaseTypesMenuComponent;
     let fixture: ComponentFixture<CaseTypesMenuComponent>;
     let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    const caseType = 'caseType1';
 
     beforeEach(async () => {
         videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getHearingTypes']);
-        videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: 'caseType1' })]));
+        videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: caseType })]));
         await TestBed.configureTestingModule({
             declarations: [CaseTypesMenuComponent],
             providers: [
@@ -32,6 +33,7 @@ describe('CaseTypesMenuComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(CaseTypesMenuComponent);
         component = fixture.componentInstance;
+        component.selectedEmitter = jasmine.createSpyObj('selectedEmitter', ['emit']);
         fixture.detectChanges();
     });
 
@@ -69,6 +71,15 @@ describe('CaseTypesMenuComponent', () => {
             component.loadItems();
             expect(videoHearingServiceSpy.getHearingTypes).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('onSelect', () => {
+        it('should select case type', () => {
+            component.loadItems();
+            component.form.controls[component.formGroupName].setValue(caseType);
+            component.onSelect();
+            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(caseType);
         });
     });
 });
