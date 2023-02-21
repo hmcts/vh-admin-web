@@ -38,7 +38,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _expectedUserIdentityName = "created by";
 
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
