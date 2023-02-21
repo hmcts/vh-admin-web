@@ -16,7 +16,8 @@ public static class AllocationHearingsResponseMapper
             CaseNumber = hearing.CaseNumber,
             CaseType = hearing.CaseType,
             AllocatedCso = hearing.AllocatedCso,
-            HasWorkHoursClash = hearing.HasWorkHoursClash
+            HasWorkHoursClash = hearing.HasWorkHoursClash,
+            ExceededConcurrencyLimit = hearing.ExceededConcurrencyLimit
         };
     }
 }

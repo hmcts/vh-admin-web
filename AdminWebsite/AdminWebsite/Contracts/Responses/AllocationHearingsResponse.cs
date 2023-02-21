@@ -45,7 +45,12 @@ public class AllocationHearingsResponse
     public string AllocatedCso { get; set; }
     
     /// <summary>
-    /// True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso
+    /// True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO
     /// </summary>
     public bool? HasWorkHoursClash { get; set; }
+    
+    /// <summary>
+    /// True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO
+    /// </summary>
+    public bool? ExceededConcurrencyLimit { get; set; }
 }
