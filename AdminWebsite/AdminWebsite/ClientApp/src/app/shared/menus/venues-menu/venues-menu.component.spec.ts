@@ -32,6 +32,7 @@ describe('VenuesMenuComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(VenuesMenuComponent);
         component = fixture.componentInstance;
+        component.selectedEmitter = jasmine.createSpyObj('selectedEmitter', ['emit']);
         fixture.detectChanges();
     });
     it('should create', () => {
@@ -69,6 +70,17 @@ describe('VenuesMenuComponent', () => {
             component.loadItems();
             expect(refDataServiceSpy.getCourts).toHaveBeenCalled();
             expect(handleListErrorSpy).toHaveBeenCalled();
+        });
+    });
+
+    describe('onSelect', () => {
+        it('should select venue', () => {
+            const venueId = 1;
+            refDataServiceSpy.getCourts.and.returnValue(of([new HearingVenueResponse({ id: venueId, name: 'London' })]));
+            component.loadItems();
+            component.form.controls[component.formGroupName].setValue(venueId);
+            component.onSelect();
+            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(venueId);
         });
     });
 });
