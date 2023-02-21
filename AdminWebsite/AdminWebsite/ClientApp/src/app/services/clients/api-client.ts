@@ -4967,9 +4967,9 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     exceeded_concurrency_limit?: boolean | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
@@ -5032,9 +5032,9 @@ export interface IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     exceeded_concurrency_limit?: boolean | undefined;
 }
 
@@ -7534,8 +7534,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
-    hearing_type_code?: string | undefined;
-    allocated_to?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -7583,8 +7581,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
-            this.hearing_type_code = _data['hearing_type_code'];
-            this.allocated_to = _data['allocated_to'];
         }
     }
 
@@ -7632,8 +7628,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
-        data['hearing_type_code'] = this.hearing_type_code;
-        data['allocated_to'] = this.allocated_to;
         return data;
     }
 }
@@ -7662,8 +7656,6 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
-    hearing_type_code?: string | undefined;
-    allocated_to?: string | undefined;
 }
 
 export class HearingVenueResponse implements IHearingVenueResponse {
