@@ -15,10 +15,16 @@
             class="govuk-button govuk-!-margin-left-2"
             *ngIf="displayAddButton"
             data-module="govuk-button"
-            (click)="searchForExistingUser()"
+            (click)="searchForExistingAccount()"
           >
             Add a team member
           </button>
+          <div class="govuk-body" *ngIf="showSpinner">
+            <div class="vh-loader-small-container">
+              <div class="vh-loader"></div>
+              <label class="loader-label"> Please wait... </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -27,7 +33,7 @@
     <fa-icon [icon]="errorMessage ? faError : faExclamation"></fa-icon>
     {{ message }}
   </div>
-  <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
+  <table *ngIf="users?.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Username</th>
@@ -100,4 +106,14 @@
       </tr>
     </tbody>
   </table>
+  <div *ngIf="displayAddButton && existingAccount" class="popup-overlay">
+    <div class="vh-popup-aligned">
+      <app-justice-user-form
+        [justiceUser]="existingAccount"
+        (cancelFormEvent)="onFormCancelled()"
+        (saveFailedEvent)="onJusticeFailedSave($event)"
+        (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
+      ></app-justice-user-form>
+    </div>
+  </div>
 </details>

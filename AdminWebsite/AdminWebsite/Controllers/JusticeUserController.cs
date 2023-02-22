@@ -1,8 +1,10 @@
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Extensions;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -32,25 +34,26 @@ namespace AdminWebsite.Controllers
         /// <returns>a new justice user</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "AddNewJusticeUser")]
-        [ProducesResponseType(typeof(ExistingJusticeUserResponse), (int) HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int) HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         public async Task<ActionResult> AddNewJusticeUser([FromBody] AddJusticeUserRequest addJusticeUserRequest)
         {
             try
             {
+                addJusticeUserRequest.CreatedBy = User.Identity.Name;
                 var newUser = await _bookingsApiClient.AddAJusticeUserAsync(addJusticeUserRequest);
                 return Created("", newUser);
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int) HttpStatusCode.BadRequest)
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException.Result);
                 }
 
-                if (e.StatusCode is (int) HttpStatusCode.Conflict)
+                if (e.StatusCode is (int)HttpStatusCode.Conflict)
                 {
                     var typedException = e as BookingsApiException<string>;
                     return Conflict(typedException.Result);
@@ -68,8 +71,8 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpGet("/check/{username}")]
         [SwaggerOperation(OperationId = "CheckJusticeUserExists")]
-        [ProducesResponseType(typeof(ExistingJusticeUserResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ExistingJusticeUserResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<ExistingJusticeUserResponse>> CheckJusticeUserExists([FromRoute] string username)
         {
             try
@@ -87,9 +90,9 @@ namespace AdminWebsite.Controllers
             }
             catch (UserApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
-                    return NotFound(e.Response);
+                    return NotFound($"Username could not be found. Please check the username and try again. An account may need to be requested via Service Catalogue.");
                 }
 
                 _logger.LogError(e, "Unexpected error when checking if a user with the username {Username} exists",

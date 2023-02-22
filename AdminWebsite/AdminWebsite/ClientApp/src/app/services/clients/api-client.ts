@@ -2188,7 +2188,7 @@ export class BHClient extends ApiClientBase {
      * @param body (optional)
      * @return Created
      */
-    addNewJusticeUser(body: AddJusticeUserRequest | undefined): Observable<ExistingJusticeUserResponse> {
+    addNewJusticeUser(body: AddJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
         let url_ = this.baseUrl + '/api/justice-users';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2221,14 +2221,14 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processAddNewJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<ExistingJusticeUserResponse>;
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<ExistingJusticeUserResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
                 })
             );
     }
 
-    protected processAddNewJusticeUser(response: HttpResponseBase): Observable<ExistingJusticeUserResponse> {
+    protected processAddNewJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -2258,7 +2258,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result201: any = null;
                     let resultData201 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result201 = ExistingJusticeUserResponse.fromJS(resultData201);
+                    result201 = JusticeUserResponse.fromJS(resultData201);
                     return _observableOf(result201);
                 })
             );
@@ -2294,7 +2294,7 @@ export class BHClient extends ApiClientBase {
                 })
             );
         }
-        return _observableOf<ExistingJusticeUserResponse>(null as any);
+        return _observableOf<JusticeUserResponse>(null as any);
     }
 
     /**

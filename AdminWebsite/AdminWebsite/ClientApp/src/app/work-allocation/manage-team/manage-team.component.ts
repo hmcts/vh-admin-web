@@ -14,11 +14,14 @@ import { BookHearingException } from 'src/app/services/clients/api-client';
 })
 export class ManageTeamComponent {
     private filterSize = 20;
+    existingAccount: ExistingJusticeUserResponse;
+    showSpinner = false;
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
             inputSearch: new FormControl('')
         });
+        this.form.controls.inputSearch.valueChanges.subscribe(() => (this.displayAddButton = false));
     }
 
     loggerPrefix = '[ManageTeamComponent] -';
@@ -35,75 +38,95 @@ export class ManageTeamComponent {
     errorMessage = false;
 
     searchUsers() {
-        const term = this.form.value.inputSearch;
         this.errorMessage = false;
         this.displayAddButton = false;
         this.displayMessage = false;
         this.message = '';
         this.isEditing = false;
-        this.justiceUserService.retrieveJusticeUserAccountsNoCache(term).subscribe(
-            (data: JusticeUserResponse[]) => {
-                this.users = data;
-                this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-                if (this.users.length > this.filterSize) {
-                    this.users = this.users.slice(0, this.filterSize);
-                    this.displayMessage = true;
-                    this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
-                } else if (this.users.length === 0) {
-                    this.displayAddButton = true;
-                    this.displayMessage = true;
-                    this.errorMessage = true;
-                    this.message =
-                        'No users matching this search criteria were found. ' +
-                        'Please check the search and try again. Or, add the team member.';
-                }
-            },
-            error => {
-                this.handleListError(error, 'users');
-            }
-        );
+        this.showSpinner = true;
+        this.justiceUserService.retrieveJusticeUserAccountsNoCache(this.form.value.inputSearch).subscribe({
+            next: (data: JusticeUserResponse[]) => this.onJusticeUserSearchComplete(data),
+            error: error => this.handleListError(error, 'users'),
+            complete: () => (this.showSpinner = false)
+        });
     }
 
-    searchForExistingUser() {
+    onJusticeUserSearchComplete(data: JusticeUserResponse[]) {
+        this.users = data;
+        this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
+        if (this.users.length > this.filterSize) {
+            this.users = this.users.slice(0, this.filterSize);
+            this.displayMessage = true;
+            this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
+        } else if (this.users.length === 0) {
+            this.displayMessage = true;
+            this.errorMessage = true;
+            this.message =
+                'No users matching this search criteria were found. ' + 'Please check the search and try again. Or, add the team member.';
+
+            if (isAValidEmail(this.form.value.inputSearch)) {
+                this.displayAddButton = true;
+            }
+        }
+    }
+
+    searchForExistingAccount() {
+        this.displayMessage = false;
         const username = this.form.value.inputSearch;
         if (isAValidEmail(username)) {
+            this.showSpinner = true;
             this.justiceUserService.checkIfUserExistsByUsername(username).subscribe({
                 next: result => this.onUserAccountFound(result),
-                error: (error: string | BookHearingException) => this.onUserAccountNotFound(error)
+                error: (error: string | BookHearingException) => this.onUserAccountNotFound(error),
+                complete: () => (this.showSpinner = false)
             });
-            // this.justiceUserService.checkIfUserExistsByUsername(username).subscribe(
-            //     user => {
-            //         console.warn(user);
-            //     },
-            //     error => {
-            //         console.warn('user does not exist' + error);
-            //     }
-            // );
         } else {
             // TODO: handle invalid email input
             console.warn('do something about this invalid email');
         }
     }
+
     onUserAccountNotFound(userNotFoundError: string | BookHearingException): void {
+        this.showSpinner = false;
         const isApiException = BookHearingException.isBookHearingException(userNotFoundError);
         if (isApiException) {
             const exception = userNotFoundError as BookHearingException;
             this.message =
                 exception.status === 400
-                    ? 'Error: Username could not be found. Please check the username and try again. An account may need to be requested via Service Catalogue'
-                    : 'There was an unexpected error. Please try again later';
+                    ? 'Error: Username could not be found. Please check the username and try again. An account may need to be requested via Service Catalogue.'
+                    : 'There was an unexpected error. Please try again later.';
         } else {
             this.message = userNotFoundError;
         }
+        this.displayMessage = true;
     }
 
     onUserAccountFound(result: ExistingJusticeUserResponse): void {
-        console.warn(result);
+        this.existingAccount = result;
     }
 
     handleListError(err, type) {
         this.logger.error(`${this.loggerPrefix} Error getting ${type} list`, err, type);
         this.error = true;
+    }
+
+    onFormCancelled() {
+        this.existingAccount = null;
+    }
+
+    onJusticeSuccessfulSave(newUser: JusticeUserResponse) {
+        this.existingAccount = null;
+        this.displayAddButton = false;
+        this.message = 'Changes saved successfully. You can now add working hours and non-availability hours for this user.';
+        this.errorMessage = false;
+        this.displayMessage = true;
+        this.users.push(newUser);
+    }
+
+    onJusticeFailedSave(errorMessage: string) {
+        this.message = errorMessage;
+        this.errorMessage = false;
+        this.displayMessage = true;
     }
 }
 
