@@ -132,6 +132,9 @@
           <span appTooltip [text]="'Hearing is outside of user working hours'" [colour]="'blue'" colour="grey">
             <fa-icon *ngIf="hearing.hasWorkHoursClash" [icon]="triangleExclamation"></fa-icon>
           </span>
+            <span id="clockIcon"  appTooltip [text]="'Hearing clashes with user non-availability'" [colour]="'blue'" colour="grey">
+            <fa-icon *ngIf="hearing.hasWorkHoursClash" [icon]="faClock"></fa-icon>
+          </span>
         </td>
       </tr>
     </tbody>
