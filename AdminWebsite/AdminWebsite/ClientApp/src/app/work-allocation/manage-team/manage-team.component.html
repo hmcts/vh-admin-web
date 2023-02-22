@@ -10,12 +10,15 @@
           <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" formControlName="inputSearch" />
         </div>
         <div class="govuk-grid-column-one-third">
-          <div class="govuk-grid-column-one-third">
-            <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
-          </div>
-          <div class="govuk-grid-column-one" *ngIf="displayAddButton">
-            <button class="govuk-button" data-module="govuk-button">Add a team member</button>
-          </div>
+          <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+          <button
+            class="govuk-button govuk-!-margin-left-2"
+            *ngIf="displayAddButton"
+            data-module="govuk-button"
+            (click)="searchForExistingUser()"
+          >
+            Add a team member
+          </button>
         </div>
       </div>
     </div>

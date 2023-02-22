@@ -1,4 +1,4 @@
-<div id="confirmDeletePopup" class="popup-overlay vh-top-pop">
+<div id="confirmDeletePopup" class="popup-overlay">
   <div class="popup popup-small" style="text-align: center">
     <h1 class="govuk-heading-m">Are you sure you want to delete this user account?</h1>
     <div class="content">
@@ -8,7 +8,7 @@
           <button id="btnConfirm" class="govuk-button vh-mr" type="submit" data-module="govuk-button" (click)="confirmDelete()">Yes</button>
           <button
             id="btnCancel"
-            class="govuk-button govuk-button--secondary"
+            class="govuk-button govuk-button--secondary govuk-!-margin-left-2"
             type="submit"
             data-module="govuk-button"
             (click)="cancelDelete()"

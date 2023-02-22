@@ -26,4 +26,12 @@ export class JusticeUsersService {
     private requestJusticeUsers(term: string) {
         return this.apiClient.getUserList(cleanQuery(term));
     }
+
+    checkIfUserExistsByUsername(username: string) {
+        return this.apiClient.checkJusticeUserExists(username);
+    }
+
+    addNewJusticeUser(firstName: string, lastName: string) {
+        return this.apiClient.addNewJusticeUser(null);
+    }
 }
