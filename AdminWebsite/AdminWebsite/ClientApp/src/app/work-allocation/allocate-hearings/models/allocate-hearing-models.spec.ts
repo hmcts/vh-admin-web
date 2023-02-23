@@ -9,19 +9,17 @@ describe('AllocateHearingItemModel', () => {
         testData = new AllocationHearingsResponse({
             hearing_id: '1',
             allocated_cso: null,
-            hearing_date: new Date(),
+            scheduled_date_time: new Date(),
             case_number: 'case1',
             case_type: 'generic',
-            duration: 30,
-            start_time: '10:30:00'
+            duration: 30
         });
     });
 
     it('should default to unchecked', () => {
         const model = new AllocateHearingItemModel(
             testData.hearing_id,
-            testData.hearing_date,
-            testData.start_time,
+            testData.scheduled_date_time,
             testData.duration,
             testData.case_number,
             testData.case_type,
@@ -36,8 +34,7 @@ describe('AllocateHearingItemModel', () => {
     it('should update checked value', () => {
         const model = new AllocateHearingItemModel(
             testData.hearing_id,
-            testData.hearing_date,
-            testData.start_time,
+            testData.scheduled_date_time,
             testData.duration,
             testData.case_number,
             testData.case_type,
@@ -56,8 +53,7 @@ describe('AllocateHearingItemModel', () => {
         const id = newGuid();
         const model = new AllocateHearingItemModel(
             testData.hearing_id,
-            testData.hearing_date,
-            testData.start_time,
+            testData.scheduled_date_time,
             testData.duration,
             testData.case_number,
             testData.case_type,
@@ -76,28 +72,56 @@ describe('AllocateHearingItemModel', () => {
 
 describe('AllocateHearingModel', () => {
     let testData: AllocationHearingsResponse[];
+    let testDataOverlapping: AllocationHearingsResponse[];
 
     beforeEach(() => {
         testData = [
             new AllocationHearingsResponse({
                 hearing_id: '1',
                 allocated_cso: null,
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '2',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '3',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '4',
                 allocated_cso: 'tl@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
+            })
+        ];
+
+        testDataOverlapping = [
+            new AllocationHearingsResponse({
+                hearing_id: '1',
+                allocated_cso: null,
+                scheduled_date_time: new Date('2022-01-01 00:00:00'),
+                duration: 100
+            }),
+            new AllocationHearingsResponse({
+                hearing_id: '2',
+                allocated_cso: 'john@cso.com',
+                scheduled_date_time: new Date('2022-01-01 00:00:00'),
+                duration: 100
+            }),
+            new AllocationHearingsResponse({
+                hearing_id: '3',
+                allocated_cso: 'john@cso.com',
+                scheduled_date_time: new Date('2022-01-01 00:00:00'),
+                duration: 100
+            }),
+            new AllocationHearingsResponse({
+                hearing_id: '4',
+                allocated_cso: 'tl@cso.com',
+                scheduled_date_time: new Date('2022-01-01 00:00:00'),
+                duration: 100
             })
         ];
     });
@@ -134,6 +158,20 @@ describe('AllocateHearingModel', () => {
         model.checkAllHearings();
 
         expect(model.areAllChecked).toBeTruthy();
+    });
+
+    it('should update selected hearings to new cso and set concurrency count to 4', () => {
+        const model = new AllocateHearingModel(testDataOverlapping);
+
+        const newUserName = 'new@test.com';
+        const newId = newGuid();
+        model.checkAllHearings();
+
+        model.assignCsoToSelectedHearings(newUserName, newId);
+
+        expect(model.areAllChecked).toBeTruthy();
+        expect(model.hearings.every(h => h.allocatedOfficerId === newId && h.allocatedOfficerUsername === newUserName)).toBeTruthy();
+        expect(model.hearings.every(h => h.concurrentHearingsCount === 4 && h.allocatedOfficerUsername === newUserName)).toBeTruthy();
     });
 
     it('should update selected hearings to new cso', () => {
@@ -184,17 +222,17 @@ describe('AllocateHearingModel', () => {
             new AllocationHearingsResponse({
                 hearing_id: '1',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '2',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '3',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             })
         ];
 

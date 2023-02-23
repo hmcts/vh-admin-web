@@ -5056,10 +5056,8 @@ export interface IUpdateAccountDetailsRequest {
 export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** The hearing id */
     hearing_id?: string;
-    /** The date of the hearing */
-    hearing_date?: Date;
-    /** The start time for a hearing */
-    start_time?: string;
+    /** The date and time of the hearing */
+    scheduled_date_time?: Date;
     /** The duration of a hearing in minutes */
     duration?: number;
     /** The hearing case number */
@@ -5085,8 +5083,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     init(_data?: any) {
         if (_data) {
             this.hearing_id = _data['hearing_id'];
-            this.hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
-            this.start_time = _data['start_time'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.duration = _data['duration'];
             this.case_number = _data['case_number'];
             this.case_type = _data['case_type'];
@@ -5106,8 +5103,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['hearing_id'] = this.hearing_id;
-        data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
-        data['start_time'] = this.start_time;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['duration'] = this.duration;
         data['case_number'] = this.case_number;
         data['case_type'] = this.case_type;
@@ -5121,10 +5117,8 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
 export interface IAllocationHearingsResponse {
     /** The hearing id */
     hearing_id?: string;
-    /** The date of the hearing */
-    hearing_date?: Date;
-    /** The start time for a hearing */
-    start_time?: string;
+    /** The date and time of the hearing */
+    scheduled_date_time?: Date;
     /** The duration of a hearing in minutes */
     duration?: number;
     /** The hearing case number */

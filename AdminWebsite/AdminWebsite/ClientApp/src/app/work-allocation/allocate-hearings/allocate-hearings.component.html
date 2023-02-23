@@ -119,8 +119,8 @@
             (click)="selectHearing(!hearing.checked, hearing.hearingId)"
           />
         </td>
-        <td class="govuk-table__cell">{{ hearing.hearingDate.toLocaleDateString('en-GB') }}</td>
-        <td class="govuk-table__cell">{{ hearing.startTime }}</td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleDateString('en-GB') }}</td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleTimeString('en-GB', { timeStyle: 'short' }) }}</td>
         <td class="govuk-table__cell">{{ hearing.duration | minutesToHours }}</td>
         <td class="govuk-table__cell">{{ hearing.caseNumber }}</td>
         <td class="govuk-table__cell">{{ hearing.caseType }}</td>
@@ -141,7 +141,7 @@
         </td>
         <td class="govuk-table__cell no-border">
           <span
-            *ngIf="hearing.exceededConcurrencyLimit"
+            *ngIf="hearing.concurrentHearingsCount > 3"
             appTooltip
             [text]="'User has more than 3 concurrent hearings allocated'"
             [colour]="'blue'"
