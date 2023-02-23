@@ -10,15 +10,10 @@ public class AllocationHearingsResponse
     public Guid HearingId { get; set; }
     
     /// <summary>
-    /// The date of the hearing
+    /// The date and time of the hearing
     /// </summary>
-    public DateTime HearingDate { get; set; }
-    
-    /// <summary>
-    /// The start time for a hearing
-    /// </summary>
-    public TimeSpan StartTime { get; set; }
-    
+    public DateTime ScheduledDateTime { get; set; }
+
     /// <summary>
     /// The duration of a hearing in minutes
     /// </summary>
@@ -52,5 +47,5 @@ public class AllocationHearingsResponse
     /// <summary>
     /// True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO
     /// </summary>
-    public bool? ExceededConcurrencyLimit { get; set; }
+    public int? ConcurrentHearingsCount { get; set; }
 }

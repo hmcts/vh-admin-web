@@ -10,14 +10,13 @@ public static class AllocationHearingsResponseMapper
         return new AllocationHearingsResponse
         {
             HearingId = hearing.HearingId,
-            HearingDate = hearing.ScheduledDateTime.Date,
-            StartTime = hearing.ScheduledDateTime.TimeOfDay,
+            ScheduledDateTime = hearing.ScheduledDateTime,
             Duration = hearing.Duration,
             CaseNumber = hearing.CaseNumber,
             CaseType = hearing.CaseType,
             AllocatedCso = hearing.AllocatedCso,
             HasWorkHoursClash = hearing.HasWorkHoursClash,
-            ExceededConcurrencyLimit = hearing.ExceededConcurrencyLimit
+            ConcurrentHearingsCount = hearing.ConcurrentHearingsCount
         };
     }
 }
