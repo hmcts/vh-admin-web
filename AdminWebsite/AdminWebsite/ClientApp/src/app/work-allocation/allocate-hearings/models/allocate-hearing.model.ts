@@ -28,6 +28,25 @@ export class AllocateHearingItemModel {
         this.hasChanged = true;
         this.hasWorkHoursClash = false;
     }
+
+    hasSameScheduledDateTime(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() === otherHearing.scheduledDateTime.valueOf();
+    }
+
+    isBefore(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() < otherHearing.scheduledDateTime.valueOf();
+    }
+
+    isAfter(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() > otherHearing.scheduledDateTime.valueOf();
+    }
+
+    // convenience function to calculate and return hearing's end time, using duration
+    endDateTime(): Date {
+        const startsAt = new Date(this.scheduledDateTime);
+        startsAt.setMinutes(startsAt.getMinutes() + this.duration);
+        return startsAt;
+    }
 }
 
 /**
@@ -139,10 +158,16 @@ export class AllocateHearingModel {
         );
     }
 
-    private addDuration(date: Date, minutes: number): Date {
-        const dateToCompare = new Date(date);
-        dateToCompare.setMinutes(dateToCompare.getMinutes() + minutes);
-        return dateToCompare;
+    // compare two hearings - consider them concurrent if:
+    // (a) the have the same scheduled start time
+    // (b) a starts after b, but b's end time is past a's start time
+    // (c) a starts before b, but a's end time is past b's start time
+    isConcurrent(a: AllocateHearingItemModel, b: AllocateHearingItemModel): boolean {
+        return (
+            a.hasSameScheduledDateTime(b) ||
+            (a.isAfter(b) && b.endDateTime().valueOf() > a.scheduledDateTime.valueOf()) ||
+            (a.isBefore(b) && a.endDateTime().valueOf() > b.scheduledDateTime.valueOf())
+        );
     }
 
     updateConcurrency() {
@@ -156,24 +181,14 @@ export class AllocateHearingModel {
             let concurrentHearings = 0;
 
             if (hearingsForUser.length > 1) {
-                hearingsForUser.forEach((hearing, index) => {
-                    const hearingScheduledDateTime = new Date(hearing.scheduledDateTime);
+                hearingsForUser.forEach(hearing => {
+                    const otherHearings = hearingsForUser.filter(x => x.hearingId !== hearing.hearingId);
 
-                    // get the next hearing, if there is one, or the previous hearing if there's not one
-                    const nextHearing = hearingsForUser[index + 1];
+                    const hasOverlappingHearings =
+                        otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing)).length > 0;
 
-                    if (nextHearing) {
-                        // if there's a next hearing, see if the current hearing overlaps it
-                        if (this.addHours(hearingScheduledDateTime, hearing.duration) > nextHearing.scheduledDateTime) {
-                            concurrentHearings++;
-                        }
-                    } else {
-                        const previousHearing = hearingsForUser[index - 1];
-                        const previousHearingScheduledDateTime = new Date(previousHearing.scheduledDateTime);
-                        // if there's a previous hearing, see if it overlaps the current one
-                        if (this.addHours(previousHearingScheduledDateTime, previousHearing.duration) > hearing.scheduledDateTime) {
-                            concurrentHearings++;
-                        }
+                    if (hasOverlappingHearings) {
+                        concurrentHearings++;
                     }
                 });
             }
