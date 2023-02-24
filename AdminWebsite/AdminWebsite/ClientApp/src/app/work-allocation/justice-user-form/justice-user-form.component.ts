@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Constants } from 'src/app/common/constants';
 import {
@@ -82,8 +82,7 @@ export class JusticeUserFormComponent {
         this.showSpinner = false;
         let message = Constants.Error.JusticeUserForm.SaveError;
         if (BookHearingException.isBookHearingException(onSaveFailedError)) {
-            const exception = onSaveFailedError as BookHearingException;
-            if (exception.status === 409) {
+            if (onSaveFailedError.status === 409) {
                 message = Constants.Error.JusticeUserForm.SaveErrorDuplicateUser;
             }
         }

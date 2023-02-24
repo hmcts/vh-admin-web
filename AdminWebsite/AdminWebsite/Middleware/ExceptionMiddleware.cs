@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Helper;
 using BookingsApi.Client;
 using UserApi.Client;
 
@@ -81,17 +81,5 @@ namespace AdminWebsite.Middleware
             });
 
         }
-    }
-}
-
-public class SnakeCasePropertyNamingPolicy : JsonNamingPolicy
-{
-    public override string ConvertName(string name)
-    {
-        return string.Concat(name.Select((character, index) =>
-                index > 0 && char.IsUpper(character)
-                    ? "_" + character
-                    : character.ToString()))
-            .ToLower();
     }
 }
