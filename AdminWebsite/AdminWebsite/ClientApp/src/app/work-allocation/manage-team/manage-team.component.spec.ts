@@ -82,12 +82,13 @@ describe('ManageTeamComponent', () => {
 
         it('should display portion of users when search returns a list of users exceeds filter limit', fakeAsync(() => {
             // arrange
-            const users = Array.from(Array(30).keys()).map(i => {
-                return new JusticeUserResponse({
-                    id: newGuid(),
-                    username: `username${i + 1}@mail.com`
-                });
-            });
+            users = Array.from(Array(30).keys()).map(
+                i =>
+                    new JusticeUserResponse({
+                        id: newGuid(),
+                        username: `username${i + 1}@mail.com`
+                    })
+            );
             justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(users));
             component.form.controls.inputSearch.setValue('username');
 
@@ -104,12 +105,13 @@ describe('ManageTeamComponent', () => {
 
         it('should users when search returns a list of users exceeds filter limit', fakeAsync(() => {
             // arrange
-            const users = Array.from(Array(10).keys()).map(i => {
-                return new JusticeUserResponse({
-                    id: newGuid(),
-                    username: `username${i + 1}@mail.com`
-                });
-            });
+            users = Array.from(Array(10).keys()).map(
+                i =>
+                    new JusticeUserResponse({
+                        id: newGuid(),
+                        username: `username${i + 1}@mail.com`
+                    })
+            );
             justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(users));
             component.form.controls.inputSearch.setValue('username');
 

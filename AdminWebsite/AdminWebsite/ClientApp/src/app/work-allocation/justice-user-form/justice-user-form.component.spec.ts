@@ -15,7 +15,7 @@ import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { JusticeUserFormComponent } from './justice-user-form.component';
 
 describe('JusticeUserFormComponent', () => {
-    let justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['addNewJusticeUser']);
+    const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['addNewJusticeUser']);
 
     let component: JusticeUserFormComponent;
     let fixture: ComponentFixture<JusticeUserFormComponent>;

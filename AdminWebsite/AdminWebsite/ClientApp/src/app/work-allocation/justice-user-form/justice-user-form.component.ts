@@ -27,7 +27,9 @@ export class JusticeUserFormComponent {
 
     @Input()
     set justiceUser(value: ExistingJusticeUserResponse) {
-        if (!value) return;
+        if (!value) {
+            return;
+        }
         this._justiceUser = value;
         this.form.reset({
             firstName: value.first_name,
@@ -89,11 +91,11 @@ export class JusticeUserFormComponent {
 
         if (onSaveFailedError instanceof ValidationProblemDetails) {
             const validationProblems = onSaveFailedError.errors;
-            for (const propertyName in validationProblems) {
+            Object.keys(validationProblems).forEach(propertyName => {
                 const validationMessage = validationProblems[propertyName][0];
                 const controlName = toCamel(propertyName);
                 this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
-            }
+            });
             message = onSaveFailedError.title;
         }
         this.failedSaveMessage = message;
