@@ -14,7 +14,6 @@ export class AllocateHearingItemModel {
         public caseType: string,
         public allocatedOfficerUsername?: string,
         public hasWorkHoursClash?: boolean,
-        public exceededConcurrencyLimit?: boolean,
         public concurrentHearingsCount?: number,
         public checked: boolean = false
     ) {}
@@ -48,8 +47,7 @@ export class AllocateHearingModel {
                     val.case_type,
                     val.allocated_cso,
                     val.has_work_hours_clash,
-                    val.exceeded_concurrency_limit,
-                    0,
+                    val.concurrent_hearings_count,
                     false
                 )
         );
@@ -113,8 +111,7 @@ export class AllocateHearingModel {
             originalHearing.case_type,
             originalHearing.allocated_cso,
             originalHearing.has_work_hours_clash,
-            originalHearing.exceeded_concurrency_limit,
-            0,
+            originalHearing.concurrent_hearings_count,
             false
         );
     }

@@ -5070,7 +5070,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
-    exceeded_concurrency_limit?: boolean | undefined;
+    concurrent_hearings_count?: number | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
         if (data) {
@@ -5089,7 +5089,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
             this.case_type = _data['case_type'];
             this.allocated_cso = _data['allocated_cso'];
             this.has_work_hours_clash = _data['has_work_hours_clash'];
-            this.exceeded_concurrency_limit = _data['exceeded_concurrency_limit'];
+            this.concurrent_hearings_count = _data['concurrent_hearings_count'];
         }
     }
 
@@ -5109,7 +5109,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
         data['case_type'] = this.case_type;
         data['allocated_cso'] = this.allocated_cso;
         data['has_work_hours_clash'] = this.has_work_hours_clash;
-        data['exceeded_concurrency_limit'] = this.exceeded_concurrency_limit;
+        data['concurrent_hearings_count'] = this.concurrent_hearings_count;
         return data;
     }
 }
@@ -5131,7 +5131,7 @@ export interface IAllocationHearingsResponse {
     /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
-    exceeded_concurrency_limit?: boolean | undefined;
+    concurrent_hearings_count?: number | undefined;
 }
 
 /** Configuration to initialise the UI application */
