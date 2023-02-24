@@ -29,7 +29,7 @@
   </PropertyGroup>
   <PropertyGroup><ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles></PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BookingsApi.Client" Version="1.42.0" />
+    <PackageReference Include="BookingsApi.Client" Version="1.42.4" />
     <PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
@@ -57,7 +57,7 @@
     <PackageReference Include="TimeZoneConverter" Version="6.0.1" />
     <PackageReference Include="UserApi.Client" Version="1.41.8" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.12" />
-    <PackageReference Include="VideoApi.Client" Version="1.41.17" />
+    <PackageReference Include="VideoApi.Client" Version="1.41.18" />
   </ItemGroup>
 
   <ItemGroup>
