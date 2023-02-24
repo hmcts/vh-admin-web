@@ -68,6 +68,122 @@ describe('AllocateHearingItemModel', () => {
         expect(model.hasChanged).toBeTruthy();
         expect(model.hasWorkHoursClash).toBeFalsy();
     });
+
+    it('should return true when dates match', () => {
+        const modelA = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.scheduled_date_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        const modelB = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.scheduled_date_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        expect(modelA.hasSameScheduledDateTime(modelB)).toBeTruthy();
+    });
+
+    it('should return false when dates do not match', () => {
+        const modelA = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.scheduled_date_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        const futureDate = new Date(testData.scheduled_date_time);
+        futureDate.setHours(futureDate.getHours() + 1);
+
+        const modelB = new AllocateHearingItemModel(
+            testData.hearing_id,
+            futureDate,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        expect(modelA.hasSameScheduledDateTime(modelB)).toBeFalsy();
+    });
+
+    it('should return true when hearing A is before hearing B', () => {
+        const modelA = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.scheduled_date_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        const futureDate = new Date(testData.scheduled_date_time);
+        futureDate.setHours(futureDate.getHours() + 1);
+
+        const modelB = new AllocateHearingItemModel(
+            testData.hearing_id,
+            futureDate,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        expect(modelA.isBefore(modelB)).toBeTruthy();
+    });
+
+    it('should return true when hearing A is after hearing B', () => {
+        const futureDate = new Date(testData.scheduled_date_time);
+        futureDate.setHours(futureDate.getHours() + 1);
+
+        const modelA = new AllocateHearingItemModel(
+            testData.hearing_id,
+            futureDate,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        const modelB = new AllocateHearingItemModel(
+            testData.hearing_id,
+            testData.scheduled_date_time,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        expect(modelA.isAfter(modelB)).toBeTruthy();
+    });
+
+    it('should correctly calculate EndDateTime', () => {
+        const futureDate = new Date(testData.scheduled_date_time);
+        futureDate.setHours(futureDate.getHours() + 1);
+
+        const model = new AllocateHearingItemModel(
+            testData.hearing_id,
+            futureDate,
+            testData.duration,
+            testData.case_number,
+            testData.case_type,
+            testData.allocated_cso
+        );
+
+        const expectedEndDateTime = new Date(futureDate);
+        expectedEndDateTime.setMinutes(expectedEndDateTime.getMinutes() + model.duration);
+
+        expect(model.endDateTime()).toEqual(expectedEndDateTime);
+    });
 });
 
 describe('AllocateHearingModel', () => {
