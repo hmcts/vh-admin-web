@@ -6,9 +6,9 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
-	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-	<PublishRunWebpack>true</PublishRunWebpack>
+    <PublishRunWebpack>true</PublishRunWebpack>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <ProjectGuid>4ACDEFE1-58CD-4E6B-A11D-FD219633B38E</ProjectGuid>
@@ -27,9 +27,11 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
-  <PropertyGroup><ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles></PropertyGroup>
+  <PropertyGroup>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BookingsApi.Client" Version="1.42.3-pullrequest0594-0003" />
+    <PackageReference Include="BookingsApi.Client" Version="1.42.4" />
     <PackageReference Include="LaunchDarkly.ServerSdk" Version="6.3.2" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
@@ -87,19 +89,19 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
 
-	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition=" '$(PublishRunWebpack)' == 'true' ">
-		<!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build-prod" />
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition=" '$(PublishRunWebpack)' == 'true' ">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build-prod" />
 
-		<!-- Include the newly-built files in the publish output -->
-		<ItemGroup>
-			<DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
-			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-				<RelativePath>%(DistFiles.Identity)</RelativePath>
-				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-			</ResolvedFileToPublish>
-		</ItemGroup>
-	</Target>
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>

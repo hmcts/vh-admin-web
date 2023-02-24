@@ -207,11 +207,11 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
-        const csoUsername = this.csoAllocatedMenu?.selectedLabel;
-        // safe to cast to string
-        const csoId = this.csoAllocatedMenu?.selectedItems as string;
-
         if (checked) {
+            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+            // safe to cast to string
+            const csoId = this.csoAllocatedMenu?.selectedItems as string;
+
             this.allocationHearingViewModel.checkHearing(hearing_id);
             this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
         } else {

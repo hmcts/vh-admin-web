@@ -119,18 +119,35 @@
             (click)="selectHearing(!hearing.checked, hearing.hearingId)"
           />
         </td>
-        <td class="govuk-table__cell">{{ hearing.hearingDate.toLocaleDateString('en-GB') }}</td>
-        <td class="govuk-table__cell">{{ hearing.startTime }}</td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleDateString('en-GB') }}</td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleTimeString('en-GB', { timeStyle: 'short' }) }}</td>
         <td class="govuk-table__cell">{{ hearing.duration | minutesToHours }}</td>
         <td class="govuk-table__cell">{{ hearing.caseNumber }}</td>
         <td class="govuk-table__cell">{{ hearing.caseType }}</td>
         <td id="cso_{{ hearing.hearingId }}" class="govuk-table__cell">{{ hearing.allocatedOfficerUsername }}</td>
         <td class="govuk-table__cell no-border">
-          <span appTooltip [text]="'Pending change'" [colour]="'blue'" colour="grey">
-            <fa-icon *ngIf="hearing.hasChanged" [icon]="hourGlassStart" [transform]="customIconTransform"></fa-icon>
+          <span *ngIf="hearing.hasChanged" appTooltip [text]="'Pending change'" [colour]="'blue'" colour="grey">
+            <fa-icon [icon]="hourGlassStart" [transform]="customIconTransform"></fa-icon>
           </span>
-          <span appTooltip [text]="'Hearing is outside of user working hours'" [colour]="'blue'" colour="grey">
-            <fa-icon *ngIf="hearing.hasWorkHoursClash" [icon]="triangleExclamation"></fa-icon>
+          <span
+            *ngIf="hearing.hasWorkHoursClash"
+            appTooltip
+            [text]="'Hearing is outside of user working hours'"
+            [colour]="'blue'"
+            colour="grey"
+          >
+            <fa-icon [icon]="triangleExclamation"></fa-icon>
+          </span>
+        </td>
+        <td class="govuk-table__cell no-border">
+          <span
+            *ngIf="hearing.concurrentHearingsCount > 3"
+            appTooltip
+            [text]="'User has more than 3 concurrent hearings allocated'"
+            [colour]="'blue'"
+            colour="grey"
+          >
+            <div class="more-than-three">3+</div>
           </span>
         </td>
       </tr>

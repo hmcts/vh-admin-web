@@ -31,22 +31,22 @@ describe('AllocateHearingsComponent', () => {
             new AllocationHearingsResponse({
                 hearing_id: '1',
                 allocated_cso: null,
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '2',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '3',
                 allocated_cso: 'john@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             }),
             new AllocationHearingsResponse({
                 hearing_id: '4',
                 allocated_cso: 'tl@cso.com',
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             })
         ];
 
@@ -322,7 +322,7 @@ describe('AllocateHearingsComponent', () => {
             const updatedAllocation = new AllocationHearingsResponse({
                 hearing_id: '1',
                 allocated_cso: username,
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             });
 
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
@@ -370,7 +370,7 @@ describe('AllocateHearingsComponent', () => {
             const updatedAllocation = new AllocationHearingsResponse({
                 hearing_id: '1',
                 allocated_cso: username,
-                hearing_date: new Date()
+                scheduled_date_time: new Date()
             });
 
             // act
