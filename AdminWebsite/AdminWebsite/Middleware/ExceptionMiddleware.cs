@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
 using BookingsApi.Client;
 using UserApi.Client;
 
@@ -71,7 +74,24 @@ namespace AdminWebsite.Middleware
                 innerException = innerException.InnerException;
             }
 
-            return context.Response.WriteAsJsonAsync(sb.ToString());
+            var dto = new UnexpectedErrorResponse {ErrorMessage = sb.ToString()};
+            return context.Response.WriteAsJsonAsync(dto, new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = new SnakeCasePropertyNamingPolicy()
+            });
+
         }
+    }
+}
+
+public class SnakeCasePropertyNamingPolicy : JsonNamingPolicy
+{
+    public override string ConvertName(string name)
+    {
+        return string.Concat(name.Select((character, index) =>
+                index > 0 && char.IsUpper(character)
+                    ? "_" + character
+                    : character.ToString()))
+            .ToLower();
     }
 }

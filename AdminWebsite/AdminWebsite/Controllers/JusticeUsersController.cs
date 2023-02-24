@@ -14,14 +14,14 @@ namespace AdminWebsite.Controllers
 {
     [Produces("application/json")]
     [Route("api/justice-users")]
-    public class JusticeUserController : ControllerBase
+    public class JusticeUsersController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserApiClient _userApiClient;
-        private readonly ILogger<JusticeUserController> _logger;
+        private readonly ILogger<JusticeUsersController> _logger;
 
-        public JusticeUserController(IBookingsApiClient bookingsApiClient, IUserApiClient userApiClient,
-            ILogger<JusticeUserController> logger)
+        public JusticeUsersController(IBookingsApiClient bookingsApiClient, IUserApiClient userApiClient,
+            ILogger<JusticeUsersController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _userApiClient = userApiClient;

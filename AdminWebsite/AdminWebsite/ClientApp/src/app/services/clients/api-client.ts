@@ -99,8 +99,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -203,8 +202,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -316,8 +314,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -429,8 +426,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -544,8 +540,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -652,8 +647,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -745,8 +739,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1028,8 +1021,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1134,8 +1126,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1238,8 +1229,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1355,8 +1345,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1471,8 +1460,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1588,8 +1576,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1695,8 +1682,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1806,8 +1792,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1917,8 +1902,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2030,8 +2014,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2139,8 +2122,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2248,8 +2230,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2359,8 +2340,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2464,8 +2444,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2571,8 +2550,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2673,8 +2651,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2778,8 +2755,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2881,8 +2857,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2986,8 +2961,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3093,8 +3067,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3197,8 +3170,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3301,8 +3273,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3408,8 +3379,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3518,8 +3488,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3617,8 +3586,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3721,8 +3689,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3826,8 +3793,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3924,8 +3890,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4017,8 +3982,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4111,8 +4075,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4233,8 +4196,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4333,8 +4295,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4441,8 +4402,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4544,8 +4504,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4638,8 +4597,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4730,8 +4688,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4839,8 +4796,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4952,8 +4908,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -5039,8 +4994,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -5773,6 +5727,41 @@ export interface IUnallocatedHearingsForVhoResponse {
     tomorrow?: DateForUnallocatedHearings;
     this_week?: DateForUnallocatedHearings;
     this_month?: DateForUnallocatedHearings;
+}
+
+export class UnexpectedErrorResponse implements IUnexpectedErrorResponse {
+    error_message?: string | undefined;
+
+    constructor(data?: IUnexpectedErrorResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.error_message = _data['error_message'];
+        }
+    }
+
+    static fromJS(data: any): UnexpectedErrorResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnexpectedErrorResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['error_message'] = this.error_message;
+        return data;
+    }
+}
+
+export interface IUnexpectedErrorResponse {
+    error_message?: string | undefined;
 }
 
 export class UserProfileResponse implements IUserProfileResponse {
@@ -9008,8 +8997,7 @@ export class BookHearingException extends Error {
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): Observable<any> {
     if (result !== null && result !== undefined) {
         return _observableThrow(result);
-    }
-    else {
+    } else {
         return _observableThrow(new BookHearingException(message, status, response, headers, null));
     }
 }

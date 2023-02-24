@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ExistingJusticeUserResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { ExistingJusticeUserResponse, JusticeUserResponse, UnexpectedErrorResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { isAValidEmail } from 'src/app/common/custom-validations/email-validator';
@@ -87,10 +87,10 @@ export class ManageTeamComponent {
         });
     }
 
-    onUserAccountNotFound(userNotFoundError: string | BookHearingException): void {
+    onUserAccountNotFound(userNotFoundError: string | BookHearingException | UnexpectedErrorResponse): void {
         this.showSpinner = false;
         const isApiException = BookHearingException.isBookHearingException(userNotFoundError);
-        if (isApiException) {
+        if (isApiException || userNotFoundError instanceof UnexpectedErrorResponse) {
             this.message = Constants.Error.ManageJusticeUsers.SearchFailure;
         } else {
             this.message = userNotFoundError;
