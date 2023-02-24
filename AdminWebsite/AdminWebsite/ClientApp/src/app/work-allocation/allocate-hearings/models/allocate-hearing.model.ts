@@ -139,9 +139,10 @@ export class AllocateHearingModel {
         );
     }
 
-    private addHours(date: Date, hours: number): Date {
-        date.setHours(date.getHours() + hours);
-        return date;
+    private addDuration(date: Date, minutes: number): Date {
+        const dateToCompare = new Date(date);
+        dateToCompare.setMinutes(dateToCompare.getMinutes() + minutes);
+        return dateToCompare;
     }
 
     updateConcurrency() {
