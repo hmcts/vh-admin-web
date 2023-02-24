@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using BookingsApi.Client;
+using UserApi.Client;
 
 namespace AdminWebsite.Middleware
 {
@@ -29,8 +30,15 @@ namespace AdminWebsite.Middleware
             }
             catch (BookingsApiException apiException)
             {
-                var properties = new Dictionary<string, string> {{"response", apiException.Response}};
+                var properties = new Dictionary<string, string> { { "response", apiException.Response } };
                 ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "Bookings API Client Exception",
+                    apiException, null, properties);
+                await HandleExceptionAsync(httpContext, apiException, apiException.StatusCode);
+            }
+            catch (UserApiException apiException)
+            {
+                var properties = new Dictionary<string, string> { { "response", apiException.Response } };
+                ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "User API Client Exception",
                     apiException, null, properties);
                 await HandleExceptionAsync(httpContext, apiException, apiException.StatusCode);
             }
@@ -44,13 +52,17 @@ namespace AdminWebsite.Middleware
         }
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception,
-            int statusCode = (int) HttpStatusCode.InternalServerError)
+            int statusCode = (int)HttpStatusCode.InternalServerError)
         {
             context.Response.StatusCode = statusCode;
-            if (exception is BookingsApiException bookingsException)
+            switch (exception)
             {
-                return context.Response.WriteAsJsonAsync(bookingsException.Response);
+                case BookingsApiException bookingsException:
+                    return context.Response.WriteAsJsonAsync(bookingsException.Response);
+                case UserApiException userApiException:
+                    return context.Response.WriteAsJsonAsync(userApiException.Response);
             }
+
             var sb = new StringBuilder(exception.Message);
             var innerException = exception.InnerException;
             while (innerException != null)

@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { Constants } from 'src/app/common/constants';
 import {
     BookHearingException,
     ExistingJusticeUserResponse,
+    JusticeUserResponse,
     JusticeUserRole,
     ValidationProblemDetails
 } from 'src/app/services/clients/api-client';
@@ -37,7 +39,6 @@ export class JusticeUserFormComponent {
     }
 
     @Output() saveSuccessfulEvent = new EventEmitter<ExistingJusticeUserResponse>();
-    @Output() saveFailedEvent = new EventEmitter<string>();
     @Output() cancelFormEvent = new EventEmitter();
 
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
@@ -72,18 +73,18 @@ export class JusticeUserFormComponent {
         this.cancelFormEvent.emit();
     }
 
-    onSaveSucceeded(newJusticeUser: ExistingJusticeUserResponse): void {
+    onSaveSucceeded(newJusticeUser: JusticeUserResponse): void {
         this.showSpinner = false;
         this.saveSuccessfulEvent.emit(newJusticeUser);
     }
 
     onSaveFailed(onSaveFailedError: string | BookHearingException | ValidationProblemDetails): void {
         this.showSpinner = false;
-        let message = 'There was an unexpected error. Please try again later.';
+        let message = Constants.Error.JusticeUserForm.SaveError;
         if (BookHearingException.isBookHearingException(onSaveFailedError)) {
             const exception = onSaveFailedError as BookHearingException;
             if (exception.status === 409) {
-                message = 'A justice user with the same name already exists';
+                message = Constants.Error.JusticeUserForm.SaveErrorDuplicateUser;
             }
         }
 
@@ -94,7 +95,7 @@ export class JusticeUserFormComponent {
                 const controlName = toCamel(propertyName);
                 this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
             }
-            message = 'Please ensure all values provided are valid';
+            message = onSaveFailedError.title;
         }
         this.failedSaveMessage = message;
     }
