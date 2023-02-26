@@ -17,3 +17,15 @@
 .no-border {
   border-bottom: none;
 }
+
+.more-than-three {
+  border-radius: 50%;
+  background-color: #000;
+  color: #fff;
+  width: 1.9em;
+  height: 1.9em;
+  font-size: 0.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

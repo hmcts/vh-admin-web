@@ -13,7 +13,6 @@ public class AllocationHearingsResponseMapperTests
     {
         var id = Guid.NewGuid();
         var hearingDate = DateTime.Now;
-        var startTime = hearingDate.TimeOfDay; 
         var length = 400;
         var caseNumber = "0123-CaseNumber";
         var caseType = "caseType";
@@ -32,8 +31,7 @@ public class AllocationHearingsResponseMapperTests
         var result = AllocationHearingsResponseMapper.Map(source);
 
         result.HearingId.Should().Be(id);
-        result.HearingDate.Should().Be(hearingDate.Date);
-        result.StartTime.Should().Be(startTime);
+        result.ScheduledDateTime.Should().Be(hearingDate);
         result.Duration.Should().Be(length);
         result.CaseType.Should().Be(caseType);
         result.CaseNumber.Should().Be(caseNumber);
