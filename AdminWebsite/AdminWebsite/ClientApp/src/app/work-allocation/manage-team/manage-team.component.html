@@ -11,12 +11,7 @@
         </div>
         <div class="govuk-grid-column-one-third">
           <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
-          <button
-            class="govuk-button govuk-!-margin-left-2"
-            *ngIf="displayAddButton"
-            data-module="govuk-button"
-            (click)="searchForExistingAccount()"
-          >
+          <button class="govuk-button govuk-!-margin-left-2" *ngIf="displayAddButton" data-module="govuk-button" (click)="displayForm()">
             Add a team member
           </button>
           <div class="govuk-body" *ngIf="showSpinner">
@@ -72,10 +67,9 @@
       </tr>
     </tbody>
   </table>
-  <div *ngIf="displayAddButton && existingAccount" class="popup-overlay">
+  <div *ngIf="showForm" class="popup-overlay">
     <div class="vh-popup-aligned">
       <app-justice-user-form
-        [justiceUser]="existingAccount"
         (cancelFormEvent)="onFormCancelled()"
         (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
       ></app-justice-user-form>

@@ -2279,107 +2279,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Check AD for an account for a given justice user
-     * @return Success
-     */
-    checkJusticeUserExists(username: string): Observable<ExistingJusticeUserResponse> {
-        let url_ = this.baseUrl + '/check/{username}';
-        if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
-        url_ = url_.replace('{username}', encodeURIComponent('' + username));
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processCheckJusticeUserExists(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processCheckJusticeUserExists(response_ as any);
-                        } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<ExistingJusticeUserResponse>;
-                        }
-                    } else return (_observableThrow(response_) as any) as Observable<ExistingJusticeUserResponse>;
-                })
-            );
-    }
-
-    protected processCheckJusticeUserExists(response: HttpResponseBase): Observable<ExistingJusticeUserResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = ExistingJusticeUserResponse.fromJS(resultData200);
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result404: any = null;
-                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result404 = resultData404 !== undefined ? resultData404 : <any>null;
-
-                    return throwException('Not Found', status, _responseText, _headers, result404);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf<ExistingJusticeUserResponse>(null as any);
-    }
-
-    /**
      * Find person list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
@@ -5450,67 +5349,6 @@ export interface IDateForUnallocatedHearings {
     count?: number;
     date_start?: Date;
     date_end?: Date | undefined;
-}
-
-export class ExistingJusticeUserResponse implements IExistingJusticeUserResponse {
-    /** The username for the existing user */
-    username?: string | undefined;
-    /** The first name of the existing user */
-    first_name?: string | undefined;
-    /** The last name of the existing user */
-    last_name?: string | undefined;
-    /** The contact email of the existing user */
-    contact_email?: string | undefined;
-    /** The contact telephone number of the existing user */
-    telephone?: string | undefined;
-
-    constructor(data?: IExistingJusticeUserResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.username = _data['username'];
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone = _data['telephone'];
-        }
-    }
-
-    static fromJS(data: any): ExistingJusticeUserResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ExistingJusticeUserResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['username'] = this.username;
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone'] = this.telephone;
-        return data;
-    }
-}
-
-export interface IExistingJusticeUserResponse {
-    /** The username for the existing user */
-    username?: string | undefined;
-    /** The first name of the existing user */
-    first_name?: string | undefined;
-    /** The last name of the existing user */
-    last_name?: string | undefined;
-    /** The contact email of the existing user */
-    contact_email?: string | undefined;
-    /** The contact telephone number of the existing user */
-    telephone?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */
@@ -8995,11 +8833,8 @@ export class BookHearingException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): Observable<any> {
-    if (result !== null && result !== undefined) {
-        return _observableThrow(result);
-    } else {
-        return _observableThrow(new BookHearingException(message, status, response, headers, null));
-    }
+    if (result !== null && result !== undefined) return _observableThrow(result);
+    else return _observableThrow(new BookHearingException(message, status, response, headers, null));
 }
 
 function blobToText(blob: any): Observable<string> {

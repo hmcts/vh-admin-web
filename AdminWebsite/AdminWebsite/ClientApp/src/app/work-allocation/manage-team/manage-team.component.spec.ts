@@ -4,7 +4,7 @@ import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { BHClient, BookHearingException, ExistingJusticeUserResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { BHClient, BookHearingException, JusticeUserResponse } from '../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Component } from '@angular/core';
@@ -22,10 +22,7 @@ describe('ManageTeamComponent', () => {
     let users: JusticeUserResponse[] = [];
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
-            'retrieveJusticeUserAccountsNoCache',
-            'checkIfUserExistsByUsername'
-        ]);
+        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['retrieveJusticeUserAccountsNoCache']);
         users = [];
 
         await TestBed.configureTestingModule({
@@ -140,71 +137,37 @@ describe('ManageTeamComponent', () => {
         }));
     });
 
-    describe('searchForExistingAccount', () => {
-        it('should update form input when checking for an existing account return an user', fakeAsync(() => {
+    describe('displayForm', () => {
+        it('should display justice user form when displayForm has been selected', () => {
             // arrange
-            const existngUser = new ExistingJusticeUserResponse({
-                contact_email: 'test@cso.com',
-                first_name: 'John',
-                last_name: 'Doe',
-                username: 'test@cso.com'
-            });
-            component.form.controls.inputSearch.setValue(existngUser.contact_email);
-            justiceUsersServiceSpy.checkIfUserExistsByUsername.and.returnValue(of(existngUser));
+            component.displayMessage = true;
+            component.showForm = false;
 
             // act
-            component.searchForExistingAccount();
-            tick();
+            component.displayForm();
 
             // assert
-            expect(component.existingAccount).toBe(existngUser);
-        }));
-
-        it('should display a user account does not exist message when checking for an existing account returns a 404', fakeAsync(() => {
-            // arrange
-            const errorMessage =
-                'Username could not be found. Please check the username and try again. An account may need to be requested via Service Catalogue.';
-            justiceUsersServiceSpy.checkIfUserExistsByUsername.and.returnValue(throwError(errorMessage));
-
-            // act
-            component.searchForExistingAccount();
-            tick();
-
-            // assert
-            expect(component.message).toBe(errorMessage);
-            expect(component.displayMessage).toBeTruthy();
-        }));
-
-        it('should display a standard error message when checking for an existng account fails', fakeAsync(() => {
-            // arrange
-            const exception = new BookHearingException('Server Error', 500, 'Random error', null, null);
-            justiceUsersServiceSpy.checkIfUserExistsByUsername.and.returnValue(throwError(exception));
-
-            // act
-            component.searchForExistingAccount();
-            tick();
-
-            // assert
-            expect(component.message).toBe(Constants.Error.ManageJusticeUsers.SearchFailure);
-            expect(component.displayMessage).toBeTruthy();
-        }));
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.showForm).toBeTruthy();
+        });
     });
 
     describe('justiceFormEventHandlers', () => {
-        it('should clear variables when add new user is cancelled', () => {
+        it('should hide form when add new user is cancelled', () => {
             // arrange
-            component.existingAccount = new ExistingJusticeUserResponse({ first_name: 'john' });
+            component.showForm = true;
 
             // act
             component.onFormCancelled();
 
             // assert
-            expect(component.existingAccount).toBeNull();
+            expect(component.showForm).toBeFalsy();
         });
 
         it('should add newly created user to search results to display', () => {
             // arrange
             component.users = [];
+            component.showForm = true;
             const newUser = new JusticeUserResponse({
                 id: newGuid(),
                 contact_email: 'new@cso.com',
@@ -221,7 +184,7 @@ describe('ManageTeamComponent', () => {
             component.onJusticeSuccessfulSave(newUser);
 
             // assert
-            expect(component.existingAccount).toBeNull();
+            expect(component.showForm).toBeFalsy();
             expect(component.displayAddButton).toBeFalsy();
             expect(component.message).toBe(Constants.ManageJusticeUsers.NewUserAdded);
             expect(component.isAnErrorMessage).toBeFalsy();

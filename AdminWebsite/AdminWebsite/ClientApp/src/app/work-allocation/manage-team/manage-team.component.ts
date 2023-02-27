@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ExistingJusticeUserResponse, JusticeUserResponse, UnexpectedErrorResponse } from '../../services/clients/api-client';
+import { JusticeUserResponse, UnexpectedErrorResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { isAValidEmail } from 'src/app/common/custom-validations/email-validator';
-import { BookHearingException } from 'src/app/services/clients/api-client';
 import { Constants } from 'src/app/common/constants';
 
 @Component({
@@ -15,16 +14,6 @@ import { Constants } from 'src/app/common/constants';
 })
 export class ManageTeamComponent {
     private filterSize = 20;
-    existingAccount: ExistingJusticeUserResponse;
-    showSpinner = false;
-
-    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
-        this.form = this.fb.group<SearchForExistingJusticeUserForm>({
-            inputSearch: new FormControl('')
-        });
-        this.form.controls.inputSearch.valueChanges.subscribe(() => (this.displayAddButton = false));
-    }
-
     loggerPrefix = '[ManageTeamComponent] -';
     displayMessage = false;
     faExclamation = faCircleExclamation;
@@ -36,6 +25,15 @@ export class ManageTeamComponent {
     isSaving = false;
     displayAddButton = false;
     isAnErrorMessage = false;
+    showSpinner = false;
+    showForm = false;
+
+    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
+        this.form = this.fb.group<SearchForExistingJusticeUserForm>({
+            inputSearch: new FormControl('')
+        });
+        this.form.controls.inputSearch.valueChanges.subscribe(() => (this.displayAddButton = false));
+    }
 
     searchUsers() {
         this.isAnErrorMessage = false;
@@ -75,40 +73,17 @@ export class ManageTeamComponent {
         this.displayMessage = true;
     }
 
-    searchForExistingAccount() {
+    displayForm() {
         this.displayMessage = false;
-        const username = this.form.value.inputSearch;
-
-        this.showSpinner = true;
-        this.justiceUserService.checkIfUserExistsByUsername(username).subscribe({
-            next: result => this.onUserAccountFound(result),
-            error: (error: string | BookHearingException) => this.onUserAccountNotFound(error),
-            complete: () => (this.showSpinner = false)
-        });
-    }
-
-    onUserAccountNotFound(userNotFoundError: string | BookHearingException | UnexpectedErrorResponse): void {
-        this.showSpinner = false;
-        const isApiException = BookHearingException.isBookHearingException(userNotFoundError);
-        if (isApiException || userNotFoundError instanceof UnexpectedErrorResponse) {
-            this.message = Constants.Error.ManageJusticeUsers.SearchFailure;
-        } else {
-            this.message = userNotFoundError;
-        }
-        this.isAnErrorMessage = true;
-        this.displayMessage = true;
-    }
-
-    onUserAccountFound(result: ExistingJusticeUserResponse): void {
-        this.existingAccount = result;
+        this.showForm = true;
     }
 
     onFormCancelled() {
-        this.existingAccount = null;
+        this.showForm = false;
     }
 
     onJusticeSuccessfulSave(newUser: JusticeUserResponse) {
-        this.existingAccount = null;
+        this.showForm = false;
         this.displayAddButton = false;
         this.message = Constants.ManageJusticeUsers.NewUserAdded;
         this.isAnErrorMessage = false;

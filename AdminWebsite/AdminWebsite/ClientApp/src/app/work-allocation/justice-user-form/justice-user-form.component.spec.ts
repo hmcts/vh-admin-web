@@ -2,12 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { of, throwError } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
-import {
-    BookHearingException,
-    ExistingJusticeUserResponse,
-    JusticeUserResponse,
-    ValidationProblemDetails
-} from 'src/app/services/clients/api-client';
+import { BookHearingException, JusticeUserResponse, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { Logger } from 'src/app/services/logger';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
@@ -19,10 +14,10 @@ describe('JusticeUserFormComponent', () => {
 
     let component: JusticeUserFormComponent;
     let fixture: ComponentFixture<JusticeUserFormComponent>;
-    const existngUser = new ExistingJusticeUserResponse({
+    const existngUser = new JusticeUserResponse({
         contact_email: 'test@cso.com',
         first_name: 'John',
-        last_name: 'Doe',
+        lastname: 'Doe',
         username: 'test@cso.com',
         telephone: null
     });
@@ -117,8 +112,7 @@ describe('JusticeUserFormComponent', () => {
                 errors: {
                     FirstName: ['First name is required'],
                     LastName: ['Last Name is required'],
-                    ContactEmail: ['Contact Email is required'],
-                    DoesNotExist: ['Does not exist is required']
+                    ContactEmail: ['Contact Email is required']
                 },
                 type: 'https://tools.ietf.org/html/rfc7231#section-6.5.1',
                 title: 'One or more validation errors occurred.',
@@ -132,7 +126,6 @@ describe('JusticeUserFormComponent', () => {
 
             // assert
             expect(component.failedSaveMessage).toBe(validationProblem.title);
-            expect(component.form.controls.contactEmail.errors.errorMessage).toContain(validationProblem.errors.ContactEmail);
             expect(component.form.controls.firstName.errors.errorMessage).toContain(validationProblem.errors.FirstName);
             expect(component.form.controls.lastName.errors.errorMessage).toContain(validationProblem.errors.LastName);
         }));

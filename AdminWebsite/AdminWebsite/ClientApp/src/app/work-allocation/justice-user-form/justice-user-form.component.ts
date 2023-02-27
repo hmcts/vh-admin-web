@@ -1,14 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Constants } from 'src/app/common/constants';
-import {
-    BookHearingException,
-    ExistingJusticeUserResponse,
-    JusticeUserResponse,
-    JusticeUserRole,
-    ValidationProblemDetails
-} from 'src/app/services/clients/api-client';
+import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
 
@@ -23,33 +17,33 @@ export class JusticeUserFormComponent {
     availableRoles = JusticeUserRole;
     form: FormGroup<JusticeUserForm>;
 
-    _justiceUser: ExistingJusticeUserResponse;
+    _justiceUser: JusticeUserResponse;
 
     @Input()
-    set justiceUser(value: ExistingJusticeUserResponse) {
+    set justiceUser(value: JusticeUserResponse) {
         if (!value) {
             return;
         }
         this._justiceUser = value;
         this.form.reset({
             firstName: value.first_name,
-            lastName: value.last_name,
+            lastName: value.lastname,
             username: value.username,
-            contactEmail: value.contact_email,
+            contactTelephone: value.telephone,
             role: this.availableRoles.Vho
         });
     }
 
-    @Output() saveSuccessfulEvent = new EventEmitter<ExistingJusticeUserResponse>();
+    @Output() saveSuccessfulEvent = new EventEmitter<JusticeUserResponse>();
     @Output() cancelFormEvent = new EventEmitter();
 
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
-            username: new FormControl({ value: null, disabled: true }),
-            contactEmail: new FormControl({ value: null, disabled: true }),
-            firstName: new FormControl({ value: null, disabled: true }),
-            lastName: new FormControl({ value: null, disabled: true }),
-            role: new FormControl(null)
+            username: new FormControl('', [Validators.email]),
+            contactTelephone: new FormControl(''),
+            firstName: new FormControl(''),
+            lastName: new FormControl(''),
+            role: new FormControl(this.availableRoles.Vho)
         });
     }
 
@@ -58,11 +52,10 @@ export class JusticeUserFormComponent {
         this.showSpinner = true;
         this.justiceUserService
             .addNewJusticeUser(
-                this.form.getRawValue().username,
-                this.form.getRawValue().firstName,
-                this.form.getRawValue().lastName,
-                this.form.getRawValue().contactEmail,
-                this._justiceUser.telephone,
+                this.form.controls.username.value,
+                this.form.controls.firstName.value,
+                this.form.controls.lastName.value,
+                this.form.controls.contactTelephone.value,
                 this.form.value.role
             )
             .subscribe({
@@ -106,6 +99,6 @@ interface JusticeUserForm {
     username: FormControl<string>;
     firstName: FormControl<string>;
     lastName: FormControl<string>;
-    contactEmail: FormControl<string>;
+    contactTelephone: FormControl<string>;
     role: FormControl<JusticeUserRole>;
 }
