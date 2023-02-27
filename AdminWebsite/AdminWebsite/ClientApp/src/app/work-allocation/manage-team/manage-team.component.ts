@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { JusticeUserResponse, UnexpectedErrorResponse } from '../../services/clients/api-client';
+import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { isAValidEmail } from 'src/app/common/custom-validations/email-validator';
