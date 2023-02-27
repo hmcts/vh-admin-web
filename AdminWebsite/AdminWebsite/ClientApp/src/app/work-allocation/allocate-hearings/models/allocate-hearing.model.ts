@@ -15,6 +15,7 @@ export class AllocateHearingItemModel {
         public caseType: string,
         public allocatedOfficerUsername?: string,
         public hasWorkHoursClash?: boolean,
+        public hasNonAvailabilityClash?: boolean,
         public checked: boolean = false
     ) {}
 
@@ -27,6 +28,7 @@ export class AllocateHearingItemModel {
         this.allocatedOfficerId = id;
         this.hasChanged = true;
         this.hasWorkHoursClash = false;
+        this.hasNonAvailabilityClash = false;
     }
 }
 
@@ -48,7 +50,7 @@ export class AllocateHearingModel {
                     val.case_type,
                     val.allocated_cso,
                     val.has_work_hours_clash,
-                    false
+                    val.has_non_availability_clash
                 )
         );
     }

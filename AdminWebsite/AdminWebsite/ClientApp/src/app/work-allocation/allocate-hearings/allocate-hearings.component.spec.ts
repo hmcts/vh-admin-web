@@ -12,7 +12,7 @@ import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/cas
 import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
 import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
-import { AllocateHearingModel } from './models/allocate-hearing.model';
+import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 
 describe('AllocateHearingsComponent', () => {
@@ -384,5 +384,47 @@ describe('AllocateHearingsComponent', () => {
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.originalState).toEqual(testData);
         }));
+    });
+    describe('allocate hearings icon', () => {
+        it('should show clock icon if there is nonavailability clash', () => {
+            component.allocationHearingViewModel.hearings = [
+                new AllocateHearingItemModel(
+                    'hearingid',
+                    new Date(),
+                    'startTime',
+                    10,
+                    'casenumber',
+                    'casetype',
+                    'allocatedOfficerUserName',
+                    false,
+                    true,
+                    false
+                )
+            ];
+            fixture.detectChanges();
+            const debugElement = fixture.debugElement;
+            const clockIcon = debugElement.query(By.css('#clockIcon')).nativeElement;
+            expect(clockIcon).toBeTruthy();
+        });
+        it('should not show clock icon if there is nonavailability clash', () => {
+            component.allocationHearingViewModel.hearings = [
+                new AllocateHearingItemModel(
+                    'hearingid',
+                    new Date(),
+                    'startTime',
+                    10,
+                    'casenumber',
+                    'casetype',
+                    'allocatedOfficerUserName',
+                    false,
+                    false,
+                    false
+                )
+            ];
+            fixture.detectChanges();
+            const debugElement = fixture.debugElement;
+            const clockIcon = debugElement.query(By.css('#clockIcon'))?.nativeElement;
+            expect(clockIcon).toBeFalsy();
+        });
     });
 });

@@ -4164,7 +4164,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get allocation for hearing Id
-     * @param hearingId (optional)
+     * @param hearingId (optional) Guid
      * @return Success
      */
     getAllocationForHearing(hearingId: string | undefined): Observable<AllocatedCsoResponse> {
@@ -5071,6 +5071,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     allocated_cso?: string | undefined;
     /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
     has_work_hours_clash?: boolean | undefined;
+    has_non_availability_clash?: boolean | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
         if (data) {
@@ -5090,6 +5091,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
             this.case_type = _data['case_type'];
             this.allocated_cso = _data['allocated_cso'];
             this.has_work_hours_clash = _data['has_work_hours_clash'];
+            this.has_non_availability_clash = _data['has_non_availability_clash'];
         }
     }
 
@@ -5110,6 +5112,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
         data['case_type'] = this.case_type;
         data['allocated_cso'] = this.allocated_cso;
         data['has_work_hours_clash'] = this.has_work_hours_clash;
+        data['has_non_availability_clash'] = this.has_non_availability_clash;
         return data;
     }
 }
@@ -5132,6 +5135,7 @@ export interface IAllocationHearingsResponse {
     allocated_cso?: string | undefined;
     /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
     has_work_hours_clash?: boolean | undefined;
+    has_non_availability_clash?: boolean | undefined;
 }
 
 /** Configuration to initialise the UI application */
