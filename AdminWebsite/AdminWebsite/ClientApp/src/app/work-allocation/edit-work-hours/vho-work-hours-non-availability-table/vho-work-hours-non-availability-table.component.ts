@@ -39,12 +39,19 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        this.resetStartDateAndEndDate();
+        //if the form is not filtered, reset the dates
+        if (!this.isFiltered) {
+            this.resetStartDateAndEndDate();
+        }
         this.hideMessage();
         if (value) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            //rerun the filter again
+            if (this.isFiltered) {
+                this.filterByDate();
+            }
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
                 this.showMessage(`Showing only ${this.filterSize} Records, For more records please use filter by date`);
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
@@ -89,6 +96,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     isEditing = false;
     isSaving = false;
+    isFiltered = false; //form is not filtered by default
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
@@ -393,6 +401,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     filterByDate() {
         if (!this.isDataChangedAndUnsaved()) {
+            
             const clean = (d: Date): Date => new Date(d.toDateString()); // remove time from date
             const calenderStartDate = this.retrieveDate(this.filterForm.value.startDate);
             const calenderEndDate = this.retrieveDate(this.filterForm.value.endDate);
@@ -417,6 +426,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 );
             }
             this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
+            this.isFiltered = true; //set filtered to true
         } else {
             this.showSaveConfirmation = true;
         }
