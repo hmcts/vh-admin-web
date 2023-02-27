@@ -342,6 +342,35 @@ describe('AllocateHearingsComponent', () => {
             expect(component.allocationHearingViewModel.hearings[0].allocatedOfficerUsername).toBe(username);
         }));
 
+        it('should clear previous message when allocation has been confirmed', fakeAsync(() => {
+            // Given
+            component.allocationHearingViewModel = new AllocateHearingModel(testData);
+
+            const hearingId = testData[0].hearing_id;
+            const csoId = newGuid();
+            const username = 'test@cso.com';
+            component.csoAllocatedMenu.selectedLabel = username;
+
+            const updatedAllocation = new AllocationHearingsResponse({
+                hearing_id: '1',
+                allocated_cso: username,
+                scheduled_date_time: new Date()
+            });
+
+            allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
+            const spy = spyOn(component, 'clearMessage');
+
+            // When
+            component.selectHearing(true, hearingId);
+            component.onJusticeUserForAllocationSelected(csoId);
+            component.confirmAllocation();
+            tick();
+
+            // Then
+            expect(spy).toHaveBeenCalled();
+            expect(component.message).toBe('Hearings have been updated.');
+        }));
+
         it('should display error when confirmation fails', fakeAsync(() => {
             const responseObj = [new AllocationHearingsResponse()];
             allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
