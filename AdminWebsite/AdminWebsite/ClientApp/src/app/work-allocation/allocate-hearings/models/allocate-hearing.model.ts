@@ -68,8 +68,8 @@ export class AllocateHearingModel {
                     val.case_type,
                     val.allocated_cso,
                     val.has_work_hours_clash,
-                    val.has_non_availability_clash
                     val.concurrent_hearings_count,
+                    val.has_non_availability_clash,
                     false
                 )
         );
