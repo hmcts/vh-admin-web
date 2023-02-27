@@ -596,14 +596,16 @@ describe('Video hearing service', () => {
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(false);
         });
     });
+
     describe('getAllocatedCsoForHearing', () => {
-        it('should return an allocated cso for the hearing id', () => {
+        it('should return an allocated cso for the hearing id', done => {
             const allocatedCsoObj = new AllocatedCsoResponse({ hearing_id: 'id', cso: new JusticeUserResponse() });
             clientApiSpy.getAllocationForHearing.and.returnValue(of(allocatedCsoObj));
-            const response = service.getAllocatedCsoForHearing(allocatedCsoObj.hearing_id).toPromise();
+            const response = clientApiSpy.getAllocationForHearing(allocatedCsoObj.hearing_id).toPromise();
             response.then(res => {
-                expect(service.getAllocatedCsoForHearing).toHaveBeenCalled();
+                expect(clientApiSpy.getAllocationForHearing).toHaveBeenCalled();
                 expect(res).toEqual(allocatedCsoObj);
+                done();
             });
         });
     });
