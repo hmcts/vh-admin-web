@@ -141,13 +141,13 @@
         </td>
         <td class="govuk-table__cell no-border">
           <span
-            *ngIf="hearing.concurrentHearingsCount > 3"
+            *ngIf="hearing.concurrentHearingsCount"
             appTooltip
-            [text]="'User has more than 3 concurrent hearings allocated'"
+            [text]="hearing.concurrentHearingsCount + ' hearings overlap with this one'"
             [colour]="'blue'"
             colour="grey"
           >
-            <div class="more-than-three">3+</div>
+            <div class="more-than-three">{{ hearing.concurrentHearingsCount }}</div>
           </span>
         </td>
       </tr>
