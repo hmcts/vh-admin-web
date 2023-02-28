@@ -182,47 +182,6 @@ namespace AdminWebsite.UnitTests.Controllers
             userList.Count.Should().Be(2);
         }
         
-        [Test]
-        public async Task should_get_empty_user_list_for_exception_404()
-        {
-            _claimsPrincipal = new ClaimsPrincipalBuilder()
-                .WithRole(AppRoles.CaseAdminRole)
-                .Build();
-
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null))
-                .ThrowsAsync(new BookingsApiException("not found message", 404, "not found response", null, null));
-            
-            _controller = SetupControllerWithClaims(_claimsPrincipal);
-            var response = await _controller.GetUserList(null);
-            var result = response.Result.As<OkObjectResult>();
-
-            result.Should().NotBeNull();
-            var userList = (List<JusticeUserResponse>) result.Value;
-
-            userList.Count.Should().Be(0);
-        }
-        
-        [Test]
-        public async Task should_get_resultwith_message_for_exception_not_404()
-        {
-            _claimsPrincipal = new ClaimsPrincipalBuilder()
-                .WithRole(AppRoles.CaseAdminRole)
-                .Build();
-
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null))
-                .ThrowsAsync(new BookingsApiException("not found message", 400, "not found response", null, null));
-            
-            _controller = SetupControllerWithClaims(_claimsPrincipal);
-            var response = await _controller.GetUserList(null);
-            var result = response.Result.As<ObjectResult>();
-
-            result.Should().NotBeNull();
-            var message = (string) result.Value;
-
-            message.Should().NotBeEmpty();
-        }
-                
-        
         private UserIdentityController SetupControllerWithClaims(ClaimsPrincipal claimsPrincipal)
         {
             var context = new ControllerContext

@@ -1,4 +1,5 @@
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Middleware;
 using AdminWebsite.Services;
@@ -41,7 +42,7 @@ namespace AdminWebsite
             services.RegisterAuthSchemes(Configuration);
             services.AddMvc(opt =>
             {
-                opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(string), 500));
+                opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(UnexpectedErrorResponse), 500));
             }).AddFluentValidation();
 
             // In production, the Angular files will be served from this directory

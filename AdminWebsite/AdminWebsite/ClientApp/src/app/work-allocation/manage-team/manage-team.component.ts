@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
+import { isAValidEmail } from 'src/app/common/custom-validations/email-validator';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
     selector: 'app-manage-team',
@@ -12,58 +14,84 @@ import { JusticeUsersService } from '../../services/justice-users.service';
 })
 export class ManageTeamComponent {
     private filterSize = 20;
-
-    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
-        this.form = fb.group({
-            inputSearch: ['']
-        });
-    }
-
     loggerPrefix = '[ManageTeamComponent] -';
     displayMessage = false;
     faExclamation = faCircleExclamation;
     faError = faExclamationCircle;
     message: string;
     users: JusticeUserResponse[];
-    form: FormGroup;
+    form: FormGroup<SearchForExistingJusticeUserForm>;
     isEditing = false;
     isSaving = false;
-    error = false;
     displayAddButton = false;
-    errorMessage = false;
+    isAnErrorMessage = false;
+    showSpinner = false;
+    showForm = false;
+
+    constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
+        this.form = this.fb.group<SearchForExistingJusticeUserForm>({
+            inputSearch: new FormControl('')
+        });
+        this.form.controls.inputSearch.valueChanges.subscribe(() => (this.displayAddButton = false));
+    }
 
     searchUsers() {
-        const term = this.form.value.inputSearch;
-        this.errorMessage = false;
+        this.isAnErrorMessage = false;
         this.displayAddButton = false;
         this.displayMessage = false;
         this.message = '';
         this.isEditing = false;
-        this.justiceUserService.retrieveJusticeUserAccountsNoCache(term).subscribe(
-            (data: JusticeUserResponse[]) => {
-                this.users = data;
-                this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-                if (this.users.length > this.filterSize) {
-                    this.users = this.users.slice(0, this.filterSize);
-                    this.displayMessage = true;
-                    this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
-                } else if (this.users.length === 0) {
-                    this.displayMessage = true;
-                    this.errorMessage = true;
-                    this.message =
-                        'No users matching this search criteria were found. ' +
-                        'Please check the search and try again. Or, add the team member.';
-                }
-                this.displayAddButton = true;
-            },
-            error => {
-                this.handleListError(error, 'users');
-            }
-        );
+        this.showSpinner = true;
+        this.justiceUserService.retrieveJusticeUserAccountsNoCache(this.form.value.inputSearch).subscribe({
+            next: (data: JusticeUserResponse[]) => this.onJusticeUserSearchComplete(data),
+            error: error => this.onJusticeUserSearchFailed(error),
+            complete: () => (this.showSpinner = false)
+        });
     }
 
-    handleListError(err, type) {
-        this.logger.error(`${this.loggerPrefix} Error getting ${type} list`, err, type);
-        this.error = true;
+    onJusticeUserSearchComplete(data: JusticeUserResponse[]) {
+        this.users = data;
+        this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
+        if (this.users.length > this.filterSize) {
+            this.users = this.users.slice(0, this.filterSize);
+            this.displayMessage = true;
+            this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
+        } else if (this.users.length === 0) {
+            this.displayMessage = true;
+            this.isAnErrorMessage = true;
+            this.message = Constants.ManageJusticeUsers.EmptySearchResults;
+
+            if (isAValidEmail(this.form.value.inputSearch)) {
+                this.displayAddButton = true;
+            }
+        }
     }
+
+    onJusticeUserSearchFailed(errorMessage: string) {
+        this.logger.error(`${this.loggerPrefix} There was an unexpected error searching for justice users`, new Error(errorMessage));
+        this.message = Constants.Error.ManageJusticeUsers.SearchFailure;
+        this.displayMessage = true;
+    }
+
+    displayForm() {
+        this.displayMessage = false;
+        this.showForm = true;
+    }
+
+    onFormCancelled() {
+        this.showForm = false;
+    }
+
+    onJusticeSuccessfulSave(newUser: JusticeUserResponse) {
+        this.showForm = false;
+        this.displayAddButton = false;
+        this.message = Constants.ManageJusticeUsers.NewUserAdded;
+        this.isAnErrorMessage = false;
+        this.displayMessage = true;
+        this.users.push(newUser);
+    }
+}
+
+interface SearchForExistingJusticeUserForm {
+    inputSearch: FormControl<string>;
 }
