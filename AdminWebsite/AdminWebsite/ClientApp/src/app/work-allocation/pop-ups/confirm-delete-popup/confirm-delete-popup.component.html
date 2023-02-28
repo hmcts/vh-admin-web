@@ -1,4 +1,4 @@
-<div id="confirmDeletePopup" class="popup-overlay vh-top-pop">
+<div id="confirmDeletePopup" class="popup-overlay">
   <div class="popup popup-small" style="text-align: center">
     <div class="govuk-grid-row">You have selected to delete non-availability hours for {{ userName }}</div>
     <div class="govuk-grid-row"></div>
@@ -9,12 +9,12 @@
       <div class="govuk-grid-row">
         <div class="vh-top">
           <div class="govuk-grid-row">Are you sure you want to proceed?</div>
-          <button id="btnConfirm" class="govuk-button vh-mr" type="submit" data-module="govuk-button" (click)="confirmDelete()">
+          <button id="btnConfirm" class="govuk-button" type="submit" data-module="govuk-button" (click)="confirmDelete()">
             Yes, continue
           </button>
           <button
             id="btnCancel"
-            class="govuk-button govuk-button--secondary"
+            class="govuk-button govuk-button--secondary govuk-!-margin-left-2"
             type="submit"
             data-module="govuk-button"
             (click)="cancelDelete()"
