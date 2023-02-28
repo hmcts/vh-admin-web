@@ -176,33 +176,19 @@ export class AllocateHearingModel {
     updateConcurrency() {
         const users = this.hearings.map(h => h.allocatedOfficerUsername).filter(x => !!x && x !== 'Not Allocated');
         const uniqueUsers = users.filter((item, pos) => users.indexOf(item) === pos);
-        const usersConcurrentHearingsCounts = uniqueUsers.map(username => {
+        uniqueUsers.forEach(username => {
             const hearingsForUser = this.hearings.filter(
                 hearing => hearing.allocatedOfficerUsername && hearing.allocatedOfficerUsername === username
             );
 
-            let concurrentHearings = 0;
-
             if (hearingsForUser.length > 1) {
                 hearingsForUser.forEach(hearing => {
+                    // get all the hearings apart from this one
                     const otherHearings = hearingsForUser.filter(x => x.hearingId !== hearing.hearingId);
-
-                    const hasOverlappingHearings =
-                        otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing)).length > 0;
-
-                    if (hasOverlappingHearings) {
-                        concurrentHearings++;
-                    }
+                    // select the overlapping ones
+                    const overlapping = otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing));
+                    hearing.concurrentHearingsCount = overlapping.length;
                 });
-            }
-            return { username, concurrentHearings };
-        });
-
-        this.hearings.forEach(hearingModel => {
-            if (hearingModel.allocatedOfficerUsername && hearingModel.allocatedOfficerUsername !== 'Not Allocated') {
-                hearingModel.concurrentHearingsCount = usersConcurrentHearingsCounts.find(
-                    x => x.username === hearingModel.allocatedOfficerUsername
-                ).concurrentHearings;
             }
         });
     }

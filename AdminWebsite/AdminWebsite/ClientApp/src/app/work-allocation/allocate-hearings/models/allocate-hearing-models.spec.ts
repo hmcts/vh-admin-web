@@ -287,7 +287,7 @@ describe('AllocateHearingModel', () => {
 
         expect(model.areAllChecked).toBeTruthy();
         expect(model.hearings.every(h => h.allocatedOfficerId === newId && h.allocatedOfficerUsername === newUserName)).toBeTruthy();
-        expect(model.hearings.every(h => h.concurrentHearingsCount === 4 && h.allocatedOfficerUsername === newUserName)).toBeTruthy();
+        expect(model.hearings.every(h => h.concurrentHearingsCount === 3 && h.allocatedOfficerUsername === newUserName)).toBeTruthy();
     });
 
     it('should update selected hearings to new cso', () => {

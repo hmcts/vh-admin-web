@@ -178,6 +178,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
+        this.clearMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
@@ -218,5 +219,9 @@ export class AllocateHearingsComponent implements OnInit {
         } else {
             this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
+    }
+
+    getConcurrentCountText(count: number): string {
+        return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
     }
 }
