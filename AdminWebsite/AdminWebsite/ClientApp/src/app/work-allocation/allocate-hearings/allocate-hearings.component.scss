@@ -18,14 +18,18 @@
   border-bottom: none;
 }
 
-.more-than-three {
+.concurrent-hearings-badge {
   border-radius: 50%;
   background-color: #000;
   color: #fff;
-  width: 1.9em;
-  height: 1.9em;
+  width: 1.6em;
+  height: 1.6em;
   font-size: 1em;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }

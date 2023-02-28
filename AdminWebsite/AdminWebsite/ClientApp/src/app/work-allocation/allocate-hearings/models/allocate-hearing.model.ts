@@ -170,127 +170,23 @@ export class AllocateHearingModel {
         );
     }
 
-    private addDuration(date: Date, minutes: number): Date {
-        const dateToCompare = new Date(date);
-        dateToCompare.setMinutes(dateToCompare.getMinutes() + minutes);
-        return dateToCompare;
-    }
-
     updateConcurrency() {
         const users = this.hearings.map(h => h.allocatedOfficerUsername).filter(x => !!x && x !== 'Not Allocated');
         const uniqueUsers = users.filter((item, pos) => users.indexOf(item) === pos);
-        const usersConcurrentHearingsCounts = uniqueUsers.map(username => {
+        uniqueUsers.forEach(username => {
             const hearingsForUser = this.hearings.filter(
                 hearing => hearing.allocatedOfficerUsername && hearing.allocatedOfficerUsername === username
             );
 
-            //let concurrentHearingsCount = 0;
-            let concurrentHearings: AllocateHearingItemModel[] = [];
-
             if (hearingsForUser.length > 1) {
-                // hearingsForUser.forEach((hearing, index) => {
-                //     const hearingScheduledDateTime = new Date(hearing.scheduledDateTime);
-
-                //     // get the next hearing, if there is one, or the previous hearing if there's not one
-                //     const nextHearing = hearingsForUser[index + 1];
-
-                //     if (nextHearing) {
-                //         // if there's a next hearing, see if the current hearing overlaps it
-                //         if (this.addDuration(hearingScheduledDateTime, hearing.duration) > nextHearing.scheduledDateTime) {
-                //             concurrentHearings++;
-                //         }
-                //     } else {
-                //         const previousHearing = hearingsForUser[index - 1];
-                //         const previousHearingScheduledDateTime = new Date(previousHearing.scheduledDateTime);
-                //         // if there's a previous hearing, see if it overlaps the current one
-                //         if (this.addDuration(previousHearingScheduledDateTime, previousHearing.duration) > hearing.scheduledDateTime) {
-                //             concurrentHearings++;
-                //         }
-
                 hearingsForUser.forEach(hearing => {
-                    console.log(`6630 found hearing at ${hearing.scheduledDateTime.toTimeString()}`);
+                    // get all the hearings apart from this one
                     const otherHearings = hearingsForUser.filter(x => x.hearingId !== hearing.hearingId);
-
+                    // select the overlapping ones
                     const overlapping = otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing));
-                    console.log(`6630 found overlapping hearings`, overlapping);
-
-                    // console.log(
-                    //     `9630 ${hearing.scheduledDateTime.toTimeString()} overlapping with: `,
-                    //     overlapping.map(x => x.scheduledDateTime.toTimeString())
-                    // );
-
-                    //concurrentHearings.push(...overlapping);
-
-                    console.log(`9630 set concurrent hearings for ${hearing.scheduledDateTime.toTimeString()} to ${overlapping.length}`);
                     hearing.concurrentHearingsCount = overlapping.length;
-                    // const hasOverlappingHearings = overlapping.length > 0;
-
-                    // if (hasOverlappingHearings) {
-                    //     concurrentHearingsCount++;
-                    // }
                 });
             }
-
-            // console.log(
-            //     `9630 concurrent hearings for ${username}: `,
-            //     concurrentHearings.sort(this.sortHearingsByDate).map(x => x.scheduledDateTime?.toTimeString())
-            // );
-
-            // const reduced = concurrentHearings.reduce((acc, hearing, i) => {
-            //     console.log(`9630 position is ${i} on hearingon ${hearing.scheduledDateTime}`);
-            //     if (i + 1 < concurrentHearings.length) {
-            //         const nextHearing = concurrentHearings[i + 1];
-            //         if (hearing.endDateTime().valueOf() > nextHearing.scheduledDateTime.valueOf()) {
-            //             acc.push(hearing);
-            //         }
-            //     }
-            //     return acc;
-            // }, []);
-
-            concurrentHearings = concurrentHearings.filter((item, pos) => concurrentHearings.indexOf(item) === pos);
-
-            console.log(`OVERLAP: concurrentHearings`, concurrentHearings);
-
-            // const overlappingHearingsCounts = hearingsForUser
-            //     .sort(this.sortHearingsByDate)
-            //     .map(hearing => this.checkOverlaps(hearingsForUser, hearingsForUser.indexOf(hearing)));
-
-            // console.log(`OVERLAP: COUNTS for ${username}`, overlappingHearingsCounts);
-            // return { username, concurrentHearings: overlappingHearingsCounts.sort((a, b) => (a > b ? -1 : 1))[0] || 0 };
-            return { username, concurrentHearings: concurrentHearings };
         });
-
-        // this.hearings.forEach(hearingModel => {
-        //     if (hearingModel.allocatedOfficerUsername && hearingModel.allocatedOfficerUsername !== 'Not Allocated') {
-        //         hearingModel.concurrentHearingsCount = usersConcurrentHearingsCounts.find(
-        //             x => x.username === hearingModel.allocatedOfficerUsername
-        //         ).concurrentHearings;
-        //     }
-        // });
-    }
-
-    private checkOverlaps(hearings: AllocateHearingItemModel[], position: number = 0, groupSize: number = 1): number {
-        console.warn('OVERLAP: checkOverlaps()');
-        if (position + 1 < hearings.length) {
-            const currentHearing = hearings[position];
-            const nextHearing = hearings[position + 1];
-            console.log('OVERLAP: CHECKING FOR', currentHearing.scheduledDateTime.toTimeString());
-            if (
-                currentHearing.endDateTime().valueOf() > nextHearing.scheduledDateTime.valueOf() ||
-                currentHearing.hasSameScheduledDateTime(nextHearing)
-            ) {
-                console.log('OVERLAP: OVERLAPS WITH NEXT HEARING AT', nextHearing.scheduledDateTime.toTimeString());
-                //groupSize++;
-                groupSize += this.checkOverlaps(hearings, position + 1, groupSize);
-            } else {
-                console.log('OVERLAP: NO OVERLAP WITH NEXT HEARING AT', nextHearing.scheduledDateTime.toTimeString());
-            }
-        }
-        console.log('OVERLAP: GROUP SIZE IS ', groupSize);
-        return groupSize;
-    }
-
-    private sortHearingsByDate(a: AllocateHearingItemModel, b: AllocateHearingItemModel) {
-        return a.scheduledDateTime.valueOf() > b.scheduledDateTime.valueOf() ? 1 : -1;
     }
 }
