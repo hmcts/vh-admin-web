@@ -401,7 +401,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
 
     filterByDate() {
         if (!this.isDataChangedAndUnsaved()) {
-            
             const clean = (d: Date): Date => new Date(d.toDateString()); // remove time from date
             const calenderStartDate = this.retrieveDate(this.filterForm.value.startDate);
             const calenderEndDate = this.retrieveDate(this.filterForm.value.endDate);
