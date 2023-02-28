@@ -192,6 +192,9 @@ p {
     bottom: 0;
     left: 0;
     right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: rgba(0, 0, 0, 0.7);
     transition: opacity 500ms;
 }
@@ -308,16 +311,6 @@ p {
     margin: 70px auto !important;
 }
 
-.vh-popup-aligned {
-    margin: 70px auto;
-    padding: 30px;
-    background: #fff;
-    border-radius: 0px;
-    width: 50%;
-    position: relative;
-    transition: all 2s ease-in-out;
-    max-width: 560px !important;
-}
 .aligned-centre {
     text-align: center;
 }

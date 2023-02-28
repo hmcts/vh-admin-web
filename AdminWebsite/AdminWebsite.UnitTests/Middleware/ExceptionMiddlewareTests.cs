@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
+using UserApi.Client;
 
 namespace AdminWebsite.UnitTests.Middleware;
 
@@ -51,6 +52,22 @@ public class ExceptionMiddlewareTests
         await ExceptionMiddleware.InvokeAsync(_HttpContext);
 
         Assert.AreEqual(bookingsApiException.StatusCode, _HttpContext.Response.StatusCode);
+        _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+    }
+    
+    [Test]
+    public async Task Should_return_status_code_and_message_from_user_api_exception()
+    {
+        var userApiException = new UserApiException("Error", 400, "failed somewhere", null, null);
+        RequestDelegateMock
+            .Setup(x => x.RequestDelegate(It.IsAny<HttpContext>()))
+            .Returns(Task.FromException(userApiException));
+        ExceptionMiddleware = new ExceptionMiddleware(RequestDelegateMock.Object.RequestDelegate);
+
+
+        await ExceptionMiddleware.InvokeAsync(_HttpContext);
+
+        Assert.AreEqual(userApiException.StatusCode, _HttpContext.Response.StatusCode);
         _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
 
