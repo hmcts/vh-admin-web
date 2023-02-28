@@ -177,6 +177,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
+        this.clearMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
