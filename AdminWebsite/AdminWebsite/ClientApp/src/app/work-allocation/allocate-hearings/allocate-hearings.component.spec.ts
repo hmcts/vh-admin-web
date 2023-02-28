@@ -391,14 +391,13 @@ describe('AllocateHearingsComponent', () => {
                 new AllocateHearingItemModel(
                     'hearingid',
                     new Date(),
-                    'startTime',
                     10,
                     'casenumber',
                     'casetype',
                     'allocatedOfficerUserName',
                     false,
-                    true,
-                    false
+                    0,
+                    true
                 )
             ];
             fixture.detectChanges();
@@ -411,13 +410,12 @@ describe('AllocateHearingsComponent', () => {
                 new AllocateHearingItemModel(
                     'hearingid',
                     new Date(),
-                    'startTime',
                     10,
                     'casenumber',
                     'casetype',
                     'allocatedOfficerUserName',
                     false,
-                    false,
+                    0,
                     false
                 )
             ];
