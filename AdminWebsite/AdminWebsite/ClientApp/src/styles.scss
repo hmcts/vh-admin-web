@@ -59,3 +59,33 @@ body {
   display: block;
   pointer-events: none;
 }
+
+.vh-popup-aligned {
+  margin: 70px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 0px;
+  width: 50%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  max-width: 560px !important;
+  max-height: 80vh;
+  overflow-y: scroll;
+  
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: solidgovuk-colour('white');
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: govuk-colour("mid-grey")
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: govuk-colour("mid-grey");
+    filter: opacity(50%);
+  }
+}
