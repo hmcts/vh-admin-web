@@ -128,7 +128,7 @@
         <td class="govuk-table__cell">{{ hearing.caseType }}</td>
         <td id="cso_{{ hearing.hearingId }}" class="govuk-table__cell">{{ hearing.allocatedOfficerUsername }}</td>
         <td class="govuk-table__cell no-border">
-          <span *ngIf="hearing.hasChanged" appTooltip [text]="'Pending change'" [colour]="'blue'" colour="grey">
+          <span *ngIf="hearing.hasChanged" appTooltip [text]="'Pending change'" [colour]="'blue'">
             <fa-icon [icon]="hourGlassStart" [transform]="customIconTransform"></fa-icon>
           </span>
           <span
@@ -154,7 +154,7 @@
         </td>
         <td></td>
         <td class="govuk-table__cell no-border">
-          <span appTooltip [text]="'Hearing clashes with user non-availability'" [colour]="'blue'" colour="grey">
+          <span appTooltip [text]="'Hearing clashes with user non-availability'" [colour]="'blue'">
             <fa-icon id="clockIcon" *ngIf="hearing.hasNonAvailabilityClash" [icon]="faClock"></fa-icon
           ></span>
         </td>
