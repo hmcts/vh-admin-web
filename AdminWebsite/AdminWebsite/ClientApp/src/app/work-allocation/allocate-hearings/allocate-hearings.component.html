@@ -1,4 +1,4 @@
-<details [attr.open]="allocateHearingsDetailOpen ? '' : null" class="govuk-details" data-module="govuk-details">
+<details class="govuk-details" data-module="govuk-details">
   <summary class="govuk-details__summary" tabindex="0" role="button">
     <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
   </summary>
@@ -105,6 +105,7 @@
         <th scope="col" class="govuk-table__header">Case Type</th>
         <th scope="col" class="govuk-table__header">Allocated officer</th>
         <th scope="col" class="govuk-table__header no-border"></th>
+        <th scope="col" class="govuk-table__header no-border"></th>
       </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -125,7 +126,7 @@
         <td class="govuk-table__cell">{{ hearing.caseNumber }}</td>
         <td class="govuk-table__cell">{{ hearing.caseType }}</td>
         <td id="cso_{{ hearing.hearingId }}" class="govuk-table__cell">{{ hearing.allocatedOfficerUsername }}</td>
-        <td class="govuk-table__cell no-border">
+        <td class="govuk-table__cell no-border align-middle">
           <span *ngIf="hearing.hasChanged" appTooltip [text]="'Pending change'" [colour]="'blue'" colour="grey">
             <fa-icon [icon]="hourGlassStart" [transform]="customIconTransform"></fa-icon>
           </span>
@@ -139,15 +140,15 @@
             <fa-icon [icon]="triangleExclamation"></fa-icon>
           </span>
         </td>
-        <td class="govuk-table__cell no-border">
+        <td class="govuk-table__cell no-border align-middle">
           <span
-            *ngIf="hearing.concurrentHearingsCount > 3"
+            *ngIf="hearing.concurrentHearingsCount"
             appTooltip
-            [text]="'User has more than 3 concurrent hearings allocated'"
+            [text]="getConcurrentCountText(hearing.concurrentHearingsCount)"
             [colour]="'blue'"
             colour="grey"
           >
-            <div class="more-than-three">3+</div>
+            <div class="concurrent-hearings-badge">{{ hearing.concurrentHearingsCount }}</div>
           </span>
         </td>
       </tr>

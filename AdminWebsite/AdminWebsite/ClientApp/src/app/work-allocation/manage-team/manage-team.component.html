@@ -10,11 +10,15 @@
           <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" formControlName="inputSearch" />
         </div>
         <div class="govuk-grid-column-one-third">
-          <div class="govuk-grid-column-one-third">
-            <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
-          </div>
-          <div class="govuk-grid-column-one" *ngIf="displayAddButton">
-            <button class="govuk-button" data-module="govuk-button">Add a team member</button>
+          <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+          <button class="govuk-button govuk-!-margin-left-2" *ngIf="displayAddButton" data-module="govuk-button" (click)="displayForm()">
+            Add a team member
+          </button>
+          <div class="govuk-body" *ngIf="showSpinner">
+            <div class="vh-loader-small-container">
+              <div class="vh-loader"></div>
+              <label class="loader-label"> Please wait... </label>
+            </div>
           </div>
         </div>
       </div>
@@ -24,7 +28,8 @@
     <fa-icon [icon]="errorMessage ? faError : faExclamation"></fa-icon>
     {{ message }}
   </div>
-  <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
+
+  <table *ngIf="users?.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header">Username</th>
@@ -39,54 +44,19 @@
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row" *ngFor="let user of users">
         <td class="govuk-table__cell">
-          <input
-            id="username_{{ user.id }}"
-            [disabled]="true"
-            type="text"
-            [(ngModel)]="user.username"
-            class="{{ user.id }}"
-            required="true"
-          />
+          {{ user.username }}
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="firstname_{{ user.id }}"
-            [disabled]="true"
-            type="text"
-            [(ngModel)]="user.first_name"
-            class="{{ user.id }}"
-            required="true"
-          />
+          {{ user.first_name }}
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="lastname_{{ user.id }}"
-            [disabled]="true"
-            type="text"
-            [(ngModel)]="user.lastname"
-            class="{{ user.id }}"
-            required="true"
-          />
+          {{ user.lastname }}
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="contact_email_{{ user.id }}"
-            [disabled]="true"
-            type="text"
-            [(ngModel)]="user.contact_email"
-            class="{{ user.id }}"
-            required="true"
-          />
+          {{ user.contact_email }}
         </td>
         <td class="govuk-table__cell">
-          <input
-            id="role_{{ user.id }}"
-            [disabled]="true"
-            type="text"
-            [(ngModel)]="user.user_role_name"
-            class="{{ user.id }}"
-            required="true"
-          />
+          {{ user.user_role_name }}
         </td>
         <td class="govuk-table__cell">
           <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" id="editButton_{{ user.id }}">Edit</button>
@@ -97,4 +67,12 @@
       </tr>
     </tbody>
   </table>
+  <div *ngIf="showForm" class="popup-overlay">
+    <div class="vh-popup-aligned">
+      <app-justice-user-form
+        (cancelFormEvent)="onFormCancelled()"
+        (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
+      ></app-justice-user-form>
+    </div>
+  </div>
 </details>

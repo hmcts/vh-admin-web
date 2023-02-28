@@ -218,4 +218,8 @@ export class AllocateHearingsComponent implements OnInit {
             this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
     }
+
+    getConcurrentCountText(count: number): string {
+        return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
+    }
 }
