@@ -4,7 +4,7 @@ import { AddJusticeUserRequest, BHClient, JusticeUserResponse, JusticeUserRole }
 
 import { JusticeUsersService } from './justice-users.service';
 
-fdescribe('JusticeUsersService', () => {
+describe('JusticeUsersService', () => {
     let service: JusticeUsersService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
 
