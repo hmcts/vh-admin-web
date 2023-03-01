@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {map, shareReplay} from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { AddJusticeUserRequest, BHClient, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
 
@@ -24,12 +24,15 @@ export class JusticeUsersService {
     }
 
     private requestJusticeUsers(term: string) {
-        return this.apiClient.getUserList(cleanQuery(term)).pipe(map(users => users.map(user => {
-            const userRole = user.is_vh_team_leader ? 'Team Lead' : 'CSO';
-            user.user_role_name = userRole;
-            return user;
-        }
-        )));
+        return this.apiClient.getUserList(cleanQuery(term)).pipe(
+            map(users =>
+                users.map(user => {
+                    const userRole = user.is_vh_team_leader ? 'Team Lead' : 'CSO';
+                    user.user_role_name = userRole;
+                    return user;
+                })
+            )
+        );
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
