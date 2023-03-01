@@ -12,7 +12,7 @@ import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/cas
 import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
 import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
-import { AllocateHearingModel } from './models/allocate-hearing.model';
+import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 
 describe('AllocateHearingsComponent', () => {
@@ -342,6 +342,35 @@ describe('AllocateHearingsComponent', () => {
             expect(component.allocationHearingViewModel.hearings[0].allocatedOfficerUsername).toBe(username);
         }));
 
+        it('should clear previous message when allocation has been confirmed', fakeAsync(() => {
+            // Given
+            component.allocationHearingViewModel = new AllocateHearingModel(testData);
+
+            const hearingId = testData[0].hearing_id;
+            const csoId = newGuid();
+            const username = 'test@cso.com';
+            component.csoAllocatedMenu.selectedLabel = username;
+
+            const updatedAllocation = new AllocationHearingsResponse({
+                hearing_id: '1',
+                allocated_cso: username,
+                scheduled_date_time: new Date()
+            });
+
+            allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
+            const spy = spyOn(component, 'clearMessage');
+
+            // When
+            component.selectHearing(true, hearingId);
+            component.onJusticeUserForAllocationSelected(csoId);
+            component.confirmAllocation();
+            tick();
+
+            // Then
+            expect(spy).toHaveBeenCalled();
+            expect(component.message).toBe('Hearings have been updated.');
+        }));
+
         it('should display error when confirmation fails', fakeAsync(() => {
             const responseObj = [new AllocationHearingsResponse()];
             allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
@@ -384,5 +413,45 @@ describe('AllocateHearingsComponent', () => {
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.originalState).toEqual(testData);
         }));
+    });
+    describe('allocate hearings icon', () => {
+        it('should show clock icon if there is nonavailability clash', () => {
+            component.allocationHearingViewModel.hearings = [
+                new AllocateHearingItemModel(
+                    'hearingid',
+                    new Date(),
+                    10,
+                    'casenumber',
+                    'casetype',
+                    'allocatedOfficerUserName',
+                    false,
+                    0,
+                    true
+                )
+            ];
+            fixture.detectChanges();
+            const debugElement = fixture.debugElement;
+            const clockIcon = debugElement.query(By.css('#clockIcon')).nativeElement;
+            expect(clockIcon).toBeTruthy();
+        });
+        it('should not show clock icon if there is nonavailability clash', () => {
+            component.allocationHearingViewModel.hearings = [
+                new AllocateHearingItemModel(
+                    'hearingid',
+                    new Date(),
+                    10,
+                    'casenumber',
+                    'casetype',
+                    'allocatedOfficerUserName',
+                    false,
+                    0,
+                    false
+                )
+            ];
+            fixture.detectChanges();
+            const debugElement = fixture.debugElement;
+            const clockIcon = debugElement.query(By.css('#clockIcon'))?.nativeElement;
+            expect(clockIcon).toBeFalsy();
+        });
     });
 });

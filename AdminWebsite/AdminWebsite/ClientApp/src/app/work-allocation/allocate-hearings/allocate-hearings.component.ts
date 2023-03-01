@@ -5,7 +5,7 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { faCircleExclamation, faHourglassStart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 
@@ -39,6 +39,7 @@ export class AllocateHearingsComponent implements OnInit {
     faExclamation = faCircleExclamation;
     triangleExclamation = faTriangleExclamation;
     hourGlassStart = faHourglassStart;
+    faClock = faClock;
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
@@ -177,6 +178,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
+        this.clearMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
@@ -217,5 +219,9 @@ export class AllocateHearingsComponent implements OnInit {
         } else {
             this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
+    }
+
+    getConcurrentCountText(count: number): string {
+        return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
     }
 }
