@@ -24,8 +24,8 @@
       </div>
     </div>
   </div>
-  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="errorMessage ? 'vh-text-color-red' : ''">
-    <fa-icon [icon]="errorMessage ? faError : faExclamation"></fa-icon>
+  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
+    <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
     {{ message }}
   </div>
 
