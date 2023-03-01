@@ -44,6 +44,8 @@ public class AllocationHearingsResponse
     /// </summary>
     public bool? HasWorkHoursClash { get; set; }
     
+    public bool? HasNonAvailabilityClash { get; set; }
+    
     /// <summary>
     /// True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO
     /// </summary>

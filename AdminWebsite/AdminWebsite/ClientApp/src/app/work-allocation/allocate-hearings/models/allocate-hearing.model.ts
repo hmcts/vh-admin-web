@@ -15,6 +15,7 @@ export class AllocateHearingItemModel {
         public allocatedOfficerUsername?: string,
         public hasWorkHoursClash?: boolean,
         public concurrentHearingsCount?: number,
+        public hasNonAvailabilityClash?: boolean,
         public checked: boolean = false
     ) {}
 
@@ -27,6 +28,7 @@ export class AllocateHearingItemModel {
         this.allocatedOfficerId = id;
         this.hasChanged = true;
         this.hasWorkHoursClash = false;
+        this.hasNonAvailabilityClash = false;
     }
 
     hasSameScheduledDateTime(otherHearing: AllocateHearingItemModel): boolean {
@@ -67,6 +69,7 @@ export class AllocateHearingModel {
                     val.allocated_cso,
                     val.has_work_hours_clash,
                     val.concurrent_hearings_count,
+                    val.has_non_availability_clash,
                     false
                 )
         );
