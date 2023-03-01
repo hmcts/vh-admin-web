@@ -4,7 +4,7 @@ import { AddJusticeUserRequest, BHClient, JusticeUserResponse, JusticeUserRole }
 
 import { JusticeUsersService } from './justice-users.service';
 
-describe('JusticeUsersService', () => {
+fdescribe('JusticeUsersService', () => {
     let service: JusticeUsersService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
 
@@ -51,6 +51,30 @@ describe('JusticeUsersService', () => {
             service.retrieveJusticeUserAccountsNoCache(term).subscribe(result => {
                 expect(result).toEqual(users);
                 expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(1);
+                done();
+            });
+        });
+
+        it('should change user role to "Team Lead" when user is a team leader', (done: DoneFn) => {
+            const users: JusticeUserResponse[] = [
+                new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com', is_vh_team_leader: true, user_role_name: 'foo' })
+            ];
+            const term = 'user1';
+            clientApiSpy.getUserList.and.returnValue(of(users));
+            service.retrieveJusticeUserAccountsNoCache(term).subscribe(result => {
+                expect(result[0].user_role_name).toBe('Team Lead');
+                done();
+            });
+        });
+
+        it('should change user role to "CSO" when user is not a team leader', (done: DoneFn) => {
+            const users: JusticeUserResponse[] = [
+                new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com', is_vh_team_leader: false, user_role_name: 'foo' })
+            ];
+            const term = 'user1';
+            clientApiSpy.getUserList.and.returnValue(of(users));
+            service.retrieveJusticeUserAccountsNoCache(term).subscribe(result => {
+                expect(result[0].user_role_name).toBe('CSO');
                 done();
             });
         });
