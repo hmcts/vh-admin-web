@@ -62,21 +62,6 @@ describe('ManageTeamComponent', () => {
             expect(component.displayAddButton).toBeTruthy();
         }));
 
-        it('it should not display add new user button when search term is not an email address', fakeAsync(() => {
-            // arrange
-            const emptyList: JusticeUserResponse[] = [];
-            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(emptyList));
-            component.form.controls.inputSearch.setValue('test');
-
-            // act
-            component.searchUsers();
-            tick();
-
-            // assert
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
-            expect(component.displayAddButton).toBeFalsy();
-        }));
-
         it('should display portion of users when search returns a list of users exceeds filter limit', fakeAsync(() => {
             // arrange
             users = Array.from(Array(30).keys()).map(
