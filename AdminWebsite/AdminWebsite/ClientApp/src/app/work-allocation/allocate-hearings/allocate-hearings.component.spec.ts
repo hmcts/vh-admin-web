@@ -457,8 +457,8 @@ describe('AllocateHearingsComponent', () => {
     });
 
     describe('Clear Hearing Updated Message', () => {
-        const HEARING_HAVE_BEEN_UPDATED: string = Constants.AllocateHearings.ConfirmationMessage;
-        const OTHER_MESSAGES: string = 'Other messages';
+        const HEARING_HAVE_BEEN_UPDATED = Constants.AllocateHearings.ConfirmationMessage;
+        const OTHER_MESSAGES = 'Other messages';
 
         it('should return true when message is equal to "Hearings have been updated." ', () => {
             // Given
