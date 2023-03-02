@@ -358,7 +358,7 @@ describe('AllocateHearingsComponent', () => {
             });
 
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
-            const spy = spyOn(component, 'clearMessage');
+            const spy = spyOn(component, 'clearHearingUpdatedMessage');
 
             // When
             component.selectHearing(true, hearingId);
@@ -452,6 +452,49 @@ describe('AllocateHearingsComponent', () => {
             const debugElement = fixture.debugElement;
             const clockIcon = debugElement.query(By.css('#clockIcon'))?.nativeElement;
             expect(clockIcon).toBeFalsy();
+        });
+    });
+
+    describe('Clear Hearing Updated Message', () => {
+        let HEARING_HAVE_BEEN_UPDATED: string;
+        let OTHER_MESSAGES: string;
+        beforeAll(() => {
+            HEARING_HAVE_BEEN_UPDATED = 'Hearings have been updated.';
+            OTHER_MESSAGES = 'Other messages';
+        });
+        it('should return true when message is equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = HEARING_HAVE_BEEN_UPDATED;
+            // When
+            const res = component.hasHearingBeenUpdated();
+            // Then
+            expect(res).toBe(true);
+        });
+        it('should return false when message is not equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = OTHER_MESSAGES;
+            // When
+            const res = component.hasHearingBeenUpdated();
+            // Then
+            expect(res).toBe(false);
+        });
+        it('should clear the message when message is equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = HEARING_HAVE_BEEN_UPDATED;
+            const spy = spyOn(component, 'clearMessage');
+            // When
+            component.clearHearingUpdatedMessage();
+            // Then
+            expect(spy).toHaveBeenCalled();
+        });
+        it('should not clear the message when message is not equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = OTHER_MESSAGES;
+            const spy = spyOn(component, 'clearMessage');
+            // When
+            component.clearHearingUpdatedMessage();
+            // Then
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 });

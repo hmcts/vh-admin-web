@@ -43,6 +43,7 @@ export class AllocateHearingsComponent implements OnInit {
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
+    readonly HEARING_HAVE_BEEN_UPDATED = 'Hearings have been updated.';
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -135,6 +136,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {
+        this.clearHearingUpdatedMessage();
         if (justiceUserId) {
             const username = this.csoAllocatedMenu?.selectedLabel;
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
@@ -178,7 +180,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
-        this.clearMessage();
+        this.clearHearingUpdatedMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
@@ -205,11 +207,12 @@ export class AllocateHearingsComponent implements OnInit {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         this.csoAllocatedMenu.clear();
-        this.updateMessageAndDisplay('Hearings have been updated.');
+        this.updateMessageAndDisplay(this.HEARING_HAVE_BEEN_UPDATED);
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
         if (checked) {
+            this.clearHearingUpdatedMessage();
             const csoUsername = this.csoAllocatedMenu?.selectedLabel;
             // safe to cast to string
             const csoId = this.csoAllocatedMenu?.selectedItems as string;
@@ -223,5 +226,13 @@ export class AllocateHearingsComponent implements OnInit {
 
     getConcurrentCountText(count: number): string {
         return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
+    }
+
+    hasHearingBeenUpdated(): boolean {
+        return this.message === this.HEARING_HAVE_BEEN_UPDATED;
+    }
+
+    clearHearingUpdatedMessage() {
+        return this.hasHearingBeenUpdated() ? this.clearMessage() : null;
     }
 }
