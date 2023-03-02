@@ -5138,6 +5138,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     allocated_cso?: string | undefined;
     /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
+    has_non_availability_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
 
@@ -5158,6 +5159,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
             this.case_type = _data['case_type'];
             this.allocated_cso = _data['allocated_cso'];
             this.has_work_hours_clash = _data['has_work_hours_clash'];
+            this.has_non_availability_clash = _data['has_non_availability_clash'];
             this.concurrent_hearings_count = _data['concurrent_hearings_count'];
         }
     }
@@ -5179,6 +5181,7 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
         data['allocated_cso'] = this.allocated_cso;
         data['has_work_hours_clash'] = this.has_work_hours_clash;
         data['concurrent_hearings_count'] = this.concurrent_hearings_count;
+        data['has_non_availability_clash'] = this.has_non_availability_clash;
         return data;
     }
 }
@@ -5201,6 +5204,7 @@ export interface IAllocationHearingsResponse {
     has_work_hours_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
+    has_non_availability_clash?: boolean | undefined;
 }
 
 /** Configuration to initialise the UI application */

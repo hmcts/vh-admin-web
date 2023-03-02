@@ -1,7 +1,12 @@
 @import 'govuk-frontend/govuk/base';
-@import 'govuk-frontend/govuk/all';
-@import '@hmcts/frontend/all';
 
 .red-button {
   background-color: govuk-colour('red');
+}
+
+fa-icon {
+  cursor: pointer;
+  &.red-trash {
+    color: govuk-colour('red');
+  }
 }
