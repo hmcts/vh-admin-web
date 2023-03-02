@@ -19,8 +19,7 @@
     <PackageReference Include="NotificationApi.Client" Version="1.41.9" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="TestApi.Client" Version="1.31.10" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.23.2" />
-    <PackageReference Include="VideoApi.Client" Version="1.41.19" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.24.0" />
   </ItemGroup>
 
   <ItemGroup>
