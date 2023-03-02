@@ -69,6 +69,7 @@
             appTooltip
             [text]="'Delete'"
             [colour]="'red'"
+            (click)="deleteUser(user)
           ></fa-icon>
         </td>
       </tr>
@@ -82,4 +83,11 @@
       ></app-justice-user-form>
     </div>
   </div>
+  <app-confirm-delete-justice-user-popup
+    *ngIf="displayDeleteUserPopup"
+    (cancel)="handleCancelDeleteUser()"
+    (deleteSuccessful)="onJusticeUserSuccessfulDelete()"
+    userId="{{ userToDelete.id }}"
+    username="{{ userToDelete.username }}"
+  ></app-confirm-delete-justice-user-popup>
 </details>
