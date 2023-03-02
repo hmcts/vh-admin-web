@@ -277,7 +277,7 @@ extends:
   parameters:
     netVersion: 6.x
     nodeVersion: "18.10.0"
-    useNugetConfig: false
+    useNugetConfig: true
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
     nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
@@ -286,7 +286,7 @@ extends:
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
       netVersion: 6.x
-      useNugetConfig: false
+      useNugetConfig: true
       nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
       nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
