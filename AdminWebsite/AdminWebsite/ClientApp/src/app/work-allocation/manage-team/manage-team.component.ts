@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { faCircleExclamation, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
-import { isAValidEmail } from 'src/app/common/custom-validations/email-validator';
 import { Constants } from 'src/app/common/constants';
 
 @Component({
@@ -18,6 +17,8 @@ export class ManageTeamComponent {
     displayMessage = false;
     faExclamation = faCircleExclamation;
     faError = faExclamationCircle;
+    editUserIcon = faUserPen;
+    deleteUserIcon = faTrash;
     message: string;
     users: JusticeUserResponse[];
     form: FormGroup<SearchForExistingJusticeUserForm>;
@@ -60,10 +61,7 @@ export class ManageTeamComponent {
             this.displayMessage = true;
             this.isAnErrorMessage = true;
             this.message = Constants.ManageJusticeUsers.EmptySearchResults;
-
-            if (isAValidEmail(this.form.value.inputSearch)) {
-                this.displayAddButton = true;
-            }
+            this.displayAddButton = true;
         }
     }
 

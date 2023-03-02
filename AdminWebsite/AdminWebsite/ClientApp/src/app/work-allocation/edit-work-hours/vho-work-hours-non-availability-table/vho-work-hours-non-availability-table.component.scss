@@ -1,4 +1,6 @@
-﻿#filter-btn {
+﻿@import 'govuk-frontend/govuk/base';
+
+#filter-btn {
   margin-top: 37px;
 }
 
@@ -6,9 +8,10 @@
   vertical-align: middle;
   fa-icon {
     cursor: pointer;
-    color: #ff0000;
+    color: govuk-colour('red');
   }
 }
+
 .pointer {
   cursor: pointer;
 }
