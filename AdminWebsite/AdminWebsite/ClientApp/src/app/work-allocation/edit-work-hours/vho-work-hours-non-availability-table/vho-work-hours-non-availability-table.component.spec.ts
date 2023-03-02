@@ -924,7 +924,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.nonWorkHours.length).toBe(3);
             expect(component.showSaveConfirmation).toBe(true);
         });
-
     });
 
     describe('displaying messages for results', () => {
