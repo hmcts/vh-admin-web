@@ -1,8 +1,7 @@
 <div class="popup-overlay">
   <div class="popup popup-small">
-<!-- <div class="vh-popup-overlay">
-  <div class="vh-popup vh-popup-xsmall vh-box"> -->
-    <p class="govuk-body">You have selected to delete user:
+    <p class="govuk-body">
+      You have selected to delete user:
       <br />
       <a class="vhlink remove-float" href="mailto:{{ username }}">{{ username }}</a>
     </p>
@@ -20,7 +19,14 @@
         </div>
       </div>
       <div class="govuk-button-group aligned-centre-flex" *ngIf="!showSpinner">
-        <button id="btnConfirm" class="govuk-button vh-mr" type="submit" data-module="govuk-button" (click)="confirmDeleteJusticeUser()" data-prevent-double-click="true">
+        <button
+          id="btnConfirm"
+          class="govuk-button vh-mr"
+          type="submit"
+          data-module="govuk-button"
+          (click)="confirmDeleteJusticeUser()"
+          data-prevent-double-click="true"
+        >
           Yes, continue
         </button>
         <button
@@ -37,4 +43,5 @@
         <fa-icon [icon]="errorIcon"></fa-icon><span class="govuk-visually-hidden">Error:</span> {{ failedDeleteMessage }}
       </p>
     </div>
+  </div>
 </div>

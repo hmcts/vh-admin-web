@@ -19,8 +19,7 @@ export class ConfirmDeleteJusticeUserPopupComponent {
     @Input() userId: string;
     @Input() username: string;
 
-    constructor(private justiceUserService: JusticeUsersService) {
-    }
+    constructor(private justiceUserService: JusticeUsersService) {}
 
     confirmDeleteJusticeUser() {
         this.failedDeleteMessage = null;
