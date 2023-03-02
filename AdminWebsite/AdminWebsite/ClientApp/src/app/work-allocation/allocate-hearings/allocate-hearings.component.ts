@@ -8,6 +8,7 @@ import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -43,7 +44,6 @@ export class AllocateHearingsComponent implements OnInit {
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
-    readonly HEARING_HAVE_BEEN_UPDATED = 'Hearings have been updated.';
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -207,7 +207,7 @@ export class AllocateHearingsComponent implements OnInit {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         this.csoAllocatedMenu.clear();
-        this.updateMessageAndDisplay(this.HEARING_HAVE_BEEN_UPDATED);
+        this.updateMessageAndDisplay(Constants.AllocateHearings.ConfirmationMessage);
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
@@ -229,7 +229,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     hasHearingBeenUpdated(): boolean {
-        return this.message === this.HEARING_HAVE_BEEN_UPDATED;
+        return this.message === Constants.AllocateHearings.ConfirmationMessage;
     }
 
     clearHearingUpdatedMessage() {

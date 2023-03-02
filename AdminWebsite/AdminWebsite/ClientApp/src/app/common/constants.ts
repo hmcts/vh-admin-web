@@ -1,4 +1,7 @@
 export const Constants = {
+    AllocateHearings: {
+        ConfirmationMessage: 'Hearings have been updated.'
+    },
     BookHearingTitle: 'Book a video hearing',
     PleaseSelect: 'Please select',
     Representative: 'Representative',

@@ -14,6 +14,7 @@ import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
+import { Constants } from 'src/app/common/constants';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -456,12 +457,9 @@ describe('AllocateHearingsComponent', () => {
     });
 
     describe('Clear Hearing Updated Message', () => {
-        let HEARING_HAVE_BEEN_UPDATED: string;
-        let OTHER_MESSAGES: string;
-        beforeAll(() => {
-            HEARING_HAVE_BEEN_UPDATED = 'Hearings have been updated.';
-            OTHER_MESSAGES = 'Other messages';
-        });
+        const HEARING_HAVE_BEEN_UPDATED: string = Constants.AllocateHearings.ConfirmationMessage;
+        const OTHER_MESSAGES: string = 'Other messages';
+
         it('should return true when message is equal to "Hearings have been updated." ', () => {
             // Given
             component.message = HEARING_HAVE_BEEN_UPDATED;
