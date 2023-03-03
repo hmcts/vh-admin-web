@@ -939,7 +939,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.isFiltered).toBe(true);
             component.result = testData;
         });
-
     });
 
     describe('displaying messages for results', () => {
