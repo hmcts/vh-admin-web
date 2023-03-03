@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
-import { AddJusticeUserRequest, BHClient, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { filter, map, mergeMap, share, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
 
 @Injectable({
@@ -9,8 +9,44 @@ import { cleanQuery } from '../common/helpers/api-helper';
 })
 export class JusticeUsersService {
     private cache$: Observable<JusticeUserResponse[]>;
+    private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
+    private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
+
+    users$ = this.refresh$.pipe(
+        mergeMap(() => this.requestJusticeUsers(null)),
+        shareReplay(1),
+        switchMap(users =>
+            this.searchTerm$.pipe(
+                map(term => {
+                    return this.applyFilter(term, users);
+                })
+            )
+        ),
+        tap(x => console.log(`Search results`, x))
+    );
 
     constructor(private apiClient: BHClient) {}
+
+    // just for testing -- remove
+    // triggers an emission on users$
+    refresh() {
+        this.refresh$.next();
+    }
+
+    // push a search term into the stream
+    search(searchTerm: string) {
+        console.log(`Searching with ${searchTerm}`);
+        this.searchTerm$.next(searchTerm);
+    }
+
+    // more complex searching required here
+    applyFilter(searchTerm: string, users: JusticeUserResponse[]): JusticeUserResponse[] {
+        if (!searchTerm) {
+            return users;
+        }
+        return users.filter(user => user.first_name === searchTerm);
+    }
+
     retrieveJusticeUserAccounts() {
         if (!this.cache$) {
             this.cache$ = this.requestJusticeUsers(null).pipe(shareReplay(1));
@@ -43,6 +79,15 @@ export class JusticeUsersService {
             telephone: telephone,
             role: role
         });
-        return this.apiClient.addNewJusticeUser(request);
+        return this.apiClient.addNewJusticeUser(request).pipe(tap(() => this.refresh$.next()));
+    }
+
+    editJusticeUser(id: string, username: string, role: JusticeUserRole) {
+        const request = new EditJusticeUserRequest({
+            id,
+            username,
+            role
+        });
+        return this.apiClient.editJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 }
