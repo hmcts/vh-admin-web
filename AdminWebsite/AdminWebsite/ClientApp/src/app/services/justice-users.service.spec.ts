@@ -9,7 +9,7 @@ describe('JusticeUsersService', () => {
     let clientApiSpy: jasmine.SpyObj<BHClient>;
 
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser']);
+        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser', 'deleteJusticeUser']);
 
         TestBed.configureTestingModule({ providers: [{ provide: BHClient, useValue: clientApiSpy }] });
         service = TestBed.inject(JusticeUsersService);
@@ -114,4 +114,13 @@ describe('JusticeUsersService', () => {
             expect(clientApiSpy.addNewJusticeUser).toHaveBeenCalledWith(request);
         }));
     });
+
+    describe('deleteJusticeUser', () => {
+        it('should call the api to delete the user', () => {
+            clientApiSpy.deleteJusticeUser.and.returnValue(of(''));
+            const id = '123';
+            service.deleteJusticeUser(id).subscribe();
+            expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
+        });
+    })
 });
