@@ -157,7 +157,7 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.9, )",
+        "requested": "[1.43.3, )",
         "resolved": "1.43.3",
         "contentHash": "6BLg9Al5oN8/+fgsGuH7jzbTGMPsD2t/6riV6mpSmcuH2Y2aglr8+wQh488KRA4gDVqHVuTQNkFcxCu3E/+MLA==",
         "dependencies": {
