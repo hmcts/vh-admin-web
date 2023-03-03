@@ -85,8 +85,8 @@
   </div>
   <app-confirm-delete-justice-user-popup
     *ngIf="displayDeleteUserPopup"
-    (cancel)="handleCancelDeleteUser()"
-    (deleteSuccessful)="onJusticeUserSuccessfulDelete()"
+    (cancelEvent)="handleCancelDeleteUser()"
+    (deleteSuccessfulEvent)="onJusticeUserSuccessfulDelete()"
     userId="{{ userToDelete.id }}"
     username="{{ userToDelete.username }}"
   ></app-confirm-delete-justice-user-popup>

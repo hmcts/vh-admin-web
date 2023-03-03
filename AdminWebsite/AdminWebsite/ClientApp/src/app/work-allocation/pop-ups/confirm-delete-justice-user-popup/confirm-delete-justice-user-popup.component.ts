@@ -12,16 +12,15 @@ export class ConfirmDeleteJusticeUserPopupComponent {
     showSpinner = false;
     failedDeleteMessage: string;
 
-    @Output() confirm = new EventEmitter();
-    @Output() cancel = new EventEmitter();
-    @Output() deleteSuccessful = new EventEmitter();
+    @Output() cancelEvent = new EventEmitter();
+    @Output() deleteSuccessfulEvent = new EventEmitter();
 
     @Input() userId: string;
     @Input() username: string;
 
     constructor(private justiceUserService: JusticeUsersService) {}
 
-    confirmDeleteJusticeUser() {
+    onConfirmDelete() {
         this.failedDeleteMessage = null;
         this.showSpinner = true;
         this.justiceUserService.deleteJusticeUser(this.userId).subscribe({
@@ -30,13 +29,13 @@ export class ConfirmDeleteJusticeUserPopupComponent {
         });
     }
 
-    cancelDeleteJusticeUser() {
-        this.cancel.emit();
+    onCancel() {
+        this.cancelEvent.emit();
     }
 
     onDeleteSucceeded() {
         this.showSpinner = false;
-        this.deleteSuccessful.emit();
+        this.deleteSuccessfulEvent.emit();
     }
 
     onDeleteFailed() {

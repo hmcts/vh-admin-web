@@ -24,7 +24,7 @@
           class="govuk-button vh-mr"
           type="submit"
           data-module="govuk-button"
-          (click)="confirmDeleteJusticeUser()"
+          (click)="onConfirmDelete()"
           data-prevent-double-click="true"
         >
           Yes, proceed
@@ -34,7 +34,7 @@
           class="govuk-button govuk-button--secondary"
           type="submit"
           data-module="govuk-button"
-          (click)="cancelDeleteJusticeUser()"
+          (click)="onCancel()"
         >
           Cancel
         </button>
