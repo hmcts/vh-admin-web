@@ -122,5 +122,5 @@ describe('JusticeUsersService', () => {
             service.deleteJusticeUser(id).subscribe();
             expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
         });
-    })
+    });
 });
