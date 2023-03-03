@@ -6,7 +6,7 @@
     <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.username.invalid }">
       <label class="govuk-label" for="username"> Username </label>
       <p *ngIf="form.controls.username.invalid" id="username-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> Enter the username
+        <span class="govuk-visually-hidden">Error:</span> Enter a valid username
       </p>
       <input
         class="govuk-input"
@@ -21,7 +21,7 @@
     <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.firstName.invalid }">
       <label class="govuk-label" for="firstName"> First name </label>
       <p *ngIf="form.controls.firstName.invalid" id="firstName-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> Enter the first name
+        <span class="govuk-visually-hidden">Error:</span> Enter a valid first name
       </p>
       <input
         class="govuk-input"
@@ -36,7 +36,7 @@
     <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.lastName.invalid }">
       <label class="govuk-label" for="lastName"> Last name </label>
       <p *ngIf="form.controls.lastName.invalid" id="lastName-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> Enter the last name
+        <span class="govuk-visually-hidden">Error:</span> Enter a valid last name
       </p>
       <input
         class="govuk-input"
@@ -48,19 +48,19 @@
         [ngClass]="{ 'govuk-input--error': form.controls.lastName.invalid }"
       />
     </div>
-    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.contactTelephone.invalid }">
-      <label class="govuk-label" for="contactTelephone"> Contact telephone </label>
-      <p *ngIf="form.controls.contactTelephone.invalid" id="contactTelephone-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> Enter the contact telephone
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.telephone.invalid }">
+      <label class="govuk-label" for="telephone"> Contact telephone </label>
+      <p *ngIf="form.controls.telephone.invalid" id="telephone-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Enter a valid contact telephone
       </p>
       <input
         class="govuk-input"
-        formControlName="contactTelephone"
-        id="contactTelephone"
-        name="contactTelephone"
-        type="text"
+        formControlName="telephone"
+        id="telephone"
+        name="telephone"
+        type="number"
         autocomplete="tel"
-        [ngClass]="{ 'govuk-input--error': form.controls.contactTelephone.invalid }"
+        [ngClass]="{ 'govuk-input--error': form.controls.telephone.invalid }"
       />
     </div>
     <div class="govuk-form-group">

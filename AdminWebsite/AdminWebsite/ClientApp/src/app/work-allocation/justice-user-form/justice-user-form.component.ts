@@ -29,7 +29,7 @@ export class JusticeUserFormComponent {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            contactTelephone: value.telephone,
+            telephone: value.telephone,
             role: this.availableRoles.Vho
         });
     }
@@ -39,10 +39,10 @@ export class JusticeUserFormComponent {
 
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
-            username: new FormControl('', [Validators.email]),
-            contactTelephone: new FormControl(''),
-            firstName: new FormControl(''),
-            lastName: new FormControl(''),
+            username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
+            telephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
+            firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
+            lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             role: new FormControl(this.availableRoles.Vho)
         });
     }
@@ -55,7 +55,7 @@ export class JusticeUserFormComponent {
                 this.form.controls.username.value,
                 this.form.controls.firstName.value,
                 this.form.controls.lastName.value,
-                this.form.controls.contactTelephone.value,
+                this.form.controls.telephone.value,
                 this.form.value.role
             )
             .subscribe({
@@ -99,6 +99,6 @@ interface JusticeUserForm {
     username: FormControl<string>;
     firstName: FormControl<string>;
     lastName: FormControl<string>;
-    contactTelephone: FormControl<string>;
+    telephone: FormControl<string>;
     role: FormControl<JusticeUserRole>;
 }
