@@ -8,6 +8,7 @@ import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -135,6 +136,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {
+        this.clearHearingUpdatedMessage();
         if (justiceUserId) {
             const username = this.csoAllocatedMenu?.selectedLabel;
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
@@ -178,7 +180,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
-        this.clearMessage();
+        this.clearHearingUpdatedMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
@@ -205,11 +207,12 @@ export class AllocateHearingsComponent implements OnInit {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         this.csoAllocatedMenu.clear();
-        this.updateMessageAndDisplay('Hearings have been updated.');
+        this.updateMessageAndDisplay(Constants.AllocateHearings.ConfirmationMessage);
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
         if (checked) {
+            this.clearHearingUpdatedMessage();
             const csoUsername = this.csoAllocatedMenu?.selectedLabel;
             // safe to cast to string
             const csoId = this.csoAllocatedMenu?.selectedItems as string;
@@ -223,5 +226,13 @@ export class AllocateHearingsComponent implements OnInit {
 
     getConcurrentCountText(count: number): string {
         return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
+    }
+
+    hasHearingBeenUpdated(): boolean {
+        return this.message === Constants.AllocateHearings.ConfirmationMessage;
+    }
+
+    clearHearingUpdatedMessage() {
+        return this.hasHearingBeenUpdated() ? this.clearMessage() : null;
     }
 }
