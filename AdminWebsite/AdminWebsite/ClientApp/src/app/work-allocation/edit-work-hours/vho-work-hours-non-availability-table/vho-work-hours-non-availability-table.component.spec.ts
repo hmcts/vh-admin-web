@@ -924,6 +924,22 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.nonWorkHours.length).toBe(3);
             expect(component.showSaveConfirmation).toBe(true);
         });
+
+        it('User filter dates and save changes', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            component.result = testData;
+            component.switchToEditMode();
+            component.filterForm.setValue({ startDate: '2023/01/01', endDate: '2023/01/05' });
+            // act
+            component.filterByDate();
+            component.nonWorkHours[2].start_time = '09:01:00';
+            component.saveNonWorkingHours();
+            // assert
+            expect(component.isFiltered).toBe(true);
+            component.result = testData;
+        });
+
     });
 
     describe('displaying messages for results', () => {
