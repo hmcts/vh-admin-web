@@ -24,8 +24,8 @@
       </div>
     </div>
   </div>
-  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="errorMessage ? 'vh-text-color-red' : ''">
-    <fa-icon [icon]="errorMessage ? faError : faExclamation"></fa-icon>
+  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
+    <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
     {{ message }}
   </div>
 
@@ -35,7 +35,7 @@
         <th scope="col" class="govuk-table__header">Username</th>
         <th scope="col" class="govuk-table__header">First name</th>
         <th scope="col" class="govuk-table__header">Last name</th>
-        <th scope="col" class="govuk-table__header">Contact email</th>
+        <th scope="col" class="govuk-table__header">Contact telephone</th>
         <th scope="col" class="govuk-table__header">Role</th>
         <th scope="col" class="govuk-table__header action-cell"></th>
         <th scope="col" class="govuk-table__header action-cell"></th>
@@ -53,16 +53,23 @@
           {{ user.lastname }}
         </td>
         <td class="govuk-table__cell">
-          {{ user.contact_email }}
+          {{ user.telephone }}
         </td>
         <td class="govuk-table__cell">
           {{ user.user_role_name }}
         </td>
         <td class="govuk-table__cell">
-          <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" id="editButton_{{ user.id }}">Edit</button>
+          <fa-icon id="editButton_{{ user.id }}" [icon]="editUserIcon" appTooltip [text]="'Edit'" [colour]="'blue'"></fa-icon>
         </td>
         <td class="govuk-table__cell">
-          <button class="govuk-button govuk-!-margin-right-6 red-button" data-module="govuk-button">Delete</button>
+          <fa-icon
+            class="red-trash"
+            id="deleteButton_{{ user.id }}"
+            [icon]="deleteUserIcon"
+            appTooltip
+            [text]="'Delete'"
+            [colour]="'red'"
+          ></fa-icon>
         </td>
       </tr>
     </tbody>
