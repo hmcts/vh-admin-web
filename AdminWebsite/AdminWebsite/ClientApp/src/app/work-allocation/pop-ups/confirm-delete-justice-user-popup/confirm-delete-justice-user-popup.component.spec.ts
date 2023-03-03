@@ -42,7 +42,7 @@ describe('ConfirmDeleteJusticeUserPopupComponent', () => {
 
         it('should show delete failed message on failed delete', () => {
             // Arrange
-            justiceUsersServiceSpy.deleteJusticeUser.and.returnValue(throwError('error'))
+            justiceUsersServiceSpy.deleteJusticeUser.and.returnValue(throwError('error'));
 
             // Act
             component.onConfirmDelete();
@@ -50,7 +50,7 @@ describe('ConfirmDeleteJusticeUserPopupComponent', () => {
             // Assert
             expect(component.showSpinner).toBeFalsy();
             expect(component.failedDeleteMessage).toBe(Constants.Error.DeleteJusticeUser.DeleteFailure);
-        })
+        });
     });
 
     describe('onCancel', () => {

@@ -91,12 +91,12 @@ export class ManageTeamComponent {
         this.users.push(newUser);
     }
 
-    deleteUser(user: JusticeUserResponse) {
+    onDeleteJusticeUser(user: JusticeUserResponse) {
         this.userToDelete = user;
         this.displayDeleteUserPopup = true;
     }
 
-    handleCancelDeleteUser() {
+    onCancelDeleteJusticeUser() {
         this.userToDelete = null;
         this.displayDeleteUserPopup = false;
     }
