@@ -29,7 +29,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         {
             _mocker = AutoMock.GetLoose();
             _sut = SetupControllerWithClaims();
-        }
+        }       
 
         private JusticeUsersController SetupControllerWithClaims()
         {
@@ -57,7 +57,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 .With(x => x.Id, request.Id)
                 .Build();
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.EditAJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ReturnsAsync(expectedResponse);
 
             // act
@@ -65,7 +65,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 
             // assert
             bookingsApiClient.Verify(x =>
-                x.EditAJusticeUserAsync(It.Is<EditJusticeUserRequest>(r => r.Id == expectedResponse.Id)), Times.Once());
+                x.EditJusticeUserAsync(It.Is<EditJusticeUserRequest>(r => r.Id == expectedResponse.Id)), Times.Once());
             result.Should().BeOfType<OkObjectResult>().And.Subject.As<OkObjectResult>().Value.Should()
                 .Be(expectedResponse);
         }
@@ -84,7 +84,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.BadRequest,
                 "Please provide a valid conference Id", null, validationProblemDetails, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.EditAJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
             var request = new EditJusticeUserRequest();
@@ -106,7 +106,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.InternalServerError,
                 "Server Error", null, errorMessage, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.EditAJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
             var request = new EditJusticeUserRequest();

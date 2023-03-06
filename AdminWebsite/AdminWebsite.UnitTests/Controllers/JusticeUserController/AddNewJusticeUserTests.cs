@@ -58,7 +58,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 .With(x => x.Id, Guid.NewGuid())
                 .Build();
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddAJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ReturnsAsync(expectedResponse);
 
             // act
@@ -66,7 +66,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 
             // assert
             bookingsApiClient.Verify(x =>
-                x.AddAJusticeUserAsync(It.Is<AddJusticeUserRequest>(r => r.CreatedBy == _username)), Times.Once());
+                x.AddJusticeUserAsync(It.Is<AddJusticeUserRequest>(r => r.CreatedBy == _username)), Times.Once());
             result.Should().BeOfType<CreatedResult>().And.Subject.As<CreatedResult>().Value.Should()
                 .Be(expectedResponse);
         }
@@ -85,7 +85,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.BadRequest,
                 "Please provide a valid conference Id", null, validationProblemDetails, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddAJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
             var request = new AddJusticeUserRequest();
@@ -106,7 +106,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             var apiException = new BookingsApiException<string>("Conflict", (int) HttpStatusCode.Conflict,
                 "Conflict", null, errorMessage, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddAJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
             var request = new AddJusticeUserRequest();
@@ -128,7 +128,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.InternalServerError,
                 "Server Error", null, errorMessage, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddAJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
             var request = new AddJusticeUserRequest();
