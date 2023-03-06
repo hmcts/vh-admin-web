@@ -31,6 +31,8 @@ export class ManageTeamComponent {
     showForm = false;
     justiceUser: JusticeUserResponse;
     userFormMode: JusticeUserFormMode = 'add';
+    displayDeleteUserPopup = false;
+    userToDelete: JusticeUserResponse;
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
@@ -110,6 +112,29 @@ export class ManageTeamComponent {
         this.justiceUser = user;
         this.userFormMode = 'edit';
         this.displayForm();
+    }
+
+    onDeleteJusticeUser(user: JusticeUserResponse) {
+        this.userToDelete = user;
+        this.displayDeleteUserPopup = true;
+    }
+
+    onCancelDeleteJusticeUser() {
+        this.userToDelete = null;
+        this.displayDeleteUserPopup = false;
+    }
+
+    onJusticeUserSuccessfulDelete() {
+        this.displayDeleteUserPopup = false;
+        this.message = Constants.ManageJusticeUsers.UserDeleted;
+        this.displayMessage = true;
+        this.removeJusticeUser();
+    }
+
+    removeJusticeUser() {
+        const id = this.users.indexOf(this.userToDelete);
+        this.users.splice(id, 1);
+        this.userToDelete = null;
     }
 }
 

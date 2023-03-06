@@ -2279,21 +2279,20 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional)
-     * @return Success
+     * Delete a justice user
+     * @param id The justice user id
+     * @return No Content
      */
-    editJusticeUser(body: EditJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
-        let url_ = this.baseUrl + '/api/justice-users';
+    deleteJusticeUser(id: string): Observable<string> {
+        let url_ = this.baseUrl + '/api/justice-users/{id}';
+        if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace('{id}', encodeURIComponent('' + id));
         url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
-
         let options_: any = {
-            body: content_,
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
                 Accept: 'application/json'
             })
         };
@@ -2301,28 +2300,28 @@ export class BHClient extends ApiClientBase {
         return _observableFrom(this.transformOptions(options_))
             .pipe(
                 _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('patch', url_, transformedOptions_);
+                    return this.http.request('delete', url_, transformedOptions_);
                 })
             )
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processEditJusticeUser(response_);
+                    return this.processDeleteJusticeUser(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processEditJusticeUser(response_ as any);
+                            return this.processDeleteJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                            return (_observableThrow(e) as any) as Observable<string>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                    } else return (_observableThrow(response_) as any) as Observable<string>;
                 })
             );
     }
 
-    protected processEditJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
+    protected processDeleteJusticeUser(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -2346,22 +2345,14 @@ export class BHClient extends ApiClientBase {
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
-        } else if (status === 200) {
+        } else if (status === 204) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = JusticeUserResponse.fromJS(resultData200);
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap(_responseText => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ValidationProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                    let result204: any = null;
+                    let resultData204 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result204 = resultData204 !== undefined ? resultData204 : <any>null;
+
+                    return _observableOf(result204);
                 })
             );
         } else if (status === 404) {
@@ -2372,6 +2363,15 @@ export class BHClient extends ApiClientBase {
                     result404 = resultData404 !== undefined ? resultData404 : <any>null;
 
                     return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
         } else if (status === 401) {
@@ -2387,7 +2387,7 @@ export class BHClient extends ApiClientBase {
                 })
             );
         }
-        return _observableOf<JusticeUserResponse>(null as any);
+        return _observableOf<string>(null as any);
     }
 
     /**

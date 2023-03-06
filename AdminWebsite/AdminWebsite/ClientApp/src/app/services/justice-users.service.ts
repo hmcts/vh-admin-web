@@ -54,4 +54,8 @@ export class JusticeUsersService {
         });
         return this.apiClient.editJusticeUser(request);
     }
+
+    deleteJusticeUser(id: string) {
+        return this.apiClient.deleteJusticeUser(id);
+    }
 }

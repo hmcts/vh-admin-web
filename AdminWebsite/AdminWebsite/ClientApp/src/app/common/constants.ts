@@ -45,6 +45,9 @@ export const Constants = {
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',
             SaveErrorDuplicateUser: 'A justice user with the same name already exists'
+        },
+        DeleteJusticeUser: {
+            DeleteFailure: 'There was an unexpected error. Please try again'
         }
     },
     Contact: {
@@ -68,7 +71,8 @@ export const Constants = {
         EmptySearchResults:
             'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.',
         NewUserAdded: 'Changes saved successfully. You can now add working hours and non-availability hours for this user.',
-        UserEdited: 'Changes saved successfully.'
+        UserEdited: 'Changes saved successfully.',
+        UserDeleted: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
 };
