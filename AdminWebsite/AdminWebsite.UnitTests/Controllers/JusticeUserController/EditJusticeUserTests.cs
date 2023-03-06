@@ -22,16 +22,15 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
     {
         private JusticeUsersController _sut;
         private AutoMock _mocker;
-        private readonly string _username = "test.vho@hmcts.net";
 
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _sut = SetupControllerWithClaims();
+            _sut = SetupController();
         }       
 
-        private JusticeUsersController SetupControllerWithClaims()
+        private JusticeUsersController SetupController()
         {
             var controller = _mocker.Create<JusticeUsersController>();
             return controller;
