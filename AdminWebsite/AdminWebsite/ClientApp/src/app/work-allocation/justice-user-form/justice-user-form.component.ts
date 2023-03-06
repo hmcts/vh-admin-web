@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { Constants } from 'src/app/common/constants';
@@ -6,11 +6,13 @@ import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationP
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
 
+export type JusticeUserFormMode = 'add' | 'edit';
+
 @Component({
     selector: 'app-justice-user-form',
     templateUrl: './justice-user-form.component.html'
 })
-export class JusticeUserFormComponent {
+export class JusticeUserFormComponent implements OnChanges {
     errorIcon = faExclamationCircle;
     showSpinner = false;
     failedSaveMessage: string;
@@ -34,6 +36,8 @@ export class JusticeUserFormComponent {
         });
     }
 
+    @Input() mode: JusticeUserFormMode = 'add';
+
     @Output() saveSuccessfulEvent = new EventEmitter<JusticeUserResponse>();
     @Output() cancelFormEvent = new EventEmitter();
 
@@ -47,21 +51,37 @@ export class JusticeUserFormComponent {
         });
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        const mode = changes['mode'];
+        if (mode.currentValue === 'edit') {
+            ['firstName', 'lastName', 'username', 'contactTelephone'].forEach(field => this.form.controls[field].disable());
+        }
+    }
+
     onSave() {
         this.failedSaveMessage = null;
         this.showSpinner = true;
-        this.justiceUserService
-            .addNewJusticeUser(
-                this.form.controls.username.value,
-                this.form.controls.firstName.value,
-                this.form.controls.lastName.value,
-                this.form.controls.contactTelephone.value,
-                this.form.value.role
-            )
-            .subscribe({
-                next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-                error: (error: string | BookHearingException) => this.onSaveFailed(error)
-            });
+        if (this.mode === 'add') {
+            this.justiceUserService
+                .addNewJusticeUser(
+                    this.form.controls.username.value,
+                    this.form.controls.firstName.value,
+                    this.form.controls.lastName.value,
+                    this.form.controls.contactTelephone.value,
+                    this.form.value.role
+                )
+                .subscribe({
+                    next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
+                    error: (error: string | BookHearingException) => this.onSaveFailed(error)
+                });
+        } else if (this.mode === 'edit') {
+            this.justiceUserService
+                .editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, this.form.value.role)
+                .subscribe({
+                    next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
+                    error: (error: string | BookHearingException) => this.onSaveFailed(error)
+                });
+        }
     }
 
     onCancel() {
