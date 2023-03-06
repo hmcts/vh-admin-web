@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Client;
@@ -55,6 +56,43 @@ namespace AdminWebsite.Controllers
                 }
 
                 _logger.LogError(e, "Unexpected error trying to add a new justice user");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Delete a justice user
+        /// </summary>
+        /// <param name="id">The justice user id</param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        [SwaggerOperation(OperationId = "DeleteJusticeUser")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteJusticeUser(Guid id)
+        {
+            try
+            {
+                await _bookingsApiClient.DeleteJusticeUserAsync(id);
+
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+                
+                _logger.LogError(e, "Unexpected error trying to delete justice user");
                 throw;
             }
         }

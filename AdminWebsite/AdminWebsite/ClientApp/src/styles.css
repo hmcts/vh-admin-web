@@ -93,7 +93,7 @@
 }
 
 .vh-text-color-red {
-    color: red;
+    color: red !important;
 }
 
 .vh-btn-cancel {
@@ -313,4 +313,12 @@ p {
 
 .aligned-centre {
     text-align: center;
+}
+
+.aligned-centre-flex {
+    justify-content: center;
+}
+
+.remove-float {
+    float: none !important;
 }
