@@ -62,25 +62,9 @@ export class JusticeUserFormComponent implements OnChanges {
         this.failedSaveMessage = null;
         this.showSpinner = true;
         if (this.mode === 'add') {
-            this.justiceUserService
-                .addNewJusticeUser(
-                    this.form.controls.username.value,
-                    this.form.controls.firstName.value,
-                    this.form.controls.lastName.value,
-                    this.form.controls.contactTelephone.value,
-                    this.form.value.role
-                )
-                .subscribe({
-                    next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-                    error: (error: string | BookHearingException) => this.onSaveFailed(error)
-                });
+            this.addNewUser();
         } else if (this.mode === 'edit') {
-            this.justiceUserService
-                .editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, this.form.value.role)
-                .subscribe({
-                    next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-                    error: (error: string | BookHearingException) => this.onSaveFailed(error)
-                });
+            this.updateExistingUser();
         }
     }
 
@@ -112,6 +96,28 @@ export class JusticeUserFormComponent implements OnChanges {
             message = onSaveFailedError.title;
         }
         this.failedSaveMessage = message;
+    }
+
+    private addNewUser() {
+        this.justiceUserService
+            .addNewJusticeUser(
+                this.form.controls.username.value,
+                this.form.controls.firstName.value,
+                this.form.controls.lastName.value,
+                this.form.controls.contactTelephone.value,
+                this.form.value.role
+            )
+            .subscribe({
+                next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
+                error: (error: string | BookHearingException) => this.onSaveFailed(error)
+            });
+    }
+
+    private updateExistingUser() {
+        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, this.form.value.role).subscribe({
+            next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
+            error: (error: string | BookHearingException) => this.onSaveFailed(error)
+        });
     }
 }
 
