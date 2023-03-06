@@ -39,7 +39,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        //if the filter by date form is not filtered, reset the start and end dates
         if (!this.isFiltered) {
             this.resetStartDateAndEndDate();
         }
@@ -48,7 +47,6 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
-            //if the form has has already been filtered, run-run the filter again
             if (this.isFiltered) {
                 this.filterByDate();
             }
@@ -425,7 +423,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 );
             }
             this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
-            this.isFiltered = true; //set filtered to true
+            this.isFiltered = true; 
         } else {
             this.showSaveConfirmation = true;
         }
