@@ -83,13 +83,13 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode is (int)HttpStatusCode.NotFound)
                 {
                     var typedException = e as BookingsApiException<string>;
-                    return NotFound(typedException.Result);
+                    return NotFound(typedException!.Result);
                 }
 
                 if (e.StatusCode is (int)HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
-                    return ValidationProblem(typedException.Result);
+                    return ValidationProblem(typedException!.Result);
                 }
                 
                 _logger.LogError(e, "Unexpected error trying to delete justice user");
