@@ -33,18 +33,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 
         private JusticeUsersController SetupControllerWithClaims()
         {
-            var cp = new ClaimsPrincipalBuilder().WithRole(AppRoles.VhOfficerRole)
-                .WithUsername(_username).Build();
-            var context = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = cp
-                }
-            };
-
             var controller = _mocker.Create<JusticeUsersController>();
-            controller.ControllerContext = context;
             return controller;
         }
 
