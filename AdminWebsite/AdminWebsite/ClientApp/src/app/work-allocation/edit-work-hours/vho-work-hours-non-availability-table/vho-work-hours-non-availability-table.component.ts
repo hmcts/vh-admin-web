@@ -96,7 +96,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     isEditing = false;
     isSaving = false;
-    isFiltered = false; //form is not filtered by default
+    isFiltered = false;
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
