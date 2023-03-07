@@ -134,7 +134,7 @@ export class AllocateHearingModel {
             originalHearing.allocated_cso,
             originalHearing.has_work_hours_clash,
             originalHearing.concurrent_hearings_count,
-            false
+            originalHearing.has_non_availability_clash
         );
     }
 

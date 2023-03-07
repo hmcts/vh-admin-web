@@ -45,4 +45,8 @@ export class JusticeUsersService {
         });
         return this.apiClient.addNewJusticeUser(request);
     }
+
+    deleteJusticeUser(id: string) {
+        return this.apiClient.deleteJusticeUser(id);
+    }
 }

@@ -14,6 +14,7 @@ import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
+import { Constants } from 'src/app/common/constants';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -358,7 +359,7 @@ describe('AllocateHearingsComponent', () => {
             });
 
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
-            const spy = spyOn(component, 'clearMessage');
+            const spy = spyOn(component, 'clearHearingUpdatedMessage');
 
             // When
             component.selectHearing(true, hearingId);
@@ -452,6 +453,46 @@ describe('AllocateHearingsComponent', () => {
             const debugElement = fixture.debugElement;
             const clockIcon = debugElement.query(By.css('#clockIcon'))?.nativeElement;
             expect(clockIcon).toBeFalsy();
+        });
+    });
+
+    describe('Clear Hearing Updated Message', () => {
+        const HEARING_HAVE_BEEN_UPDATED = Constants.AllocateHearings.ConfirmationMessage;
+        const OTHER_MESSAGES = 'Other messages';
+
+        it('should return true when message is equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = HEARING_HAVE_BEEN_UPDATED;
+            // When
+            const res = component.hasHearingBeenUpdated();
+            // Then
+            expect(res).toBe(true);
+        });
+        it('should return false when message is not equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = OTHER_MESSAGES;
+            // When
+            const res = component.hasHearingBeenUpdated();
+            // Then
+            expect(res).toBe(false);
+        });
+        it('should clear the message when message is equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = HEARING_HAVE_BEEN_UPDATED;
+            const spy = spyOn(component, 'clearMessage');
+            // When
+            component.clearHearingUpdatedMessage();
+            // Then
+            expect(spy).toHaveBeenCalled();
+        });
+        it('should not clear the message when message is not equal to "Hearings have been updated." ', () => {
+            // Given
+            component.message = OTHER_MESSAGES;
+            const spy = spyOn(component, 'clearMessage');
+            // When
+            component.clearHearingUpdatedMessage();
+            // Then
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 });
