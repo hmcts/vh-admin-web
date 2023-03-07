@@ -31,9 +31,10 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            contactTelephone: value.telephone,
-            role: this.availableRoles.Vho
+            contactTelephone: value.telephone
         });
+
+        this.form.get('role').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : this.availableRoles.Vho);
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
