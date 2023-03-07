@@ -423,7 +423,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 );
             }
             this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
-            this.isFiltered = true; 
+            this.isFiltered = true;
         } else {
             this.showSaveConfirmation = true;
         }
