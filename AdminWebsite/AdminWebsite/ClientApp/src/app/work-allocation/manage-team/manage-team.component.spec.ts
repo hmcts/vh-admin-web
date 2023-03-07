@@ -297,4 +297,30 @@ describe('ManageTeamComponent', () => {
             expect(component.userToDelete).toBeNull();
         });
     });
+
+    describe('editUser', () => {
+        it('should display edit role popup', () => {
+            // arrange
+            const userToEdit = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'user@email.com',
+                first_name: 'Test',
+                lastname: 'User',
+                full_name: 'Test User',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'user@email.com',
+                telephone: ''
+            });
+
+            // act
+            component.editUser(userToEdit);
+
+            // assert
+            expect(component.justiceUser).toBe(userToEdit);
+            expect(component.userFormMode).toBe('edit');
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.showForm).toBeTruthy();
+        });
+    });
 });

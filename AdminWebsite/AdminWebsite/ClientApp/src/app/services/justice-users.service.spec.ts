@@ -1,6 +1,6 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { AddJusticeUserRequest, BHClient, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
 
 import { JusticeUsersService } from './justice-users.service';
 
@@ -9,7 +9,7 @@ describe('JusticeUsersService', () => {
     let clientApiSpy: jasmine.SpyObj<BHClient>;
 
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser', 'deleteJusticeUser']);
+        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser', 'deleteJusticeUser', 'editJusticeUser']);
 
         TestBed.configureTestingModule({ providers: [{ provide: BHClient, useValue: clientApiSpy }] });
         service = TestBed.inject(JusticeUsersService);
@@ -112,6 +112,39 @@ describe('JusticeUsersService', () => {
             });
             expect(result).toEqual(newUser);
             expect(clientApiSpy.addNewJusticeUser).toHaveBeenCalledWith(request);
+        }));
+    });
+
+    describe('editJusticeUser', () => {
+        it('should call the api to edit an existing user', fakeAsync(() => {
+            const id = '123';
+            const username = 'john@doe.com';
+            const firstName = 'john';
+            const lastName = 'doe';
+            const telephone = '01234567890';
+            const role = JusticeUserRole.VhTeamLead;
+
+            const existingUser = new JusticeUserResponse({
+                contact_email: username,
+                username,
+                first_name: firstName,
+                lastname: lastName,
+                telephone: telephone,
+                is_vh_team_leader: true
+            });
+
+            clientApiSpy.editJusticeUser.and.returnValue(of(existingUser));
+            let result: JusticeUserResponse;
+
+            service.editJusticeUser(id, username, role).subscribe(data => (result = data));
+            tick();
+            const request = new EditJusticeUserRequest({
+                id,
+                username,
+                role
+            });
+            expect(result).toEqual(existingUser);
+            expect(clientApiSpy.editJusticeUser).toHaveBeenCalledWith(request);
         }));
     });
 
