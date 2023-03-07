@@ -56,7 +56,7 @@
           {{ user.telephone }}
         </td>
         <td class="govuk-table__cell">
-          {{ user.user_role_name }}
+          {{ user.is_vh_team_leader ? 'Team Lead' : 'CSO' }}
         </td>
         <td class="govuk-table__cell">
           <fa-icon
