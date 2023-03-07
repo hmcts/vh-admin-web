@@ -5,6 +5,7 @@ import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Constants } from 'src/app/common/constants';
+import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
 
 @Component({
     selector: 'app-manage-team',
@@ -28,6 +29,8 @@ export class ManageTeamComponent {
     isAnErrorMessage = false;
     showSpinner = false;
     showForm = false;
+    justiceUser: JusticeUserResponse;
+    userFormMode: JusticeUserFormMode = 'add';
     displayDeleteUserPopup = false;
     userToDelete: JusticeUserResponse;
 
@@ -80,15 +83,38 @@ export class ManageTeamComponent {
 
     onFormCancelled() {
         this.showForm = false;
+        // reset form related properties
+        this.justiceUser = null;
+        this.userFormMode = 'add';
     }
 
-    onJusticeSuccessfulSave(newUser: JusticeUserResponse) {
-        this.showForm = false;
-        this.displayAddButton = false;
-        this.message = Constants.ManageJusticeUsers.NewUserAdded;
-        this.isAnErrorMessage = false;
-        this.displayMessage = true;
-        this.users.push(newUser);
+    onJusticeSuccessfulSave(user: JusticeUserResponse) {
+        if (this.userFormMode === 'add') {
+            this.showForm = false;
+            this.displayAddButton = false;
+            this.message = Constants.ManageJusticeUsers.NewUserAdded;
+            this.isAnErrorMessage = false;
+            this.displayMessage = true;
+            this.users.push(user);
+        } else if (this.userFormMode === 'edit') {
+            const index = this.users.findIndex(x => x.id === user.id);
+            this.users[index] = user;
+            this.showForm = false;
+            this.displayAddButton = false;
+            this.message = Constants.ManageJusticeUsers.UserEdited;
+            this.isAnErrorMessage = false;
+            this.displayMessage = true;
+
+            // reset form related properties
+            this.justiceUser = null;
+            this.userFormMode = 'add';
+        }
+    }
+
+    editUser(user: JusticeUserResponse) {
+        this.justiceUser = user;
+        this.userFormMode = 'edit';
+        this.displayForm();
     }
 
     onDeleteJusticeUser(user: JusticeUserResponse) {
