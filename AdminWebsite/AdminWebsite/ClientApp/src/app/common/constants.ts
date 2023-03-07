@@ -10,7 +10,7 @@ export const Constants = {
     TextInputPatternDisplayName: /^([-A-Za-z0-9 ',._])*$/,
     TextInputPatternName: /^(\w+(?:\w|['._-](?!['._-]))*\w+)$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
-    EmailPattern: /^([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*)@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+    EmailPattern: /^([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)*)@([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)+)$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
     Citizen: 'Citizen',
@@ -71,6 +71,7 @@ export const Constants = {
         EmptySearchResults:
             'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.',
         NewUserAdded: 'Changes saved successfully. You can now add working hours and non-availability hours for this user.',
+        UserEdited: 'Changes saved successfully.',
         UserDeleted: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']

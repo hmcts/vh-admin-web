@@ -38,7 +38,7 @@ namespace AdminWebsite.Controllers
             {
                 addJusticeUserRequest.CreatedBy = User.Identity!.Name;
                 addJusticeUserRequest.ContactEmail = addJusticeUserRequest.Username;
-                var newUser = await _bookingsApiClient.AddAJusticeUserAsync(addJusticeUserRequest);
+                var newUser = await _bookingsApiClient.AddJusticeUserAsync(addJusticeUserRequest);
                 return Created("", newUser);
             }
             catch (BookingsApiException e)
@@ -59,6 +59,38 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+
+        [HttpPatch]
+        [SwaggerOperation(OperationId = "EditJusticeUser")]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> EditJusticeUser([FromBody] EditJusticeUserRequest editJusticeUserRequest)
+        {
+            try
+            {
+                var editedUser = await _bookingsApiClient.EditJusticeUserAsync(editJusticeUserRequest);
+                return Ok(editedUser);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+
+                _logger.LogError(e, "Unexpected error trying to edit a justice user");
+                throw;
+            }
+        }
+
 
         /// <summary>
         /// Delete a justice user
@@ -91,10 +123,13 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
-                
+
                 _logger.LogError(e, "Unexpected error trying to delete justice user");
                 throw;
             }
         }
+
     }
+
+
 }
