@@ -81,7 +81,9 @@
 
   <div class="govuk-button-group" *ngIf="!showSpinner">
     <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit">Save</button>
-    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">Cancel</button>
+    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
+      Discard Changes
+    </button>
   </div>
 
   <p *ngIf="failedSaveMessage" id="failed-save-justice-user-message" class="govuk-error-message">
