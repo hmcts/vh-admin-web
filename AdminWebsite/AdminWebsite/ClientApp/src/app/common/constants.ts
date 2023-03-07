@@ -71,6 +71,7 @@ export const Constants = {
         EmptySearchResults:
             'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.',
         NewUserAdded: 'Changes saved successfully. You can now add working hours and non-availability hours for this user.',
+        UserEdited: 'Changes saved successfully.',
         UserDeleted: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
