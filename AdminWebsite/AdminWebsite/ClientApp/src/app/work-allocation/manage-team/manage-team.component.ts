@@ -83,6 +83,9 @@ export class ManageTeamComponent {
 
     onFormCancelled() {
         this.showForm = false;
+        // reset form related properties
+        this.justiceUser = null;
+        this.userFormMode = 'add';
     }
 
     onJusticeSuccessfulSave(user: JusticeUserResponse) {
