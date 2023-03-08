@@ -39,12 +39,17 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        this.resetStartDateAndEndDate();
+        if (!this.isFiltered) {
+            this.resetStartDateAndEndDate();
+        }
         this.hideMessage();
         if (value) {
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            if (this.isFiltered) {
+                this.filterByDate();
+            }
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
                 this.showMessage(`Showing only ${this.filterSize} Records, For more records please use filter by date`);
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
@@ -89,6 +94,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     isEditing = false;
     isSaving = false;
+    isFiltered = false;
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
@@ -417,6 +423,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 );
             }
             this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
+            this.isFiltered = true;
         } else {
             this.showSaveConfirmation = true;
         }
