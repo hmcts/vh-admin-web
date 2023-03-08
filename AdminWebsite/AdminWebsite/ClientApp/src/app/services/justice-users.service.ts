@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import { AddNewJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
 
 @Injectable({
@@ -28,11 +28,11 @@ export class JusticeUsersService {
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
-        const request = new AddJusticeUserRequest({
+        const request = new AddNewJusticeUserRequest({
             username: username,
             first_name: firstName,
             last_name: lastName,
-            telephone: telephone,
+            contact_telephone: telephone,
             role: role
         });
         return this.apiClient.addNewJusticeUser(request);

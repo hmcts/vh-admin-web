@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using AdminWebsite.Testing.Common.Builders;
@@ -52,7 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         public async Task should_add_current_user_to_request_as_createdby_and_forward_request_to_api()
         {
             // arrange
-            var request = Builder<AddJusticeUserRequest>.CreateNew().Build();
+            var request = Builder<AddNewJusticeUserRequest>.CreateNew().Build();
             var expectedResponse = Builder<JusticeUserResponse>.CreateNew()
                 .With(x => x.CreatedBy, _username)
                 .With(x => x.Id, Guid.NewGuid())
@@ -88,7 +89,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
-            var request = new AddJusticeUserRequest();
+            var request = new AddNewJusticeUserRequest();
 
             // act
             var result = await _sut.AddNewJusticeUser(request);
@@ -109,7 +110,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
-            var request = new AddJusticeUserRequest();
+            var request = new AddNewJusticeUserRequest();
 
             // act
             var result = await _sut.AddNewJusticeUser(request);
@@ -131,7 +132,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
-            var request = new AddJusticeUserRequest();
+            var request = new AddNewJusticeUserRequest();
 
             // act & assert
             Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.AddNewJusticeUser(request)).Result

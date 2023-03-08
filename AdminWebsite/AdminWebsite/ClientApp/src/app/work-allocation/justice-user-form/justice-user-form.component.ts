@@ -13,6 +13,7 @@ export type JusticeUserFormMode = 'add' | 'edit';
     templateUrl: './justice-user-form.component.html'
 })
 export class JusticeUserFormComponent implements OnChanges {
+    errorMessages = Constants.Error;
     errorIcon = faExclamationCircle;
     showSpinner = false;
     failedSaveMessage: string;
@@ -31,7 +32,7 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            telephone: value.telephone,
+            contactTelephone: value.telephone,
             role: this.availableRoles.Vho
         });
 
@@ -46,7 +47,7 @@ export class JusticeUserFormComponent implements OnChanges {
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
             username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
-            telephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
+            contactTelephone: new FormControl(''),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             role: new FormControl(this.availableRoles.Vho)
@@ -106,7 +107,7 @@ export class JusticeUserFormComponent implements OnChanges {
                 this.form.controls.username.value,
                 this.form.controls.firstName.value,
                 this.form.controls.lastName.value,
-                this.form.controls.telephone.value,
+                this.form.controls.contactTelephone.value,
                 this.form.value.role
             )
             .subscribe({
@@ -127,6 +128,6 @@ interface JusticeUserForm {
     username: FormControl<string>;
     firstName: FormControl<string>;
     lastName: FormControl<string>;
-    telephone: FormControl<string>;
+    contactTelephone: FormControl<string>;
     role: FormControl<JusticeUserRole>;
 }

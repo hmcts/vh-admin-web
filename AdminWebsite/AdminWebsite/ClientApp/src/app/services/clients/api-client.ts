@@ -2170,7 +2170,7 @@ export class BHClient extends ApiClientBase {
      * @param body (optional)
      * @return Created
      */
-    addNewJusticeUser(body: AddJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+    addNewJusticeUser(body: AddNewJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
         let url_ = this.baseUrl + '/api/justice-users';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -5161,6 +5161,67 @@ export enum JudgeAccountType {
     Judiciary = 'Judiciary'
 }
 
+/** Create a new Justice User */
+export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
+
+    constructor(data?: IAddNewJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.username = _data['username'];
+            this.contact_telephone = _data['contact_telephone'];
+            this.role = _data['role'];
+        }
+    }
+
+    static fromJS(data: any): AddNewJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNewJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['username'] = this.username;
+        data['contact_telephone'] = this.contact_telephone;
+        data['role'] = this.role;
+        return data;
+    }
+}
+
+/** Create a new Justice User */
+export interface IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
+}
+
 export class BookHearingRequest implements IBookHearingRequest {
     booking_details?: BookNewHearingRequest;
     is_multi_day?: boolean;
@@ -6965,65 +7026,6 @@ export enum BookingStatus {
 
 export enum LinkedParticipantType {
     Interpreter = 'Interpreter'
-}
-
-export class AddJusticeUserRequest implements IAddJusticeUserRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    username?: string | undefined;
-    contact_email?: string | undefined;
-    telephone?: string | undefined;
-    created_by?: string | undefined;
-    role?: JusticeUserRole;
-
-    constructor(data?: IAddJusticeUserRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.username = _data['username'];
-            this.contact_email = _data['contact_email'];
-            this.telephone = _data['telephone'];
-            this.created_by = _data['created_by'];
-            this.role = _data['role'];
-        }
-    }
-
-    static fromJS(data: any): AddJusticeUserRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddJusticeUserRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['username'] = this.username;
-        data['contact_email'] = this.contact_email;
-        data['telephone'] = this.telephone;
-        data['created_by'] = this.created_by;
-        data['role'] = this.role;
-        return data;
-    }
-}
-
-export interface IAddJusticeUserRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    username?: string | undefined;
-    contact_email?: string | undefined;
-    telephone?: string | undefined;
-    created_by?: string | undefined;
-    role?: JusticeUserRole;
 }
 
 export class BookNewHearingRequest implements IBookNewHearingRequest {
