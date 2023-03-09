@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -20,6 +20,7 @@ export class ManageTeamComponent {
     faError = faExclamationCircle;
     editUserIcon = faUserPen;
     deleteUserIcon = faTrash;
+    restoreUserIcon = faRotateLeft;
     message: string;
     users: JusticeUserResponse[];
     form: FormGroup<SearchForExistingJusticeUserForm>;
@@ -28,11 +29,13 @@ export class ManageTeamComponent {
     displayAddButton = false;
     isAnErrorMessage = false;
     showSpinner = false;
-    showForm = false;
-    justiceUser: JusticeUserResponse;
+    showUserForm = false;
+    selectedUser: JusticeUserResponse;
     userFormMode: JusticeUserFormMode = 'add';
     displayDeleteUserPopup = false;
     userToDelete: JusticeUserResponse;
+    displayRestoreUserPopup = false;
+    userToRestore: JusticeUserResponse;
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
@@ -76,46 +79,42 @@ export class ManageTeamComponent {
         this.displayMessage = true;
     }
 
-    displayForm() {
-        this.displayMessage = false;
-        this.showForm = true;
+    /*
+        Add & Edit User
+    */
+
+    addUser = this.displayUserForm;
+
+    editUser(user: JusticeUserResponse) {
+        this.selectedUser = user;
+        this.userFormMode = 'edit';
+        this.displayUserForm();
     }
 
-    onFormCancelled() {
-        this.showForm = false;
-        // reset form related properties
-        this.justiceUser = null;
+    onUserFormCancelled() {
+        this.showUserForm = false;
+        this.selectedUser = null;
         this.userFormMode = 'add';
     }
 
-    onJusticeSuccessfulSave(user: JusticeUserResponse) {
+    onJusticeUserSuccessfulSave(user: JusticeUserResponse) {
         if (this.userFormMode === 'add') {
-            this.showForm = false;
-            this.displayAddButton = false;
-            this.message = Constants.ManageJusticeUsers.NewUserAdded;
-            this.isAnErrorMessage = false;
-            this.displayMessage = true;
+            this.resetAfterSave(Constants.ManageJusticeUsers.NewUserAdded);
             this.users.push(user);
         } else if (this.userFormMode === 'edit') {
             const index = this.users.findIndex(x => x.id === user.id);
             this.users[index] = user;
-            this.showForm = false;
-            this.displayAddButton = false;
-            this.message = Constants.ManageJusticeUsers.UserEdited;
-            this.isAnErrorMessage = false;
-            this.displayMessage = true;
-
-            // reset form related properties
-            this.justiceUser = null;
-            this.userFormMode = 'add';
+            this.resetAfterSave(Constants.ManageJusticeUsers.UserEdited);
         }
     }
 
-    editUser(user: JusticeUserResponse) {
-        this.justiceUser = user;
-        this.userFormMode = 'edit';
-        this.displayForm();
-    }
+    /*
+        End Add & Edit User
+    */
+
+    /*
+        Delete User
+    */
 
     onDeleteJusticeUser(user: JusticeUserResponse) {
         this.userToDelete = user;
@@ -131,13 +130,59 @@ export class ManageTeamComponent {
         this.displayDeleteUserPopup = false;
         this.message = Constants.ManageJusticeUsers.UserDeleted;
         this.displayMessage = true;
-        this.removeJusticeUser();
+        this.updateDeletedJusticeUser();
     }
 
-    removeJusticeUser() {
-        const id = this.users.indexOf(this.userToDelete);
-        this.users.splice(id, 1);
-        this.userToDelete = null;
+    updateDeletedJusticeUser() {
+        this.userToDelete.deleted = true;
+    }
+
+    /*
+        End Delete User
+    */
+
+    /*
+        Restore User
+    */
+
+    restoreUser(user: JusticeUserResponse) {
+        this.userToRestore = user;
+        this.displayRestoreUserPopup = true;
+    }
+
+    onCancelRestoreJusticeUser() {
+        this.userToRestore = null;
+        this.displayRestoreUserPopup = false;
+    }
+
+    onJusticeUserSuccessfulRestore() {
+        this.displayRestoreUserPopup = false;
+        this.message = Constants.ManageJusticeUsers.UserRestored;
+        this.displayMessage = true;
+        this.updateRestoredJusticeUser();
+    }
+
+    updateRestoredJusticeUser() {
+        this.userToRestore.deleted = false;
+    }
+
+    /*
+        End Restore User
+    */
+
+    displayUserForm() {
+        this.displayMessage = false;
+        this.showUserForm = true;
+    }
+
+    private resetAfterSave(message: string) {
+        this.showUserForm = false;
+        this.displayAddButton = false;
+        this.message = message;
+        this.isAnErrorMessage = false;
+        this.displayMessage = true;
+        this.selectedUser = null;
+        this.userFormMode = 'add';
     }
 }
 

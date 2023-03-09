@@ -1,0 +1,41 @@
+<div class="popup-overlay">
+  <div class="popup popup-small">
+    <p class="govuk-body">
+      You have selected to restore user:
+      <br />
+      <a class="vhlink remove-float" href="mailto:{{ user.username }}">{{ user.username }}</a>
+    </p>
+    <p class="govuk-body">
+      This will restore the user, but not their working hours and non-availability hours. Any hearings allocated to this user will become
+      unallocated?
+    </p>
+    <p class="govuk-body">Are you sure you want to proceed?</p>
+
+    <div>
+      <div class="govuk-body" *ngIf="showSpinner">
+        <div class="vh-loader-small-container aligned-centre-flex">
+          <div class="vh-loader"></div>
+          <label class="loader-label"> Please wait... </label>
+        </div>
+      </div>
+      <div class="govuk-button-group aligned-centre-flex" *ngIf="!showSpinner">
+        <button
+          id="btnConfirm"
+          class="govuk-button vh-mr"
+          type="submit"
+          data-module="govuk-button"
+          (click)="onConfirmRestore()"
+          data-prevent-double-click="true"
+        >
+          Yes, proceed
+        </button>
+        <button id="btnCancel" class="govuk-button govuk-button--secondary" type="submit" data-module="govuk-button" (click)="onCancel()">
+          Cancel
+        </button>
+      </div>
+      <p *ngIf="failedRestoreMessage" id="failed-restore-justice-user-message" class="govuk-error-message">
+        <fa-icon [icon]="errorIcon"></fa-icon><span class="govuk-visually-hidden">Error:</span> {{ failedRestoreMessage }}
+      </p>
+    </div>
+  </div>
+</div>
