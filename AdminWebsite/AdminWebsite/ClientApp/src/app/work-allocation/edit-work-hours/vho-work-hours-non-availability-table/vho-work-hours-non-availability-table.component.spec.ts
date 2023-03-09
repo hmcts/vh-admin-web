@@ -48,8 +48,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     it('check results input parameter sets the value', () => {
         const slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
-            start_time: new Date(2022, 1, 1, 6, 0, 0),
-            end_time: new Date(2022, 1, 1, 8, 0, 0)
+            start_time: new Date(2023, 10, 1, 6, 0, 0),
+            end_time: new Date(2023, 10, 1, 8, 0, 0)
         });
         const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
         component.result = [slot];
@@ -60,8 +60,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     it('check the slot is not removed if confirmation is popup is false', () => {
         const slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
-            start_time: new Date(2022, 1, 1, 6, 0, 0),
-            end_time: new Date(2022, 1, 1, 8, 0, 0)
+            start_time: new Date(2023, 10, 1, 6, 0, 0),
+            end_time: new Date(2023, 10, 1, 8, 0, 0)
         });
         const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
         component.result = [slot];
@@ -78,8 +78,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         const nonWorkHoursPassed: VhoNonAvailabilityWorkHoursResponse[] = [];
         let slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
-            start_time: new Date(2022, 1, 1, 6, 0, 0),
-            end_time: new Date(2022, 1, 1, 8, 0, 0)
+            start_time: new Date(2023, 10, 1, 6, 0, 0),
+            end_time: new Date(2023, 10, 1, 8, 0, 0)
         });
         let slotMapped = component.mapNonWorkingHoursToEditModel(slot);
         nonWorkHours.push(slotMapped);
@@ -87,8 +87,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
-            start_time: new Date(2022, 1, 1, 6, 0, 0),
-            end_time: new Date(2022, 1, 1, 8, 0, 0)
+            start_time: new Date(2023, 10, 1, 6, 0, 0),
+            end_time: new Date(2023, 10, 1, 8, 0, 0)
         });
         slotMapped = component.mapNonWorkingHoursToEditModel(slot);
 
@@ -135,8 +135,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     it('check slot not removed from result when confirm deletion but error in api', () => {
         const slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
-            start_time: new Date(2022, 1, 1, 6, 0, 0),
-            end_time: new Date(2022, 1, 1, 8, 0, 0)
+            start_time: new Date(2023, 10, 1, 6, 0, 0),
+            end_time: new Date(2023, 10, 1, 8, 0, 0)
         });
         const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
         bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(throwError({ status: 500 }));
@@ -163,8 +163,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             const nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
             const slot = new VhoNonAvailabilityWorkHoursResponse({
                 id: 1,
-                start_time: new Date(2022, 0, 1, 8, 0, 0),
-                end_time: new Date(2022, 0, 1, 10, 0, 0)
+                start_time: new Date(2023, 10, 1, 8, 0, 0),
+                end_time: new Date(2023, 10, 1, 10, 0, 0)
             });
             const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
             nonWorkHours.push(slotMapped);
@@ -217,8 +217,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.switchToEditMode();
                 const originalNonWorkHours = JSON.parse(JSON.stringify(component.nonWorkHours));
                 const updatedWorkHour = component.nonWorkHours[0];
-                updatedWorkHour.start_date = '2022-1-2';
-                updatedWorkHour.end_date = '2022-1-2';
+                updatedWorkHour.start_date = '2023-10-2';
+                updatedWorkHour.end_date = '2023-10-2';
                 fixture.detectChanges();
 
                 const cancelButton = fixture.debugElement.query(By.css('#cancel-editing-individual-non-work-hours-button')).nativeElement;
@@ -238,9 +238,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('should save correctly', () => {
                 const nonWorkHours = {
                     id: 1,
-                    start_date: '2020-01-01',
+                    start_date: '2023-10-01',
                     start_time: '00:00:00',
-                    end_date: '2021-01-01',
+                    end_date: '2023-11-01',
                     end_time: '00:00:00',
                     new_row: true
                 };
@@ -259,9 +259,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('should not save', () => {
                 const nonWorkHours = {
                     id: 1,
-                    start_date: '2020-01-01',
+                    start_date: '2023-10-01',
                     start_time: '00:00:00',
-                    end_date: '2020-01-01',
+                    end_date: '2023-10-01',
                     end_time: '00:00:00',
                     new_row: true
                 };
@@ -280,9 +280,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours = [
                     {
                         id: 1,
-                        start_date: '2022-01-01',
+                        start_date: '2023-10-01',
                         start_time: '06:00',
-                        end_date: '2022-01-01',
+                        end_date: '2023-10-01',
                         end_time: '08:00'
                     } as any
                 ];
@@ -348,28 +348,28 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                     id: 1,
                     start_date: '',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
                 const workHour2 = {
                     id: 1,
-                    start_date: '2022-01-01',
+                    start_date: '2023-10-01',
                     start_time: '',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
                 const workHour3 = {
                     id: 1,
-                    start_date: '2022-01-01',
+                    start_date: '2023-10-01',
                     start_time: '06:00',
                     end_date: '',
                     end_time: '08:00'
                 } as any;
                 const workHour4 = {
                     id: 1,
-                    start_date: '2022-01-01',
+                    start_date: '2023-10-01',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: ''
                 } as any;
 
@@ -394,9 +394,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours = [];
                 const workHour1 = {
                     id: 1,
-                    start_date: '2022-01-01',
+                    start_date: '2023-10-01',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
 
@@ -429,7 +429,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                     id: 1,
                     start_date: '',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
 
@@ -446,7 +446,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                     id: 1,
                     start_date: '',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
 
@@ -463,7 +463,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                     id: 1,
                     start_date: '',
                     start_time: '06:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '08:00'
                 } as any;
 
@@ -478,9 +478,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours = [];
                 const workHour1 = {
                     id: 1,
-                    start_date: '2022-01-01',
+                    start_date: '2023-10-01',
                     start_time: '08:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '06:00'
                 } as any;
 
@@ -495,9 +495,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours = [];
                 const workHour1 = {
                     id: 1,
-                    start_date: '2022-01-03',
+                    start_date: '2023-10-03',
                     start_time: '08:00',
-                    end_date: '2022-01-01',
+                    end_date: '2023-10-01',
                     end_time: '06:00'
                 } as any;
 
@@ -689,9 +689,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         function checkValidationFailsWhenEndTimeIsBeforeStartTime() {
             const nonWorkHour = component.nonWorkHours[0];
-            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_date = '2023-10-01';
             nonWorkHour.start_time = '08:00:00';
-            nonWorkHour.end_date = '2022-01-01';
+            nonWorkHour.end_date = '2023-10-01';
             nonWorkHour.end_time = '06:00:00';
             fixture.detectChanges();
 
@@ -708,7 +708,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         function checkValidationFailsWhenStartAndEndDatetimesMatch() {
             const nonWorkHour = component.nonWorkHours[0];
-            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_date = '2023-10-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = nonWorkHour.start_date;
             nonWorkHour.end_time = nonWorkHour.start_time;
@@ -728,15 +728,15 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.nonWorkHours = [];
             const workHour1 = new EditVhoNonAvailabilityWorkHoursModel();
             workHour1.id = 1;
-            workHour1.start_date = '2022-10-22';
+            workHour1.start_date = '2023-10-22';
             workHour1.start_time = '10:00:00';
-            workHour1.end_date = '2022-10-24';
+            workHour1.end_date = '2023-10-24';
             workHour1.end_time = '17:00:00';
             const workHour2 = new EditVhoNonAvailabilityWorkHoursModel();
             workHour2.id = 2;
-            workHour2.start_date = '2022-10-23';
+            workHour2.start_date = '2023-10-23';
             workHour2.start_time = '10:00:00';
-            workHour2.end_date = '2022-10-24';
+            workHour2.end_date = '2023-10-24';
             workHour2.end_time = '17:00:00';
             component.nonWorkHours.push(workHour1);
             component.nonWorkHours.push(workHour2);
@@ -755,9 +755,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         function checkValidationFailsWhenStartTimeIsEmpty() {
             const nonWorkHour = component.nonWorkHours[0];
-            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_date = '2023-10-01';
             nonWorkHour.start_time = '';
-            nonWorkHour.end_date = '2022-01-01';
+            nonWorkHour.end_date = '2023-10-01';
             nonWorkHour.end_time = '10:00:00';
 
             component.saveNonWorkingHours();
@@ -773,9 +773,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         function checkValidationFailsWhenEndTimeIsEmpty() {
             const nonWorkHour = component.nonWorkHours[0];
-            nonWorkHour.start_date = '2022-01-01';
+            nonWorkHour.start_date = '2023-10-01';
             nonWorkHour.start_time = '08:00:00';
-            nonWorkHour.end_date = '2022-01-01';
+            nonWorkHour.end_date = '2023-10-01';
             nonWorkHour.end_time = '';
 
             component.saveNonWorkingHours();
@@ -793,21 +793,21 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     describe('date filter function', () => {
         beforeEach(() => {
             component.nonWorkHours = [
-                { id: 0, start_date: '2022/10/24', end_date: '2022/10/24', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
-                { id: 1, start_date: '2022/10/25', end_date: '2022/10/29', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
-                { id: 2, start_date: '2022/10/30', end_date: '2022/10/31', start_time: '09:00:00', end_time: '23:00:00', new_row: false }
+                { id: 0, start_date: '2023/10/24', end_date: '2023/10/24', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
+                { id: 1, start_date: '2023/10/25', end_date: '2023/10/29', start_time: '09:00:00', end_time: '23:00:00', new_row: false },
+                { id: 2, start_date: '2023/10/30', end_date: '2023/10/31', start_time: '09:00:00', end_time: '23:00:00', new_row: false }
             ];
             component.nonAvailabilityWorkHoursResponses = [
-                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2022/10/24'), end_time: new Date('2022/10/24') }),
-                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2022/10/25'), end_time: new Date('2022/10/29') }),
-                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2022/10/30'), end_time: new Date('2022/10/31') })
+                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2023/10/24'), end_time: new Date('2023/10/24') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2023/10/25'), end_time: new Date('2023/10/29') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2023/10/30'), end_time: new Date('2023/10/31') })
             ];
             fixture.detectChanges();
         });
 
         it('a start date, but no end is selected, valid', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '' });
+            component.filterForm.setValue({ startDate: '2023/10/26', endDate: '' });
             // act
             component.filterByDate();
             // assert
@@ -817,7 +817,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('a start date, but no end is selected, invalid', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/23', endDate: '' });
+            component.filterForm.setValue({ startDate: '2023/10/23', endDate: '' });
             // act
             component.filterByDate();
             // assert
@@ -826,7 +826,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('a start date, and end date is selected', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '2022/10/30' });
+            component.filterForm.setValue({ startDate: '2023/10/26', endDate: '2023/10/30' });
             // act
             component.filterByDate();
             // assert
@@ -837,7 +837,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, within the rang of one workhours, but not on the specific dates', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '2022/10/27' });
+            component.filterForm.setValue({ startDate: '2023/10/26', endDate: '2023/10/27' });
             // act
             component.filterByDate();
             // assert
@@ -847,7 +847,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, on the same day', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/24', endDate: '2022/10/24' });
+            component.filterForm.setValue({ startDate: '2023/10/24', endDate: '2023/10/24' });
             // act
             component.filterByDate();
             // assert
@@ -856,7 +856,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, outside range', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/11/20', endDate: '2022/11/22' });
+            component.filterForm.setValue({ startDate: '2023/11/20', endDate: '2023/11/22' });
             // act
             component.filterByDate();
             // assert
@@ -865,7 +865,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, across all range', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/11/02' });
+            component.filterForm.setValue({ startDate: '2023/10/20', endDate: '2023/11/02' });
             // act
             component.filterByDate();
             // assert
@@ -883,7 +883,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // arrange
             let startD = null;
             let endD = null;
-            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/10/20' });
+            component.filterForm.setValue({ startDate: '2023/10/20', endDate: '2023/10/20' });
             // act
             component.resetStartDateAndEndDate();
             startD = component.filterForm.value.startDate;
@@ -903,7 +903,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('User somehow managed to enter an end date before the start date', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/10/29' });
+            component.filterForm.setValue({ startDate: '2023/10/31', endDate: '2023/10/29' });
             // act
             component.filterByDate();
             // assert
@@ -915,9 +915,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         it('User filter table without save changes', () => {
             // arrange
             component.switchToEditMode();
-            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/11/01' });
+            component.filterForm.setValue({ startDate: '2023/10/31', endDate: '2023/11/01' });
 
-            component.nonWorkHours[2].start_date = '2022/10/29';
+            component.nonWorkHours[2].start_date = '2023/10/29';
             // act
             component.filterByDate();
             // assert
@@ -940,8 +940,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         it('should display a message when results length exceeds 20 after filter', () => {
             // arrange
             const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
-            const startDate = new Date(2022, 1, 1);
-            const endDate = new Date(2023, 4, 1);
+            const startDate = new Date(2023, 10, 1);
+            const endDate = new Date(2023, 9, 1);
             component.result = testData;
             component.switchToEditMode();
             component.originalNonWorkHours = component.nonWorkHours;
@@ -957,8 +957,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         it('should not display a message when results are between 0 and  less than 20 after filter', () => {
             // arrange
             const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
-            const startDate = new Date(2022, 1, 1);
-            const endDate = new Date(2023, 1, 0);
+            const startDate = new Date(2023, 10, 1);
+            const endDate = new Date(2023, 11, 0);
             component.result = testData;
             component.switchToEditMode();
             component.originalNonWorkHours = component.nonWorkHours;
@@ -969,6 +969,22 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.displayMessage).toBeFalsy();
         });
+
+        it('should on return future dates vho data ', () => {
+            // arrange
+          const futureDates =  component.nonAvailabilityWorkHoursResponses = [
+                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2023/03/03'), end_time: new Date('2023/03/04') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2023/03/06'), end_time: new Date('2023/03/07') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2023/03/09'), end_time: new Date('2023/03/12') })
+            ];
+            fixture.detectChanges();
+
+            // act
+            component.filterByFutureDate(futureDates);
+            // assert
+            expect(component.filterByFutureDate).toBeTruthy();
+        });
+
     });
 
     describe('handleContinue', () => {
