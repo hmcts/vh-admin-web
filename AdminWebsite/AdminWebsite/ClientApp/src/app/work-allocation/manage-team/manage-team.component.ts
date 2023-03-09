@@ -71,6 +71,15 @@ export class ManageTeamComponent {
             this.message = Constants.ManageJusticeUsers.EmptySearchResults;
             this.displayAddButton = true;
         }
+        this.sortUsers();
+    }
+
+    sortUsers(): void {
+        this.users = this.users.sort(this.sortByDeleted);
+    }
+
+    sortByDeleted(a: JusticeUserResponse, b: JusticeUserResponse) {
+        return a.deleted ? -1 : b.deleted ? 1 : 0;
     }
 
     onJusticeUserSearchFailed(errorMessage: string) {
@@ -131,6 +140,7 @@ export class ManageTeamComponent {
         this.message = Constants.ManageJusticeUsers.UserDeleted;
         this.displayMessage = true;
         this.updateDeletedJusticeUser();
+        this.sortUsers();
     }
 
     updateDeletedJusticeUser() {
@@ -160,6 +170,7 @@ export class ManageTeamComponent {
         this.message = Constants.ManageJusticeUsers.UserRestored;
         this.displayMessage = true;
         this.updateRestoredJusticeUser();
+        this.sortUsers();
     }
 
     updateRestoredJusticeUser() {
