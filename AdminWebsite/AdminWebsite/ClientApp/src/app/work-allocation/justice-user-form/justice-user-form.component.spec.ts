@@ -1,3 +1,4 @@
+import { SimpleChange, SimpleChanges } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { of, throwError } from 'rxjs';
@@ -10,7 +11,10 @@ import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { JusticeUserFormComponent } from './justice-user-form.component';
 
 describe('JusticeUserFormComponent', () => {
-    const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['addNewJusticeUser']);
+    const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
+        'addNewJusticeUser',
+        'editJusticeUser'
+    ]);
 
     let component: JusticeUserFormComponent;
     let fixture: ComponentFixture<JusticeUserFormComponent>;
@@ -50,6 +54,22 @@ describe('JusticeUserFormComponent', () => {
         });
     });
 
+    describe('edit mode set-up', () => {
+        it('should disable form fields in edit mode', () => {
+            // arrange / act
+            const changes: SimpleChanges = {
+                mode: new SimpleChange(null, 'edit', true)
+            };
+            component.ngOnChanges(changes);
+
+            // assert
+            expect(component.form.controls.contactTelephone.disabled).toBeTruthy();
+            expect(component.form.controls.firstName.disabled).toBeTruthy();
+            expect(component.form.controls.lastName.disabled).toBeTruthy();
+            expect(component.form.controls.username.disabled).toBeTruthy();
+        });
+    });
+
     describe('on form save', () => {
         it('should emit new user on successful save', fakeAsync(() => {
             // arrange
@@ -72,6 +92,31 @@ describe('JusticeUserFormComponent', () => {
 
             // assert
             expect(spy).toHaveBeenCalledWith(newUser);
+            expect(component.showSpinner).toBeFalsy();
+        }));
+
+        it('should emit an updated user on successful save', fakeAsync(() => {
+            // arrange
+            const spy = spyOn(component.saveSuccessfulEvent, 'emit');
+            const updatedUser = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'new@cso.com',
+                first_name: 'Jack',
+                lastname: 'Jones',
+                full_name: 'Jack Jones',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'new@cso.com',
+                telephone: '01234567890'
+            });
+            justiceUsersServiceSpy.editJusticeUser.and.returnValue(of(updatedUser));
+            component.mode = 'edit';
+
+            // act
+            component.onSave();
+
+            // assert
+            expect(spy).toHaveBeenCalledWith(updatedUser);
             expect(component.showSpinner).toBeFalsy();
         }));
 
