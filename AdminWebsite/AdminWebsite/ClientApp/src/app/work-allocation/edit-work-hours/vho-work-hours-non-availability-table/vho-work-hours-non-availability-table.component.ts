@@ -42,7 +42,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         this.resetStartDateAndEndDate();
         this.hideMessage();
         if (value) {
-           value = this.filterByFutureDate(value);
+            value = this.filterByFutureDate(value);
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
@@ -448,10 +448,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         } else if (this.nonWorkHours.length === 0) {
             this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
         }
-
     }
     public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
         const todayDate = new Date();
-         return  value.filter(d => d.start_time >= todayDate);
+        return value.filter(d => d.start_time >= todayDate);
     }
 }

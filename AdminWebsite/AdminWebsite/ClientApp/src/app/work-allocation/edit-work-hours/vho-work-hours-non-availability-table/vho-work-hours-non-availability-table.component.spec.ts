@@ -972,11 +972,11 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('should on return future dates vho data ', () => {
             // arrange
-          const futureDates =  component.nonAvailabilityWorkHoursResponses = [
+            const futureDates = (component.nonAvailabilityWorkHoursResponses = [
                 new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2023/03/03'), end_time: new Date('2023/03/04') }),
                 new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2023/03/06'), end_time: new Date('2023/03/07') }),
                 new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2023/03/09'), end_time: new Date('2023/03/12') })
-            ];
+            ]);
             fixture.detectChanges();
 
             // act
@@ -984,7 +984,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.filterByFutureDate).toBeTruthy();
         });
-
     });
 
     describe('handleContinue', () => {
