@@ -18,56 +18,43 @@ using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {
-    public class AddNewJusticeUserTests
+    public class EditJusticeUserTests
     {
         private JusticeUsersController _sut;
         private AutoMock _mocker;
-        private readonly string _username = "test.vho@hmcts.net";
 
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _sut = SetupControllerWithClaims();
-        }
+            _sut = SetupController();
+        }       
 
-        private JusticeUsersController SetupControllerWithClaims()
+        private JusticeUsersController SetupController()
         {
-            var cp = new ClaimsPrincipalBuilder().WithRole(AppRoles.VhOfficerRole)
-                .WithUsername(_username).Build();
-            var context = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = cp
-                }
-            };
-
             var controller = _mocker.Create<JusticeUsersController>();
-            controller.ControllerContext = context;
             return controller;
         }
 
         [Test]
-        public async Task should_add_current_user_to_request_as_createdby_and_forward_request_to_api()
+        public async Task should_add_edited_user_to_request_as_ok_and_forward_request_to_api()
         {
             // arrange
-            var request = Builder<AddJusticeUserRequest>.CreateNew().Build();
+            var request = Builder<EditJusticeUserRequest>.CreateNew().Build();
             var expectedResponse = Builder<JusticeUserResponse>.CreateNew()
-                .With(x => x.CreatedBy, _username)
-                .With(x => x.Id, Guid.NewGuid())
+                .With(x => x.Id, request.Id)
                 .Build();
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ReturnsAsync(expectedResponse);
 
             // act
-            var result = await _sut.AddNewJusticeUser(request);
+            var result = await _sut.EditJusticeUser(request);
 
             // assert
             bookingsApiClient.Verify(x =>
-                x.AddJusticeUserAsync(It.Is<AddJusticeUserRequest>(r => r.CreatedBy == _username)), Times.Once());
-            result.Should().BeOfType<CreatedResult>().And.Subject.As<CreatedResult>().Value.Should()
+                x.EditJusticeUserAsync(It.Is<EditJusticeUserRequest>(r => r.Id == expectedResponse.Id)), Times.Once());
+            result.Should().BeOfType<OkObjectResult>().And.Subject.As<OkObjectResult>().Value.Should()
                 .Be(expectedResponse);
         }
 
@@ -85,38 +72,17 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.BadRequest,
                 "Please provide a valid conference Id", null, validationProblemDetails, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
-            var request = new AddJusticeUserRequest();
+            var request = new EditJusticeUserRequest();
 
             // act
-            var result = await _sut.AddNewJusticeUser(request);
+            var result = await _sut.EditJusticeUser(request);
 
             // assert
             result.Should().BeOfType<BadRequestObjectResult>().And.Subject.As<BadRequestObjectResult>().Value.Should()
                 .Be(validationProblemDetails);
-        }
-
-        [Test]
-        public async Task should_forward_conflict_from_bookings_api_to_client_app()
-        {
-            // arrange
-            var errorMessage = "A user with the username already exists";
-            var apiException = new BookingsApiException<string>("Conflict", (int) HttpStatusCode.Conflict,
-                "Conflict", null, errorMessage, null);
-            var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
-                .ThrowsAsync(apiException);
-
-            var request = new AddJusticeUserRequest();
-
-            // act
-            var result = await _sut.AddNewJusticeUser(request);
-
-            // assert
-            result.Should().BeOfType<ConflictObjectResult>().And.Subject.As<ConflictObjectResult>().Value.Should()
-                .Be(errorMessage);
         }
 
         [Test]
@@ -128,13 +94,13 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 (int) HttpStatusCode.InternalServerError,
                 "Server Error", null, errorMessage, null);
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.AddJusticeUserAsync(It.IsAny<AddJusticeUserRequest>()))
+            bookingsApiClient.Setup(x => x.EditJusticeUserAsync(It.IsAny<EditJusticeUserRequest>()))
                 .ThrowsAsync(apiException);
 
-            var request = new AddJusticeUserRequest();
+            var request = new EditJusticeUserRequest();
 
             // act & assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.AddNewJusticeUser(request)).Result
+            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.EditJusticeUser(request)).Result
                 .Should().Be(errorMessage);
         }
     }
