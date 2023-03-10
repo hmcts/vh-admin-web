@@ -29,7 +29,7 @@ export class EditWorkHoursComponent implements OnInit {
 
     isUploadWorkHoursSuccessful = false;
     isUploadWorkHoursFailure = false;
-
+    todayDate: Date = new Date();
     isUploadNonWorkHoursSuccessful = false;
     showSaveNonWorkHoursFailedPopup = false;
     saveNonWorkHoursCompleted$: Subject<boolean> = new Subject();
@@ -107,6 +107,7 @@ export class EditWorkHoursComponent implements OnInit {
                 this.showWorkHoursTable = true;
                 break;
             case HoursType.NonWorkingHours:
+                this.result = this.filterByFutureDate(this.result as VhoNonAvailabilityWorkHoursResponse[]);
                 this.showNonWorkHoursTable = true;
                 break;
         }
@@ -199,5 +200,9 @@ export class EditWorkHoursComponent implements OnInit {
 
     dataChanged($event: boolean) {
         this.dataChange.emit($event);
+    }
+    public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
+        const todayDate = this.todayDate;
+        return value.filter(d => d.start_time >= todayDate);
     }
 }

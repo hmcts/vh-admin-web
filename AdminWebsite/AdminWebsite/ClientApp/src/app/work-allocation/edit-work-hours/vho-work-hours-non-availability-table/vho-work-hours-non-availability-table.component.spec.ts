@@ -41,13 +41,11 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         fixture = TestBed.createComponent(VhoWorkHoursNonAvailabilityTableComponent);
         component = fixture.componentInstance;
         component.saveNonWorkHoursCompleted$ = new Subject<boolean>();
-        component.todayDate = new Date(2021,1,1);
         videoServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
         fixture.detectChanges();
     });
 
     it('check results input parameter sets the value', () => {
-
         const slot = new VhoNonAvailabilityWorkHoursResponse({
             id: 1,
             start_time: new Date(2022, 1, 1, 6, 0, 0),
