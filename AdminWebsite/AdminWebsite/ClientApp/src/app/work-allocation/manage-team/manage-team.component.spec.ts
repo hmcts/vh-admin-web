@@ -175,6 +175,48 @@ describe('ManageTeamComponent', () => {
             expect(component.isAnErrorMessage).toBeFalsy();
             expect(component.users[0]).toBe(newUser);
         });
+
+        it('should update user in search results to display after editing', () => {
+            // arrange
+            component.showForm = true;
+            const id = newGuid();
+            const newUser = new JusticeUserResponse({
+                id,
+                contact_email: 'new@cso.com',
+                first_name: 'Jack',
+                lastname: 'Jones',
+                full_name: 'Jack Jones',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'new@cso.com',
+                telephone: '01234567890'
+            });
+
+            component.users = [newUser];
+            component.userFormMode = 'edit';
+
+            const updatedUser = new JusticeUserResponse({
+                id,
+                contact_email: 'new@cso.com',
+                first_name: 'Jack',
+                lastname: 'Jones',
+                full_name: 'Jack Jones',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'new@cso.com',
+                telephone: '01234567890'
+            });
+
+            // act
+            component.onJusticeSuccessfulSave(updatedUser);
+
+            // assert
+            expect(component.showForm).toBeFalsy();
+            expect(component.displayAddButton).toBeFalsy();
+            expect(component.message).toBe(Constants.ManageJusticeUsers.UserEdited);
+            expect(component.isAnErrorMessage).toBeFalsy();
+            expect(component.users[0]).toBe(updatedUser);
+        });
     });
 
     describe('onDeleteJusticeUser', () => {
@@ -253,6 +295,32 @@ describe('ManageTeamComponent', () => {
             expect(component.users.length).toBe(1);
             expect(component.users[0].id).toBe(userToKeep.id);
             expect(component.userToDelete).toBeNull();
+        });
+    });
+
+    describe('editUser', () => {
+        it('should display edit role popup', () => {
+            // arrange
+            const userToEdit = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'user@email.com',
+                first_name: 'Test',
+                lastname: 'User',
+                full_name: 'Test User',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'user@email.com',
+                telephone: ''
+            });
+
+            // act
+            component.editUser(userToEdit);
+
+            // assert
+            expect(component.justiceUser).toBe(userToEdit);
+            expect(component.userFormMode).toBe('edit');
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.showForm).toBeTruthy();
         });
     });
 });

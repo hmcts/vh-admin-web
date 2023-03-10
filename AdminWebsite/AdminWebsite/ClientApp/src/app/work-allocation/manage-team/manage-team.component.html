@@ -56,10 +56,17 @@
           {{ user.telephone }}
         </td>
         <td class="govuk-table__cell">
-          {{ user.user_role_name }}
+          {{ user.is_vh_team_leader ? 'Administrator' : 'CSO' }}
         </td>
         <td class="govuk-table__cell">
-          <fa-icon id="editButton_{{ user.id }}" [icon]="editUserIcon" appTooltip [text]="'Edit'" [colour]="'blue'"></fa-icon>
+          <fa-icon
+            id="editButton_{{ user.id }}"
+            [icon]="editUserIcon"
+            appTooltip
+            [text]="'Edit role'"
+            [colour]="'blue'"
+            (click)="editUser(user)"
+          ></fa-icon>
         </td>
         <td class="govuk-table__cell">
           <fa-icon
@@ -78,6 +85,8 @@
   <div *ngIf="showForm" class="popup-overlay">
     <div class="vh-popup-aligned">
       <app-justice-user-form
+        [justiceUser]="justiceUser"
+        [mode]="userFormMode"
         (cancelFormEvent)="onFormCancelled()"
         (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
       ></app-justice-user-form>

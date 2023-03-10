@@ -189,6 +189,11 @@ export class AllocateHearingModel {
                     const overlapping = otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing));
                     hearing.concurrentHearingsCount = overlapping.length;
                 });
+            } else {
+                // reset the count if there are 1 or fewer hearings
+                hearingsForUser.forEach(hearing => {
+                    hearing.concurrentHearingsCount = 0;
+                });
             }
         });
     }
