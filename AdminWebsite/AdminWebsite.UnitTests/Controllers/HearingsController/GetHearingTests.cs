@@ -1,13 +1,8 @@
-﻿using AdminWebsite.Models;
-using AdminWebsite.Security;
-using AdminWebsite.Services;
+﻿using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -16,9 +11,6 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
-using VideoApi.Client;
-using Microsoft.Extensions.Options;
-using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
 
@@ -36,7 +28,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse

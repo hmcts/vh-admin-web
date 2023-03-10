@@ -74,7 +74,7 @@ describe('RefreshTokenParameterInterceptor', () => {
             return of({} as HttpEvent<any>);
         });
         const request = new HttpRequest<any>('POST', '/oauth2/v2.0/token', 'params1');
-        mockOidcSecurityService.configuration.configuration.scope = null;
+        mockOidcSecurityService.configuration.scope = null;
 
         // Act
         await sut.intercept(request, next).toPromise();

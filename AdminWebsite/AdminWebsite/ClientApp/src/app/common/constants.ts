@@ -1,4 +1,7 @@
 export const Constants = {
+    AllocateHearings: {
+        ConfirmationMessage: 'Hearings have been updated.'
+    },
     BookHearingTitle: 'Book a video hearing',
     PleaseSelect: 'Please select',
     Representative: 'Representative',
@@ -7,7 +10,7 @@ export const Constants = {
     TextInputPatternDisplayName: /^([-A-Za-z0-9 ',._])*$/,
     TextInputPatternName: /^(\w+(?:\w|['._-](?!['._-]))*\w+)$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
-    EmailPattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+    EmailPattern: /^([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)*)@([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)+)$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
     Citizen: 'Citizen',
@@ -35,7 +38,17 @@ export const Constants = {
         JohJudgeErrorMsg: 'The email address you have provided cannot be the same as the judge. Please enter an alternative.',
         JohEmailErrorMsg: 'Please enter an alternative email address',
         NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.',
-        JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account'
+        JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account',
+        ManageJusticeUsers: {
+            SearchFailure: 'There was an unexpected error. Please try again'
+        },
+        JusticeUserForm: {
+            SaveError: 'There was an unexpected error. Please try again later.',
+            SaveErrorDuplicateUser: 'A justice user with the same name already exists'
+        },
+        DeleteJusticeUser: {
+            DeleteFailure: 'There was an unexpected error. Please try again'
+        }
     },
     Contact: {
         phone: '0300 303 0655',
@@ -54,8 +67,12 @@ export const Constants = {
         Observer: 'Observer',
         Interpreter: 'Interpreter'
     },
-    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
-    SessionStorageKeys: {
-        userProfile: 'userProfile'
-    }
+    ManageJusticeUsers: {
+        EmptySearchResults:
+            'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.',
+        NewUserAdded: 'Changes saved successfully. You can now add working hours and non-availability hours for this user.',
+        UserEdited: 'Changes saved successfully.',
+        UserDeleted: 'Changes saved successfully.'
+    },
+    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
 };

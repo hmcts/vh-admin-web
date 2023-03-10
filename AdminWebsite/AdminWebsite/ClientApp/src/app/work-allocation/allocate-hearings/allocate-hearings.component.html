@@ -1,0 +1,164 @@
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary" tabindex="0" role="button">
+    <span class="govuk-details__summary-text" id="allocate-hearings"> Allocate hearings </span>
+  </summary>
+  <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="form">
+    <p class="govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member">Search hearings</p>
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+      <div class="govuk-grid-column-one-third">
+        <label class="govuk-label" for="from-date-entry">Hearing date (range start)</label>
+        <input
+          class="govuk-input custom"
+          id="from-date-entry"
+          type="date"
+          formControlName="fromDate"
+          name="fromDate"
+          max="{{ form.value.toDate }}"
+        />
+      </div>
+      <div class="govuk-grid-column-one-third" *ngIf="form.valid">
+        <label class="govuk-label" for="to-date-entry">Hearing Date (range end)</label>
+        <input
+          class="govuk-input custom"
+          id="to-date-entry"
+          type="date"
+          formControlName="toDate"
+          name="toDate"
+          min="{{ form.value.fromDate }}"
+        />
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <app-justice-users-menu #csoFilterMenu (selectedEmitter)="onJusticeUserForFilterSelected($event)"></app-justice-users-menu>
+      </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+      <div class="govuk-grid-column-one-third">
+        <app-case-types-menu (selectedEmitter)="onCaseTypeSelected($event)"></app-case-types-menu>
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <label class="govuk-label" for="case-number-entry">Case number</label>
+        <input class="govuk-input" id="case-number-entry" formControlName="caseNumber" type="text" />
+      </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-bottom-4" id="checkbox-row">
+      <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="is-unallocated" name="isUnallocated" type="checkbox" formControlName="isUnallocated" />
+          <label class="govuk-label govuk-checkboxes__label" for="is-unallocated"> Only show unallocated hearings </label>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-!-margin-bottom-2">
+      <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="searchForHearings()">Search</button>
+      <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">Clear</button>
+    </div>
+  </div>
+  <div id="user-allocation" class="govuk-grid-row" *ngIf="allocationHearingViewModel.hearings.length > 0">
+    <div class="actions-and-message">
+      <div>
+        <div id="user-menu" class="govuk-grid-column-one-half">
+          <app-justice-users-menu
+            #csoAllocatedMenu
+            [multiSelect]="false"
+            [dropDownLabel]="dropDownUserLabelAllocateTo"
+            (selectedEmitter)="onJusticeUserForAllocationSelected($event)"
+          >
+          </app-justice-users-menu>
+        </div>
+
+        <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold govuk-grid-column-one-half govuk-!-padding-top-6">
+          <fa-icon [icon]="faExclamation"></fa-icon>
+          {{ message }}
+        </div>
+      </div>
+      <div id="user-allocation-button" class="govuk-grid-column-one-half govuk-!-padding-top-5">
+        <div *ngIf="allocationHearingViewModel.hasPendingChanges">
+          <div class="govuk-!-margin-bottom-2">
+            <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="confirmAllocation()">Confirm</button>
+            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelAllocation()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="govuk-table" aria-describedby="table of hearings with their assigned CSOs">
+    <caption class="govuk-table__caption govuk-table__caption--m">
+      Hearings
+    </caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">
+          <input
+            id="select-all-hearings"
+            name="select-all-hearings"
+            type="checkbox"
+            [checked]="allocationHearingViewModel.areAllChecked"
+            aria-label="Select all hearings"
+            (change)="toggleAll(!allocationHearingViewModel.areAllChecked)"
+          />
+        </th>
+        <th scope="col" class="govuk-table__header">Hearing date</th>
+        <th scope="col" class="govuk-table__header">Start time</th>
+        <th scope="col" class="govuk-table__header">Estimated duration</th>
+        <th scope="col" class="govuk-table__header">Case number</th>
+        <th scope="col" class="govuk-table__header">Case Type</th>
+        <th scope="col" class="govuk-table__header">Allocated officer</th>
+        <th scope="col" class="govuk-table__header no-border"></th>
+        <th scope="col" class="govuk-table__header no-border"></th>
+        <th scope="col" class="govuk-table__header no-border"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row" *ngFor="let hearing of allocationHearingViewModel.hearings; let i = index">
+        <td class="govuk-table__cell">
+          <input
+            id="hearing_{{ hearing.hearingId }}"
+            [name]="'select-hearing_' + i"
+            type="checkbox"
+            [checked]="hearing.checked"
+            aria-label="Select hearing"
+            (click)="selectHearing(!hearing.checked, hearing.hearingId)"
+          />
+        </td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleDateString('en-GB') }}</td>
+        <td class="govuk-table__cell">{{ hearing.scheduledDateTime.toLocaleTimeString('en-GB', { timeStyle: 'short' }) }}</td>
+        <td class="govuk-table__cell">{{ hearing.duration | minutesToHours }}</td>
+        <td class="govuk-table__cell">{{ hearing.caseNumber }}</td>
+        <td class="govuk-table__cell">{{ hearing.caseType }}</td>
+        <td id="cso_{{ hearing.hearingId }}" class="govuk-table__cell">{{ hearing.allocatedOfficerUsername }}</td>
+        <td class="govuk-table__cell no-border align-middle">
+          <span *ngIf="hearing.hasChanged" appTooltip [text]="'Pending change'" [colour]="'blue'">
+            <fa-icon [icon]="hourGlassStart" [transform]="customIconTransform"></fa-icon>
+          </span>
+          <span
+            *ngIf="hearing.hasWorkHoursClash"
+            appTooltip
+            [text]="'Hearing is outside of user working hours'"
+            [colour]="'blue'"
+            colour="grey"
+          >
+            <fa-icon [icon]="triangleExclamation"></fa-icon>
+          </span>
+        </td>
+        <td class="govuk-table__cell no-border align-middle">
+          <span
+            *ngIf="hearing.concurrentHearingsCount"
+            appTooltip
+            [text]="getConcurrentCountText(hearing.concurrentHearingsCount)"
+            [colour]="'blue'"
+            colour="grey"
+          >
+            <div class="concurrent-hearings-badge">{{ hearing.concurrentHearingsCount }}</div>
+          </span>
+        </td>
+        <td></td>
+        <td class="govuk-table__cell no-border">
+          <span appTooltip [text]="'Hearing clashes with user non-availability'" [colour]="'blue'">
+            <fa-icon id="clockIcon" *ngIf="hearing.hasNonAvailabilityClash" [icon]="faClock"></fa-icon
+          ></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</details>

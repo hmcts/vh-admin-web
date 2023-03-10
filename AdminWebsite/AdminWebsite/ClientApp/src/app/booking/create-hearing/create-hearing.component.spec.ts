@@ -367,7 +367,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         component.hearing = null;
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
-    it('should unsibscribe subcription on destroy', () => {
+    afterAll(() => {
         component.ngOnDestroy();
     });
 });

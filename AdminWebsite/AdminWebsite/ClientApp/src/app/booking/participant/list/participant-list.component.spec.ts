@@ -174,6 +174,17 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 is_courtroom_account: false
             });
         });
+
+        component.ngOnInit();
+
+        expect(component.sortedParticipants.length).toBe(11);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(2);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Staff Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Observer').length).toBe(1);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(3);
+        expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);
     });
 
     it('should produce a sorted list with specific hierarchy and grouping', () => {

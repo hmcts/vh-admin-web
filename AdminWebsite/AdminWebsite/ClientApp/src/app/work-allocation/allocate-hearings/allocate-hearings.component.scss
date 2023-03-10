@@ -1,0 +1,35 @@
+@import 'govuk-frontend/govuk/base';
+@import 'govuk-frontend/govuk/core/all';
+
+#from-date-entry,
+#to-date-entry {
+  @extend .govuk-body;
+}
+
+.ng-select.custom ::ng-deep .ng-placeholder {
+  color: govuk-colour('black');
+}
+
+#checkbox-row {
+  margin-left: -1px;
+}
+
+.no-border {
+  border-bottom: none;
+}
+
+.concurrent-hearings-badge {
+  border-radius: 50%;
+  background-color: #000;
+  color: #fff;
+  width: 1.6em;
+  height: 1.6em;
+  font-size: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.align-middle {
+  vertical-align: middle;
+}

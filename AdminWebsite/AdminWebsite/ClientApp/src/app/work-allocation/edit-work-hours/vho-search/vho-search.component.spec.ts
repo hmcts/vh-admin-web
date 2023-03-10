@@ -1,13 +1,14 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { VhoSearchComponent } from './vho-search.component';
-import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
-import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 
 import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { Subject } from 'rxjs';
+import { SearchResults } from '../search-results-model';
+import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 describe('VhoSearchComponent', () => {
     let component: VhoSearchComponent;
@@ -18,7 +19,7 @@ describe('VhoSearchComponent', () => {
 
     beforeEach(async () => {
         service = jasmine.createSpyObj('EditWorkHoursService', ['getWorkAvailabilityForVho', 'getNonWorkAvailabilityForVho']);
-        service.fetchNonWorkHours$ = new Subject<void>();
+        service.fetchNonWorkHours$ = new Subject<boolean>();
         videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
             'cancelVhoNonAvailabiltiesRequest',
             'setVhoNonAvailabiltiesHaveChanged',
@@ -59,13 +60,13 @@ describe('VhoSearchComponent', () => {
 
     describe('ngOnInit', () => {
         it('should reload non work hours when fetchNonWorkHours event streamed', fakeAsync(() => {
-            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            const vhoSearchResult: SearchResults = { result: [], refresh: true };
             component.ngOnInit();
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
+            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
             fixture.detectChanges();
 
-            service.fetchNonWorkHours$.next();
+            service.fetchNonWorkHours$.next(true);
             tick();
 
             expect(component).toBeTruthy();
@@ -76,11 +77,11 @@ describe('VhoSearchComponent', () => {
 
     describe('search tests working hours', () => {
         it('should call searchForVho and emit vhoSearchResult', async () => {
-            const vhoSearchResult: Array<VhoWorkHoursResponse> = [];
+            const vhoSearchResult: SearchResults = { result: [], refresh: false };
 
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
 
-            service.getWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
+            service.getWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
 
             await component.search();
 
@@ -110,7 +111,7 @@ describe('VhoSearchComponent', () => {
 
             service.getWorkAvailabilityForVho.and.throwError('bad request');
 
-            await component.search().catch(err => {
+            await component.search().then(() => {
                 expect(component).toBeTruthy();
                 expect(service.getWorkAvailabilityForVho).toHaveBeenCalled();
 
@@ -122,9 +123,9 @@ describe('VhoSearchComponent', () => {
 
     describe('search tests non working hours', () => {
         it('should call searchForVho and emit events', async () => {
-            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            const vhoSearchResult: SearchResults = { result: [], refresh: false };
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
+            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
 
             await component.search();
 
@@ -133,7 +134,7 @@ describe('VhoSearchComponent', () => {
             expect(component.hoursTypeEmitter.emit).toHaveBeenCalledWith(HoursType.NonWorkingHours);
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
         });
-        it('should  sort the dates in chronological order ', async () => {
+        it('should sort the dates in chronological order ', async () => {
             const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
@@ -172,7 +173,7 @@ describe('VhoSearchComponent', () => {
             );
             expect(component).toBeTruthy();
             expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
-            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSortedDates);
+            expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith({ result: vhoSortedDates, refresh: false });
         });
         it('should call searchForVho return null and set the error message', async () => {
             const vhoSearchResult = null;
@@ -191,7 +192,7 @@ describe('VhoSearchComponent', () => {
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
             service.getNonWorkAvailabilityForVho.and.throwError('bad request');
 
-            await component.search().catch(err => {
+            await component.search().then(() => {
                 expect(component).toBeTruthy();
                 expect(service.getNonWorkAvailabilityForVho).toHaveBeenCalled();
 

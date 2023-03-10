@@ -14,10 +14,38 @@ import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { CaseTypesMenuComponent } from './menus/case-types-menu/case-types-menu.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { JusticeUsersMenuComponent } from './menus/justice-users-menu/justice-users-menu.component';
+import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
+import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
+import { TooltipDirective } from './directives/tooltip.directive';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
-    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule.withConfig({
+            callSetDisabledState: 'whenDisabledForLegacyCode'
+        }),
+        HttpClientModule,
+        SharedRoutingModule,
+        ClipboardModule,
+        NgSelectModule
+    ],
+    declarations: [
+        HeaderComponent,
+        FooterComponent,
+        PaginationComponent,
+        ScrollTriggerDirective,
+        BookingEditComponent,
+        LongDatetimePipe,
+        CaseTypesMenuComponent,
+        JusticeUsersMenuComponent,
+        VenuesMenuComponent,
+        MinutesToHoursPipe,
+        TooltipDirective
+    ],
     providers: [WindowRef, WindowScrolling],
     exports: [
         HeaderComponent,
@@ -29,7 +57,12 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
         ReactiveFormsModule,
         HttpClientModule,
         ScrollTriggerDirective,
-        LongDatetimePipe
+        LongDatetimePipe,
+        CaseTypesMenuComponent,
+        JusticeUsersMenuComponent,
+        VenuesMenuComponent,
+        MinutesToHoursPipe,
+        TooltipDirective
     ]
 })
 export class SharedModule {

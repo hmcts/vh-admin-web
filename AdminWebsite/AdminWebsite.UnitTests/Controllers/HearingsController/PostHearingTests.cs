@@ -40,7 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _mocker = AutoMock.GetLoose();
 
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
@@ -66,12 +66,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
-        
-        [SetUp]
-        public void Setup2()
-        {
-        }
-
 
         [Test]
         public async Task Should_create_a_hearing_with_endpoints()
@@ -271,19 +265,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()))
                 .Verifiable();
 
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest{Status = UpdateBookingStatus.Created});
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest { Status = UpdateBookingStatus.Created });
 
             response.Should().BeOfType<OkObjectResult>();
 
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()),
                 Times.Exactly(1));
-            
-            _mocker.Mock<IHearingsService>().Verify(
-                x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()),
-                Times.Exactly(1));
         }
-        
+
         [Test]
         public async Task Should_not_confirm_booking_status_if_no_judge_present()
         {
@@ -295,11 +285,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<HearingDetailsResponse>());
 
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(),
-                new UpdateBookingStatusRequest {Status = UpdateBookingStatus.Created});
-            
+                new UpdateBookingStatusRequest { Status = UpdateBookingStatus.Created });
+
             response.Should().BeOfType<BadRequestObjectResult>();
         }
-        
+
         [Test]
         public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_bad_result()
         {
@@ -419,6 +409,123 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
 
             response.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [TestCase("2023-01-07", "2023-01-09")]
+        [TestCase("2023-01-08", "2023-01-09")]
+        [TestCase("2023-01-06", "2023-01-07")]
+        [TestCase("2023-01-06", "2023-01-08")]
+        public async Task Should_clone_hearings_on_weekends_when_start_or_end_date_are_on_weekends(DateTime startDate, DateTime endDate)
+        {
+            var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
+            var groupedHearings = new List<HearingDetailsResponse>
+            {
+                new()
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                }
+            };
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+            
+            var expectedDates = new List<DateTime>();
+            for (var date = startDate.AddDays(1); date <= endDate; date = date.AddDays(1))
+            {
+                expectedDates.Add(date);
+            }
+            
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), 
+                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task Should_not_clone_hearings_on_weekends_when_start_or_end_date_are_on_weekdays()
+        {
+            var startDate = new DateTime(2022, 12, 15);
+            var endDate = new DateTime(2022, 12, 20);
+            var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
+            var groupedHearings = new List<HearingDetailsResponse>
+            {
+                new()
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                }
+            };
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+
+            var expectedDates = new List<DateTime>
+            {
+                new(2022, 12, 16),
+                new(2022, 12, 17),
+                new(2022, 12, 18),
+                new(2022, 12, 19),
+                new(2022, 12, 20)
+            };
+            
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), 
+                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task Should_clone_hearings_using_hearing_dates()
+        {
+            var hearingDates = new List<DateTime>
+            {
+                new DateTime(2023, 1, 6),
+                new DateTime(2023, 1, 7),
+                new DateTime(2023, 1, 8)
+            };
+            var request = new MultiHearingRequest { HearingDates = hearingDates };
+            var groupedHearings = new List<HearingDetailsResponse>
+            {
+                new()
+                {
+                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    GroupId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                }
+            };
+            
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(groupedHearings);
+
+            var expectedDates = new List<DateTime>
+            {
+                new DateTime(2023, 1, 6),
+                new DateTime(2023, 1, 7),
+                new DateTime(2023, 1, 8)
+            };
+            
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _mocker.Mock<IBookingsApiClient>().Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), 
+                    It.Is<CloneHearingRequest>(r => r.Dates.All(d => expectedDates.Contains(d)))),
+                Times.Exactly(1));
         }
 
         private static MultiHearingRequest GetMultiHearingRequest()

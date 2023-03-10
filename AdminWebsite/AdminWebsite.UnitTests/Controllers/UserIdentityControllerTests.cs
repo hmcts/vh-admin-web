@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
@@ -20,6 +21,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
         private ClaimsPrincipal _claimsPrincipal;
         private JusticeUserResponse _justiceUserResponse;
+        private List<JusticeUserResponse> _justiceUserListResponse;
         private UserIdentityController _controller;
 
         [SetUp]
@@ -29,6 +31,8 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 IsVhTeamLeader = true
             };
+
+            
 
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.GetJusticeUserByUsernameAsync(It.IsAny<string>())).ReturnsAsync(_justiceUserResponse);
@@ -138,6 +142,44 @@ namespace AdminWebsite.UnitTests.Controllers
 
             userProfile.IsVhOfficerAdministratorRole.Should().BeFalse();
             userProfile.IsCaseAdministrator.Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task should_get_user_list()
+        {
+            _justiceUserListResponse = new List<JusticeUserResponse>();
+            var user = new JusticeUserResponse
+            {
+                ContactEmail = "userName0@mail.com",
+                Username = "userName0@mail.com",
+                CreatedBy = "integration.test@test.com",
+                FirstName = "firstName0",
+                Lastname = "lastName0"
+            };
+            _justiceUserListResponse.Add(user);
+            user = new JusticeUserResponse
+            {
+                ContactEmail = "userName1@mail.com",
+                Username = "userName1@mail.com",
+                CreatedBy = "integration.test@test.com",
+                FirstName = "firstName1",
+                Lastname = "lastName1"
+            };
+            _justiceUserListResponse.Add(user);
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null)).ReturnsAsync(_justiceUserListResponse);
+            
+            _claimsPrincipal = new ClaimsPrincipalBuilder()
+                .WithRole(AppRoles.CaseAdminRole)
+                .Build();
+
+            _controller = SetupControllerWithClaims(_claimsPrincipal);
+            var response = await _controller.GetUserList(null);
+            var result = response.Result.As<OkObjectResult>();
+
+            result.Should().NotBeNull();
+            var userList = (List<JusticeUserResponse>) result.Value;
+
+            userList.Count.Should().Be(2);
         }
         
         private UserIdentityController SetupControllerWithClaims(ClaimsPrincipal claimsPrincipal)

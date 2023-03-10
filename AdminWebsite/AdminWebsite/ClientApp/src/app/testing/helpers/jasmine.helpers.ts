@@ -1,3 +1,1 @@
-export const provide = (type, value) => {
-    return { provide: type, useValue: value };
-};
+export const provide = (type, value) => ({ provide: type, useValue: value });

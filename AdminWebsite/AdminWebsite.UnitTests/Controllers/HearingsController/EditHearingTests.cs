@@ -78,7 +78,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _featureToggle = new Mock<IFeatureToggles>();
             _featureToggle.Setup(e => e.BookAndConfirmToggle()).Returns(true);
-            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
@@ -562,8 +562,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
-
-            var userName = _addNewParticipantRequest.Participants.Last().ContactEmail;
 
             //Act
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);

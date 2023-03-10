@@ -1,0 +1,92 @@
+<form [formGroup]="form" (ngSubmit)="onSave()">
+  <fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+      <h1 class="govuk-fieldset__heading">{{ mode === 'edit' ? 'Edit role' : 'Add a justice user' }}</h1>
+    </legend>
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.username.invalid }">
+      <label class="govuk-label" for="username"> Username </label>
+      <p *ngIf="form.controls.username.invalid" id="username-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Enter the username
+      </p>
+      <input
+        class="govuk-input"
+        formControlName="username"
+        id="username"
+        name="username"
+        type="email"
+        autocomplete="email"
+        [ngClass]="{ 'govuk-input--error': form.controls.username.invalid }"
+      />
+    </div>
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.firstName.invalid }">
+      <label class="govuk-label" for="firstName"> First name </label>
+      <p *ngIf="form.controls.firstName.invalid" id="firstName-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Enter the first name
+      </p>
+      <input
+        class="govuk-input"
+        formControlName="firstName"
+        id="firstName"
+        name="firstName"
+        type="text"
+        autocomplete="given-name"
+        [ngClass]="{ 'govuk-input--error': form.controls.firstName.invalid }"
+      />
+    </div>
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.lastName.invalid }">
+      <label class="govuk-label" for="lastName"> Last name </label>
+      <p *ngIf="form.controls.lastName.invalid" id="lastName-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Enter the last name
+      </p>
+      <input
+        class="govuk-input"
+        formControlName="lastName"
+        id="lastName"
+        name="lastName"
+        type="text"
+        autocomplete="family-name"
+        [ngClass]="{ 'govuk-input--error': form.controls.lastName.invalid }"
+      />
+    </div>
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.contactTelephone.invalid }">
+      <label class="govuk-label" for="contactTelephone"> Contact telephone </label>
+      <p *ngIf="form.controls.contactTelephone.invalid" id="contactTelephone-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> Enter the contact telephone
+      </p>
+      <input
+        class="govuk-input"
+        formControlName="contactTelephone"
+        id="contactTelephone"
+        name="contactTelephone"
+        type="text"
+        autocomplete="tel"
+        [ngClass]="{ 'govuk-input--error': form.controls.contactTelephone.invalid }"
+      />
+    </div>
+    <div class="govuk-form-group">
+      <label class="govuk-label" for="role"> Role </label>
+      <select class="govuk-select" id="role" formControlName="role" name="role">
+        <option value="{{ availableRoles.Vho }}">CSO</option>
+        <option value="{{ availableRoles.VhTeamLead }}">Administrator</option>
+      </select>
+    </div>
+  </fieldset>
+
+  <div class="govuk-body" *ngIf="showSpinner">
+    <div class="vh-loader-small-container">
+      <div class="vh-loader"></div>
+      <label class="loader-label"> Please wait... </label>
+    </div>
+  </div>
+
+  <div class="govuk-button-group" *ngIf="!showSpinner">
+    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit">Save</button>
+    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
+      Discard Changes
+    </button>
+  </div>
+
+  <p *ngIf="failedSaveMessage" id="failed-save-justice-user-message" class="govuk-error-message">
+    <fa-icon [icon]="errorIcon"></fa-icon><span class="govuk-visually-hidden">Error:</span> {{ failedSaveMessage }}
+  </p>
+</form>

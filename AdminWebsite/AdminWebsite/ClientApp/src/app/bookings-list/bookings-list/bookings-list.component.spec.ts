@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Directive, EventEmitter, Output } from '@angular/core';
+import { Component, Directive, EventEmitter, Output, ViewChild } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
@@ -26,40 +26,63 @@ import {
     BookingsResponse,
     HearingDetailsResponse,
     HearingVenueResponse,
-    HearingTypeResponse
+    HearingTypeResponse,
+    JusticeUserResponse,
+    UserProfileResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
+import { v4 as uuid } from 'uuid';
+import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
+import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
+import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
 let fixture: ComponentFixture<BookingsListComponent>;
-let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
-bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
+const bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService', [
     'getBookingsList',
     'mapBookingsResponse',
     'addBookings',
     'replaceBookingRecord'
 ]);
-let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
+const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getCurrentRequest',
     'cancelRequest',
     'getHearingById',
     'mapHearingDetailsResponseToHearingModel',
-    'getHearingTypes'
+    'getHearingTypes',
+    'getUsers'
 ]);
-let referenceDataServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
-let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
-launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
 let returnUrlService: ReturnUrlService;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
+const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
 export class ResponseTestData {
+    getUserData(): Array<JusticeUserResponse> {
+        const list: Array<JusticeUserResponse> = [];
+        let user = new JusticeUserResponse();
+        user.id = uuid();
+        user.username = 'username1@mail.com';
+        user.contact_email = 'username1@mail.com';
+        user.first_name = 'firstName1';
+        user.lastname = 'lastName1';
+        list.push(user);
+
+        user = new JusticeUserResponse();
+        user.id = uuid();
+        user.username = 'username2@mail.com';
+        user.contact_email = 'username2@mail.com';
+        user.first_name = 'firstName2';
+        user.lastname = 'lastName2';
+        list.push(user);
+
+        return list;
+    }
+
     getTestData(): BookingsResponse {
         const fixedDate = new Date('2019-10-22 13:58:40.3730067');
         const response = new BookingsResponse();
@@ -126,7 +149,8 @@ export class BookingslistTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@hmcts.net',
-            '1234567'
+            '1234567',
+            'true'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -461,6 +485,7 @@ export class BookingPersistServiceSpy {
     private _caseNumber = 'CASE_NUMBER';
     private _showSearch = false;
     private _noJudgeInHearings = false;
+    private _selectedUsers: string[] = [];
 
     get bookingList() {
         const listItem = new BookingslistTestData().getTestData();
@@ -515,6 +540,14 @@ export class BookingPersistServiceSpy {
         this._noJudgeInHearings = value;
     }
 
+    get selectedUsers(): string[] {
+        return this._selectedUsers;
+    }
+
+    set selectedUsers(value) {
+        this._selectedUsers = value;
+    }
+
     updateBooking(hearing: HearingModel) {
         const booking = new BookingsDetailsModel(
             '1',
@@ -549,6 +582,7 @@ export class BookingPersistServiceSpy {
 let routerSpy: jasmine.SpyObj<Router>;
 const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
+const justiceUserServiceSpy = jasmine.createSpyObj(['JusticeUsersService', ['retrieveJusticeUserAccounts']]);
 
 describe('BookingsListComponent', () => {
     beforeEach(
@@ -572,7 +606,15 @@ describe('BookingsListComponent', () => {
             featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
             TestBed.configureTestingModule({
-                declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
+                declarations: [
+                    BookingsListComponent,
+                    ScrollableDirective,
+                    BookingDetailsComponent,
+                    LongDatetimePipe,
+                    JusticeUsersMenuComponent,
+                    CaseTypesMenuComponent,
+                    VenuesMenuComponent
+                ],
                 imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
                 providers: [
                     FormBuilder,
@@ -599,8 +641,6 @@ describe('BookingsListComponent', () => {
 
     function setFormValue(noJudge?: boolean) {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-        component.searchForm.controls['selectedCaseTypes'].setValue(['Tribunal', 'Mental Health']);
         component.searchForm.controls['startDate'].setValue(moment().startOf('day').add(1, 'days').toDate());
         component.searchForm.controls['endDate'].setValue(moment().startOf('day').add(2, 'days').toDate());
         component.searchForm.controls['participantLastName'].setValue('PARTICIPANT_LAST_NAME');
@@ -609,12 +649,11 @@ describe('BookingsListComponent', () => {
 
     function clearSearch() {
         component.searchForm.controls['caseNumber'].setValue('');
-        component.searchForm.controls['selectedVenueIds'].setValue([]);
-        component.searchForm.controls['selectedCaseTypes'].setValue([]);
         component.searchForm.controls['startDate'].setValue(null);
         component.searchForm.controls['endDate'].setValue(null);
         component.searchForm.controls['participantLastName'].setValue('');
         component.searchForm.controls['noJudge'].setValue(false);
+        component.searchForm.controls['noAllocated'].setValue(false);
     }
 
     it('should create bookings list component', () => {
@@ -637,8 +676,6 @@ describe('BookingsListComponent', () => {
         component.enableSearchFeature = false;
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -652,8 +689,6 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -663,10 +698,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -678,8 +715,6 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toBeNull();
         expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -689,10 +724,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.endDate).startOf('day').toDate(),
             moment(bookingPersistService.endDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -704,8 +741,6 @@ describe('BookingsListComponent', () => {
         component.onSearch();
         expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
         expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-        expect(bookingPersistService.selectedVenueIds).toEqual([1, 2]);
-        expect(bookingPersistService.selectedCaseTypes).toEqual(['Tribunal', 'Mental Health']);
         expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
         expect(bookingPersistService.endDate).toBeNull();
         expect(component.bookings.length).toBeGreaterThan(0);
@@ -715,10 +750,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.startDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -735,10 +772,12 @@ describe('BookingsListComponent', () => {
             bookingPersistService.caseNumber,
             bookingPersistService.selectedVenueIds,
             bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
             moment(bookingPersistService.startDate).startOf('day').toDate(),
             moment(bookingPersistService.startDate).endOf('day').toDate(),
             bookingPersistService.participantLastName,
-            bookingPersistService.noJugdeInHearings
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
         );
     });
 
@@ -876,10 +915,35 @@ describe('BookingsListComponent', () => {
         });
     });
 
-    it('should onClear', () => {
+    it('should onClear (if workAllocation feature on)', () => {
+        spyOn(component, 'workAllocationEnabled').and.returnValue(true);
+        const csoMenu = onClearTest();
+        expect(csoMenu).toHaveBeenCalledTimes(1);
+    });
+
+    it('should onClear (if workAllocation feature off)', () => {
+        spyOn(component, 'workAllocationEnabled').and.returnValue(false);
+        const csoMenu = onClearTest();
+        expect(csoMenu).toHaveBeenCalledTimes(0);
+    });
+
+    function onClearTest() {
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         const searchFormSpy = component.searchForm;
         spyOn(searchFormSpy, 'reset');
         spyOn(bookingPersistService, 'resetAll');
+        const csoMenuSpy = spyOn(component.csoMenu, 'clear');
+
         component.onClear();
         expect(component.bookings.length).toBeGreaterThan(0);
         expect(bookingPersistService.caseNumber).toEqual('');
@@ -890,8 +954,8 @@ describe('BookingsListComponent', () => {
         expect(bookingPersistService.noJugdeInHearings).toBeFalsy();
         expect(bookingPersistService.resetAll).toHaveBeenCalledTimes(1);
         expect(searchFormSpy.reset).toHaveBeenCalledTimes(1);
-    });
-
+        return csoMenuSpy;
+    }
     it('should display correct title upon inital load', () => {
         component.ngOnInit();
         expect(component.title).toEqual('Booking List');
@@ -904,6 +968,16 @@ describe('BookingsListComponent', () => {
     });
 
     it('should reset title after search is cleared', () => {
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         setFormValue();
         component.enableSearchFeature = true;
         component.onSearch();
@@ -941,26 +1015,6 @@ describe('BookingsListComponent', () => {
         expect(searchButton.disabled).toBe(false);
     });
 
-    it('should enable search button if selectedVenueIds field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue([1, 2]);
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
-
-    it('should enable search button if selectedCaseTypes field is valid', () => {
-        component.openSearchPanel();
-        clearSearch();
-        component.searchForm.controls['selectedVenueIds'].setValue(['Tribunal']);
-        component.enableSearchFeature = true;
-        fixture.detectChanges();
-        const searchButton = document.getElementById('searchButton') as HTMLButtonElement;
-        expect(searchButton.disabled).toBe(false);
-    });
-
     it('should enable search button if start date is valid', () => {
         component.openSearchPanel();
         clearSearch();
@@ -987,6 +1041,17 @@ describe('BookingsListComponent', () => {
         fixture.detectChanges();
         let searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
         expect(searchPanel).not.toBeNull();
+
+        const formBuilder = new FormBuilder();
+        const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
+            'selectedUsers',
+            'selectedCaseTypes',
+            'selectedVenueIds'
+        ]);
+        component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
+        component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistServiceSpy, videoHearingServiceSpy, formBuilder, loggerSpy);
+        component.venueMenu = new VenuesMenuComponent(bookingPersistServiceSpy, referenceDataServiceSpy, formBuilder, loggerSpy);
+
         component.closeSearchPanel();
         fixture.detectChanges();
         searchPanel = document.getElementById('searchPanel') as HTMLDivElement;
@@ -1000,14 +1065,14 @@ describe('BookingsListComponent', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
         launchDarklyServiceSpy.flagChange.next({ admin_search: false });
         fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(0);
+        expect(component.enableSearchFeature).toBeFalsy();
     });
 
     it('should load venues when search feature is enabled', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
         launchDarklyServiceSpy.flagChange.next({ admin_search: true });
         fixture.detectChanges();
-        expect(referenceDataServiceSpy.getCourts).toHaveBeenCalledTimes(1);
+        expect(component.enableSearchFeature).toBeTruthy();
     });
 
     it('should hide the search panel on initial load when search feature enabled', () => {
@@ -1180,6 +1245,65 @@ describe('BookingsListComponent', () => {
             expect(component.selectedHearingId).toBe('');
             expect(component.selectedGroupIndex).toBe(-1);
             expect(component.selectedItemIndex).toBe(-1);
+        });
+    });
+
+    describe('onSelectUserChange', () => {
+        it('should disable noAllocated if any selected user', () => {
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
+            component.searchForm.controls['selectedUserIds'].setValue([
+                bookingPersistService.selectedUsers[0],
+                bookingPersistService.selectedUsers[1]
+            ]);
+            component.onSelectUserChange();
+            expect(component.searchForm.controls['noAllocated'].disabled).toBeTruthy();
+        });
+
+        it('should enable noAllocated if no selected user', () => {
+            bookingPersistService.selectedUsers = [];
+            component.onSelectUserChange();
+            expect(component.searchForm.controls['noAllocated'].disabled).toBeFalsy();
+        });
+    });
+
+    describe('onChangeNoAllocated', () => {
+        const bookingList = new BookingslistTestData();
+        const bookingData = bookingList.getTestData();
+        beforeEach(() => {
+            const formBuilder = new FormBuilder();
+            const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedCaseTypes']);
+            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistServiceSpy, justiceUserServiceSpy, formBuilder, loggerSpy);
+            spyOn(component.csoMenu, 'enabled');
+        });
+        it('should disable selectedUsers if noAllocated is checked', () => {
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
+            component.searchForm.controls['noAllocated'].setValue(true);
+            component.onChangeNoAllocated();
+            expect(bookingPersistService.selectedUsers).toEqual([]);
+        });
+
+        it('should enable selectedUsers if noAllocated is not checked', () => {
+            bookingPersistService.selectedUsers = new ResponseTestData().getUserData().map(x => x.id);
+            const count = bookingPersistService.selectedUsers.length;
+            component.searchForm.controls['noAllocated'].setValue(false);
+            component.onChangeNoAllocated();
+            expect(bookingPersistService.selectedUsers.length).toEqual(count);
+        });
+
+        it('should not show allocated to label if work allocation feature flag is off', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            expect(divToHide).toBeFalsy();
+        });
+
+        it('should show allocated label to if work allocation feature flag is on', async () => {
+            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            expect(divToHide).toBeTruthy();
         });
     });
 });

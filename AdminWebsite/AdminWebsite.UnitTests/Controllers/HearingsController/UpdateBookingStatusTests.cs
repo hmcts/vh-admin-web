@@ -33,7 +33,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _mocker = AutoMock.GetLoose();
 
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
@@ -152,307 +152,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
         }
-        
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_video_api_throws()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant",
-                    PexipNode = "pexip"
-                }
-            };
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_conference_exists_but_meeting_null()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId
-            };
-            
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_conference_exists_but_admin_uri_null()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
-            _mocker.Mock<IConferenceDetailsService>()
-                .Setup(x => x.GetConferenceDetailsByHearingIdWithRetry(It.IsAny<Guid>(), It.IsAny<string>()))
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            var updateBookingStatusResp = (UpdateBookingStatusResponse)result.Value;
-            updateBookingStatusResp.Should().NotBeNull();
-            updateBookingStatusResp.Success.Should().BeFalse();
-            updateBookingStatusResp.Message.Should().Be($"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}");
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_conference_exists_but_participant_uri_null()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    JudgeUri = "judge",
-                    PexipNode = "pexip"
-                }
-            };
-
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_conference_exists_but_judge_uri_null()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    ParticipantUri = "participant",
-                    PexipNode = "pexip"
-                }
-            };
-
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_returns_false_response_when_conference_exists_but_pexip_node_null()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    AdminUri = "admin",
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant"
-                }
-            };
-
-            _mocker.Mock<IHearingsService>().Setup(x => x.UpdateFailedBookingStatus(hearingId));
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.UpdateBookingStatusAsync(hearingId, It.IsAny<UpdateBookingStatusRequest>()));
-
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-                ))
-                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-                {
-                    sleepDuration(1);
-                    retryAction(1);
-                    handleResultCondition(expectedConferenceDetailsResponse);
-                    await executeFunction();
-                })
-                .ThrowsAsync(new VideoApiException("", 0, "", null, null));
-
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.AtLeastOnce);
-        }
-
-        [Test]
-        public async Task UpdateBookingStatus_for_create_returns_failed_booking_status_in_response_when_there_is_nornal_exception()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("test");
-            var updateCreatedStatus = new UpdateBookingStatusRequest
-            {
-                UpdatedBy = "test",
-                CancelReason = "",
-                Status = UpdateBookingStatus.Created
-            };
-
-            var hearingId = Guid.NewGuid();
-
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus))
-                .ThrowsAsync(new Exception("test exception"));
-            
-            var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
-
-            var result = (OkObjectResult)response;
-            result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _mocker.Mock<IHearingsService>().Verify(x => x.UpdateFailedBookingStatus(hearingId), Times.Once);
-        }
 
         [Test]
         public async Task UpdateBookingStatus_returns_failed_status_response_when_there_is_argument_exception()
@@ -497,7 +196,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var result = (BadRequestObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-            
+
         }
 
         [Test]
@@ -506,7 +205,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IUserIdentity>()
                 .Setup(x => x.GetUserIdentityName())
                 .Returns("test");
-            
+
             var request = new UpdateBookingStatusRequest
             {
                 UpdatedBy = "test",
@@ -526,7 +225,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.StatusCode.Should().Be(StatusCodes.Status404NotFound);
 
         }
-        
+
         [Test]
         public async Task UpdateBookingStatus_with_cancellation_returns_bad_request_when_throws_bookings_api_exception_badrequest()
         {

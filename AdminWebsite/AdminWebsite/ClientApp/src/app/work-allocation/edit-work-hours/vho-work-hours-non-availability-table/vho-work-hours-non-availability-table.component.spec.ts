@@ -1,24 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
-import { ConfirmDeleteHoursPopupComponent } from '../../../popups/confirm-delete-popup/confirm-delete-popup.component';
-import { of, throwError } from 'rxjs';
+import { ConfirmDeleteHoursPopupComponent } from '../../pop-ups/confirm-delete-popup/confirm-delete-popup.component';
+import { of, throwError, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
-import { Subject } from 'rxjs';
 import { By } from '@angular/platform-browser';
-import { HoursType } from '../../../common/model/hours-type';
 import { FormBuilder } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { MockWorkAllocationValues } from '../../../testing/data/work-allocation-test-data';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursNonAvailabilityTableComponent>;
     let bHClientSpy: jasmine.SpyObj<BHClient>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+    const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
         'setVhoNonAvailabiltiesHaveChanged'
     ]);
@@ -43,6 +41,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         fixture = TestBed.createComponent(VhoWorkHoursNonAvailabilityTableComponent);
         component = fixture.componentInstance;
         component.saveNonWorkHoursCompleted$ = new Subject<boolean>();
+        videoServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
         fixture.detectChanges();
     });
 
@@ -104,12 +103,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
     it('check results input parameter sets to null', () => {
         component.result = null;
-        fixture.detectChanges();
-        expect(component.nonWorkHours).toBe(null);
-    });
-
-    it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new EditVhoNonAvailabilityWorkHoursModel()];
         fixture.detectChanges();
         expect(component.nonWorkHours).toBe(null);
     });
@@ -184,6 +177,10 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('edit button clicked', () => {
             it('should switch to edit mode', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+                const x = component.checkVhoHasWorkHours;
+
                 spyOn(component.editNonWorkHours, 'emit');
                 const editButton = fixture.debugElement.query(By.css('#edit-individual-non-work-hours-button')).nativeElement;
                 editButton.click();
@@ -197,6 +194,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         describe('cancel button clicked', () => {
             it('should switch to read mode', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+
                 spyOn(component.cancelSaveNonWorkHours, 'emit');
                 component.switchToEditMode();
                 fixture.detectChanges();
@@ -211,6 +211,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('should revert non work hour changes', () => {
+                component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+                fixture.detectChanges();
+
                 component.switchToEditMode();
                 const originalNonWorkHours = JSON.parse(JSON.stringify(component.nonWorkHours));
                 const updatedWorkHour = component.nonWorkHours[0];
@@ -226,19 +229,70 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
-        describe('save button clicked', () => {
-            it('should emit save event', () => {
+        describe('saveNonWorkingHours', () => {
+            beforeEach(() => {
                 component.switchToEditMode();
                 fixture.detectChanges();
                 spyOn(component.saveNonWorkHours, 'emit');
+            });
+            it('should save correctly', () => {
+                const nonWorkHours = {
+                    id: 1,
+                    start_date: '2020-01-01',
+                    start_time: '00:00:00',
+                    end_date: '2021-01-01',
+                    end_time: '00:00:00',
+                    new_row: true
+                };
+                component.nonWorkHours = [nonWorkHours];
 
-                const saveButton = fixture.debugElement.query(By.css('#save-individual-non-work-hours-button')).nativeElement;
-                saveButton.click();
+                fixture.detectChanges();
+
+                component.saveNonWorkingHours();
                 fixture.detectChanges();
 
                 expect(component.isSaving).toBe(true);
                 expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(1);
                 expect(component.saveNonWorkHours.emit).toHaveBeenCalledWith(component.nonWorkHours);
+                expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
+            });
+            it('should not save', () => {
+                const nonWorkHours = {
+                    id: 1,
+                    start_date: '2020-01-01',
+                    start_time: '00:00:00',
+                    end_date: '2020-01-01',
+                    end_time: '00:00:00',
+                    new_row: true
+                };
+                component.nonWorkHours = [nonWorkHours];
+
+                fixture.detectChanges();
+
+                component.saveNonWorkingHours();
+                fixture.detectChanges();
+
+                expect(component.isSaving).toBe(false);
+                expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(0);
+                expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(0);
+            });
+            it('should save if there are no validation failures', () => {
+                component.nonWorkHours = [
+                    {
+                        id: 1,
+                        start_date: '2022-01-01',
+                        start_time: '06:00',
+                        end_date: '2022-01-01',
+                        end_time: '08:00'
+                    } as any
+                ];
+
+                component.saveNonWorkingHours();
+
+                expect(component.isSaving).toBe(true);
+                expect(component.saveNonWorkHours.emit).toHaveBeenCalledTimes(1);
+                expect(component.saveNonWorkHours.emit).toHaveBeenCalledWith(component.nonWorkHours);
+                expect(videoServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -268,7 +322,6 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         describe('addNewNonAvailabilityRow', () => {
             it('should add new row and validate', () => {
                 const originalNonWorkHoursLength = component.nonWorkHours.length;
-                const spy = spyOn(component, 'onStartDateBlur');
 
                 component.addNewNonAvailabilityRow();
                 const addedNonWorkHours = component.nonWorkHours[component.nonWorkHours.length - 1];
@@ -276,12 +329,185 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(component.nonWorkHours.length).toBe(originalNonWorkHoursLength + 1);
                 expect(addedNonWorkHours.end_date).toBe(addedNonWorkHours.start_date);
                 expect(addedNonWorkHours.end_time).toBe(addedNonWorkHours.start_time);
-                expect(spy).toHaveBeenCalledTimes(1);
                 expect(component.isEditing).toBe(true);
             });
         });
 
-        describe('onStartDateBlur', () => {
+        describe('validateRequiredField', () => {
+            beforeEach(() => {
+                component.switchToEditMode();
+                fixture.detectChanges();
+            });
+
+            it('should return false and add an error when any required value is missing', () => {
+                spyOn(component, 'addValidationError');
+                spyOn(component, 'removeValidationError');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+                const workHour2 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+                const workHour3 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '',
+                    end_time: '08:00'
+                } as any;
+                const workHour4 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: ''
+                } as any;
+
+                const result = [
+                    [workHour1, 'start_date'],
+                    [workHour2, 'start_time'],
+                    [workHour3, 'end_date'],
+                    [workHour4, 'end_time']
+                ]
+                    .map(([workHour, field]) => component.validateRequiredField(workHour, field))
+                    .filter(Boolean);
+
+                expect(result.length).toBe(0);
+                expect(component.addValidationError).toHaveBeenCalledTimes(4);
+                expect(component.removeValidationError).toHaveBeenCalledTimes(0);
+            });
+
+            it('should return true and not add an error when no value is missing', () => {
+                spyOn(component, 'addValidationError');
+                spyOn(component, 'removeValidationError');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                const result = [
+                    [workHour1, 'start_date'],
+                    [workHour1, 'start_time'],
+                    [workHour1, 'end_date'],
+                    [workHour1, 'end_time']
+                ]
+                    .map(([workHour, field]) => component.validateRequiredField(workHour, field))
+                    .filter(Boolean);
+
+                expect(result.length).toBe(4);
+                expect(component.addValidationError).toHaveBeenCalledTimes(0);
+                expect(component.removeValidationError).toHaveBeenCalledTimes(4);
+            });
+        });
+
+        describe('validateNonWorkHour', () => {
+            beforeEach(() => {
+                component.switchToEditMode();
+                fixture.detectChanges();
+            });
+
+            it('should not call validateEndTimeBeforeStartTime if any date value is missing', () => {
+                spyOn(component, 'validateEndTimeBeforeStartTime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndTimeBeforeStartTime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateEndDatetimeAfterStartDatetime if any date value is missing', () => {
+                spyOn(component, 'validateEndDatetimeAfterStartDatetime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndDatetimeAfterStartDatetime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateOverlappingDates if any date value is missing', () => {
+                spyOn(component, 'validateOverlappingDates');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '',
+                    start_time: '06:00',
+                    end_date: '2022-01-01',
+                    end_time: '08:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateOverlappingDates).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateEndDatetimeAfterStartDatetime if end time is before start time', () => {
+                spyOn(component, 'validateEndDatetimeAfterStartDatetime');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-01',
+                    start_time: '08:00',
+                    end_date: '2022-01-01',
+                    end_time: '06:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateEndDatetimeAfterStartDatetime).toHaveBeenCalledTimes(0);
+            });
+
+            it('should not call validateOverlappingDates if end date time is before start date time', () => {
+                spyOn(component, 'validateOverlappingDates');
+
+                component.nonWorkHours = [];
+                const workHour1 = {
+                    id: 1,
+                    start_date: '2022-01-03',
+                    start_time: '08:00',
+                    end_date: '2022-01-01',
+                    end_time: '06:00'
+                } as any;
+
+                component.validateNonWorkHour(workHour1);
+
+                expect(component.validateOverlappingDates).toHaveBeenCalledTimes(0);
+            });
+        });
+
+        describe('start date validation', () => {
             const elementPrefix = 'start-date';
 
             beforeEach(() => {
@@ -292,9 +518,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             it('fails validation when start date is empty', () => {
                 const nonWorkHour = component.nonWorkHours[0];
                 nonWorkHour.start_date = '';
+                fixture.detectChanges();
 
-                const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-                triggerBlurEvent(elementId);
+                component.saveNonWorkingHours();
 
                 expect(component.validationSummary.length).toBe(1);
                 expect(component.validationSummary[0]).toEqual(ERROR_START_DATE_REQUIRED);
@@ -303,19 +529,18 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(validationFailure).not.toEqual(null);
                 expect(validationFailure.id).toBe(nonWorkHour.id);
                 expect(validationFailure.errorMessage).toBe(ERROR_START_DATE_REQUIRED);
-                assertSaveButtonIsDisabled();
             });
 
             it('fails validation when end time is before start time on same day', () => {
-                checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix);
+                checkValidationFailsWhenEndTimeIsBeforeStartTime();
             });
 
             it('fails validation when start and end datetimes match', () => {
-                checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix);
+                checkValidationFailsWhenStartAndEndDatetimesMatch();
             });
 
             it('fails validation when datetimes overlap with another non work hour', () => {
-                checkValidationFailsWhenDatetimesOverlap(elementPrefix);
+                checkValidationFailsWhenDatetimesOverlap();
             });
 
             it('removes previous validation error when valid', () => {
@@ -336,8 +561,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.validationFailures = [...previousValidationFailures];
                 component.validationSummary = [...previousDistinctValidationFailures];
 
-                const elementId = `#${elementPrefix}_${nonWorkHourIdWithValidData}`;
-                triggerBlurEvent(elementId);
+                component.saveNonWorkingHours();
 
                 expect(component.validationFailures.length).toBe(previousValidationFailures.length - 1);
                 const previousFailure = component.validationFailures.find(
@@ -367,7 +591,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 component.nonWorkHours.push(workHour2);
 
                 component.nonWorkHours.forEach(workHour => {
-                    component.onStartDateBlur(workHour);
+                    component.validateNonWorkHour(workHour);
                     fixture.detectChanges();
                 });
 
@@ -377,7 +601,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
         });
 
-        describe('onEndDateBlur', () => {
+        describe('end date validation', () => {
             const elementPrefix = 'end-date';
 
             beforeEach(() => {
@@ -389,8 +613,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 const nonWorkHour = component.nonWorkHours[0];
                 nonWorkHour.end_date = '';
 
-                const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-                triggerBlurEvent(elementId);
+                component.saveNonWorkingHours();
 
                 expect(component.validationSummary.length).toBe(1);
                 expect(component.validationSummary[0]).toEqual(ERROR_END_DATE_REQUIRED);
@@ -399,23 +622,22 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
                 expect(validationFailure).not.toEqual(null);
                 expect(validationFailure.id).toBe(nonWorkHour.id);
                 expect(validationFailure.errorMessage).toBe(ERROR_END_DATE_REQUIRED);
-                assertSaveButtonIsDisabled();
             });
 
             it('fails validation when end time is before start time on same day', () => {
-                checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix);
+                checkValidationFailsWhenEndTimeIsBeforeStartTime();
             });
 
             it('fails validation when start and end datetimes match', () => {
-                checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix);
+                checkValidationFailsWhenStartAndEndDatetimesMatch();
             });
 
             it('fails validation when datetimes overlap with another non work hour', () => {
-                checkValidationFailsWhenDatetimesOverlap(elementPrefix);
+                checkValidationFailsWhenDatetimesOverlap();
             });
         });
 
-        describe('onStartTimeBlur', () => {
+        describe('start time validation', () => {
             const elementPrefix = 'start-time';
 
             beforeEach(() => {
@@ -424,23 +646,23 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('fails validation when end time is before start time on same day', () => {
-                checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix);
+                checkValidationFailsWhenEndTimeIsBeforeStartTime();
             });
 
             it('fails validation when start and end datetimes match', () => {
-                checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix);
+                checkValidationFailsWhenStartAndEndDatetimesMatch();
             });
 
             it('fails validation when datetimes overlap with another non work hour', () => {
-                checkValidationFailsWhenDatetimesOverlap(elementPrefix);
+                checkValidationFailsWhenDatetimesOverlap();
             });
 
             it('fails validation when start time is empty', () => {
-                checkValidationFailsWhenStartTimeIsEmpty(elementPrefix);
+                checkValidationFailsWhenStartTimeIsEmpty();
             });
         });
 
-        describe('onEndTimeBlur', () => {
+        describe('end time validation', () => {
             const elementPrefix = 'end-time';
 
             beforeEach(() => {
@@ -449,36 +671,31 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             });
 
             it('fails validation when end time is before start time on same day', () => {
-                checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix);
+                checkValidationFailsWhenEndTimeIsBeforeStartTime();
             });
 
             it('fails validation when start and end datetimes match', () => {
-                checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix);
+                checkValidationFailsWhenStartAndEndDatetimesMatch();
             });
 
             it('fails validation when datetimes overlap with another non work hour', () => {
-                checkValidationFailsWhenDatetimesOverlap(elementPrefix);
+                checkValidationFailsWhenDatetimesOverlap();
             });
 
             it('fails validation when end time is empty', () => {
-                checkValidationFailsWhenEndTimeIsEmpty(elementPrefix);
+                checkValidationFailsWhenEndTimeIsEmpty();
             });
         });
 
-        function assertSaveButtonIsDisabled() {
-            const saveButton = fixture.debugElement.query(By.css('#save-individual-non-work-hours-button')).nativeElement;
-            expect(saveButton.getAttribute('disabled')).toEqual('');
-        }
-
-        function checkValidationFailsWhenEndTimeIsBeforeStartTime(elementPrefix: string) {
+        function checkValidationFailsWhenEndTimeIsBeforeStartTime() {
             const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = '2022-01-01';
             nonWorkHour.end_time = '06:00:00';
+            fixture.detectChanges();
 
-            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-            triggerBlurEvent(elementId);
+            component.saveNonWorkingHours();
 
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
@@ -487,18 +704,16 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME);
-            assertSaveButtonIsDisabled();
         }
 
-        function checkValidationFailsWhenStartAndEndDatetimesMatch(elementPrefix: string) {
+        function checkValidationFailsWhenStartAndEndDatetimesMatch() {
             const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = nonWorkHour.start_date;
             nonWorkHour.end_time = nonWorkHour.start_time;
 
-            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-            triggerBlurEvent(elementId);
+            component.saveNonWorkingHours();
 
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
@@ -507,10 +722,9 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME);
-            assertSaveButtonIsDisabled();
         }
 
-        function checkValidationFailsWhenDatetimesOverlap(elementPrefix: string) {
+        function checkValidationFailsWhenDatetimesOverlap() {
             component.nonWorkHours = [];
             const workHour1 = new EditVhoNonAvailabilityWorkHoursModel();
             workHour1.id = 1;
@@ -528,8 +742,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.nonWorkHours.push(workHour2);
             fixture.detectChanges();
 
-            const elementId = `#${elementPrefix}_${workHour1.id}`;
-            triggerBlurEvent(elementId);
+            component.saveNonWorkingHours();
 
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_OVERLAPPING_DATETIMES);
@@ -538,18 +751,16 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(workHour1.id);
             expect(validationFailure.errorMessage).toBe(ERROR_OVERLAPPING_DATETIMES);
-            assertSaveButtonIsDisabled();
         }
 
-        function checkValidationFailsWhenStartTimeIsEmpty(elementPrefix: string) {
+        function checkValidationFailsWhenStartTimeIsEmpty() {
             const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '';
             nonWorkHour.end_date = '2022-01-01';
             nonWorkHour.end_time = '10:00:00';
 
-            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-            triggerBlurEvent(elementId);
+            component.saveNonWorkingHours();
 
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_START_TIME_REQUIRED);
@@ -558,18 +769,16 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_START_TIME_REQUIRED);
-            assertSaveButtonIsDisabled();
         }
 
-        function checkValidationFailsWhenEndTimeIsEmpty(elementPrefix: string) {
+        function checkValidationFailsWhenEndTimeIsEmpty() {
             const nonWorkHour = component.nonWorkHours[0];
             nonWorkHour.start_date = '2022-01-01';
             nonWorkHour.start_time = '08:00:00';
             nonWorkHour.end_date = '2022-01-01';
             nonWorkHour.end_time = '';
 
-            const elementId = `#${elementPrefix}_${nonWorkHour.id}`;
-            triggerBlurEvent(elementId);
+            component.saveNonWorkingHours();
 
             expect(component.validationSummary.length).toBe(1);
             expect(component.validationSummary[0]).toEqual(ERROR_END_TIME_REQUIRED);
@@ -578,15 +787,8 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(validationFailure).not.toEqual(null);
             expect(validationFailure.id).toBe(nonWorkHour.id);
             expect(validationFailure.errorMessage).toBe(ERROR_END_TIME_REQUIRED);
-            assertSaveButtonIsDisabled();
         }
     });
-
-    function triggerBlurEvent(elementId: string) {
-        const startDateElement = fixture.debugElement.query(By.css(elementId)).nativeElement;
-        startDateElement.dispatchEvent(new Event('blur'));
-        fixture.detectChanges();
-    }
 
     describe('date filter function', () => {
         beforeEach(() => {
@@ -669,7 +871,27 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
         });
-
+        it('should check non work hours are populated', () => {
+            component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
+            expect(component.checkVhoHasWorkHours).toBe(true);
+        });
+        it('should check non work hours are empty', () => {
+            component.nonWorkHours = null;
+            expect(component.checkVhoHasWorkHours).toBe(false);
+        });
+        it('it should reset the start date and end date ', () => {
+            // arrange
+            let startD = null;
+            let endD = null;
+            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/10/20' });
+            // act
+            component.resetStartDateAndEndDate();
+            startD = component.filterForm.value.startDate;
+            endD = component.filterForm.value.startDate;
+            // assert
+            expect(startD).toBe(null);
+            expect(endD).toBe(null);
+        });
         it('no dates selected, filter is click', () => {
             // arrange
             component.filterForm.setValue({ startDate: '', endDate: '' });
@@ -701,6 +923,76 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.nonWorkHours.length).toBe(3);
             expect(component.showSaveConfirmation).toBe(true);
+        });
+
+        it('User filter dates and save changes', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            component.result = testData;
+            component.switchToEditMode();
+            component.filterForm.setValue({ startDate: '2023/01/01', endDate: '2023/01/05' });
+            // act
+            component.filterByDate();
+            expect(component.nonWorkHours.length).toEqual(5);
+            component.nonWorkHours[2].start_time = '09:01:00';
+            component.saveNonWorkingHours();
+            // assert
+            expect(component.isFiltered).toBe(true);
+            component.result = testData;
+            expect(component.nonWorkHours.length).toEqual(5);
+        });
+    });
+
+    describe('displaying messages for results', () => {
+        it('should display a message when there are zero results', () => {
+            // arrange
+            const testData = new Array<VhoNonAvailabilityWorkHoursResponse>();
+            // act
+            component.result = testData;
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should display a message when results length exceeds 20 after filter', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            const startDate = new Date(2022, 1, 1);
+            const endDate = new Date(2023, 4, 1);
+            component.result = testData;
+            component.switchToEditMode();
+            component.originalNonWorkHours = component.nonWorkHours;
+            component.filterForm.controls['startDate'].setValue(startDate);
+            component.filterForm.controls['endDate'].setValue(endDate);
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+        });
+
+        it('should not display a message when results are between 0 and  less than 20 after filter', () => {
+            // arrange
+            const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
+            const startDate = new Date(2022, 1, 1);
+            const endDate = new Date(2023, 1, 0);
+            component.result = testData;
+            component.switchToEditMode();
+            component.originalNonWorkHours = component.nonWorkHours;
+            component.filterForm.controls['startDate'].setValue(startDate);
+            component.filterForm.controls['endDate'].setValue(endDate);
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.displayMessage).toBeFalsy();
+        });
+    });
+
+    describe('handleContinue', () => {
+        it('hides save confirmation', () => {
+            component.showSaveConfirmation = true;
+            component.handleContinue();
+            expect(component.showSaveConfirmation).toBeFalsy();
         });
     });
 });

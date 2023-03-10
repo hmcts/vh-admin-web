@@ -1,0 +1,17 @@
+﻿@import 'govuk-frontend/govuk/base';
+
+#filter-btn {
+  margin-top: 37px;
+}
+
+.table-cell-delete {
+  vertical-align: middle;
+  fa-icon {
+    cursor: pointer;
+    color: govuk-colour('red');
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}

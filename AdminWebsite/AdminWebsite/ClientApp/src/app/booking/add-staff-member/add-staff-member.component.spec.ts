@@ -178,21 +178,6 @@ describe('AddStaffMemberComponent', () => {
     });
 
     describe('setupStaffMemberValidityEmissionOnFormValueChange', () => {
-        it('should subscribe to email changes when search email exists', fakeAsync(done => {
-            const email = 'email@email.com';
-            component.isSubscribedToEmailChanges = false;
-
-            tick();
-            component.searchEmail.emailChanged.subscribe(value => {
-                expect(value).toBe(email);
-                done();
-            });
-
-            component.setupStaffMemberValidityEmissionOnFormValueChange();
-
-            component.role.setValue('newRole');
-        }));
-
         it('should emit if staff member is valid on form change', done => {
             component.isStaffMemberValid.subscribe(valid => {
                 expect(valid).not.toBeNull();

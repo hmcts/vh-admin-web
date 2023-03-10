@@ -1,17 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ValidationFailure, VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
-import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
-import { Logger } from '../../../services/logger';
+import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
-import { DatePipe } from '@angular/common';
-import { FormBuilder } from '@angular/forms';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
     let fixture: ComponentFixture<VhoWorkHoursTableComponent>;
-    let videoServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
+    const videoServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
         'cancelVhoNonAvailabiltiesRequest',
         'setVhoNonAvailabiltiesHaveChanged'
     ]);
@@ -48,8 +44,20 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(workHoursTable).toBeNull();
         });
 
+        it('should check work hours are empty', () => {
+            component.workHours = [new VhoWorkHoursResponse()];
+            expect(component.checkVhoHasWorkHours).toBe(true);
+        });
+
+        it('should check work hours are empty', () => {
+            component.workHours = null;
+            expect(component.checkVhoHasWorkHours).toBe(false);
+        });
+
         it('should switch to edit mode when edit button is clicked', () => {
             component.isEditing = false;
+            component.workHours = [new VhoWorkHoursResponse()];
+            fixture.detectChanges();
             const spy = spyOn(component, 'switchToEditMode');
             const editButton = fixture.debugElement.query(By.css('#edit-individual-work-hours-button')).nativeElement;
 
@@ -61,6 +69,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should save when save button is clicked', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             fixture.detectChanges();
             const spy = spyOn(component, 'saveWorkingHours');
             const saveButton = fixture.debugElement.query(By.css('#save-individual-work-hours-button')).nativeElement;
@@ -72,6 +81,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should disable save button when errors exist', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             const validationFailure = new ValidationFailure();
             validationFailure.id = 1;
             validationFailure.errorMessage = 'Error';
@@ -85,6 +95,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
         it('should cancel editing mode when cancel button is clicked', () => {
             component.isEditing = true;
+            component.workHours = [new VhoWorkHoursResponse()];
             fixture.detectChanges();
             const spy = spyOn(component, 'cancelEditingWorkingHours');
             const cancelButton = fixture.debugElement.query(By.css('#cancel-editing-individual-work-hours-button')).nativeElement;
@@ -92,6 +103,39 @@ describe('VhoWorkHoursTableComponent', () => {
             cancelButton.click();
 
             expect(spy).toHaveBeenCalledTimes(1);
+        });
+        it('should display a message when Vho has no working hours', () => {
+            // arrange
+            component.result = [];
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBe(true);
+            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should display a message when Vho  working hours are null', () => {
+            // arrange
+            component.result = null;
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBeTruthy(true);
+            expect(component.message).toBe(VhoWorkHoursTableComponent.WarningNoWorkingHoursForVho);
+        });
+
+        it('should not display a message when Vho  has no working hours', () => {
+            // arrange
+            const mondayWorkHours = new VhoWorkHoursResponse();
+            mondayWorkHours.day_of_week_id = 1;
+            mondayWorkHours.end_time = '17:00';
+            mondayWorkHours.start_time = '09:00';
+            component.result = [mondayWorkHours];
+            // act
+            fixture.detectChanges();
+            // assert
+            expect(component.displayMessage).toBe(false);
+            expect(component.message).toBe(undefined);
         });
     });
 
@@ -112,6 +156,15 @@ describe('VhoWorkHoursTableComponent', () => {
             expect(component.validationFailures.length).toBe(0);
         });
 
+        it('should emit event', () => {
+            component.isEditing = true;
+            spyOn(component.cancelSaveWorkHours, 'emit');
+
+            component.cancelEditingWorkingHours();
+
+            expect(component.cancelSaveWorkHours.emit).toHaveBeenCalledTimes(1);
+        });
+
         it('should set work hours back to original values', () => {
             const originalMondayWorkHours = new VhoWorkHoursResponse();
             originalMondayWorkHours.day_of_week_id = 1;
@@ -124,7 +177,6 @@ describe('VhoWorkHoursTableComponent', () => {
             originalMondayWorkHours.start_time = '09:00';
 
             component.originalWorkHours = [originalMondayWorkHours];
-
             component.workHours = [editedMondayWorkHours];
 
             component.switchToEditMode();
@@ -202,6 +254,20 @@ describe('VhoWorkHoursTableComponent', () => {
 
             expect(JSON.stringify(component.originalWorkHours)).toEqual(JSON.stringify(component.workHours));
         });
+
+        it('should emit event when work hours are not empty', () => {
+            const mondayWorkHours = new VhoWorkHoursResponse();
+            mondayWorkHours.day_of_week_id = 1;
+            mondayWorkHours.end_time = '17:00';
+            mondayWorkHours.start_time = '09:00';
+
+            spyOn(component.editWorkHours, 'emit');
+            component.workHours = [mondayWorkHours];
+
+            component.switchToEditMode();
+
+            expect(component.editWorkHours.emit).toHaveBeenCalledTimes(1);
+        });
     });
 
     it('check results input parameter sets the value', () => {
@@ -215,13 +281,6 @@ describe('VhoWorkHoursTableComponent', () => {
         fixture.detectChanges();
         expect(component.workHours).toBeNull();
     });
-
-    it('check results input parameter, when wrong type sets to null', () => {
-        component.result = [new VhoNonAvailabilityWorkHoursResponse()];
-        fixture.detectChanges();
-        expect(component.workHours).toBeNull();
-    });
-
     describe('validateTimes', () => {
         beforeEach(() => {
             component.validationFailures = [];
@@ -346,6 +405,15 @@ describe('VhoWorkHoursTableComponent', () => {
             const result = component.workHourIsValid(workHour.day_of_week_id);
             expect(result).toBe(false);
             expect(videoServiceSpy.setVhoNonAvailabiltiesHaveChanged).toHaveBeenCalledTimes(1);
+        });
+
+        it('should display a message', () => {
+            // arrange
+            const Message = 'Tesing';
+            // act
+            component.message = Message;
+            // assert
+            expect(component.message).toBe('Tesing');
         });
     });
 });

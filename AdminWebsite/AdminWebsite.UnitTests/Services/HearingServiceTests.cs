@@ -47,7 +47,7 @@ namespace AdminWebsite.UnitTests.Services
             });
 
             _mocker.Mock<IConferenceDetailsService>()
-                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
@@ -617,7 +617,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_Invoke_BookingAPI_UpdateBookingStatusAsync_when_UpdateFailedBookingStatus_called()
         {
             // Arrange
-            var hearingId = new Guid();
+            var hearingId = Guid.NewGuid();
             // Act
             await _service.UpdateFailedBookingStatus(hearingId);
 

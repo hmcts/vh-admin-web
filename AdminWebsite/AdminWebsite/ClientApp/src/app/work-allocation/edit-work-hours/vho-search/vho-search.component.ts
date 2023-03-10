@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { HoursType } from '../../../common/model/hours-type';
-import { EditWorkHoursService } from '../../../services/edit-work-hours.service';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { SearchResults } from '../search-results-model';
+import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 @Component({
     selector: 'app-vho-search',
@@ -19,7 +20,7 @@ export class VhoSearchComponent implements OnInit {
 
     @Output() hoursTypeEmitter = new EventEmitter<HoursType>();
     @Output() usernameEmitter = new EventEmitter<string>();
-    @Output() vhoSearchEmitter = new EventEmitter<VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[]>();
+    @Output() vhoSearchEmitter = new EventEmitter<SearchResults>();
     @Output() dataChange = new EventEmitter<boolean>();
 
     @Input() dataChangedBroadcast = new EventEmitter<boolean>();
@@ -52,19 +53,19 @@ export class VhoSearchComponent implements OnInit {
                 this.cancelEditing();
             }
         });
-        this.service.fetchNonWorkHours$.subscribe(async x => {
-            await this.search();
+        this.service.fetchNonWorkHours$.subscribe(async refresh => {
+            await this.search(refresh);
         });
     }
 
-    async search(): Promise<void> {
+    async search(refresh: boolean = false): Promise<void> {
         if (this.form.valid) {
             const hoursType: HoursType = this.form.controls['hoursType'].value;
             this.error = null;
             const userName = this.username.value;
             this.logger.debug(`${this.loggerPrefix} Attempting to search for username`, { userName });
             try {
-                let result;
+                let result: VhoWorkHoursResponse[] | VhoNonAvailabilityWorkHoursResponse[];
                 switch (hoursType) {
                     case HoursType.WorkingHours:
                         result = await this.service.getWorkAvailabilityForVho(this.username.value);
@@ -79,7 +80,7 @@ export class VhoSearchComponent implements OnInit {
                 }
                 if (result) {
                     this.hoursTypeEmitter.emit(hoursType);
-                    this.vhoSearchEmitter.emit(result);
+                    this.vhoSearchEmitter.emit({ result, refresh });
                     this.usernameEmitter.emit(this.username.value);
                 } else {
                     this.error = 'User could not be found. Please check the username and try again';
@@ -92,7 +93,7 @@ export class VhoSearchComponent implements OnInit {
     }
 
     clear() {
-        this.vhoSearchEmitter.emit(null);
+        this.vhoSearchEmitter.emit({ refresh: false, result: null });
     }
 
     isDataChanged(): boolean {
@@ -116,7 +117,8 @@ export class VhoSearchComponent implements OnInit {
         this.videoService.cancelVhoNonAvailabiltiesRequest();
         this.showSaveConfirmation = false;
         this.dataChange.emit(false);
-        this.vhoSearchEmitter.emit(null);
+        const result: SearchResults = { refresh: false, result: null };
+        this.vhoSearchEmitter.emit(result);
     }
 
     changeSearch() {

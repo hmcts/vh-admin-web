@@ -72,8 +72,8 @@ export class AudioLinkService {
         return function (
             source: Observable<HearingsForAudioFileSearchResponse[] | CvpForAudioFileResponse[]>
         ): Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult> {
-            return new Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult>(subscriber => {
-                return source.subscribe({
+            return new Observable<ICvpAudioRecordingResult | IVhAudioRecordingResult>(subscriber =>
+                source.subscribe({
                     next(value) {
                         subscriber.next({ status: 200, result: value, error: null });
                     },
@@ -83,8 +83,8 @@ export class AudioLinkService {
                     complete() {
                         subscriber.complete();
                     }
-                });
-            });
+                })
+            );
         };
     }
 }

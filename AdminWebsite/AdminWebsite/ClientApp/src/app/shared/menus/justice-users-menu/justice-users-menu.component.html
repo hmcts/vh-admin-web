@@ -1,0 +1,24 @@
+<div [formGroup]="form">
+  <label class="govuk-label" for="user-list">{{ dropDownLabel }}</label>
+  <ng-select
+    id="user-list"
+    class="custom"
+    labelForId="users"
+    [items]="users"
+    bindLabel="full_name"
+    bindValue="id"
+    formControlName="selectedUserIds"
+    [placeholder]="'Select Users'"
+    [multiple]="multiSelect"
+    [attr.aria-label]="'User list'"
+    [closeOnSelect]="false"
+    [clearSearchOnAdd]="true"
+    [selectOnTab]="true"
+    (change)="onSelect()"
+  >
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.first_name" />
+      {{ item.full_name }}
+    </ng-template>
+  </ng-select>
+</div>

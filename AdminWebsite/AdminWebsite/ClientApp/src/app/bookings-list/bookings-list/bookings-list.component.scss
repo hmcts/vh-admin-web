@@ -1,6 +1,6 @@
-@import '~govuk-frontend/govuk/base';
-@import '~govuk-frontend/govuk/all';
-@import '~@hmcts/frontend/all';
+@import 'govuk-frontend/govuk/base';
+@import 'govuk-frontend/govuk/all';
+@import '@hmcts/frontend/all';
 
 p {
   overflow: hidden;
@@ -126,10 +126,6 @@ p {
 }
 
 #venue-list {
-  @extend .govuk-body;
-}
-
-#case-type-list {
   @extend .govuk-body;
 }
 

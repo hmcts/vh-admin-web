@@ -10,7 +10,9 @@ import {
     ClientSettingsResponse,
     HearingRole,
     LinkedParticipantResponse,
-    BookingStatus
+    BookingStatus,
+    AllocatedCsoResponse,
+    JusticeUserResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -18,7 +20,6 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
-import { Component } from '@angular/core';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -33,7 +34,9 @@ describe('Video hearing service', () => {
             'bookNewHearing',
             'cloneHearing',
             'getTelephoneConferenceIdById',
-            'getConfigSettings'
+            'getConfigSettings',
+            'getUserList',
+            'getAllocationForHearing'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -591,6 +594,19 @@ describe('Video hearing service', () => {
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(true);
             service.setVhoNonAvailabiltiesHaveChanged(false);
             expect(service.hasUnsavedVhoNonAvailabilityChanges()).toBe(false);
+        });
+    });
+
+    describe('getAllocatedCsoForHearing', () => {
+        it('should return an allocated cso for the hearing id', done => {
+            const allocatedCsoObj = new AllocatedCsoResponse({ hearing_id: 'id', cso: new JusticeUserResponse() });
+            clientApiSpy.getAllocationForHearing.and.returnValue(of(allocatedCsoObj));
+            const response = clientApiSpy.getAllocationForHearing(allocatedCsoObj.hearing_id).toPromise();
+            response.then(res => {
+                expect(clientApiSpy.getAllocationForHearing).toHaveBeenCalled();
+                expect(res).toEqual(allocatedCsoObj);
+                done();
+            });
         });
     });
 });

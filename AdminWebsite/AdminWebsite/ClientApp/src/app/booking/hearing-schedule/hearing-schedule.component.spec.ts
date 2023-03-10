@@ -26,7 +26,8 @@ function initExistingHearingRequest(): HearingModel {
 
     const existingRequest = new HearingModel();
     existingRequest.hearing_type_id = 2;
-    (existingRequest.hearing_venue_id = 1), (existingRequest.scheduled_date_time = today);
+    existingRequest.hearing_venue_id = 1;
+    existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
     existingRequest.multiDays = false;
     return existingRequest;
@@ -319,12 +320,6 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.isAddHearingControlValid()).toBe(false);
     });
 
-    it('should return invalid for hearing date on a weekend', () => {
-        component.addHearingDate();
-        component.addHearingDateControl.setValue('2021-03-06');
-        expect(component.isAddHearingControlValid()).toBe(false);
-    });
-
     it('should return true if a date is already selected', () => {
         component.hearingDates = [new Date()];
         component.addHearingDate();
@@ -520,7 +515,7 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.courtRoomControl.value).toBe('text');
     });
 
-    it('should unsibscribe subcription on destroy', () => {
+    afterAll(() => {
         component.ngOnDestroy();
     });
 });

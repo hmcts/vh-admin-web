@@ -33,6 +33,7 @@ function initHearingRequest(): HearingModel {
     const p1 = new ParticipantModel();
     p1.display_name = 'display name1';
     p1.email = 'test1@hmcts.net';
+    p1.contact_email = 'test1@hmcts.net';
     p1.first_name = 'first';
     p1.last_name = 'last';
     p1.is_judge = true;
@@ -43,6 +44,7 @@ function initHearingRequest(): HearingModel {
     const p2 = new ParticipantModel();
     p2.display_name = 'display name2';
     p2.email = 'test2@hmcts.net';
+    p2.contact_email = 'test2@hmcts.net';
     p2.first_name = 'first2';
     p2.last_name = 'last2';
     p2.is_judge = false;
@@ -244,17 +246,15 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('judge display name field validity required', () => {
-            let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('');
             const judge_display_name = component.form.controls['judgeDisplayNameFld'];
-            errors = judge_display_name.errors || {};
+            const errors = judge_display_name.errors || {};
             expect(errors['required']).toBeTruthy();
         });
         it('judge display name field validity pattern', () => {
-            let errors: {};
             component.form.controls['judgeDisplayNameFld'].setValue('%');
             const judge_display_name = component.form.controls['judgeDisplayNameFld'];
-            errors = judge_display_name.errors || {};
+            const errors = judge_display_name.errors || {};
             expect(errors['pattern']).toBeTruthy();
         });
         it('should fail validation if a judge display name is not entered', () => {
@@ -475,10 +475,6 @@ describe('AssignJudgeComponent', () => {
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
-        });
-
-        it('should set correct validation errors if cannot add judge', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
         });
 
         it('should set correct validation errors if display name is null', () => {

@@ -1,0 +1,102 @@
+<details class="govuk-details" data-module="govuk-details">
+  <summary class="govuk-details__summary govuk-!-margin-bottom-2" tabindex="0" role="button">
+    <span class="govuk-details__summary-text" id="manage-team"> Manage team </span>
+  </summary>
+  <div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="form">
+    <div class="govuk-form-group">
+      <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member"> Search for team member </label>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+          <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" formControlName="inputSearch" />
+        </div>
+        <div class="govuk-grid-column-one-third">
+          <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+          <button class="govuk-button govuk-!-margin-left-2" *ngIf="displayAddButton" data-module="govuk-button" (click)="displayForm()">
+            Add a team member
+          </button>
+          <div class="govuk-body" *ngIf="showSpinner">
+            <div class="vh-loader-small-container">
+              <div class="vh-loader"></div>
+              <label class="loader-label"> Please wait... </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
+    <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
+    {{ message }}
+  </div>
+
+  <table *ngIf="users?.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Username</th>
+        <th scope="col" class="govuk-table__header">First name</th>
+        <th scope="col" class="govuk-table__header">Last name</th>
+        <th scope="col" class="govuk-table__header">Contact telephone</th>
+        <th scope="col" class="govuk-table__header">Role</th>
+        <th scope="col" class="govuk-table__header action-cell"></th>
+        <th scope="col" class="govuk-table__header action-cell"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row" *ngFor="let user of users">
+        <td class="govuk-table__cell">
+          {{ user.username }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.first_name }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.lastname }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.telephone }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.is_vh_team_leader ? 'Administrator' : 'CSO' }}
+        </td>
+        <td class="govuk-table__cell">
+          <fa-icon
+            id="editButton_{{ user.id }}"
+            [icon]="editUserIcon"
+            appTooltip
+            [text]="'Edit role'"
+            [colour]="'blue'"
+            (click)="editUser(user)"
+          ></fa-icon>
+        </td>
+        <td class="govuk-table__cell">
+          <fa-icon
+            class="red-trash"
+            id="deleteButton_{{ user.id }}"
+            [icon]="deleteUserIcon"
+            appTooltip
+            [text]="'Delete'"
+            [colour]="'red'"
+            (click)="onDeleteJusticeUser(user)"
+          ></fa-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="showForm" class="popup-overlay">
+    <div class="vh-popup-aligned">
+      <app-justice-user-form
+        [justiceUser]="justiceUser"
+        [mode]="userFormMode"
+        (cancelFormEvent)="onFormCancelled()"
+        (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
+      ></app-justice-user-form>
+    </div>
+  </div>
+  <app-confirm-delete-justice-user-popup
+    *ngIf="displayDeleteUserPopup"
+    (cancelEvent)="onCancelDeleteJusticeUser()"
+    (deleteSuccessfulEvent)="onJusticeUserSuccessfulDelete()"
+    userId="{{ userToDelete.id }}"
+    username="{{ userToDelete.username }}"
+  ></app-confirm-delete-justice-user-popup>
+</details>

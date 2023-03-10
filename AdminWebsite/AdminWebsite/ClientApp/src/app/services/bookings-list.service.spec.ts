@@ -378,8 +378,7 @@ describe('bookings list service', () => {
 });
 
 describe('Booking list service functionality', () => {
-    let bhClientSpy: jasmine.SpyObj<BHClient>;
-    bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
+    const bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['bookingsList']);
     const bookingsResponse = new ResponseTestData().getTestData();
 
     bhClientSpy.bookingsList.and.returnValue(of(bookingsResponse));
@@ -485,9 +484,19 @@ describe('Booking list service functionality', () => {
         const searchTerm = 'CASE_NUMBER';
         const selectedVenueIds = [1, 2];
         const selectedCaseTypes = ['Tribunal', 'Mental Health'];
+        const selectedUsers = [];
         const startDate = new Date(2022, 3, 25);
         const endDate = new Date(2022, 3, 26);
-        const bookings = service.getBookingsList('cursor', limit, searchTerm, selectedVenueIds, selectedCaseTypes, startDate, endDate);
+        const bookings = service.getBookingsList(
+            'cursor',
+            limit,
+            searchTerm,
+            selectedVenueIds,
+            selectedCaseTypes,
+            selectedUsers,
+            startDate,
+            endDate
+        );
         expect(bhClientSpy.bookingsList).toHaveBeenCalledTimes(1);
         expect(bookings).toEqual(jasmine.any(Observable));
     });

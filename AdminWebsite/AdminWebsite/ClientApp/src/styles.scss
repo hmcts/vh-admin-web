@@ -9,3 +9,83 @@ body {
 .break-all {
   word-break: break-all;
 }
+
+.vh-tooltip {
+  @include govuk-font(14, $weight: 'regular', $tabular: false, $line-height: false);
+  color: govuk-colour('white');
+  width: auto;
+  height: auto;
+  z-index: 999;
+  box-shadow: 0 7px 11px 0px rgba(0, 0, 0, 0.3);
+  background: govuk-colour('blue');
+  border: 1px solidgovuk-colour('blue');
+  border-radius: 2px;
+  position: absolute;
+  top: 127px;
+  left: 42px;
+  padding: 8px;
+  display: none;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.vh-tooltip-blue {
+  background: govuk-colour('blue');
+  border: 1px solidgovuk-colour('blue');
+}
+
+.vh-tooltip-red {
+  background: govuk-colour('red');
+  border: 1px solidgovuk-colour('red');
+}
+
+.vh-tooltip-grey {
+  background: govuk-colour('dark-grey');
+  border: 1px solidgovuk-colour('dark-grey');
+}
+
+.vh-tooltip-green {
+  background: govuk-colour('green');
+  border: 1px solidgovuk-colour('green');
+}
+
+.vh-tooltip-yellow {
+  background: govuk-colour('yellow');
+  border: 1px solidgovuk-colour('yellow') !important;
+  color: govuk-colour('black');
+}
+
+.vh-tooltip-show {
+  display: block;
+  pointer-events: none;
+}
+
+.vh-popup-aligned {
+  margin: 70px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 0px;
+  width: 50%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  max-width: 560px !important;
+  max-height: 80vh;
+  overflow-y: scroll;
+  
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: solidgovuk-colour('white');
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: govuk-colour("mid-grey")
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: govuk-colour("mid-grey");
+    filter: opacity(50%);
+  }
+}

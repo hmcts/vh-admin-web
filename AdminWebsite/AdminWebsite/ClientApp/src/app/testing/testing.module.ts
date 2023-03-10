@@ -13,6 +13,9 @@ import { SignOutStubComponent } from './stubs/sign-out-stub';
 import { SignOutPopupStubComponent } from './stubs/sign-out-popup-stub';
 import { RemovePopupStubComponent } from './stubs/remove-popup-stub';
 import { BookingEditStubComponent } from './stubs/booking-edit-stub';
+import { VenueUserMenuStubComponent } from './stubs/dropdown-menu/venue-menu-stub.component';
+import { JusticeUserMenuStubComponent } from './stubs/dropdown-menu/justice-user-menu-stub.component';
+import { CaseTypeMenuStubComponent } from './stubs/dropdown-menu/case-type-menu-stub.component';
 
 @NgModule({
     imports: [CommonModule],
@@ -30,7 +33,10 @@ import { BookingEditStubComponent } from './stubs/booking-edit-stub';
         BookingEditStubComponent,
         SearchEmailStubComponent,
         SignOutPopupStubComponent,
-        SignOutStubComponent
+        SignOutStubComponent,
+        VenueUserMenuStubComponent,
+        JusticeUserMenuStubComponent,
+        CaseTypeMenuStubComponent
     ]
 })
 export class TestingModule {}

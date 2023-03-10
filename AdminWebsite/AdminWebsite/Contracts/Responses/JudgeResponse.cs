@@ -26,6 +26,11 @@ namespace AdminWebsite.Contracts.Responses
         /// Judge username/email
         /// </summary>
         public string Email { get; set; }
+        
+        /// <summary>
+        /// Judge contact email
+        /// </summary>
+        public string ContactEmail { get; set; }
 
         public JudgeAccountType AccountType { get; set; }
     }

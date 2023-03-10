@@ -12,12 +12,8 @@ import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component
 import { DeleteParticipantSearchComponent } from './delete-participant/delete-participant-search/delete-participant-search.component';
 import { EditParticipantSearchComponent } from './edit-participant/edit-participant-search/edit-participant-search.component';
 import { EditParticipantComponent } from './edit-participant/edit-participant/edit-participant.component';
-import { WorkAllocationComponent } from './work-allocation/work-allocation.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
-import { VhoWorkHoursNonAvailabilityTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
-import { ChangesGuard } from './common/guards/changes.guard';
-import { VhoWorkHoursTableComponent } from './work-allocation/edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -32,9 +28,11 @@ export const routes: Routes = [
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
-    { path: 'work-allocation', component: WorkAllocationComponent, canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard] },
-    { path: 'work-allocation', component: VhoWorkHoursNonAvailabilityTableComponent, canDeactivate: [ChangesGuard] },
-    { path: 'work-allocation', component: VhoWorkHoursTableComponent, canDeactivate: [ChangesGuard] },
+    {
+        path: 'work-allocation',
+        canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard],
+        loadChildren: () => import('./work-allocation/work-allocation.module').then(m => m.WorkAllocationModule)
+    },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 

@@ -25,7 +25,7 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    HearingRole
+    AllocatedCsoResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -34,7 +34,6 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
-import { HearingRoles } from '../common/model/hearing-roles.model';
 
 @Injectable({
     providedIn: 'root'
@@ -500,5 +499,9 @@ export class VideoHearingsService {
         } else {
             return false;
         }
+    }
+
+    getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
+        return this.bhClient.getAllocationForHearing(hearingId);
     }
 }

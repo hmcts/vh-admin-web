@@ -1,0 +1,12 @@
+@import 'govuk-frontend/govuk/base';
+
+.red-button {
+  background-color: govuk-colour('red');
+}
+
+fa-icon {
+  cursor: pointer;
+  &.red-trash {
+    color: govuk-colour('red');
+  }
+}

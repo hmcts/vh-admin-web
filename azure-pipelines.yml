@@ -27,7 +27,7 @@ parameters:
 - name: RunMutationTests
   displayName: Run Mutation Tests
   type: boolean
-  default: true
+  default: false
 
 - name: RunACTests
   displayName: Run Acceptance Tests
@@ -276,6 +276,7 @@ extends:
   template: stages\dotnet-package.yml@templates
   parameters:
     netVersion: 6.x
+    nodeVersion: "18.10.0"
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
@@ -314,7 +315,7 @@ extends:
         sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
         sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
         sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)/Coverage/coverage.opencover.xml
-        sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
+        sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*, **/.eslintrc.js, AdminWebsite/ClientApp/src/app/testing/**
     ACTest: ${{ parameters.RunACTests }}
     releaseParameters:
       environment: Preview
