@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FileType } from '../../common/model/file-type';
 import { WorkHoursFileProcessorService } from '../services/work-hours-file-processor.service';
+import { error } from '@angular/compiler-cli/src/transformers/util';
 
 @Component({
     selector: 'app-upload-work-hours',
