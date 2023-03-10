@@ -4,9 +4,9 @@
     "net6.0": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.43.13, )",
-        "resolved": "1.43.13",
-        "contentHash": "tV08pKNr8ddSXxZQN0/GU91MQS2polyopMXv9o7yw2KOgvoF8XcIBX/kgmNQ9VCU2uQepWxU10SQo7tLeNi3Bg==",
+        "requested": "[1.43.19, )",
+        "resolved": "1.43.19",
+        "contentHash": "0G3mw947QLxd8S2j0M8XMOPUrycW1CRaXCcvcaNdm2oz0i8XyADd7ecU+hdWQjTBcv8/gEPtGeO8l0/NpGQ8cA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -157,9 +157,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.9, )",
-        "resolved": "1.41.9",
-        "contentHash": "O+vKF9438qyEw+KPXUHvjwDj+FpNs85GoyeyaAcdQZYWjWb6nfzg2MzW72BwLKn7MrdOJCK/OpDpXxPJ7UNlrg==",
+        "requested": "[1.43.3, )",
+        "resolved": "1.43.3",
+        "contentHash": "6BLg9Al5oN8/+fgsGuH7jzbTGMPsD2t/6riV6mpSmcuH2Y2aglr8+wQh488KRA4gDVqHVuTQNkFcxCu3E/+MLA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.1"
@@ -234,9 +234,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.9, )",
-        "resolved": "1.41.9",
-        "contentHash": "d81wR5NWqEbuJdlbkH6k6x5a0VNIzBXMHj8T7QykcUHiUllzJ4lxIW2ANfYZ4Bn1DeXoGDzBV0EcpjtU2WNVog==",
+        "requested": "[1.43.5, )",
+        "resolved": "1.43.5",
+        "contentHash": "rlJ3KAMly7sSLwYYvS5bQcX/H8wn03vytMh4y0ue0Xwu2SPDxGhOD8/rtnbvH7Mc6XGuqJKEMzexeW7bk1lqfQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -256,9 +256,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.19, )",
-        "resolved": "1.41.19",
-        "contentHash": "oKchf3PZ+qHcwz9jxmVdaHykoVxYv+vfnGK7dTRS3mb/44zF05knYlL3aSyrB1CL+jOUZ6/AY7gIRQS3CQOXcA==",
+        "requested": "[1.43.6, )",
+        "resolved": "1.43.6",
+        "contentHash": "UNF+P0x6BgwddXApPZW5U957DgpI2O9W+foj9p0bTlbarl+0fLcK23ChoRMak5rsKjlLylyM86Ek7AhIYMdZgw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
