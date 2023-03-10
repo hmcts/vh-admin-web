@@ -138,8 +138,8 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var restoredUser = await _bookingsApiClient.RestoreJusticeUserAsync(restoreJusticeUserRequest);
-                return Ok(restoredUser);
+                await _bookingsApiClient.RestoreJusticeUserAsync(restoreJusticeUserRequest);
+                return NoContent();
             }
             catch (BookingsApiException e)
             {
