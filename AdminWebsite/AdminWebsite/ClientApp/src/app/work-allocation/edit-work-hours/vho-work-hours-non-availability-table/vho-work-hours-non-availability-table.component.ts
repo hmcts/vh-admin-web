@@ -39,13 +39,18 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         });
     }
     @Input() set result(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        this.resetStartDateAndEndDate();
+        if (!this.isFiltered) {
+            this.resetStartDateAndEndDate();
+        }
         this.hideMessage();
         if (value) {
             value = this.filterByFutureDate(value);
             this.nonAvailabilityWorkHoursResponses = value;
             this.nonWorkHours = value.map(x => this.mapNonWorkingHoursToEditModel(x));
             this.nonWorkHours = this.nonWorkHours.slice(0, this.filterSize);
+            if (this.isFiltered) {
+                this.filterByDate();
+            }
             if (this.nonAvailabilityWorkHoursResponses.length > 20) {
                 this.showMessage(`Showing only ${this.filterSize} Records, For more records please use filter by date`);
             } else if (this.nonAvailabilityWorkHoursResponses.length === 0) {
@@ -90,9 +95,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     originalNonWorkHours: EditVhoNonAvailabilityWorkHoursModel[];
     isEditing = false;
     isSaving = false;
+    isFiltered = false;
     validationFailures: ValidationFailure[] = [];
     validationSummary: string[] = [];
     message: string;
+    todayDate: Date =new Date();
     filterForm: FormGroup;
 
     @Input() userName: string;
@@ -418,10 +425,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 );
             }
             this.nonWorkHours = tempWorkHours.map(e => this.mapNonWorkingHoursToEditModel(e));
+            this.isFiltered = true;
         } else {
             this.showSaveConfirmation = true;
         }
-
         this.checkResultsLength();
     }
 
@@ -449,8 +456,9 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
             this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
         }
     }
+
     public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        const todayDate = new Date();
+        const todayDate = this.todayDate;
         return value.filter(d => d.start_time >= todayDate);
     }
 }
