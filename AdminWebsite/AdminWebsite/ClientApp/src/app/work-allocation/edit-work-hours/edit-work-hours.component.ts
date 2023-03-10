@@ -202,7 +202,6 @@ export class EditWorkHoursComponent implements OnInit {
         this.dataChange.emit($event);
     }
     public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        const todayDate = this.todayDate;
-        return value.filter(d => d.start_time >= todayDate);
+        return value.filter(d => d.start_time >= this.todayDate);
     }
 }
