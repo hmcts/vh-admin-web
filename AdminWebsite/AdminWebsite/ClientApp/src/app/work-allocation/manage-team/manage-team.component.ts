@@ -23,6 +23,7 @@ export class ManageTeamComponent {
     restoreUserIcon = faRotateLeft;
     message: string;
     users: JusticeUserResponse[];
+    sortedUsers: JusticeUserResponse[] = [];
     form: FormGroup<SearchForExistingJusticeUserForm>;
     isEditing = false;
     isSaving = false;
@@ -75,11 +76,16 @@ export class ManageTeamComponent {
     }
 
     sortUsers(): void {
-        this.users = this.users.sort(this.sortByDeleted);
+        const deletedUsers = this.users.filter(user => user.deleted).sort(this.sortAlphanumerically);
+        const activeUsers = this.users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
+        this.sortedUsers = deletedUsers.concat(activeUsers);
     }
 
-    sortByDeleted(a: JusticeUserResponse, b: JusticeUserResponse) {
-        return a.deleted ? -1 : b.deleted ? 1 : 0;
+    sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
+        return a.username.localeCompare(b.username, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        });
     }
 
     onJusticeUserSearchFailed(errorMessage: string) {
@@ -115,6 +121,7 @@ export class ManageTeamComponent {
             this.users[index] = user;
             this.resetAfterSave(Constants.ManageJusticeUsers.UserEdited);
         }
+        this.sortUsers();
     }
 
     /*
