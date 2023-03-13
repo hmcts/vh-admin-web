@@ -5,7 +5,7 @@
   </CommonConfig>
   <CommonOnScreenData>
     <VhoEmail>video-hearings@justice.gov.uk</VhoEmail>
-    <VhoPhone>01414960605</VhoPhone>
+    <VhoPhone>01234567890</VhoPhone>
   </CommonOnScreenData>
   <CommonUris>
     <LoginUri>login.microsoftonline.com</LoginUri>
