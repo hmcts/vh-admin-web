@@ -19,7 +19,7 @@
     <Participant>
       <NewUserPrefix>Automation_</NewUserPrefix>
       <Title>Mrs</Title>
-      <Phone>01234567890</Phone>
+      <Phone>07700900670</Phone>
       <Organisation>MoJ</Organisation>
     </Participant>
   </AddParticipant>
@@ -27,7 +27,7 @@
     <DisplayName>Endpoint 001 - CourtRoom1</DisplayName>
   </VideoAccessPoints>
   <OtherInformationDetails>
-    <OtherInformation>|JudgeEmail|test@test.com|JudgePhone|01234567890|OtherInformation|Other Info</OtherInformation>
+    <OtherInformation>|JudgeEmail|test@test.com|JudgePhone|07700900670|OtherInformation|Other Info</OtherInformation>
   </OtherInformationDetails>
   <Questionnaire>
     <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>
