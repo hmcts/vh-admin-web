@@ -94,10 +94,6 @@ export class ManageTeamComponent {
         this.displayMessage = true;
     }
 
-    /*
-        Add & Edit User
-    */
-
     addUser = this.displayUserForm;
 
     editUser(user: JusticeUserResponse) {
@@ -124,14 +120,6 @@ export class ManageTeamComponent {
         this.sortUsers();
     }
 
-    /*
-        End Add & Edit User
-    */
-
-    /*
-        Delete User
-    */
-
     onDeleteJusticeUser(user: JusticeUserResponse) {
         this.userToDelete = user;
         this.displayDeleteUserPopup = true;
@@ -154,14 +142,6 @@ export class ManageTeamComponent {
         this.userToDelete.deleted = true;
     }
 
-    /*
-        End Delete User
-    */
-
-    /*
-        Restore User
-    */
-
     restoreUser(user: JusticeUserResponse) {
         this.userToRestore = user;
         this.displayRestoreUserPopup = true;
@@ -183,10 +163,6 @@ export class ManageTeamComponent {
     updateRestoredJusticeUser() {
         this.userToRestore.deleted = false;
     }
-
-    /*
-        End Restore User
-    */
 
     displayUserForm() {
         this.displayMessage = false;
