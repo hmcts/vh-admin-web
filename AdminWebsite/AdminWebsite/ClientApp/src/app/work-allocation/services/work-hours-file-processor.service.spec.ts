@@ -216,6 +216,24 @@ describe('WorkHoursFileProcessorService', () => {
         });
     });
 
+    describe('isFileFormatValild', () => {
+        it('should return true when file extension is valid', () => {
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
+
+            const result = service.isFileFormatValild(file);
+
+            expect(result).toBeTruthy();
+        });
+
+        it('should return false when file extension is not csv', () => {
+            const file = new File([''], 'filename.xls', { type: 'application/vnd.ms-excel' });
+
+            const result = service.isFileFormatValild(file);
+
+            expect(result).toBeFalsy();
+        });
+    });
+
     describe('validateTimeCell', () => {
         const testCases = [
             { case: 'hour is not a number', timeCell: [NaN, 30], errorMessage: 'Value is not a valid time' },
