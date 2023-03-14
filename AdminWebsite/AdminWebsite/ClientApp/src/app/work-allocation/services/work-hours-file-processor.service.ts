@@ -15,6 +15,7 @@ export class WorkHoursFileProcessorService {
     maxFileUploadSize = 200000;
 
     private incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
+    private duplicateUserErrorMessage = 'duplicate team member found.';
 
     constructor(private bhClient: BHClient) {}
 
@@ -31,11 +32,21 @@ export class WorkHoursFileProcessorService {
         const userWorkAvailabilityRowsSplit = userWorkAvailabilityRows.map(x => x.split(this.csvDelimiter));
         this.checkWorkAvailabilityForDuplicateUsers(userWorkAvailabilityRowsSplit);
 
+        const userNames: { [username: string]: number } = {};
+
         userWorkAvailabilityRows.forEach((row, index) => {
             const values = row.split(this.csvDelimiter);
+            const actualRow = index + 3;
 
             const uploadWorkHoursRequest = new UploadWorkHoursRequest();
             uploadWorkHoursRequest.username = values[0];
+
+            if (!userNames[values[0]]) {
+                userNames[values[0]] = actualRow;
+            } else {
+                const otherRow = userNames[values[0]];
+                workingHoursFileValidationErrors.push(`Row ${actualRow} & Row ${otherRow} ${this.duplicateUserErrorMessage}`);
+            }
 
             const workingHours: WorkingHours[] = [];
 
