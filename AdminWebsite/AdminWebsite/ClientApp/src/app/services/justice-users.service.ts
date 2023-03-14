@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { shareReplay } from 'rxjs/operators';
 import {
     AddJusticeUserRequest,
     BHClient,
