@@ -309,8 +309,7 @@ export class WorkHoursFileProcessorService {
 
     isFileFormatValild(file: File): boolean {
         const fileNameParts = file.name.split(this.fileExtensionDelimiter);
-        const partsNumber = fileNameParts.length;
-        const extension = fileNameParts[partsNumber - 1].toLowerCase();
+        const extension = fileNameParts.pop().toLowerCase();
         return extension === this.fileExtension && file.type === this.fileType;
     }
 }
