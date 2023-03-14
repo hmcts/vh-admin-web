@@ -134,7 +134,7 @@ export class AllocateHearingModel {
             originalHearing.allocated_cso,
             originalHearing.has_work_hours_clash,
             originalHearing.concurrent_hearings_count,
-            false
+            originalHearing.has_non_availability_clash
         );
     }
 
@@ -188,6 +188,11 @@ export class AllocateHearingModel {
                     // select the overlapping ones
                     const overlapping = otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing));
                     hearing.concurrentHearingsCount = overlapping.length;
+                });
+            } else {
+                // reset the count if there are 1 or fewer hearings
+                hearingsForUser.forEach(hearing => {
+                    hearing.concurrentHearingsCount = 0;
                 });
             }
         });

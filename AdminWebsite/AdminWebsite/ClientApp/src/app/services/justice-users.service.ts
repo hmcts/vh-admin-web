@@ -60,15 +60,7 @@ export class JusticeUsersService {
     }
 
     private requestJusticeUsers(term: string) {
-        return this.apiClient.getUserList(cleanQuery(term)).pipe(
-            map(users =>
-                users.map(user => {
-                    const userRole = user.is_vh_team_leader ? 'Team Lead' : 'CSO';
-                    user.user_role_name = userRole;
-                    return user;
-                })
-            )
-        );
+        return this.apiClient.getUserList(cleanQuery(term));
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
@@ -89,5 +81,9 @@ export class JusticeUsersService {
             role
         });
         return this.apiClient.editJusticeUser(request).pipe(tap(() => this.refresh$.next()));
+    }
+
+    deleteJusticeUser(id: string) {
+        return this.apiClient.deleteJusticeUser(id);
     }
 }

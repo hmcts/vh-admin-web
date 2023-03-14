@@ -93,7 +93,7 @@
 }
 
 .vh-text-color-red {
-    color: red;
+    color: red !important;
 }
 
 .vh-btn-cancel {
@@ -197,6 +197,7 @@ p {
     justify-content: center;
     background: rgba(0, 0, 0, 0.7);
     transition: opacity 500ms;
+    z-index: 2;
 }
 
 .popup-small {
@@ -313,4 +314,12 @@ p {
 
 .aligned-centre {
     text-align: center;
+}
+
+.aligned-centre-flex {
+    justify-content: center;
+}
+
+.remove-float {
+    float: none !important;
 }

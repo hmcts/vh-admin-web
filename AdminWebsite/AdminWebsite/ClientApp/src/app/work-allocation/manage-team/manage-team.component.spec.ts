@@ -175,5 +175,152 @@ describe('ManageTeamComponent', () => {
             expect(component.isAnErrorMessage).toBeFalsy();
             expect(component.users[0]).toBe(newUser);
         });
+
+        it('should update user in search results to display after editing', () => {
+            // arrange
+            component.showForm = true;
+            const id = newGuid();
+            const newUser = new JusticeUserResponse({
+                id,
+                contact_email: 'new@cso.com',
+                first_name: 'Jack',
+                lastname: 'Jones',
+                full_name: 'Jack Jones',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'new@cso.com',
+                telephone: '01234567890'
+            });
+
+            component.users = [newUser];
+            component.userFormMode = 'edit';
+
+            const updatedUser = new JusticeUserResponse({
+                id,
+                contact_email: 'new@cso.com',
+                first_name: 'Jack',
+                lastname: 'Jones',
+                full_name: 'Jack Jones',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'new@cso.com',
+                telephone: '01234567890'
+            });
+
+            // act
+            component.onJusticeSuccessfulSave(updatedUser);
+
+            // assert
+            expect(component.showForm).toBeFalsy();
+            expect(component.displayAddButton).toBeFalsy();
+            expect(component.message).toBe(Constants.ManageJusticeUsers.UserEdited);
+            expect(component.isAnErrorMessage).toBeFalsy();
+            expect(component.users[0]).toBe(updatedUser);
+        });
+    });
+
+    describe('onDeleteJusticeUser', () => {
+        it('should display delete justice user popup', () => {
+            // arrange
+            const userToDelete = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'user@email.com',
+                first_name: 'Test',
+                lastname: 'User',
+                full_name: 'Test User',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'user@email.com',
+                telephone: ''
+            });
+
+            // act
+            component.onDeleteJusticeUser(userToDelete);
+
+            // assert
+            expect(component.userToDelete).toBe(userToDelete);
+            expect(component.displayDeleteUserPopup).toBeTruthy();
+        });
+    });
+
+    describe('onCancelDeleteJusticeUser', () => {
+        it('should hide delete justice user popup', () => {
+            // arrange & act
+            component.onCancelDeleteJusticeUser();
+
+            // assert
+            expect(component.userToDelete).toBeNull();
+            expect(component.displayDeleteUserPopup).toBeFalsy();
+        });
+    });
+
+    describe('onJusticeUserSuccessfulDelete', () => {
+        it('should hide delete justice user popup and update user list', () => {
+            // arrange
+            const userToKeep = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'userToKeep@email.com',
+                first_name: 'Test',
+                lastname: 'UserToKeep',
+                full_name: 'Test User To Keep',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'userToKeep@email.com',
+                telephone: ''
+            });
+            const userToDelete = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'userToDelete@email.com',
+                first_name: 'Test',
+                lastname: 'UserToDelete',
+                full_name: 'Test User To Delete',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'userToDelete@email.com',
+                telephone: ''
+            });
+            component.users = [];
+            component.users.push(userToKeep);
+            component.users.push(userToDelete);
+            component.userToDelete = userToDelete;
+            component.displayDeleteUserPopup = true;
+
+            // act
+            component.onJusticeUserSuccessfulDelete();
+
+            // assert
+            expect(component.displayDeleteUserPopup).toBeFalsy();
+            expect(component.message).toBe(Constants.ManageJusticeUsers.UserDeleted);
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.users.length).toBe(1);
+            expect(component.users[0].id).toBe(userToKeep.id);
+            expect(component.userToDelete).toBeNull();
+        });
+    });
+
+    describe('editUser', () => {
+        it('should display edit role popup', () => {
+            // arrange
+            const userToEdit = new JusticeUserResponse({
+                id: newGuid(),
+                contact_email: 'user@email.com',
+                first_name: 'Test',
+                lastname: 'User',
+                full_name: 'Test User',
+                user_role_name: 'Team Leader',
+                is_vh_team_leader: true,
+                username: 'user@email.com',
+                telephone: ''
+            });
+
+            // act
+            component.editUser(userToEdit);
+
+            // assert
+            expect(component.justiceUser).toBe(userToEdit);
+            expect(component.userFormMode).toBe('edit');
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.showForm).toBeTruthy();
+        });
     });
 });
