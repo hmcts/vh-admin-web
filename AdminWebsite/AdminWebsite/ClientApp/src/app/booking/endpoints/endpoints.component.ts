@@ -112,8 +112,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         if (!this.videoHearingService.isHearingAboutToStart()) {
             this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
             this.endpoints.removeAt(rowIndex);
-        }
-        else {
+        } else {
             this.logger.warn(`${this.loggerPrefix} Cannot remove an endpoint when hearing is about to start ${rowIndex}.`);
         }
     }
