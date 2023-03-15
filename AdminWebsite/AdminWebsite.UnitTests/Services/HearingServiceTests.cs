@@ -123,7 +123,6 @@ namespace AdminWebsite.UnitTests.Services
             };
         }
 
- 
         [Test]
         public void Should_return_false_if_HearingRoomName_is_not_changed()
         {
@@ -178,7 +177,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void Should_return_false_when_endpoint_count_is_changed()
+        public void Should_return_true_when_endpoint_count_is_changed()
         {
             _editHearingRequest.Endpoints.Add(new EditEndpointRequest
             {
@@ -188,20 +187,20 @@ namespace AdminWebsite.UnitTests.Services
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
-        public void Should_return_false_when_endpoint_displayName_is_changed()
+        public void Should_return_true_when_endpoint_displayName_is_changed()
         {
             _editHearingRequest.Endpoints.First().DisplayName = "test1";
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
-        public void Should_return_false_when_endpoint_removed()
+        public void Should_return_true_when_endpoint_removed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.Add(new EndpointResponse
             {
@@ -211,15 +210,15 @@ namespace AdminWebsite.UnitTests.Services
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
         [Test]
-        public void Should_return_false_when_endpoint_defenceAdvocateUsername_is_changed()
+        public void Should_return_true_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 
@@ -247,6 +246,36 @@ namespace AdminWebsite.UnitTests.Services
             var editParticipants2 = new List<EditParticipantRequest> { participantRequest1 };
 
             Assert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
+        }
+
+        [Test]
+        public void Should_have_one_added_participant()
+        {
+            var originalParticipants = new List<EditParticipantRequest> 
+            { 
+                new EditParticipantRequest 
+                { 
+                    Id = It.IsAny<Guid>(), 
+                    DisplayName = "Test" 
+                } 
+            };
+
+            // This should contain the existing participants as well as the new participants
+            var editParticipantRequest = new List<EditParticipantRequest> 
+            { 
+                new EditParticipantRequest 
+                { 
+                    Id = It.IsAny<Guid>(), 
+                    DisplayName = "Test" 
+                }, 
+                new EditParticipantRequest 
+                { 
+                    Id = It.IsAny<Guid>(), 
+                    DisplayName = "Test2" 
+                } 
+            };
+
+            Assert.AreEqual(1, _service.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
         }
 
         [Test]

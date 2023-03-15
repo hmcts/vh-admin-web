@@ -39,6 +39,8 @@ namespace AdminWebsite.Services
 
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
 
+        bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
+
         (string email, string phone) GetJudgeInformationForUpdate(string otherInformation);
         Task UpdateFailedBookingStatus(Guid hearingId);
     }
@@ -76,11 +78,6 @@ namespace AdminWebsite.Services
                 .Select(EditParticipantRequestMapper.MapFrom).ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
             var hearingCase = hearingDetailsResponse.Cases.First();
-            var originalEndpoints = hearingDetailsResponse.Endpoints == null
-                ? new List<EditEndpointRequest>()
-                : hearingDetailsResponse.Endpoints
-                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
-            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
             var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
 
             return addedParticipant.Any() &&
@@ -91,8 +88,7 @@ namespace AdminWebsite.Services
                    editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
                    editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
                    hearingCase.Name == editHearingRequest.Case.Name &&
-                   hearingCase.Number == editHearingRequest.Case.Number &&
-                   HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
+                   hearingCase.Number == editHearingRequest.Case.Number;
         }
 
         public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
@@ -123,16 +119,21 @@ namespace AdminWebsite.Services
                     phone: ExtractJudgeInfo(otherInfoProperties, "JudgePhone"));
         }
 
-        public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints,
-            List<EditEndpointRequest> requestEndpoints)
+        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest,
+            HearingDetailsResponse hearingDetailsResponse)
         {
-            return originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
-                .ToList()
-                .Count == 0 && requestEndpoints
-                .Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
-                .ToList()
-                .Count == 0;
+            var originalEndpoints = hearingDetailsResponse.Endpoints == null
+                ? new List<EditEndpointRequest>()
+                : hearingDetailsResponse.Endpoints
+                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
+
+            var ogEnpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
+            var newEndpoints = requestEndpoints.Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
+
+            return ogEnpoints.Count != 0 || newEndpoints.Count != 0;
         }
+
         public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants,
             List<EditParticipantRequest> requestParticipants)
         {
