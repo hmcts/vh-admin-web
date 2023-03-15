@@ -128,6 +128,37 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+        
+        [HttpPatch("restore")]
+        [SwaggerOperation(OperationId = "RestoreJusticeUser")]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> RestoreJusticeUser([FromBody] RestoreJusticeUserRequest restoreJusticeUserRequest)
+        {
+            try
+            {
+                await _bookingsApiClient.RestoreJusticeUserAsync(restoreJusticeUserRequest);
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+
+                _logger.LogError(e, "Unexpected error trying to restore a justice user");
+                throw;
+            }
+        }
 
     }
 
