@@ -16,6 +16,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PopupModule } from '../popups/popup.module';
 import { JusticeUserFormComponent } from './justice-user-form/justice-user-form.component';
 import { ConfirmDeleteJusticeUserPopupComponent } from './pop-ups/confirm-delete-justice-user-popup/confirm-delete-justice-user-popup.component';
+import { ConfirmRestoreJusticeUserPopupComponent } from './pop-ups/confirm-restore-justice-user-popup/confirm-restore-justice-user-popup.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { ConfirmDeleteJusticeUserPopupComponent } from './pop-ups/confirm-delete
         ManageTeamComponent,
         AllocateHearingsComponent,
         ConfirmDeleteHoursPopupComponent,
+        ConfirmRestoreJusticeUserPopupComponent,
         JusticeUserFormComponent,
         ConfirmDeleteJusticeUserPopupComponent
     ],
