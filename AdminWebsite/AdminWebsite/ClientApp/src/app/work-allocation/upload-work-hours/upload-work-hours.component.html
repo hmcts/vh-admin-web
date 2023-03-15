@@ -20,7 +20,7 @@
         <p>Upload working hours:</p>
       </div>
       <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
-        <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload"> Select .CSV file to upload </label>
+        <label class="govuk-label govuk-!-font-size-16" for="working-hours-file-upload">Select .CSV file to upload </label>
         <input
           (change)="handleFileInput($event.target.files[0], fileType.UploadWorkingHours)"
           (click)="workingHoursFileUpload.value = null"
@@ -111,7 +111,7 @@
         <p>Upload non-availability hours:</p>
       </div>
       <div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
-        <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload"> Select .CSV file to upload </label>
+        <label class="govuk-label govuk-!-font-size-16" for="non-availability-hours-file-upload">Select .CSV file to upload </label>
         <input
           (change)="handleFileInput($event.target.files[0], fileType.UploadNonWorkingHours)"
           (click)="nonWorkingHoursFileUpload.value = null"
