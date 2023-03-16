@@ -136,7 +136,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judge = judge;
         this.canNavigate = false;
         this.isJudgeParticipantError = false;
-        judge ? this.updateWithNewJudge(judge) : this.removeJudge();
+
+        if (judge) {
+            this.updateWithNewJudge(judge);
+        } else {
+            this.removeJudge();
+        }
+
         this.hearing = { ...this.hearing };
         this.setTextFieldValues();
     }
