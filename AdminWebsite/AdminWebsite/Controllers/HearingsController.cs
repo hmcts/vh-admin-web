@@ -266,35 +266,24 @@ namespace AdminWebsite.Controllers
             foreach (var participant in request.Participants)
             {
                 if (!participant.Id.HasValue)
-                {
-                    if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
-                    {
-                        if (newParticipant.HearingRoleName == HearingRoleName.Judge)
-                        {
-                            newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
-                            newParticipant.TelephoneNumber =  judgeContact.phone ?? newParticipant.TelephoneNumber;
-                        }
-                        newParticipants.Add(newParticipant);
-                    }
-                }
+                    await ExtractNewParticipants(hearingId, originalHearing, participant, removedParticipantIds, judgeContact, newParticipants);
                 else
-                {
-                    var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                    if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-                        continue;
-                    if (existingParticipant.HearingRoleName == HearingRoleName.Judge)
-                    {
-                        participant.ContactEmail = judgeContact.email ?? existingParticipant.ContactEmail;
-                        participant.TelephoneNumber = judgeContact.phone ?? existingParticipant.TelephoneNumber;
-                    }
-                    var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-                    existingParticipants.Add(updateParticipantRequest);
-                }
+                    ExtractExistingParticipants(originalHearing, participant, judgeContact, existingParticipants);
             }
 
+            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
+            // participants
+            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
+            // endpoints
+            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
+        }
+
+        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(EditHearingRequest request, HearingDetailsResponse originalHearing,
+            List<Guid> removedParticipantIds, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants)
+        {
             var linkedParticipants = new List<LinkedParticipantRequest>();
             var participantsWithLinks = request.Participants
-                .Where(x => x.LinkedParticipants.Any() && 
+                .Where(x => x.LinkedParticipants.Any() &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].LinkedId) &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].ParticipantId))
                 .ToList();
@@ -319,7 +308,8 @@ namespace AdminWebsite.Controllers
                     var secondaryParticipantInLinkContactEmail = originalHearing.Participants
                         .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
                         .ContactEmail ?? newParticipants
-                        .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
+                        .SingleOrDefault(x =>
+                            x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
                         .ContactEmail;
 
                     // If the linked participant isn't an existing participant it will be a newly added participant                        
@@ -331,13 +321,51 @@ namespace AdminWebsite.Controllers
                     if (secondaryParticipantInLinkIndex >= 0)
                         participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
                 }
+
                 linkedParticipants.Add(linkedParticipantRequest);
             }
-            // participants
-            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants,
-                removedParticipantIds.ToList(), linkedParticipants.ToList());
-            // endpoints
-            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
+
+            return linkedParticipants;
+        }
+
+        private async Task ExtractNewParticipants(
+            Guid hearingId, 
+            HearingDetailsResponse originalHearing,
+            EditParticipantRequest participant, 
+            List<Guid> removedParticipantIds, 
+            (string email, string phone) judgeContact,
+            List<ParticipantRequest> newParticipants)
+        {
+            if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is
+                { } newParticipant)
+            {
+                if (newParticipant.HearingRoleName == HearingRoleName.Judge)
+                {
+                    newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
+                    newParticipant.TelephoneNumber = judgeContact.phone ?? newParticipant.TelephoneNumber;
+                }
+
+                newParticipants.Add(newParticipant);
+            }
+        }
+
+        private static void ExtractExistingParticipants(
+            HearingDetailsResponse originalHearing,
+            EditParticipantRequest participant, 
+            (string email, string phone) judgeContact, 
+            List<UpdateParticipantRequest> existingParticipants)
+        {
+            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
+                return;
+            if (existingParticipant.HearingRoleName == HearingRoleName.Judge)
+            {
+                participant.ContactEmail = judgeContact.email ?? existingParticipant.ContactEmail;
+                participant.TelephoneNumber = judgeContact.phone ?? existingParticipant.TelephoneNumber;
+            }
+
+            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
+            existingParticipants.Add(updateParticipantRequest);
         }
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
