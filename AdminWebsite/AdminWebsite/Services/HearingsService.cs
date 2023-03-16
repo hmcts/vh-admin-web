@@ -82,15 +82,22 @@ namespace AdminWebsite.Services
                    hearingCase.Number == editHearingRequest.Case.Number &&
                    HasEndpointsBeenChanged(originalEndpoints, requestEndpoints);
         }
-
+        
         public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse)
         {
-            var existingJudge = hearingDetailsResponse.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
-            var newJudge = editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
-            return newJudge?.ContactEmail != existingJudge?.ContactEmail;
-        }
+            var existingJudge =
+                hearingDetailsResponse.Participants.FirstOrDefault(
+                    x => x.HearingRoleName == HearingRoleName.Judge);
+            var newJudge =
+                editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
+            var existingJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(hearingDetailsResponse.OtherInformation);
+            var newJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(editHearingRequest.OtherInformation);
 
+            return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
+                   newJudgeOtherInformation != existingJudgeOtherInformation;
+        }
+        
         public bool HasEndpointsBeenChanged(List<EditEndpointRequest> originalEndpoints, List<EditEndpointRequest> requestEndpoints)
         {
             return originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer)
