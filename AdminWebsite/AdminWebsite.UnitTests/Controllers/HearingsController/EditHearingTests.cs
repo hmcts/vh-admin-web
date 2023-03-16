@@ -1071,18 +1071,20 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Verify(x 
                 => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(uhpr => hearingRequestValidation(uhpr))));
+                    It.Is<UpdateHearingRequest>(uhpr => HearingRequestValidation(uhpr))));
             
             _bookingsApiClient.Verify(x 
                 => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingParticipantsRequest>(uhpr => JudgeRequestValidation(uhpr))));
         }
-        private bool hearingRequestValidation(UpdateHearingRequest request)
+        
+        private static bool HearingRequestValidation(UpdateHearingRequest request)
         {
             request.OtherInformation.Should().Be("|JudgeEmail|notify_judge@email.com|JudgePhone|9876");
             return true;
         }
-        private bool JudgeRequestValidation(UpdateHearingParticipantsRequest request)
+        
+        private static bool JudgeRequestValidation(UpdateHearingParticipantsRequest request)
         {
             request.NewParticipants[0].Username.Should().Be("judge@email.com");
             request.NewParticipants[0].ContactEmail.Should().Be("judge@email.com");
