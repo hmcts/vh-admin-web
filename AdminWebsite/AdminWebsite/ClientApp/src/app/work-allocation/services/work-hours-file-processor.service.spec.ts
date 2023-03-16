@@ -53,6 +53,18 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.uploadWorkHoursRequest[1].username).toBe('first.second.2@xyz.com');
             expect(result.uploadWorkHoursRequest[1].working_hours.length).toBe(7);
         });
+
+        it('show duplicate user errors', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+
+            const result = service.processWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(1);
+            expect(result.fileValidationErrors[0]).toContain('duplicate team member found');
+        });
     });
 
     describe('processNonWorkHour', () => {

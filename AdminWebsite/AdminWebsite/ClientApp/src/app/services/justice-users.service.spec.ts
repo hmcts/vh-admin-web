@@ -1,6 +1,13 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { AddNewJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import {
+    AddNewJusticeUserRequest,
+    BHClient,
+    EditJusticeUserRequest,
+    JusticeUserResponse,
+    JusticeUserRole,
+    RestoreJusticeUserRequest
+} from './clients/api-client';
 
 import { JusticeUsersService } from './justice-users.service';
 
@@ -9,7 +16,13 @@ describe('JusticeUsersService', () => {
     let clientApiSpy: jasmine.SpyObj<BHClient>;
 
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser', 'deleteJusticeUser', 'editJusticeUser']);
+        clientApiSpy = jasmine.createSpyObj<BHClient>([
+            'getUserList',
+            'addNewJusticeUser',
+            'deleteJusticeUser',
+            'editJusticeUser',
+            'restoreJusticeUser'
+        ]);
 
         TestBed.configureTestingModule({ providers: [{ provide: BHClient, useValue: clientApiSpy }] });
         service = TestBed.inject(JusticeUsersService);
@@ -130,6 +143,20 @@ describe('JusticeUsersService', () => {
             const id = '123';
             service.deleteJusticeUser(id).subscribe();
             expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
+        });
+    });
+
+    describe('restoreJusticeUser', () => {
+        it('should call the api to restore the user', () => {
+            clientApiSpy.restoreJusticeUser.and.returnValue(of(''));
+            const id = '123';
+            const username = 'user1@test.com';
+            const request = new RestoreJusticeUserRequest({
+                id,
+                username
+            });
+            service.restoreJusticeUser(id, username).subscribe();
+            expect(clientApiSpy.restoreJusticeUser).toHaveBeenCalledWith(request);
         });
     });
 });
