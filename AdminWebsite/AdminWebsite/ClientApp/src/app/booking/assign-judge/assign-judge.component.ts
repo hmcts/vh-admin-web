@@ -10,7 +10,6 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
@@ -28,33 +27,25 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     hearing: HearingModel;
     courtAccountJudgeEmail: string;
     judge: ParticipantModel;
-
     otherInformationDetails: OtherInformationModel;
-
     showAddStaffMemberFld: FormControl;
     isStaffMemberValid = false;
-    staffMember: ParticipantModel;
     showStaffMemberErrorSummary = false;
     isStaffMemberExisting = false;
-
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
     judgePhoneFld: FormControl;
-
     failedSubmission: boolean;
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
     hasSaved: boolean;
     canNavigate = false;
-
     constants = Constants;
     updateJudgeAttempted = false;
-
     expanded = false;
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
     isBookedHearing = false;
-
     invalidPattern: string;
     isValidEmail = true;
     showStaffMemberFeature: boolean;
@@ -78,23 +69,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             .subscribe(result => {
                 this.ejudFeatureFlag = result;
             });
-    }
-
-    static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
-        const newParticipant = new ParticipantModel();
-        newParticipant.title = 'Judge';
-        newParticipant.first_name = judge.first_name;
-        newParticipant.middle_names = '';
-        newParticipant.last_name = judge.last_name;
-        newParticipant.display_name = judge.display_name;
-        newParticipant.email = judge.contact_email;
-        newParticipant.is_judge = true;
-        newParticipant.phone = '';
-        newParticipant.id = null;
-        newParticipant.username = judge.email;
-        newParticipant.case_role_name = 'Judge';
-        newParticipant.hearing_role_name = 'Judge';
-        return newParticipant;
     }
 
     ngOnInit() {
@@ -147,7 +121,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail, {
+        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail ?? this.judge?.contact_email, {
             validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
@@ -162,14 +136,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judge = judge;
         this.canNavigate = false;
         this.isJudgeParticipantError = false;
-        if (judge) {
-            this.updateWithNewJudge(judge);
-        } else {
-            this.removeJudge();
-        }
-
+        judge ? this.updateWithNewJudge(judge) : this.removeJudge();
         this.hearing = { ...this.hearing };
-
         this.setTextFieldValues();
     }
 
@@ -219,12 +187,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         );
     }
 
-    populateFormFields(existingJudge: ParticipantModel) {
-        this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
-        this.judge = existingJudge;
-        this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
-    }
-
     get canNavigateNext() {
         const savedInCacheHearing = this.hearingService.getCurrentRequest();
         return this.canNavigate && savedInCacheHearing.participants.length > 0;
@@ -249,10 +211,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
     }
 
-    get isCourtroomAccount(): boolean {
-        return this.judge.is_courtroom_account;
-    }
-
     get displayEmailField(): boolean {
         return !!this.judge && !ParticipantModel.IsEmailEjud(this.judge.email);
     }
@@ -270,10 +228,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeEmail() {
-        const judge = this.hearing.participants.find(x => x.is_judge);
-        if (judge) {
-            this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
-        }
         const text = SanitizeInputText(this.judgeEmailFld.value);
         this.judgeEmailFld.setValue(text);
 
@@ -291,18 +245,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         }
         const text = SanitizeInputText(this.judgePhoneFld.value);
         this.judgePhoneFld.setValue(text);
-    }
-
-    changeIsStaffMemberValid(isValid: boolean) {
-        this.isStaffMemberValid = isValid;
-    }
-
-    changeStaffMember(staffMember: ParticipantModel) {
-        this.staffMember = staffMember;
-        this.staffMember.is_staff_member = true;
-        if (!this.showAddStaffMemberFld.value) {
-            this.showAddStaffMemberFld.setValue(true);
-        }
     }
 
     saveJudgeAndStaffMember() {
@@ -336,18 +278,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.changeDisplayName();
                 this.changeEmail();
                 this.changeTelephone();
-
-                if (this.showAddStaffMemberFld.value === true && this.isStaffMemberValid) {
-                    const staffMemberIndex = this.hearing.participants.findIndex(
-                        x => x.hearing_role_name === Constants.HearingRoles.StaffMember
-                    );
-
-                    if (staffMemberIndex > -1) {
-                        this.hearing.participants[staffMemberIndex] = this.staffMember;
-                    } else {
-                        this.hearing.participants.push(this.staffMember);
-                    }
-                }
 
                 this.hearingService.updateHearingRequest(this.hearing);
 
@@ -416,9 +346,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
-        this.$subscriptions.forEach(subcription => {
-            if (subcription) {
-                subcription.unsubscribe();
+        this.$subscriptions.forEach(subscription => {
+            if (subscription) {
+                subscription.unsubscribe();
             }
         });
     }
