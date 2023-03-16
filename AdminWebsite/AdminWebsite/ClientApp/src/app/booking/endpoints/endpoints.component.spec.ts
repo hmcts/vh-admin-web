@@ -45,7 +45,8 @@ describe('EndpointsComponent', () => {
                 'getCurrentRequest',
                 'updateHearingRequest',
                 'setBookingHasChanged',
-                'cancelRequest'
+                'cancelRequest',
+                'isHearingAboutToStart'
             ]);
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -173,6 +174,7 @@ describe('EndpointsComponent', () => {
     });
     it('it should validate defence advocate on next click and navigate to other information page for defence adv none', () => {
         component.ngOnInit();
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         component.endpoints.controls[0].get('displayName').setValue('200');
         component.saveEndpoints();
         expect(component.duplicateDa).toBe(false);
@@ -185,6 +187,7 @@ describe('EndpointsComponent', () => {
 
     it('it should validate fields on next click and navigate to other information page if validations pass', () => {
         component.ngOnInit();
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         component.endpoints.controls[0].get('displayName').setValue('200');
         component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
         component.addEndpoint();
@@ -229,6 +232,7 @@ describe('EndpointsComponent', () => {
             },
             { user_role_name: 'Representative', display_name: 'Advocate2', hearing_role_name: 'Advocate', case_role_name: 'Respondent' }
         ];
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         // act
         component.ngOnInit();
@@ -244,6 +248,7 @@ describe('EndpointsComponent', () => {
     });
 
     it('it should validate form array on next click and navigate to summary page in edit mode', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         component.ngOnInit();
         const existinghearing = new HearingModel();
@@ -272,6 +277,7 @@ describe('EndpointsComponent', () => {
     });
 
     it('it should remove an endpoint from the endpoint array on remove click', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         component.ngOnInit();
         component.endpoints.controls[0].get('displayName').setValue('200');
         component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
@@ -287,6 +293,7 @@ describe('EndpointsComponent', () => {
         expect(component.hearing.endpoints.length).toBe(2);
     });
     it('should map participant list to defence advocate model', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
         participantModel.email = 'username@hmcts.net';
@@ -300,6 +307,7 @@ describe('EndpointsComponent', () => {
         expect(dA.isSelected).toBe(null);
     });
     it('should return the username from id', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
         participantModel.email = 'username@hmcts.net';
@@ -312,6 +320,7 @@ describe('EndpointsComponent', () => {
         expect(result).toBe('1001');
     });
     it('should unsubscribe all subcription on destroy', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         component.ngOnDestroy();
         expect(component.$subscriptions[0].closed).toBe(true);
     });
