@@ -63,7 +63,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList([FromQuery] string term)
         {
-            var justiceUserList = await _bookingsApiClient.GetJusticeUserListAsync(term);
+            var justiceUserList = await _bookingsApiClient.GetJusticeUserListAsync(term, true);
             return Ok(justiceUserList);
         }
     }
