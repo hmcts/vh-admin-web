@@ -1,21 +1,22 @@
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Contract.Requests;
 
-namespace AdminWebsite.Mappers;
-
-public class AddJusticeUserRequestMapper
+namespace AdminWebsite.Mappers
 {
-    public static AddJusticeUserRequest MapToBookingsApiRequest(AddNewJusticeUserRequest request, string createdBy)
+    public static class AddJusticeUserRequestMapper
     {
-        return new AddJusticeUserRequest
+        public static AddJusticeUserRequest MapToBookingsApiRequest(AddNewJusticeUserRequest request, string createdBy)
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Username = request.Username,
-            ContactEmail = request.Username,
-            ContactTelephone = request.ContactTelephone,
-            CreatedBy = createdBy,
-            Role = request.Role,
-        };
+            return new AddJusticeUserRequest
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Username = request.Username,
+                ContactEmail = request.Username,
+                ContactTelephone = request.ContactTelephone,
+                CreatedBy = createdBy,
+                Role = request.Role,
+            };
+        }
     }
 }
