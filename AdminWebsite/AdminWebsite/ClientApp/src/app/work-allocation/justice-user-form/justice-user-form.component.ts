@@ -84,7 +84,6 @@ export class JusticeUserFormComponent implements OnChanges {
         this.showSpinner = false;
         let message = Constants.Error.JusticeUserForm.SaveError;
         if (BookHearingException.isBookHearingException(onSaveFailedError)) {
-            debugger;
             if (onSaveFailedError.status === 409) {
                 message = Constants.Error.JusticeUserForm.SaveErrorDuplicateUser;
             }
