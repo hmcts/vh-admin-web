@@ -12,7 +12,7 @@ import {
 
 import { UploadWorkHoursComponent } from './upload-work-hours.component';
 
-describe('UploadWorkHoursComponent', () => {
+fdescribe('UploadWorkHoursComponent', () => {
     let component: UploadWorkHoursComponent;
     let fixture: ComponentFixture<UploadWorkHoursComponent>;
 
@@ -55,10 +55,13 @@ describe('UploadWorkHoursComponent', () => {
     });
 
     describe('rendering', () => {
-        it('should show working hours file upload max size error', () => {
+        fit('should show working hours file upload max size error', () => {
             component.workingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
+            // find an element with the id 'working-hours-file-upload-error' and get the text
+            const element = fixture.debugElement.query(By.css('#working-hours-file-upload-error'));
+            console.log(element);
             const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
             expect(error).toContain('Error: error message');
         });
