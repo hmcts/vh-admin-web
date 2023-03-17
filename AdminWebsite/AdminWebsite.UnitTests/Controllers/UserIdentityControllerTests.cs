@@ -166,7 +166,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Lastname = "lastName1"
             };
             _justiceUserListResponse.Add(user);
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null)).ReturnsAsync(_justiceUserListResponse);
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null, true)).ReturnsAsync(_justiceUserListResponse);
             
             _claimsPrincipal = new ClaimsPrincipalBuilder()
                 .WithRole(AppRoles.CaseAdminRole)
