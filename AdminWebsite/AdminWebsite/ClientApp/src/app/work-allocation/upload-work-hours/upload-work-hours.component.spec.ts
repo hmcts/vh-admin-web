@@ -12,7 +12,7 @@ import {
 
 import { UploadWorkHoursComponent } from './upload-work-hours.component';
 
-fdescribe('UploadWorkHoursComponent', () => {
+describe('UploadWorkHoursComponent', () => {
     let component: UploadWorkHoursComponent;
     let fixture: ComponentFixture<UploadWorkHoursComponent>;
 
@@ -35,14 +35,9 @@ fdescribe('UploadWorkHoursComponent', () => {
         } as jasmine.SpyObj<WorkHoursFileProcessorService>;
 
         workHoursProcessorSpy.isFileTooBig.and.returnValue(false);
-        TestBed.configureTestingModule({
-            imports: [FontAwesomeTestingModule],
-            declarations: [UploadWorkHoursComponent],
-            providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
-        }).compileComponents();
-
         workHoursProcessorSpy.isFileFormatValild.and.returnValue(true);
         TestBed.configureTestingModule({
+            imports: [FontAwesomeTestingModule],
             declarations: [UploadWorkHoursComponent],
             providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
         }).compileComponents();
@@ -55,13 +50,10 @@ fdescribe('UploadWorkHoursComponent', () => {
     });
 
     describe('rendering', () => {
-        fit('should show working hours file upload max size error', () => {
+        it('should show working hours file upload max size error', () => {
             component.workingHoursFileValidationErrors.push('error message');
             fixture.detectChanges();
 
-            // find an element with the id 'working-hours-file-upload-error' and get the text
-            const element = fixture.debugElement.query(By.css('#working-hours-file-upload-error'));
-            console.log(element);
             const error = fixture.debugElement.query(By.css('#working-hours-file-upload-error')).nativeElement.innerText;
             expect(error).toContain('Error: error message');
         });
