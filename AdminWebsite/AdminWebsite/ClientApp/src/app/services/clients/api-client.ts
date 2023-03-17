@@ -9261,8 +9261,7 @@ export class BookHearingException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): Observable<any> {
-    if (result !== null && result !== undefined) return _observableThrow(result);
-    else return _observableThrow(new BookHearingException(message, status, response, headers, null));
+    return _observableThrow(new BookHearingException(message, status, response, headers, result));
 }
 
 function blobToText(blob: any): Observable<string> {

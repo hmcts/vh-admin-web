@@ -84,19 +84,19 @@ export class JusticeUserFormComponent implements OnChanges {
         this.showSpinner = false;
         let message = Constants.Error.JusticeUserForm.SaveError;
         if (BookHearingException.isBookHearingException(onSaveFailedError)) {
+            debugger;
             if (onSaveFailedError.status === 409) {
                 message = Constants.Error.JusticeUserForm.SaveErrorDuplicateUser;
             }
-        }
-
-        if (onSaveFailedError instanceof ValidationProblemDetails) {
-            const validationProblems = onSaveFailedError.errors;
-            Object.keys(validationProblems).forEach(propertyName => {
-                const validationMessage = validationProblems[propertyName][0];
-                const controlName = toCamel(propertyName);
-                this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
-            });
-            message = onSaveFailedError.title;
+            if (onSaveFailedError.status === 400 && onSaveFailedError.result instanceof ValidationProblemDetails) {
+                const validationProblems = onSaveFailedError.result.errors;
+                Object.keys(validationProblems).forEach(propertyName => {
+                    const validationMessage = validationProblems[propertyName][0];
+                    const controlName = toCamel(propertyName);
+                    this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
+                });
+                message = onSaveFailedError.result.title;
+            }
         }
         this.failedSaveMessage = message;
     }
