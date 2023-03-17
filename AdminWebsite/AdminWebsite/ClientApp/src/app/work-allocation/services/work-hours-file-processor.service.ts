@@ -11,6 +11,9 @@ export class WorkHoursFileProcessorService {
     private timeDelimiter = ':';
     private earliestStartHour = 8;
     private latestEndHour = 18;
+    private fileExtensionDelimiter = '.';
+    private fileExtension = 'csv';
+    private fileType = 'text/csv';
 
     maxFileUploadSize = 200000;
 
@@ -313,6 +316,12 @@ export class WorkHoursFileProcessorService {
         }
 
         return [true, undefined];
+    }
+
+    isFileFormatValild(file: File): boolean {
+        const fileNameParts = file.name.split(this.fileExtensionDelimiter);
+        const extension = fileNameParts.pop().toLowerCase();
+        return extension === this.fileExtension && file.type === this.fileType;
     }
 }
 
