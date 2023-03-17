@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { of } from 'rxjs';
 import { FileType } from 'src/app/common/model/file-type';
 import { UploadNonWorkingHoursRequest, UploadWorkHoursRequest, UploadWorkHoursResponse } from 'src/app/services/clients/api-client';
@@ -35,6 +36,7 @@ describe('UploadWorkHoursComponent', () => {
 
         workHoursProcessorSpy.isFileTooBig.and.returnValue(false);
         TestBed.configureTestingModule({
+            imports: [FontAwesomeTestingModule],
             declarations: [UploadWorkHoursComponent],
             providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
         }).compileComponents();

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.1.17",
+      "commands": ["reportgenerator"]
+    },
+    "dotnet-stryker": {
+      "version": "3.6.1",
+      "commands": ["dotnet-stryker"]
+    }
+  }
+}
