@@ -23,7 +23,8 @@ describe('UploadWorkHoursComponent', () => {
             'processNonWorkHours',
             'uploadWorkingHours',
             'uploadNonWorkingHours',
-            'isFileTooBig'
+            'isFileTooBig',
+            'isFileFormatValild'
         ]);
 
         // when jasmine is upgraded then properties can be included in the above statement
@@ -33,6 +34,12 @@ describe('UploadWorkHoursComponent', () => {
         } as jasmine.SpyObj<WorkHoursFileProcessorService>;
 
         workHoursProcessorSpy.isFileTooBig.and.returnValue(false);
+        TestBed.configureTestingModule({
+            declarations: [UploadWorkHoursComponent],
+            providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
+        }).compileComponents();
+
+        workHoursProcessorSpy.isFileFormatValild.and.returnValue(true);
         TestBed.configureTestingModule({
             declarations: [UploadWorkHoursComponent],
             providers: [{ provide: WorkHoursFileProcessorService, useValue: workHoursProcessorSpy }]
@@ -341,7 +348,7 @@ describe('UploadWorkHoursComponent', () => {
     describe('handleFileInput', () => {
         it('should reset file upload errors', () => {
             const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
-            const file = new File([''], 'filename', { type: 'text/html' });
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
 
             component.handleFileInput(file, FileType.UploadNonWorkingHours);
 
@@ -350,7 +357,7 @@ describe('UploadWorkHoursComponent', () => {
 
         it('should not assign working hours file if file is null', () => {
             const resetErrorsSpy = spyOn(component, 'resetWorkingHoursMessages');
-            const file = new File([''], 'filename', { type: 'text/html' });
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
             component.workingHoursFile = file;
 
             component.handleFileInput(null, FileType.UploadWorkingHours);
@@ -361,7 +368,7 @@ describe('UploadWorkHoursComponent', () => {
 
         it('should not assign non-working hours file if file is null', () => {
             const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
-            const file = new File([''], 'filename', { type: 'text/html' });
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
             component.nonWorkingHoursFile = file;
 
             component.handleFileInput(null, FileType.UploadNonWorkingHours);
@@ -371,7 +378,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it(`should set errors when maximum working hours file size is exceeded`, () => {
-            const file = new File([''], 'filename', { type: 'text/html' });
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
             Object.defineProperty(file, 'size', { value: 2000001 });
             workHoursProcessorSpy.isFileTooBig.and.returnValue(true);
 
@@ -381,7 +388,7 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it(`should set errors when maximum non-working hours file size is exceeded`, () => {
-            const file = new File([''], 'filename', { type: 'text/html' });
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
             Object.defineProperty(file, 'size', { value: 2000001 });
             workHoursProcessorSpy.isFileTooBig.and.returnValue(true);
 
