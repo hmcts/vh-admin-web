@@ -6,7 +6,7 @@ rm -d -r ${PWD}/TestResults
 rm -d -r ${PWD}/AdminWebsite/AdminWebsite/ClientApp/node_modules
 
 configuration=Release
-dotnet sonarscanner begin /k:"${SONAR_PROJECT_KEY}" /o:"${SONAR_ORG}" /version:"${SONAR_PROJECT_VERSION}" /name:"${SONAR_PROJECT_NAME}" /d:sonar.host.url="${SONAR_HOST}" /d:sonar.login="${SONAR_TOKEN}" /d:sonar.projectBaseDir="${PWD}/AdminWebsite" /d:sonar.sources="${PWD}/AdminWebsite" /d:sonar.cs.opencover.reportsPaths="${PWD}/Coverage/coverage.opencover.xml" /d:sonar.javascript.lcov.reportsPaths="${PWD}/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info" /d:sonar.coverage.exclusions="**/AdminWebsite/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/AdminWebsite.Common/**/*, **/AdminWebsite/Security/**/*, **/AdminWebsite/Configuration/**/*, **/AdminWebsite/Pages/**/*, **/AdminWebsite.IntegrationTests/**/*, **/AdminWebsite.UnitTests/**/*, **/AdminWebsite/Extensions/*, **/app-insights-logger.service.ts" /d:sonar.cpd.exclusions="**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/AdminWebsite/Swagger/**/*" /d:sonar.exclusions="**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs"
+dotnet sonarscanner begin /k:"${SONAR_PROJECT_KEY}" /o:"${SONAR_ORG}" /version:"${SONAR_PROJECT_VERSION}" /name:"${SONAR_PROJECT_NAME}" /d:sonar.host.url="${SONAR_HOST}" /d:sonar.login="${SONAR_TOKEN}" /d:sonar.cs.opencover.reportsPaths="${PWD}/Coverage/coverage.opencover.xml" /d:sonar.javascript.lcov.reportsPaths="${PWD}/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info" /d:sonar.coverage.exclusions="**/AdminWebsite/Swagger/**/*, **/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/AdminWebsite.Common/**/*, **/AdminWebsite/Security/**/*, **/AdminWebsite/Configuration/**/*, **/AdminWebsite/Pages/**/*, **/AdminWebsite.IntegrationTests/**/*, **/AdminWebsite.UnitTests/**/*, **/AdminWebsite/Extensions/*, **/app-insights-logger.service.ts" /d:sonar.cpd.exclusions="**/Program.cs, **/Startup.cs, **/Testing.Common/**/*, **/AdminWebsite/Swagger/**/*" /d:sonar.exclusions="**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs"
 
 exclusions="[Testing.Common]*,[AdminWebsite.Common]AdminWebsite.Common.*,[AdminWebsite]AdminWebsite.Security.*,[AdminWebsite]AdminWebsite.Configuration.*,[AdminWebsite]AdminWebsite.Pages.*,[AdminWebsite.Testing.Common]*"
 
@@ -31,4 +31,6 @@ cd AdminWebsite/AdminWebsite/ClientApp
 npm install
 npm run test-once-ci
 
+# Return to the root directory to finish the SonarQube analysis
+cd $OLDPWD
 dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
