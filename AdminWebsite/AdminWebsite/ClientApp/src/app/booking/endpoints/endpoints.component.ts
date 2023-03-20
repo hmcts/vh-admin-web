@@ -62,8 +62,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         return <FormArray>this.form.get('endpoints');
     }
 
-    get canRemoveEndpoint(): boolean {
-        return this.endpoints.length > 1 && !this.videoHearingService.isHearingAboutToStart();
+    get hasEndpoints(): boolean {
+        return this.endpoints.length > 1;
+    }
+
+    get isHearingAboutToStart(): boolean {
+        return this.videoHearingService.isHearingAboutToStart();
     }
 
     addEndpoint(): void {
