@@ -32,7 +32,7 @@
             <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayName' + i"> Display name </label>
             <input [id]="'displayName' + i" class="govuk-input govuk-!-width-three-quarters" type="text" formControlName="displayName" />
             <a
-              *ngIf="endpoints.length > 1 && !videoHearingService.isHearingAboutToStart()"
+              *ngIf="canRemoveEndpoint"
               [id]="'removeDisplayName' + i"
               class="govuk-link govuk-!-margin-left-2"
               href="javascript:void(0)"
@@ -41,7 +41,7 @@
               Remove
             </a>
             <a
-              *ngIf="endpoints.length > 1 && videoHearingService.isHearingAboutToStart()"
+              *ngIf="!canRemoveEndpoint"
               [id]="'removeDisplayName' + i"
               class="govuk-link govuk-!-margin-left-2"
               href="javascript:void(0)"
