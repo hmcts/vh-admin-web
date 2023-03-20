@@ -311,7 +311,7 @@ describe('EndpointsComponent', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
         component.ngOnInit();
 
-        for (var index = 0; index < 2; index++) {
+        for (let index = 0; index < 2; index++) {
             component.addEndpoint();
             component.endpoints.controls[0].get('displayName').setValue(`20${index}`);
             component.endpoints.controls[0].get('defenceAdvocate').setValue(`username${index}@hmcts.net`);
