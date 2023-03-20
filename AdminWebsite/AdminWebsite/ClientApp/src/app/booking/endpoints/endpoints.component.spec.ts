@@ -313,8 +313,8 @@ describe('EndpointsComponent', () => {
 
         for (var index = 0; index < 2; index++) {
             component.addEndpoint();
-            component.endpoints.controls[0].get('displayName').setValue('20' + index);
-            component.endpoints.controls[0].get('defenceAdvocate').setValue('username' + index + '@hmcts.net');
+            component.endpoints.controls[0].get('displayName').setValue(`20${index}`);
+            component.endpoints.controls[0].get('defenceAdvocate').setValue(`username${index}@hmcts.net`);
         }
 
         component.removeEndpoint(1);
