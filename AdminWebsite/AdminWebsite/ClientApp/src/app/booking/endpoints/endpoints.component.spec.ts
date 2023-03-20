@@ -306,6 +306,23 @@ describe('EndpointsComponent', () => {
         component.saveEndpoints();
         expect(component.hearing.endpoints.length).toBe(2);
     });
+
+    it('it should not remove an endpoint from the endpoint array on remove click when hearing is about to start', () => {
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        component.ngOnInit();
+        component.endpoints.controls[0].get('displayName').setValue('200');
+        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
+        component.addEndpoint();
+        component.endpoints.controls[1].get('displayName').setValue('201');
+        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@hmcts.net');
+        component.addEndpoint();
+        component.endpoints.controls[2].get('displayName').setValue('202');
+        component.endpoints.controls[2].get('defenceAdvocate').setValue('username2@hmcts.net');
+
+        component.removeEndpoint(1);
+        component.saveEndpoints();
+        expect(component.hearing.endpoints.length).toBe(3);
+    });
     it('should map participant list to defence advocate model', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
         const participantModel = new ParticipantModel();
