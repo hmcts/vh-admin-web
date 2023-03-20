@@ -310,14 +310,12 @@ describe('EndpointsComponent', () => {
     it('it should not remove an endpoint from the endpoint array on remove click when hearing is about to start', () => {
         videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
         component.ngOnInit();
-        component.endpoints.controls[0].get('displayName').setValue('200');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
-        component.addEndpoint();
-        component.endpoints.controls[1].get('displayName').setValue('201');
-        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@hmcts.net');
-        component.addEndpoint();
-        component.endpoints.controls[2].get('displayName').setValue('202');
-        component.endpoints.controls[2].get('defenceAdvocate').setValue('username2@hmcts.net');
+
+        for (var index = 0; index < 2; index++) {
+            component.addEndpoint();
+            component.endpoints.controls[0].get('displayName').setValue('20' + index);
+            component.endpoints.controls[0].get('defenceAdvocate').setValue('username' + index + '@hmcts.net');
+        }
 
         component.removeEndpoint(1);
         component.saveEndpoints();
