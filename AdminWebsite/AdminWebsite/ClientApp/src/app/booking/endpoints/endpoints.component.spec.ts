@@ -89,6 +89,14 @@ describe('EndpointsComponent', () => {
         component.ngOnInit();
         expect(component.endpoints).toBeTruthy();
     });
+    it('should have multiple endpoints', () => {
+        component.ngOnInit();
+        component.endpoints.controls[0].get('displayName').setValue('100');
+        component.addEndpoint();
+        component.endpoints.controls[1].get('displayName').setValue('200');
+        component.addEndpoint();
+        expect(component.hasEndpoints).toBe(true);
+    });
     it('should naviagate to the other information page when next clicked', () => {
         component.ngOnInit();
         component.saveEndpoints();
@@ -183,6 +191,12 @@ describe('EndpointsComponent', () => {
         expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+    });
+
+    it('should return true for hearing about to start', () => {
+        component.ngOnInit();
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        expect(component.isHearingAboutToStart).toBe(true);
     });
 
     it('it should validate fields on next click and navigate to other information page if validations pass', () => {
