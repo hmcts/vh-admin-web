@@ -30,5 +30,5 @@ docker-compose -f "docker-compose.tests.yml" up --build --abort-on-container-exi
 Run the following in a terminal
 
 ``` bash
-dotnet reportgenerator "-reports:./Coverage/coverage.opencover.xml" "-targetDir:./Artifacts/Coverage/Report" -reporttypes:Html -sourcedirs:./BookingsApi
+dotnet reportgenerator "-reports:./Coverage/coverage.opencover.xml" "-targetDir:./Artifacts/Coverage/Report" -reporttypes:Html -sourcedirs:./AdminWeb
 ```

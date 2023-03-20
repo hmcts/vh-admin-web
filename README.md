@@ -2,22 +2,6 @@
 
 This application provides the book a video hearing functionality for the video hearing case administrator.
 
-## Restore Tools
-
-Run the following in a terminal at the root of the repository
-
-``` shell
-dotnet tool restore
-```
-
-## Generate HTML Report
-
-Under the unit test project directory
-
-```bash
-dotnet reportgenerator "-reports:./Coverage/coverage.opencover.xml" "-targetDir:./Artifacts/Coverage/Report" -reporttypes:Html -sourcedirs:./AdminWebsite
-```
-
 ## Sonar Cloud
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vh-admin-web&metric=alert_status)](https://sonarcloud.io/dashboard?id=vh-admin-web)
