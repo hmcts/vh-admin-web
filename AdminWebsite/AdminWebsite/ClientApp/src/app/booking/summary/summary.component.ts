@@ -94,7 +94,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
+        this.hearing.audio_recording_required = this.interpreterPresent && this.caseType !== "Court of Appeal Criminal Division" ? true : this.hearing.audio_recording_required;
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
