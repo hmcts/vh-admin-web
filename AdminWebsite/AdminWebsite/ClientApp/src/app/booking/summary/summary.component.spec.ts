@@ -435,7 +435,6 @@ describe('SummaryComponent with valid request', () => {
         videoHearingsServiceSpy.getStatus.calls.reset();
         videoHearingsServiceSpy.saveHearing.and.throwError('BadRequest');
         await component.bookHearing().then(() => {
-            expect(component.errors).toBeDefined();
             expect(component.showWaitSaving).toBeFalsy();
             expect(videoHearingsServiceSpy.getStatus).toHaveBeenCalledTimes(0);
             expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
@@ -704,7 +703,6 @@ describe('SummaryComponent  with existing request', () => {
         videoHearingsServiceSpy.updateHearing.and.returnValue(of(response));
         component.updateHearing();
 
-        expect(component.errors).toBeDefined();
         expect(component.showWaitSaving).toBeFalsy();
         expect(component.hearing.hearing_id).toEqual('hearing_id');
     });

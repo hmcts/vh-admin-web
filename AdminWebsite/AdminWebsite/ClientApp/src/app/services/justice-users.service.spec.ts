@@ -1,7 +1,7 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 import {
-    AddJusticeUserRequest,
+    AddNewJusticeUserRequest,
     BHClient,
     EditJusticeUserRequest,
     JusticeUserResponse,
@@ -92,11 +92,11 @@ describe('JusticeUsersService', () => {
 
             service.addNewJusticeUser(username, firstName, lastName, telephone, role).subscribe(data => (result = data));
             tick();
-            const request = new AddJusticeUserRequest({
+            const request = new AddNewJusticeUserRequest({
                 username: username,
                 first_name: firstName,
                 last_name: lastName,
-                telephone: telephone,
+                contact_telephone: telephone,
                 role: role
             });
             expect(result).toEqual(newUser);

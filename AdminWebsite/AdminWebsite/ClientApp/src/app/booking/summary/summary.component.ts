@@ -10,7 +10,7 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { BookHearingException, BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -42,7 +42,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDuration: string;
     otherInformation: OtherInformationModel;
     audioChoice: string;
-    errors: any;
     showConfirmationRemoveParticipant = false;
     selectedParticipantEmail: string;
     removerFullName: string;
@@ -316,7 +315,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
-            this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+            this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
         }
         await this.postProcessBooking(hearingDetailsResponse);
     }
@@ -349,7 +348,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                     if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
                         this.hearing.hearing_id = hearingDetailsResponse.id;
-                        this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+                        this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
                         return;
                     }
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
@@ -366,10 +365,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         );
     }
 
-    private setError(error) {
+    private setError(error: BookHearingException | Error) {
         this.showWaitSaving = false;
         this.showErrorSaving = true;
-        this.errors = error;
     }
 
     cancel(): void {

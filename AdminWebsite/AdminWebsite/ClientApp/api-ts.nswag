@@ -26,7 +26,7 @@
       "generateClientInterfaces": false,
       "generateOptionalParameters": false,
       "exportTypes": true,
-      "wrapDtoExceptions": false,
+      "wrapDtoExceptions": true,
       "exceptionClass": "BookHearingException",
       "clientBaseClass": "ApiClientBase",
       "wrapResponses": false,

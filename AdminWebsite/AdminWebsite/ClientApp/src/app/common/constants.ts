@@ -44,7 +44,7 @@ export const Constants = {
         },
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',
-            SaveErrorDuplicateUser: 'A justice user with the same name already exists'
+            SaveErrorDuplicateUser: 'A justice user with the same username already exists'
         },
         DeleteJusticeUser: {
             DeleteFailure: 'There was an unexpected error. Please try again'
