@@ -44,7 +44,7 @@ describe('JusticeUsersService', () => {
                 new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' })
             ];
             clientApiSpy.getUserList.and.returnValue(of(users));
-            service.users$.subscribe(result => {
+            service.allUsers$.subscribe(result => {
                 expect(result).toEqual(users);
                 done();
             });
@@ -53,10 +53,10 @@ describe('JusticeUsersService', () => {
         it('should not make additional api requests when additional observers subscribe', (done: DoneFn) => {
             clientApiSpy.getUserList.and.returnValue(of([]));
 
-            combineLatest([service.users$, service.users$])
+            combineLatest([service.allUsers$, service.allUsers$])
                 .pipe(
                     delay(1000),
-                    switchMap(x => service.users$)
+                    switchMap(x => service.allUsers$)
                 )
                 .subscribe(() => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(1);
@@ -104,7 +104,7 @@ describe('JusticeUsersService', () => {
             clientApiSpy.getUserList.and.returnValue(of([]));
 
             // users$ will emit initially - after calling refresh() two more times, we should see 3 emissions from users$
-            service.users$.pipe(take(3), count()).subscribe(c => {
+            service.allUsers$.pipe(take(3), count()).subscribe(c => {
                 // assert
                 expect(c).toBe(3);
                 done();
@@ -145,7 +145,7 @@ describe('JusticeUsersService', () => {
                 role: role
             });
 
-            combineLatest([service.users$, service.addNewJusticeUser(username, firstName, lastName, telephone, role)]).subscribe(
+            combineLatest([service.allUsers$, service.addNewJusticeUser(username, firstName, lastName, telephone, role)]).subscribe(
                 ([_, userResponse]: [JusticeUserResponse[], JusticeUserResponse]) => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                     expect(userResponse).toEqual(newUser);
@@ -183,7 +183,7 @@ describe('JusticeUsersService', () => {
                 role
             });
 
-            combineLatest([service.users$, service.editJusticeUser(id, username, role)]).subscribe(
+            combineLatest([service.allUsers$, service.editJusticeUser(id, username, role)]).subscribe(
                 ([_, result]: [JusticeUserResponse[], JusticeUserResponse]) => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                     expect(result).toEqual(existingUser);
@@ -200,7 +200,7 @@ describe('JusticeUsersService', () => {
             clientApiSpy.getUserList.and.returnValue(of([]));
 
             const id = '123';
-            combineLatest([service.users$, service.deleteJusticeUser(id)]).subscribe(() => {
+            combineLatest([service.allUsers$, service.deleteJusticeUser(id)]).subscribe(() => {
                 expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                 expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
                 done();
