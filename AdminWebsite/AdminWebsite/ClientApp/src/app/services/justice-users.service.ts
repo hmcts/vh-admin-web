@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, throwError } from 'rxjs';
+import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { catchError, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
 import {
     AddNewJusticeUserRequest,
@@ -18,14 +18,14 @@ import { Logger } from './logger';
 export class JusticeUsersService {
     loggerPrefix = '[JusticeUsersService] -';
     private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
-    private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
+    private searchTerm$: Subject<string> = new Subject();
 
-    users$ = this.refresh$.pipe(
+    allUsers$ = this.refresh$.pipe(
         mergeMap(() => this.getJusticeUsers(null)),
         shareReplay(1)
     );
 
-    filteredUsers$ = this.users$.pipe(switchMap(users => this.searchTerm$.pipe(map(term => this.applyFilter(term, users)))));
+    filteredUsers$ = this.allUsers$.pipe(switchMap(users => this.searchTerm$.pipe(map(term => this.applyFilter(term, users)))));
 
     constructor(private apiClient: BHClient, private logger: Logger) {}
 
