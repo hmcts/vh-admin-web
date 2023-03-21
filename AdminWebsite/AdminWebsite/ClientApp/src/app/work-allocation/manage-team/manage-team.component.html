@@ -32,7 +32,7 @@
 
   <div *ngIf="displayMessage$ | async" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
     <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
-    {{ message | async }}
+    {{ message$ | async }}
   </div>
 
   <ng-container *ngIf="users$ | async as users">
