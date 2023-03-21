@@ -40,10 +40,10 @@ describe('WorkHoursFileProcessorService', () => {
 
         it('should successfully parse valid input', () => {
             const input =
-                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday,,,\n' +
                 ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
-                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
-                'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+                'first.second@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,\n' +
+                'first.second.2@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,';
 
             const result = service.processWorkHours(input);
             expect(result.fileValidationErrors.length).toBe(0);
@@ -145,33 +145,19 @@ describe('WorkHoursFileProcessorService', () => {
 
     describe('isDelimiterValid', () => {
         it('should return false when delimeter is not used in working hours file', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
-
-            const result = service.isDelimiterValid('0900');
-
-            expect(result).toBeFalsy();
+            expect(service.isDelimiterValid('0900')).toBeFalsy();
         });
 
-        it('should return false when incorrect delimeter is used in working hours file', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
-
-            const result = service.isDelimiterValid(
-                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,,Saturday,,Sunday,,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
-                    'TestUser@hearings.hmcts.net,08:00,16:00,10:00,17:30,08:00,17:30,08:00,17:01,09:00,17:00,,,,'
-            );
+        it('should return false when input is undefined', () => {
+            const result = service.isDelimiterValid(undefined);
 
             expect(result).toBeFalsy();
         });
 
         it('should return true when correct delimeter is used', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
-
             const result = service.isDelimiterValid('09:00');
-
             expect(result).toBeTruthy();
+            expect(service.isDelimiterValid('09:00')).toBeTruthy();
         });
     });
 

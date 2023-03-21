@@ -211,6 +211,9 @@ export class WorkHoursFileProcessorService {
     }
 
     isDelimiterValid(time: string) {
+        if (!time) {
+            return false;
+        }
         let isValid = true;
 
         try {
