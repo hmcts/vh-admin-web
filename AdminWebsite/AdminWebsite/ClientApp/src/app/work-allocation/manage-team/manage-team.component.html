@@ -66,17 +66,17 @@
             {{ user.is_vh_team_leader ? 'Administrator' : 'CSO' }}
           </td>
           <td class="govuk-table__cell">
-            <!-- <fa-icon
+            <fa-icon
               id="editButton_{{ user.id }}"
               [icon]="editUserIcon"
               appTooltip
               [text]="'Edit role'"
               [colour]="'blue'"
               (click)="editUser(user)"
-            ></fa-icon> -->
+            ></fa-icon>
           </td>
           <td class="govuk-table__cell">
-            <!-- <fa-icon
+            <fa-icon
               class="red-trash"
               id="deleteButton_{{ user.id }}"
               [icon]="deleteUserIcon"
@@ -84,7 +84,7 @@
               [text]="'Delete'"
               [colour]="'red'"
               (click)="onDeleteJusticeUser(user)"
-            ></fa-icon> -->
+            ></fa-icon>
           </td>
         </tr>
       </tbody>

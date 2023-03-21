@@ -168,7 +168,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     }
 
     removeJusticeUser() {
-        // this.userToDelete = null;
+        this.userToDelete = null;
         // this.updateDeletedJusticeUser();
         this.sortUsers();
     }
