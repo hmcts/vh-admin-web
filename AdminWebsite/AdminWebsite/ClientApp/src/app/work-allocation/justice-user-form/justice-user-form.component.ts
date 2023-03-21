@@ -13,6 +13,7 @@ export type JusticeUserFormMode = 'add' | 'edit';
     templateUrl: './justice-user-form.component.html'
 })
 export class JusticeUserFormComponent implements OnChanges {
+    errorMessages = Constants.Error;
     errorIcon = faExclamationCircle;
     showSpinner = false;
     failedSaveMessage: string;
@@ -31,7 +32,8 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            contactTelephone: value.telephone
+            contactTelephone: value.telephone,
+            role: this.availableRoles.Vho
         });
 
         this.form.get('role').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : this.availableRoles.Vho);
@@ -44,10 +46,10 @@ export class JusticeUserFormComponent implements OnChanges {
 
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
-            username: new FormControl('', [Validators.email]),
+            username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
             contactTelephone: new FormControl(''),
-            firstName: new FormControl(''),
-            lastName: new FormControl(''),
+            firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
+            lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             role: new FormControl(this.availableRoles.Vho)
         });
     }
@@ -85,16 +87,15 @@ export class JusticeUserFormComponent implements OnChanges {
             if (onSaveFailedError.status === 409) {
                 message = Constants.Error.JusticeUserForm.SaveErrorDuplicateUser;
             }
-        }
-
-        if (onSaveFailedError instanceof ValidationProblemDetails) {
-            const validationProblems = onSaveFailedError.errors;
-            Object.keys(validationProblems).forEach(propertyName => {
-                const validationMessage = validationProblems[propertyName][0];
-                const controlName = toCamel(propertyName);
-                this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
-            });
-            message = onSaveFailedError.title;
+            if (onSaveFailedError.status === 400 && onSaveFailedError.result instanceof ValidationProblemDetails) {
+                const validationProblems = onSaveFailedError.result.errors;
+                Object.keys(validationProblems).forEach(propertyName => {
+                    const validationMessage = validationProblems[propertyName][0];
+                    const controlName = toCamel(propertyName);
+                    this.form.get(controlName)?.setErrors({ errorMessage: validationMessage });
+                });
+                message = onSaveFailedError.result.title;
+            }
         }
         this.failedSaveMessage = message;
     }

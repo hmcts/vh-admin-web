@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -32,13 +34,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
-        public async Task<ActionResult> AddNewJusticeUser([FromBody] AddJusticeUserRequest addJusticeUserRequest)
+        public async Task<ActionResult> AddNewJusticeUser([FromBody] AddNewJusticeUserRequest addJusticeUserRequest)
         {
             try
             {
-                addJusticeUserRequest.CreatedBy = User.Identity!.Name;
-                addJusticeUserRequest.ContactEmail = addJusticeUserRequest.Username;
-                var newUser = await _bookingsApiClient.AddJusticeUserAsync(addJusticeUserRequest);
+                var apiRequest =
+                    AddJusticeUserRequestMapper.MapToBookingsApiRequest(addJusticeUserRequest, User.Identity!.Name);
+                var newUser = await _bookingsApiClient.AddJusticeUserAsync(apiRequest);
                 return Created("", newUser);
             }
             catch (BookingsApiException e)
