@@ -1,17 +1,16 @@
-import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { BHClient, BookHearingException, JusticeUserResponse } from '../../services/clients/api-client';
-import { BehaviorSubject, combineLatest, forkJoin, of, Subject, throwError } from 'rxjs';
+import { JusticeUserResponse } from '../../services/clients/api-client';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Component } from '@angular/core';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
-import { filter, skip, tap, withLatestFrom } from 'rxjs/operators';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
@@ -131,7 +130,7 @@ describe('ManageTeamComponent', () => {
     describe('displayForm', () => {
         it('should display justice user form when displayForm has been clicked', (done: DoneFn) => {
             // act
-            component.displayForm();
+            component.displayUserForm();
 
             // assert
             combineLatest([component.displayMessage$, component.showForm$]).subscribe(([displayMessage, showForm]: [boolean, boolean]) => {
@@ -222,7 +221,7 @@ describe('ManageTeamComponent', () => {
             component.editUser(userToEdit);
 
             // assert
-            expect(component.justiceUser).toBe(userToEdit);
+            expect(component.selectedUser).toBe(userToEdit);
             expect(component.userFormMode).toBe('edit');
 
             combineLatest([component.showForm$, component.displayMessage$]).subscribe(([showForm, displayMessage]: [boolean, boolean]) => {
@@ -281,10 +280,10 @@ describe('ManageTeamComponent', () => {
     describe('User form', () => {
         it('should hide form when add new user is cancelled', () => {
             // arrange
-            component.displayForm();
+            component.displayUserForm();
 
             // act
-            component.onFormCancelled();
+            component.onUserFormCancelled();
 
             // assert
             component.showForm$.subscribe(showForm => expect(showForm).toBeFalsy());

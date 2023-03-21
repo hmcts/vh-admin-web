@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, delay, filter, map, mergeMap, share, shareReplay, switchMap, tap } from 'rxjs/operators';
-import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
+import {
+    AddNewJusticeUserRequest,
+    BHClient,
+    EditJusticeUserRequest,
+    JusticeUserResponse,
+    JusticeUserRole,
+    RestoreJusticeUserRequest
+} from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
 import { Logger } from './logger';
 
@@ -39,11 +46,11 @@ export class JusticeUsersService {
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
-        const request = new AddJusticeUserRequest({
+        const request = new AddNewJusticeUserRequest({
             username: username,
             first_name: firstName,
             last_name: lastName,
-            telephone: telephone,
+            contact_telephone: telephone,
             role: role
         });
         return this.apiClient.addNewJusticeUser(request).pipe(tap(() => this.refresh$.next()));
@@ -69,5 +76,13 @@ export class JusticeUsersService {
                 return throwError(error);
             })
         );
+    }
+
+    restoreJusticeUser(id: string, username: string) {
+        const request = new RestoreJusticeUserRequest({
+            username,
+            id
+        });
+        return this.apiClient.restoreJusticeUser(request);
     }
 }

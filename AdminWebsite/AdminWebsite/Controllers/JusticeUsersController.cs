@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
@@ -32,13 +34,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
-        public async Task<ActionResult> AddNewJusticeUser([FromBody] AddJusticeUserRequest addJusticeUserRequest)
+        public async Task<ActionResult> AddNewJusticeUser([FromBody] AddNewJusticeUserRequest addJusticeUserRequest)
         {
             try
             {
-                addJusticeUserRequest.CreatedBy = User.Identity!.Name;
-                addJusticeUserRequest.ContactEmail = addJusticeUserRequest.Username;
-                var newUser = await _bookingsApiClient.AddJusticeUserAsync(addJusticeUserRequest);
+                var apiRequest =
+                    AddJusticeUserRequestMapper.MapToBookingsApiRequest(addJusticeUserRequest, User.Identity!.Name);
+                var newUser = await _bookingsApiClient.AddJusticeUserAsync(apiRequest);
                 return Created("", newUser);
             }
             catch (BookingsApiException e)
@@ -125,6 +127,37 @@ namespace AdminWebsite.Controllers
                 }
 
                 _logger.LogError(e, "Unexpected error trying to delete justice user");
+                throw;
+            }
+        }
+        
+        [HttpPatch("restore")]
+        [SwaggerOperation(OperationId = "RestoreJusticeUser")]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> RestoreJusticeUser([FromBody] RestoreJusticeUserRequest restoreJusticeUserRequest)
+        {
+            try
+            {
+                await _bookingsApiClient.RestoreJusticeUserAsync(restoreJusticeUserRequest);
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+
+                _logger.LogError(e, "Unexpected error trying to restore a justice user");
                 throw;
             }
         }

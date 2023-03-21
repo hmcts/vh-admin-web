@@ -94,10 +94,10 @@
   <div *ngIf="showForm$ | async" class="popup-overlay">
     <div class="vh-popup-aligned">
       <app-justice-user-form
-        [justiceUser]="justiceUser"
+        [justiceUser]="selectedUser"
         [mode]="userFormMode"
-        (cancelFormEvent)="onFormCancelled()"
-        (saveSuccessfulEvent)="onJusticeSuccessfulSave($event)"
+        (cancelFormEvent)="onUserFormCancelled()"
+        (saveSuccessfulEvent)="onJusticeUserSuccessfulSave($event)"
       ></app-justice-user-form>
     </div>
   </div>
@@ -109,4 +109,10 @@
     userId="{{ userToDelete.id }}"
     username="{{ userToDelete.username }}"
   ></app-confirm-delete-justice-user-popup>
+  <app-confirm-restore-justice-user-popup
+    *ngIf="displayRestoreUserPopup"
+    (cancelEvent)="onCancelRestoreJusticeUser()"
+    (restoreSuccessfulEvent)="onJusticeUserSuccessfulRestore()"
+    [user]="userToRestore"
+  ></app-confirm-restore-justice-user-popup>
 </details>

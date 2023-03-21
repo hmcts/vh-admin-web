@@ -1,7 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { combineLatest, of } from 'rxjs';
 import { count, delay, switchMap, take } from 'rxjs/operators';
-import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
+import {
+    AddNewJusticeUserRequest,
+    BHClient,
+    EditJusticeUserRequest,
+    JusticeUserResponse,
+    JusticeUserRole,
+    RestoreJusticeUserRequest
+} from './clients/api-client';
 
 import { JusticeUsersService } from './justice-users.service';
 import { Logger } from './logger';
@@ -12,7 +19,13 @@ describe('JusticeUsersService', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>(['getUserList', 'addNewJusticeUser', 'deleteJusticeUser', 'editJusticeUser']);
+        clientApiSpy = jasmine.createSpyObj<BHClient>([
+            'getUserList',
+            'addNewJusticeUser',
+            'deleteJusticeUser',
+            'editJusticeUser',
+            'restoreJusticeUser'
+        ]);
 
         TestBed.configureTestingModule({
             providers: [
@@ -124,11 +137,11 @@ describe('JusticeUsersService', () => {
             clientApiSpy.addNewJusticeUser.and.returnValue(of(newUser));
             clientApiSpy.getUserList.and.returnValue(of([]));
 
-            const request = new AddJusticeUserRequest({
+            const request = new AddNewJusticeUserRequest({
                 username: username,
                 first_name: firstName,
                 last_name: lastName,
-                telephone: telephone,
+                contact_telephone: telephone,
                 role: role
             });
 
@@ -192,6 +205,20 @@ describe('JusticeUsersService', () => {
                 expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
                 done();
             });
+        });
+    });
+
+    describe('restoreJusticeUser', () => {
+        it('should call the api to restore the user', () => {
+            clientApiSpy.restoreJusticeUser.and.returnValue(of(''));
+            const id = '123';
+            const username = 'user1@test.com';
+            const request = new RestoreJusticeUserRequest({
+                id,
+                username
+            });
+            service.restoreJusticeUser(id, username).subscribe();
+            expect(clientApiSpy.restoreJusticeUser).toHaveBeenCalledWith(request);
         });
     });
 });

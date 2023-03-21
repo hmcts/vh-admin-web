@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -26,8 +26,13 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     isEditing = false;
     isSaving = false;
     justiceUser: JusticeUserResponse;
+    restoreUserIcon = faRotateLeft;
+    showUserForm = false;
+    selectedUser: JusticeUserResponse;
     userFormMode: JusticeUserFormMode = 'add';
     userToDelete: JusticeUserResponse;
+    displayRestoreUserPopup = false;
+    userToRestore: JusticeUserResponse;
 
     message$ = new BehaviorSubject<string>(null);
     users$: Observable<JusticeUserResponse[]>;
@@ -84,18 +89,26 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.isEditing = false;
     }
 
+    sortUsers(): void {
+        // const deletedUsers = this.users.filter(user => user.deleted).sort(this.sortAlphanumerically);
+        // const activeUsers = this.users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
+        // this.sortedUsers = deletedUsers.concat(activeUsers);
+    }
+
+    sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
+        return a.username.localeCompare(b.username, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        });
+    }
+
     onJusticeUserSearchFailed(errorMessage: string) {
         this.logger.error(`${this.loggerPrefix} There was an unexpected error searching for justice users`, new Error(errorMessage));
         this.message$.next(Constants.Error.ManageJusticeUsers.SearchFailure);
         this.displayMessage$.next(true);
     }
 
-    displayForm() {
-        this.displayMessage$.next(false);
-        this.showForm$.next(true);
-    }
-
-    onFormCancelled() {
+    onUserFormCancelled() {
         this.showForm$.next(false);
         // reset form related properties
         this.justiceUser = null;
@@ -120,10 +133,21 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         }
     }
 
+    onJusticeUserSuccessfulSave(user: JusticeUserResponse) {
+        if (this.userFormMode === 'add') {
+            this.resetAfterSave(Constants.ManageJusticeUsers.NewUserAdded);
+        } else if (this.userFormMode === 'edit') {
+            this.resetAfterSave(Constants.ManageJusticeUsers.UserEdited);
+        }
+        // this.sortUsers();
+    }
+
+    addUser = this.displayUserForm;
+
     editUser(user: JusticeUserResponse) {
-        this.justiceUser = user;
+        this.selectedUser = user;
         this.userFormMode = 'edit';
-        this.displayForm();
+        this.displayUserForm();
     }
 
     onDeleteJusticeUser(user: JusticeUserResponse) {
@@ -144,7 +168,50 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     }
 
     removeJusticeUser() {
-        this.userToDelete = null;
+        // this.userToDelete = null;
+        // this.updateDeletedJusticeUser();
+        this.sortUsers();
+    }
+
+    updateDeletedJusticeUser() {
+        // this.userToDelete.deleted = true;
+    }
+
+    restoreUser(user: JusticeUserResponse) {
+        this.userToRestore = user;
+        this.displayRestoreUserPopup = true;
+    }
+
+    onCancelRestoreJusticeUser() {
+        this.userToRestore = null;
+        this.displayRestoreUserPopup = false;
+    }
+
+    onJusticeUserSuccessfulRestore() {
+        this.displayRestoreUserPopup = false;
+        this.message$.next(Constants.ManageJusticeUsers.UserRestored);
+        this.displayMessage$.next(true);
+        this.updateRestoredJusticeUser();
+        this.sortUsers();
+    }
+
+    updateRestoredJusticeUser() {
+        this.userToRestore.deleted = false;
+    }
+
+    displayUserForm() {
+        this.displayMessage$.next(false);
+        this.showForm$.next(true);
+    }
+
+    private resetAfterSave(message: string) {
+        this.showUserForm = false;
+        this.message$.next(message);
+        this.displayAddButton$.next(false);
+        this.isAnErrorMessage$.next(false);
+        this.displayMessage$.next(true);
+        this.selectedUser = null;
+        this.userFormMode = 'add';
     }
 }
 
