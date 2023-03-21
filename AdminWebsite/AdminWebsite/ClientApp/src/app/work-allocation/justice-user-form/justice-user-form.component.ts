@@ -13,6 +13,7 @@ export type JusticeUserFormMode = 'add' | 'edit';
     templateUrl: './justice-user-form.component.html'
 })
 export class JusticeUserFormComponent implements OnChanges {
+    constants = Constants;
     errorIcon = faExclamationCircle;
     showSpinner = false;
     failedSaveMessage: string;
@@ -45,7 +46,7 @@ export class JusticeUserFormComponent implements OnChanges {
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
             username: new FormControl('', [Validators.email]),
-            contactTelephone: new FormControl(''),
+            contactTelephone: new FormControl('', [Validators.pattern(this.constants.PhonePattern)]),
             firstName: new FormControl(''),
             lastName: new FormControl(''),
             role: new FormControl(this.availableRoles.Vho)

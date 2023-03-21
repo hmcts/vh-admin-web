@@ -49,10 +49,12 @@
       />
     </div>
     <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.contactTelephone.invalid }">
+      <legend id="contactTelephone-error" class="govuk-error-message" *ngIf="form.controls.contactTelephone.invalid">
+        <span class="govuk-error-message">
+          {{ constants.Error.PhoneErrorMsg }}
+        </span>
+      </legend>
       <label class="govuk-label" for="contactTelephone"> Contact telephone </label>
-      <p *ngIf="form.controls.contactTelephone.invalid" id="contactTelephone-error" class="govuk-error-message">
-        <span class="govuk-visually-hidden">Error:</span> Enter the contact telephone
-      </p>
       <input
         class="govuk-input"
         formControlName="contactTelephone"

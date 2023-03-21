@@ -96,7 +96,7 @@ describe('JusticeUsersService', () => {
                 username: username,
                 first_name: firstName,
                 last_name: lastName,
-                telephone: telephone,
+                contact_telephone: telephone,
                 role: role
             });
             expect(result).toEqual(newUser);

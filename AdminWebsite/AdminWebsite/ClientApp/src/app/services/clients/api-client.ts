@@ -7084,7 +7084,7 @@ export class AddJusticeUserRequest implements IAddJusticeUserRequest {
     last_name?: string | undefined;
     username?: string | undefined;
     contact_email?: string | undefined;
-    telephone?: string | undefined;
+    contact_telephone?: string | undefined;
     created_by?: string | undefined;
     role?: JusticeUserRole;
 
@@ -7102,7 +7102,7 @@ export class AddJusticeUserRequest implements IAddJusticeUserRequest {
             this.last_name = _data['last_name'];
             this.username = _data['username'];
             this.contact_email = _data['contact_email'];
-            this.telephone = _data['telephone'];
+            this.contact_telephone = _data['contact_telephone'];
             this.created_by = _data['created_by'];
             this.role = _data['role'];
         }
@@ -7121,7 +7121,7 @@ export class AddJusticeUserRequest implements IAddJusticeUserRequest {
         data['last_name'] = this.last_name;
         data['username'] = this.username;
         data['contact_email'] = this.contact_email;
-        data['telephone'] = this.telephone;
+        data['contact_telephone'] = this.contact_telephone;
         data['created_by'] = this.created_by;
         data['role'] = this.role;
         return data;
@@ -7133,7 +7133,7 @@ export interface IAddJusticeUserRequest {
     last_name?: string | undefined;
     username?: string | undefined;
     contact_email?: string | undefined;
-    telephone?: string | undefined;
+    contact_telephone?: string | undefined;
     created_by?: string | undefined;
     role?: JusticeUserRole;
 }

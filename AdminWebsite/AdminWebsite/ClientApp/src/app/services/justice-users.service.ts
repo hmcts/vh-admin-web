@@ -39,7 +39,7 @@ export class JusticeUsersService {
             username,
             first_name: firstName,
             last_name: lastName,
-            telephone,
+            contact_telephone: telephone,
             role
         });
         return this.apiClient.addNewJusticeUser(request);
