@@ -1,41 +1,32 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map, mergeMap, share, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, delay, filter, map, mergeMap, share, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { AddJusticeUserRequest, BHClient, EditJusticeUserRequest, JusticeUserResponse, JusticeUserRole } from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
+import { Logger } from './logger';
 
 @Injectable({
     providedIn: 'root'
 })
 export class JusticeUsersService {
-    private cache$: Observable<JusticeUserResponse[]>;
+    loggerPrefix = '[JusticeUsersService] -';
     private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
     private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
 
     users$ = this.refresh$.pipe(
-        mergeMap(() => this.requestJusticeUsers(null)),
-        shareReplay(1),
-        switchMap(users =>
-            this.searchTerm$.pipe(
-                map(term => {
-                    return this.applyFilter(term, users);
-                })
-            )
-        ),
-        tap(x => console.log(`Search results`, x))
+        mergeMap(() => this.getJusticeUsers(null)),
+        shareReplay(1)
     );
 
-    constructor(private apiClient: BHClient) {}
+    filteredUsers$ = this.users$.pipe(switchMap(users => this.searchTerm$.pipe(map(term => this.applyFilter(term, users)))));
 
-    // just for testing -- remove
-    // triggers an emission on users$
+    constructor(private apiClient: BHClient, private logger: Logger) {}
+
     refresh() {
         this.refresh$.next();
     }
 
-    // push a search term into the stream
     search(searchTerm: string) {
-        console.log(`Searching with ${searchTerm}`);
         this.searchTerm$.next(searchTerm);
     }
 
@@ -45,22 +36,6 @@ export class JusticeUsersService {
             return users;
         }
         return users.filter(user => user.first_name === searchTerm);
-    }
-
-    retrieveJusticeUserAccounts() {
-        if (!this.cache$) {
-            this.cache$ = this.requestJusticeUsers(null).pipe(shareReplay(1));
-        }
-
-        return this.cache$;
-    }
-
-    retrieveJusticeUserAccountsNoCache(term: string) {
-        return this.requestJusticeUsers(term).pipe(shareReplay(1));
-    }
-
-    private requestJusticeUsers(term: string) {
-        return this.apiClient.getUserList(cleanQuery(term));
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
@@ -84,6 +59,15 @@ export class JusticeUsersService {
     }
 
     deleteJusticeUser(id: string) {
-        return this.apiClient.deleteJusticeUser(id);
+        return this.apiClient.deleteJusticeUser(id).pipe(tap(() => this.refresh$.next()));
+    }
+
+    private getJusticeUsers(term: string) {
+        return this.apiClient.getUserList(cleanQuery(term)).pipe(
+            catchError(error => {
+                this.logger.error(`${this.loggerPrefix} There was an unexpected error getting justice users`, new Error(error));
+                return throwError(error);
+            })
+        );
     }
 }

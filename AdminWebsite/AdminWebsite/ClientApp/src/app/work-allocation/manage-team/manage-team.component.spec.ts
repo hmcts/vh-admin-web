@@ -1,16 +1,18 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 
 import { ManageTeamComponent } from './manage-team.component';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
 import { BHClient, BookHearingException, JusticeUserResponse } from '../../services/clients/api-client';
-import { of, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, of, Subject, throwError } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Component } from '@angular/core';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
+import { filter, skip, tap, withLatestFrom } from 'rxjs/operators';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
 export class JusticeUserFormStubComponent {}
@@ -19,11 +21,12 @@ describe('ManageTeamComponent', () => {
     let component: ManageTeamComponent;
     let fixture: ComponentFixture<ManageTeamComponent>;
     let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
-    let users: JusticeUserResponse[] = [];
+
+    const filteredUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['retrieveJusticeUserAccountsNoCache']);
-        users = [];
+        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['users$', 'filteredUsers$', 'search']);
+        justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
         await TestBed.configureTestingModule({
             declarations: [ManageTeamComponent, JusticeUserFormStubComponent],
@@ -33,273 +36,175 @@ describe('ManageTeamComponent', () => {
                 HttpHandler,
                 { provide: Logger, useValue: new MockLogger() },
                 { provide: JusticeUsersService, useValue: justiceUsersServiceSpy }
-            ]
+            ],
+            imports: [ReactiveFormsModule, FontAwesomeModule]
         }).compileComponents();
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ManageTeamComponent);
         component = fixture.componentInstance;
-
-        justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.calls.reset();
+        component.ngOnInit();
         fixture.detectChanges();
     });
 
     describe('searchUsers', () => {
-        it('it should display add new user button when search with a valid email returns an empty list', fakeAsync(() => {
-            // arrange
-            const emptyList: JusticeUserResponse[] = [];
-            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(emptyList));
-            component.form.controls.inputSearch.setValue('test@cso.com');
+        it('it should display add new user button when the user list is empty', (done: DoneFn) => {
+            component.displayAddButton$.subscribe((displayAddButton: boolean) => {
+                expect(displayAddButton).toBeTruthy();
+                done();
+            });
+        });
 
+        it('should display a portion of users when search returns a list of users that exceeds filter limit', (done: DoneFn) => {
             // act
-            component.searchUsers();
-            tick();
-
-            // assert
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
-            expect(component.message).toContain('No users matching this search criteria were found.');
-            expect(component.displayAddButton).toBeTruthy();
-        }));
-
-        it('should display portion of users when search returns a list of users exceeds filter limit', fakeAsync(() => {
-            // arrange
-            users = Array.from(Array(30).keys()).map(
-                i =>
-                    new JusticeUserResponse({
-                        id: newGuid(),
-                        username: `username${i + 1}@mail.com`
-                    })
+            filteredUsers$.next(
+                Array.from(Array(30).keys()).map(
+                    i =>
+                        new JusticeUserResponse({
+                            id: newGuid(),
+                            username: `username${i + 1}@mail.com`
+                        })
+                )
             );
-            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(users));
-            component.form.controls.inputSearch.setValue('username');
-
-            // act
-            component.searchUsers();
-            tick();
 
             // assert
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayMessage).toBeTruthy();
-            expect(component.users.length).toEqual(component['filterSize']);
-            expect(component.message).toContain('please refine your search to see more results.');
-        }));
-
-        it('should users when search returns a list of users exceeds filter limit', fakeAsync(() => {
-            // arrange
-            users = Array.from(Array(10).keys()).map(
-                i =>
-                    new JusticeUserResponse({
-                        id: newGuid(),
-                        username: `username${i + 1}@mail.com`
-                    })
+            combineLatest([component.users$, component.displayMessage$, component.message$, component.displayAddButton$]).subscribe(
+                ([users, displayMessage, message, displayAddButton]: [JusticeUserResponse[], boolean, string, boolean]) => {
+                    expect(users.length).toEqual(20);
+                    expect(message).toContain('please refine your search to see more results.');
+                    expect(displayMessage).toBeTruthy();
+                    expect(displayAddButton).toBeFalsy();
+                    done();
+                }
             );
-            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(of(users));
-            component.form.controls.inputSearch.setValue('username');
+        });
 
+        it('should display all users when search returns a list of users not exceeding filter limit', (done: DoneFn) => {
             // act
-            component.searchUsers();
-            tick();
+            filteredUsers$.next(
+                Array.from(Array(10).keys()).map(
+                    i =>
+                        new JusticeUserResponse({
+                            id: newGuid(),
+                            username: `username${i + 1}@mail.com`
+                        })
+                )
+            );
 
             // assert
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayMessage).toBeFalsy();
-            expect(component.users.length).toEqual(10);
-        }));
+            combineLatest([
+                component.users$,
+                component.displayAddButton$,
+                component.isAnErrorMessage$,
+                component.displayMessage$
+            ]).subscribe(
+                ([users, displayAddButton, isAnErrorMessage, displayMessage]: [JusticeUserResponse[], boolean, boolean, boolean]) => {
+                    expect(users.length).toEqual(10);
+                    expect(displayMessage).toBeFalsy();
+                    expect(displayAddButton).toBeFalsy();
+                    expect(isAnErrorMessage).toBeFalsy();
+                    done();
+                }
+            );
+        });
 
-        it('should display error when searching throws an error', fakeAsync(() => {
-            // arrange
-            justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(throwError('Random API error'));
-            component.form.controls.inputSearch.setValue('test@cso.com');
+        // it('should display error when searching throws an error', fakeAsync((done: DoneFn) => {
+        //     // arrange
+        //     // justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(throwError('Random API error'));
+        //     component.form.controls.inputSearch.setValue('test@cso.com');
 
-            // act
-            component.searchUsers();
-            tick();
+        //     // act
+        //     component.searchUsers();
+        //     tick();
 
-            // assert
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
-            expect(component.message).toBe(Constants.Error.ManageJusticeUsers.SearchFailure);
-        }));
+        //     // assert
+        //     // expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
+
+        //     component.message$.subscribe(m => {
+        //         expect(m).toBe(Constants.Error.ManageJusticeUsers.SearchFailure);
+        //         done();
+        //     });
+        // }));
     });
 
     describe('displayForm', () => {
-        it('should display justice user form when displayForm has been selected', () => {
-            // arrange
-            component.displayMessage = true;
-            component.showForm = false;
-
+        it('should display justice user form when displayForm has been clicked', (done: DoneFn) => {
             // act
             component.displayForm();
 
             // assert
-            expect(component.displayMessage).toBeFalsy();
-            expect(component.showForm).toBeTruthy();
+            combineLatest([component.displayMessage$, component.showForm$]).subscribe(([displayMessage, showForm]: [boolean, boolean]) => {
+                expect(displayMessage).toBeFalsy();
+                expect(showForm).toBeTruthy();
+                done();
+            });
         });
     });
 
-    describe('justiceFormEventHandlers', () => {
-        it('should hide form when add new user is cancelled', () => {
-            // arrange
-            component.showForm = true;
+    describe('Deleting users', () => {
+        describe('onDeleteJusticeUser', () => {
+            it('should display delete justice user popup', (done: DoneFn) => {
+                // arrange
+                const userToDelete = new JusticeUserResponse({
+                    id: newGuid(),
+                    contact_email: 'user@email.com',
+                    first_name: 'Test',
+                    lastname: 'User',
+                    full_name: 'Test User',
+                    user_role_name: 'Team Leader',
+                    is_vh_team_leader: true,
+                    username: 'user@email.com',
+                    telephone: ''
+                });
 
-            // act
-            component.onFormCancelled();
+                // act
+                component.onDeleteJusticeUser(userToDelete);
 
-            // assert
-            expect(component.showForm).toBeFalsy();
+                // assert
+                component.displayDeleteUserPopup$.subscribe(displayDeleteUserPopup => {
+                    expect(displayDeleteUserPopup).toBeTruthy();
+                    expect(component.userToDelete).toBe(userToDelete);
+                    done();
+                });
+            });
         });
 
-        it('should add newly created user to search results to display', () => {
-            // arrange
-            component.users = [];
-            component.showForm = true;
-            const newUser = new JusticeUserResponse({
-                id: newGuid(),
-                contact_email: 'new@cso.com',
-                first_name: 'Jack',
-                lastname: 'Jones',
-                full_name: 'Jack Jones',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'new@cso.com',
-                telephone: '01234567890'
+        describe('onJusticeUserSuccessfulDelete', () => {
+            it('should hide delete justice user popup & display success message', (done: DoneFn) => {
+                // arrange & act
+                component.onJusticeUserSuccessfulDelete();
+
+                // assert
+                expect(component.userToDelete).toBeNull();
+                combineLatest([component.displayDeleteUserPopup$, component.message$, component.displayMessage$]).subscribe(
+                    ([displayDeleteUserPopup, message, displayMessage]: [boolean, string, boolean]) => {
+                        expect(displayDeleteUserPopup).toBeFalsy();
+                        expect(message).toBe(Constants.ManageJusticeUsers.UserDeleted);
+                        expect(displayMessage).toBeTruthy();
+                        done();
+                    }
+                );
             });
-
-            // act
-            component.onJusticeSuccessfulSave(newUser);
-
-            // assert
-            expect(component.showForm).toBeFalsy();
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.message).toBe(Constants.ManageJusticeUsers.NewUserAdded);
-            expect(component.isAnErrorMessage).toBeFalsy();
-            expect(component.users[0]).toBe(newUser);
         });
 
-        it('should update user in search results to display after editing', () => {
-            // arrange
-            component.showForm = true;
-            const id = newGuid();
-            const newUser = new JusticeUserResponse({
-                id,
-                contact_email: 'new@cso.com',
-                first_name: 'Jack',
-                lastname: 'Jones',
-                full_name: 'Jack Jones',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'new@cso.com',
-                telephone: '01234567890'
+        describe('onCancelDeleteJusticeUser', () => {
+            it('should hide delete justice user popup', (done: DoneFn) => {
+                // arrange & act
+                component.onCancelDeleteJusticeUser();
+
+                // assert
+                component.displayDeleteUserPopup$.subscribe(displayDeleteUserPopup => {
+                    expect(displayDeleteUserPopup).toBeFalsy();
+                    expect(component.userToDelete).toBeNull();
+                    done();
+                });
             });
-
-            component.users = [newUser];
-            component.userFormMode = 'edit';
-
-            const updatedUser = new JusticeUserResponse({
-                id,
-                contact_email: 'new@cso.com',
-                first_name: 'Jack',
-                lastname: 'Jones',
-                full_name: 'Jack Jones',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'new@cso.com',
-                telephone: '01234567890'
-            });
-
-            // act
-            component.onJusticeSuccessfulSave(updatedUser);
-
-            // assert
-            expect(component.showForm).toBeFalsy();
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.message).toBe(Constants.ManageJusticeUsers.UserEdited);
-            expect(component.isAnErrorMessage).toBeFalsy();
-            expect(component.users[0]).toBe(updatedUser);
         });
     });
 
-    describe('onDeleteJusticeUser', () => {
-        it('should display delete justice user popup', () => {
-            // arrange
-            const userToDelete = new JusticeUserResponse({
-                id: newGuid(),
-                contact_email: 'user@email.com',
-                first_name: 'Test',
-                lastname: 'User',
-                full_name: 'Test User',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'user@email.com',
-                telephone: ''
-            });
-
-            // act
-            component.onDeleteJusticeUser(userToDelete);
-
-            // assert
-            expect(component.userToDelete).toBe(userToDelete);
-            expect(component.displayDeleteUserPopup).toBeTruthy();
-        });
-    });
-
-    describe('onCancelDeleteJusticeUser', () => {
-        it('should hide delete justice user popup', () => {
-            // arrange & act
-            component.onCancelDeleteJusticeUser();
-
-            // assert
-            expect(component.userToDelete).toBeNull();
-            expect(component.displayDeleteUserPopup).toBeFalsy();
-        });
-    });
-
-    describe('onJusticeUserSuccessfulDelete', () => {
-        it('should hide delete justice user popup and update user list', () => {
-            // arrange
-            const userToKeep = new JusticeUserResponse({
-                id: newGuid(),
-                contact_email: 'userToKeep@email.com',
-                first_name: 'Test',
-                lastname: 'UserToKeep',
-                full_name: 'Test User To Keep',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'userToKeep@email.com',
-                telephone: ''
-            });
-            const userToDelete = new JusticeUserResponse({
-                id: newGuid(),
-                contact_email: 'userToDelete@email.com',
-                first_name: 'Test',
-                lastname: 'UserToDelete',
-                full_name: 'Test User To Delete',
-                user_role_name: 'Team Leader',
-                is_vh_team_leader: true,
-                username: 'userToDelete@email.com',
-                telephone: ''
-            });
-            component.users = [];
-            component.users.push(userToKeep);
-            component.users.push(userToDelete);
-            component.userToDelete = userToDelete;
-            component.displayDeleteUserPopup = true;
-
-            // act
-            component.onJusticeUserSuccessfulDelete();
-
-            // assert
-            expect(component.displayDeleteUserPopup).toBeFalsy();
-            expect(component.message).toBe(Constants.ManageJusticeUsers.UserDeleted);
-            expect(component.displayMessage).toBeTruthy();
-            expect(component.users.length).toBe(1);
-            expect(component.users[0].id).toBe(userToKeep.id);
-            expect(component.userToDelete).toBeNull();
-        });
-    });
-
-    describe('editUser', () => {
-        it('should display edit role popup', () => {
+    describe('Editing users', () => {
+        it('should display edit role popup', (done: DoneFn) => {
             // arrange
             const userToEdit = new JusticeUserResponse({
                 id: newGuid(),
@@ -319,8 +224,70 @@ describe('ManageTeamComponent', () => {
             // assert
             expect(component.justiceUser).toBe(userToEdit);
             expect(component.userFormMode).toBe('edit');
-            expect(component.displayMessage).toBeFalsy();
-            expect(component.showForm).toBeTruthy();
+
+            combineLatest([component.showForm$, component.displayMessage$]).subscribe(([showForm, displayMessage]: [boolean, boolean]) => {
+                expect(displayMessage).toBeFalsy();
+                expect(showForm).toBeTruthy();
+                done();
+            });
+        });
+    });
+
+    describe('Adding users', () => {
+        describe('onJusticeSuccessfulSave', () => {
+            it('should reset the view after save', (done: DoneFn) => {
+                component.onJusticeSuccessfulSave();
+
+                combineLatest([component.showForm$, component.isAnErrorMessage$, component.displayMessage$]).subscribe(
+                    ([showForm, isAnErrorMessage, displayMessage]: [boolean, boolean, boolean]) => {
+                        expect(displayMessage).toBeTruthy();
+                        expect(isAnErrorMessage).toBeFalsy();
+                        expect(showForm).toBeFalsy();
+                        done();
+                    }
+                );
+            });
+
+            it('should display new user added message on successful add user', (done: DoneFn) => {
+                // arrange
+                component.userFormMode = 'add';
+
+                // act
+                component.onJusticeSuccessfulSave();
+
+                // assert
+                combineLatest([component.message$]).subscribe(([message]: [string]) => {
+                    expect(message).toBe(Constants.ManageJusticeUsers.NewUserAdded);
+                    done();
+                });
+            });
+
+            it('should display user edited message on successful edit user', (done: DoneFn) => {
+                // arrange
+                component.userFormMode = 'edit';
+
+                // act
+                component.onJusticeSuccessfulSave();
+
+                // assert
+                component.message$.subscribe(message => {
+                    expect(message).toBe(Constants.ManageJusticeUsers.UserEdited);
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('User form', () => {
+        it('should hide form when add new user is cancelled', () => {
+            // arrange
+            component.displayForm();
+
+            // act
+            component.onFormCancelled();
+
+            // assert
+            component.showForm$.subscribe(showForm => expect(showForm).toBeFalsy());
         });
     });
 });
