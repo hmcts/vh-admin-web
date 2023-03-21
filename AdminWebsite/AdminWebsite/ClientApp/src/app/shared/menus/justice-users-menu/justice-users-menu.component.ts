@@ -34,7 +34,7 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.users$ = this.justiceUserService.users$;
+        this.users$ = this.justiceUserService.allUsers$;
         super.ngOnInit();
     }
 
