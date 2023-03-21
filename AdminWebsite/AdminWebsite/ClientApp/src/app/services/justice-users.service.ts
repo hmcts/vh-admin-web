@@ -42,7 +42,10 @@ export class JusticeUsersService {
         if (!searchTerm) {
             return users;
         }
-        return users.filter(user => user.first_name === searchTerm);
+
+        return users.filter(user =>
+            [user.first_name, user.lastname, user.contact_email, user.username].some(field => field.toLowerCase().includes(searchTerm))
+        );
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
