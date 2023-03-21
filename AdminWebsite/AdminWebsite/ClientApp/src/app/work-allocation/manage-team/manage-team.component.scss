@@ -10,3 +10,17 @@ fa-icon {
     color: govuk-colour('red');
   }
 }
+
+tr.deleted-user {
+  background-color: #c99;
+  color: #fff;
+}
+
+span.badge {
+  background-color: #a00;
+  color: white;
+  border-radius: 5px;
+  padding: 0.3em;
+  font-size: 0.7em;
+  margin-right: 0.3em;
+}

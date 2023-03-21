@@ -31,6 +31,16 @@ export class UploadWorkHoursComponent {
             return;
         }
 
+        if (!this.workHoursProcessor.isFileFormatValild(file)) {
+            const message = `File format is not supported, Supported file format is .CSV`;
+            if (fileType === FileType.UploadNonWorkingHours) {
+                this.nonWorkingHoursFileValidationErrors.push(message);
+            } else {
+                this.workingHoursFileValidationErrors.push(message);
+            }
+            return;
+        }
+
         if (this.workHoursProcessor.isFileTooBig(file)) {
             const message = `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`;
             if (fileType === FileType.UploadNonWorkingHours) {

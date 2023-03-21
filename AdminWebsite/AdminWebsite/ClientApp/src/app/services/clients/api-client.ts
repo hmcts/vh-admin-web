@@ -2170,7 +2170,7 @@ export class BHClient extends ApiClientBase {
      * @param body (optional)
      * @return Created
      */
-    addNewJusticeUser(body: AddJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+    addNewJusticeUser(body: AddNewJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
         let url_ = this.baseUrl + '/api/justice-users';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2500,6 +2500,118 @@ export class BHClient extends ApiClientBase {
             );
         }
         return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    restoreJusticeUser(body: RestoreJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+        let url_ = this.baseUrl + '/api/justice-users/restore';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processRestoreJusticeUser(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processRestoreJusticeUser(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                })
+            );
+    }
+
+    protected processRestoreJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = JusticeUserResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = resultData404 !== undefined ? resultData404 : <any>null;
+
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<JusticeUserResponse>(null as any);
     }
 
     /**
@@ -5161,6 +5273,67 @@ export enum JudgeAccountType {
     Judiciary = 'Judiciary'
 }
 
+/** Create a new Justice User */
+export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
+
+    constructor(data?: IAddNewJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.username = _data['username'];
+            this.contact_telephone = _data['contact_telephone'];
+            this.role = _data['role'];
+        }
+    }
+
+    static fromJS(data: any): AddNewJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNewJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['username'] = this.username;
+        data['contact_telephone'] = this.contact_telephone;
+        data['role'] = this.role;
+        return data;
+    }
+}
+
+/** Create a new Justice User */
+export interface IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
+}
+
 export class BookHearingRequest implements IBookHearingRequest {
     booking_details?: BookNewHearingRequest;
     is_multi_day?: boolean;
@@ -6967,65 +7140,6 @@ export enum LinkedParticipantType {
     Interpreter = 'Interpreter'
 }
 
-export class AddJusticeUserRequest implements IAddJusticeUserRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    username?: string | undefined;
-    contact_email?: string | undefined;
-    telephone?: string | undefined;
-    created_by?: string | undefined;
-    role?: JusticeUserRole;
-
-    constructor(data?: IAddJusticeUserRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.username = _data['username'];
-            this.contact_email = _data['contact_email'];
-            this.telephone = _data['telephone'];
-            this.created_by = _data['created_by'];
-            this.role = _data['role'];
-        }
-    }
-
-    static fromJS(data: any): AddJusticeUserRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddJusticeUserRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['username'] = this.username;
-        data['contact_email'] = this.contact_email;
-        data['telephone'] = this.telephone;
-        data['created_by'] = this.created_by;
-        data['role'] = this.role;
-        return data;
-    }
-}
-
-export interface IAddJusticeUserRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    username?: string | undefined;
-    contact_email?: string | undefined;
-    telephone?: string | undefined;
-    created_by?: string | undefined;
-    role?: JusticeUserRole;
-}
-
 export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
@@ -7452,6 +7566,45 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+}
+
+export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
+
+    constructor(data?: IRestoreJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.username = _data['username'];
+        }
+    }
+
+    static fromJS(data: any): RestoreJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RestoreJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['username'] = this.username;
+        return data;
+    }
+}
+
+export interface IRestoreJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
 }
 
 export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
@@ -8334,6 +8487,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;
+    deleted?: boolean;
 
     constructor(data?: IJusticeUserResponse) {
         if (data) {
@@ -8356,6 +8510,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
             this.is_vh_team_leader = _data['is_vh_team_leader'];
             this.created_by = _data['created_by'];
             this.full_name = _data['full_name'];
+            this.deleted = _data['deleted'];
         }
     }
 
@@ -8379,6 +8534,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
         data['is_vh_team_leader'] = this.is_vh_team_leader;
         data['created_by'] = this.created_by;
         data['full_name'] = this.full_name;
+        data['deleted'] = this.deleted;
         return data;
     }
 }
@@ -8395,6 +8551,7 @@ export interface IJusticeUserResponse {
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;
+    deleted?: boolean;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {
@@ -9104,8 +9261,7 @@ export class BookHearingException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): Observable<any> {
-    if (result !== null && result !== undefined) return _observableThrow(result);
-    else return _observableThrow(new BookHearingException(message, status, response, headers, null));
+    return _observableThrow(new BookHearingException(message, status, response, headers, result));
 }
 
 function blobToText(blob: any): Observable<string> {
