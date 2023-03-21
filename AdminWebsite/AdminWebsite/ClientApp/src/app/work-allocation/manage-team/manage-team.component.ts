@@ -43,7 +43,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     showForm$ = new BehaviorSubject(false);
     displayDeleteUserPopup$ = new BehaviorSubject(false);
 
-    destroyed$ = new Subject<void>;
+    destroyed$ = new Subject<void>();
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
