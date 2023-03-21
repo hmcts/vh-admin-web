@@ -58,8 +58,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.form.controls.inputSearch.valueChanges.subscribe(() => this.displayAddButton$.next(false));
 
-        this.showSpinner$.next(true);
-
         this.users$ = this.justiceUserService.filteredUsers$.pipe(
             takeUntil(this.destroyed$),
             tap(users => {
@@ -85,6 +83,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     }
 
     searchUsers() {
+        this.showSpinner$.next(true);
         this.justiceUserService.search(this.form.value.inputSearch);
         this.isEditing = false;
     }
