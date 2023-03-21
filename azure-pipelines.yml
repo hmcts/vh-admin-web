@@ -276,7 +276,7 @@ extends:
   template: stages\dotnet-package.yml@templates
   parameters:
     netVersion: 6.x
-    nodeVersion: "18.10.0"
+    nodeVersion: "18.15.0"
     useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
