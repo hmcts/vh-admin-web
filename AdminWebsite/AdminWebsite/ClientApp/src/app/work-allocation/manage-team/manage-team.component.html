@@ -15,7 +15,7 @@
             class="govuk-button govuk-!-margin-left-2"
             data-module="govuk-button"
             *ngIf="displayAddButton$ | async"
-            (click)="displayForm()"
+            (click)="addUser()"
           >
             Add a team member
           </button>
@@ -95,7 +95,7 @@
     <div class="vh-popup-aligned">
       <app-justice-user-form
         [justiceUser]="selectedUser"
-        [mode]="userFormMode"
+        [mode]="userFormMode$ | async"
         (cancelFormEvent)="onUserFormCancelled()"
         (saveSuccessfulEvent)="onJusticeUserSuccessfulSave($event)"
       ></app-justice-user-form>
