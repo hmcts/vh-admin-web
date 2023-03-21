@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import {
-    AddJusticeUserRequest,
+    AddNewJusticeUserRequest,
     BHClient,
     EditJusticeUserRequest,
     JusticeUserResponse,
@@ -35,12 +35,12 @@ export class JusticeUsersService {
     }
 
     addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
-        const request = new AddJusticeUserRequest({
-            username,
+        const request = new AddNewJusticeUserRequest({
+            username: username,
             first_name: firstName,
             last_name: lastName,
-            telephone,
-            role
+            contact_telephone: telephone,
+            role: role
         });
         return this.apiClient.addNewJusticeUser(request);
     }
