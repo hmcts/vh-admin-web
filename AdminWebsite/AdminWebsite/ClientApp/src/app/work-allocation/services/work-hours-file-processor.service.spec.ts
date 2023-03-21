@@ -144,11 +144,23 @@ describe('WorkHoursFileProcessorService', () => {
     });
 
     describe('isDelimiterValid', () => {
-        it('should return false when incorrect delimeter is used in working hours file', () => {
+        it('should return false when delimeter is not used in working hours file', () => {
             const rowNumber = 2;
             const entryNumber = 3;
 
             const result = service.isDelimiterValid('0900');
+
+            expect(result).toBeFalsy();
+        });
+
+        it('should return false when incorrect delimeter is used in working hours file', () => {
+            const rowNumber = 2;
+            const entryNumber = 3;
+
+            const result = service.isDelimiterValid(
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,,Saturday,,Sunday,,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                    'TestUser@hearings.hmcts.net,08:00,16:00,10:00,17:30,08:00,17:30,08:00,17:01,09:00,17:00,,,,'
+            );
 
             expect(result).toBeFalsy();
         });
