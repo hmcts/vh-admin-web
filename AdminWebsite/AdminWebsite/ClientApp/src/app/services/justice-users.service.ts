@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject, throwError } from 'rxjs';
-import { catchError, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { catchError, filter, map, mergeMap, shareReplay, skip, switchMap, tap } from 'rxjs/operators';
 import {
     AddNewJusticeUserRequest,
     BHClient,
@@ -18,14 +18,21 @@ import { Logger } from './logger';
 export class JusticeUsersService {
     loggerPrefix = '[JusticeUsersService] -';
     private refresh$: BehaviorSubject<void> = new BehaviorSubject(null);
-    private searchTerm$: Subject<string> = new Subject();
+    private searchTerm$: BehaviorSubject<string> = new BehaviorSubject(null);
 
     allUsers$ = this.refresh$.pipe(
         mergeMap(() => this.getJusticeUsers(null)),
         shareReplay(1)
     );
 
-    filteredUsers$ = this.allUsers$.pipe(switchMap(users => this.searchTerm$.pipe(map(term => this.applyFilter(term, users)))));
+    filteredUsers$ = this.allUsers$.pipe(
+        switchMap(users =>
+            this.searchTerm$.pipe(
+                filter(searchTerm => searchTerm !== null),
+                map(term => this.applyFilter(term, users))
+            )
+        )
+    );
 
     constructor(private apiClient: BHClient, private logger: Logger) {}
 
@@ -37,14 +44,15 @@ export class JusticeUsersService {
         this.searchTerm$.next(searchTerm);
     }
 
-    // more complex searching required here
     applyFilter(searchTerm: string, users: JusticeUserResponse[]): JusticeUserResponse[] {
         if (!searchTerm) {
             return users;
         }
 
         return users.filter(user =>
-            [user.first_name, user.lastname, user.contact_email, user.username].some(field => field.toLowerCase().includes(searchTerm))
+            [user.first_name, user.lastname, user.contact_email, user.username].some(field =>
+                field.toLowerCase().includes(searchTerm.toLowerCase())
+            )
         );
     }
 
@@ -86,6 +94,6 @@ export class JusticeUsersService {
             username,
             id
         });
-        return this.apiClient.restoreJusticeUser(request);
+        return this.apiClient.restoreJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 }

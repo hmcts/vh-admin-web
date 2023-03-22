@@ -11,6 +11,7 @@ import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
 export class JusticeUserFormStubComponent {}
@@ -23,7 +24,11 @@ describe('ManageTeamComponent', () => {
     const filteredUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['users$', 'filteredUsers$', 'search']);
+        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
+            'allUsers$',
+            'filteredUsers$',
+            'search'
+        ]);
         justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
         await TestBed.configureTestingModule({
@@ -220,21 +225,22 @@ describe('ManageTeamComponent', () => {
             component.editUser(userToEdit);
 
             // assert
-            expect(component.selectedUser).toBe(userToEdit);
-            expect(component.userFormMode).toBe('edit');
-
-            combineLatest([component.showForm$, component.displayMessage$]).subscribe(([showForm, displayMessage]: [boolean, boolean]) => {
-                expect(displayMessage).toBeFalsy();
-                expect(showForm).toBeTruthy();
-                done();
-            });
+            combineLatest([component.showForm$, component.displayMessage$, component.selectedUser$, component.userFormMode$]).subscribe(
+                ([showForm, displayMessage, selectedUser, userFormMode]: [boolean, boolean, JusticeUserResponse, JusticeUserFormMode]) => {
+                    expect(displayMessage).toBeFalsy();
+                    expect(showForm).toBeTruthy();
+                    expect(selectedUser).toBe(userToEdit);
+                    expect(userFormMode).toBe('edit');
+                    done();
+                }
+            );
         });
     });
 
     describe('Adding users', () => {
         describe('onJusticeSuccessfulSave', () => {
             it('should reset the view after save', (done: DoneFn) => {
-                component.onJusticeSuccessfulSave();
+                component.onJusticeUserSuccessfulSave(null);
 
                 combineLatest([component.showForm$, component.isAnErrorMessage$, component.displayMessage$]).subscribe(
                     ([showForm, isAnErrorMessage, displayMessage]: [boolean, boolean, boolean]) => {
@@ -248,10 +254,10 @@ describe('ManageTeamComponent', () => {
 
             it('should display new user added message on successful add user', (done: DoneFn) => {
                 // arrange
-                component.userFormMode = 'add';
+                component.userFormMode$.next('add');
 
                 // act
-                component.onJusticeSuccessfulSave();
+                component.onJusticeUserSuccessfulSave(null);
 
                 // assert
                 combineLatest([component.message$]).subscribe(([message]: [string]) => {
@@ -262,10 +268,10 @@ describe('ManageTeamComponent', () => {
 
             it('should display user edited message on successful edit user', (done: DoneFn) => {
                 // arrange
-                component.userFormMode = 'edit';
+                component.userFormMode$.next('edit');
 
                 // act
-                component.onJusticeSuccessfulSave();
+                component.onJusticeUserSuccessfulSave(null);
 
                 // assert
                 component.message$.subscribe(message => {

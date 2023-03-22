@@ -26,9 +26,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
 
     isEditing = false;
     isSaving = false;
-    justiceUser: JusticeUserResponse;
     restoreUserIcon = faRotateLeft;
-    selectedUser: JusticeUserResponse;
     userToDelete: JusticeUserResponse;
     displayRestoreUserPopup = false;
     userToRestore: JusticeUserResponse;
@@ -42,6 +40,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     showForm$ = new BehaviorSubject(false);
     displayDeleteUserPopup$ = new BehaviorSubject(false);
     userFormMode$ = new BehaviorSubject<JusticeUserFormMode>('add');
+    selectedUser$ = new BehaviorSubject<JusticeUserResponse>(null);
 
     destroyed$ = new Subject<void>();
 
@@ -111,26 +110,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     onUserFormCancelled() {
         this.showForm$.next(false);
         // reset form related properties
-        this.justiceUser = null;
         this.userFormMode$.next('add');
-    }
-
-    onJusticeSuccessfulSave() {
-        if (this.userFormMode$.getValue() === 'add') {
-            this.showForm$.next(false);
-            this.message$.next(Constants.ManageJusticeUsers.NewUserAdded);
-            this.isAnErrorMessage$.next(false);
-            this.displayMessage$.next(true);
-        } else if (this.userFormMode$.getValue() === 'edit') {
-            this.showForm$.next(false);
-            this.message$.next(Constants.ManageJusticeUsers.UserEdited);
-            this.isAnErrorMessage$.next(false);
-            this.displayMessage$.next(true);
-
-            // reset form related properties
-            this.justiceUser = null;
-            this.userFormMode$.next('add');
-        }
     }
 
     onJusticeUserSuccessfulSave(user: JusticeUserResponse) {
@@ -139,13 +119,12 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         } else if (this.userFormMode$.getValue() === 'edit') {
             this.resetAfterSave(Constants.ManageJusticeUsers.UserEdited);
         }
-        // this.sortUsers();
     }
 
     addUser = this.displayUserForm;
 
     editUser(user: JusticeUserResponse) {
-        this.selectedUser = user;
+        this.selectedUser$.next(user);
         this.userFormMode$.next('edit');
         this.displayUserForm();
     }
@@ -208,7 +187,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.displayAddButton$.next(false);
         this.isAnErrorMessage$.next(false);
         this.displayMessage$.next(true);
-        this.selectedUser = null;
+        this.selectedUser$.next(null);
         this.userFormMode$.next('add');
     }
 }

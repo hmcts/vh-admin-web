@@ -103,7 +103,7 @@
   <div *ngIf="showForm$ | async" class="popup-overlay">
     <div class="vh-popup-aligned">
       <app-justice-user-form
-        [justiceUser]="selectedUser"
+        [justiceUser]="selectedUser$ | async"
         [mode]="userFormMode$ | async"
         (cancelFormEvent)="onUserFormCancelled()"
         (saveSuccessfulEvent)="onJusticeUserSuccessfulSave($event)"

@@ -66,14 +66,14 @@ describe('JusticeUsersService', () => {
     });
 
     describe('search()', () => {
-        it('should trigger another emission from $users observable', (done: DoneFn) => {
+        it('should trigger an emission from $users observable each time it is called', (done: DoneFn) => {
             // arrange
             clientApiSpy.getUserList.and.returnValue(of([]));
 
-            // users$ will emit initially - after calling search() two times, we should see 3 emissions from users$
-            service.filteredUsers$.pipe(take(3), count()).subscribe(c => {
+            //  after calling search() two times, we should see 2 emissions from users$
+            service.filteredUsers$.pipe(take(2), count()).subscribe(c => {
                 // assert
-                expect(c).toBe(3);
+                expect(c).toBe(2);
                 done();
             });
 
@@ -85,9 +85,27 @@ describe('JusticeUsersService', () => {
         it('should apply a filter to the users collection', () => {
             // arrange
             const users: JusticeUserResponse[] = [
-                new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com', first_name: 'Test' }),
-                new JusticeUserResponse({ id: '456', contact_email: 'user2@test.com', first_name: 'AnotherTest' }),
-                new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com', first_name: 'LastTest' })
+                new JusticeUserResponse({
+                    id: '123',
+                    contact_email: 'user1@test.com',
+                    first_name: 'Test',
+                    lastname: 'Test',
+                    username: 'Test'
+                }),
+                new JusticeUserResponse({
+                    id: '456',
+                    contact_email: 'user2@test.com',
+                    first_name: 'Another',
+                    lastname: 'Another',
+                    username: 'Another'
+                }),
+                new JusticeUserResponse({
+                    id: '789',
+                    contact_email: 'user3@test.com',
+                    first_name: 'Last',
+                    lastname: 'Last',
+                    username: 'Last'
+                })
             ];
 
             // act
