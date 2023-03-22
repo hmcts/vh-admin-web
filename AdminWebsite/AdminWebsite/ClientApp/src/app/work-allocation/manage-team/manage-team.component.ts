@@ -77,6 +77,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
                     this.message$.next(Constants.ManageJusticeUsers.EmptySearchResults);
                 }
             }),
+            map(users => this.sortUsers(users)),
             map(users => users.slice(0, this.filterSize)),
             tap(() => this.showSpinner$.next(false))
         );
@@ -88,10 +89,10 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.isEditing = false;
     }
 
-    sortUsers(): void {
-        // const deletedUsers = this.users.filter(user => user.deleted).sort(this.sortAlphanumerically);
-        // const activeUsers = this.users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
-        // this.sortedUsers = deletedUsers.concat(activeUsers);
+    sortUsers(users: JusticeUserResponse[]): JusticeUserResponse[] {
+        const deletedUsers = users.filter(user => user.deleted).sort(this.sortAlphanumerically);
+        const activeUsers = users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
+        return deletedUsers.concat(activeUsers);
     }
 
     sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
@@ -169,7 +170,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     removeJusticeUser() {
         this.userToDelete = null;
         // this.updateDeletedJusticeUser();
-        this.sortUsers();
     }
 
     updateDeletedJusticeUser() {
@@ -191,7 +191,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.message$.next(Constants.ManageJusticeUsers.UserRestored);
         this.displayMessage$.next(true);
         this.updateRestoredJusticeUser();
-        this.sortUsers();
     }
 
     updateRestoredJusticeUser() {
