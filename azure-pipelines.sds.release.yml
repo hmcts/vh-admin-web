@@ -1,8 +1,8 @@
 name: $(Date:yyyyMMddHHmm)-$(Rev:r)
 
 trigger: 
-  - release/**
-
+  - release/*
+  
 pr: none
 
 resources:
