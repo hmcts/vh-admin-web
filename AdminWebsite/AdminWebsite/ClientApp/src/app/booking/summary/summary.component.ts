@@ -93,8 +93,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required =
-            this.interpreterPresent && this.caseType !== 'Court of Appeal Criminal Division' ? true : this.hearing.audio_recording_required;
+        this.hearing.audio_recording_required = this.setAudioRecordingRequired(this.hearing.audio_recording_required);
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
@@ -112,6 +111,18 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
         this.bookinConfirmed = this.hearing.status === 'Created';
+    }
+
+    private setAudioRecordingRequired(currentValue: boolean) {
+        // CACD hearings should always have recordings set to off
+        if (this.caseType === 'Court of Appeal Criminal Division') {
+            return false;
+        }
+        // Hearings with an interpreter should always have recording set to on
+        if (this.interpreterPresent) {
+            return true;
+        }
+        return currentValue;
     }
 
     private confirmRemoveParticipant() {
