@@ -27,20 +27,20 @@ stages:
 # CI Build Checks. ##################################
 - stage: CI_Build
   displayName: CI Build Checks
-    variables:
-      - template: variables/shared.yaml
-    jobs:
-      - job: CI_Helm
-        displayName: "Helm CI"
-        steps:
-          - checkout: self
+  variables:
+    - template: variables/shared.yaml
+  jobs:
+    - job: CI_Helm
+      displayName: "Helm CI"
+      steps:
+        - checkout: self
 
-          - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
-            parameters:
-              chartPath: ${{ variables.chartPath }}
-              chartValuesPath: ${{ variables.chartPath }}
+        - template: templates\Containerisation\helm\helm-lint.yaml@azTemplates
+          parameters:
+            chartPath: ${{ variables.chartPath }}
+            chartValuesPath: ${{ variables.chartPath }}
 
-      - job: UnitAndIntegrationTests
+    - job: UnitAndIntegrationTests
         displayName: "Unit and Integration Tests"
         steps:
           - checkout: self
