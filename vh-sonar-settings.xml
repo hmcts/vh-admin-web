@@ -1,0 +1,9 @@
+<SonarQubeAnalysisProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+    <Property Name="sonar.exclusions">**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs</Property>
+    <Property Name="sonar.javascript.lcov.reportPaths">**/ClientApp/coverage/lcov.info</Property>
+    <Property Name="sonar.typescript.exclusions">**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts</Property>
+    <Property Name="sonar.coverage.exclusions">**/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*, **/.eslintrc.js, AdminWebsite/ClientApp/src/app/testing/**</Property>
+    <Property Name="sonar.cs.opencover.reportsPaths">**/coverage.opencover.xml</Property>
+</SonarQubeAnalysisProperties>

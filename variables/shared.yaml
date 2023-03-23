@@ -7,7 +7,9 @@ parameters:
     default: ''
 
 variables:
-
+  - group: Sonar-Poc
+  - name: appName
+    value: AdminWebsite
   - name: git_version_config_path
     value: $(Build.SourcesDirectory)/sds-git-version-config.yml
   - name: nuget_package_name
