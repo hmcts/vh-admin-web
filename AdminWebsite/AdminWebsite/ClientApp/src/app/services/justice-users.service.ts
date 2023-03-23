@@ -80,6 +80,14 @@ export class JusticeUsersService {
         return this.apiClient.deleteJusticeUser(id).pipe(tap(() => this.refresh$.next()));
     }
 
+    restoreJusticeUser(id: string, username: string) {
+        const request = new RestoreJusticeUserRequest({
+            username,
+            id
+        });
+        return this.apiClient.restoreJusticeUser(request).pipe(tap(() => this.refresh$.next()));
+    }
+
     private getJusticeUsers(term: string) {
         return this.apiClient.getUserList(cleanQuery(term)).pipe(
             catchError(error => {
@@ -87,13 +95,5 @@ export class JusticeUsersService {
                 return throwError(error);
             })
         );
-    }
-
-    restoreJusticeUser(id: string, username: string) {
-        const request = new RestoreJusticeUserRequest({
-            username,
-            id
-        });
-        return this.apiClient.restoreJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 }
