@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ValidationFailure, VhoWorkHoursTableComponent } from './vho-work-hours-table.component';
-import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoWorkHoursResponse } from '../../../services/clients/api-client';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
+import { FormsModule } from '@angular/forms';
+import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 
 describe('VhoWorkHoursTableComponent', () => {
     let component: VhoWorkHoursTableComponent;
@@ -14,6 +16,7 @@ describe('VhoWorkHoursTableComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
+            imports: [FontAwesomeTestingModule, FormsModule],
             providers: [{ provide: VideoHearingsService, useValue: videoServiceSpy }],
             declarations: [VhoWorkHoursTableComponent]
         }).compileComponents();
