@@ -211,11 +211,18 @@ export class WorkHoursFileProcessorService {
     }
 
     isDelimiterValid(time: string) {
+        if (!time) {
+            return false;
+        }
         let isValid = true;
 
-        const timeArray = time.split(this.timeDelimiter);
+        try {
+            const timeArray = time.split(this.timeDelimiter);
 
-        if (timeArray.length !== 2) {
+            if (timeArray.length !== 2) {
+                isValid = false;
+            }
+        } catch {
             isValid = false;
         }
 
