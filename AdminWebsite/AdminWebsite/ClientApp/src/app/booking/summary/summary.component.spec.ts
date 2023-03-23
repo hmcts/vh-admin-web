@@ -34,11 +34,8 @@ import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { log } from 'console';
-
 
 function initExistingHearingRequest(): HearingModel {
-
     const pat1 = new ParticipantModel();
     pat1.email = 'aa@hmcts.net';
     pat1.representee = 'citizen 01';
@@ -302,7 +299,6 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.audio_recording_required).toBe(false);
     });
     it('should set audio recording to true if an interpreter is present', () => {
-
         const participants: ParticipantModel[] = [];
         let participant = new ParticipantModel();
         participant.first_name = 'firstname';
@@ -321,14 +317,12 @@ describe('SummaryComponent with valid request', () => {
         participant.interpreterFor = 'firstname.lastname@email.com';
         participants.push(participant);
         component.hearing.participants = participants;
-
         const lp = new LinkedParticipantModel();
         lp.participantEmail = 'firstname.lastname@email.com';
         lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
         const lps: LinkedParticipantModel[] = [];
         lps.push(lp);
         component.hearing.linked_participants = lps;
-
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.hearing.participants.length).toBe(2);
