@@ -27,10 +27,7 @@ dotnet test AdminWebsite/AdminWebsite.IntegrationTests/AdminWebsite.IntegrationT
     "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
 
 # Run the Jasmine tests
-cd AdminWebsite/AdminWebsite/ClientApp
-npm install
-npm run test-once-ci
+npm install --prefix AdminWebsite/AdminWebsite/ClientApp test-once-ci
+npm run --prefix AdminWebsite/AdminWebsite/ClientApp test-once-ci test-once-ci
 
-# Return to the root directory to finish the SonarQube analysis
-cd $OLDPWD
 dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
