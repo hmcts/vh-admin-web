@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, throwError } from 'rxjs';
-import { catchError, filter, map, mergeMap, shareReplay, skip, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
 import {
     AddNewJusticeUserRequest,
     BHClient,

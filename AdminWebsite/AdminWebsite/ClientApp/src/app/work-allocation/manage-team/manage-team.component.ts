@@ -88,19 +88,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.isEditing = false;
     }
 
-    sortUsers(users: JusticeUserResponse[]): JusticeUserResponse[] {
-        const deletedUsers = users.filter(user => user.deleted).sort(this.sortAlphanumerically);
-        const activeUsers = users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
-        return deletedUsers.concat(activeUsers);
-    }
-
-    sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
-        return a.username.localeCompare(b.username, undefined, {
-            numeric: true,
-            sensitivity: 'base'
-        });
-    }
-
     onJusticeUserSearchFailed(errorMessage: string) {
         this.logger.error(`${this.loggerPrefix} There was an unexpected error searching for justice users`, new Error(errorMessage));
         this.message$.next(Constants.Error.ManageJusticeUsers.SearchFailure);
@@ -109,11 +96,10 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
 
     onUserFormCancelled() {
         this.showForm$.next(false);
-        // reset form related properties
         this.userFormMode$.next('add');
     }
 
-    onJusticeUserSuccessfulSave(user: JusticeUserResponse) {
+    onJusticeUserSuccessfulSave() {
         if (this.userFormMode$.getValue() === 'add') {
             this.resetAfterSave(Constants.ManageJusticeUsers.NewUserAdded);
         } else if (this.userFormMode$.getValue() === 'edit') {
@@ -135,24 +121,13 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     }
 
     onCancelDeleteJusticeUser() {
-        this.removeJusticeUser();
-        this.displayDeleteUserPopup$.next(false);
+        this.resetUserToDelete();
     }
 
     onJusticeUserSuccessfulDelete() {
-        this.removeJusticeUser();
-        this.displayDeleteUserPopup$.next(false);
+        this.resetUserToDelete();
         this.message$.next(Constants.ManageJusticeUsers.UserDeleted);
         this.displayMessage$.next(true);
-    }
-
-    removeJusticeUser() {
-        this.userToDelete = null;
-        // this.updateDeletedJusticeUser();
-    }
-
-    updateDeletedJusticeUser() {
-        // this.userToDelete.deleted = true;
     }
 
     restoreUser(user: JusticeUserResponse) {
@@ -172,13 +147,31 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.updateRestoredJusticeUser();
     }
 
-    updateRestoredJusticeUser() {
-        this.userToRestore.deleted = false;
-    }
-
     displayUserForm() {
         this.displayMessage$.next(false);
         this.showForm$.next(true);
+    }
+
+    private sortUsers(users: JusticeUserResponse[]): JusticeUserResponse[] {
+        const deletedUsers = users.filter(user => user.deleted).sort(this.sortAlphanumerically);
+        const activeUsers = users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
+        return deletedUsers.concat(activeUsers);
+    }
+
+    private sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
+        return a.username.localeCompare(b.username, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        });
+    }
+
+    private resetUserToDelete() {
+        this.userToDelete = null;
+        this.displayDeleteUserPopup$.next(false);
+    }
+
+    private updateRestoredJusticeUser() {
+        this.userToRestore.deleted = false;
     }
 
     private resetAfterSave(message: string) {

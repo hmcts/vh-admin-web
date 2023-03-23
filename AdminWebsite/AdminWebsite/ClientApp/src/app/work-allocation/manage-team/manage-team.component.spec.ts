@@ -240,7 +240,7 @@ describe('ManageTeamComponent', () => {
     describe('Adding users', () => {
         describe('onJusticeSuccessfulSave', () => {
             it('should reset the view after save', (done: DoneFn) => {
-                component.onJusticeUserSuccessfulSave(null);
+                component.onJusticeUserSuccessfulSave();
 
                 combineLatest([component.showForm$, component.isAnErrorMessage$, component.displayMessage$]).subscribe(
                     ([showForm, isAnErrorMessage, displayMessage]: [boolean, boolean, boolean]) => {
@@ -257,7 +257,7 @@ describe('ManageTeamComponent', () => {
                 component.userFormMode$.next('add');
 
                 // act
-                component.onJusticeUserSuccessfulSave(null);
+                component.onJusticeUserSuccessfulSave();
 
                 // assert
                 combineLatest([component.message$]).subscribe(([message]: [string]) => {
@@ -271,7 +271,7 @@ describe('ManageTeamComponent', () => {
                 component.userFormMode$.next('edit');
 
                 // act
-                component.onJusticeUserSuccessfulSave(null);
+                component.onJusticeUserSuccessfulSave();
 
                 // assert
                 component.message$.subscribe(message => {

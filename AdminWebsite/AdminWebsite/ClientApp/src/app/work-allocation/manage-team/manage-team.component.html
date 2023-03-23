@@ -106,7 +106,7 @@
         [justiceUser]="selectedUser$ | async"
         [mode]="userFormMode$ | async"
         (cancelFormEvent)="onUserFormCancelled()"
-        (saveSuccessfulEvent)="onJusticeUserSuccessfulSave($event)"
+        (saveSuccessfulEvent)="onJusticeUserSuccessfulSave()"
       ></app-justice-user-form>
     </div>
   </div>
