@@ -31,9 +31,9 @@ namespace AdminWebsite.Controllers
         /// <returns>a new justice user</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "AddNewJusticeUser")]
-        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int) HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.Conflict)]
         public async Task<ActionResult> AddNewJusticeUser([FromBody] AddNewJusticeUserRequest addJusticeUserRequest)
         {
             try
@@ -45,13 +45,13 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode is (int) HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
 
-                if (e.StatusCode is (int)HttpStatusCode.Conflict)
+                if (e.StatusCode is (int) HttpStatusCode.Conflict)
                 {
                     var typedException = e as BookingsApiException<string>;
                     return Conflict(typedException!.Result);
@@ -64,9 +64,9 @@ namespace AdminWebsite.Controllers
 
         [HttpPatch]
         [SwaggerOperation(OperationId = "EditJusticeUser")]
-        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(JusticeUserResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
         public async Task<ActionResult> EditJusticeUser([FromBody] EditJusticeUserRequest editJusticeUserRequest)
         {
             try
@@ -76,13 +76,13 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode is (int) HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
 
-                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                if (e.StatusCode is (int) HttpStatusCode.NotFound)
                 {
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
@@ -101,9 +101,9 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [SwaggerOperation(OperationId = "DeleteJusticeUser")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NoContent)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteJusticeUser(Guid id)
         {
             try
@@ -114,13 +114,13 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                if (e.StatusCode is (int) HttpStatusCode.NotFound)
                 {
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
                 }
 
-                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode is (int) HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
@@ -130,13 +130,14 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-        
+
         [HttpPatch("restore")]
         [SwaggerOperation(OperationId = "RestoreJusticeUser")]
-        [ProducesResponseType(typeof(JusticeUserResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> RestoreJusticeUser([FromBody] RestoreJusticeUserRequest restoreJusticeUserRequest)
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int) HttpStatusCode.NotFound)]
+        public async Task<ActionResult> RestoreJusticeUser(
+            [FromBody] RestoreJusticeUserRequest restoreJusticeUserRequest)
         {
             try
             {
@@ -145,13 +146,13 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode is (int) HttpStatusCode.BadRequest)
                 {
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
 
-                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                if (e.StatusCode is (int) HttpStatusCode.NotFound)
                 {
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
@@ -163,6 +164,4 @@ namespace AdminWebsite.Controllers
         }
 
     }
-
-
 }
