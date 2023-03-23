@@ -294,7 +294,7 @@ describe('SummaryComponent with valid request', () => {
         });
     }));
     it('should set audio recording to false if case type is CACD', () => {
-        component.hearing.case_type = "Court of Appeal Criminal Division";
+        component.hearing.case_type = 'Court of Appeal Criminal Division';
         component.ngOnInit();
         expect(component.hearing.audio_recording_required).toBe(false);
     });
