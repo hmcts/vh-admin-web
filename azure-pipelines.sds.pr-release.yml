@@ -45,10 +45,10 @@ stages:
         steps:
           - checkout: self
 
-          - template: templates/sonarCloud/prepare.yml@azTemplates
+          - template: templates/sonarCloud/prepare_cli.yml@azTemplates
             parameters:
+              ProjectKey: $(gitRepoName)
               ExtraProperties: |
-                sonar.sources=.
                 sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
                 sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
                 sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
