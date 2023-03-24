@@ -93,8 +93,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
-        this.retrieveHearingSummary();
+        this.hearing.audio_recording_required = this.setAudioRecordingRequired(this.hearing.audio_recording_required);
+            this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
@@ -185,6 +185,16 @@ export class SummaryComponent implements OnInit, OnDestroy {
     removeEndpoint(rowIndex: number): void {
         this.hearing.endpoints.splice(rowIndex, 1);
         this.hearingService.updateHearingRequest(this.hearing);
+    }
+
+    setAudioRecordingRequired(currentValue: boolean): boolean {
+        if (this.caseType === 'Court of Appeal Criminal Division') {
+            return false;
+        }
+        if (this.interpreterPresent) {
+            return true;
+        }
+        return currentValue;
     }
 
     private formatCourtRoom(courtName, courtRoom) {
