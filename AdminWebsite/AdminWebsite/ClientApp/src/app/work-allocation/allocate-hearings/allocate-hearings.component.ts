@@ -52,7 +52,7 @@ export class AllocateHearingsComponent implements OnInit {
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
     todayDate: Date;
-    dateFormat: string = 'yyyy-MM-dd';
+    dateFormat = 'yyyy-MM-dd';
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -93,7 +93,7 @@ export class AllocateHearingsComponent implements OnInit {
                 toDate: dateString
             });
         }
-        
+
         const caseNumber = this.form.value.caseNumber;
         const cso = this.csoDropDownValues;
         const caseType = this.caseTypeDropDownValues;
