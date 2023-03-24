@@ -26,7 +26,7 @@ stages:
   #####################################################
   # CI Build Checks. ##################################
   - stage: CI_Build
-    displayName: CI Build Checks
+    displayName: CI Build
     variables:
       - template: variables/shared.yaml
     jobs:
@@ -40,16 +40,34 @@ stages:
               chartPath: ${{ variables.chartPath }}
               chartValuesPath: ${{ variables.chartPath }}
 
-      - job: UnitAndIntegrationTests
-        displayName: "Unit and Integration Tests"
+      - job: UnitTests
+        displayName: "Unit Tests"
         steps:
           - checkout: self
 
-          - template: stages\dotnet-tests\unit-and-integration-tests-container.yml@azTemplates
+          - template: templates/sonarCloud/prepare.yml@azTemplates
             parameters:
-              nugetConfigPath: nuget.sds.config # remove this once the sds config file is removed
-              appName: ${{ variables.appName }}
-              dockerComposeTestFile: docker-compose.tests.yml
+              ExtraProperties: |
+                sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
+                sonar.javascript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
+                sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
+                sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)/Coverage/coverage.opencover.xml
+                sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
+
+          - template: stages\dotnet-tests\unit-tests.yml@azTemplates
+            parameters:
+              #vstsFeedId: 'Video Hearings/vh-packages'
+              nugetConfigPath: ${{ variables.app_path }} # Temp - Change To SDS Feed When Possible.
+              unitTestProjectPath: "${{ variables.app_path }}/${{ variables.app_path }}.UnitTests"
+              dotNetCoreVersion: "6.x"
+              coverletCoverageExclusions:
+                - "**/Testing.Common/**"
+                - "AdminWebsite/Views/*"
+                - "AdminWebsite/Pages/*"
+                - "AdminWebsite.UserAPI.Client/*"
+                - "AdminWebsite.AcceptanceTests/*"
+
+          - template: templates/sonarCloud/runAnalysis.yml@azTemplates
 
   #####################################################
   # Build Docker Image. ###############################
