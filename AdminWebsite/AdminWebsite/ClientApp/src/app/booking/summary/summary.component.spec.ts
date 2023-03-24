@@ -300,7 +300,7 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should set audio recording to true if an interpreter is present', () => {
         component.interpreterPresent = true;
-        //component.setAudioRecordingRequired(component.hearing.audio_recording_required);
+        component.setAudioRecordingRequired(component.hearing.audio_recording_required);
         fixture.detectChanges();
         expect(component.hearing.audio_recording_required).toBe(true);
     });
