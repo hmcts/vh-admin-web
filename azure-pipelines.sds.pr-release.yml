@@ -55,6 +55,12 @@ stages:
                 sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
                 sonar.coverage.exclusions= **/AdminWebsite/Models/**, **/AdminWebsite.Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
 
+          - task: DotNetCoreCLI@2
+            displayName: Build DotNet # needed for sonar since AutoScan does not support c#
+            inputs:
+              projects: "*/*.sln"
+              arguments: "--configuration Release"
+
           - template: stages\dotnet-tests\unit-and-integration-tests-container.yml@azTemplates
             parameters:
               nugetConfigPath: nuget.sds.config # remove this once the sds config file is removed
