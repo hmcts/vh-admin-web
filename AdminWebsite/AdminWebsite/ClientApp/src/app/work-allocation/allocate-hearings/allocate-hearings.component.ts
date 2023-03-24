@@ -31,8 +31,7 @@ export class AllocateHearingsComponent implements OnInit {
             caseNumber: [''],
             isUnallocated: [false]
         });
-        const today = new Date();
-        this.todayDate = this.datePipe.transform(today, 'yyyy-MM-dd');
+        this.todayDate = new Date();
     }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
@@ -52,7 +51,7 @@ export class AllocateHearingsComponent implements OnInit {
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
-    todayDate: string;
+    todayDate: Date;
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -84,12 +83,12 @@ export class AllocateHearingsComponent implements OnInit {
         if (fromDateValue === null) {
             fromDateValue = new Date();
             this.form.patchValue({
-                fromDate: this.todayDate
+                fromDate: this.datePipe.transform(this.todayDate, 'yyyy-MM-dd')
             });
         }
         let toDate = retrieveDate(this.form.value.toDate);
         if (toDate === null) {
-            toDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+            toDate = new Date(this.todayDate.setFullYear(this.todayDate.getFullYear() + 1));
             const dateString = this.datePipe.transform(toDate, 'yyyy-MM-dd');
             this.form.patchValue({
                 toDate: dateString
