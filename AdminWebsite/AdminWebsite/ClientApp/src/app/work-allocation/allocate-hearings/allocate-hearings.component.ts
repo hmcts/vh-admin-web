@@ -81,20 +81,19 @@ export class AllocateHearingsComponent implements OnInit {
         const retrieveDate = (date: any): Date => (date === null || date === '' ? null : new Date(date));
 
         let fromDateValue = retrieveDate(this.form.value.fromDate);
+        let toDate = retrieveDate(this.form.value.toDate);
         if (fromDateValue === null) {
             fromDateValue = new Date();
             this.form.patchValue({
                 fromDate: this.datePipe.transform(this.todayDate, this.dateFormat)
             });
-        }
-        let toDate = retrieveDate(this.form.value.toDate);
-        if (toDate === null) {
             toDate = new Date(this.todayDate.setFullYear(this.todayDate.getFullYear() + 1));
             const dateString = this.datePipe.transform(toDate, this.dateFormat);
             this.form.patchValue({
                 toDate: dateString
             });
         }
+        
         const caseNumber = this.form.value.caseNumber;
         const cso = this.csoDropDownValues;
         const caseType = this.caseTypeDropDownValues;
