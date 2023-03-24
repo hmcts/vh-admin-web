@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { BHClient, JusticeUserResponse } from './clients/api-client';
+import {
+    AddNewJusticeUserRequest,
+    BHClient,
+    EditJusticeUserRequest,
+    JusticeUserResponse,
+    JusticeUserRole,
+    RestoreJusticeUserRequest
+} from './clients/api-client';
 import { cleanQuery } from '../common/helpers/api-helper';
 
 @Injectable({
@@ -25,5 +32,37 @@ export class JusticeUsersService {
 
     private requestJusticeUsers(term: string) {
         return this.apiClient.getUserList(cleanQuery(term));
+    }
+
+    addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
+        const request = new AddNewJusticeUserRequest({
+            username: username,
+            first_name: firstName,
+            last_name: lastName,
+            contact_telephone: telephone,
+            role: role
+        });
+        return this.apiClient.addNewJusticeUser(request);
+    }
+
+    editJusticeUser(id: string, username: string, role: JusticeUserRole) {
+        const request = new EditJusticeUserRequest({
+            id,
+            username,
+            role
+        });
+        return this.apiClient.editJusticeUser(request);
+    }
+
+    deleteJusticeUser(id: string) {
+        return this.apiClient.deleteJusticeUser(id);
+    }
+
+    restoreJusticeUser(id: string, username: string) {
+        const request = new RestoreJusticeUserRequest({
+            username,
+            id
+        });
+        return this.apiClient.restoreJusticeUser(request);
     }
 }

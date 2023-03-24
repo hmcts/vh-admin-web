@@ -11,10 +11,14 @@ export class WorkHoursFileProcessorService {
     private timeDelimiter = ':';
     private earliestStartHour = 8;
     private latestEndHour = 18;
+    private fileExtensionDelimiter = '.';
+    private fileExtension = 'csv';
+    private fileType = 'text/csv';
 
     maxFileUploadSize = 200000;
 
     private incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
+    private duplicateUserErrorMessage = 'duplicate team member found.';
 
     constructor(private bhClient: BHClient) {}
 
@@ -31,11 +35,21 @@ export class WorkHoursFileProcessorService {
         const userWorkAvailabilityRowsSplit = userWorkAvailabilityRows.map(x => x.split(this.csvDelimiter));
         this.checkWorkAvailabilityForDuplicateUsers(userWorkAvailabilityRowsSplit);
 
+        const userNames: { [username: string]: number } = {};
+
         userWorkAvailabilityRows.forEach((row, index) => {
             const values = row.split(this.csvDelimiter);
+            const actualRow = index + 3;
 
             const uploadWorkHoursRequest = new UploadWorkHoursRequest();
             uploadWorkHoursRequest.username = values[0];
+
+            if (!userNames[values[0]]) {
+                userNames[values[0]] = actualRow;
+            } else {
+                const otherRow = userNames[values[0]];
+                workingHoursFileValidationErrors.push(`Row ${actualRow} & Row ${otherRow} ${this.duplicateUserErrorMessage}`);
+            }
 
             const workingHours: WorkingHours[] = [];
 
@@ -197,11 +211,18 @@ export class WorkHoursFileProcessorService {
     }
 
     isDelimiterValid(time: string) {
+        if (!time) {
+            return false;
+        }
         let isValid = true;
 
-        const timeArray = time.split(this.timeDelimiter);
+        try {
+            const timeArray = time.split(this.timeDelimiter);
 
-        if (timeArray.length !== 2) {
+            if (timeArray.length !== 2) {
+                isValid = false;
+            }
+        } catch {
             isValid = false;
         }
 
@@ -302,6 +323,12 @@ export class WorkHoursFileProcessorService {
         }
 
         return [true, undefined];
+    }
+
+    isFileFormatValild(file: File): boolean {
+        const fileNameParts = file.name.split(this.fileExtensionDelimiter);
+        const extension = fileNameParts.pop().toLowerCase();
+        return extension === this.fileExtension && file.type === this.fileType;
     }
 }
 

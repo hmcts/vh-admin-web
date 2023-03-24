@@ -1,7 +1,26 @@
 @import 'govuk-frontend/govuk/base';
-@import 'govuk-frontend/govuk/all';
-@import '@hmcts/frontend/all';
 
 .red-button {
   background-color: govuk-colour('red');
+}
+
+fa-icon {
+  cursor: pointer;
+  &.red-trash {
+    color: govuk-colour('red');
+  }
+}
+
+tr.deleted-user {
+  background-color: #c99;
+  color: #fff;
+}
+
+span.badge {
+  background-color: #a00;
+  color: white;
+  border-radius: 5px;
+  padding: 0.3em;
+  font-size: 0.7em;
+  margin-right: 0.3em;
 }

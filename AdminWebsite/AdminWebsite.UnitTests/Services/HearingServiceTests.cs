@@ -47,7 +47,7 @@ namespace AdminWebsite.UnitTests.Services
             });
 
             _mocker.Mock<IConferenceDetailsService>()
-                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+                .Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
                     MeetingRoom = new MeetingRoomResponse
@@ -551,30 +551,6 @@ namespace AdminWebsite.UnitTests.Services
             var response = _service.IsUpdatingJudge(editHearing, hearing);
             //Assert
             response.Should().Be(false);
-        }
-        
-        [Test]
-        public void GetJudgeInformationForUpdate_should_extract_OtherInformation_and_update_EditRequest_participant()
-        {
-            // Arrange
-            var otherInformation = "|JudgeEmail|judge@email.com|JudgePhone|0123454678";
-            //Act
-            var judge = _service.GetJudgeInformationForUpdate(otherInformation);
-            //Assert
-            judge.phone.Should().Be("0123454678");
-            judge.email.Should().Be("judge@email.com");
-        }
-        
-        [Test]
-        public void GetJudgeInformationForUpdate_should_return_break_when_otherInfo_empty()
-        {
-            // Arrange
-            var otherInformation = "";
-            //Act
-            var judge = _service.GetJudgeInformationForUpdate(otherInformation);
-            //Assert
-            judge.phone.Should().BeNullOrEmpty();
-            judge.email.Should().BeNullOrEmpty();
         }
         
         private HearingDetailsResponse InitHearing()

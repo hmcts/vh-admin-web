@@ -40,10 +40,10 @@ describe('WorkHoursFileProcessorService', () => {
 
         it('should successfully parse valid input', () => {
             const input =
-                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday,,,\n' +
                 ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
-                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
-                'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+                'first.second@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,\n' +
+                'first.second.2@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,';
 
             const result = service.processWorkHours(input);
             expect(result.fileValidationErrors.length).toBe(0);
@@ -52,6 +52,18 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.uploadWorkHoursRequest[0].working_hours.length).toBe(7);
             expect(result.uploadWorkHoursRequest[1].username).toBe('first.second.2@xyz.com');
             expect(result.uploadWorkHoursRequest[1].working_hours.length).toBe(7);
+        });
+
+        it('show duplicate user errors', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+
+            const result = service.processWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(1);
+            expect(result.fileValidationErrors[0]).toContain('duplicate team member found');
         });
     });
 
@@ -132,22 +144,20 @@ describe('WorkHoursFileProcessorService', () => {
     });
 
     describe('isDelimiterValid', () => {
-        it('should return false when incorrect delimeter is used in working hours file', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
+        it('should return false when delimeter is not used in working hours file', () => {
+            expect(service.isDelimiterValid('0900')).toBeFalsy();
+        });
 
-            const result = service.isDelimiterValid('0900');
+        it('should return false when input is undefined', () => {
+            const result = service.isDelimiterValid(undefined);
 
             expect(result).toBeFalsy();
         });
 
         it('should return true when correct delimeter is used', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
-
             const result = service.isDelimiterValid('09:00');
-
             expect(result).toBeTruthy();
+            expect(service.isDelimiterValid('09:00')).toBeTruthy();
         });
     });
 
@@ -211,6 +221,24 @@ describe('WorkHoursFileProcessorService', () => {
             Object.defineProperty(file, 'size', { value: 19999 });
 
             const result = service.isFileTooBig(file);
+
+            expect(result).toBeFalsy();
+        });
+    });
+
+    describe('isFileFormatValild', () => {
+        it('should return true when file extension is valid', () => {
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
+
+            const result = service.isFileFormatValild(file);
+
+            expect(result).toBeTruthy();
+        });
+
+        it('should return false when file extension is not csv', () => {
+            const file = new File([''], 'filename.xls', { type: 'application/vnd.ms-excel' });
+
+            const result = service.isFileFormatValild(file);
 
             expect(result).toBeFalsy();
         });

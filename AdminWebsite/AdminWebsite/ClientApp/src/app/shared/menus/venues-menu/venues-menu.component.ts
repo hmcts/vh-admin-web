@@ -34,7 +34,7 @@ export class VenuesMenuComponent extends MenuBase {
     loadItems(): void {
         this.refDataService.getCourts().subscribe(
             (data: HearingVenueResponse[]) => {
-                this.venues = data;
+                this.venues = this.items = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of venues.`, { venues: data.length });
             },
             error => this.handleListError(error, 'venues')

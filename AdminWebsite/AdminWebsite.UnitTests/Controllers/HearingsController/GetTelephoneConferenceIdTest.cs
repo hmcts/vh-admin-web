@@ -43,7 +43,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     TelephoneConferenceId = "expected_conference_phone_id"
                 }
             };
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), true))
                 .ReturnsAsync(_conference);
             
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
@@ -74,7 +74,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_bad_request_if_exceptions_is_thrown()
         {
-            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>())).Throws(new VideoApiException("Error", 400, null, null, null));
+            _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), true)).Throws(new VideoApiException("Error", 400, null, null, null));
             
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (BadRequestObjectResult)result.Result;
@@ -84,7 +84,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_not_found_if_exceptions_is_thrown()
         {
-            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>()))
+            _mocker.Mock<IConferenceDetailsService>().Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), true))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
 
             var result = _controller.GetTelephoneConferenceIdById(_guid);

@@ -99,8 +99,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -203,8 +202,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -316,8 +314,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -429,8 +426,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -544,8 +540,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -652,8 +647,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -745,8 +739,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1028,8 +1021,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1134,8 +1126,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1238,8 +1229,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1355,8 +1345,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1471,8 +1460,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1588,8 +1576,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1695,8 +1682,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1806,8 +1792,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -1917,8 +1902,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2030,8 +2014,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2139,8 +2122,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2181,6 +2163,455 @@ export class BHClient extends ApiClientBase {
             );
         }
         return _observableOf<PersonResponse[]>(null as any);
+    }
+
+    /**
+     * Add a new justice user
+     * @param body (optional)
+     * @return Created
+     */
+    addNewJusticeUser(body: AddNewJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+        let url_ = this.baseUrl + '/api/justice-users';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processAddNewJusticeUser(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processAddNewJusticeUser(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                })
+            );
+    }
+
+    protected processAddNewJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 201) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result201: any = null;
+                    let resultData201 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result201 = JusticeUserResponse.fromJS(resultData201);
+                    return _observableOf(result201);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 409) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result409: any = null;
+                    let resultData409 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result409 = resultData409 !== undefined ? resultData409 : <any>null;
+
+                    return throwException('Conflict', status, _responseText, _headers, result409);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<JusticeUserResponse>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    editJusticeUser(body: EditJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+        let url_ = this.baseUrl + '/api/justice-users';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processEditJusticeUser(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processEditJusticeUser(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                })
+            );
+    }
+
+    protected processEditJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = JusticeUserResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = resultData404 !== undefined ? resultData404 : <any>null;
+
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<JusticeUserResponse>(null as any);
+    }
+
+    /**
+     * Delete a justice user
+     * @param id The justice user id
+     * @return No Content
+     */
+    deleteJusticeUser(id: string): Observable<string> {
+        let url_ = this.baseUrl + '/api/justice-users/{id}';
+        if (id === undefined || id === null) throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace('{id}', encodeURIComponent('' + id));
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('delete', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processDeleteJusticeUser(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processDeleteJusticeUser(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<string>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<string>;
+                })
+            );
+    }
+
+    protected processDeleteJusticeUser(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result204: any = null;
+                    let resultData204 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result204 = resultData204 !== undefined ? resultData204 : <any>null;
+
+                    return _observableOf(result204);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = resultData404 !== undefined ? resultData404 : <any>null;
+
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<string>(null as any);
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    restoreJusticeUser(body: RestoreJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
+        let url_ = this.baseUrl + '/api/justice-users/restore';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processRestoreJusticeUser(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processRestoreJusticeUser(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                })
+            );
+    }
+
+    protected processRestoreJusticeUser(response: HttpResponseBase): Observable<JusticeUserResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = JusticeUserResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = resultData404 !== undefined ? resultData404 : <any>null;
+
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<JusticeUserResponse>(null as any);
     }
 
     /**
@@ -2248,8 +2679,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2355,8 +2785,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2457,8 +2886,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2562,8 +2990,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2665,8 +3092,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2770,8 +3196,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2877,8 +3302,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -2981,8 +3405,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3085,8 +3508,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3192,8 +3614,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3302,8 +3723,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3401,8 +3821,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3505,8 +3924,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3610,8 +4028,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3708,8 +4125,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3801,8 +4217,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -3895,8 +4310,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4017,8 +4431,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4117,8 +4530,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4160,6 +4572,107 @@ export class BHClient extends ApiClientBase {
             );
         }
         return _observableOf<AllocationHearingsResponse[]>(null as any);
+    }
+
+    /**
+     * Get allocation for hearing Id
+     * @param hearingId (optional) Guid
+     * @return Success
+     */
+    getAllocationForHearing(hearingId: string | undefined): Observable<AllocatedCsoResponse> {
+        let url_ = this.baseUrl + '/api/hearings/allocations/cso?';
+        if (hearingId === null) throw new Error("The parameter 'hearingId' cannot be null.");
+        else if (hearingId !== undefined) url_ += 'hearingId=' + encodeURIComponent('' + hearingId) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetAllocationForHearing(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetAllocationForHearing(response_ as any);
+                        } catch (e) {
+                            return (_observableThrow(e) as any) as Observable<AllocatedCsoResponse>;
+                        }
+                    } else return (_observableThrow(response_) as any) as Observable<AllocatedCsoResponse>;
+                })
+            );
+    }
+
+    protected processGetAllocationForHearing(response: HttpResponseBase): Observable<AllocatedCsoResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = AllocatedCsoResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<AllocatedCsoResponse>(null as any);
     }
 
     /**
@@ -4226,8 +4739,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4320,8 +4832,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4412,8 +4923,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4521,8 +5031,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4634,8 +5143,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4721,8 +5229,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = resultData500 !== undefined ? resultData500 : <any>null;
-
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
@@ -4764,6 +5271,67 @@ export class BHClient extends ApiClientBase {
 export enum JudgeAccountType {
     Courtroom = 'Courtroom',
     Judiciary = 'Judiciary'
+}
+
+/** Create a new Justice User */
+export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
+
+    constructor(data?: IAddNewJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.username = _data['username'];
+            this.contact_telephone = _data['contact_telephone'];
+            this.role = _data['role'];
+        }
+    }
+
+    static fromJS(data: any): AddNewJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddNewJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['username'] = this.username;
+        data['contact_telephone'] = this.contact_telephone;
+        data['role'] = this.role;
+        return data;
+    }
+}
+
+/** Create a new Justice User */
+export interface IAddNewJusticeUserRequest {
+    /** The user's first name */
+    first_name?: string | undefined;
+    /** The user's last name */
+    last_name?: string | undefined;
+    /** The user's username */
+    username?: string | undefined;
+    /** The user's telephone */
+    contact_telephone?: string | undefined;
+    role?: JusticeUserRole;
 }
 
 export class BookHearingRequest implements IBookHearingRequest {
@@ -4954,10 +5522,8 @@ export interface IUpdateAccountDetailsRequest {
 export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** The hearing id */
     hearing_id?: string;
-    /** The date of the hearing */
-    hearing_date?: Date;
-    /** The start time for a hearing */
-    start_time?: string;
+    /** The date and time of the hearing */
+    scheduled_date_time?: Date;
     /** The duration of a hearing in minutes */
     duration?: number;
     /** The hearing case number */
@@ -4967,8 +5533,11 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
+    has_non_availability_clash?: boolean | undefined;
+    /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
+    concurrent_hearings_count?: number | undefined;
 
     constructor(data?: IAllocationHearingsResponse) {
         if (data) {
@@ -4981,13 +5550,14 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     init(_data?: any) {
         if (_data) {
             this.hearing_id = _data['hearing_id'];
-            this.hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
-            this.start_time = _data['start_time'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.duration = _data['duration'];
             this.case_number = _data['case_number'];
             this.case_type = _data['case_type'];
             this.allocated_cso = _data['allocated_cso'];
             this.has_work_hours_clash = _data['has_work_hours_clash'];
+            this.has_non_availability_clash = _data['has_non_availability_clash'];
+            this.concurrent_hearings_count = _data['concurrent_hearings_count'];
         }
     }
 
@@ -5001,13 +5571,14 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['hearing_id'] = this.hearing_id;
-        data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
-        data['start_time'] = this.start_time;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['duration'] = this.duration;
         data['case_number'] = this.case_number;
         data['case_type'] = this.case_type;
         data['allocated_cso'] = this.allocated_cso;
         data['has_work_hours_clash'] = this.has_work_hours_clash;
+        data['has_non_availability_clash'] = this.has_non_availability_clash;
+        data['concurrent_hearings_count'] = this.concurrent_hearings_count;
         return data;
     }
 }
@@ -5015,10 +5586,8 @@ export class AllocationHearingsResponse implements IAllocationHearingsResponse {
 export interface IAllocationHearingsResponse {
     /** The hearing id */
     hearing_id?: string;
-    /** The date of the hearing */
-    hearing_date?: Date;
-    /** The start time for a hearing */
-    start_time?: string;
+    /** The date and time of the hearing */
+    scheduled_date_time?: Date;
     /** The duration of a hearing in minutes */
     duration?: number;
     /** The hearing case number */
@@ -5028,8 +5597,11 @@ export interface IAllocationHearingsResponse {
     /** The allocated CSO. Can be one of following:
 <list type="bullet"><item>"Not Allocated"</item><item>"Not Required" (if venue is scottish or case type is generic)</item><item>The username of the allocated justice user</item></list> */
     allocated_cso?: string | undefined;
-    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated cso */
+    /** True if the hearing is outside of the CSO's work hours. Null if the hearing has no allocated CSO */
     has_work_hours_clash?: boolean | undefined;
+    has_non_availability_clash?: boolean | undefined;
+    /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
+    concurrent_hearings_count?: number | undefined;
 }
 
 /** Configuration to initialise the UI application */
@@ -5394,6 +5966,41 @@ export interface IUnallocatedHearingsForVhoResponse {
     tomorrow?: DateForUnallocatedHearings;
     this_week?: DateForUnallocatedHearings;
     this_month?: DateForUnallocatedHearings;
+}
+
+export class UnexpectedErrorResponse implements IUnexpectedErrorResponse {
+    error_message?: string | undefined;
+
+    constructor(data?: IUnexpectedErrorResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.error_message = _data['error_message'];
+        }
+    }
+
+    static fromJS(data: any): UnexpectedErrorResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnexpectedErrorResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['error_message'] = this.error_message;
+        return data;
+    }
+}
+
+export interface IUnexpectedErrorResponse {
+    error_message?: string | undefined;
 }
 
 export class UserProfileResponse implements IUserProfileResponse {
@@ -6702,6 +7309,49 @@ export interface ICaseRequest {
     is_lead_case?: boolean;
 }
 
+export class EditJusticeUserRequest implements IEditJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
+    role?: JusticeUserRole;
+
+    constructor(data?: IEditJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.username = _data['username'];
+            this.role = _data['role'];
+        }
+    }
+
+    static fromJS(data: any): EditJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['username'] = this.username;
+        data['role'] = this.role;
+        return data;
+    }
+}
+
+export interface IEditJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
+    role?: JusticeUserRole;
+}
+
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
@@ -6739,6 +7389,11 @@ export class EndpointRequest implements IEndpointRequest {
 export interface IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+}
+
+export enum JusticeUserRole {
+    Vho = 'Vho',
+    VhTeamLead = 'VhTeamLead'
 }
 
 export enum UpdateBookingStatus {
@@ -6911,6 +7566,45 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+}
+
+export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
+
+    constructor(data?: IRestoreJusticeUserRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.username = _data['username'];
+        }
+    }
+
+    static fromJS(data: any): RestoreJusticeUserRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new RestoreJusticeUserRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['username'] = this.username;
+        return data;
+    }
+}
+
+export interface IRestoreJusticeUserRequest {
+    id?: string;
+    username?: string | undefined;
 }
 
 export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
@@ -7179,6 +7873,45 @@ export interface IWorkingHours {
     end_time_minutes?: number | undefined;
     start_time_hour?: number | undefined;
     start_time_minutes?: number | undefined;
+}
+
+export class AllocatedCsoResponse implements IAllocatedCsoResponse {
+    hearing_id?: string;
+    cso?: JusticeUserResponse;
+
+    constructor(data?: IAllocatedCsoResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hearing_id = _data['hearing_id'];
+            this.cso = _data['cso'] ? JusticeUserResponse.fromJS(_data['cso']) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): AllocatedCsoResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AllocatedCsoResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['hearing_id'] = this.hearing_id;
+        data['cso'] = this.cso ? this.cso.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IAllocatedCsoResponse {
+    hearing_id?: string;
+    cso?: JusticeUserResponse;
 }
 
 export class BookingsByDateResponse implements IBookingsByDateResponse {
@@ -7528,8 +8261,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
-    hearing_type_code?: string | undefined;
-    allocated_to?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -7577,8 +8308,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
-            this.hearing_type_code = _data['hearing_type_code'];
-            this.allocated_to = _data['allocated_to'];
         }
     }
 
@@ -7626,8 +8355,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
-        data['hearing_type_code'] = this.hearing_type_code;
-        data['allocated_to'] = this.allocated_to;
         return data;
     }
 }
@@ -7656,8 +8383,6 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
-    hearing_type_code?: string | undefined;
-    allocated_to?: string | undefined;
 }
 
 export class HearingVenueResponse implements IHearingVenueResponse {
@@ -7762,6 +8487,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;
+    deleted?: boolean;
 
     constructor(data?: IJusticeUserResponse) {
         if (data) {
@@ -7784,6 +8510,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
             this.is_vh_team_leader = _data['is_vh_team_leader'];
             this.created_by = _data['created_by'];
             this.full_name = _data['full_name'];
+            this.deleted = _data['deleted'];
         }
     }
 
@@ -7807,6 +8534,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
         data['is_vh_team_leader'] = this.is_vh_team_leader;
         data['created_by'] = this.created_by;
         data['full_name'] = this.full_name;
+        data['deleted'] = this.deleted;
         return data;
     }
 }
@@ -7823,6 +8551,7 @@ export interface IJusticeUserResponse {
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;
+    deleted?: boolean;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {
@@ -8431,6 +9160,82 @@ export interface IProblemDetails {
     [key: string]: any;
 }
 
+export class ValidationProblemDetails implements IValidationProblemDetails {
+    errors?: { [key: string]: string[] } | undefined;
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    [key: string]: any;
+
+    constructor(data?: IValidationProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            for (var property in _data) {
+                if (_data.hasOwnProperty(property)) this[property] = _data[property];
+            }
+            if (_data['errors']) {
+                this.errors = {} as any;
+                for (let key in _data['errors']) {
+                    if (_data['errors'].hasOwnProperty(key))
+                        (<any>this.errors)![key] = _data['errors'][key] !== undefined ? _data['errors'][key] : [];
+                }
+            }
+            this.type = _data['type'];
+            this.title = _data['title'];
+            this.status = _data['status'];
+            this.detail = _data['detail'];
+            this.instance = _data['instance'];
+        }
+    }
+
+    static fromJS(data: any): ValidationProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidationProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        for (var property in this) {
+            if (this.hasOwnProperty(property)) data[property] = this[property];
+        }
+        if (this.errors) {
+            data['errors'] = {};
+            for (let key in this.errors) {
+                if (this.errors.hasOwnProperty(key)) (<any>data['errors'])[key] = (<any>this.errors)[key];
+            }
+        }
+        data['type'] = this.type;
+        data['title'] = this.title;
+        data['status'] = this.status;
+        data['detail'] = this.detail;
+        data['instance'] = this.instance;
+        return data;
+    }
+}
+
+export interface IValidationProblemDetails {
+    errors?: { [key: string]: string[] } | undefined;
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    [key: string]: any;
+}
+
 export class BookHearingException extends Error {
     message: string;
     status: number;
@@ -8456,8 +9261,7 @@ export class BookHearingException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any }, result?: any): Observable<any> {
-    if (result !== null && result !== undefined) return _observableThrow(result);
-    else return _observableThrow(new BookHearingException(message, status, response, headers, null));
+    return _observableThrow(new BookHearingException(message, status, response, headers, result));
 }
 
 function blobToText(blob: any): Observable<string> {

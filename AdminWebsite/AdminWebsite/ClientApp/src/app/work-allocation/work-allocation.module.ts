@@ -14,6 +14,9 @@ import { AllocateHearingsComponent } from './allocate-hearings/allocate-hearings
 import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PopupModule } from '../popups/popup.module';
+import { JusticeUserFormComponent } from './justice-user-form/justice-user-form.component';
+import { ConfirmDeleteJusticeUserPopupComponent } from './pop-ups/confirm-delete-justice-user-popup/confirm-delete-justice-user-popup.component';
+import { ConfirmRestoreJusticeUserPopupComponent } from './pop-ups/confirm-restore-justice-user-popup/confirm-restore-justice-user-popup.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +28,10 @@ import { PopupModule } from '../popups/popup.module';
         UploadWorkHoursComponent,
         ManageTeamComponent,
         AllocateHearingsComponent,
-        ConfirmDeleteHoursPopupComponent
+        ConfirmDeleteHoursPopupComponent,
+        ConfirmRestoreJusticeUserPopupComponent,
+        JusticeUserFormComponent,
+        ConfirmDeleteJusticeUserPopupComponent
     ],
     imports: [SharedModule, WorkAllocationRoutingModule, FontAwesomeModule, PopupModule]
 })

@@ -10,6 +10,7 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    AllocatedCsoResponse,
     BookingStatus,
     HearingDetailsResponse,
     PhoneConferenceResponse,
@@ -139,6 +140,7 @@ export class BookingDetailsTestData {
 }
 
 const hearingResponse = new HearingDetailsResponse();
+const allocatedCsoResponse = new AllocatedCsoResponse();
 
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
@@ -158,7 +160,6 @@ const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
 updateBookingStatusRequest.updated_by = '';
 updateBookingStatusRequest.cancel_reason = 'Online abandonment (incomplete registration)';
-
 class BookingDetailsServiceMock {
     mapBooking(response) {
         return new BookingDetailsTestData().getBookingsDetailsModel();
@@ -184,7 +185,8 @@ describe('BookingDetailsComponent', () => {
         'getTelephoneConferenceId',
         'getConferencePhoneNumber',
         'isHearingAboutToStart',
-        'isConferenceClosed'
+        'isConferenceClosed',
+        'getAllocatedCsoForHearing'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -203,6 +205,7 @@ describe('BookingDetailsComponent', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
+        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
 
         bookingPersistServiceSpy.selectedHearingId = '44';
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));

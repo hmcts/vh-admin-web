@@ -32,13 +32,13 @@ namespace AdminWebsite.Controllers
         {
             var username = User.Claims.SingleOrDefault(x => x.Type == ClaimNames.PreferredUsername)?.Value;
             JusticeUserResponse justiceUser = null;
-            
+
             try
             {
                 justiceUser = await _bookingsApiClient
                     .GetJusticeUserByUsernameAsync(username);
             }
-            catch(BookingsApiException e)
+            catch (BookingsApiException e)
             {
                 if (e.StatusCode != 404)
                     return StatusCode(e.StatusCode, e.Response);
@@ -52,7 +52,7 @@ namespace AdminWebsite.Controllers
 
             return Ok(profile);
         }
-        
+
         /// <summary>
         /// Get list of Justice User filtered by term. If term is null then no filter applied.
         /// </summary>
@@ -63,19 +63,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList([FromQuery] string term)
         {
-            ICollection<JusticeUserResponse> justiceUserList = new List<JusticeUserResponse>();
-            
-            try
-            {
-                justiceUserList = await _bookingsApiClient
-                    .GetJusticeUserListAsync(term);
-            }
-            catch(BookingsApiException e)
-            {
-                if (e.StatusCode != 404)
-                    return StatusCode(e.StatusCode, e.Response);
-            }
-            
+            var justiceUserList = await _bookingsApiClient.GetJusticeUserListAsync(term, true);
             return Ok(justiceUserList);
         }
     }

@@ -3,7 +3,7 @@ import { AllocateHearingsService } from '../services/allocate-hearings.service';
 import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { faCircleExclamation, faHourglassStart, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { MenuComponent, MenuItem } from 'src/app/shared/menus/menu/menu.component';
@@ -48,6 +48,7 @@ export class AllocateHearingsComponent implements OnInit {
     faExclamation = faCircleExclamation;
     triangleExclamation = faTriangleExclamation;
     hourGlassStart = faHourglassStart;
+    faClock = faClock;
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
@@ -219,6 +220,7 @@ export class AllocateHearingsComponent implements OnInit {
     }
 
     confirmAllocation() {
+        this.clearHearingUpdatedMessage();
         const csoId = this.csoAllocatedMenu?.selectedItems as string;
         this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
@@ -245,19 +247,32 @@ export class AllocateHearingsComponent implements OnInit {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         this.csoAllocatedMenu.clear();
-        this.updateMessageAndDisplay('Hearings have been updated.');
+        this.updateMessageAndDisplay(Constants.AllocateHearings.ConfirmationMessage);
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
-        const csoUsername = this.csoAllocatedMenu?.selectedLabel;
-        // safe to cast to string
-        const csoId = this.csoAllocatedMenu?.selectedItems as string;
-
         if (checked) {
+            this.clearHearingUpdatedMessage();
+            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
+            // safe to cast to string
+            const csoId = this.csoAllocatedMenu?.selectedItems as string;
+
             this.allocationHearingViewModel.checkHearing(hearing_id);
             this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
         } else {
             this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }
+    }
+
+    getConcurrentCountText(count: number): string {
+        return `User has ${count} concurrent ${count > 1 ? 'hearings' : 'hearing'} allocated`;
+    }
+
+    hasHearingBeenUpdated(): boolean {
+        return this.message === Constants.AllocateHearings.ConfirmationMessage;
+    }
+
+    clearHearingUpdatedMessage() {
+        return this.hasHearingBeenUpdated() ? this.clearMessage() : null;
     }
 }

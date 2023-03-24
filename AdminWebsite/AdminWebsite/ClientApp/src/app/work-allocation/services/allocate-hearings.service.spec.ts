@@ -40,20 +40,18 @@ describe('AllocateHearingsService', () => {
                 new AllocationHearingsResponse({
                     allocated_cso: 'test_user1',
                     hearing_id: 'hearing_id_value1',
-                    start_time: 'start_time1',
+                    scheduled_date_time: new Date('2023-01-01'),
                     case_type: 'case_type1',
                     case_number: 'case_number1',
-                    duration: 480,
-                    hearing_date: new Date('2023-01-01')
+                    duration: 480
                 }),
                 new AllocationHearingsResponse({
                     allocated_cso: 'test_user2',
                     hearing_id: 'hearing_id_value2',
-                    start_time: 'start_time2',
                     case_type: 'case_type1',
                     case_number: 'case_number2',
                     duration: 360,
-                    hearing_date: new Date('2023-01-02')
+                    scheduled_date_time: new Date('2023-01-02')
                 })
             ];
 
@@ -73,29 +71,26 @@ describe('AllocateHearingsService', () => {
                 new AllocationHearingsResponse({
                     allocated_cso: csoUsername,
                     hearing_id: newGuid(),
-                    start_time: 'start_time1',
+                    scheduled_date_time: new Date('2023-01-01'),
                     case_type: 'case_type1',
                     case_number: 'case_number1',
-                    duration: 480,
-                    hearing_date: new Date('2023-01-01')
+                    duration: 480
                 }),
                 new AllocationHearingsResponse({
                     allocated_cso: csoUsername,
                     hearing_id: newGuid(),
-                    start_time: 'start_time2',
+                    scheduled_date_time: new Date('2023-01-02'),
                     case_type: 'case_type1',
                     case_number: 'case_number2',
-                    duration: 360,
-                    hearing_date: new Date('2023-01-02')
+                    duration: 360
                 }),
                 new AllocationHearingsResponse({
                     allocated_cso: csoUsername,
                     hearing_id: newGuid(),
-                    start_time: 'start_time2',
+                    scheduled_date_time: new Date('2023-01-02'),
                     case_type: 'case_type1',
                     case_number: 'case_number2',
-                    duration: 360,
-                    hearing_date: new Date('2023-01-02')
+                    duration: 360
                 })
             ];
 

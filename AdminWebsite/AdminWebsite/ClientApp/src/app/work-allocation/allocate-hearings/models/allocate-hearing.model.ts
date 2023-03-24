@@ -8,13 +8,14 @@ export class AllocateHearingItemModel {
 
     constructor(
         public hearingId: string,
-        public hearingDate: Date,
-        public startTime: string,
+        public scheduledDateTime: Date,
         public duration: number,
         public caseNumber: string,
         public caseType: string,
         public allocatedOfficerUsername?: string,
         public hasWorkHoursClash?: boolean,
+        public concurrentHearingsCount?: number,
+        public hasNonAvailabilityClash?: boolean,
         public checked: boolean = false
     ) {}
 
@@ -27,6 +28,26 @@ export class AllocateHearingItemModel {
         this.allocatedOfficerId = id;
         this.hasChanged = true;
         this.hasWorkHoursClash = false;
+        this.hasNonAvailabilityClash = false;
+    }
+
+    hasSameScheduledDateTime(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() === otherHearing.scheduledDateTime.valueOf();
+    }
+
+    isBefore(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() < otherHearing.scheduledDateTime.valueOf();
+    }
+
+    isAfter(otherHearing: AllocateHearingItemModel): boolean {
+        return this.scheduledDateTime.valueOf() > otherHearing.scheduledDateTime.valueOf();
+    }
+
+    // convenience function to calculate and return hearing's end time, using duration
+    endDateTime(): Date {
+        const startsAt = new Date(this.scheduledDateTime);
+        startsAt.setMinutes(startsAt.getMinutes() + this.duration);
+        return startsAt;
     }
 }
 
@@ -41,13 +62,14 @@ export class AllocateHearingModel {
             val =>
                 new AllocateHearingItemModel(
                     val.hearing_id,
-                    val.hearing_date,
-                    val.start_time,
+                    val.scheduled_date_time,
                     val.duration,
                     val.case_number,
                     val.case_type,
                     val.allocated_cso,
                     val.has_work_hours_clash,
+                    val.concurrent_hearings_count,
+                    val.has_non_availability_clash,
                     false
                 )
         );
@@ -79,6 +101,7 @@ export class AllocateHearingModel {
                 h.updateAssignedCso(csoUsername, csoId);
             }
         });
+        this.updateConcurrency();
     }
 
     checkHearing(hearingId: string) {
@@ -88,6 +111,7 @@ export class AllocateHearingModel {
     uncheckHearingAndRevert(hearingId: string) {
         // reverting to original hearing defaults to unchecked
         this.revertHearing(hearingId);
+        this.updateConcurrency();
     }
 
     checkAllHearings(): void {
@@ -103,14 +127,14 @@ export class AllocateHearingModel {
         const originalHearing = this.originalState.find(h => h.hearing_id === hearingId);
         this.hearings[index] = new AllocateHearingItemModel(
             originalHearing.hearing_id,
-            originalHearing.hearing_date,
-            originalHearing.start_time,
+            originalHearing.scheduled_date_time,
             originalHearing.duration,
             originalHearing.case_number,
             originalHearing.case_type,
             originalHearing.allocated_cso,
             originalHearing.has_work_hours_clash,
-            false
+            originalHearing.concurrent_hearings_count,
+            originalHearing.has_non_availability_clash
         );
     }
 
@@ -127,8 +151,7 @@ export class AllocateHearingModel {
             val =>
                 new AllocateHearingItemModel(
                     val.hearing_id,
-                    val.hearing_date,
-                    val.start_time,
+                    val.scheduled_date_time,
                     val.duration,
                     val.case_number,
                     val.case_type,
@@ -136,5 +159,42 @@ export class AllocateHearingModel {
                     false
                 )
         );
+    }
+
+    // compare two hearings - consider them concurrent if:
+    // (a) the have the same scheduled start time
+    // (b) a starts after b, but b's end time is past a's start time
+    // (c) a starts before b, but a's end time is past b's start time
+    isConcurrent(a: AllocateHearingItemModel, b: AllocateHearingItemModel): boolean {
+        return (
+            a.hasSameScheduledDateTime(b) ||
+            (a.isAfter(b) && b.endDateTime().valueOf() > a.scheduledDateTime.valueOf()) ||
+            (a.isBefore(b) && a.endDateTime().valueOf() > b.scheduledDateTime.valueOf())
+        );
+    }
+
+    updateConcurrency() {
+        const users = this.hearings.map(h => h.allocatedOfficerUsername).filter(x => !!x && x !== 'Not Allocated');
+        const uniqueUsers = users.filter((item, pos) => users.indexOf(item) === pos);
+        uniqueUsers.forEach(username => {
+            const hearingsForUser = this.hearings.filter(
+                hearing => hearing.allocatedOfficerUsername && hearing.allocatedOfficerUsername === username
+            );
+
+            if (hearingsForUser.length > 1) {
+                hearingsForUser.forEach(hearing => {
+                    // get all the hearings apart from this one
+                    const otherHearings = hearingsForUser.filter(x => x.hearingId !== hearing.hearingId);
+                    // select the overlapping ones
+                    const overlapping = otherHearings.filter(otherHearing => this.isConcurrent(hearing, otherHearing));
+                    hearing.concurrentHearingsCount = overlapping.length;
+                });
+            } else {
+                // reset the count if there are 1 or fewer hearings
+                hearingsForUser.forEach(hearing => {
+                    hearing.concurrentHearingsCount = 0;
+                });
+            }
+        });
     }
 }
