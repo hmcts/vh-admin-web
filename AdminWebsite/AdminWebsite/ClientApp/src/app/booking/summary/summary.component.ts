@@ -113,7 +113,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookinConfirmed = this.hearing.status === 'Created';
     }
 
-    private setAudioRecordingRequired(currentValue: boolean) {
+    setAudioRecordingRequired(currentValue: boolean) {
         // CACD hearings should always have recordings set to off
         if (this.caseType === 'Court of Appeal Criminal Division') {
             return false;
