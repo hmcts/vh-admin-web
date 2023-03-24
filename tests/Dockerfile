@@ -6,8 +6,8 @@ ENV SONAR_ORG "hmcts"
 ENV SONAR_HOST "https://sonarcloud.io"
 
 ## Settings for Node Tests
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+# ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
 ## Install Java, because the sonarscanner needs it.
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y openjdk-11-jre
@@ -19,16 +19,16 @@ RUN dotnet tool install --global dotnet-sonarscanner
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
 ## Install NodeJS
-RUN apt-get -y update \
-    && apt-get install -y curl \
-    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \ 
-    && apt-get install -y nodejs \
-    && apt-get clean
+# RUN apt-get -y update \
+#     && apt-get install -y curl \
+#     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \ 
+#     && apt-get install -y nodejs \
+#     && apt-get clean
 
-RUN apt-get update \
-    && apt-get install -y chromium \
-    fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
-    --no-install-recommends
+# RUN apt-get update \
+#     && apt-get install -y chromium \
+#     fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+#     --no-install-recommends
 
 
 # Copy wait-for-it.sh to wait for sql before running integration tests
