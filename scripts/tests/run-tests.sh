@@ -6,7 +6,7 @@ rm -d -r ${PWD}/TestResults
 rm -d -r ${PWD}/AdminWebsite/AdminWebsite/ClientApp/node_modules
 
 configuration=Release
-dotnet sonarscanner begin /k:"${SONAR_PROJECT_KEY}" /o:"${SONAR_ORG}" /version:"${SONAR_PROJECT_VERSION}" /name:"${SONAR_PROJECT_NAME}" /d:sonar.host.url="${SONAR_HOST}" /d:sonar.login="${SONAR_TOKEN}" /d:sonar.pullrequest.key="${SONAR_PR_KEY}" /d:sonar.pullrequest.branch="${SONAR_PR_BRANCH}" /d:sonar.pullrequest.base="${SONAR_PR_BASE}" /s:"${PWD}/vh-sonar-settings.xml"
+# dotnet sonarscanner begin /k:"${SONAR_PROJECT_KEY}" /o:"${SONAR_ORG}" /version:"${SONAR_PROJECT_VERSION}" /name:"${SONAR_PROJECT_NAME}" /d:sonar.host.url="${SONAR_HOST}" /d:sonar.login="${SONAR_TOKEN}" /d:sonar.pullrequest.key="${SONAR_PR_KEY}" /d:sonar.pullrequest.branch="${SONAR_PR_BRANCH}" /d:sonar.pullrequest.base="${SONAR_PR_BASE}" /s:"${PWD}/vh-sonar-settings.xml"
 
 exclusions="[Testing.Common]*,[AdminWebsite.Common]AdminWebsite.Common.*,[AdminWebsite]AdminWebsite.Security.*,[AdminWebsite]AdminWebsite.Configuration.*,[AdminWebsite]AdminWebsite.Pages.*,[AdminWebsite.Testing.Common]*"
 
@@ -30,4 +30,4 @@ dotnet test AdminWebsite/AdminWebsite.IntegrationTests/AdminWebsite.IntegrationT
 npm install --prefix AdminWebsite/AdminWebsite/ClientApp
 npm run --prefix AdminWebsite/AdminWebsite/ClientApp test-once-ci
 
-dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
+# dotnet sonarscanner end /d:sonar.login="${SONAR_TOKEN}"
