@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: master
+      ref: sonar-for-docker
       endpoint: hmcts
 
 pool:
@@ -45,7 +45,7 @@ stages:
         steps:
           - checkout: self
 
-          - template: templates/sonarCloud/prepare.yml@azTemplates
+          - template: templates/sonarCloud/prepare_cli.yml@azTemplates
             parameters:
               ExtraProperties: |
                 sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
