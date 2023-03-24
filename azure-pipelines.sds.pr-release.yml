@@ -45,7 +45,7 @@ stages:
         steps:
           - checkout: self
 
-          - template: templates/sonarCloud/prepare_cli.yml@azTemplates
+          - template: templates/sonarCloud/prepare.yml@azTemplates
             parameters:
               ProjectKey: $(gitRepoName)
               ExtraProperties: |
