@@ -304,7 +304,13 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.hearing.audio_recording_required).toBe(true);
     });
-
+    it('should set audio recording to false if case type is CACD and an interpreter is present', () => {
+        component.hearing.case_type = 'Court of Appeal Criminal Division';
+        component.interpreterPresent = true;
+        component.setAudioRecordingRequired(component.hearing.audio_recording_required);
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
     it('should display valid court address when room number is empty', () => {
         component.hearing.court_room = '';
         component.ngOnInit();
