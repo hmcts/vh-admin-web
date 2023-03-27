@@ -1,10 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { BookingPersistService } from '../../../services/bookings-persist.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Logger } from '../../../services/logger';
 
 export type MenuItem = {
-    id: string;
+    entityId: string;
     label: string;
     ariaLabel?: string;
     data?: string;
@@ -15,49 +13,47 @@ export type MenuItem = {
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss']
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
     logger: Logger;
-    form: FormGroup;
-    private formBuilder: FormBuilder;
     loggerPrefix = '[Menu] -';
-    selectedItems: [];
+    selectedItems: MenuItem[] = [];
+    disabled = false;
 
-    @Output() selectedEmitter = new EventEmitter<string[]>();
+    @Output() itemSelected = new EventEmitter<MenuItem | MenuItem[]>();
+
     @Input() title = '';
     @Input() multiSelect = true;
     @Input() items: MenuItem[] = [];
     @Input() placeholder = 'Select items';
     @Input() ariaLabel = 'Selectable item list';
+    // TODO update selectedItems on set, or maybe make selectedItems a func
+    @Input() selectedEntityIds: string[] = [];
 
-    constructor(private bookingPersistService: BookingPersistService, formBuilder: FormBuilder, logger: Logger) {
+    constructor(logger: Logger) {
         this.logger = logger;
-        this.formBuilder = formBuilder;
     }
 
-    ngOnInit(): void {
-        this.form = this.formBuilder.group({
-            selectedIds: [this.bookingPersistService.selectedUsers || []]
-        });
+    onSelect(selectedItems: MenuItem[]) {
+        console.log(':::: onSelect(), selectedItems', selectedItems);
+        this.selectedItems = this.items.filter(item => this.selectedEntityIds.includes(item.entityId));
+        this.itemSelected.emit(this.selectedItems);
     }
 
-    onSelect() {
-        this.selectedItems = this.form.value['selectedIds'] || [];
-        this.selectedEmitter.emit(this.selectedItems);
-    }
-
+    // TODO rethink this func - where is it used? is it needed?
     clear(): void {
+        console.log(':::: clear()');
         const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
         if (searchCriteriaEntered) {
             this.selectedItems = [];
-            this.form.reset();
-            this.selectedEmitter.next(this.selectedItems);
+            this.itemSelected.next(this.selectedItems);
+            this.selectedEntityIds = [];
         }
     }
 
     enable() {
-        this.form.enable();
+        this.disabled = false;
     }
     disable() {
-        this.form.disable();
+        this.disabled = true;
     }
 }

@@ -1,19 +1,20 @@
-<div [formGroup]="form">
+<div>
   <label class="govuk-label" for="select-menu">{{ title }}</label>
   <ng-select
     id="select-menu"
     class="custom"
     [items]="items"
-    bindValue="id"
+    bindValue="entityId"
     bindLabel="label"
-    formControlName="selectedIds"
+    [(ngModel)]="selectedEntityIds"
+    [disabled]="disabled"
     [placeholder]="placeholder"
     [multiple]="multiSelect"
     [attr.aria-label]="ariaLabel"
     [closeOnSelect]="false"
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
-    (change)="onSelect()"
+    (change)="onSelect($event)"
   >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
       <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.ariaLabel || item.id" />
