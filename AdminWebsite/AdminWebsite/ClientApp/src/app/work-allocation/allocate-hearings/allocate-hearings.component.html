@@ -32,11 +32,12 @@
         <app-justice-users-menu #csoFilterMenu (selectedEmitter)="onJusticeUserForFilterSelected($event)"></app-justice-users-menu>
         <app-select
           #csoFilterMenu2
-          (itemSelected)="onJusticeUserForFilterSelected2($event)"
+          (selectionChange)="onJusticeUserForFilterSelected2($event)"
           [items]="justiceUsersMenuItems"
           ariaLabel="User list"
           placeholder="Select users"
           title="Allocated CSO"
+          multiple
           [selectedEntityIds]="selectedJusticeUserIds"
         ></app-select>
       </div>
@@ -45,7 +46,7 @@
       <div class="govuk-grid-column-one-third">
         <app-case-types-menu (selectedEmitter)="onCaseTypeSelected($event)"></app-case-types-menu>
         <app-select
-          (itemSelected)="onCaseTypeSelected2($event)"
+          (selectionChange)="onCaseTypeSelected2($event)"
           [items]="caseTypesMenuItems"
           ariaLabel="Case types list"
           placeholder="Select case types"
@@ -83,9 +84,8 @@
           </app-justice-users-menu>
           <app-select
             #csoAllocatedMenu2
-            (itemSelected)="onJusticeUserForAllocationSelected2($event)"
+            (selectionChange)="onJusticeUserForAllocationSelected2($event)"
             [items]="justiceUsersMenuItems"
-            [multiSelect]="false"
             ariaLabel="User list"
             placeholder="Select user"
             title="Allocate to"

@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { Logger } from '../../services/logger';
 
-export type MenuItem = {
+export type SelectOption = {
     entityId: string;
     label: string;
     ariaLabel?: string;
@@ -16,37 +16,55 @@ export type MenuItem = {
 export class SelectComponent {
     logger: Logger;
     loggerPrefix = '[Menu] -';
-    selectedItems: MenuItem[] = [];
     disabled = false;
+    private _multiple: boolean;
 
-    @Output() itemSelected = new EventEmitter<MenuItem | MenuItem[]>();
+    @Output() selectionChange = new EventEmitter<SelectOption | SelectOption[]>();
 
     @Input() title = '';
-    @Input() multiSelect = true;
-    @Input() items: MenuItem[] = [];
+    @Input() items: SelectOption[] = [];
     @Input() placeholder = 'Select items';
     @Input() ariaLabel = 'Selectable item list';
-    // TODO update selectedItems on set, or maybe make selectedItems a func
     @Input() selectedEntityIds: string[] = [];
+
+    @Input()
+    set multiple(value: any) {
+        this._multiple = this.coerceBooleanProperty(value);
+    }
+    get multiple() {
+        return this._multiple;
+    }
+
+    private _selected: SelectOption[] = [];
+    get selected(): SelectOption | SelectOption[] {
+        return this._multiple ? this._selected || [] : this._selected[0];
+    }
 
     constructor(logger: Logger) {
         this.logger = logger;
     }
 
-    onSelect(selectedItems: MenuItem[]) {
-        console.log(':::: onSelect(), selectedItems', selectedItems);
-        this.selectedItems = this.items.filter(item => this.selectedEntityIds.includes(item.entityId));
-        this.itemSelected.emit(this.selectedItems);
+    ngOnChanges(changes: SimpleChanges) {
+        const items = changes['items'];
+        if (items.currentValue) {
+            console.log('---- GOT SOME ITEMS', items.currentValue);
+            this.updateSelectedItems();
+        } else {
+            console.log('---- NO ITEMS YET');
+        }
     }
 
-    // TODO rethink this func - where is it used? is it needed?
+    handleOnChange() {
+        this.updateSelectedItems();
+        this.selectionChange.emit(this.selected);
+    }
+
     clear(): void {
-        console.log(':::: clear()');
-        const searchCriteriaEntered = this.selectedItems && this.selectedItems.length > 0;
+        const searchCriteriaEntered = this._selected && this._selected.length > 0;
         if (searchCriteriaEntered) {
-            this.selectedItems = [];
-            this.itemSelected.next(this.selectedItems);
             this.selectedEntityIds = [];
+            this._selected = [];
+            this.selectionChange.next(this.selected);
         }
     }
 
@@ -55,5 +73,15 @@ export class SelectComponent {
     }
     disable() {
         this.disabled = true;
+    }
+
+    private updateSelectedItems() {
+        this._selected = this.items.filter(item => this.selectedEntityIds.includes(item.entityId));
+        console.log('---- SET SELECTED', this._selected);
+    }
+
+    // this can probably be exported at some point
+    private coerceBooleanProperty(value: any): boolean {
+        return value != null && `${value}` !== 'false';
     }
 }

@@ -9,12 +9,12 @@
     [(ngModel)]="selectedEntityIds"
     [disabled]="disabled"
     [placeholder]="placeholder"
-    [multiple]="multiSelect"
+    [multiple]="multiple"
     [attr.aria-label]="ariaLabel"
     [closeOnSelect]="false"
     [clearSearchOnAdd]="true"
     [selectOnTab]="true"
-    (change)="onSelect($event)"
+    (change)="handleOnChange()"
   >
     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
       <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.ariaLabel || item.id" />

@@ -8,7 +8,7 @@ import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { Constants } from 'src/app/common/constants';
 import { DatePipe } from '@angular/common';
-import { SelectComponent, MenuItem } from 'src/app/shared/select/select.component';
+import { SelectComponent, SelectOption } from 'src/app/shared/select/select.component';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -65,9 +65,9 @@ export class AllocateHearingsComponent implements OnInit {
     todayDate: Date;
     dateFormat = 'yyyy-MM-dd';
 
-    justiceUsersMenuItems: MenuItem[];
+    justiceUsersMenuItems: SelectOption[];
     selectedJusticeUserIds: string[] = [];
-    caseTypesMenuItems: MenuItem[];
+    caseTypesMenuItems: SelectOption[];
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -133,7 +133,7 @@ export class AllocateHearingsComponent implements OnInit {
         const cso = this.csoDropDownValues;
         console.log(':::: cso', cso);
         console.log(':::: filter menu', this.csoFilterMenu.selectedItems);
-        console.log(':::: filter2 menu', this.csoFilterMenu2.selectedItems);
+        console.log(':::: filter2 menu', this.csoFilterMenu2.selected);
         const caseType = this.caseTypeDropDownValues;
         const isUnallocated = this.form.value.isUnallocated;
 
@@ -180,7 +180,7 @@ export class AllocateHearingsComponent implements OnInit {
         console.log('caseTypeDropDownValues', this.caseTypeDropDownValues);
     }
 
-    onCaseTypeSelected2($event: MenuItem[]) {
+    onCaseTypeSelected2($event: SelectOption[]) {
         console.log(':::: onCaseTypeSelected2', $event);
         this.caseTypeDropDownValues = $event.map(x => x.entityId);
         console.log('caseTypeDropDownValues2', this.caseTypeDropDownValues);
@@ -195,10 +195,8 @@ export class AllocateHearingsComponent implements OnInit {
         }
     }
 
-    onJusticeUserForFilterSelected2(selectedCsoIds: MenuItem[]) {
-        console.log(':::: onJusticeUserForFilterSelected2', selectedCsoIds);
-        // this.csoDropDownValues = selectedCsoIds.map(x => x.entityId);
-        console.log(':::: csoDropDownValues2', this.csoDropDownValues);
+    onJusticeUserForFilterSelected2(selectedCsoIds: SelectOption[]) {
+        this.csoDropDownValues = selectedCsoIds.map(x => x.entityId);
         if (selectedCsoIds.length > 0) {
             this.form.get('isUnallocated').setValue(false);
         }
@@ -224,10 +222,8 @@ export class AllocateHearingsComponent implements OnInit {
 
     onJusticeUserForAllocationSelected(justiceUserId: string) {
         this.clearHearingUpdatedMessage();
-        console.log(':::: onJusticeUserForAllocationSelected', justiceUserId);
         if (justiceUserId) {
             const username = this.csoAllocatedMenu?.selectedLabel;
-            console.log(':::: USER', username);
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
         } else {
             // without a selected CSO, unset selection
@@ -236,12 +232,11 @@ export class AllocateHearingsComponent implements OnInit {
         }
     }
 
-    onJusticeUserForAllocationSelected2(selectedItem: MenuItem) {
-        console.log(':::: onJusticeUserForAllocationSelected2', selectedItem);
+    onJusticeUserForAllocationSelected2(selectedItem: SelectOption) {
         if (selectedItem) {
             const username = selectedItem.data;
             const justiceUserId = selectedItem.entityId;
-            console.log(':::: USER2', username);
+            console.log(':::: onJusticeUserForAllocationSelected2 username', username);
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
         } else {
             // without a selected CSO, unset selection
@@ -284,8 +279,9 @@ export class AllocateHearingsComponent implements OnInit {
 
     confirmAllocation() {
         this.clearHearingUpdatedMessage();
-        const csoId = this.csoAllocatedMenu2?.selectedItems[0].entityId;
-        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
+        console.log(':::: csoAllocatedMenu2 menu', this.csoAllocatedMenu2.selected);
+        const selectedCso = this.csoAllocatedMenu2?.selected as SelectOption;
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
             () => {
                 this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
