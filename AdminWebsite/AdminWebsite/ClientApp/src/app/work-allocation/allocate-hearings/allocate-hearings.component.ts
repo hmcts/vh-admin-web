@@ -8,12 +8,11 @@ import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { Constants } from 'src/app/common/constants';
 import { DatePipe } from '@angular/common';
-import { MenuComponent, MenuItem } from 'src/app/shared/menus/menu/menu.component';
+import { SelectComponent, MenuItem } from 'src/app/shared/select/select.component';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { Constants } from 'src/app/common/constants';
 import { BookingPersistService } from 'src/app/services/bookings-persist.service';
 
 @Component({
@@ -45,8 +44,8 @@ export class AllocateHearingsComponent implements OnInit {
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
     @ViewChild('csoFilterMenu', { static: false, read: JusticeUsersMenuComponent }) csoFilterMenu: JusticeUsersMenuComponent;
 
-    @ViewChild('csoAllocatedMenu2', { static: false, read: MenuComponent }) csoAllocatedMenu2: MenuComponent;
-    @ViewChild('csoFilterMenu2', { static: false, read: MenuComponent }) csoFilterMenu2: MenuComponent;
+    @ViewChild('csoAllocatedMenu2', { static: false, read: SelectComponent }) csoAllocatedMenu2: SelectComponent;
+    @ViewChild('csoFilterMenu2', { static: false, read: SelectComponent }) csoFilterMenu2: SelectComponent;
 
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
     form: FormGroup;

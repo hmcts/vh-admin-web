@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Logger } from '../../../services/logger';
+import { Logger } from '../../services/logger';
 
 export type MenuItem = {
     entityId: string;
@@ -9,11 +9,11 @@ export type MenuItem = {
 };
 
 @Component({
-    selector: 'app-menu',
-    templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.scss']
+    selector: 'app-select',
+    templateUrl: './select.component.html',
+    styleUrls: ['./select.component.scss']
 })
-export class MenuComponent {
+export class SelectComponent {
     logger: Logger;
     loggerPrefix = '[Menu] -';
     selectedItems: MenuItem[] = [];
