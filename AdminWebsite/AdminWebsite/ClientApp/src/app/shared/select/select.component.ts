@@ -1,19 +1,19 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Logger } from '../../services/logger';
 
-export type SelectOption = {
+export interface SelectOption {
     entityId: string;
     label: string;
     ariaLabel?: string;
     data?: string;
-};
+}
 
 @Component({
     selector: 'app-select',
     templateUrl: './select.component.html',
     styleUrls: ['./select.component.scss']
 })
-export class SelectComponent {
+export class SelectComponent implements OnChanges {
     logger: Logger;
     loggerPrefix = '[Menu] -';
     disabled = false;
@@ -47,10 +47,7 @@ export class SelectComponent {
     ngOnChanges(changes: SimpleChanges) {
         const items = changes['items'];
         if (items.currentValue) {
-            console.log('---- GOT SOME ITEMS', items.currentValue);
             this.updateSelectedItems();
-        } else {
-            console.log('---- NO ITEMS YET');
         }
     }
 
@@ -76,8 +73,7 @@ export class SelectComponent {
     }
 
     private updateSelectedItems() {
-        this._selected = this.items.filter(item => this.selectedEntityIds.includes(item.entityId));
-        console.log('---- SET SELECTED', this._selected);
+        this._selected = this.items.filter(item => (this.selectedEntityIds || []).includes(item.entityId));
     }
 
     // this can probably be exported at some point
