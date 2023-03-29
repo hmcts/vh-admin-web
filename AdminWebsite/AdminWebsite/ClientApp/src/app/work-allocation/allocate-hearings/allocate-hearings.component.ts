@@ -172,9 +172,9 @@ export class AllocateHearingsComponent implements OnInit {
         this.caseTypeDropDownValues = $event.map(x => x.entityId);
     }
 
-    onJusticeUserForFilterSelected(selectedCsoIds: SelectOption[]) {
-        this.csoDropDownValues = selectedCsoIds.map(x => x.entityId);
-        if (selectedCsoIds.length > 0) {
+    onJusticeUserForFilterSelected(selectedOptions: SelectOption[]) {
+        this.csoDropDownValues = selectedOptions.map(x => x.entityId);
+        if (selectedOptions.length > 0) {
             this.form.get('isUnallocated').setValue(false);
         }
     }
