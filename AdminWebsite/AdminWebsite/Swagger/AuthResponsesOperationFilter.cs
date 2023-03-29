@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.Authorization;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
 namespace AdminWebsite.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public class AuthResponsesOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
