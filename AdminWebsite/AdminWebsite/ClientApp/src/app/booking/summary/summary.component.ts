@@ -93,7 +93,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.setAudioRecordingRequired(this.hearing.audio_recording_required);
+        this.hearing.audio_recording_required = this.isAudioRecordingRequired();
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
@@ -113,7 +113,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookinConfirmed = this.hearing.status === 'Created';
     }
 
-    setAudioRecordingRequired(currentValue: boolean): boolean {
+    isAudioRecordingRequired(): boolean {
         // CACD hearings should always have recordings set to off
         if (this.caseType === 'Court of Appeal Criminal Division') {
             return false;
@@ -122,7 +122,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (this.interpreterPresent) {
             return true;
         }
-        return currentValue;
+        return this.hearing.audio_recording_required;
     }
 
     private confirmRemoveParticipant() {
