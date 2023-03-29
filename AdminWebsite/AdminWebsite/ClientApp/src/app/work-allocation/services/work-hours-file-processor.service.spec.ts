@@ -94,6 +94,18 @@ describe('WorkHoursFileProcessorService', () => {
             const result = service.processNonWorkHours(input);
             expect(result.fileValidationErrors.length).toBe(0);
         });
+
+        it('should succesfully parse valid input with DD/MM/YYYY date format', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'manual.vhoteamlead1@hearings.reform.hmcts.net,01/01/2023,10:00,01/01/2023,17:00\n' +
+                'first.second2@xyz.com,02/01/2023,10:00,02/01/2023,17:00';
+
+            const result = service.processNonWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(0);
+        });
+
+
     });
 
     describe('validateDayWorkingHours', () => {

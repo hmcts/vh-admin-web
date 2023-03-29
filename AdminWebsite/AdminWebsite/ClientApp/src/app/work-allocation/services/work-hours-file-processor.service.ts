@@ -186,7 +186,6 @@ export class WorkHoursFileProcessorService {
     parseDate(rawDateString: string, rawTimeString: string): Date {
         //check if date is in format DD/MM/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
-            console.log("DD/MM/YYYY")
             var spiltStartDate = rawDateString.split("/");
             var day = spiltStartDate[0];
             var month = spiltStartDate[1];
@@ -195,7 +194,6 @@ export class WorkHoursFileProcessorService {
         }
         //check if date is in format YYYY-MM-DD
         if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(rawDateString)) {
-            console.log("YYYY-MM-DD")
             var date = rawDateString;
         }
         return new Date(`${date}T${rawTimeString}`);
