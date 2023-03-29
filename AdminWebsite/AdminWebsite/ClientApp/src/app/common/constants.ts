@@ -80,6 +80,4 @@ export const Constants = {
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
     CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division' }
-
-
 };
