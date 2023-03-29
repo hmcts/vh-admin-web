@@ -115,7 +115,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     isAudioRecordingRequired(): boolean {
         // CACD hearings should always have recordings set to off
-        if (this.caseType === 'Court of Appeal Criminal Division') {
+        if (this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision) {
             return false;
         }
         // Hearings with an interpreter should always have recording set to on

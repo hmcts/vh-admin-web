@@ -78,5 +78,8 @@ export const Constants = {
         UserDeleted: 'Changes saved successfully.',
         UserRestored: 'Changes saved successfully.'
     },
-    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger']
+    OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
+    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division' }
+
+
 };
