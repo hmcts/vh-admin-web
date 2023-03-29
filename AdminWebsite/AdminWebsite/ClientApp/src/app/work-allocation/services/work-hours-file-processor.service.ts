@@ -154,9 +154,9 @@ export class WorkHoursFileProcessorService {
                 return;
             }
 
-            const startTime = new Date(`${values[1]}T${values[2]}`);
-            const endTime = new Date(`${values[3]}T${values[4]}`);
-
+            const startTime = this.parseDate(values[1], values[2]);
+            const endTime = this.parseDate(values[3], values[4]);
+      
             if (isNaN(endTime.getTime()) || isNaN(startTime.getTime())) {
                 nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
             }
@@ -181,6 +181,24 @@ export class WorkHoursFileProcessorService {
             numberOfUserNameToUpload: numberOfUsernamesToUploadNonWorkHours
         };
         return result;
+    }
+
+    parseDate(rawDateString: string, rawTimeString: string): Date {
+        //check if date is in format DD/MM/YYYY
+        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
+            console.log("DD/MM/YYYY")
+            var spiltStartDate = rawDateString.split("/");
+            var day = spiltStartDate[0];
+            var month = spiltStartDate[1];
+            var year = spiltStartDate[2];
+            var date = year + "-" + month + "-" + day;
+        }
+        //check if date is in format YYYY-MM-DD
+        if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(rawDateString)) {
+            console.log("YYYY-MM-DD")
+            var date = rawDateString;
+        }
+        return new Date(`${date}T${rawTimeString}`);
     }
 
     uploadWorkingHours(workAvailabilities: UploadWorkHoursRequest[]) {
