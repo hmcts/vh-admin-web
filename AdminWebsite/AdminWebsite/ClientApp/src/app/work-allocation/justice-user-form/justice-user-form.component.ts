@@ -47,7 +47,7 @@ export class JusticeUserFormComponent implements OnChanges {
     constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
         this.form = this.formBuilder.group<JusticeUserForm>({
             username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
-            contactTelephone: new FormControl(''),
+            contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             role: new FormControl(this.availableRoles.Vho)
