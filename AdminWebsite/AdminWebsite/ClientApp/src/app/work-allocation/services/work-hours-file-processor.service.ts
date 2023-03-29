@@ -156,7 +156,7 @@ export class WorkHoursFileProcessorService {
 
             const startTime = this.parseDate(values[1], values[2]);
             const endTime = this.parseDate(values[3], values[4]);
-      
+
             if (isNaN(endTime.getTime()) || isNaN(startTime.getTime())) {
                 nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
             }
@@ -186,11 +186,11 @@ export class WorkHoursFileProcessorService {
     parseDate(rawDateString: string, rawTimeString: string): Date {
         //check if date is in format DD/MM/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
-            var spiltStartDate = rawDateString.split("/");
+            var spiltStartDate = rawDateString.split('/');
             var day = spiltStartDate[0];
             var month = spiltStartDate[1];
             var year = spiltStartDate[2];
-            var date = year + "-" + month + "-" + day;
+            var date = year + '-' + month + '-' + day;
         }
         //check if date is in format YYYY-MM-DD
         if (/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(rawDateString)) {

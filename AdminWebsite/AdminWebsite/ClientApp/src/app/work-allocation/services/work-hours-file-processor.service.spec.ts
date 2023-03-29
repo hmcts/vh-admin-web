@@ -105,7 +105,16 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.fileValidationErrors.length).toBe(0);
         });
 
+        it('should show non-working hours file upload date errors', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'invalid.date@xyz.com,2023-25-01,10:00,2023-25-01,17:00';
 
+            const result = service.processNonWorkHours(input);
+
+            expect(result.fileValidationErrors.length).toBe(1);
+            expect(result.fileValidationErrors[0]).toContain('Contains an invalid date');
+        });
     });
 
     describe('validateDayWorkingHours', () => {
