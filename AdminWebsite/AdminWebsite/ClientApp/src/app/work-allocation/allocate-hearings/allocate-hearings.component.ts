@@ -87,7 +87,7 @@ export class AllocateHearingsComponent implements OnInit {
             this.form.patchValue({
                 fromDate: this.datePipe.transform(this.todayDate, this.dateFormat)
             });
-            toDate = new Date(this.todayDate.setFullYear(this.todayDate.getFullYear() + 1));
+            toDate = new Date(new Date().setFullYear(this.todayDate.getFullYear() + 1));
             const dateString = this.datePipe.transform(toDate, this.dateFormat);
             this.form.patchValue({
                 toDate: dateString
