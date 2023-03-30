@@ -165,6 +165,30 @@ describe('AllocateHearingsComponent', () => {
             expect(component.displayMessage).toBe(false);
         });
 
+        it('should call the allocate service and return response when no allocated CSOs are selected', () => {
+            component.onJusticeUserForFilterSelected([]);
+            component.form.controls['fromDate'].setValue('2023-01-13');
+            component.form.controls['toDate'].setValue('2023-01-14');
+            component.caseTypeDropDownValues = ['test', 'case', 'type'];
+            component.form.controls['caseNumber'].setValue('testCaseNumber1234');
+            component.form.controls['isUnallocated'].setValue(true);
+            const responseObj = [new AllocationHearingsResponse()];
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
+
+            component.searchForHearings();
+
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalledWith(
+                new Date('2023-01-13'),
+                new Date('2023-01-14'),
+                [],
+                ['test', 'case', 'type'],
+                'testCaseNumber1234',
+                true
+            );
+            expect(component.allocationHearingViewModel.originalState).toEqual(responseObj);
+            expect(component.displayMessage).toBe(false);
+        });
+
         it('should call the allocate service and return 0 rows', () => {
             const responseObj: AllocationHearingsResponse[] = [];
 
