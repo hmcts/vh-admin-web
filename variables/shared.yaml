@@ -4,19 +4,20 @@ parameters:
     default: ""
   - name: prNumber
     type: string
-    default: ''
+    default: ""
 
 variables:
-
+  - name: appName
+    value: AdminWebsite
   - name: git_version_config_path
     value: $(Build.SourcesDirectory)/sds-git-version-config.yml
   - name: nuget_package_name
-    value: 'AdminWebsite.Client'
+    value: "AdminWebsite.Client"
 
   - name: git_repo_name
-    value: 'admin-web'
+    value: "admin-web"
   - name: sonar_exclusion
-    value: '**/AdminWebsite.Contract/**,**/Admin.Website/Program.cs, **/Admin.Web/Startup.cs, **/Admin.Web/Extensions/**, **/Admin.Web/Swagger/**, **/Admin.Web/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Test.Common/**, **/Test.DAL/Mappings/**, **/Test.DAL/SeedData/**, **/Test.DAL/TestDbContext.cs, **/Test.DAL/**/DesignTimeHearingsContextFactory.cs, Test.DAL/Migrations/**, **/Test.Domain/Ddd/**, **/Test.DAL/Commands/Core/**, **/Test.DAL/Queries/Core/**, **/Testing.Common/**, **/Test.DAL/Migrations/*, **/Test.DAL/Migrations/**, **/Migrations/*'
+    value: "**/AdminWebsite.Contract/**,**/Admin.Website/Program.cs, **/Admin.Web/Startup.cs, **/Admin.Web/Extensions/**, **/Admin.Web/Swagger/**, **/Admin.Web/ConfigureServicesExtensions.cs, **/Testing.Common/**, **/Test.Common/**, **/Test.DAL/Mappings/**, **/Test.DAL/SeedData/**, **/Test.DAL/TestDbContext.cs, **/Test.DAL/**/DesignTimeHearingsContextFactory.cs, Test.DAL/Migrations/**, **/Test.Domain/Ddd/**, **/Test.DAL/Commands/Core/**, **/Test.DAL/Queries/Core/**, **/Testing.Common/**, **/Test.DAL/Migrations/*, **/Test.DAL/Migrations/**, **/Migrations/*"
 
   - name: prNumber
     ${{ if eq(parameters.prNumber, '')}}:
@@ -24,30 +25,29 @@ variables:
     ${{ else }}:
       value: ${{ parameters.prNumber }}
   - name: prTagPrefix
-    value: 'pr-${{ variables.prNumber }}'
+    value: "pr-${{ variables.prNumber }}"
   - name: prTagName
-    value: '${{ variables.prTagPrefix }}-$(Build.BuildNumber)'
+    value: "${{ variables.prTagPrefix }}-$(Build.BuildNumber)"
 
   - name: imageName
     value: "${{ replace(variables.git_repo_name, '-', '') }}"
   - name: subscriptionName
     value: "DTS-SHAREDSERVICES-${{ upper(parameters.env) }}-Video Hearings"
   - name: acrSubscription
-    value: 'DTS-SHAREDSERVICES-PROD-Video Hearings'
+    value: "DTS-SHAREDSERVICES-PROD-Video Hearings"
   - name: acrName
-    value: 'sdshmctspublic'
+    value: "sdshmctspublic"
   - name: repositoryName
-    value: 'vh/${{ variables.git_repo_name }}'
+    value: "vh/${{ variables.git_repo_name }}"
   - name: gitRepoName
     value: vh-${{ variables.git_repo_name }}
-
 
   - name: chartName
     value: "vh-${{ variables.git_repo_name }}"
   - name: chartRepoPath
-    value: '$(Build.SourcesDirectory)/'
+    value: "$(Build.SourcesDirectory)/"
   - name: chartPath
-    value: '$(Build.SourcesDirectory)/charts/vh-${{ variables.git_repo_name }}'
+    value: "$(Build.SourcesDirectory)/charts/vh-${{ variables.git_repo_name }}"
   - name: envValuesPath
     value: "${{ variables.chartPath }}/values.${env}.yaml"
   - name: envValuesTemplatePath
