@@ -293,7 +293,24 @@ describe('SummaryComponent with valid request', () => {
             expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
         });
     }));
-
+    it('should set audio recording to false if case type is CACD', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should set audio recording to true if an interpreter is present', () => {
+        component.interpreterPresent = true;
+        component.isAudioRecordingRequired();
+        fixture.detectChanges();
+        expect(component.hearing.audio_recording_required).toBe(true);
+    });
+    it('should set audio recording to false if case type is CACD and an interpreter is present', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
+        component.interpreterPresent = true;
+        component.isAudioRecordingRequired();
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
     it('should display valid court address when room number is empty', () => {
         component.hearing.court_room = '';
         component.ngOnInit();
