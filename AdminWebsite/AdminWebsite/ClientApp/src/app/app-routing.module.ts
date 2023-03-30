@@ -14,10 +14,12 @@ import { EditParticipantSearchComponent } from './edit-participant/edit-particip
 import { EditParticipantComponent } from './edit-participant/edit-participant/edit-participant.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
+import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
+    { path: 'home', component: HomeComponent }, // does nothing but setting up auth
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },
