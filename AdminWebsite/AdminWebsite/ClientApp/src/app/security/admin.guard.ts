@@ -23,7 +23,7 @@ export class AdminGuard implements CanActivate {
         return this.oidcSecurityService.isAuthenticated$.pipe(
             mergeMap(isAuthenticated => {
                 if (!isAuthenticated) {
-                    this.logger.debug(`${this.loggerPrefix} User is not authenticated. Navigating to unauthorised.`);
+                    this.logger.warn(`${this.loggerPrefix} User is not authenticated. Navigating to unauthorised.`);
                     this.router.navigate(['/unauthorised']);
                     return of(false);
                 }
