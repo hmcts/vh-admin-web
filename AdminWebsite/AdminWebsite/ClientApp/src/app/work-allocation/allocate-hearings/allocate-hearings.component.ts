@@ -272,7 +272,6 @@ export class AllocateHearingsComponent implements OnInit {
 
             const selectedCso = this.selectAllocateCso?.selected as SelectOption;
             if (selectedCso) {
-                console.log('selectedCso', selectedCso);
                 const csoId = selectedCso.entityId;
                 const csoUsername = selectedCso.data;
 

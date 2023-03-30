@@ -77,10 +77,7 @@ describe('AllocateHearingsComponent', () => {
         fixture = TestBed.createComponent(AllocateHearingsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        // component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
-        // component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
         component.selectAllocateCso = TestBed.createComponent(SelectComponent).componentInstance as SelectComponent;
-        // component.csoFilterMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
     });
 
     describe('ngOnInit', () => {
