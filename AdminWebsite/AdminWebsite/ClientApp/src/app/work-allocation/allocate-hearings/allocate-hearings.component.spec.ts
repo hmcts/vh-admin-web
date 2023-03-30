@@ -84,7 +84,7 @@ describe('AllocateHearingsComponent', () => {
         let searchForHearingsSpy;
 
         justiceUsersServiceMock.retrieveJusticeUserAccounts.and.returnValue(of([]));
-        hearingServiceMock.getHearingTypes.and.returnValue(of([]));
+        hearingServiceMock.getHearingTypes.and.returnValue(of(['Type1', 'Type2']));
 
         beforeEach(() => {
             searchForHearingsSpy = spyOn(component, 'searchForHearings');
