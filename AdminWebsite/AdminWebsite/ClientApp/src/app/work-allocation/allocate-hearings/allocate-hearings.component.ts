@@ -188,7 +188,7 @@ export class AllocateHearingsComponent implements OnInit {
         }
     }
 
-    onJusticeUserForAllocationSelected(selectedItem: SelectOption) {
+    onJusticeUserForAllocationSelected(selectedItem?: SelectOption) {
         if (selectedItem) {
             const username = selectedItem.data;
             const justiceUserId = selectedItem.entityId;

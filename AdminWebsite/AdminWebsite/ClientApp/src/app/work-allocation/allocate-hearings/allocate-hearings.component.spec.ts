@@ -242,6 +242,19 @@ describe('AllocateHearingsComponent', () => {
             expect(component.displayMessage).toBe(true);
             expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
         });
+
+        it('should map selected options for case types to id array', () => {
+            const id = newGuid();
+            const id2 = newGuid();
+            const label = '';
+            component.onCaseTypeSelected([
+                { entityId: id, label },
+                { entityId: id2, label }
+            ]);
+            expect(component.caseTypeDropDownValues.includes(id)).toBe(true);
+            expect(component.caseTypeDropDownValues.includes(id2)).toBe(true);
+            expect(component.caseTypeDropDownValues.length).toBe(2);
+        });
     });
 
     describe('clear', () => {
@@ -469,13 +482,28 @@ describe('AllocateHearingsComponent', () => {
             // act
             component.selectHearing(true, hearingId);
 
-            // mimic cso selection
-            component.onJusticeUserForAllocationSelected({ entityId: csoId, label: 'label' });
-
             component.cancelAllocation();
 
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.originalState).toEqual(testData);
+        }));
+
+        it('should reset when allocate to CSO is cleared', fakeAsync(() => {
+            // arrange
+            component.allocationHearingViewModel = new AllocateHearingModel(testData);
+
+            const hearingId = testData[0].hearing_id;
+
+            // act
+            component.selectHearing(true, hearingId);
+
+            // mimic cso selection clear
+            component.onJusticeUserForAllocationSelected();
+
+            expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
+            expect(component.allocationHearingViewModel.originalState).toEqual(testData);
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.message).toBe('');
         }));
     });
 
