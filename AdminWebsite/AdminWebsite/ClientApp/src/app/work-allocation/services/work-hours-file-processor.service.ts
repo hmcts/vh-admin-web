@@ -184,7 +184,7 @@ export class WorkHoursFileProcessorService {
     }
 
     parseDate(rawDateString: string, rawTimeString: string): Date {
-        var date;
+        let date;
         //check if date is in format DD/MM/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
             let spiltStartDate = rawDateString.split('/');
