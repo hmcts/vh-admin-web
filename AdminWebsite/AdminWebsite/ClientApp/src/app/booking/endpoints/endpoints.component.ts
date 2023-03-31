@@ -217,7 +217,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
     private addEndpointsFormGroup(): FormGroup {
         return this.fb.group({
-            displayName: ['', [blankSpaceValidator, Validators.required, Validators.pattern(Constants.TextInputPattern)]],
+            displayName: ['', [blankSpaceValidator]],
             defenceAdvocate: ['None'],
             id: [],
             defenceAdvocateId: []
