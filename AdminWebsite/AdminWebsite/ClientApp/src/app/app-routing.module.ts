@@ -15,24 +15,25 @@ import { EditParticipantComponent } from './edit-participant/edit-participant/ed
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 import { HomeComponent } from './home/home.component';
+import { AuthGuard } from './security/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'home', component: HomeComponent }, // does nothing but setting up auth
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },
     { path: 'error', component: ErrorComponent },
     { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
-    { path: 'change-password', component: ChangePasswordComponent, canActivate: [AdminGuard] },
-    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AdminGuard] },
-    { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
-    { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
-    { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
+    { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
     {
         path: 'work-allocation',
-        canActivate: [VhOfficerAdminGuard, WorkAllocationFeatureGuard],
+        canActivate: [AuthGuard, VhOfficerAdminGuard, WorkAllocationFeatureGuard],
         loadChildren: () => import('./work-allocation/work-allocation.module').then(m => m.WorkAllocationModule)
     },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }

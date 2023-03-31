@@ -21,7 +21,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     showBooking = false;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
-
     $ldSubcription: Subscription;
 
     ngOnInit() {
