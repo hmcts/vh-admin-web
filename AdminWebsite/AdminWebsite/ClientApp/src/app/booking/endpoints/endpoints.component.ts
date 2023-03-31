@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/for
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
-import { removeSpecialCharacters } from 'src/app/common/formatters/sanitize-input-text';
+import { RemoveSpecialCharacters } from 'src/app/common/formatters/remove-special-characters';
 import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
@@ -81,7 +81,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         for (const control of this.endpoints.controls) {
             const endpointModel = new EndpointModel();
             if (control.value.displayName.trim() !== '') {
-                const displayNameText = removeSpecialCharacters(control.value.displayName);
+                const displayNameText = RemoveSpecialCharacters(control.value.displayName);
                 endpointModel.displayName = displayNameText;
                 endpointModel.id = control.value.id;
                 endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
