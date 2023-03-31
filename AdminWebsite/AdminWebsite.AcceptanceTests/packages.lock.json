@@ -1037,8 +1037,8 @@
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
-        "resolved": "4.48.1",
-        "contentHash": "AsTnTKgmJqhL1hjZ7TA13TDQVyWdn0vpYwhDMdb1mTg+w5m9AZsacLvmxsUZt03uamZ81pDY78himvXOM//tpw==",
+        "resolved": "4.51.0",
+        "contentHash": "jdLFkx4cbPbQEf8k6YPoAAzPMWHmMJR5bFR7tqOTxpZb0B4nwm7OeeWTTDmUVMy2Vvfdozu5V7ltjUqB2R67oQ==",
         "dependencies": {
           "Microsoft.IdentityModel.Abstractions": "6.22.0"
         }
@@ -2650,7 +2650,7 @@
           "Microsoft.AspNetCore.SpaServices": "[3.1.1, )",
           "Microsoft.AspNetCore.SpaServices.Extensions": "[6.0.9, )",
           "Microsoft.Graph": "[1.21.0, )",
-          "Microsoft.IdentityModel.Clients.ActiveDirectory": "[5.2.8, )",
+          "Microsoft.Identity.Client": "[4.51.0, )",
           "Microsoft.OpenApi": "[1.4.2, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.17.0, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",

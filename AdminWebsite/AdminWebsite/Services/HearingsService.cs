@@ -22,27 +22,14 @@ namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
-            IReadOnlyCollection<ParticipantRequest> participants);
-
-        Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
-            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
-
-        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
-            List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
-
-        Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
-            List<ParticipantRequest> newParticipantList);
-
-        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse);
-
+        void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants);
+        Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
+        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
+        Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<ParticipantRequest> newParticipantList);
+        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
-
-        bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
-
-        (string email, string phone) GetJudgeInformationForUpdate(string otherInformation);
         Task UpdateFailedBookingStatus(Guid hearingId);
+        bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
     }
 
     public class HearingsService : IHearingsService
@@ -78,6 +65,7 @@ namespace AdminWebsite.Services
                 .Select(EditParticipantRequestMapper.MapFrom).ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
             var hearingCase = hearingDetailsResponse.Cases.First();
+            
             var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
 
             return addedParticipant.Any() &&
@@ -87,10 +75,9 @@ namespace AdminWebsite.Services
                    editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
                    editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
                    editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
-                   hearingCase.Name == editHearingRequest.Case.Name &&
                    hearingCase.Number == editHearingRequest.Case.Number;
         }
-
+        
         public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse)
         {
@@ -105,20 +92,7 @@ namespace AdminWebsite.Services
             return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
                    newJudgeOtherInformation != existingJudgeOtherInformation;
         }
-
-        public (string email, string phone) GetJudgeInformationForUpdate(string otherInformation)
-        {
-            string ExtractJudgeInfo(string[] properties, string property) 
-                => Array.IndexOf(properties, property) > -1 ? properties[Array.IndexOf(properties, property) + 1] : null;
-
-            if (String.IsNullOrWhiteSpace(otherInformation)) 
-                return (null, null);
-            
-            var otherInfoProperties = otherInformation.Split('|');
-            return (email: ExtractJudgeInfo(otherInfoProperties, "JudgeEmail"), 
-                    phone: ExtractJudgeInfo(otherInfoProperties, "JudgePhone"));
-        }
-
+        
         public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest,
             HearingDetailsResponse hearingDetailsResponse)
         {
@@ -128,14 +102,13 @@ namespace AdminWebsite.Services
                     .Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
 
-            var ogEnpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
+            var ogEndpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
             var newEndpoints = requestEndpoints.Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
 
-            return ogEnpoints.Count != 0 || newEndpoints.Count != 0;
+            return ogEndpoints.Count != 0 || newEndpoints.Count != 0;
         }
-
-        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants,
-            List<EditParticipantRequest> requestParticipants)
+        
+        public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants, List<EditParticipantRequest> requestParticipants)
         {
             return originalParticipants
                 .Except(requestParticipants, EditParticipantRequest.EditParticipantRequestComparer)
@@ -161,7 +134,9 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
 
-        public async Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant,
+        public async Task<ParticipantRequest> ProcessNewParticipant(
+            Guid hearingId, 
+            EditParticipantRequest participant,
             List<Guid> removedParticipantIds,
             HearingDetailsResponse hearing)
         {

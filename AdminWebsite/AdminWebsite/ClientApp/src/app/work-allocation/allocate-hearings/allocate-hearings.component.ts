@@ -9,6 +9,7 @@ import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock }
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { Constants } from 'src/app/common/constants';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -16,7 +17,12 @@ import { Constants } from 'src/app/common/constants';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
-    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
+    constructor(
+        private route: ActivatedRoute,
+        private fb: FormBuilder,
+        private allocateService: AllocateHearingsService,
+        private datePipe: DatePipe
+    ) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],
@@ -25,6 +31,7 @@ export class AllocateHearingsComponent implements OnInit {
             caseNumber: [''],
             isUnallocated: [false]
         });
+        this.todayDate = new Date();
     }
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
@@ -44,6 +51,8 @@ export class AllocateHearingsComponent implements OnInit {
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
     dropDownUserLabelAllocateTo = 'Allocate to';
+    todayDate: Date;
+    dateFormat = 'yyyy-MM-dd';
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -71,15 +80,27 @@ export class AllocateHearingsComponent implements OnInit {
     searchForHearings(keepExistingMessage: boolean = false) {
         const retrieveDate = (date: any): Date => (date === null || date === '' ? null : new Date(date));
 
-        const fromDate = retrieveDate(this.form.value.fromDate);
-        const toDate = retrieveDate(this.form.value.toDate);
+        let fromDateValue = retrieveDate(this.form.value.fromDate);
+        let toDate = retrieveDate(this.form.value.toDate);
+        if (fromDateValue === null) {
+            fromDateValue = new Date();
+            this.form.patchValue({
+                fromDate: this.datePipe.transform(this.todayDate, this.dateFormat)
+            });
+            toDate = new Date(new Date().setFullYear(this.todayDate.getFullYear() + 1));
+            const dateString = this.datePipe.transform(toDate, this.dateFormat);
+            this.form.patchValue({
+                toDate: dateString
+            });
+        }
+
         const caseNumber = this.form.value.caseNumber;
         const cso = this.csoDropDownValues;
         const caseType = this.caseTypeDropDownValues;
         const isUnallocated = this.form.value.isUnallocated;
 
         this.allocateService
-            .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
+            .getAllocationHearings(fromDateValue, toDate, cso, caseType, caseNumber, isUnallocated)
             .subscribe(result => this.displayResults(result, keepExistingMessage));
     }
 
