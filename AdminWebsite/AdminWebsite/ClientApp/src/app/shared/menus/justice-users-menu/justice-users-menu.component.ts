@@ -6,6 +6,7 @@ import { JusticeUsersService } from '../../../services/justice-users.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-justice-users-menu',
@@ -34,7 +35,7 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.users$ = this.justiceUserService.allUsers$;
+        this.users$ = this.justiceUserService.allUsers$.pipe(map(users => users.filter(user => !user.deleted)));
         super.ngOnInit();
     }
 
