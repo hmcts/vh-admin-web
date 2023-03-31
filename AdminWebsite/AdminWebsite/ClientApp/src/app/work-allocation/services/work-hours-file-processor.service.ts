@@ -154,8 +154,8 @@ export class WorkHoursFileProcessorService {
                 return;
             }
 
-            const startTime = this.parseDate(values[1], values[2]);
-            const endTime = this.parseDate(values[3], values[4]);
+            const startTime = this.parseRawDateString(values[1], values[2]);
+            const endTime = this.parseRawDateString(values[3], values[4]);
 
             if (isNaN(endTime.getTime()) || isNaN(startTime.getTime())) {
                 nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
@@ -183,7 +183,7 @@ export class WorkHoursFileProcessorService {
         return result;
     }
 
-    parseDate(rawDateString: string, rawTimeString: string): Date {
+    parseRawDateString(rawDateString: string, rawTimeString: string): Date {
         let date;
         //check if date is in format DD/MM/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
