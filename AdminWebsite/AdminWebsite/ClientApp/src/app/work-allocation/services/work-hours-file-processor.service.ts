@@ -135,6 +135,10 @@ export class WorkHoursFileProcessorService {
         const numberOfUsernamesToUploadNonWorkHours = userNonWorkAvailabilityRows.length;
 
         userNonWorkAvailabilityRows.forEach((row, index) => {
+            // Do not process a blank row
+            if (row == '\n' || row.trim().length == 0) {
+                return;
+            }
             const values = row.replace(/\r/g, '').split(this.csvDelimiter);
 
             const uploadNonWorkHoursRequest = new UploadNonWorkingHoursRequest();

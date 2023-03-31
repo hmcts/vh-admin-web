@@ -115,6 +115,17 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.fileValidationErrors.length).toBe(1);
             expect(result.fileValidationErrors[0]).toContain('Contains an invalid date');
         });
+
+        it('should not parse empty row in non-working hours file upload', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00\n' +
+                '     ';
+
+            const result = service.processNonWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(0);
+        });
     });
 
     describe('validateDayWorkingHours', () => {
