@@ -13,6 +13,7 @@
           type="date"
           formControlName="fromDate"
           name="fromDate"
+          min="{{ todayDate | date: dateFormat }}"
           max="{{ form.value.toDate }}"
         />
       </div>
