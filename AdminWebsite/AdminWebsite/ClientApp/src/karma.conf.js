@@ -1,6 +1,10 @@
 // Karma configuration file, see link for more information
-// https://karma-runner.github.io/1.0/config/configuration-file.html
-process.env.CHROME_BIN = require('puppeteer').executablePath();
+// https://karma-runner.github.io/6.4/config/configuration-file.html
+if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    process.env.CHROME_BIN = process.env.PUPPETEER_EXECUTABLE_PATH;
+} else {
+    process.env.CHROME_BIN = require('puppeteer').executablePath();
+}
 
 module.exports = function (config) {
     config.set({
@@ -18,13 +22,14 @@ module.exports = function (config) {
             clearContext: false, // leave Jasmine Spec Runner output visible in browser
             jasmine: {
                 //tells jasmine to run specs in semi random order, false is default
-                random: false
+                random: false,
+                failSpecWithNoExpectations: true
             }
         },
         coverageReporter: {
             dir: require('path').join(__dirname, '../coverage'),
             subdir: '.',
-            reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'cobertura' }],
+            reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'cobertura', file: 'coverage.cobertura.xml' }],
             fixWebpackSourcePaths: true
         },
         junitReporter: {
@@ -50,7 +55,7 @@ module.exports = function (config) {
             },
             ChromeHeadlessNoPrompt: {
                 base: 'ChromeHeadless',
-                flags: ['--remote-debugging-port=9222', '--use-fake-ui-for-media-stream', '--mute-audio']
+                flags: ['--remote-debugging-port=9222', '--use-fake-ui-for-media-stream', '--mute-audio', '--no-sandbox']
             }
         },
         singleRun: false

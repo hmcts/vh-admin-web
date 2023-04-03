@@ -15,6 +15,7 @@ import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { Constants } from 'src/app/common/constants';
+import { DatePipe } from '@angular/common';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -58,7 +59,8 @@ describe('AllocateHearingsComponent', () => {
             providers: [
                 FormBuilder,
                 { provide: ActivatedRoute, useValue: activatedRoute },
-                { provide: AllocateHearingsService, useValue: allocateServiceSpy }
+                { provide: AllocateHearingsService, useValue: allocateServiceSpy },
+                DatePipe
             ]
         }).compileComponents();
     });
@@ -182,6 +184,30 @@ describe('AllocateHearingsComponent', () => {
             expect(component.allocationHearingViewModel.originalState.length).toBe(20);
             expect(component.message).toBe('Showing only 20 Records, For more records please apply filter');
             expect(component.displayMessage).toBe(true);
+        });
+
+        it('should call the allocate service and return only future hearings if date range no set', () => {
+            const responseObj: AllocationHearingsResponse[] = [];
+            const today = new Date();
+            for (let i = 0; i < 30; i++) {
+                const hearing = new AllocationHearingsResponse();
+                hearing.hearing_id = i.toString();
+                hearing.scheduled_date_time = today;
+                responseObj.push(hearing);
+            }
+
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
+
+            component.searchForHearings();
+
+            const datePipe = new DatePipe('en-GB');
+
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
+            expect(component.form.value.fromDate).toEqual(datePipe.transform(today, 'yyyy-MM-dd'));
+            expect(component.allocationHearingViewModel.originalState.length).toBe(20);
+            expect(component.message).toBe('Showing only 20 Records, For more records please apply filter');
+            expect(component.displayMessage).toBe(true);
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
         });
     });
 

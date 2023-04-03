@@ -93,7 +93,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
+        this.hearing.audio_recording_required = this.isAudioRecordingRequired();
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
@@ -113,10 +113,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookinConfirmed = this.hearing.status === 'Created';
     }
 
+    isAudioRecordingRequired(): boolean {
+        // CACD hearings should always have recordings set to off
+        if (this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision) {
+            return false;
+        }
+        // Hearings with an interpreter should always have recording set to on
+        if (this.interpreterPresent) {
+            return true;
+        }
+        return this.hearing.audio_recording_required;
+    }
+
     private confirmRemoveParticipant() {
         const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
-        const isNotLast = filteredParticipants && filteredParticipants.length > 1;
         const title = participant && participant.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
 
