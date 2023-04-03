@@ -29,12 +29,30 @@
         />
       </div>
       <div class="govuk-grid-column-one-third">
-        <app-justice-users-menu #csoFilterMenu (selectedEmitter)="onJusticeUserForFilterSelected($event)"></app-justice-users-menu>
+        <app-select
+          #selectFilterCso
+          (selectionChange)="onJusticeUserForFilterSelected($event)"
+          [items]="justiceUsersSelectOptions"
+          ariaLabel="User list"
+          placeholder="Select users"
+          title="Allocated CSO"
+          multiple
+          [selectedEntityIds]="selectedJusticeUserIds"
+        ></app-select>
       </div>
     </div>
     <div class="govuk-grid-row govuk-!-margin-bottom-4">
       <div class="govuk-grid-column-one-third">
-        <app-case-types-menu (selectedEmitter)="onCaseTypeSelected($event)"></app-case-types-menu>
+        <app-select
+          #selectCaseType
+          (selectionChange)="onCaseTypeSelected($event)"
+          [items]="caseTypesSelectOptions"
+          ariaLabel="Case types list"
+          placeholder="Select case types"
+          title="Case types"
+          multiple
+          [selectedEntityIds]="selectedCaseTypeIds"
+        ></app-select>
       </div>
       <div class="govuk-grid-column-one-third">
         <label class="govuk-label" for="case-number-entry">Case number</label>
@@ -58,13 +76,14 @@
     <div class="actions-and-message">
       <div>
         <div id="user-menu" class="govuk-grid-column-one-half">
-          <app-justice-users-menu
-            #csoAllocatedMenu
-            [multiSelect]="false"
-            [dropDownLabel]="dropDownUserLabelAllocateTo"
-            (selectedEmitter)="onJusticeUserForAllocationSelected($event)"
-          >
-          </app-justice-users-menu>
+          <app-select
+            #selectAllocateCso
+            (selectionChange)="onJusticeUserForAllocationSelected($event)"
+            [items]="justiceUsersSelectOptions"
+            ariaLabel="User list"
+            placeholder="Select user"
+            title="Allocate to"
+          ></app-select>
         </div>
 
         <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold govuk-grid-column-one-half govuk-!-padding-top-6">
