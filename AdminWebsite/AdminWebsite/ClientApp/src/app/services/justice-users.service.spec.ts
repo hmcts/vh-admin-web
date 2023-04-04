@@ -1,5 +1,6 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { combineLatest, of } from 'rxjs';
+import { count, delay, switchMap, take } from 'rxjs/operators';
 import {
     AddNewJusticeUserRequest,
     BHClient,
@@ -10,10 +11,12 @@ import {
 } from './clients/api-client';
 
 import { JusticeUsersService } from './justice-users.service';
+import { Logger } from './logger';
 
 describe('JusticeUsersService', () => {
     let service: JusticeUsersService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>([
@@ -24,53 +27,115 @@ describe('JusticeUsersService', () => {
             'restoreJusticeUser'
         ]);
 
-        TestBed.configureTestingModule({ providers: [{ provide: BHClient, useValue: clientApiSpy }] });
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: BHClient, useValue: clientApiSpy },
+                { provide: Logger, useValue: loggerSpy }
+            ]
+        });
         service = TestBed.inject(JusticeUsersService);
     });
 
-    describe('retrieveJusticeUserAccounts', () => {
-        it('should call api when retrieving justice user accounts', (done: DoneFn) => {
+    describe('`users$` observable', () => {
+        it('should emit users returned from api', (done: DoneFn) => {
             const users: JusticeUserResponse[] = [
                 new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com' }),
                 new JusticeUserResponse({ id: '456', contact_email: 'user2@test.com' }),
                 new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' })
             ];
             clientApiSpy.getUserList.and.returnValue(of(users));
-            service.retrieveJusticeUserAccounts().subscribe(result => {
+            service.allUsers$.subscribe(result => {
                 expect(result).toEqual(users);
                 done();
             });
         });
 
-        it('should not call api when retrieving justice user accounts and users have been already been cached', (done: DoneFn) => {
+        it('should not make additional api requests when additional observers subscribe', (done: DoneFn) => {
+            clientApiSpy.getUserList.and.returnValue(of([]));
+
+            combineLatest([service.allUsers$, service.allUsers$])
+                .pipe(
+                    delay(1000),
+                    switchMap(x => service.allUsers$)
+                )
+                .subscribe(() => {
+                    expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(1);
+                    done();
+                });
+        });
+    });
+
+    describe('search()', () => {
+        it('should trigger an emission from $users observable each time it is called', (done: DoneFn) => {
+            // arrange
+            clientApiSpy.getUserList.and.returnValue(of([]));
+
+            //  after calling search() two times, we should see 2 emissions from users$
+            service.filteredUsers$.pipe(take(2), count()).subscribe(c => {
+                // assert
+                expect(c).toBe(2);
+                done();
+            });
+
+            // act
+            service.search('');
+            service.search('');
+        });
+
+        it('should apply a filter to the users collection', () => {
+            // arrange
             const users: JusticeUserResponse[] = [
-                new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com' }),
-                new JusticeUserResponse({ id: '456', contact_email: 'user2@test.com' }),
-                new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' })
+                new JusticeUserResponse({
+                    id: '123',
+                    contact_email: 'user1@test.com',
+                    first_name: 'Test',
+                    lastname: 'Test',
+                    username: 'Test'
+                }),
+                new JusticeUserResponse({
+                    id: '456',
+                    contact_email: 'user2@test.com',
+                    first_name: 'Another',
+                    lastname: 'Another',
+                    username: 'Another'
+                }),
+                new JusticeUserResponse({
+                    id: '789',
+                    contact_email: 'user3@test.com',
+                    first_name: 'Last',
+                    lastname: 'Last',
+                    username: 'Last'
+                })
             ];
-            service['cache$'] = of(users);
-            clientApiSpy.getUserList.and.returnValue(of(users));
-            service.retrieveJusticeUserAccounts().subscribe(result => {
-                expect(result).toEqual(users);
-                expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(0);
-                done();
-            });
-        });
 
-        it('should call api and return user list', (done: DoneFn) => {
-            const users: JusticeUserResponse[] = [new JusticeUserResponse({ id: '123', contact_email: 'user1@test.com' })];
-            const term = 'user1';
-            clientApiSpy.getUserList.and.returnValue(of(users));
-            service.retrieveJusticeUserAccountsNoCache(term).subscribe(result => {
-                expect(result).toEqual(users);
-                expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(1);
+            // act
+            const filteredUsers = service.applyFilter('Test', users);
+
+            // assert
+            expect(filteredUsers[0].first_name).toBe('Test');
+        });
+    });
+
+    describe('refresh()', () => {
+        it('should trigger another emission from $users observable', (done: DoneFn) => {
+            // arrange
+            clientApiSpy.getUserList.and.returnValue(of([]));
+
+            // users$ will emit initially - after calling refresh() two more times, we should see 3 emissions from users$
+            service.allUsers$.pipe(take(3), count()).subscribe(c => {
+                // assert
+                expect(c).toBe(3);
                 done();
             });
+
+            // act
+            service.refresh();
+            service.refresh();
         });
     });
 
     describe('addNewJusticeUser', () => {
-        it('should call the api to save a new user', fakeAsync(() => {
+        it('should call the api to save a new user & again to get the users list', (done: DoneFn) => {
             const username = 'john@doe.com';
             const firstName = 'john';
             const lastName = 'doe';
@@ -88,10 +153,8 @@ describe('JusticeUsersService', () => {
             });
 
             clientApiSpy.addNewJusticeUser.and.returnValue(of(newUser));
-            let result: JusticeUserResponse;
+            clientApiSpy.getUserList.and.returnValue(of([]));
 
-            service.addNewJusticeUser(username, firstName, lastName, telephone, role).subscribe(data => (result = data));
-            tick();
             const request = new AddNewJusticeUserRequest({
                 username: username,
                 first_name: firstName,
@@ -99,13 +162,20 @@ describe('JusticeUsersService', () => {
                 contact_telephone: telephone,
                 role: role
             });
-            expect(result).toEqual(newUser);
-            expect(clientApiSpy.addNewJusticeUser).toHaveBeenCalledWith(request);
-        }));
+
+            combineLatest([service.allUsers$, service.addNewJusticeUser(username, firstName, lastName, telephone, role)]).subscribe(
+                ([_, userResponse]: [JusticeUserResponse[], JusticeUserResponse]) => {
+                    expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
+                    expect(userResponse).toEqual(newUser);
+                    expect(clientApiSpy.addNewJusticeUser).toHaveBeenCalledWith(request);
+                    done();
+                }
+            );
+        });
     });
 
     describe('editJusticeUser', () => {
-        it('should call the api to edit an existing user', fakeAsync(() => {
+        it('should call the api to edit an existing user & again to get the users list', (done: DoneFn) => {
             const id = '123';
             const username = 'john@doe.com';
             const firstName = 'john';
@@ -123,26 +193,36 @@ describe('JusticeUsersService', () => {
             });
 
             clientApiSpy.editJusticeUser.and.returnValue(of(existingUser));
-            let result: JusticeUserResponse;
+            clientApiSpy.getUserList.and.returnValue(of([]));
 
-            service.editJusticeUser(id, username, role).subscribe(data => (result = data));
-            tick();
             const request = new EditJusticeUserRequest({
                 id,
                 username,
                 role
             });
-            expect(result).toEqual(existingUser);
-            expect(clientApiSpy.editJusticeUser).toHaveBeenCalledWith(request);
-        }));
+
+            combineLatest([service.allUsers$, service.editJusticeUser(id, username, role)]).subscribe(
+                ([_, result]: [JusticeUserResponse[], JusticeUserResponse]) => {
+                    expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
+                    expect(result).toEqual(existingUser);
+                    expect(clientApiSpy.editJusticeUser).toHaveBeenCalledWith(request);
+                    done();
+                }
+            );
+        });
     });
 
     describe('deleteJusticeUser', () => {
-        it('should call the api to delete the user', () => {
+        it('should call the api to delete the user & again to get the users list', (done: DoneFn) => {
             clientApiSpy.deleteJusticeUser.and.returnValue(of(''));
+            clientApiSpy.getUserList.and.returnValue(of([]));
+
             const id = '123';
-            service.deleteJusticeUser(id).subscribe();
-            expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
+            combineLatest([service.allUsers$, service.deleteJusticeUser(id)]).subscribe(() => {
+                expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
+                expect(clientApiSpy.deleteJusticeUser).toHaveBeenCalledWith(id);
+                done();
+            });
         });
     });
 
