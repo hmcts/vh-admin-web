@@ -201,6 +201,16 @@ describe('EndpointsComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });
 
+    it('it should remove special characters from displayName when entered', () => {
+        // Given
+        component.ngOnInit();
+        component.endpoints.controls[0].get('displayName').setValue('Adam^%<>');
+        // When
+        component.saveEndpoints();
+        // Then
+        expect(component.hearing.endpoints[0].displayName).toBe('Adam');
+    });
+
     it('it should filter  "Representative" user-types only as valid defenceAdvocates for JVM', () => {
         // arrange
         newHearing.participants = [

@@ -92,10 +92,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             firstCase = new CaseModel();
         }
         this.form = this.fb.group({
-            caseName: [firstCase.name, [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
+            caseName: [
+                firstCase.name,
+                [Validators.required, Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]
+            ],
             caseNumber: [
                 firstCase.number,
-                [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
+                [Validators.required, Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
             hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
