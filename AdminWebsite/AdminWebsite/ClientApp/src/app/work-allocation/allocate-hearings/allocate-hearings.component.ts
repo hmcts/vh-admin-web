@@ -12,6 +12,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingPersistService } from 'src/app/services/bookings-persist.service';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -89,14 +90,21 @@ export class AllocateHearingsComponent implements OnInit {
         this.selectedJusticeUserIds = this.bookingPersistService.selectedUsers;
         this.selectedCaseTypeIds = this.bookingPersistService.selectedCaseTypes;
 
-        this.justiceUserService.retrieveJusticeUserAccounts().subscribe((data: JusticeUserResponse[]) => {
-            this.justiceUsersSelectOptions = data.map(item => ({
-                label: item.full_name,
-                entityId: item.id,
-                data: item.username,
-                ariaLabel: item.first_name
-            }));
-        });
+        this.justiceUserService.allUsers$
+            .pipe(
+                map(users => users.filter(user => !user.deleted)),
+                tap(() => {
+                    this.selectFilterCso.clear();
+                })
+            )
+            .subscribe((data: JusticeUserResponse[]) => {
+                this.justiceUsersSelectOptions = data.map(item => ({
+                    label: item.full_name,
+                    entityId: item.id,
+                    data: item.username,
+                    ariaLabel: item.first_name
+                }));
+            });
 
         const distinct = (value, index, array) => array.indexOf(value) === index;
         this.videoHearingService.getHearingTypes().subscribe((data: HearingTypeResponse[]) => {

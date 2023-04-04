@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { FormBuilder } from '@angular/forms';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { of, throwError } from 'rxjs';
-import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
+import { BehaviorSubject, of, throwError } from 'rxjs';
+import { AllocationHearingsResponse, BookHearingException, JusticeUserResponse } from '../../services/clients/api-client';
 import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
@@ -24,13 +24,20 @@ describe('AllocateHearingsComponent', () => {
     let fixture: ComponentFixture<AllocateHearingsComponent>;
     let activatedRoute: ActivatedRouteStub;
     let allocateServiceSpy: jasmine.SpyObj<AllocateHearingsService>;
+    let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
     let testData: AllocationHearingsResponse[];
 
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
     const hearingServiceMock = jasmine.createSpyObj('VideoHearingsService', ['getUsers', 'getHearingTypes']);
-    const justiceUsersServiceMock = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
-
+    const allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
     beforeEach(async () => {
+        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
+            'allUsers$',
+            'filteredUsers$',
+            'search'
+        ]);
+        justiceUsersServiceSpy.allUsers$ = allUsers$;
+
         testData = [
             new AllocationHearingsResponse({
                 hearing_id: '1',
@@ -60,14 +67,14 @@ describe('AllocateHearingsComponent', () => {
             declarations: [AllocateHearingsComponent, MinutesToHoursPipe],
             providers: [
                 FormBuilder,
+                DatePipe,
+                HttpClient,
+                HttpHandler,
                 { provide: ActivatedRoute, useValue: activatedRoute },
                 { provide: AllocateHearingsService, useValue: allocateServiceSpy },
-                DatePipe,
-                { provide: JusticeUsersService, useValue: justiceUsersServiceMock },
+                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy },
                 { provide: VideoHearingsService, useValue: hearingServiceMock },
-                { provide: Logger, useValue: loggerMock },
-                HttpClient,
-                HttpHandler
+                { provide: Logger, useValue: loggerMock }
             ],
             imports: [SharedModule]
         }).compileComponents();
@@ -83,7 +90,6 @@ describe('AllocateHearingsComponent', () => {
     describe('ngOnInit', () => {
         let searchForHearingsSpy;
 
-        justiceUsersServiceMock.retrieveJusticeUserAccounts.and.returnValue(of([]));
         hearingServiceMock.getHearingTypes.and.returnValue(of(['Type1', 'Type2']));
 
         beforeEach(() => {

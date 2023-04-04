@@ -5,6 +5,8 @@ import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { BehaviorSubject } from 'rxjs';
+import { JusticeUserResponse } from '../../../services/clients/api-client';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
@@ -12,8 +14,8 @@ describe('JusticeUsersMenuComponent', () => {
     let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
-
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['allUsers$']);
+        justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
             providers: [
