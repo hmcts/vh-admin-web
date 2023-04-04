@@ -99,6 +99,7 @@ namespace AdminWebsite
             }
 
             app.UseAuthentication();
+            app.UseMiddleware<UserClaimsMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
             // HTTP Response Headers
