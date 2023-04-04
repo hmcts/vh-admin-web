@@ -1,0 +1,24 @@
+<div>
+  <label class="govuk-label" for="select-menu">{{ title }}</label>
+  <ng-select
+    id="select-menu"
+    class="custom"
+    [items]="items"
+    bindValue="entityId"
+    bindLabel="label"
+    [(ngModel)]="selectedEntityIds"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    [multiple]="multiple"
+    [attr.aria-label]="ariaLabel"
+    [closeOnSelect]="false"
+    [clearSearchOnAdd]="true"
+    [selectOnTab]="true"
+    (change)="handleOnChange()"
+  >
+    <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+      <input id="item-{{ index }}" type="checkbox" [checked]="item$.selected" [attr.aria-label]="'User ' + item.ariaLabel || item.id" />
+      {{ item.label || item.id }}
+    </ng-template>
+  </ng-select>
+</div>

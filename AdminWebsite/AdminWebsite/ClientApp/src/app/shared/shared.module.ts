@@ -20,6 +20,7 @@ import { JusticeUsersMenuComponent } from './menus/justice-users-menu/justice-us
 import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
+import { SelectComponent } from './select';
 
 @NgModule({
     imports: [
@@ -44,7 +45,8 @@ import { TooltipDirective } from './directives/tooltip.directive';
         JusticeUsersMenuComponent,
         VenuesMenuComponent,
         MinutesToHoursPipe,
-        TooltipDirective
+        TooltipDirective,
+        SelectComponent
     ],
     providers: [WindowRef, WindowScrolling],
     exports: [
@@ -62,7 +64,8 @@ import { TooltipDirective } from './directives/tooltip.directive';
         JusticeUsersMenuComponent,
         VenuesMenuComponent,
         MinutesToHoursPipe,
-        TooltipDirective
+        TooltipDirective,
+        SelectComponent
     ]
 })
 export class SharedModule {
