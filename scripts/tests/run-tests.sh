@@ -5,8 +5,6 @@ configuration=Release
 
 exclusions="[Testing.Common]*,[AdminWebsite.Common]AdminWebsite.Common.*,[AdminWebsite]AdminWebsite.Security.*,[AdminWebsite]AdminWebsite.Configuration.*,[AdminWebsite]AdminWebsite.Pages.*,[AdminWebsite.Testing.Common]*"
 
-dotnet build AdminWebsite/AdminWebsite.sln -c $configuration
-
 # Script is for docker compose tests where the script is at the root level
 dotnet test AdminWebsite/AdminWebsite.UnitTests/AdminWebsite.UnitTests.csproj -c $configuration --results-directory ./TestResults --logger "trx;LogFileName=AdminWebsite-Unit-Tests-TestResults.trx" \
     "/p:CollectCoverage=true" \
