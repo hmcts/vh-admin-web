@@ -29,7 +29,12 @@ module.exports = function (config) {
         coverageReporter: {
             dir: require('path').join(__dirname, '../coverage'),
             subdir: '.',
-            reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'cobertura', file: 'coverage.cobertura.xml' }],
+            reporters: [
+                { type: 'html' },
+                { type: 'lcovonly' },
+                { type: 'cobertura', file: 'coverage.cobertura.xml' },
+                { type: 'cobertura', file: 'cobertura-coverage.xml' }
+            ],
             fixWebpackSourcePaths: true
         },
         junitReporter: {
