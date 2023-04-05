@@ -3,7 +3,6 @@ set -x
 
 rm -d -r ${PWD}/Coverage
 rm -d -r ${PWD}/TestResults
-rm -d -r ${PWD}/AdminWebsite/AdminWebsite/ClientApp/node_modules
 
 configuration=Release
 
@@ -26,5 +25,8 @@ dotnet test AdminWebsite/AdminWebsite.IntegrationTests/AdminWebsite.IntegrationT
 
 # Run the Jasmine tests
 npm install --prefix AdminWebsite/AdminWebsite/ClientApp
-npm run --prefix AdminWebsite/AdminWebsite/ClientApp lint
+npm run --prefix VideoWeb/VideoWeb/ClientApp lint || {
+    echo 'Linting failed'
+    exit 1
+}
 npm run --prefix AdminWebsite/AdminWebsite/ClientApp test-once-ci
