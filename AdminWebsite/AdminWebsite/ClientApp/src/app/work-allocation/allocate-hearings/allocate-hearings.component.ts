@@ -93,9 +93,7 @@ export class AllocateHearingsComponent implements OnInit {
         this.justiceUserService.allUsers$
             .pipe(
                 map(users => users.filter(user => !user.deleted)),
-                tap(() => {
-                    this.selectFilterCso.clear();
-                })
+                tap(() => this.selectFilterCso?.clear())
             )
             .subscribe((data: JusticeUserResponse[]) => {
                 this.justiceUsersSelectOptions = data.map(item => ({
