@@ -118,7 +118,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
         this.showAddStaffMemberFld = new FormControl(!!staffMemberExists);
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
-            validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
+            validators: [Validators.required, Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)],
             updateOn: 'blur'
         });
         this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail ?? this.judge?.contact_email, {

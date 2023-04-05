@@ -145,7 +145,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             hearingDurationHour: this.durationHourControl,
             hearingDurationMinute: this.durationMinuteControl,
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
-            courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
+            courtRoom: [room, [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],
             endHearingDate: [endHearingDateParsed],
             multiDaysRange: [multiDaysRange]
