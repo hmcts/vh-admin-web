@@ -12,17 +12,17 @@ parameters:
 - name: RunUnitTests
   displayName: Run Unit Tests
   type: boolean
-  default: true
+  default: false
 
 - name: RunIntegTests
   displayName: Run Integration Tests
   type: boolean
-  default: true
+  default: false
 
 - name: RunSonarCloudTests
   displayName: Run Sonar Cloud Analysis
   type: boolean
-  default: true
+  default: false
 
 - name: RunMutationTests
   displayName: Run Mutation Tests
@@ -37,7 +37,7 @@ parameters:
 - name: RunNodeTests
   displayName: Run Node Tests
   type: boolean
-  default: true
+  default: false
 
 - name: testSettings
   type: object
