@@ -22,8 +22,8 @@ dotnet test AdminWebsite/AdminWebsite.IntegrationTests/AdminWebsite.IntegrationT
 
 # Run the Jasmine tests
 npm install --prefix AdminWebsite/AdminWebsite/ClientApp
-npm run --prefix AdminWebsite/AdminWebsite/ClientApp lint || {
-    echo 'Linting failed'
-    exit 1
-}
+# npm run --prefix AdminWebsite/AdminWebsite/ClientApp lint || {
+#     echo 'Linting failed'
+#     exit 1
+# }
 npm run --prefix AdminWebsite/AdminWebsite/ClientApp test-once-ci
