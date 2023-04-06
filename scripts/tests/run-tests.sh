@@ -20,6 +20,10 @@ dotnet test AdminWebsite/AdminWebsite.IntegrationTests/AdminWebsite.IntegrationT
     "/p:MergeWith=${PWD}/Coverage/coverage.json" \
     "/p:CoverletOutputFormat=\"opencover,json,cobertura,lcov\""
 
+# replace the /app/AdminWebsite/ with nothing in coverage files in attempt to index entries
+# sed -i "s|\/app\/AdminWebsite\/||g" "${PWD}/Coverage/coverage.opencover.xml"
+# cat "${PWD}/Coverage/coverage.opencover.xml"
+
 # # Run the Jasmine tests
 # npm install --prefix AdminWebsite/AdminWebsite/ClientApp
 # npm run --prefix AdminWebsite/AdminWebsite/ClientApp lint || {
