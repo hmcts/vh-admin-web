@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: vh-sonar-dotnet-fix
+      ref: master
       endpoint: hmcts
 
 pool:
@@ -58,7 +58,6 @@ stages:
                 sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
                 sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
                 sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*
-                sonar.verbose=true
 
   #####################################################
   # Build Docker Image. ###############################
