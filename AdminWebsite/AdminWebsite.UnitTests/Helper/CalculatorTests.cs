@@ -44,4 +44,14 @@ public class CalculatorTests
         
         Assert.AreEqual(2, result);
     }
+    
+    [Test]
+    public void should_divide_by_zero()
+    {
+        var sut = new Calculator();
+        
+        var result = sut.Divide(4, 0);
+        
+        Assert.AreEqual(0, result);
+    }
 }
