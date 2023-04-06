@@ -24,4 +24,24 @@ public class CalculatorTests
 
         Assert.AreEqual(1, result);
     }
+
+    [Test]
+    public void should_multiply()
+    {
+        var sut = new Calculator();
+        
+        var result = sut.Multiply(2, 2);
+        
+        Assert.AreEqual(4, result);
+    }
+    
+    [Test]
+    public void should_divide()
+    {
+        var sut = new Calculator();
+        
+        var result = sut.Divide(4, 2);
+        
+        Assert.AreEqual(2, result);
+    }
 }
