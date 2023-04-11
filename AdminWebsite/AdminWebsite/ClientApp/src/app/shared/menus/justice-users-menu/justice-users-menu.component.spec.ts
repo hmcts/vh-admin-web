@@ -4,9 +4,9 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import { of, throwError } from 'rxjs';
-import { JusticeUserResponse } from '../../../services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { BehaviorSubject } from 'rxjs';
+import { JusticeUserResponse } from '../../../services/clients/api-client';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
@@ -14,9 +14,8 @@ describe('JusticeUsersMenuComponent', () => {
     let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
-        justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of([new JusticeUserResponse()]));
-
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['allUsers$']);
+        justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
             providers: [
@@ -52,24 +51,6 @@ describe('JusticeUsersMenuComponent', () => {
         it('should call base enable function, to disable this component', () => {
             component.enabled(false);
             expect(component.form.controls[component.formGroupName].enabled).toEqual(false);
-        });
-    });
-
-    describe('loadItems', () => {
-        it('should call video hearing service', () => {
-            const expectedResponse = [new JusticeUserResponse()];
-            component.loadItems();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
-            expect(component.users).toEqual(expectedResponse);
-        });
-
-        it('should call video hearing service, and catch thrown exception', () => {
-            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(throwError({ status: 404 }));
-
-            const handleListErrorSpy = spyOn(component, 'handleListError');
-            component.loadItems();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
-            expect(handleListErrorSpy).toHaveBeenCalled();
         });
     });
 });
