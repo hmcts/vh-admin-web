@@ -41,12 +41,14 @@ import { of } from 'rxjs';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HearingSearchResultsComponent } from './get-audio-file/get-audio-file-vh/hearing-search-results/hearing-search-results.component';
 import { LaunchDarklyService } from './services/launch-darkly.service';
+import { UserIdentityService } from './services/user-identity.service';
 
 describe('app routing', () => {
     let location: Location;
     let router: Router;
     let fixture: ComponentFixture<DashboardComponent>;
-    let oidcSecurityService: MockOidcSecurityService;
+    const oidcSecurityService = new MockOidcSecurityService();
+    const UserIdentityServiceSpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
@@ -89,7 +91,8 @@ describe('app routing', () => {
                 AuthGuard,
                 AdminGuard,
                 { provide: ChangesGuard, useClass: MockChangesGuard },
-                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: OidcSecurityService, useValue: oidcSecurityService },
+                { provide: UserIdentityService, useValue: UserIdentityServiceSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 HttpClient,
                 HttpHandler,
@@ -103,11 +106,23 @@ describe('app routing', () => {
 
         router = TestBed.inject(Router);
         location = TestBed.inject(Location);
-        oidcSecurityService = new MockOidcSecurityService();
     });
 
-    it('it should navigate to login', fakeAsync(() => {
+    it('it should navigate to login, if not authenticated', fakeAsync(() => {
         oidcSecurityService.setAuthenticated(false);
+        router.navigate(['/dashboard']);
+        tick();
+        expect(location.path()).toBe('/login');
+    }));
+
+    it('it should navigate to unauthorised, if not correct role', fakeAsync(() => {
+        oidcSecurityService.setAuthenticated(true);
+        UserIdentityServiceSpy.getUserInformation.and.returnValue(
+            of({
+                is_vh_officer_administrator_role: false,
+                is_case_administrator: false
+            })
+        );
         router.navigate(['/dashboard']);
         tick();
         expect(location.path()).toBe('/unauthorised');

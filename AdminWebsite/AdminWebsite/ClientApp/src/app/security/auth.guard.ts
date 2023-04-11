@@ -4,20 +4,22 @@ import { AuthenticatedResult, OidcSecurityService } from 'angular-auth-oidc-clie
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PageUrls } from '../shared/page-url.constants';
+import { Logger } from '../services/logger';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private oidcSecurityService: OidcSecurityService, private router: Router) {}
+    private readonly loggerPrefix = '[AuthorizationGuard] -';
+    constructor(private oidcSecurityService: OidcSecurityService, private router: Router, private logger: Logger) {}
 
     canActivate(): Observable<boolean> {
         return this.oidcSecurityService.isAuthenticated$.pipe(
             map((result: AuthenticatedResult) => {
-                console.log('[AuthorizationGuard] - canActivate isAuthorized: ' + result.isAuthenticated);
                 if (!result.isAuthenticated) {
+                    this.logger.warn(`${this.loggerPrefix}- canActivate isAuthorized: ` + result.isAuthenticated);
                     this.router.navigate([`/${PageUrls.Login}`]);
                     return false;
                 }
-
+                this.logger.debug(`${this.loggerPrefix}- canActivate isAuthorized: ` + result.isAuthenticated);
                 return true;
             })
         );
