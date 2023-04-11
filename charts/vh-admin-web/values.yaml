@@ -18,6 +18,8 @@ java:
       secrets:
         - applicationinsights--instrumentationkey
         - azuread--tenantid
+        - dom1--tenant--id
+        - dom1--adminweb--clientid
         - name: launchdarkly-client-id
           alias: VHSERVICES--LAUNCHDARKLYCLIENTID
     vh-admin-web:
