@@ -4,11 +4,17 @@ import { VideoHearingsService } from '../services/video-hearings.service';
 import { Observable } from 'rxjs';
 import { FeatureFlagService } from '../services/feature-flag.service';
 import { first } from 'rxjs/operators';
+import { Logger } from '../services/logger';
 
 @Injectable()
 export class LastMinuteAmendmentsGuard implements CanActivate {
     eJudFeatureFlag: boolean;
-    constructor(private videoHearingsService: VideoHearingsService, private router: Router, private featureService: FeatureFlagService) {
+    constructor(
+        private videoHearingsService: VideoHearingsService,
+        private router: Router,
+        private featureService: FeatureFlagService,
+        private logger: Logger
+    ) {
         featureService
             .getFeatureFlagByName('EJudFeature')
             .pipe(first())
@@ -24,6 +30,7 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
                 return true;
             }
             this.router.navigate(['/summary']);
+            this.logger.warn('[LastMinuteGuard] - canActivate: False');
             return false;
         } else {
             return true;
