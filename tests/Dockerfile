@@ -4,7 +4,7 @@ WORKDIR /app
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
 
-# # Install NodeJS and chromium
+# Install NodeJS and chromium
 RUN apt-get -y update \
     && apt-get install -y curl \
     && curl -sL https://deb.nodesource.com/setup_18.x | bash - \ 
