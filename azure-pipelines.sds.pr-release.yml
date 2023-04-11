@@ -54,7 +54,7 @@ stages:
               nodeTestResultFolder: $(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp
               sonarExtraProperties: |
                 sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
-                sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+                sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
                 sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
                 sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
                 sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*

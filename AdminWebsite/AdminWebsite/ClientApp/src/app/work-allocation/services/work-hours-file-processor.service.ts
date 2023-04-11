@@ -136,7 +136,7 @@ export class WorkHoursFileProcessorService {
 
         userNonWorkAvailabilityRows.forEach((row, index) => {
             // Do not process a blank row
-            if (row == '\n' || row.trim().length == 0) {
+            if (row === '\n' || row.trim().length === 0) {
                 return;
             }
             const values = row.replace(/\r/g, '').split(this.csvDelimiter);
@@ -191,10 +191,10 @@ export class WorkHoursFileProcessorService {
         let date;
         //check if date is in format DD/MM/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
-            let spiltStartDate = rawDateString.split('/');
-            let day = spiltStartDate[0];
-            let month = spiltStartDate[1];
-            let year = spiltStartDate[2];
+            const spiltStartDate = rawDateString.split('/');
+            const day = spiltStartDate[0];
+            const month = spiltStartDate[1];
+            const year = spiltStartDate[2];
             date = year + '-' + month + '-' + day;
         }
         //check if date is in format YYYY-MM-DD
