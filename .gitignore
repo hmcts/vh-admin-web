@@ -130,8 +130,6 @@ _TeamCity*
 
 # DotCover is a Code Coverage Tool
 *.dotCover
-*Test_Report.html
-*_VH_Test_Report
 
 # AxoCover is a Code Coverage Tool
 .axoCover/*
