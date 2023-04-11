@@ -53,6 +53,7 @@ namespace AdminWebsite
         {
             Settings = Configuration.Get<Settings>();
 
+            services.Configure<Dom1AdConfiguration>(options => Configuration.Bind(Dom1AdConfiguration.ConfigSectionKey, options));
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
