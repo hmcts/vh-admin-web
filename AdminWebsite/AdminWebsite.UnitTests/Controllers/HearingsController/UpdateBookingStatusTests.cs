@@ -7,7 +7,7 @@ using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helpers;
+using AdminWebsite.UnitTests.Helper;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Client;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
