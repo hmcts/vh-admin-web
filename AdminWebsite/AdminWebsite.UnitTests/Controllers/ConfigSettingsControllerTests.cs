@@ -12,17 +12,17 @@ namespace AdminWebsite.UnitTests.Controllers
     public class ConfigSettingsControllerTests
     {
         [Test]
-        public void should_return_settings_when_dom1_config_is_not_identical_to_vh()
+        public void should_return_dom1_idp_settings_when_dom1_config_is_enabled()
         {
-            var azureAdConfiguration = new AzureAdConfiguration
+            var vhAdConfiguration = new AzureAdConfiguration
             {
-                ClientId = "ClientId", 
-                TenantId = "TenantId",
-                ClientSecret = "ClientSecret",
+                ClientId = "VHClientId", 
+                TenantId = "VHTenantId",
+                ClientSecret = "VHClientSecret",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = "azureAdResourceId"
+                ResourceId = "VHazureAdResourceId"
             };
             
             var dom1AdConfiguration = new Dom1AdConfiguration()
@@ -32,7 +32,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null
+                ResourceId = null,
+                Enabled = true
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -43,7 +44,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            var configSettingsController = InitController(dom1AdConfiguration, vhAdConfiguration, kinlyConfiguration, testSettings);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
@@ -59,27 +60,28 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_return_response_with_settings_for_vh_resource()
+        public void should_return_vh_idp_settings_when_dom1_config_is_not_enabled()
         {
-            var azureAdConfiguration = new AzureAdConfiguration
+            var vhAdConfiguration = new AzureAdConfiguration
             {
-                ClientId = "ClientId", 
-                TenantId = "TenantId",
-                ClientSecret = "ClientSecret",
+                ClientId = "VHClientId", 
+                TenantId = "VHTenantId",
+                ClientSecret = "VHClientSecret",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = "azureAdResourceId"
+                ResourceId = "VHazureAdResourceId"
             };
             
             var dom1AdConfiguration = new Dom1AdConfiguration()
             {
-                ClientId = "ClientId", 
-                TenantId = "TenantId",
+                ClientId = "DOM1ClientId", 
+                TenantId = "DOM1TenantId",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null
+                ResourceId = null,
+                Enabled = false
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -90,23 +92,23 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-            var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            var configSettingsController = InitController(dom1AdConfiguration, vhAdConfiguration, kinlyConfiguration, testSettings);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
             
-            clientSettings.ClientId.Should().Be(dom1AdConfiguration.ClientId);
-            clientSettings.TenantId.Should().Be(dom1AdConfiguration.TenantId);
-            clientSettings.RedirectUri.Should().Be(dom1AdConfiguration.RedirectUri);
-            clientSettings.PostLogoutRedirectUri.Should().Be(dom1AdConfiguration.PostLogoutRedirectUri);
-            clientSettings.ResourceId.Should().Be(azureAdConfiguration.ResourceId);
+            clientSettings.ClientId.Should().Be(vhAdConfiguration.ClientId);
+            clientSettings.TenantId.Should().Be(vhAdConfiguration.TenantId);
+            clientSettings.RedirectUri.Should().Be(vhAdConfiguration.RedirectUri);
+            clientSettings.PostLogoutRedirectUri.Should().Be(vhAdConfiguration.PostLogoutRedirectUri);
+            clientSettings.ResourceId.Should().Be(vhAdConfiguration.ResourceId);
             clientSettings.ConferencePhoneNumber.Should().Be(kinlyConfiguration.ConferencePhoneNumber);
             clientSettings.JoinByPhoneFromDate.Should().Be(kinlyConfiguration.JoinByPhoneFromDate);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
 
         }
         
-        private ConfigSettingsController InitController(Dom1AdConfiguration dom1AdConfiguration,
+        private static ConfigSettingsController InitController(Dom1AdConfiguration dom1AdConfiguration,
             AzureAdConfiguration azureAdConfiguration, KinlyConfiguration kinlyConfiguration,
             TestUserSecrets testSettings)
         {
