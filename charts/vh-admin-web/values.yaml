@@ -18,7 +18,6 @@ java:
       secrets:
         - applicationinsights--instrumentationkey
         - azuread--tenantid
-        - dom1--tenantid
         - name: dom1--tenant--id
           alias: DOM1--TenantId
         - name: dom1--adminweb--clientid
