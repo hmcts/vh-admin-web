@@ -36,7 +36,9 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             // Arrange
             var id = Guid.NewGuid();
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.DeleteJusticeUserAsync(id)).ReturnsAsync(It.IsAny<string>());
+            bookingsApiClient
+                .Setup(x => x.DeleteJusticeUserAsync(id))
+                .Returns(Task.CompletedTask);
 
             // Act
             var result = await _sut.DeleteJusticeUser(id);

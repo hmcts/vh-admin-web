@@ -43,7 +43,9 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 .Build();
             
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.RestoreJusticeUserAsync(It.IsAny<RestoreJusticeUserRequest>())).ReturnsAsync(It.IsAny<string>());
+            bookingsApiClient
+                .Setup(x => x.RestoreJusticeUserAsync(It.IsAny<RestoreJusticeUserRequest>()))
+                .Returns(Task.FromResult(expectedResponse));
 
             // Act
             var result = await _sut.RestoreJusticeUser(request);
