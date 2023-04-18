@@ -75,8 +75,8 @@ java:
     AZUREAD__BASEVIDEOURL: https://vhinfracore{{ lower .Values.global.environment }}.blob.core.windows.net/video
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
-    DOM1__POSTLOGOUTREDIRECTURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
-    DOM1__REDIRECTURI: https://vh-video-web.{{ .Values.global.environment }}.platform.hmcts.net/home
+    DOM1__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
+    DOM1__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
     DISABLEHTTPSREDIRECTION: true
     ISLIVE: "False"
     Logging__LogLevel__Default: debug
