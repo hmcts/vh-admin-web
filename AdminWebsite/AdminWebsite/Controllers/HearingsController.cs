@@ -217,8 +217,9 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && 
-                    !_hearingsService.IsUpdatingJudge(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) &&
+                    !_hearingsService.IsUpdatingJudge(request, originalHearing) &&
+                    !_hearingsService.HasEndpointsBeenChanged(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {StartingSoonMinutesThreshold} minutes of it starting";
@@ -235,6 +236,7 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
+
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
