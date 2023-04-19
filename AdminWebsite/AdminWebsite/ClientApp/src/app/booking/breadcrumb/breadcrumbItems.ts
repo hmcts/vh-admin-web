@@ -39,7 +39,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Name: 'Video access points',
         Url: '/video-access-points',
         Active: false,
-        LastMinuteAmendable: false
+        LastMinuteAmendable: true
     },
     {
         Id: 6,

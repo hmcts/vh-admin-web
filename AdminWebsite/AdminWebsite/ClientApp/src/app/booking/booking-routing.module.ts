@@ -23,7 +23,7 @@ export const routes: Routes = [
         data: { exceptionToRuleCheck: true }
     },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
+    { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
     { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] }
