@@ -41,6 +41,7 @@ import { EditParticipantModule } from './edit-participant/edit-participant.modul
 import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
+import { HomeComponent } from './home/home.component';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -56,7 +57,8 @@ export function loadConfig(configService: ConfigService) {
         ErrorComponent,
         UnsupportedBrowserComponent,
         ChangePasswordComponent,
-        UnallocatedHearingsComponent
+        UnallocatedHearingsComponent,
+        HomeComponent
     ],
     imports: [
         MomentModule,

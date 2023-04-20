@@ -11,10 +11,15 @@
         </div>
         <div class="govuk-grid-column-one-third">
           <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
-          <button class="govuk-button govuk-!-margin-left-2" *ngIf="displayAddButton" data-module="govuk-button" (click)="addUser()">
+          <button
+            class="govuk-button govuk-!-margin-left-2"
+            data-module="govuk-button"
+            *ngIf="displayAddButton$ | async"
+            (click)="addUser()"
+          >
             Add a team member
           </button>
-          <div class="govuk-body" *ngIf="showSpinner">
+          <div class="govuk-body" *ngIf="showSpinner$ | async">
             <div class="vh-loader-small-container">
               <div class="vh-loader"></div>
               <label class="loader-label"> Please wait... </label>
@@ -24,26 +29,27 @@
       </div>
     </div>
   </div>
-  <div *ngIf="displayMessage" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
+
+  <div *ngIf="displayMessage$ | async" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
     <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
-    {{ message }}
+    {{ message$ | async }}
   </div>
 
-  <table *ngIf="sortedUsers?.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Username</th>
-        <th scope="col" class="govuk-table__header">First name</th>
-        <th scope="col" class="govuk-table__header">Last name</th>
-        <th scope="col" class="govuk-table__header">Contact telephone</th>
-        <th scope="col" class="govuk-table__header">Role</th>
-        <th scope="col" class="govuk-table__header action-cell"></th>
-        <th scope="col" class="govuk-table__header action-cell"></th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      <ng-container *ngFor="let user of sortedUsers">
+  <ng-container *ngIf="users$ | async as users">
+    <table *ngIf="users.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
+      <thead class="govuk-table__head">
         <tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Username</th>
+          <th scope="col" class="govuk-table__header">First name</th>
+          <th scope="col" class="govuk-table__header">Last name</th>
+          <th scope="col" class="govuk-table__header">Contact telephone</th>
+          <th scope="col" class="govuk-table__header">Role</th>
+          <th scope="col" class="govuk-table__header action-cell"></th>
+          <th scope="col" class="govuk-table__header action-cell"></th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <tr class="govuk-table__row" *ngFor="let user of users">
           <td class="govuk-table__cell"><span *ngIf="user.deleted" class="badge">Deleted</span>{{ user.username }}</td>
           <td class="govuk-table__cell">
             {{ user.first_name }}
@@ -90,21 +96,23 @@
             ></fa-icon>
           </td>
         </tr>
-      </ng-container>
-    </tbody>
-  </table>
-  <div *ngIf="showUserForm" class="popup-overlay">
+      </tbody>
+    </table>
+  </ng-container>
+
+  <div *ngIf="showForm$ | async" class="popup-overlay">
     <div class="vh-popup-aligned">
       <app-justice-user-form
-        [justiceUser]="selectedUser"
-        [mode]="userFormMode"
+        [justiceUser]="selectedUser$ | async"
+        [mode]="userFormMode$ | async"
         (cancelFormEvent)="onUserFormCancelled()"
-        (saveSuccessfulEvent)="onJusticeUserSuccessfulSave($event)"
+        (saveSuccessfulEvent)="onJusticeUserSuccessfulSave()"
       ></app-justice-user-form>
     </div>
   </div>
+
   <app-confirm-delete-justice-user-popup
-    *ngIf="displayDeleteUserPopup"
+    *ngIf="displayDeleteUserPopup$ | async"
     (cancelEvent)="onCancelDeleteJusticeUser()"
     (deleteSuccessfulEvent)="onJusticeUserSuccessfulDelete()"
     userId="{{ userToDelete.id }}"

@@ -3,7 +3,7 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/for
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
-import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
+import { RemoveSpecialCharacters } from 'src/app/common/formatters/remove-special-characters';
 import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
@@ -62,6 +62,14 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         return <FormArray>this.form.get('endpoints');
     }
 
+    get hasEndpoints(): boolean {
+        return this.endpoints.length > 1;
+    }
+
+    get isHearingAboutToStart(): boolean {
+        return this.videoHearingService.isHearingAboutToStart();
+    }
+
     addEndpoint(): void {
         this.duplicateDa = false;
         if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
@@ -81,7 +89,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         for (const control of this.endpoints.controls) {
             const endpointModel = new EndpointModel();
             if (control.value.displayName.trim() !== '') {
-                const displayNameText = SanitizeInputText(control.value.displayName);
+                const displayNameText = RemoveSpecialCharacters(control.value.displayName);
                 endpointModel.displayName = displayNameText;
                 endpointModel.id = control.value.id;
                 endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
@@ -109,8 +117,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
 
     removeEndpoint(rowIndex: number): void {
-        this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
-        this.endpoints.removeAt(rowIndex);
+        if (!this.isHearingAboutToStart) {
+            this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
+            this.endpoints.removeAt(rowIndex);
+        } else {
+            this.logger.warn(`${this.loggerPrefix} Cannot remove an endpoint when hearing is about to start ${rowIndex}.`);
+        }
     }
 
     cancelBooking(): void {
