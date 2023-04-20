@@ -135,6 +135,10 @@ export class WorkHoursFileProcessorService {
         const numberOfUsernamesToUploadNonWorkHours = userNonWorkAvailabilityRows.length;
 
         userNonWorkAvailabilityRows.forEach((row, index) => {
+            // Do not process a blank row
+            if (row === '\n' || row.trim().length === 0) {
+                return;
+            }
             const values = row.replace(/\r/g, '').split(this.csvDelimiter);
 
             const uploadNonWorkHoursRequest = new UploadNonWorkingHoursRequest();
@@ -154,8 +158,8 @@ export class WorkHoursFileProcessorService {
                 return;
             }
 
-            const startTime = new Date(`${values[1]}T${values[2]}`);
-            const endTime = new Date(`${values[3]}T${values[4]}`);
+            const startTime = this.parseRawDateString(values[1], values[2]);
+            const endTime = this.parseRawDateString(values[3], values[4]);
 
             if (isNaN(endTime.getTime()) || isNaN(startTime.getTime())) {
                 nonWorkingHoursFileValidationErrors.push(`Row ${rowNumber} - Contains an invalid date`);
@@ -181,6 +185,23 @@ export class WorkHoursFileProcessorService {
             numberOfUserNameToUpload: numberOfUsernamesToUploadNonWorkHours
         };
         return result;
+    }
+
+    parseRawDateString(rawDateString: string, rawTimeString: string): Date {
+        let date;
+        //check if date is in format DD/MM/YYYY
+        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(rawDateString)) {
+            const spiltStartDate = rawDateString.split('/');
+            const day = spiltStartDate[0];
+            const month = spiltStartDate[1];
+            const year = spiltStartDate[2];
+            date = year + '-' + month + '-' + day;
+        }
+        //check if date is in format YYYY-MM-DD
+        if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(rawDateString)) {
+            date = rawDateString;
+        }
+        return new Date(`${date}T${rawTimeString}`);
     }
 
     uploadWorkingHours(workAvailabilities: UploadWorkHoursRequest[]) {

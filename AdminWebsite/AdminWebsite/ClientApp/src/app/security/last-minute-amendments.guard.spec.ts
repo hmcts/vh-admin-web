@@ -1,9 +1,10 @@
-import { fakeAsync, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Data, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { LastMinuteAmendmentsGuard } from './last-minute-amendments.guard';
 import { VideoHearingsService } from '../services/video-hearings.service';
 import { FeatureFlagService } from '../services/feature-flag.service';
 import { of } from 'rxjs';
+import { Logger } from '../services/logger';
 
 describe('LastMinuteAmendmentsGuard', () => {
     let guard: LastMinuteAmendmentsGuard;
@@ -11,6 +12,7 @@ describe('LastMinuteAmendmentsGuard', () => {
         navigate: jasmine.createSpy('navigate')
     };
 
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['warn', 'debug']);
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
     const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
@@ -22,7 +24,8 @@ describe('LastMinuteAmendmentsGuard', () => {
                 LastMinuteAmendmentsGuard,
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: router },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy }
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
         guard = TestBed.inject(LastMinuteAmendmentsGuard);

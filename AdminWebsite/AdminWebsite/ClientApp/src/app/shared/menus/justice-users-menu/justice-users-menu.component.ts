@@ -1,20 +1,22 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
 import { FormBuilder } from '@angular/forms';
 import { BookingPersistService } from '../../../services/bookings-persist.service';
 import { JusticeUsersService } from '../../../services/justice-users.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-justice-users-menu',
     templateUrl: './justice-users-menu.component.html',
     styleUrls: ['./justice-users-menu.component.scss']
 })
-export class JusticeUsersMenuComponent extends MenuBase {
+export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     loggerPrefix = '[MenuJusticeUser] -';
     formGroupName = 'selectedUserIds';
-    users: JusticeUserResponse[];
+    users$: Observable<JusticeUserResponse[]>;
     selectedItems: [] | string;
     formConfiguration = {
         selectedUserIds: [this.bookingPersistService.selectedUsers || []]
@@ -32,14 +34,10 @@ export class JusticeUsersMenuComponent extends MenuBase {
         super(formBuilder, logger);
     }
 
-    loadItems(): void {
-        this.justiceUserService.retrieveJusticeUserAccounts().subscribe(
-            (data: JusticeUserResponse[]) => {
-                this.users = data;
-                this.items = data;
-                this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-            },
-            error => this.handleListError(error, 'users')
-        );
+    ngOnInit(): void {
+        this.users$ = this.justiceUserService.allUsers$.pipe(map(users => users.filter(user => !user.deleted)));
+        super.ngOnInit();
     }
+
+    loadItems(): void {}
 }

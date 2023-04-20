@@ -3,10 +3,12 @@ import { AuthGuard } from './auth.guard';
 import { Router } from '@angular/router';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { Logger } from '../services/logger';
 
 describe('authguard', () => {
     let authGuard: AuthGuard;
     let oidcSecurityService;
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const router = {
         navigate: jasmine.createSpy('navigate')
     };
@@ -16,7 +18,8 @@ describe('authguard', () => {
             providers: [
                 AuthGuard,
                 { provide: OidcSecurityService, useClass: MockOidcSecurityService },
-                { provide: Router, useValue: router }
+                { provide: Router, useValue: router },
+                { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
         oidcSecurityService = TestBed.inject(OidcSecurityService);
