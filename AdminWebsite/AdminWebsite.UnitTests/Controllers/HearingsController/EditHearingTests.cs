@@ -39,6 +39,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     public class EditHearingTests
     {
         private EditHearingRequest _addEndpointToHearingRequest;
+        private EditHearingRequest _addEndpointToHearingRequestWithJudge;
+        private EditHearingRequest _editEndpointOnHearingRequest;
+        private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
+        private EditHearingRequest _removeEndpointOnHearingRequest;
+        private EditHearingRequest _removeEndpointOnHearingRequestWithJudge;
         private EditHearingRequest _addNewParticipantRequest;
         private EditHearingRequest _switchJudgeRequest;
         private EditHearingRequest _updateJudgeOtherInformationRequest;
@@ -207,12 +212,140 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<EditParticipantRequest>(),
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest
-                        {Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net"},
-                    new EditEndpointRequest
-                        {Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = "edit-user@hmcts.net"},
-                    new EditEndpointRequest {Id = guid2, DisplayName = "data2-edit"},
-                    new EditEndpointRequest {Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = ""}
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
+                    new EditEndpointRequest { Id = guid4, DisplayName = "data4", DefenceAdvocateContactEmail = guid4.ToString() }
+                }
+            };
+
+            _addEndpointToHearingRequestWithJudge = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest>() 
+                { 
+                    new EditParticipantRequest() { 
+                        Id = guid1,
+                        CaseRoleName = "judge",
+                        HearingRoleName = HearingRoleName.Judge,
+                        FirstName = "FirstName",
+                        LastName = "LastName",
+                        ContactEmail = "judge@email.com",
+                        DisplayName = "FirstName LastName",
+                        LinkedParticipants = new List<LinkedParticipant>(),
+                        OrganisationName = "Org1",
+                        Representee = "Rep1",
+                        TelephoneNumber = "+44 123 1234",
+                        Title = "Mr",
+                        MiddleNames = "MiddleNames"
+                    } 
+                },
+                Endpoints = new List<EditEndpointRequest>
+                {
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
+                    new EditEndpointRequest { Id = guid4, DisplayName = "data4", DefenceAdvocateContactEmail = guid4.ToString() }
+                }
+            };
+
+            _editEndpointOnHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest 
+                { 
+                    Name = "Case", 
+                    Number = "123" 
+                },
+                Endpoints = new List<EditEndpointRequest>
+                {
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
+                    new EditEndpointRequest { Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = guid4.ToString() }
+                }
+            };
+
+            _editEndpointOnHearingRequestWithJudge = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = "Case",
+                    Number = "123"
+                },
+                Participants = new List<EditParticipantRequest>()
+                {
+                    new EditParticipantRequest() {
+                        Id = guid1,
+                        CaseRoleName = "judge",
+                        HearingRoleName = HearingRoleName.Judge,
+                        FirstName = "FirstName",
+                        LastName = "LastName",
+                        ContactEmail = "judge@email.com",
+                        DisplayName = "FirstName LastName",
+                        LinkedParticipants = new List<LinkedParticipant>(),
+                        OrganisationName = "Org1",
+                        Representee = "Rep1",
+                        TelephoneNumber = "+44 123 1234",
+                        Title = "Mr",
+                        MiddleNames = "MiddleNames"
+                    }
+                },
+                Endpoints = new List<EditEndpointRequest>
+                {
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
+                    new EditEndpointRequest { Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = guid4.ToString() }
+                }
+            };
+
+            _removeEndpointOnHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = "Case",
+                    Number = "123"
+                },
+                Endpoints = new List<EditEndpointRequest>
+                {
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() }
+                }
+            };
+
+            _removeEndpointOnHearingRequestWithJudge = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = "Case",
+                    Number = "123"
+                },
+                Participants = new List<EditParticipantRequest>()
+                {
+                    new EditParticipantRequest() {
+                        Id = guid1,
+                        CaseRoleName = "judge",
+                        HearingRoleName = HearingRoleName.Judge,
+                        FirstName = "FirstName",
+                        LastName = "LastName",
+                        ContactEmail = "judge@email.com",
+                        DisplayName = "FirstName LastName",
+                        LinkedParticipants = new List<LinkedParticipant>(),
+                        OrganisationName = "Org1",
+                        Representee = "Rep1",
+                        TelephoneNumber = "+44 123 1234",
+                        Title = "Mr",
+                        MiddleNames = "MiddleNames"
+                    }
+                },
+                Endpoints = new List<EditEndpointRequest>
+                {
+                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
+                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
+                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() }
                 }
             };
 
@@ -222,18 +355,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<ParticipantResponse>(),
                 Endpoints = new List<EndpointResponse>
                 {
-                    new EndpointResponse {DisplayName = "data1", Id = guid1, Pin = "0000", Sip = "1111111111"},
-                    new EndpointResponse
-                    {
-                        DisplayName = "data2", Id = guid2, Pin = "1111", Sip = "2222222222",
-                        DefenceAdvocateId = Guid.NewGuid()
-                    },
-                    new EndpointResponse {DisplayName = "data3", Id = guid3, Pin = "2222", Sip = "5544332234"},
-                    new EndpointResponse
-                    {
-                        DisplayName = "data4", Id = guid4, Pin = "2222", Sip = "5544332234",
-                        DefenceAdvocateId = Guid.NewGuid()
-                    }
+                    new EndpointResponse { Id = guid1, DisplayName = "data1", Pin = "0000", Sip = "1111111111", DefenceAdvocateId = guid1 },
+                    new EndpointResponse { Id = guid2, DisplayName = "data2", Pin = "1111", Sip = "2222222222", DefenceAdvocateId = guid2 },
+                    new EndpointResponse { Id = guid3, DisplayName = "data3", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = guid3 },
+                    new EndpointResponse { Id = guid4, DisplayName = "data4", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = guid4 }
                 },
                 Cases = cases,
                 CaseTypeName = "Unit Test",
@@ -383,7 +508,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
                 Times.Once);
         }
-        
+
         [Test]
         public async Task Should_allow_updating_judge_other_information_prior_30_minutes_of_hearing_starting()
         {
@@ -405,7 +530,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task
+        public async Task 
             Should_allow_edit_confirmed_hearing_up_until_30_minutes_before_starting()
         {
             _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(1);
@@ -492,7 +617,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             Assert.ThrowsAsync<BookingsApiException>(async () => await _controller.EditHearing(_validId, _addNewParticipantRequest));
         }
 
-
         [Test]
         public async Task Should_return_bad_request_if_editing_hearing_fails_with_bad_request_status_code()
         {
@@ -570,7 +694,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()));
         }
-
 
         [Test]
         public async Task Should_not_send_email_for_existing_individual_participant_added()
@@ -725,7 +848,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Once);
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
-                    It.IsAny<UpdateEndpointRequest>()), Times.Exactly(3));
+                    It.IsAny<UpdateEndpointRequest>()), Times.Never);
+            _bookingsApiClient.Verify(
+                x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_add_endpoint_if_new_endpoint_is_added_to_endpoint_list_prior_30_minutes_of_hearing_starting()
+        {
+            _existingHearingWithEndpointsOriginal.ScheduledDateTime = DateTime.UtcNow.AddMinutes(20);
+            _existingHearingWithEndpointsOriginal.Status = BookingStatus.Created;
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithEndpointsOriginal);
+
+            var result = await _controller.EditHearing(_validId, _addEndpointToHearingRequestWithJudge);
+
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(
+                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Once);
+
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+
+            _bookingsApiClient.Verify(
+                x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
+                    It.IsAny<UpdateEndpointRequest>()), Times.Never);
+
+            _bookingsApiClient.Verify(
+                x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
@@ -733,11 +886,47 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithEndpointsOriginal);
-            var result = await _controller.EditHearing(_validId, _addEndpointToHearingRequest);
+            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(
+                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+            _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
-                    It.IsAny<UpdateEndpointRequest>()), Times.Exactly(3));
+                    It.IsAny<UpdateEndpointRequest>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
+                Times.Never);
+
+        }
+
+        [Test]
+        public async Task Should_update_endpoint_if_an_endpoint_is_updates_in_endpoint_list_prior_30_minutes_of_hearing_starting()
+        {
+            _existingHearingWithEndpointsOriginal.ScheduledDateTime = DateTime.UtcNow.AddMinutes(20);
+            _existingHearingWithEndpointsOriginal.Status = BookingStatus.Created;
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearingWithEndpointsOriginal);
+
+            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequestWithJudge);
+
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(
+                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
+
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+
+            _bookingsApiClient.Verify(
+                x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
+                    It.IsAny<UpdateEndpointRequest>()), Times.Exactly(1));
+
+            _bookingsApiClient.Verify(
+                x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
@@ -745,17 +934,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithEndpointsOriginal);
-            var result = await _controller.EditHearing(_validId, _addEndpointToHearingRequest);
+            var result = await _controller.EditHearing(_validId, _removeEndpointOnHearingRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(
+                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
+
             _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
                 Times.Once);
+
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
-                    It.IsAny<UpdateEndpointRequest>()), Times.Exactly(3));
+                    It.IsAny<UpdateEndpointRequest>()), Times.Never);
         }
 
         [Test]
@@ -798,20 +992,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_not_update_DisplayName_if_no_matching_endpoint_exists_in_list()
         {
             _existingHearingWithEndpointsOriginal.Endpoints[0].Id = Guid.NewGuid();
-            _existingHearingWithEndpointsOriginal.Endpoints[1].DisplayName = "data2-edit";
-            _existingHearingWithEndpointsOriginal.Endpoints[1].DefenceAdvocateId = null;
+            _existingHearingWithEndpointsOriginal.Endpoints[0].DisplayName = "data1-edit";
+            _existingHearingWithEndpointsOriginal.Endpoints[0].DefenceAdvocateId = null;
             _existingHearingWithEndpointsOriginal.Endpoints[3].DisplayName = "data4-edit";
             _existingHearingWithEndpointsOriginal.Endpoints[3].DefenceAdvocateId = null;
+
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithEndpointsOriginal);
+
             var result = await _controller.EditHearing(_validId, _addEndpointToHearingRequest);
+
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()),
-                Times.Exactly(2));
+
+            _bookingsApiClient.Verify(
+                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Once);
+
+            // The old Endpoints[0] has no matching Id now, and so it will be removed
+            _bookingsApiClient.Verify(
+                x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
+
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+
+            // Endpoints[3] has had their details changed, and so will be updated
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
                     It.IsAny<UpdateEndpointRequest>()), Times.Once);
