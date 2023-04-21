@@ -9,3 +9,4 @@ java:
     AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
     VHSERVICES__VIDEOWEBURL: https://${SERVICE_FQDN}
     VHSERVICES__USERAPIURL: https://vh-user-api-pr-223.dev.platform.hmcts.net/
+    VHSERVICES__BOOKINGSAPIURL : https://vh-bookings-api-pr-635.dev.platform.hmcts.net/
