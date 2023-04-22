@@ -12,6 +12,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {
@@ -38,12 +39,8 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         {
             // Arrange
             var request = Builder<RestoreJusticeUserRequest>.CreateNew().Build();
-            var expectedResponse = Builder<JusticeUserResponse>.CreateNew()
-                .With(x => x.Id, request.Id)
-                .Build();
-            
             var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
-            bookingsApiClient.Setup(x => x.RestoreJusticeUserAsync(It.IsAny<RestoreJusticeUserRequest>())).ReturnsAsync(It.IsAny<string>());
+            bookingsApiClient.Setup(x => x.RestoreJusticeUserAsync(It.IsAny<RestoreJusticeUserRequest>()));
 
             // Act
             var result = await _sut.RestoreJusticeUser(request);
