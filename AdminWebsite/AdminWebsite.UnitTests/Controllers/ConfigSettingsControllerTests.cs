@@ -12,7 +12,7 @@ namespace AdminWebsite.UnitTests.Controllers
     public class ConfigSettingsControllerTests
     {
         [Test]
-        public void should_return_settings_when_dom1_config_is_not_identical_to_vh()
+        public void should_return_dom1_settings_to_client_when_dom1_enabled()
         {
             var azureAdConfiguration = new AzureAdConfiguration
             {
@@ -32,7 +32,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null
+                ResourceId = null,
+                Enabled = true
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -59,7 +60,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_return_response_with_settings_for_vh_resource()
+        public void should_return_vh_settings_to_client_when_dom1_disabled()
         {
             var azureAdConfiguration = new AzureAdConfiguration
             {
@@ -79,7 +80,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null
+                ResourceId = null,
+                Enabled = false
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
