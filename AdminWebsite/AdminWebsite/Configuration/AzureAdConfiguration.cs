@@ -5,6 +5,8 @@
     /// </summary>
     public class AzureAdConfiguration : IdpConfiguration
     {
+        public const string ConfigSectionKey = "AzureAd";
+        
         /// <summary>
         /// Secret used to authenticate as the <see cref="IdpConfiguration.ClientId"/>
         /// </summary>
