@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DeviceDetectorService } from 'ngx-device-detector';
+import { DeviceDetectorService, BROWSERS } from 'ngx-device-detector';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +20,7 @@ export class DeviceType {
     }
 
     isSupportedBrowser(): boolean {
-        const supportedBrowsers = ['Chrome'];
+        const supportedBrowsers = [BROWSERS.CHROME, BROWSERS.MS_EDGE_CHROMIUM];
         const browser = this.deviceDetectorService.browser;
         return supportedBrowsers.findIndex(x => x.toUpperCase() === browser.toUpperCase()) > -1;
     }
