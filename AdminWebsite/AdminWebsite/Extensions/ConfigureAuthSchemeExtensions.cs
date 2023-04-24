@@ -21,8 +21,11 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
-            var securitySettings = configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
-
+            var vhSecuritySettings = configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
+            var dom1SecuritySettings = configuration.GetSection(Dom1AdConfiguration.ConfigSectionKey).Get<Dom1AdConfiguration>();
+            IdpConfiguration securitySettings = dom1SecuritySettings.Enabled ? dom1SecuritySettings : vhSecuritySettings;
+            
+            
             serviceCollection.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

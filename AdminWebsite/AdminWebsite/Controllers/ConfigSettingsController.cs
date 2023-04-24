@@ -60,24 +60,13 @@ namespace AdminWebsite.Controllers
 
             // DOM1 in dev is hearings reform
             // default to azure ad resource id because scope in setup differently in hearings reform
-            if (_azureAdConfiguration.ClientId == _dom1AdConfiguration.ClientId)
-            {
-                clientSettings.ClientId = _azureAdConfiguration.ClientId;
-                clientSettings.TenantId = _azureAdConfiguration.TenantId;
-                clientSettings.ResourceId = _azureAdConfiguration.ResourceId;
-                clientSettings.TenantId = _azureAdConfiguration.TenantId;
-                clientSettings.RedirectUri = _azureAdConfiguration.RedirectUri;
-                clientSettings.PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri;
-            }
-            else
-            {
-                clientSettings.ClientId = _dom1AdConfiguration.ClientId;
-                clientSettings.TenantId = _dom1AdConfiguration.TenantId;
-                clientSettings.ResourceId = null;
-                clientSettings.TenantId = _dom1AdConfiguration.TenantId;
-                clientSettings.RedirectUri = _dom1AdConfiguration.RedirectUri;
-                clientSettings.PostLogoutRedirectUri = _dom1AdConfiguration.PostLogoutRedirectUri;
-            }
+            IdpConfiguration idpConfiguration = _dom1AdConfiguration.Enabled ? _dom1AdConfiguration : _azureAdConfiguration;
+            clientSettings.ClientId = idpConfiguration.ClientId;
+            clientSettings.TenantId = idpConfiguration.TenantId;
+            clientSettings.ResourceId = idpConfiguration.ResourceId;
+            clientSettings.TenantId = idpConfiguration.TenantId;
+            clientSettings.RedirectUri = idpConfiguration.RedirectUri;
+            clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
             return Ok(clientSettings);
         }
