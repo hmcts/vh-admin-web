@@ -1,6 +1,6 @@
 ---
 java:
-  image: '${IMAGE_NAME}'
+  image: "${IMAGE_NAME}"
   ingressHost: ${SERVICE_FQDN}
   releaseNameOverride: ${RELEASE_NAME}
   disableTraefikTls: false
@@ -10,4 +10,4 @@ java:
     DOM1__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     DOM1__REDIRECTURI: https://${SERVICE_FQDN}/home
     VHSERVICES__VIDEOWEBURL: https://${SERVICE_FQDN}
-    DOM1_Support: false
+    DOM1__Enabled: false
