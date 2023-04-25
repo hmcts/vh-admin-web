@@ -38,7 +38,6 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle() => _ldClient.BoolVariation(BookAndConfirmToggleKey, _user);
         public bool Dom1Enabled()
         {
-            var dnss = Dns.GetHostAddresses(Dns.GetHostName()).ToList();
             return _ldClient.BoolVariation(Dom1EnabledToggleKey, _user);
         }
     }
