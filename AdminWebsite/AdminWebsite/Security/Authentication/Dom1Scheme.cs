@@ -15,6 +15,7 @@ namespace AdminWebsite.Security.Authentication
         {
             base.SetJwtBearerOptions(options);
             options.Audience = $"api://{_idpConfiguration.ClientId}";
+            options.TokenValidationParameters.ValidIssuer = $"https://sts.windows.net/{_idpConfiguration.TenantId}/";
         }
     }
 }
