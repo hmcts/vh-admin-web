@@ -61,7 +61,7 @@ namespace AdminWebsite.Controllers
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
 
-            IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled() && _dom1AdConfiguration.Enabled
+            IdpConfiguration idpConfiguration = _dom1AdConfiguration.Enabled
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
             clientSettings.ClientId = idpConfiguration.ClientId;
