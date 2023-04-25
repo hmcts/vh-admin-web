@@ -1,19 +1,30 @@
-﻿using AdminWebsite.Configuration;
+﻿using System;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Moq;
 using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
     public class ConfigSettingsControllerTests
     {
+        private Mock<IFeatureToggles> _featureToggleMock;
+        
+        [TearDown]
+        public void TearDown()
+        {
+            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, null);
+        }
+
         [Test]
         public void should_return_dom1_settings_to_client_when_dom1_enabled()
         {
+            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, "true");
             var azureAdConfiguration = new AzureAdConfiguration
             {
                 ClientId = "ClientId", 
@@ -33,7 +44,6 @@ namespace AdminWebsite.UnitTests.Controllers
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
                 ResourceId = null,
-                Enabled = true
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -45,6 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             
             var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(true);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
@@ -62,6 +73,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void should_return_vh_settings_to_client_when_dom1_disabled()
         {
+            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, "true");
             var azureAdConfiguration = new AzureAdConfiguration
             {
                 ClientId = "ClientId", 
@@ -80,8 +92,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null,
-                Enabled = false
+                ResourceId = null
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -93,6 +104,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             
             var configSettingsController = InitController(dom1AdConfiguration, azureAdConfiguration, kinlyConfiguration, testSettings);
+            _featureToggleMock.Setup(opt => opt.Dom1Enabled()).Returns(false);
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
@@ -112,6 +124,7 @@ namespace AdminWebsite.UnitTests.Controllers
             AzureAdConfiguration azureAdConfiguration, KinlyConfiguration kinlyConfiguration,
             TestUserSecrets testSettings)
         {
+            _featureToggleMock = new Mock<IFeatureToggles>();
             var applicationInsightsConfiguration = new ApplicationInsightsConfiguration();
 
             var httpContext = new DefaultHttpContext
@@ -136,7 +149,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Options.Create(kinlyConfiguration),
                 Options.Create(applicationInsightsConfiguration),
                 Options.Create(testSettings),
-                Options.Create(vhServiceConfiguration)) {
+                Options.Create(vhServiceConfiguration),
+                _featureToggleMock.Object) {
 
                 ControllerContext = controllerContext
             };
