@@ -7,7 +7,7 @@ namespace AdminWebsite.Security.Authentication
 {
     public abstract class AadSchemeBase : ProviderSchemeBase, IProviderSchemes
     {
-        private readonly IdpConfiguration _idpConfiguration;
+        protected readonly IdpConfiguration _idpConfiguration;
         
         protected AadSchemeBase(IdpConfiguration idpConfiguration)
         {
