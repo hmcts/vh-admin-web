@@ -28,9 +28,15 @@ namespace AdminWebsite.Controllers
         [HttpGet]
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
         {
-            var username = User.Claims.SingleOrDefault(x => x.Type == ClaimNames.PreferredUsername)?.Value;
+            var username = User.Identity?.Name;
+            if (username == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "Username not found in claims");
+            }
+
             JusticeUserResponse justiceUser = null;
 
             try
