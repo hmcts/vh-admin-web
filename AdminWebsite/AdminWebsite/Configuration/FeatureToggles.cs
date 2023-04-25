@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net;
 using LaunchDarkly.Logging;
 using LaunchDarkly.Sdk;
 using LaunchDarkly.Sdk.Server;
@@ -8,7 +10,9 @@ namespace AdminWebsite.Configuration
 {
     public interface IFeatureToggles
     {
+        public const string DOM1_SUPPORTED_KEY = "DOM1_Support";
         public bool BookAndConfirmToggle();
+        public bool Dom1Enabled();
     }
     
     public class FeatureToggles : IFeatureToggles
@@ -17,8 +21,10 @@ namespace AdminWebsite.Configuration
         private readonly User _user;
         private const string LdUser = "vh-admin-web";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
+        private const string Dom1EnabledToggleKey = "dom1";
         public FeatureToggles(string sdkKey)
         {
+            
             var config = LaunchDarkly.Sdk.Server.Configuration.Builder(sdkKey)
                 .Logging(
                     Components.Logging(Logs.ToWriter(Console.Out)).Level(LogLevel.Warn)
@@ -26,9 +32,14 @@ namespace AdminWebsite.Configuration
                 .Build();
             
             _ldClient = new LdClient(config);
-            _user = LaunchDarkly.Sdk.User.WithKey(LdUser);
+            _user = User.WithKey(LdUser);
         }
 
         public bool BookAndConfirmToggle() => _ldClient.BoolVariation(BookAndConfirmToggleKey, _user);
+        public bool Dom1Enabled()
+        {
+            var dnss = Dns.GetHostAddresses(Dns.GetHostName()).ToList();
+            return _ldClient.BoolVariation(Dom1EnabledToggleKey, _user);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ namespace AdminWebsite.Controllers
         private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly TestUserSecrets _testUserSecrets;
         private readonly ServiceConfiguration _vhServiceConfiguration;
+        private readonly IFeatureToggles _featureToggles;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
@@ -26,8 +28,10 @@ namespace AdminWebsite.Controllers
             IOptions<KinlyConfiguration> kinlyConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
-            IOptions<ServiceConfiguration> vhServiceConfiguration)
+            IOptions<ServiceConfiguration> vhServiceConfiguration, 
+            IFeatureToggles featureToggles)
         {
+            _featureToggles = featureToggles;
             _azureAdConfiguration = azureAdConfiguration.Value;
             _dom1AdConfiguration = dom1AdConfiguration.Value;
             _kinlyConfiguration = kinlyConfiguration.Value;
@@ -46,7 +50,6 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetConfigSettings")]
         public ActionResult<ClientSettingsResponse> Get()
         {
-            
             var clientSettings = new ClientSettingsResponse
             {
                 InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
@@ -58,9 +61,12 @@ namespace AdminWebsite.Controllers
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
 
-            // DOM1 in dev is hearings reform
-            // default to azure ad resource id because scope in setup differently in hearings reform
-            IdpConfiguration idpConfiguration = _dom1AdConfiguration.Enabled ? _dom1AdConfiguration : _azureAdConfiguration;
+            var isDom1SupportedKeyExists =
+                bool.TryParse(Environment.GetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY),
+                    out var isDom1Supported);
+            IdpConfiguration idpConfiguration = isDom1SupportedKeyExists && isDom1Supported && _featureToggles.Dom1Enabled()
+                ? _dom1AdConfiguration
+                : _azureAdConfiguration;
             clientSettings.ClientId = idpConfiguration.ClientId;
             clientSettings.TenantId = idpConfiguration.TenantId;
             clientSettings.ResourceId = idpConfiguration.ResourceId;
