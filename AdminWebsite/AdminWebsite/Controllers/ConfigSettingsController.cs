@@ -61,10 +61,11 @@ namespace AdminWebsite.Controllers
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
 
-            var isDom1SupportedKeyExists =
-                bool.TryParse(Environment.GetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY),
-                    out var isDom1Supported);
-            IdpConfiguration idpConfiguration = isDom1SupportedKeyExists && isDom1Supported && _featureToggles.Dom1Enabled()
+            // var isDom1SupportedKeyExists =
+            //     bool.TryParse(Environment.GetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY),
+            //         out var isDom1Supported);
+            // IdpConfiguration idpConfiguration = isDom1SupportedKeyExists && isDom1Supported && _featureToggles.Dom1Enabled()
+            IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
             clientSettings.ClientId = idpConfiguration.ClientId;
