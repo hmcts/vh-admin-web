@@ -14,17 +14,10 @@ namespace AdminWebsite.UnitTests.Controllers
     public class ConfigSettingsControllerTests
     {
         private Mock<IFeatureToggles> _featureToggleMock;
-        
-        [TearDown]
-        public void TearDown()
-        {
-            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, null);
-        }
 
         [Test]
         public void should_return_dom1_settings_to_client_when_dom1_enabled()
         {
-            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, "true");
             var azureAdConfiguration = new AzureAdConfiguration
             {
                 ClientId = "ClientId", 
@@ -44,6 +37,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
                 ResourceId = null,
+                Enabled = true
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -73,7 +67,6 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void should_return_vh_settings_to_client_when_dom1_disabled()
         {
-            Environment.SetEnvironmentVariable(IFeatureToggles.DOM1_SUPPORTED_KEY, "true");
             var azureAdConfiguration = new AzureAdConfiguration
             {
                 ClientId = "ClientId", 
@@ -92,7 +85,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null
+                ResourceId = null,
+                Enabled = false
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };

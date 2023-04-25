@@ -10,7 +10,6 @@ namespace AdminWebsite.Configuration
 {
     public interface IFeatureToggles
     {
-        public const string DOM1_SUPPORTED_KEY = "DOM1_Support";
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
     }
