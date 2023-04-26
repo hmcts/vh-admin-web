@@ -31,7 +31,8 @@ namespace AdminWebsite
             services.AddApplicationInsightsTelemetry(options =>
                 options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"]));
+            var envName = Configuration["AzureAd:ResourceId"];
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"], envName));
             
             services.AddSwagger();
             services.AddJsonOptions();

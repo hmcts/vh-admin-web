@@ -62,7 +62,7 @@ namespace AdminWebsite.Controllers
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
 
-            IdpConfiguration idpConfiguration = _dom1AdConfiguration.Enabled
+            IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
             clientSettings.ClientId = idpConfiguration.ClientId;
@@ -73,25 +73,6 @@ namespace AdminWebsite.Controllers
             clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
             return Ok(clientSettings);
-        }
-        
-        [HttpGet("test")]
-        [AllowAnonymous]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [SwaggerOperation(OperationId = "GetFeatureToggles")]
-        public ActionResult<ClientSettingsResponse> GetFeatureToggles()
-        {
-
-            var Dom1Enabled = _featureToggles.Dom1Enabled();
-            var isDom1Supported = !_azureAdConfiguration.ResourceId.Contains("dev");
-            var settings = new
-            {
-                Dom1Enabled,
-                isDom1Supported,
-                _dom1AdConfiguration,
-                _azureAdConfiguration
-            };
-            return Ok(settings);
         }
     }
 }

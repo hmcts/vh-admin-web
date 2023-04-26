@@ -21,7 +21,7 @@ namespace AdminWebsite.Configuration
         private const string LdUser = "vh-admin-web";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
-        public FeatureToggles(string sdkKey)
+        public FeatureToggles(string sdkKey, string environmentName)
         {
             
             var config = LaunchDarkly.Sdk.Server.Configuration.Builder(sdkKey)
@@ -31,7 +31,8 @@ namespace AdminWebsite.Configuration
                 .Build();
             
             _ldClient = new LdClient(config);
-            _user = User.WithKey(LdUser);
+            // the first param is key and set to LDUser. This is the app name and not to be confused with the Darkly SDK Key 
+            _user = new User(LdUser, null, null, null, null, null, environmentName, null, null, null, null, null);
         }
 
         public bool BookAndConfirmToggle() => _ldClient.BoolVariation(BookAndConfirmToggleKey, _user);

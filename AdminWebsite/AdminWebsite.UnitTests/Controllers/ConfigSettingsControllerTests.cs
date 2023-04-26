@@ -36,8 +36,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null,
-                Enabled = true
+                ResourceId = null
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
@@ -85,8 +84,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com/home",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/logout",
-                ResourceId = null,
-                Enabled = false
+                ResourceId = null
             };
             
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
