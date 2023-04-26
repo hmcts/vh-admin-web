@@ -35,7 +35,7 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
         {
             var username = User.Identity?.Name;
-            if (username == null)
+            if (string.IsNullOrWhiteSpace(username))
             {
                 const string message = "Username not found in claims. Check the Scheme's NameClaimType has been configured correctly.";
                 var ex = new NullReferenceException(message);
@@ -52,6 +52,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
+                _logger.LogError(e, "Failed to get justice user by username");
                 if (e.StatusCode != 404)
                     return StatusCode(e.StatusCode, e.Response);
             }
