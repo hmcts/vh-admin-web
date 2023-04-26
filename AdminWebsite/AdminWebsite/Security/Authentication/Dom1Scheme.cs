@@ -14,7 +14,6 @@ namespace AdminWebsite.Security.Authentication
         public override void SetJwtBearerOptions(JwtBearerOptions options)
         {
             base.SetJwtBearerOptions(options);
-            options.Audience = $"api://{_idpConfiguration.ClientId}";
             options.TokenValidationParameters.NameClaimType= "unique_name";
         }
     }
