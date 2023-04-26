@@ -74,18 +74,5 @@ namespace AdminWebsite.Controllers
 
             return Ok(clientSettings);
         }
-        
-        [HttpGet("test")]
-        [AllowAnonymous]
-        [ProducesResponseType(typeof(ClientSettingsResponse), (int)HttpStatusCode.OK)]
-        [SwaggerOperation(OperationId = "GetTestConfigSettings")]
-        public ActionResult<ClientSettingsResponse> GetTest()
-        {
-
-            _azureAdConfiguration.ClientSecret = null;
-            var DOM1 = _dom1AdConfiguration;
-            var VH = _azureAdConfiguration;
-            return Ok(new {DOM = DOM1, VH});
-        }
     }
 }
