@@ -35,7 +35,7 @@ java:
         - kinlyconfiguration--conferencephonenumberwelsh
         - kinlyconfiguration--joinbyphonefromdate
         - name: FeatureToggles--SDK-Key
-          alias: FeatureToggles--SdkKey
+          alias: FeatureToggles--SDKKey
         - NotifyConfiguration--ApiKey
         - TestUserSecrets--TestUsernameStem
     vh-bookings-api:
