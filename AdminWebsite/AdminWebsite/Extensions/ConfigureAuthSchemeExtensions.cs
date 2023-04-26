@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
@@ -64,7 +65,17 @@ namespace AdminWebsite.Extensions
             if (httpRequest.Headers.TryGetValue("Authorization", out var authHeader))
             {
                 var jwtToken = new JwtSecurityToken(authHeader.ToString().Replace("Bearer ", string.Empty));
-                return providerSchemes.SingleOrDefault(s => s.BelongsToScheme(jwtToken))?.Provider ?? defaultScheme;
+                try
+                {
+                    return providerSchemes.SingleOrDefault(s => s.BelongsToScheme(jwtToken))?.Provider ?? defaultScheme;
+                }
+                catch (Exception e)
+                {
+                    var ex = new Exception("Exception in GetProviderFromRequest", e);
+                    var ex2 = new Exception(providerSchemes.Select(x=>x.SchemeName).Aggregate((x,y)=>x+y), ex);
+                    var ex3 = new Exception(authHeader.ToString().Replace("Bearer ", string.Empty));
+                    throw new AggregateException(new[] {e, ex, ex2, ex3});
+                }
             }
 
             return defaultScheme;
