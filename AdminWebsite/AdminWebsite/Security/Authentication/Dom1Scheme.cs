@@ -10,11 +10,5 @@ namespace AdminWebsite.Security.Authentication
         }
 
         public override AuthProvider Provider => AuthProvider.Dom1;
-
-        public override void SetJwtBearerOptions(JwtBearerOptions options)
-        {
-            base.SetJwtBearerOptions(options);
-            options.TokenValidationParameters.NameClaimType= "unique_name";
-        }
     }
 }
