@@ -23,6 +23,7 @@ namespace AdminWebsite.Configuration
         private const string Dom1EnabledToggleKey = "dom1";
         public FeatureToggles(string sdkKey)
         {
+            Console.WriteLine($"LaunchDarklySdkKey: {sdkKey}");
             
             var config = LaunchDarkly.Sdk.Server.Configuration.Builder(sdkKey)
                 .Logging(
