@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace AdminWebsite.Controllers
 {
@@ -72,6 +73,23 @@ namespace AdminWebsite.Controllers
             clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
             return Ok(clientSettings);
+        }
+        
+        [HttpGet("test")]
+        [AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "GetFeatureToggles")]
+        public ActionResult<ClientSettingsResponse> GetFeatureToggles()
+        {
+
+            var Dom1Enabled = _featureToggles.Dom1Enabled();
+            var settings = new
+            {
+                Dom1Enabled,
+                _dom1AdConfiguration,
+                _azureAdConfiguration
+            };
+            return Ok(settings);
         }
     }
 }
