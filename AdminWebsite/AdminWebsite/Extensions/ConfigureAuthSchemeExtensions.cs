@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using AdminWebsite.Configuration;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AdminWebsite.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class ConfigureAuthSchemeExtensions
     {
 

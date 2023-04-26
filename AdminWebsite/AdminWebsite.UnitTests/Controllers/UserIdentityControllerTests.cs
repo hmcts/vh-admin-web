@@ -41,6 +41,28 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
+        public async Task should_return_not_found_when_username_cannot_be_found_from_claims()
+        {
+            var claims = new List<Claim>
+            {
+                new("unique_user", "user@name.com"),
+                new(ClaimTypes.NameIdentifier, "userId"),
+                new("name", "John Doe")
+            };
+            
+            var identity = new ClaimsIdentity(claims, "TestAuthType", "preferred_username", ClaimTypes.Role);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            _controller = SetupControllerWithClaims(claimsPrincipal);
+            
+            var response = await _controller.GetUserProfile();
+            var result = response.Result.As<ObjectResult>();
+
+            result.Should().NotBeNull();
+
+            Assert.AreEqual(404, result.StatusCode);
+        }
+        
+        [Test]
         public async Task should_return_status_code_result_when_api_errors_with_non_404()
         {
             _claimsPrincipal = new ClaimsPrincipalBuilder()
