@@ -10,6 +10,7 @@ using AdminWebsite.Helper;
 using System;
 using System.Collections.Generic;
 using BookingsApi.Contract.Responses;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.Controllers
 {
@@ -19,10 +20,12 @@ namespace AdminWebsite.Controllers
     {
 
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly ILogger<UserIdentityController> _logger;
 
-        public UserIdentityController(IBookingsApiClient bookingsApiClient)
+        public UserIdentityController(IBookingsApiClient bookingsApiClient, ILogger<UserIdentityController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -34,7 +37,10 @@ namespace AdminWebsite.Controllers
             var username = User.Identity?.Name;
             if (username == null)
             {
-                return StatusCode((int)HttpStatusCode.NotFound, "Username not found in claims");
+                const string message = "Username not found in claims. Check the Scheme's NameClaimType has been configured correctly.";
+                var ex = new NullReferenceException(message);
+                _logger.LogError(ex, message);
+                return StatusCode((int)HttpStatusCode.NotFound, message);
             }
 
             JusticeUserResponse justiceUser = null;
