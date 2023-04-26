@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Moq;
 using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests
@@ -48,7 +49,8 @@ namespace AdminWebsite.UnitTests
                 Options.Create(kinlyConfiguration),
                 Options.Create(applicationInsightsConfiguration),
                 Options.Create(testSettings),
-                Options.Create(vhServiceConfiguration)) {
+                Options.Create(vhServiceConfiguration),
+                new Mock<IFeatureToggles>().Object) {
 
                 ControllerContext = controllerContext
             };
