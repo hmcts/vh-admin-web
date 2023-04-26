@@ -1,4 +1,3 @@
-using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
-using Newtonsoft.Json;
 
 namespace AdminWebsite.Controllers
 {
