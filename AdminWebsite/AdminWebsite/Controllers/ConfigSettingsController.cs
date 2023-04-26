@@ -18,14 +18,18 @@ namespace AdminWebsite.Controllers
         private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly TestUserSecrets _testUserSecrets;
         private readonly ServiceConfiguration _vhServiceConfiguration;
+        private readonly IFeatureToggles _featureToggles;
+
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
             IOptions<KinlyConfiguration> kinlyConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
-            IOptions<ServiceConfiguration> vhServiceConfiguration)
+            IOptions<ServiceConfiguration> vhServiceConfiguration,
+            IFeatureToggles featureToggles)
         {
+            _featureToggles = featureToggles;
             _azureAdConfiguration = azureAdConfiguration.Value;
             _kinlyConfiguration = kinlyConfiguration.Value;
             _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
@@ -60,6 +64,24 @@ namespace AdminWebsite.Controllers
             };
 
             return Ok(clientSettings);
+        }
+        
+        [HttpGet("test")]
+        [AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "GetFeatureToggles")]
+        public ActionResult<ClientSettingsResponse> GetFeatureToggles()
+        {
+
+            var Dom1Enabled = _featureToggles.Dom1Enabled();
+            var isDom1Supported = !_azureAdConfiguration.ResourceId.Contains("dev");
+            var settings = new
+            {
+                Dom1Enabled,
+                isDom1Supported,
+                _azureAdConfiguration
+            };
+            return Ok(settings);
         }
     }
 }
