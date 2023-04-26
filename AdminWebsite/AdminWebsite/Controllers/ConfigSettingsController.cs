@@ -83,9 +83,11 @@ namespace AdminWebsite.Controllers
         {
 
             var Dom1Enabled = _featureToggles.Dom1Enabled();
+            var isDom1Supported = !_azureAdConfiguration.ResourceId.Contains("dev");
             var settings = new
             {
                 Dom1Enabled,
+                isDom1Supported,
                 _dom1AdConfiguration,
                 _azureAdConfiguration
             };
