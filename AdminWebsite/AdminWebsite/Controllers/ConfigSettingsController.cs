@@ -75,10 +75,12 @@ namespace AdminWebsite.Controllers
 
             var Dom1Enabled = _featureToggles.Dom1Enabled();
             var isDom1Supported = !_azureAdConfiguration.ResourceId.Contains("dev");
+            var bookAndConfirmEnabled = _featureToggles.BookAndConfirmToggle();
             var settings = new
             {
                 Dom1Enabled,
                 isDom1Supported,
+                bookAndConfirmEnabled,
                 _azureAdConfiguration
             };
             return Ok(settings);
