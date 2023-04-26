@@ -40,11 +40,19 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle() => _ldClient.BoolVariation(BookAndConfirmToggleKey, _user);
         public bool Dom1Enabled()
         {
+            if (!_ldClient.Initialized)
+            {
+                throw new InvalidOperationException("LaunchDarkly client not initialized");
+            }
             return _ldClient.BoolVariation(Dom1EnabledToggleKey, _user);
         }
         
         public bool Dom1EnabledV2()
         {
+            if (!_ldClient.Initialized)
+            {
+                throw new InvalidOperationException("LaunchDarkly client not initialized");
+            }
             return _ldClient.BoolVariation(Dom1EnabledV2ToggleKey, _user);
         }
     }
