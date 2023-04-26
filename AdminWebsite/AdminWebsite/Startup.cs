@@ -32,7 +32,7 @@ namespace AdminWebsite
                 options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
             var envName = Configuration["AzureAd:ResourceId"];
-            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"], envName));
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
             
             services.AddSwagger();
             services.AddJsonOptions();

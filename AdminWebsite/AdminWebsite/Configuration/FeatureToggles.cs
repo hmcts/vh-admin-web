@@ -12,6 +12,7 @@ namespace AdminWebsite.Configuration
     {
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
+        public bool Dom1EnabledV2();
     }
     
     public class FeatureToggles : IFeatureToggles
@@ -21,6 +22,7 @@ namespace AdminWebsite.Configuration
         private const string LdUser = "vh-admin-web";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
+        private const string Dom1EnabledV2ToggleKey = "Dom1Feature";
         public FeatureToggles(string sdkKey, string environmentName)
         {
             
@@ -39,6 +41,11 @@ namespace AdminWebsite.Configuration
         public bool Dom1Enabled()
         {
             return _ldClient.BoolVariation(Dom1EnabledToggleKey, _user);
+        }
+        
+        public bool Dom1EnabledV2()
+        {
+            return _ldClient.BoolVariation(Dom1EnabledV2ToggleKey, _user);
         }
     }
 }

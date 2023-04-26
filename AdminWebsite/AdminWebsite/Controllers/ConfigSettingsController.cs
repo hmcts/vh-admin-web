@@ -74,5 +74,24 @@ namespace AdminWebsite.Controllers
 
             return Ok(clientSettings);
         }
+        
+        [HttpGet("test")]
+        [AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "GetFeatureToggles")]
+        public ActionResult<ClientSettingsResponse> GetFeatureToggles()
+        {
+
+            var Dom1Enabled = _featureToggles.Dom1Enabled();
+            var Dom1V2Enabled = _featureToggles.Dom1EnabledV2();
+            var BookAndConfirmToggle = _featureToggles.BookAndConfirmToggle();
+            var settings = new
+            {
+                Dom1Enabled,
+                Dom1V2Enabled,
+                BookAndConfirmToggle
+            };
+            return Ok(settings);
+        }
     }
 }
