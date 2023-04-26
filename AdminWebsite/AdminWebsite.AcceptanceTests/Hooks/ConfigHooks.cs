@@ -165,8 +165,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
         
         private void SetBookingConfirmToggleStatus(TestContext context)
-        { 
-            var featureToggle = new FeatureToggles(_configRoot["FeatureToggle:SDKKey"]);
+        {
+            var featureToggle =
+                new FeatureToggles(_configRoot["FeatureToggle:SDKKey"], _configRoot["AzureAd:ResourceId"]);
             context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
     }

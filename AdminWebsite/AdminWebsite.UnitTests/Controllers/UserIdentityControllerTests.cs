@@ -10,6 +10,7 @@ using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
@@ -18,6 +19,7 @@ namespace AdminWebsite.UnitTests.Controllers
     public class UserIdentityControllerTests
     {
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
+        private Mock<ILogger<UserIdentityController>> _loggerMock;
 
         private ClaimsPrincipal _claimsPrincipal;
         private JusticeUserResponse _justiceUserResponse;
@@ -33,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-
+            _loggerMock = new Mock<ILogger<UserIdentityController>>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.GetJusticeUserByUsernameAsync(It.IsAny<string>())).ReturnsAsync(_justiceUserResponse);
         }
@@ -192,7 +194,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 }
             };
 
-            return new UserIdentityController(_bookingsApiClientMock.Object)
+            return new UserIdentityController(_bookingsApiClientMock.Object, _loggerMock.Object)
             {
                 ControllerContext = context
             };
