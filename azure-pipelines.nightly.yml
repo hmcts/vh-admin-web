@@ -237,6 +237,9 @@ stages:
             value: $(IsLive)
 
           # AzureAd
+          - name: AzureAd:ResourceId
+            value: vh-video-web-appid-v2
+            secret: true
           - name: AzureAd:ClientId
             value: vh-admin-web-appid-v2
             secret: true

@@ -226,6 +226,10 @@ stages:
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
+          
+          - name: AzureAd:ResourceId
+            value: vh-video-web-appid-v2
+            secret: true
 
           # DOM1
           - name: DOM1:TenantId
