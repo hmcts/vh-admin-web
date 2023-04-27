@@ -84,6 +84,14 @@ parameters:
         value: vh-admin-web-Feature-Toggle
         secret: true
 
+      # DOM1
+      - name: DOM1:TenantId
+        value: dom1--tenant--id
+        secret: true
+      - name: DOM1:ClientId
+        value: dom1--adminweb-clientid
+        secret: true
+
       # GOV Notify Configuration
       - name: NotifyConfiguration:ApiKey
         value: $(notify-api-key)
@@ -175,6 +183,14 @@ parameters:
             value: $(admin_web_url)home
       - name: AzureAd:TenantId
         value: tenantid
+        secret: true
+
+      # DOM1
+      - name: DOM1:TenantId
+        value: dom1--tenant--id
+        secret: true
+      - name: DOM1:ClientId
+        value: dom1--adminweb-clientid
         secret: true
 
       # Testing
