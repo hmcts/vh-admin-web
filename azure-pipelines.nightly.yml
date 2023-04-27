@@ -1,107 +1,107 @@
 parameters:
-  - name: deploymentBranch
-    displayName: Branch to Deploy
-    type: string
-    default: refs/heads/master
+- name: deploymentBranch
+  displayName: Branch to Deploy
+  type: string
+  default: refs/heads/master
 
-  - name: environment
-    displayName: Environment
-    type: string
-    default: AAT
-    values:
-      - Preview
-      - Dev
-      - AAT
-      - Sandbox
-      - Test1
-      - Test2
-      - Demo
-      - Preprod
-      - Prod
+- name: environment
+  displayName: Environment
+  type: string
+  default: AAT
+  values:
+  - Preview
+  - Dev
+  - AAT
+  - Sandbox
+  - Test1
+  - Test2
+  - Demo
+  - Preprod
+  - Prod
 
-  - name: deviceConfiguration
-    displayName: Device Configurations
-    type: object
-    default:
-      - OS: Windows
-        Browser: Chrome
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory!=UnsupportedBrowser
-      - OS: Windows
-        Browser: Firefox
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: Windows
-        Browser: EdgeChromium
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: MacOS
-        Browser: Safari
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: MacOS
-        Browser: Chrome
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=Smoketest-Extended
-      - OS: MacOS
-        Browser: Firefox
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: MacOS
-        Browser: EdgeChromium
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: Windows
-        Browser: Ie11
-        BrowserVersion: Latest
-        DeviceType: Desktop
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedBrowser
-      - OS: iOS
-        Browser: Safari
-        BrowserVersion:
-        DeviceType: Tablet
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedDevice
-      - OS: Android
-        Browser: Chrome
-        BrowserVersion:
-        DeviceType: Tablet
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedDevice
-      - OS: iOS
-        Browser: Safari
-        BrowserVersion:
-        DeviceType: Mobile
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedDevice
-      - OS: Android
-        Browser: Chrome
-        BrowserVersion:
-        DeviceType: Mobile
-        DeviceName:
-        TestCaseFilter: TestCategory=UnsupportedDevice
+- name: deviceConfiguration
+  displayName: Device Configurations
+  type: object
+  default:
+    - OS: Windows
+      Browser: Chrome
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory!=UnsupportedBrowser
+    - OS: Windows
+      Browser: Firefox
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: Windows
+      Browser: EdgeChromium
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: MacOS
+      Browser: Safari
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: MacOS
+      Browser: Chrome
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=Smoketest-Extended
+    - OS: MacOS
+      Browser: Firefox
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: MacOS
+      Browser: EdgeChromium
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser  
+    - OS: Windows
+      Browser: Ie11
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: iOS
+      Browser: Safari
+      BrowserVersion:
+      DeviceType: Tablet
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: Android
+      Browser: Chrome
+      BrowserVersion:
+      DeviceType: Tablet
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: iOS
+      Browser: Safari
+      BrowserVersion:
+      DeviceType: Mobile
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: Android
+      Browser: Chrome
+      BrowserVersion:
+      DeviceType: Mobile
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
 
-  - name: prodEnvs
-    displayName: Environments Using Prod Subscription
-    type: object
-    default:
-      - Prod
-      - Preprod
+- name: prodEnvs
+  displayName: Environments Using Prod Subscription
+  type: object
+  default:
+    - Prod
+    - Preprod
 
 # Set variables once
 variables:
@@ -111,19 +111,19 @@ variables:
   - group: vh test users
   - group: Saucelabs
   - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
-      - group: vh-prod
+    - group: vh-prod
   - ${{ if not(containsValue(parameters.prodEnvs, parameters.environment)) }}:
-      - group: vh-preview
+    - group: vh-preview
 
 trigger: none
 pr: none
 schedules:
-  - cron: "0 19 * * *"
-    displayName: Daily midnight build
-    always: true
-    branches:
-      include:
-        - master
+- cron: "0 19 * * *"
+  displayName: Daily midnight build
+  always: true
+  branches:
+    include:
+    - master
 
 resources:
   repositories:
@@ -133,8 +133,8 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts
   pipelines:
-    - pipeline: CI
-      source: hmcts.vh-admin-web
+  - pipeline: CI
+    source: hmcts.vh-admin-web
 
 stages:
   - template: templates/vh-release.yml@templates
@@ -151,81 +151,81 @@ stages:
         resourceGroup: vh-admin-web-$(environment)
         testCaseFilter: TestCategory=smoketest
         dependentApps:
-          - name: vh-user-api-$(environment)
-            resourceGroup: vh-user-api-$(environment)
-            healthEndpoint: $(user_api_url)healthcheck/health
-          - name: vh-bookings-api-$(environment)
-            resourceGroup: vh-bookings-api-$(environment)
-            healthEndpoint: $(bookings_api_url)healthcheck/health
-          - name: vh-video-api-$(environment)
-            resourceGroup: vh-video-api-$(environment)
-            healthEndpoint: $(video_api_url)healthcheck/health
-          - name: vh-notification-api-$(environment)
-            resourceGroup: vh-notification-api-$(environment)
-            healthEndpoint: $(notification_api_url)healthcheck/health
-          - name: vh-test-api-$(environment)
-            resourceGroup: vh-test-api-$(environment)
-            healthEndpoint: $(test_api_url)health/health
+        - name: vh-user-api-$(environment)
+          resourceGroup: vh-user-api-$(environment)
+          healthEndpoint: $(user_api_url)healthcheck/health
+        - name: vh-bookings-api-$(environment)
+          resourceGroup: vh-bookings-api-$(environment)
+          healthEndpoint: $(bookings_api_url)healthcheck/health
+        - name: vh-video-api-$(environment)
+          resourceGroup: vh-video-api-$(environment)
+          healthEndpoint: $(video_api_url)healthcheck/health
+        - name: vh-notification-api-$(environment)
+          resourceGroup: vh-notification-api-$(environment)
+          healthEndpoint: $(notification_api_url)healthcheck/health
+        - name: vh-test-api-$(environment)
+          resourceGroup: vh-test-api-$(environment)
+          healthEndpoint: $(test_api_url)health/health
         variables:
           - group: vh-wowza-dev
             env:
-              - Preview
-              - Dev
-              - AAT
-              - Sandbox
-              - Test1
-              - Test2
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
           - group: vh-wowza-demo
             env:
-              - Demo
+             - Demo
           - group: vh-wowza-preprod
             env:
-              - Preprod
+             - Preprod
           - group: vh-wowza-prod
             env:
-              - Prod
+             - Prod
           - group: KinlyConfiguration_Test
             env:
-              - Preview
-              - Dev
-              - AAT
-              - Sandbox
-              - Test1
-              - Test2
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
           - group: KinlyConfiguration_Test2
             env:
-              - Demo
+             - Demo
           - group: KinlyConfiguration_Preprod
             env:
-              - Preprod
+             - Preprod
           - group: KinlyConfiguration_Prod
             env:
-              - Prod
+             - Prod
           - group: govuk-notify-preview
             env:
-              - Preview
+             - Preview
           - group: govuk-notify-dev
             env:
-              - Dev
+             - Dev
           - group: govuk-notify-aat
             env:
-              - AAT
+             - AAT
           - group: govuk-notify-sandbox
             env:
-              - Sandbox
+             - Sandbox
           - group: govuk-notify-test1
             env:
-              - Test1
-              - Test2
+             - Test1
+             - Test2
           - group: govuk-notify-demo
             env:
-              - Demo
+             - Demo
           - group: govuk-notify-preprod
             env:
-              - PreProd
+             - PreProd
           - group: govuk-notify-prod
             env:
-              - Prod
+             - Prod
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -236,10 +236,15 @@ stages:
           - name: IsLive
             value: $(IsLive)
 
-          # AzureAd
-          - name: AzureAd:ResourceId
-            value: vh-video-web-appid-v2
+          # Dom1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
             secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
+
+          # AzureAd
           - name: AzureAd:ClientId
             value: vh-admin-web-appid-v2
             secret: true
@@ -261,15 +266,7 @@ stages:
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
-
-          # DOM1
-          - name: DOM1:TenantId
-            value: dom1--tenant--id
-            secret: true
-          - name: DOM1:ClientId
-            value: dom1--adminweb--clientid
-            secret: true
-
+            
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
@@ -312,10 +309,10 @@ stages:
           - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
-
+            
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
-            value: $(notify-api-key)
+            value: $(notify-api-key)            
 
         acceptanceTestSettings:
           # VhServices
@@ -342,7 +339,7 @@ stages:
             value: $(test_api_url)
           - name: VhServices:TestApiResourceId
             value: vh-test-api-identifieruris
-            secret: true
+            secret: true 
           - name: VhServices:BookingsApiUrl
             value: $(bookings_api_url)
           - name: VhServices:BookingsApiResourceId
@@ -357,6 +354,14 @@ stages:
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
 
+          # Dom1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
+          
           # AzureAd
           - name: AzureAd:TenantId
             value: tenantid
@@ -374,14 +379,6 @@ stages:
           - name: AzureAd:TemporaryPassword
             value: $(TemporaryPassword)
 
-          # DOM1
-          - name: DOM1:TenantId
-            value: dom1--tenant--id
-            secret: true
-          - name: DOM1:ClientId
-            value: dom1--adminweb--clientid
-            secret: true
-
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
@@ -392,11 +389,11 @@ stages:
           - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
             secret: true
-
+            
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
             value: $(notify-api-key)
-
+            
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
@@ -404,7 +401,7 @@ stages:
             value: $(ConferencePhoneNumberWelsh)
           - name: KinlyConfiguration:JoinByPhoneFromDate
             value: $(JoinByPhoneFromDate)
-
+            
           # SauceLabs
           - name: Saucelabs:Username
             value: $(Saucelabs:Username)
@@ -420,7 +417,7 @@ stages:
             value: $(wowza_storageAccountKey)
           - name: WowzaConfiguration:StorageContainerName
             value: $(wowza_storageContainerName)
-
+            
           # Ejud - test setting only
           - name: UsingEjud
             value: $(UsingEjud)
