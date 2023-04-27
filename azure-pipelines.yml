@@ -89,7 +89,7 @@ parameters:
         value: dom1--tenant--id
         secret: true
       - name: DOM1:ClientId
-        value: dom1--adminweb-clientid
+        value: dom1--adminweb--clientid
         secret: true
 
       # GOV Notify Configuration
@@ -190,7 +190,7 @@ parameters:
         value: dom1--tenant--id
         secret: true
       - name: DOM1:ClientId
-        value: dom1--adminweb-clientid
+        value: dom1--adminweb--clientid
         secret: true
 
       # Testing
