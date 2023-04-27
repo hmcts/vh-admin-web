@@ -27,7 +27,7 @@ namespace AdminWebsite.Controllers
             IOptions<KinlyConfiguration> kinlyConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
-            IOptions<ServiceConfiguration> vhServiceConfiguration, 
+            IOptions<ServiceConfiguration> vhServiceConfiguration,
             IFeatureToggles featureToggles)
         {
             _featureToggles = featureToggles;
@@ -71,6 +71,20 @@ namespace AdminWebsite.Controllers
             clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
             return Ok(clientSettings);
+        }
+
+        [HttpGet("test")]
+        [AllowAnonymous]
+        [ProducesResponseType(typeof(ClientSettingsResponse), (int)HttpStatusCode.OK)]
+        [SwaggerOperation(OperationId = "GetTestConfigSettings")]
+        public ActionResult<ClientSettingsResponse> GetTest()
+        {
+
+            _azureAdConfiguration.ClientSecret = null;
+            var darklyDom1Enabled = _featureToggles.Dom1Enabled();
+            var DOM1 = _dom1AdConfiguration;
+            var VH = _azureAdConfiguration;
+            return Ok(new { DOM1, VH, darklyDom1Enabled });
         }
     }
 }
