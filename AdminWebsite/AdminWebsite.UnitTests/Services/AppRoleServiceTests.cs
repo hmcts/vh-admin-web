@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
@@ -112,8 +113,11 @@ namespace AdminWebsite.UnitTests.Services
             // arrange
             var username = "random@claims.com";
             var uniqueId = Guid.NewGuid().ToString();
+            var apiException = new BookingsApiException<string>("Conflict", (int) HttpStatusCode.NotFound,
+                "Conflict", null, null, null);
+            // var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
-                .ReturnsAsync((JusticeUserResponse) null);
+                .ThrowsAsync(apiException);
 
             // act
             var claims = await _sut.GetClaimsForUserAsync(uniqueId, username);
