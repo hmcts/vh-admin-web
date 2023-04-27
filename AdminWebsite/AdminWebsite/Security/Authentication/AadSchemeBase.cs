@@ -8,7 +8,7 @@ namespace AdminWebsite.Security.Authentication
     public abstract class AadSchemeBase : ProviderSchemeBase, IProviderSchemes
     {
         protected readonly IdpConfiguration IdpConfiguration;
-        
+
         protected AadSchemeBase(IdpConfiguration idpConfiguration)
         {
             IdpConfiguration = idpConfiguration;
@@ -19,9 +19,9 @@ namespace AdminWebsite.Security.Authentication
         public override void SetJwtBearerOptions(JwtBearerOptions options)
         {
             // reform uses client id (config should be null here), SDS uses resource id. 
-            var audience  = IdpConfiguration.ResourceId ?? IdpConfiguration.ClientId;
+            // var audience = IdpConfiguration.ResourceId ?? IdpConfiguration.ClientId;
             options.Authority = $"{IdpConfiguration.Authority}{IdpConfiguration.TenantId}/v2.0";
-            options.Audience = audience;
+            options.Audience = IdpConfiguration.ClientId;
             options.TokenValidationParameters.NameClaimType = "preferred_username";
             options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
             options.TokenValidationParameters.ValidateLifetime = true;
