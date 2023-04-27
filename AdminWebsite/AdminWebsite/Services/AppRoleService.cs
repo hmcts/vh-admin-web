@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Responses;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -45,7 +46,8 @@ namespace AdminWebsite.Services
             {
                 if (ex.StatusCode == (int) System.Net.HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning(ex, "User {Username} not found as a JusticeUser in BookingsApi", username);
+                    var typedException = ex as BookingsApiException<ProblemDetails>;
+                    _logger.LogWarning(typedException, "User {Username} not found as a JusticeUser in BookingsApi", username);
                 }
                 return new List<Claim>();
             }
