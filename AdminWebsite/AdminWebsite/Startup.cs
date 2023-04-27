@@ -31,9 +31,9 @@ namespace AdminWebsite
             services.AddApplicationInsightsTelemetry(options =>
                 options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            var envName = Configuration["AzureAd:ResourceId"];
+            var envName = Configuration["AzureAd:RedirectUri"]; // resource ID is a GUID, 
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
-            
+
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
