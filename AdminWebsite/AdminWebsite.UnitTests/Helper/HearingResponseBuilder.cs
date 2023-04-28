@@ -1,10 +1,10 @@
-﻿using FizzWare.NBuilder;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using BookingsApi.Contract.Responses;
+using FizzWare.NBuilder;
 
-namespace AdminWebsite.UnitTests.Helpers
+namespace AdminWebsite.UnitTests.Helper
 {
     public static class HearingResponseBuilder
     {

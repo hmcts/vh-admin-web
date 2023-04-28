@@ -236,6 +236,14 @@ stages:
           - name: IsLive
             value: $(IsLive)
 
+          # Dom1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
+
           # AzureAd
           - name: AzureAd:ClientId
             value: vh-admin-web-appid-v2
@@ -345,6 +353,14 @@ stages:
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
+
+          # Dom1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
           
           # AzureAd
           - name: AzureAd:TenantId

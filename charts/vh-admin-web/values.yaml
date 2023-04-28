@@ -1,6 +1,6 @@
 ---
 java:
-  image: 'sdshmctspublic.azurecr.io/vh/admin-web:latest'
+  image: "sdshmctspublic.azurecr.io/vh/admin-web:latest"
   applicationPort: 8080
   replicas: 2
   ingressHost: vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
@@ -18,6 +18,10 @@ java:
       secrets:
         - applicationinsights--instrumentationkey
         - azuread--tenantid
+        - name: dom1--tenant--id
+          alias: DOM1--TenantId
+        - name: dom1--adminweb--clientid
+          alias: DOM1--ClientId
         - name: launchdarkly-client-id
           alias: VHSERVICES--LAUNCHDARKLYCLIENTID
     vh-admin-web:
@@ -35,7 +39,7 @@ java:
         - kinlyconfiguration--conferencephonenumberwelsh
         - kinlyconfiguration--joinbyphonefromdate
         - name: FeatureToggles--SDK-Key
-          alias: FeatureToggles--SdkKey
+          alias: FeatureToggle--SDKKey
         - NotifyConfiguration--ApiKey
         - TestUserSecrets--TestUsernameStem
     vh-bookings-api:
@@ -71,6 +75,8 @@ java:
     AZUREAD__BASEVIDEOURL: https://vhinfracore{{ lower .Values.global.environment }}.blob.core.windows.net/video
     AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
     AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
+    DOM1__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
+    DOM1__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
     DISABLEHTTPSREDIRECTION: true
     ISLIVE: "False"
     Logging__LogLevel__Default: debug

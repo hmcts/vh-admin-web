@@ -20,7 +20,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NotificationApi.Client;
-using Swashbuckle.AspNetCore.Swagger;
 using UserApi.Client;
 using VideoApi.Client;
 
@@ -82,8 +81,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<AzureAdConfiguration>();
-            serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
-            serviceCollection.AddScoped<ICachedUserClaimBuilder, CachedUserClaimBuilder>();
+            serviceCollection.AddScoped<IAppRoleService, AppRoleService>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url

@@ -31,8 +31,9 @@ namespace AdminWebsite
             services.AddApplicationInsightsTelemetry(options =>
                 options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SDKKey"]));
-            
+            var envName = Configuration["AzureAd:RedirectUri"]; // resource ID is a GUID, 
+            services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
+
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -53,6 +54,7 @@ namespace AdminWebsite
         {
             Settings = Configuration.Get<Settings>();
 
+            services.Configure<Dom1AdConfiguration>(options => Configuration.Bind(Dom1AdConfiguration.ConfigSectionKey, options));
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
@@ -99,6 +101,7 @@ namespace AdminWebsite
             }
 
             app.UseAuthentication();
+            app.UseMiddleware<UserClaimsMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
 
             // HTTP Response Headers
