@@ -115,7 +115,6 @@ namespace AdminWebsite.UnitTests.Services
             var uniqueId = Guid.NewGuid().ToString();
             var apiException = new BookingsApiException<string>("Conflict", (int) HttpStatusCode.NotFound,
                 "Conflict", null, null, null);
-            // var bookingsApiClient = _mocker.Mock<IBookingsApiClient>();
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
                 .ThrowsAsync(apiException);
 
