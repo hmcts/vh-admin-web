@@ -18,8 +18,6 @@ namespace AdminWebsite.Security.Authentication
 
         public override void SetJwtBearerOptions(JwtBearerOptions options)
         {
-            // reform uses client id (config should be null here), SDS uses resource id. 
-            // var audience = IdpConfiguration.ResourceId ?? IdpConfiguration.ClientId;
             options.Authority = $"{IdpConfiguration.Authority}{IdpConfiguration.TenantId}/v2.0";
             options.Audience = IdpConfiguration.ClientId;
             options.TokenValidationParameters.NameClaimType = "preferred_username";
