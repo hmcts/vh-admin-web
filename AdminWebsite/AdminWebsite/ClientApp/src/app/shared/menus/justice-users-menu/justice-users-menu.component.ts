@@ -5,7 +5,6 @@ import { BookingPersistService } from '../../../services/bookings-persist.servic
 import { JusticeUsersService } from '../../../services/justice-users.service';
 import { Logger } from '../../../services/logger';
 import { MenuBase } from '../menu-base';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
