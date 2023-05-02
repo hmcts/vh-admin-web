@@ -16,7 +16,6 @@ import { map } from 'rxjs/operators';
 export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     loggerPrefix = '[MenuJusticeUser] -';
     formGroupName = 'selectedUserIds';
-    users$: Observable<JusticeUserResponse[]>;
     selectedItems: [] | string;
     formConfiguration = {
         selectedUserIds: [this.bookingPersistService.selectedUsers || []]
@@ -35,7 +34,11 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.users$ = this.justiceUserService.allUsers$.pipe(map(users => users.filter(user => !user.deleted)));
+        this.justiceUserService.allUsers$
+            .pipe(map(users => users.filter(user => !user.deleted)))
+            .subscribe((data: JusticeUserResponse[]) => {
+                this.items = data;
+            });
         super.ngOnInit();
     }
 
