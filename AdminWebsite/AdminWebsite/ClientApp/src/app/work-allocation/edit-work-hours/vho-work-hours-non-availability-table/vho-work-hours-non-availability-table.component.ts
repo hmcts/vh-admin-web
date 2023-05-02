@@ -394,7 +394,10 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     retrieveDate(date: any): Date {
-        return date === '' ? null : new Date(date);
+        if (date === '') return null;
+        const result = new Date(date);
+        result.setHours(0, 0, 0, 0);
+        return result;
     }
 
     filterByDate() {
