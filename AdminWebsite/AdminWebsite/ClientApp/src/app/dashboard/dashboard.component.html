@@ -20,7 +20,7 @@
       </div>
     </a>
   </div>
-  <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
+  <div class="govuk-grid-column-one-third" *ngIf="showCheckList && !hrsIntegrationFeature">
     <a class="vhpanel-link" [routerLink]="['/get-audio-file']">
       <div class="vhpanel vhpanel-lightblue" id="getAudioLinkBtn">
         <h1 class="vhpanel-title">Get audio file link</h1>
