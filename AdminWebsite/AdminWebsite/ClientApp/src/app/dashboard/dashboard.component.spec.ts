@@ -139,7 +139,7 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
-    fit('should not show  link to audio file  if feature is switched on', async () => {
+    it('should not show  link to audio file  if feature is switched on', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
                 new UserProfileResponse({
@@ -153,7 +153,7 @@ describe('DashboardComponent', () => {
         expect(component.showCheckList).toBeFalsy();
     });
 
-    fit('should  show  link to audio file  if feature is switched off', async () => {
+    it('should  show  link to audio file  if feature is switched off', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
                 new UserProfileResponse({
