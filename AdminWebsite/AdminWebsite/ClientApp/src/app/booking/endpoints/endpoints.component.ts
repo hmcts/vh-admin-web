@@ -252,7 +252,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
     const displayNameText: string = control.value;
-    if (displayNameText !== null && displayNameText.replace(/\s/g, '').length) {
+    if (displayNameText?.replace(/\s/g, '').length) {
         return null;
     } else {
         return { blankSpaceValidator: true };
