@@ -22,14 +22,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     showBooking = false;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
-    hrsIntegrationFeature: boolean = true;
+    hrsIntegrationFeature: boolean ;
     $ldSubcription: Subscription;
 
     ngOnInit() {
         this.$ldSubcription = this.launchDarklyService.flagChange.subscribe(value => {
             if (value) {
                 this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-                //this.hrsIntegrationFeature = value[FeatureFlags.hrsIntegration];
+                this.hrsIntegrationFeature = value[FeatureFlags.hrsIntegration];
             }
 
             this.userIdentityService
