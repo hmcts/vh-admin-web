@@ -137,7 +137,7 @@ describe('DashboardComponent', () => {
             )
         );
         await component.ngOnInit();
-        expect(component.showAudioFileLink).toBeFalsy();
+        expect(component.showWorkAllocation).toBeFalsy();
     });
     it('should not show  link to audio file  if feature is switched on', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
