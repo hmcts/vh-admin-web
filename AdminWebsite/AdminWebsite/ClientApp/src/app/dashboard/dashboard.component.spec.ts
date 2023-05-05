@@ -137,7 +137,7 @@ describe('DashboardComponent', () => {
             )
         );
         await component.ngOnInit();
-        expect(component.showWorkAllocation).toBeFalsy();
+        expect(component.showAudioFileLink).toBeFalsy();
     });
     it('should not show  link to audio file  if feature is switched on', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
@@ -150,7 +150,7 @@ describe('DashboardComponent', () => {
 
         launchDarklyServiceSpy.flagChange.next({ 'hrs-integration': true });
         await component.ngOnInit();
-        expect(component.showCheckList).toBeFalsy();
+        expect(component.showAudioFileLink).toBeFalsy();
     });
 
     it('should  show  link to audio file  if feature is switched off', async () => {
