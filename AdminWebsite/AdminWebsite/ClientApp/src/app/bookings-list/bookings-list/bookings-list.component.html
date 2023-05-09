@@ -38,7 +38,7 @@
               class="govuk-input"
               type="date"
               formControlName="startDate"
-              min="{{ today | date: 'yyyy-MM-dd' }}"
+              min="{{ today | date : 'yyyy-MM-dd' }}"
               max="{{ searchForm.value.endDate }}"
               (blur)="onStartDateBlur()"
             />
@@ -50,7 +50,7 @@
               class="govuk-input"
               type="date"
               formControlName="endDate"
-              min="{{ searchForm.value.startDate || today | date: 'yyyy-MM-dd' }}"
+              min="{{ searchForm.value.startDate || today | date : 'yyyy-MM-dd' }}"
               (blur)="onEndDateBlur()"
             />
           </div>
@@ -132,7 +132,7 @@
     <div *ngFor="let booking of bookings; index as b">
       <div class="govuk-grid-row vh-row">
         <div class="govuk-grid-column-full govuk-hint">
-          {{ booking.BookingsDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY' }}
+          {{ booking.BookingsDate | amLocal | amDateFormat : 'dddd DD MMMM YYYY' }}
         </div>
       </div>
       <div class="govuk-grid-row vh-row">
@@ -145,7 +145,7 @@
         <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
             <span *ngIf="!detail?.JudgeName && ejudFeatureFlag" class="vh-sml vh-nojudge">NO JUDGE ASSIGNED</span>
-            <div class="vh-sml vh-col govuk-!-margin-top-2">{{ detail.StartTime | amLocal | amDateFormat: 'h:mm a' }}</div>
+            <div class="vh-sml vh-col govuk-!-margin-top-2">{{ detail.StartTime | amLocal | amDateFormat : 'h:mm a' }}</div>
             <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{ detail.DurationInHoursAndMinutes }}</div>
             <div *ngIf="detail.isCancelled" class="vh-cancelled-booking">{{ detail.Status }}</div>
             <div *ngIf="detail.isCreated" class="vh-created-booking">Confirmed</div>

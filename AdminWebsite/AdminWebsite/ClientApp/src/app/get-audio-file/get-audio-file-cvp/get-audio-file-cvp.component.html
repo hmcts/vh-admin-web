@@ -9,7 +9,7 @@
         formControlName="hearingDate"
         required
         placeholder="e.g. 30/08/2020"
-        max="{{ today | date: 'yyyy-MM-dd' }}"
+        max="{{ today | date : 'yyyy-MM-dd' }}"
       />
       <div *ngIf="hearingDateInvalid" class="alert alert-danger">
         <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the past </span>
