@@ -585,59 +585,57 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 const justiceUserServiceSpy = jasmine.createSpyObj(['JusticeUsersService', ['retrieveJusticeUserAccounts']]);
 
 describe('BookingsListComponent', () => {
-    beforeEach(
-        waitForAsync(() => {
-            const data = new ResponseTestData().getTestData();
+    beforeEach(waitForAsync(() => {
+        const data = new ResponseTestData().getTestData();
 
-            bookingsListServiceSpy.getBookingsList.and.returnValue(of(data));
-            const model1 = new BookingslistTestData().getBookings();
-            const model2 = new BookingslistTestData().getBookings1();
-            const listModel = new ArrayBookingslistModelTestData().getTestData();
-            bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
-            bookingsListServiceSpy.addBookings.and.returnValue(listModel);
-            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        bookingsListServiceSpy.getBookingsList.and.returnValue(of(data));
+        const model1 = new BookingslistTestData().getBookings();
+        const model2 = new BookingslistTestData().getBookings1();
+        const listModel = new ArrayBookingslistModelTestData().getTestData();
+        bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
+        bookingsListServiceSpy.addBookings.and.returnValue(listModel);
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
-            videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
-            configServiceSpy.getConfig.and.returnValue({});
-            launchDarklyServiceSpy.flagChange = new ReplaySubject();
-            launchDarklyServiceSpy.flagChange.next({ admin_search: true });
-            referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
-            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
+        videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
+        configServiceSpy.getConfig.and.returnValue({});
+        launchDarklyServiceSpy.flagChange = new ReplaySubject();
+        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+        referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
-            TestBed.configureTestingModule({
-                declarations: [
-                    BookingsListComponent,
-                    ScrollableDirective,
-                    BookingDetailsComponent,
-                    LongDatetimePipe,
-                    JusticeUsersMenuComponent,
-                    CaseTypesMenuComponent,
-                    VenuesMenuComponent
-                ],
-                imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
-                providers: [
-                    FormBuilder,
-                    ConfigService,
-                    { provide: BookingsListService, useValue: bookingsListServiceSpy },
-                    { provide: Router, useValue: routerSpy },
-                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                    { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                    DatePipe
-                ]
-            }).compileComponents();
+        TestBed.configureTestingModule({
+            declarations: [
+                BookingsListComponent,
+                ScrollableDirective,
+                BookingDetailsComponent,
+                LongDatetimePipe,
+                JusticeUsersMenuComponent,
+                CaseTypesMenuComponent,
+                VenuesMenuComponent
+            ],
+            imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
+            providers: [
+                FormBuilder,
+                ConfigService,
+                { provide: BookingsListService, useValue: bookingsListServiceSpy },
+                { provide: Router, useValue: routerSpy },
+                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                DatePipe
+            ]
+        }).compileComponents();
 
-            fixture = TestBed.createComponent(BookingsListComponent);
-            component = fixture.componentInstance;
-            bookingPersistService = TestBed.inject(BookingPersistService);
-            returnUrlService = TestBed.inject(ReturnUrlService);
-            fixture.detectChanges();
-        })
-    );
+        fixture = TestBed.createComponent(BookingsListComponent);
+        component = fixture.componentInstance;
+        bookingPersistService = TestBed.inject(BookingPersistService);
+        returnUrlService = TestBed.inject(ReturnUrlService);
+        fixture.detectChanges();
+    }));
 
     function setFormValue(noJudge?: boolean) {
         component.searchForm.controls['caseNumber'].setValue('CASE_NUMBER');
@@ -1089,31 +1087,25 @@ describe('BookingsListComponent', () => {
         expect(component.showSearch).toBe(false);
     });
 
-    it(
-        'should add bookings list records on the next scroll and delete duplicated hearings',
-        waitForAsync(() => {
-            component.bookings = new ArrayBookingslistModelTestData().getTestData();
-            component.ngOnInit();
-            expect(component.endOfData).toBeFalsy();
-            fixture.detectChanges();
-            component.scrollHandler();
-            expect(component.bookings.length).toBe(2);
-            expect(component.recordsLoaded).toBeTruthy();
-        })
-    );
+    it('should add bookings list records on the next scroll and delete duplicated hearings', waitForAsync(() => {
+        component.bookings = new ArrayBookingslistModelTestData().getTestData();
+        component.ngOnInit();
+        expect(component.endOfData).toBeFalsy();
+        fixture.detectChanges();
+        component.scrollHandler();
+        expect(component.bookings.length).toBe(2);
+        expect(component.recordsLoaded).toBeTruthy();
+    }));
 
-    it(
-        'should add bookings list records on next scroll',
-        waitForAsync(() => {
-            component.ngOnInit();
-            expect(component.endOfData).toBeFalsy();
-            fixture.detectChanges();
-            component.scrollHandler();
+    it('should add bookings list records on next scroll', waitForAsync(() => {
+        component.ngOnInit();
+        expect(component.endOfData).toBeFalsy();
+        fixture.detectChanges();
+        component.scrollHandler();
 
-            component.scrollHandler();
-            expect(component.bookings.length).toBe(2);
-        })
-    );
+        component.scrollHandler();
+        expect(component.bookings.length).toBe(2);
+    }));
     it('should select row', () => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         component.rowSelected(1, 0);

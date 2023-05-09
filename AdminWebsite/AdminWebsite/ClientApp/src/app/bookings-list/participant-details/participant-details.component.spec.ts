@@ -12,14 +12,12 @@ describe('ParticipantDetailsComponent', () => {
     let fixture: ComponentFixture<ParticipantDetailsComponent>;
     let debugElement: DebugElement;
     let hearing = null;
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [ParticipantDetailsComponent],
-                imports: [RouterTestingModule]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [ParticipantDetailsComponent],
+            imports: [RouterTestingModule]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantDetailsComponent);

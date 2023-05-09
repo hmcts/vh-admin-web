@@ -22,14 +22,12 @@ describe('BookingParticipantListComponent', () => {
     let fixture: ComponentFixture<BookingParticipantListComponent>;
     let debugElement: DebugElement;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [BookingParticipantListComponent, ParticipantDetailsMockComponent],
-                imports: [RouterTestingModule]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [BookingParticipantListComponent, ParticipantDetailsMockComponent],
+            imports: [RouterTestingModule]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(BookingParticipantListComponent);

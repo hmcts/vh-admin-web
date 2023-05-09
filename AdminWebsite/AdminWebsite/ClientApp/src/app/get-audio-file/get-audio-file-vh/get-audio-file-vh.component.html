@@ -11,7 +11,7 @@
         formControlName="vhDate"
         required
         placeholder="e.g. 30/08/2020"
-        max="{{ today | date: 'yyyy-MM-dd' }}"
+        max="{{ today | date : 'yyyy-MM-dd' }}"
       />
       <div *ngIf="vhDateInvalid" class="alert alert-danger">
         <span id="vhDate-error" class="govuk-error-message"> Please enter a date in the past </span>

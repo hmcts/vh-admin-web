@@ -200,9 +200,11 @@ describe('BookingDetailsComponent', () => {
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
+    const defaultUpdateBookingStatusResponse = new UpdateBookingStatusResponse({ success: true, telephone_conference_id: '1234' });
+
     beforeEach(() => {
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
+        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
         videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
@@ -404,7 +406,7 @@ describe('BookingDetailsComponent', () => {
     });
     it('should get update conference phone details', fakeAsync(() => {
         component.ngOnInit();
-        tick(1000);
+        tick();
         component.telephoneConferenceId = '7777';
         component.conferencePhoneNumber = '12345';
         component.conferencePhoneNumberWelsh = '54321';
