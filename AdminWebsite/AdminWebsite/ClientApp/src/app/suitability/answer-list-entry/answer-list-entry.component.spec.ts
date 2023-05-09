@@ -6,13 +6,11 @@ describe('AnswerListEntryComponent', () => {
     let component: AnswerListEntryComponent;
     let fixture: ComponentFixture<AnswerListEntryComponent>;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [AnswerListEntryComponent]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [AnswerListEntryComponent]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AnswerListEntryComponent);

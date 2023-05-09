@@ -10,13 +10,11 @@ describe('SaveFailedPopupComponent', () => {
     let buttonTryAgain: ElementRef;
     let buttonCancel: ElementRef;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [SaveFailedPopupComponent]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [SaveFailedPopupComponent]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SaveFailedPopupComponent);

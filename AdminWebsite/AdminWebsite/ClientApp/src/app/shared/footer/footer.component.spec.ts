@@ -12,15 +12,13 @@ describe('FooterComponent', () => {
     let location: Location;
     let router: Router;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [FooterComponent, DashboardStubComponent],
-                imports: [RouterTestingModule.withRoutes([{ path: 'dashboard', component: DashboardStubComponent }])],
-                schemas: [NO_ERRORS_SCHEMA]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [FooterComponent, DashboardStubComponent],
+            imports: [RouterTestingModule.withRoutes([{ path: 'dashboard', component: DashboardStubComponent }])],
+            schemas: [NO_ERRORS_SCHEMA]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         router = TestBed.inject(Router);
