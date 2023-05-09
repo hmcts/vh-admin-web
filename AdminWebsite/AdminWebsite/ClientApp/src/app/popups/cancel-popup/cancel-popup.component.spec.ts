@@ -5,13 +5,11 @@ describe('CancelPopupComponent', () => {
     let component: CancelPopupComponent;
     let fixture: ComponentFixture<CancelPopupComponent>;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [CancelPopupComponent]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [CancelPopupComponent]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(CancelPopupComponent);

@@ -41,34 +41,32 @@ describe('OtherInformationComponent', () => {
         'setBookingHasChanged'
     ]);
 
-    beforeEach(
-        waitForAsync(() => {
-            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+    beforeEach(waitForAsync(() => {
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-            TestBed.configureTestingModule({
-                imports: [RouterTestingModule, SharedModule],
-                providers: [
-                    { provide: Router, useValue: routerSpy },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                    { provide: Logger, useValue: loggerSpy }
-                ],
-                declarations: [
-                    OtherInformationComponent,
-                    BreadcrumbComponent,
-                    CancelPopupStubComponent,
-                    ConfirmationPopupStubComponent,
-                    DiscardConfirmPopupComponent
-                ]
-            }).compileComponents();
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
-                participants: [],
-                other_information: 'some text'
-            });
-        })
-    );
+        TestBed.configureTestingModule({
+            imports: [RouterTestingModule, SharedModule],
+            providers: [
+                { provide: Router, useValue: routerSpy },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: Logger, useValue: loggerSpy }
+            ],
+            declarations: [
+                OtherInformationComponent,
+                BreadcrumbComponent,
+                CancelPopupStubComponent,
+                ConfirmationPopupStubComponent,
+                DiscardConfirmPopupComponent
+            ]
+        }).compileComponents();
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
+            participants: [],
+            other_information: 'some text'
+        });
+    }));
     beforeEach(() => {
         fixture = TestBed.createComponent(OtherInformationComponent);
         component = fixture.componentInstance;

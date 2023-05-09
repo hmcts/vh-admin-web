@@ -17,15 +17,13 @@ describe('CancelBookingPopupComponent', () => {
     let cancelReasonDetailsControl: AbstractControl;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                imports: [SharedModule, RouterTestingModule],
-                declarations: [CancelBookingPopupComponent],
-                providers: [{ provide: Logger, useValue: loggerSpy }]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            imports: [SharedModule, RouterTestingModule],
+            declarations: [CancelBookingPopupComponent],
+            providers: [{ provide: Logger, useValue: loggerSpy }]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(CancelBookingPopupComponent);
