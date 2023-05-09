@@ -164,6 +164,6 @@ describe('DashboardComponent', () => {
 
         launchDarklyServiceSpy.flagChange.next({ 'hrs-integration': false });
         await component.ngOnInit();
-        expect(component.showCheckList).toBeTruthy();
+        expect(component.showAudioFileLink).toBeTruthy();
     });
 });
