@@ -10,3 +10,4 @@ java:
     DOM1__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     DOM1__REDIRECTURI: https://${SERVICE_FQDN}/home
     VHSERVICES__VIDEOWEBURL: https://${SERVICE_FQDN}
+    VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api-pr-638.dev.platform.hmcts.net/
