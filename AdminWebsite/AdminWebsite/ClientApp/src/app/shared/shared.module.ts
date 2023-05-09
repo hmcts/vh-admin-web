@@ -21,8 +21,7 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { SelectComponent } from './select';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
-import { SpinnerInterceptor } from './loading-spinner/spinner.interceptor';
+import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 
 @NgModule({
     imports: [
@@ -48,8 +47,7 @@ import { SpinnerInterceptor } from './loading-spinner/spinner.interceptor';
         VenuesMenuComponent,
         MinutesToHoursPipe,
         TooltipDirective,
-        SelectComponent,
-        LoadingSpinnerComponent
+        SelectComponent
     ],
     providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
@@ -68,8 +66,7 @@ import { SpinnerInterceptor } from './loading-spinner/spinner.interceptor';
         VenuesMenuComponent,
         MinutesToHoursPipe,
         TooltipDirective,
-        SelectComponent,
-        LoadingSpinnerComponent
+        SelectComponent
     ]
 })
 export class SharedModule {
