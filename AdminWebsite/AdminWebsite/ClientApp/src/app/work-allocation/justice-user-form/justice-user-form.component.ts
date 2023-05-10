@@ -33,10 +33,12 @@ export class JusticeUserFormComponent implements OnChanges {
             lastName: value.lastname,
             username: value.username,
             contactTelephone: value.telephone,
-            role: this.availableRoles.Vho
+            rolevho: this.availableRoles.Vho,
+            roleadmin: this.availableRoles.VhTeamLead,
+            rolesm: this.availableRoles.StaffMember
         });
 
-        this.form.get('role').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : this.availableRoles.Vho);
+        this.form.get('roleadmin').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : null);
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
@@ -50,7 +52,9 @@ export class JusticeUserFormComponent implements OnChanges {
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
-            role: new FormControl(this.availableRoles.Vho)
+            rolevho: new FormControl(this.availableRoles.Vho),
+            roleadmin: new FormControl(this.availableRoles.VhTeamLead),
+            rolesm: new FormControl(this.availableRoles.StaffMember)
         });
     }
 
@@ -101,13 +105,14 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     private addNewUser() {
+        const roles = this.getRoles();
         this.justiceUserService
             .addNewJusticeUser(
                 this.form.controls.username.value,
                 this.form.controls.firstName.value,
                 this.form.controls.lastName.value,
                 this.form.controls.contactTelephone.value,
-                this.form.value.role
+                roles
             )
             .subscribe({
                 next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
@@ -116,10 +121,20 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     private updateExistingUser() {
-        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, this.form.value.role).subscribe({
+        const roles = this.getRoles();
+        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, roles).subscribe({
             next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
             error: (error: string | BookHearingException) => this.onSaveFailed(error)
         });
+    }
+
+    private getRoles(): JusticeUserRole[] {
+        const roles: JusticeUserRole[] = [];
+        if (this.form.controls.rolevho.value) roles.push(JusticeUserRole.Vho);
+        if (this.form.controls.roleadmin.value) roles.push(JusticeUserRole.VhTeamLead);
+        if (this.form.controls.rolesm.value) roles.push(JusticeUserRole.StaffMember);
+
+        return roles;
     }
 }
 
@@ -128,5 +143,7 @@ interface JusticeUserForm {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     contactTelephone: FormControl<string>;
-    role: FormControl<JusticeUserRole>;
+    rolevho: FormControl<JusticeUserRole>;
+    roleadmin: FormControl<JusticeUserRole>;
+    rolesm: FormControl<JusticeUserRole>;
 }

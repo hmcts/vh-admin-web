@@ -56,7 +56,7 @@ export class JusticeUsersService {
         );
     }
 
-    addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
+    addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole[]) {
         const request = new AddNewJusticeUserRequest({
             username: username,
             first_name: firstName,
@@ -67,7 +67,7 @@ export class JusticeUsersService {
         return this.apiClient.addNewJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 
-    editJusticeUser(id: string, username: string, role: JusticeUserRole) {
+    editJusticeUser(id: string, username: string, role: JusticeUserRole[]) {
         const request = new EditJusticeUserRequest({
             id,
             username,
