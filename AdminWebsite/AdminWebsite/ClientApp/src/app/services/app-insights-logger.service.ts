@@ -48,14 +48,23 @@ export class AppInsightsLogger implements LogAdapter {
     }
 
     trackPage(pageName: string, url: string) {
+        if (!this.appInsights) {
+            return;
+        }
         this.appInsights.trackPageView({ name: pageName, uri: url });
     }
 
     trackEvent(eventName: string, properties: any) {
+        if (!this.appInsights) {
+            return;
+        }
         this.appInsights.trackEvent({ name: eventName }, properties);
     }
 
     trackException(message: string, err: Error, properties: any) {
+        if (!this.appInsights) {
+            return;
+        }
         properties = properties || {};
         properties.message = message;
 

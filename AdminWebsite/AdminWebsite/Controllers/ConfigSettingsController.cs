@@ -14,19 +14,25 @@ namespace AdminWebsite.Controllers
     public class ConfigSettingsController : ControllerBase
     {
         private readonly AzureAdConfiguration _azureAdConfiguration;
+        private readonly Dom1AdConfiguration _dom1AdConfiguration;
         private readonly KinlyConfiguration _kinlyConfiguration;
         private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly TestUserSecrets _testUserSecrets;
         private readonly ServiceConfiguration _vhServiceConfiguration;
+        private readonly IFeatureToggles _featureToggles;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<Dom1AdConfiguration> dom1AdConfiguration,
             IOptions<KinlyConfiguration> kinlyConfiguration,
             IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings,
-            IOptions<ServiceConfiguration> vhServiceConfiguration)
+            IOptions<ServiceConfiguration> vhServiceConfiguration,
+            IFeatureToggles featureToggles)
         {
+            _featureToggles = featureToggles;
             _azureAdConfiguration = azureAdConfiguration.Value;
+            _dom1AdConfiguration = dom1AdConfiguration.Value;
             _kinlyConfiguration = kinlyConfiguration.Value;
             _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
             _testUserSecrets = testSettings.Value;
@@ -45,11 +51,6 @@ namespace AdminWebsite.Controllers
         {
             var clientSettings = new ClientSettingsResponse
             {
-                ClientId = _azureAdConfiguration.ClientId,
-                ResourceId = _azureAdConfiguration.ResourceId,
-                TenantId = _azureAdConfiguration.TenantId,
-                RedirectUri = _azureAdConfiguration.RedirectUri,
-                PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri,
                 InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
@@ -58,6 +59,16 @@ namespace AdminWebsite.Controllers
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
                 LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
             };
+
+            IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
+                ? _dom1AdConfiguration
+                : _azureAdConfiguration;
+            clientSettings.ClientId = idpConfiguration.ClientId;
+            clientSettings.TenantId = idpConfiguration.TenantId;
+            clientSettings.ResourceId = idpConfiguration.ResourceId;
+            clientSettings.TenantId = idpConfiguration.TenantId;
+            clientSettings.RedirectUri = idpConfiguration.RedirectUri;
+            clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
             return Ok(clientSettings);
         }

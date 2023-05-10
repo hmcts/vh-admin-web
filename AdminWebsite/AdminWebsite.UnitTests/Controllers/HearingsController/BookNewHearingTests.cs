@@ -1,6 +1,5 @@
 using AdminWebsite.Models;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -14,6 +13,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
+using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using UserApi.Client;

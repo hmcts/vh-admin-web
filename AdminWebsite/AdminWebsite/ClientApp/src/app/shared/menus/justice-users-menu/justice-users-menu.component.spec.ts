@@ -12,10 +12,16 @@ describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
     let fixture: ComponentFixture<JusticeUsersMenuComponent>;
     let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
+    const users: JusticeUserResponse[] = [];
+    const user1 = new JusticeUserResponse({
+        id: '123',
+        full_name: 'Test User'
+    });
+    users.push(user1);
 
     beforeEach(async () => {
         justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['allUsers$']);
-        justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
+        justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>(users);
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
             providers: [
@@ -51,6 +57,15 @@ describe('JusticeUsersMenuComponent', () => {
         it('should call base enable function, to disable this component', () => {
             component.enabled(false);
             expect(component.form.controls[component.formGroupName].enabled).toEqual(false);
+        });
+    });
+
+    describe('ngOnInit', () => {
+        it('should load items', () => {
+            component.ngOnInit();
+            expect(component.items.length).toBe(users.length);
+            expect(component.items[0].id).toBe(user1.id);
+            expect(component.items[0].full_name).toBe(user1.full_name);
         });
     });
 });

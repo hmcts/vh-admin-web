@@ -198,7 +198,15 @@ stages:
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
-            
+          
+          # DOM1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
+
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
@@ -319,6 +327,14 @@ stages:
             slot: true
           - name: AzureAd:TemporaryPassword
             value: $(TemporaryPassword)
+
+          # DOM1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
 
           # Testing
           - name: TestUserSecrets:TestUsernameStem
