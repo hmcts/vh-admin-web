@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { LoadingSpinnerService } from './loading-spinner.service';
 
-fdescribe('LoadingSpinnerService', () => {
+describe('LoadingSpinnerService', () => {
     let service: LoadingSpinnerService;
 
     beforeEach(() => {
