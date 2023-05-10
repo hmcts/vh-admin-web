@@ -121,7 +121,7 @@ describe('JusticeUserFormComponent', () => {
 
             // assert
             expect(spy).toHaveBeenCalledWith(newUser);
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isSaving).toBeFalsy();
         }));
 
         it('should emit an updated user on successful save', fakeAsync(() => {
@@ -146,7 +146,7 @@ describe('JusticeUserFormComponent', () => {
 
             // assert
             expect(spy).toHaveBeenCalledWith(updatedUser);
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isSaving).toBeFalsy();
         }));
 
         it('should display generic error message when unexpected api error occurs', fakeAsync(() => {
