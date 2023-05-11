@@ -45,9 +45,7 @@ export class WorkHoursFileProcessorService {
                 return;
             }
 
-            row = row.replace(/\r/g, '').replace(/\n/g, '');
-
-            const values = row.split(this.csvDelimiter);
+            const values = row.replace(/\r/g, '').replace(/\n/g, '').split(this.csvDelimiter);
             if (values.every(x => x === '')) {
                 numberOfUsernamesToUploadWorkHours -= 1;
                 return;
@@ -152,7 +150,7 @@ export class WorkHoursFileProcessorService {
             if (row === '\n' || row.trim().length === 0) {
                 return;
             }
-            const values = row.replace(/\r/g, '').split(this.csvDelimiter);
+            const values = row.replace(/\r/g, '').replace(/\n/g, '').split(this.csvDelimiter);
 
             const uploadNonWorkHoursRequest = new UploadNonWorkingHoursRequest();
 
