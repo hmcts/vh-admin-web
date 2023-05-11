@@ -11,11 +11,11 @@
     </div>
     <div class="govuk-grid-column-one-quarter">
       <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.weekDate">{{ getThisWeeksCount }}</a>
-      <p>This Week</p>
+      <p>Next 7 Days</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
       <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.monthDate">{{ getThisMonthsCount }}</a>
-      <p>This Month</p>
+      <p>Next 30 Days</p>
     </div>
   </div>
 </div>
