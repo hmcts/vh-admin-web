@@ -26,19 +26,19 @@ public class UnallocatedHearingsForVhoMapperTests
                 ScheduledDateTime = _testDate.AddDays(1) //tomorrow
             },
             new(){
-                ScheduledDateTime = _testDate.AddDays(2) //within the week
+                ScheduledDateTime = _testDate.AddDays(2) //within the next 7 days
             },
             new(){
-                ScheduledDateTime = _testDate.AddDays(6) //within the week
+                ScheduledDateTime = _testDate.AddDays(7) //within the next 7 days
             },
             new(){
-                ScheduledDateTime = _testDate.AddDays(7) //within the month
+                ScheduledDateTime = _testDate.AddDays(8) //within the next 30 days
             },
             new(){
-                ScheduledDateTime = _testDate.AddDays(8) //within the month
+                ScheduledDateTime = _testDate.AddDays(9) //within the next 30 days
             },
             new(){
-                ScheduledDateTime = _testDate.AddDays(35) //outside the month
+                ScheduledDateTime = _testDate.AddDays(35) //outside the next 30 days
             }
         };
 
@@ -46,8 +46,8 @@ public class UnallocatedHearingsForVhoMapperTests
 
         response.Today.Count.Should().Be(1);
         response.Tomorrow.Count.Should().Be(2);
-        response.ThisWeek.Count.Should().Be(5);
-        response.ThisMonth.Count.Should().Be(7);
+        response.Next7Days.Count.Should().Be(5);
+        response.Next30Days.Count.Should().Be(7);
     }
     
     [Test]
@@ -59,7 +59,7 @@ public class UnallocatedHearingsForVhoMapperTests
 
         response.Today.Count.Should().Be(0);
         response.Tomorrow.Count.Should().Be(0);
-        response.ThisWeek.Count.Should().Be(0);
-        response.ThisMonth.Count.Should().Be(0);
+        response.Next7Days.Count.Should().Be(0);
+        response.Next30Days.Count.Should().Be(0);
     }
 }
