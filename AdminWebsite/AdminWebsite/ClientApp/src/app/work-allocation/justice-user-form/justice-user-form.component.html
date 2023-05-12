@@ -63,15 +63,11 @@
         [ngClass]="{ 'govuk-input--error': form.controls.contactTelephone.invalid }"
       />
     </div>
-    <!--      <div class="govuk-form-group">-->
-    <!--          <label class="govuk-label" for="role"> Role </label>-->
-    <!--          <select class="govuk-select" id="role" formControlName="role" name="role">-->
-    <!--              <option value="{{ availableRoles.Vho }}">CSO</option>-->
-    <!--              <option value="{{ availableRoles.VhTeamLead }}">Administrator</option>-->
-    <!--          </select>-->
-    <!--      </div>-->
-    <div class="govuk-form-group">
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.roles.invalid }">
       <label class="govuk-label"> Roles </label>
+      <p *ngIf="form.controls.roles.invalid" id="roles-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ form.controls.roles.errors.userRoleInvalid }}
+      </p>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
           <input #checkBoxVho id="role_vho" name="role_vho" type="checkbox" formControlName="rolevho" />

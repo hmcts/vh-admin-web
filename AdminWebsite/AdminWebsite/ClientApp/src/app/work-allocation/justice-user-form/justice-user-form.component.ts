@@ -5,6 +5,7 @@ import { Constants } from 'src/app/common/constants';
 import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
+import { justiceUserRoleValidator } from '../../common/custom-validations/justice-user-role-validator';
 
 export type JusticeUserFormMode = 'add' | 'edit';
 
@@ -33,12 +34,12 @@ export class JusticeUserFormComponent implements OnChanges {
             lastName: value.lastname,
             username: value.username,
             contactTelephone: value.telephone,
-            rolevho: this.availableRoles.Vho,
-            roleadmin: this.availableRoles.VhTeamLead,
-            rolesm: this.availableRoles.StaffMember
+            roles: value.user_roles
         });
 
-        this.form.get('roleadmin').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : null);
+        this.form.controls.rolevho.setValue(value.user_roles.includes(JusticeUserRole.Vho));
+        this.form.controls.roleadmin.setValue(value.user_roles.includes(JusticeUserRole.VhTeamLead));
+        this.form.controls.rolesm.setValue(value.user_roles.includes(JusticeUserRole.StaffMember));
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
@@ -52,9 +53,10 @@ export class JusticeUserFormComponent implements OnChanges {
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
-            rolevho: new FormControl(this.availableRoles.Vho),
-            roleadmin: new FormControl(this.availableRoles.VhTeamLead),
-            rolesm: new FormControl(this.availableRoles.StaffMember)
+            roles: new FormControl([], [justiceUserRoleValidator()]),
+            rolevho: new FormControl(false),
+            roleadmin: new FormControl(false),
+            rolesm: new FormControl(false)
         });
     }
 
@@ -143,7 +145,8 @@ interface JusticeUserForm {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     contactTelephone: FormControl<string>;
-    rolevho: FormControl<JusticeUserRole>;
-    roleadmin: FormControl<JusticeUserRole>;
-    rolesm: FormControl<JusticeUserRole>;
+    roles: FormControl<JusticeUserRole[]>;
+    rolevho: FormControl<boolean>;
+    roleadmin: FormControl<boolean>;
+    rolesm: FormControl<boolean>;
 }
