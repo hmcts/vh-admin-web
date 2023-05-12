@@ -19,6 +19,6 @@ export function justiceUserRoleValidator(): ValidatorFn {
             return null;
         }
 
-        return { userRoleInvalid: 'User cannot be both a CSO and a Team Lead' };
+        return { userRoleInvalid: 'User cannot be both a CSO and an Administrator' };
     };
 }

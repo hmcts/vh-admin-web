@@ -1,7 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCircleExclamation,
+    faExclamationCircle,
+    faRotateLeft,
+    faTrash,
+    faUserPen
+} from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { JusticeUserResponse } from '../../services/clients/api-client';
+import { JusticeUserResponse, JusticeUserRole } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Constants } from 'src/app/common/constants';
@@ -182,6 +188,19 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.displayMessage$.next(true);
         this.selectedUser$.next(null);
         this.userFormMode$.next('add');
+    }
+
+    getRoles(roles: JusticeUserRole[]) {
+        let rolesToDisplay = '';
+        if (roles.includes(JusticeUserRole.Vho)) rolesToDisplay += 'CSO' + this.addComma(roles.length);
+        if (roles.includes(JusticeUserRole.VhTeamLead)) rolesToDisplay += 'ADMIN' + this.addComma(roles.length);
+        if (roles.includes(JusticeUserRole.StaffMember)) rolesToDisplay += 'SM';
+        return rolesToDisplay;
+    }
+
+    private addComma(length: number) {
+        if (length > 1) return ', ';
+        return '';
     }
 }
 

@@ -138,6 +138,12 @@ export class JusticeUserFormComponent implements OnChanges {
 
         return roles;
     }
+
+    onCheckBoxChange() {
+        const roles = this.getRoles();
+        this.form.controls.roles.setValue(roles);
+    }
+
 }
 
 interface JusticeUserForm {

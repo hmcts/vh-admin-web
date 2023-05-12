@@ -70,15 +70,15 @@
       </p>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
-          <input #checkBoxVho id="role_vho" name="role_vho" type="checkbox" formControlName="rolevho" />
+          <input #checkBoxVho id="role_vho" name="role_vho" type="checkbox" formControlName="rolevho" (change)="onCheckBoxChange()" />
           <label class="govuk-label govuk-checkboxes__label" for="role_vho"> CSO </label>
         </div>
         <div class="govuk-grid-column-one-third">
-          <input #checkBoxAdmin id="role_admin" name="role_admin" type="checkbox" formControlName="roleadmin" />
-          <label class="govuk-label govuk-checkboxes__label" for="role_vho"> Administrator </label>
+          <input #checkBoxAdmin id="role_admin" name="role_admin" type="checkbox" formControlName="roleadmin" (change)="onCheckBoxChange()" />
+          <label class="govuk-label govuk-checkboxes__label" for="role_admin"> Administrator </label>
         </div>
         <div class="govuk-grid-column-one-third">
-          <input #checkBoxStaffMember id="role_sm" name="role_sm" type="checkbox" formControlName="rolesm" />
+          <input #checkBoxStaffMember id="role_sm" name="role_sm" type="checkbox" formControlName="rolesm" (change)="onCheckBoxChange()" />
           <label class="govuk-label govuk-checkboxes__label" for="role_sm"> Staff Member </label>
         </div>
       </div>
