@@ -29,22 +29,20 @@ describe('ParticipantItemComponent', () => {
         first_name: 'Sam'
     };
 
-    beforeEach(
-        waitForAsync(() => {
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
-            TestBed.configureTestingModule({
-                declarations: [ParticipantItemComponent],
-                providers: [
-                    { provide: Router, useValue: router },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: BookingService, useValue: bookingServiceSpy },
-                    { provide: Router, useValue: router },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
-                ],
-                imports: [RouterTestingModule]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        TestBed.configureTestingModule({
+            declarations: [ParticipantItemComponent],
+            providers: [
+                { provide: Router, useValue: router },
+                { provide: Logger, useValue: loggerSpy },
+                { provide: BookingService, useValue: bookingServiceSpy },
+                { provide: Router, useValue: router },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+            ],
+            imports: [RouterTestingModule]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantItemComponent);

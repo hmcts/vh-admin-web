@@ -25,24 +25,22 @@ describe('LoginComponent', () => {
         configService = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     });
 
-    beforeEach(
-        waitForAsync(() => {
-            route = {
-                snapshot: {
-                    queryParams: {}
-                }
-            };
+    beforeEach(waitForAsync(() => {
+        route = {
+            snapshot: {
+                queryParams: {}
+            }
+        };
 
-            logger = jasmine.createSpyObj<LoggerService>(['error', 'debug']);
-            router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
-            returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
-            window = jasmine.createSpyObj<WindowRef>(['getLocation']);
-            configService = jasmine.createSpyObj<ConfigService>(['getClientSettings']);
+        logger = jasmine.createSpyObj<LoggerService>(['error', 'debug']);
+        router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
+        returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
+        window = jasmine.createSpyObj<WindowRef>(['getLocation']);
+        configService = jasmine.createSpyObj<ConfigService>(['getClientSettings']);
 
-            component = new LoginComponent(oidcSecurityService, router, logger, returnUrl, configService);
-            configService.getClientSettings.and.returnValue(of(null));
-        })
-    );
+        component = new LoginComponent(oidcSecurityService, router, logger, returnUrl, configService);
+        configService.getClientSettings.and.returnValue(of(null));
+    }));
 
     const givenAuthenticated = (authenticated: boolean) => {
         oidcSecurityService.setAuthenticated(authenticated);

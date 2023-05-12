@@ -5,13 +5,11 @@ describe('CancelPopupComponent', () => {
     let component: SignOutPopupComponent;
     let fixture: ComponentFixture<SignOutPopupComponent>;
 
-    beforeEach(
-        waitForAsync(() => {
-            TestBed.configureTestingModule({
-                declarations: [SignOutPopupComponent]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            declarations: [SignOutPopupComponent]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SignOutPopupComponent);

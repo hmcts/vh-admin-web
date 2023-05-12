@@ -72,9 +72,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetAudioRecordingLink(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingAudioRecordingResponse>;
+                            return _observableThrow(e) as any as Observable<HearingAudioRecordingResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingAudioRecordingResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HearingAudioRecordingResponse>;
                 })
             );
     }
@@ -175,9 +175,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetCvpAudioRecordingsAll(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
+                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -287,9 +287,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetCvpAudioRecordingsByCloudRoom(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
+                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -399,9 +399,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetCvpAudioRecordingsByDate(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<CvpForAudioFileResponse[]>;
+                            return _observableThrow(e) as any as Observable<CvpForAudioFileResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<CvpForAudioFileResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<CvpForAudioFileResponse[]>;
                 })
             );
     }
@@ -513,9 +513,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processBookingsList(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<BookingsResponse>;
+                            return _observableThrow(e) as any as Observable<BookingsResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<BookingsResponse>;
+                    } else return _observableThrow(response_) as any as Observable<BookingsResponse>;
                 })
             );
     }
@@ -620,9 +620,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetConfigSettings(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<ClientSettingsResponse>;
+                            return _observableThrow(e) as any as Observable<ClientSettingsResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<ClientSettingsResponse>;
+                    } else return _observableThrow(response_) as any as Observable<ClientSettingsResponse>;
                 })
             );
     }
@@ -712,9 +712,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetFeatureFlag(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<boolean>;
+                            return _observableThrow(e) as any as Observable<boolean>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<boolean>;
+                    } else return _observableThrow(response_) as any as Observable<boolean>;
                 })
             );
     }
@@ -811,9 +811,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processCheckServiceHealth(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HealthCheckResponse>;
+                            return _observableThrow(e) as any as Observable<HealthCheckResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HealthCheckResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HealthCheckResponse>;
                 })
             );
     }
@@ -900,9 +900,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processCheckServiceHealth2(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HealthCheckResponse>;
+                            return _observableThrow(e) as any as Observable<HealthCheckResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HealthCheckResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HealthCheckResponse>;
                 })
             );
     }
@@ -994,9 +994,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processBookNewHearing(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
+                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -1099,9 +1099,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processCloneHearing(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
@@ -1202,9 +1202,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processEditHearing(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
+                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -1318,9 +1318,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetHearingById(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingDetailsResponse>;
+                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingDetailsResponse>;
+                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
                 })
             );
     }
@@ -1433,9 +1433,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUpdateBookingStatus(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UpdateBookingStatusResponse>;
+                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UpdateBookingStatusResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
                 })
             );
     }
@@ -1549,9 +1549,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processSearchForAudioRecordedHearings(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingsForAudioFileSearchResponse[]>;
+                            return _observableThrow(e) as any as Observable<HearingsForAudioFileSearchResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingsForAudioFileSearchResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<HearingsForAudioFileSearchResponse[]>;
                 })
             );
     }
@@ -1655,9 +1655,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetHearingConferenceStatus(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UpdateBookingStatusResponse>;
+                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UpdateBookingStatusResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
                 })
             );
     }
@@ -1765,9 +1765,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUpdateFailedBookingStatus(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UpdateBookingStatusResponse>;
+                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UpdateBookingStatusResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
                 })
             );
     }
@@ -1875,9 +1875,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetTelephoneConferenceIdById(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PhoneConferenceResponse>;
+                            return _observableThrow(e) as any as Observable<PhoneConferenceResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PhoneConferenceResponse>;
+                    } else return _observableThrow(response_) as any as Observable<PhoneConferenceResponse>;
                 })
             );
     }
@@ -1987,9 +1987,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processPostJudgesBySearchTerm(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
+                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -2095,9 +2095,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processPostJudiciaryPersonBySearchTerm(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
+                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -2203,9 +2203,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processAddNewJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                            return _observableThrow(e) as any as Observable<JusticeUserResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                    } else return _observableThrow(response_) as any as Observable<JusticeUserResponse>;
                 })
             );
     }
@@ -2315,9 +2315,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processEditJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                            return _observableThrow(e) as any as Observable<JusticeUserResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                    } else return _observableThrow(response_) as any as Observable<JusticeUserResponse>;
                 })
             );
     }
@@ -2426,9 +2426,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processDeleteJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<string>;
+                            return _observableThrow(e) as any as Observable<string>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<string>;
+                    } else return _observableThrow(response_) as any as Observable<string>;
                 })
             );
     }
@@ -2539,9 +2539,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processRestoreJusticeUser(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse>;
+                            return _observableThrow(e) as any as Observable<JusticeUserResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse>;
+                    } else return _observableThrow(response_) as any as Observable<JusticeUserResponse>;
                 })
             );
     }
@@ -2652,9 +2652,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processPostPersonBySearchTerm(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
+                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -2758,9 +2758,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetPersonForUpdateByContactEmail(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PersonResponse>;
+                            return _observableThrow(e) as any as Observable<PersonResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse>;
+                    } else return _observableThrow(response_) as any as Observable<PersonResponse>;
                 })
             );
     }
@@ -2859,9 +2859,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetHearingsByUsernameForDeletion(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingsByUsernameForDeletionResponse[]>;
+                            return _observableThrow(e) as any as Observable<HearingsByUsernameForDeletionResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingsByUsernameForDeletionResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<HearingsByUsernameForDeletionResponse[]>;
                 })
             );
     }
@@ -2963,9 +2963,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processDeletePersonWithUsername(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
@@ -3065,9 +3065,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUpdatePersonDetails(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
@@ -3169,9 +3169,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetHearingTypes(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingTypeResponse[]>;
+                            return _observableThrow(e) as any as Observable<HearingTypeResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingTypeResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<HearingTypeResponse[]>;
                 })
             );
     }
@@ -3275,9 +3275,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetParticipantRoles(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<CaseAndHearingRolesResponse[]>;
+                            return _observableThrow(e) as any as Observable<CaseAndHearingRolesResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<CaseAndHearingRolesResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<CaseAndHearingRolesResponse[]>;
                 })
             );
     }
@@ -3378,9 +3378,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetCourts(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<HearingVenueResponse[]>;
+                            return _observableThrow(e) as any as Observable<HearingVenueResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<HearingVenueResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<HearingVenueResponse[]>;
                 })
             );
     }
@@ -3481,9 +3481,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processPublicHolidays(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PublicHolidayResponse[]>;
+                            return _observableThrow(e) as any as Observable<PublicHolidayResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PublicHolidayResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<PublicHolidayResponse[]>;
                 })
             );
     }
@@ -3587,9 +3587,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetStaffMembersBySearchTerm(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<PersonResponse[]>;
+                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<PersonResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
                 })
             );
     }
@@ -3696,9 +3696,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetSuitabilityAnswers(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<SuitabilityAnswersResponse>;
+                            return _observableThrow(e) as any as Observable<SuitabilityAnswersResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<SuitabilityAnswersResponse>;
+                    } else return _observableThrow(response_) as any as Observable<SuitabilityAnswersResponse>;
                 })
             );
     }
@@ -3794,9 +3794,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetJudges(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
+                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -3897,9 +3897,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processSearchJudgesByEmail(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JudgeResponse[]>;
+                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JudgeResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
                 })
             );
     }
@@ -4001,9 +4001,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processResetPassword(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
@@ -4098,9 +4098,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetUserProfile(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UserProfileResponse>;
+                            return _observableThrow(e) as any as Observable<UserProfileResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UserProfileResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UserProfileResponse>;
                 })
             );
     }
@@ -4200,9 +4200,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetUserList(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<JusticeUserResponse[]>;
+                            return _observableThrow(e) as any as Observable<JusticeUserResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<JusticeUserResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<JusticeUserResponse[]>;
                 })
             );
     }
@@ -4293,9 +4293,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetUnallocatedHearings(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UnallocatedHearingsForVhoResponse>;
+                            return _observableThrow(e) as any as Observable<UnallocatedHearingsForVhoResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UnallocatedHearingsForVhoResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UnallocatedHearingsForVhoResponse>;
                 })
             );
     }
@@ -4414,9 +4414,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetAllocationHearings(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
+                            return _observableThrow(e) as any as Observable<AllocationHearingsResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<AllocationHearingsResponse[]>;
                 })
             );
     }
@@ -4513,9 +4513,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processAllocateHearingsToCso(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<AllocationHearingsResponse[]>;
+                            return _observableThrow(e) as any as Observable<AllocationHearingsResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<AllocationHearingsResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<AllocationHearingsResponse[]>;
                 })
             );
     }
@@ -4620,9 +4620,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetAllocationForHearing(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<AllocatedCsoResponse>;
+                            return _observableThrow(e) as any as Observable<AllocatedCsoResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<AllocatedCsoResponse>;
+                    } else return _observableThrow(response_) as any as Observable<AllocatedCsoResponse>;
                 })
             );
     }
@@ -4722,9 +4722,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUploadWorkHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UploadWorkHoursResponse>;
+                            return _observableThrow(e) as any as Observable<UploadWorkHoursResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UploadWorkHoursResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UploadWorkHoursResponse>;
                 })
             );
     }
@@ -4815,9 +4815,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUploadNonWorkingHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<UploadNonWorkingHoursResponse>;
+                            return _observableThrow(e) as any as Observable<UploadNonWorkingHoursResponse>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<UploadNonWorkingHoursResponse>;
+                    } else return _observableThrow(response_) as any as Observable<UploadNonWorkingHoursResponse>;
                 })
             );
     }
@@ -4906,9 +4906,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetWorkAvailabilityHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<VhoWorkHoursResponse[]>;
+                            return _observableThrow(e) as any as Observable<VhoWorkHoursResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<VhoWorkHoursResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<VhoWorkHoursResponse[]>;
                 })
             );
     }
@@ -5014,9 +5014,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processGetNonAvailabilityWorkHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<VhoNonAvailabilityWorkHoursResponse[]>;
+                            return _observableThrow(e) as any as Observable<VhoNonAvailabilityWorkHoursResponse[]>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<VhoNonAvailabilityWorkHoursResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<VhoNonAvailabilityWorkHoursResponse[]>;
                 })
             );
     }
@@ -5126,9 +5126,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processUpdateNonAvailabilityWorkHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
@@ -5212,9 +5212,9 @@ export class BHClient extends ApiClientBase {
                         try {
                             return this.processDeleteNonAvailabilityWorkHours(response_ as any);
                         } catch (e) {
-                            return (_observableThrow(e) as any) as Observable<void>;
+                            return _observableThrow(e) as any as Observable<void>;
                         }
-                    } else return (_observableThrow(response_) as any) as Observable<void>;
+                    } else return _observableThrow(response_) as any as Observable<void>;
                 })
             );
     }
