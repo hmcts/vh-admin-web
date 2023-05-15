@@ -66,7 +66,7 @@ export class ConnectionService implements OnDestroy {
 
     private unsubscribe() {
         if (this.unsubscribe$ !== null) {
-            this.unsubscribe$.next();
+            this.unsubscribe$.next(true);
             this.unsubscribe$.complete();
             this.unsubscribe$ = null;
         }

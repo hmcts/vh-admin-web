@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { NEVER, catchError, tap } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
@@ -44,7 +45,7 @@ export class JusticeUserFormComponent implements OnChanges {
     @Output() saveSuccessfulEvent = new EventEmitter<JusticeUserResponse>();
     @Output() cancelFormEvent = new EventEmitter();
 
-    constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService) {
+    constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService, private cdRef: ChangeDetectorRef) {
         this.form = this.formBuilder.group<JusticeUserForm>({
             username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
@@ -109,10 +110,14 @@ export class JusticeUserFormComponent implements OnChanges {
                 this.form.controls.contactTelephone.value,
                 this.form.value.role
             )
-            .subscribe({
-                next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-                error: (error: string | BookHearingException) => this.onSaveFailed(error)
-            });
+            .pipe(
+                catchError((error: string | BookHearingException) => {
+                    this.onSaveFailed(error);
+                    this.cdRef.markForCheck();
+                    return NEVER;
+                })
+            )
+            .subscribe((newJusticeUser: JusticeUserResponse) => this.onSaveSucceeded(newJusticeUser));
     }
 
     private updateExistingUser() {
