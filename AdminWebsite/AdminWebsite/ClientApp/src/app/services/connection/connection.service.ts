@@ -54,21 +54,11 @@ export class ConnectionService implements OnDestroy {
             )
             .subscribe({
                 next: () => this.hasConnection$.next(true),
-                complete() {
+                error: () => {
                     this.hasConnection$.next(false);
                     this.unsubscribe();
                 }
             });
-
-        // .subscribe(
-        //     () => {
-        //         this.hasConnection$.next(true);
-        //     },
-        //     () => {
-        //         this.hasConnection$.next(false);
-        //         this.unsubscribe();
-        //     }
-        // );
     }
 
     private unsubscribe() {
