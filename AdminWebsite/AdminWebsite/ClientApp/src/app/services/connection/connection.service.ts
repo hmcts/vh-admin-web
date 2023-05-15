@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
-import { Observable, ReplaySubject, Subject, throwError, timer } from 'rxjs';
-import { mergeMap, retryWhen, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Observable, ReplaySubject, Subject, timer } from 'rxjs';
+import { retry, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connection';
 
 @Injectable({
@@ -26,12 +26,11 @@ export class ConnectionService implements OnDestroy {
 
     checkConnection(restartTimerOnSuccess = false): Observable<any> {
         return this.http.head(this.config.url, { responseType: 'text' }).pipe(
-            retryWhen(
-                retryStrategy({
-                    maxRetryAttempts: this.config.maxRetryAttempts,
-                    retryInterval: this.config.retryInterval
-                })
-            ),
+            retry({
+                count: this.config.maxRetryAttempts,
+                delay: this.config.retryInterval,
+                resetOnSuccess: restartTimerOnSuccess
+            }),
             tap(() => {
                 if (restartTimerOnSuccess) {
                     this.startTimer();
@@ -53,15 +52,23 @@ export class ConnectionService implements OnDestroy {
                 takeUntil(this.unsubscribe$),
                 switchMap(() => this.checkConnection())
             )
-            .subscribe(
-                () => {
-                    this.hasConnection$.next(true);
-                },
-                () => {
+            .subscribe({
+                next: () => this.hasConnection$.next(true),
+                complete() {
                     this.hasConnection$.next(false);
                     this.unsubscribe();
                 }
-            );
+            });
+
+        // .subscribe(
+        //     () => {
+        //         this.hasConnection$.next(true);
+        //     },
+        //     () => {
+        //         this.hasConnection$.next(false);
+        //         this.unsubscribe();
+        //     }
+        // );
     }
 
     private unsubscribe() {
@@ -72,14 +79,3 @@ export class ConnectionService implements OnDestroy {
         }
     }
 }
-
-const retryStrategy = (config: { maxRetryAttempts?: number; retryInterval?: number }) => (errors: Observable<any>) =>
-    errors.pipe(
-        mergeMap((error, i) => {
-            const retryAttempt = i + 1;
-            if (retryAttempt > config.maxRetryAttempts) {
-                return throwError(error);
-            }
-            return timer(config.retryInterval);
-        })
-    );
