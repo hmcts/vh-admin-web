@@ -10,21 +10,19 @@ describe('AnswersListComponent', () => {
     let location: jasmine.SpyObj<Location>;
     let service: jasmine.SpyObj<QuestionnaireService>;
 
-    beforeEach(
-        waitForAsync(() => {
-            location = jasmine.createSpyObj<Location>(['back']);
-            service = jasmine.createSpyObj<QuestionnaireService>(['loadNext']);
-            service.loadNext.and.returnValue(Promise.resolve([]));
+    beforeEach(waitForAsync(() => {
+        location = jasmine.createSpyObj<Location>(['back']);
+        service = jasmine.createSpyObj<QuestionnaireService>(['loadNext']);
+        service.loadNext.and.returnValue(Promise.resolve([]));
 
-            TestBed.configureTestingModule({
-                declarations: [AnswersListComponent, AnswerListEntryComponent],
-                providers: [
-                    { provide: Location, useValue: location },
-                    { provide: QuestionnaireService, useValue: service }
-                ]
-            }).compileComponents();
-        })
-    );
+        TestBed.configureTestingModule({
+            declarations: [AnswersListComponent, AnswerListEntryComponent],
+            providers: [
+                { provide: Location, useValue: location },
+                { provide: QuestionnaireService, useValue: service }
+            ]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AnswersListComponent);
