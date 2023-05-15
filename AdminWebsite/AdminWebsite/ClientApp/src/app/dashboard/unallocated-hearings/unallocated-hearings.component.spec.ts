@@ -24,12 +24,12 @@ describe('UnallocatedHearingsComponent', () => {
             date_end: new Date(),
             count: 2
         }),
-        this_week: new DateForUnallocatedHearings({
+        next7_days: new DateForUnallocatedHearings({
             date_start: new Date(),
             date_end: new Date(),
             count: 3
         }),
-        this_month: new DateForUnallocatedHearings({
+        next30_days: new DateForUnallocatedHearings({
             date_start: new Date(),
             date_end: new Date(),
             count: 5
@@ -79,8 +79,8 @@ describe('UnallocatedHearingsComponent', () => {
             expect(component.unallocatedHearings).toEqual(unallocatedHearings);
             expect(component.getTodayCount).toBe(1);
             expect(component.getTomorrowsCount).toBe(2);
-            expect(component.getThisWeeksCount).toBe(3);
-            expect(component.getThisMonthsCount).toBe(5);
+            expect(component.getNext7DaysCount).toBe(3);
+            expect(component.getNext30DaysCount).toBe(5);
         });
     });
 });
