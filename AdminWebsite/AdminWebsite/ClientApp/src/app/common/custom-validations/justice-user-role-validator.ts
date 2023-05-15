@@ -13,7 +13,9 @@ export function justiceUserRoleValidator(): ValidatorFn {
 
         const isVho = roles.includes(JusticeUserRole.Vho);
         const isAdmin = roles.includes(JusticeUserRole.VhTeamLead);
-        if (isVho && isAdmin) userRoleValid = false;
+        if (isVho && isAdmin) {
+            userRoleValid = false;
+        }
 
         if (userRoleValid) {
             return null;

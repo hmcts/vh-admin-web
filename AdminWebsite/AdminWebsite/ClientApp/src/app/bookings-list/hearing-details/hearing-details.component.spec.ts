@@ -58,17 +58,19 @@ describe('HearingDetailsComponent', () => {
         '1234567',
         'true'
     );
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [HearingDetailsComponent, LongDatetimePipe],
-            imports: [RouterTestingModule],
-            providers: [
-                Logger,
-                { provide: ConfigService, useValue: configServiceSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
-            ]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [HearingDetailsComponent, LongDatetimePipe],
+                imports: [RouterTestingModule],
+                providers: [
+                    Logger,
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(HearingDetailsComponent);

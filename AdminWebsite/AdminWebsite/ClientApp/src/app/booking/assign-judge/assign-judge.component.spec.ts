@@ -85,109 +85,113 @@ configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
 describe('AssignJudgeComponent', () => {
-    beforeEach(waitForAsync(() => {
-        const newHearing = initHearingRequest();
-        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureFlag']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
-        emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
-            'hasCourtroomAccountPattern',
-            'validateEmail'
-        ]);
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged',
-            'canAddUser',
-            'canAddJudge'
-        ]);
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        emailValidationServiceSpy.validateEmail.and.returnValue(true);
-        emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+    beforeEach(
+        waitForAsync(() => {
+            const newHearing = initHearingRequest();
+            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureFlag']);
+            featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+            emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
+                'hasCourtroomAccountPattern',
+                'validateEmail'
+            ]);
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'cancelRequest',
+                'setBookingHasChanged',
+                'canAddUser',
+                'canAddJudge'
+            ]);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            emailValidationServiceSpy.validateEmail.and.returnValue(true);
+            emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
+            featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-        bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
+            bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
-        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
-        judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
-        configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
-        configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
-        clientApiSpy.getFeatureFlag.and.returnValue(of(true));
+            judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
+            judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+            configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+            clientApiSpy.getFeatureFlag.and.returnValue(of(true));
 
-        TestBed.configureTestingModule({
-            imports: [SharedModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: JudgeDataService, useValue: judgeDataServiceSpy },
-                { provide: EmailValidationService, useValue: emailValidationServiceSpy },
-                { provide: ConfigService, useValue: configServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                { provide: BHClient, useValue: clientApiSpy },
-                {
-                    provide: Router,
-                    useValue: {
-                        url: '/summary',
-                        navigate: jasmine.createSpy('navigate')
-                    }
-                },
-                { provide: BookingService, useValue: bookingServiseSpy },
-                { provide: Logger, useValue: loggerSpy },
-                RecordingGuardService,
-                {
-                    provide: ActivatedRoute,
-                    useValue: {
-                        data: {
-                            subscribe: (fn: (value) => void) =>
-                                fn({
-                                    some: ''
-                                })
-                        },
-                        params: {
-                            subscribe: (fn: (value) => void) =>
-                                fn({
-                                    some: 0
-                                })
-                        },
-                        snapshot: {
-                            data: { emailPattern: 'courtroom.test' },
-                            url: [
-                                {
-                                    path: 'fake'
-                                }
-                            ]
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterTestingModule],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: JudgeDataService, useValue: judgeDataServiceSpy },
+                    { provide: EmailValidationService, useValue: emailValidationServiceSpy },
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                    { provide: BHClient, useValue: clientApiSpy },
+                    {
+                        provide: Router,
+                        useValue: {
+                            url: '/summary',
+                            navigate: jasmine.createSpy('navigate')
                         }
-                    }
-                },
-                { provide: ConfigService, useValue: configServiceSpy }
-            ],
-            declarations: [
-                AssignJudgeComponent,
-                MockComponent(SearchEmailComponent),
-                MockComponent(AddStaffMemberComponent),
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                DiscardConfirmPopupComponent
-            ]
-        }).compileComponents();
+                    },
+                    { provide: BookingService, useValue: bookingServiseSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    RecordingGuardService,
+                    {
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    { provide: ConfigService, useValue: configServiceSpy }
+                ],
+                declarations: [
+                    AssignJudgeComponent,
+                    MockComponent(SearchEmailComponent),
+                    MockComponent(AddStaffMemberComponent),
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    DiscardConfirmPopupComponent
+                ]
+            }).compileComponents();
 
-        fixture = TestBed.createComponent(AssignJudgeComponent);
+            fixture = TestBed.createComponent(AssignJudgeComponent);
 
-        /* tslint:disable */
-        routerSpy = TestBed.get(Router);
-        /* tslint:enable */
-        component = fixture.componentInstance;
-        component.showStaffMemberFeature = true;
-        fixture.detectChanges();
-    }));
+            /* tslint:disable */
+            routerSpy = TestBed.get(Router);
+            /* tslint:enable */
+            component = fixture.componentInstance;
+            component.showStaffMemberFeature = true;
+            fixture.detectChanges();
+        })
+    );
 
     describe('ngOnit beforeEach legacy tests', () => {
-        beforeEach(waitForAsync(() => {
-            component.ngOnInit();
-        }));
+        beforeEach(
+            waitForAsync(() => {
+                component.ngOnInit();
+            })
+        );
 
         it('should hide functionality of adding staff member to the hearing', () => {
             component.showStaffMemberFeature = false;

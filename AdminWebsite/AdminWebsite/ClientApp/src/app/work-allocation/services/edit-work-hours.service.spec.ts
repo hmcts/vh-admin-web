@@ -9,17 +9,19 @@ describe('EditWorkHoursService', () => {
     let bhClientMock: jasmine.SpyObj<BHClient>;
     let loggerMock: jasmine.SpyObj<Logger>;
 
-    beforeEach(waitForAsync(() => {
-        bhClientMock = jasmine.createSpyObj('BHClient', ['getWorkAvailabilityHours', 'getNonAvailabilityWorkHours']);
-        loggerMock = jasmine.createSpyObj<Logger>(['warn', 'error']);
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: BHClient, useValue: bhClientMock },
-                { provide: Logger, useValue: loggerMock }
-            ]
-        });
-        service = TestBed.inject(EditWorkHoursService);
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            bhClientMock = jasmine.createSpyObj('BHClient', ['getWorkAvailabilityHours', 'getNonAvailabilityWorkHours']);
+            loggerMock = jasmine.createSpyObj<Logger>(['warn', 'error']);
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: BHClient, useValue: bhClientMock },
+                    { provide: Logger, useValue: loggerMock }
+                ]
+            });
+            service = TestBed.inject(EditWorkHoursService);
+        })
+    );
 
     it('should be created', () => {
         expect(service).toBeTruthy();

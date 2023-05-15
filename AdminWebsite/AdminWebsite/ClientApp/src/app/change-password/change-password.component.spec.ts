@@ -13,21 +13,23 @@ describe('ChangePasswordComponent', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
     let userDataServiceSpy: jasmine.SpyObj<UserDataService>;
 
-    beforeEach(waitForAsync(() => {
-        loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'warn', 'debug', 'info']);
-        userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
+    beforeEach(
+        waitForAsync(() => {
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'warn', 'debug', 'info']);
+            userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
 
-        userDataServiceSpy.updateUser.and.returnValue(of());
+            userDataServiceSpy.updateUser.and.returnValue(of());
 
-        TestBed.configureTestingModule({
-            imports: [SharedModule, RouterTestingModule],
-            declarations: [ChangePasswordComponent, UpdateUserPopupComponent],
-            providers: [
-                { provide: Logger, useValue: loggerSpy },
-                { provide: UserDataService, useValue: userDataServiceSpy }
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterTestingModule],
+                declarations: [ChangePasswordComponent, UpdateUserPopupComponent],
+                providers: [
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: UserDataService, useValue: userDataServiceSpy }
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ChangePasswordComponent);

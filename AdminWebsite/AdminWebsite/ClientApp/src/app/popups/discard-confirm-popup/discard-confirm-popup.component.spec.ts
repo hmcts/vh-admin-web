@@ -5,11 +5,13 @@ describe('DiscardConfirmPopupComponent', () => {
     let component: DiscardConfirmPopupComponent;
     let fixture: ComponentFixture<DiscardConfirmPopupComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [DiscardConfirmPopupComponent]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [DiscardConfirmPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(DiscardConfirmPopupComponent);

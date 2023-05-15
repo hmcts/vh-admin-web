@@ -132,9 +132,15 @@ export class JusticeUserFormComponent implements OnChanges {
 
     private getRoles(): JusticeUserRole[] {
         const roles: JusticeUserRole[] = [];
-        if (this.form.controls.rolevho.value) roles.push(JusticeUserRole.Vho);
-        if (this.form.controls.roleadmin.value) roles.push(JusticeUserRole.VhTeamLead);
-        if (this.form.controls.rolesm.value) roles.push(JusticeUserRole.StaffMember);
+        if (this.form.controls.rolevho.value) {
+            roles.push(JusticeUserRole.Vho);
+        }
+        if (this.form.controls.roleadmin.value) {
+            roles.push(JusticeUserRole.VhTeamLead);
+        }
+        if (this.form.controls.rolesm.value) {
+            roles.push(JusticeUserRole.StaffMember);
+        }
 
         return roles;
     }
@@ -143,7 +149,6 @@ export class JusticeUserFormComponent implements OnChanges {
         const roles = this.getRoles();
         this.form.controls.roles.setValue(roles);
     }
-
 }
 
 interface JusticeUserForm {

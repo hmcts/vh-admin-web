@@ -74,7 +74,14 @@
           <label class="govuk-label govuk-checkboxes__label" for="role_vho"> CSO </label>
         </div>
         <div class="govuk-grid-column-one-third">
-          <input #checkBoxAdmin id="role_admin" name="role_admin" type="checkbox" formControlName="roleadmin" (change)="onCheckBoxChange()" />
+          <input
+            #checkBoxAdmin
+            id="role_admin"
+            name="role_admin"
+            type="checkbox"
+            formControlName="roleadmin"
+            (change)="onCheckBoxChange()"
+          />
           <label class="govuk-label govuk-checkboxes__label" for="role_admin"> Administrator </label>
         </div>
         <div class="govuk-grid-column-one-third">

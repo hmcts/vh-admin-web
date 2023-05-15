@@ -11,12 +11,14 @@ describe('UpdateUserSuccessPopupComponent', () => {
     let buttonOkay: ElementRef;
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [UpdateUserPopupComponent],
-            providers: [{ provide: Logger, useValue: logger }]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [UpdateUserPopupComponent],
+                providers: [{ provide: Logger, useValue: logger }]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(UpdateUserPopupComponent);

@@ -5,11 +5,13 @@ describe('RemovePopupComponent', () => {
     let component: RemovePopupComponent;
     let fixture: ComponentFixture<RemovePopupComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [RemovePopupComponent]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [RemovePopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(RemovePopupComponent);

@@ -354,40 +354,46 @@ describe('WorkHoursFileProcessorService', () => {
     });
 
     describe('calling the API', () => {
-        it('should call the api to upload work hours', waitForAsync(() => {
-            const requests: UploadWorkHoursRequest[] = [
-                new UploadWorkHoursRequest({
-                    username: 'spoc@test.com',
-                    working_hours: [
-                        new WorkingHours({
-                            day_of_week_id: 1,
-                            start_time_hour: 10,
-                            start_time_minutes: 0,
-                            end_time_hour: 15,
-                            end_time_minutes: 0
-                        })
-                    ]
-                })
-            ];
+        it(
+            'should call the api to upload work hours',
+            waitForAsync(() => {
+                const requests: UploadWorkHoursRequest[] = [
+                    new UploadWorkHoursRequest({
+                        username: 'spoc@test.com',
+                        working_hours: [
+                            new WorkingHours({
+                                day_of_week_id: 1,
+                                start_time_hour: 10,
+                                start_time_minutes: 0,
+                                end_time_hour: 15,
+                                end_time_minutes: 0
+                            })
+                        ]
+                    })
+                ];
 
-            service.uploadWorkingHours(requests).subscribe(result => {
-                expect(result.failed_usernames.length).toBe(0);
-            });
-        }));
+                service.uploadWorkingHours(requests).subscribe(result => {
+                    expect(result.failed_usernames.length).toBe(0);
+                });
+            })
+        );
 
-        it('should call the api to upload non-work hours', waitForAsync(() => {
-            const requests: UploadNonWorkingHoursRequest[] = [
-                new UploadNonWorkingHoursRequest({
-                    username: 'john@doe.com',
-                    start_time: new Date(2023, 1, 1, 10, 30, 0, 0),
-                    end_time: new Date(2023, 1, 5, 10, 30, 0, 0)
-                })
-            ];
+        it(
+            'should call the api to upload non-work hours',
+            waitForAsync(() => {
+                const requests: UploadNonWorkingHoursRequest[] = [
+                    new UploadNonWorkingHoursRequest({
+                        username: 'john@doe.com',
+                        start_time: new Date(2023, 1, 1, 10, 30, 0, 0),
+                        end_time: new Date(2023, 1, 5, 10, 30, 0, 0)
+                    })
+                ];
 
-            service.uploadNonWorkingHours(requests).subscribe(result => {
-                expect(result.failed_usernames.length).toBe(0);
-            });
-        }));
+                service.uploadNonWorkingHours(requests).subscribe(result => {
+                    expect(result.failed_usernames.length).toBe(0);
+                });
+            })
+        );
     });
 
     describe('check for duplicate users', () => {

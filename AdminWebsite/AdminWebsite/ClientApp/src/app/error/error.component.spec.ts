@@ -19,18 +19,20 @@ describe('ErrorComponent', () => {
         navigate: () => {}
     };
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
-            declarations: [ErrorComponent],
-            imports: [HttpClientTestingModule],
-            providers: [
-                { provide: Router, useValue: routerMock },
-                HttpClient,
-                ConnectionService,
-                { provide: PageTrackerService, useValue: pageTrackerMock }
-            ]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ErrorComponent],
+                imports: [HttpClientTestingModule],
+                providers: [
+                    { provide: Router, useValue: routerMock },
+                    HttpClient,
+                    ConnectionService,
+                    { provide: PageTrackerService, useValue: pageTrackerMock }
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ErrorComponent);

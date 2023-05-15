@@ -49,8 +49,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     userNameOnBlur() {
         const userNameText = this.userName.value;
         /* tslint:disable: max-line-length */
-        const pattern =
-            /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         this.isValidEmail =
             userNameText && userNameText.length > 0 && userNameText.length < 256 && pattern.test(userNameText.toLowerCase());
         this.logger.debug(`${this.loggerPrefix} Validated username.`, { username: userNameText, isValid: this.isValidEmail });

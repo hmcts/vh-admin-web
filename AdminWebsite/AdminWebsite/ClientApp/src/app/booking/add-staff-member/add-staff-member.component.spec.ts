@@ -48,23 +48,25 @@ describe('AddStaffMemberComponent', () => {
         username: 'username.judge@hmcts'
     });
 
-    beforeEach(waitForAsync(() => {
-        bookingServiceSpy = jasmine.createSpyObj('BookingService', ['']);
-        videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getCurrentRequest']);
-        routerSpy = jasmine.createSpyObj('Router', ['']);
-        loggerSpy = jasmine.createSpyObj('Logger', ['']);
+    beforeEach(
+        waitForAsync(() => {
+            bookingServiceSpy = jasmine.createSpyObj('BookingService', ['']);
+            videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getCurrentRequest']);
+            routerSpy = jasmine.createSpyObj('Router', ['']);
+            loggerSpy = jasmine.createSpyObj('Logger', ['']);
 
-        TestBed.configureTestingModule({
-            imports: [FormsModule, ReactiveFormsModule],
-            declarations: [AddStaffMemberComponent, MockComponent(SearchEmailComponent)],
-            providers: [
-                provide(BookingService, bookingServiceSpy),
-                provide(Logger, loggerSpy),
-                provide(Router, routerSpy),
-                provide(VideoHearingsService, videoHearingsServiceSpy)
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [FormsModule, ReactiveFormsModule],
+                declarations: [AddStaffMemberComponent, MockComponent(SearchEmailComponent)],
+                providers: [
+                    provide(BookingService, bookingServiceSpy),
+                    provide(Logger, loggerSpy),
+                    provide(Router, routerSpy),
+                    provide(VideoHearingsService, videoHearingsServiceSpy)
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AddStaffMemberComponent);
