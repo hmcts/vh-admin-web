@@ -7,8 +7,8 @@ public class UnallocatedHearingsForVhoResponse
     
     public DateForUnallocatedHearings Today { get; set; }
     public DateForUnallocatedHearings Tomorrow { get; set; }
-    public DateForUnallocatedHearings ThisWeek { get; set; }
-    public DateForUnallocatedHearings ThisMonth { get; set; }
+    public DateForUnallocatedHearings Next7Days { get; set; }
+    public DateForUnallocatedHearings Next30Days { get; set; }
 }
 
 public class DateForUnallocatedHearings

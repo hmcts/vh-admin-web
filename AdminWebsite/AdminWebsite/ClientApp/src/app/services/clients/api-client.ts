@@ -5934,8 +5934,8 @@ export interface IPublicHolidayResponse {
 export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsForVhoResponse {
     today?: DateForUnallocatedHearings;
     tomorrow?: DateForUnallocatedHearings;
-    this_week?: DateForUnallocatedHearings;
-    this_month?: DateForUnallocatedHearings;
+    next7_days?: DateForUnallocatedHearings;
+    next30_days?: DateForUnallocatedHearings;
 
     constructor(data?: IUnallocatedHearingsForVhoResponse) {
         if (data) {
@@ -5949,8 +5949,8 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
         if (_data) {
             this.today = _data['today'] ? DateForUnallocatedHearings.fromJS(_data['today']) : <any>undefined;
             this.tomorrow = _data['tomorrow'] ? DateForUnallocatedHearings.fromJS(_data['tomorrow']) : <any>undefined;
-            this.this_week = _data['this_week'] ? DateForUnallocatedHearings.fromJS(_data['this_week']) : <any>undefined;
-            this.this_month = _data['this_month'] ? DateForUnallocatedHearings.fromJS(_data['this_month']) : <any>undefined;
+            this.next7_days = _data['next7_days'] ? DateForUnallocatedHearings.fromJS(_data['next7_days']) : <any>undefined;
+            this.next30_days = _data['next30_days'] ? DateForUnallocatedHearings.fromJS(_data['next30_days']) : <any>undefined;
         }
     }
 
@@ -5965,8 +5965,8 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
         data = typeof data === 'object' ? data : {};
         data['today'] = this.today ? this.today.toJSON() : <any>undefined;
         data['tomorrow'] = this.tomorrow ? this.tomorrow.toJSON() : <any>undefined;
-        data['this_week'] = this.this_week ? this.this_week.toJSON() : <any>undefined;
-        data['this_month'] = this.this_month ? this.this_month.toJSON() : <any>undefined;
+        data['next7_days'] = this.next7_days ? this.next7_days.toJSON() : <any>undefined;
+        data['next30_days'] = this.next30_days ? this.next30_days.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -5974,8 +5974,8 @@ export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsFo
 export interface IUnallocatedHearingsForVhoResponse {
     today?: DateForUnallocatedHearings;
     tomorrow?: DateForUnallocatedHearings;
-    this_week?: DateForUnallocatedHearings;
-    this_month?: DateForUnallocatedHearings;
+    next7_days?: DateForUnallocatedHearings;
+    next30_days?: DateForUnallocatedHearings;
 }
 
 export class UnexpectedErrorResponse implements IUnexpectedErrorResponse {
