@@ -12,8 +12,8 @@ export class UnallocatedHearingsComponent implements OnInit {
     private loggerPrefix = 'UnallocatedHearingsComponent';
     todayDate: any;
     tomorrowDate: any;
-    weekDate: any;
-    monthDate: any;
+    next7DaysDate: any;
+    next30DaysDate: any;
     unallocatedHearings: UnallocatedHearingsForVhoResponse;
     isVhTeamLeader: boolean;
     get getTodayCount(): number {
@@ -22,11 +22,11 @@ export class UnallocatedHearingsComponent implements OnInit {
     get getTomorrowsCount(): number {
         return this.unallocatedHearings?.tomorrow?.count ?? 0;
     }
-    get getThisWeeksCount(): number {
-        return this.unallocatedHearings?.this_week?.count ?? 0;
+    get getNext7DaysCount(): number {
+        return this.unallocatedHearings?.next7_days?.count ?? 0;
     }
-    get getThisMonthsCount(): number {
-        return this.unallocatedHearings?.this_month?.count ?? 0;
+    get getNext30DaysCount(): number {
+        return this.unallocatedHearings?.next30_days?.count ?? 0;
     }
 
     constructor(private client: BHClient, private logger: Logger, private userIdentityService: UserIdentityService) {
@@ -53,13 +53,13 @@ export class UnallocatedHearingsComponent implements OnInit {
         this.tomorrowDate = {
             fromDt: format(this.unallocatedHearings?.tomorrow?.date_start)
         };
-        this.weekDate = {
-            fromDt: format(this.unallocatedHearings?.this_week?.date_start),
-            toDt: format(this.unallocatedHearings?.this_week?.date_end)
+        this.next7DaysDate = {
+            fromDt: format(this.unallocatedHearings?.next7_days?.date_start),
+            toDt: format(this.unallocatedHearings?.next7_days?.date_end)
         };
-        this.monthDate = {
-            fromDt: format(this.unallocatedHearings?.this_month?.date_start),
-            toDt: format(this.unallocatedHearings?.this_month?.date_end)
+        this.next30DaysDate = {
+            fromDt: format(this.unallocatedHearings?.next30_days?.date_start),
+            toDt: format(this.unallocatedHearings?.next30_days?.date_end)
         };
     }
 }

@@ -15,8 +15,8 @@ public static class UnallocatedHearingsForVhoMapper
         {
             Today = MapToday(unallocatedHearings, today),
             Tomorrow = MapTomorrow(unallocatedHearings, today),
-            ThisWeek = FindThisWeek(unallocatedHearings, today),
-            ThisMonth = FindThisMonth(unallocatedHearings, today)
+            Next7Days = FindNext7Days(unallocatedHearings, today),
+            Next30Days = FindNext30Days(unallocatedHearings, today)
         };
     }
 
@@ -39,29 +39,29 @@ public static class UnallocatedHearingsForVhoMapper
         };
     }
     
-    private static DateForUnallocatedHearings FindThisWeek(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings FindNext7Days(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
     {
-        var dateStart = today.Date.FirstDayOfWeek();
-        var dateEnd = dateStart.AddDays(6);
+        var dateStart = today.Date;
+        var dateEnd = dateStart.AddDays(7);
         
         return new DateForUnallocatedHearings
         {
-            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Date.GetWeekOfYear() == today.GetWeekOfYear()),
+            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Date >= dateStart && e.ScheduledDateTime.Date <= dateEnd),
             DateStart = dateStart,
             DateEnd = dateEnd
         };
     }
     
-    private static DateForUnallocatedHearings FindThisMonth(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
+    private static DateForUnallocatedHearings FindNext30Days(List<HearingDetailsResponse> unallocatedHearings, DateTime today)
     {
-        var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddSeconds(-1).Date;
+        var dateStart = today.Date;
+        var dateEnd = dateStart.AddDays(30);
         
         return new DateForUnallocatedHearings
         {
-            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Month == today.Month && e.ScheduledDateTime.Year == today.Year),
-            DateStart = firstDayOfMonth,
-            DateEnd = lastDayOfMonth
+            Count = unallocatedHearings.Count(e => e.ScheduledDateTime.Date >= dateStart && e.ScheduledDateTime.Date <= dateEnd),
+            DateStart = dateStart,
+            DateEnd = dateEnd
         };
     }
 }
