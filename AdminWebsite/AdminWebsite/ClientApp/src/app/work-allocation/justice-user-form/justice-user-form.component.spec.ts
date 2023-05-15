@@ -24,7 +24,7 @@ describe('JusticeUserFormComponent', () => {
         lastname: 'Doe',
         username: 'test@cso.com',
         telephone: null,
-        user_roles: [JusticeUserRole.Vho]
+        user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
     });
 
     beforeEach(async () => {
@@ -49,7 +49,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue(existingUser.telephone);
             component.form.controls.rolevho.setValue(true);
-            component.form.controls.roles.setValue([JusticeUserRole.Vho]);
+            component.form.controls.roles.setValue([JusticeUserRole.Vho, JusticeUserRole.StaffMember]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -59,7 +59,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('+441234567890');
             component.form.controls.rolevho.setValue(true);
-            component.form.controls.roles.setValue([JusticeUserRole.Vho]);
+            component.form.controls.roles.setValue([JusticeUserRole.VhTeamLead, JusticeUserRole.StaffMember]);
             expect(component.form.invalid).toBe(false);
         });
 

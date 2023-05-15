@@ -67,7 +67,7 @@ describe('ManageTeamComponent', () => {
                         new JusticeUserResponse({
                             id: newGuid(),
                             username: `username${i + 1}@mail.com`,
-                            user_roles: [JusticeUserRole.Vho]
+                            user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
                         })
                 )
             );
@@ -157,7 +157,7 @@ describe('ManageTeamComponent', () => {
                     first_name: 'Test',
                     lastname: 'User',
                     full_name: 'Test User',
-                    user_roles: [JusticeUserRole.VhTeamLead],
+                    user_roles: [JusticeUserRole.VhTeamLead, JusticeUserRole.StaffMember],
                     is_vh_team_leader: true,
                     username: 'user@email.com',
                     telephone: ''
