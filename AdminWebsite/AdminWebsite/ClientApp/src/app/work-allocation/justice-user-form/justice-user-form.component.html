@@ -63,7 +63,7 @@
         [ngClass]="{ 'govuk-input--error': form.controls.contactTelephone.invalid }"
       />
     </div>
-    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.roles.invalid }">
+    <div class="govuk-form-group">
       <label class="govuk-label"> Roles </label>
       <p *ngIf="form.controls.roles.invalid" id="roles-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span> {{ form.controls.roles.errors.userRoleInvalid }}

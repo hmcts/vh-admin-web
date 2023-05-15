@@ -140,7 +140,7 @@ describe('JusticeUsersService', () => {
             const firstName = 'john';
             const lastName = 'doe';
             const telephone = '01234567890';
-            const role = JusticeUserRole.VhTeamLead;
+            const role = [JusticeUserRole.VhTeamLead];
 
             const newUser = new JusticeUserResponse({
                 id: '123',
@@ -181,7 +181,7 @@ describe('JusticeUsersService', () => {
             const firstName = 'john';
             const lastName = 'doe';
             const telephone = '01234567890';
-            const role = JusticeUserRole.VhTeamLead;
+            const role = [JusticeUserRole.VhTeamLead];
 
             const existingUser = new JusticeUserResponse({
                 contact_email: username,

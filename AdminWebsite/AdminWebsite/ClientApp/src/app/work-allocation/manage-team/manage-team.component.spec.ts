@@ -3,7 +3,7 @@ import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { JusticeUserResponse } from '../../services/clients/api-client';
+import { JusticeUserResponse, JusticeUserRole } from '../../services/clients/api-client';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Component } from '@angular/core';
@@ -66,7 +66,8 @@ describe('ManageTeamComponent', () => {
                     i =>
                         new JusticeUserResponse({
                             id: newGuid(),
-                            username: `username${i + 1}@mail.com`
+                            username: `username${i + 1}@mail.com`,
+                            user_roles: [JusticeUserRole.Vho]
                         })
                 )
             );
@@ -90,7 +91,8 @@ describe('ManageTeamComponent', () => {
                     i =>
                         new JusticeUserResponse({
                             id: newGuid(),
-                            username: `username${i + 1}@mail.com`
+                            username: `username${i + 1}@mail.com`,
+                            user_roles: [JusticeUserRole.Vho]
                         })
                 )
             );
@@ -155,7 +157,7 @@ describe('ManageTeamComponent', () => {
                     first_name: 'Test',
                     lastname: 'User',
                     full_name: 'Test User',
-                    user_role_name: 'Team Leader',
+                    user_roles: [JusticeUserRole.VhTeamLead],
                     is_vh_team_leader: true,
                     username: 'user@email.com',
                     telephone: ''
@@ -215,7 +217,7 @@ describe('ManageTeamComponent', () => {
                 first_name: 'Test',
                 lastname: 'User',
                 full_name: 'Test User',
-                user_role_name: 'Team Leader',
+                user_roles: [JusticeUserRole.VhTeamLead],
                 is_vh_team_leader: true,
                 username: 'user@email.com',
                 telephone: ''

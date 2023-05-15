@@ -40,7 +40,8 @@ export const Constants = {
         NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.',
         JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account',
         ManageJusticeUsers: {
-            SearchFailure: 'There was an unexpected error. Please try again'
+            SearchFailure: 'There was an unexpected error. Please try again',
+            RolesCheckBox: 'User cannot be both a CSO and an Administrator'
         },
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',

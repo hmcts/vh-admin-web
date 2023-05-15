@@ -1,5 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { JusticeUserRole } from '../../services/clients/api-client';
+import { Constants } from '../constants';
 
 export function justiceUserRoleValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -21,6 +22,6 @@ export function justiceUserRoleValidator(): ValidatorFn {
             return null;
         }
 
-        return { userRoleInvalid: 'User cannot be both a CSO and an Administrator' };
+        return { userRoleInvalid: Constants.Error.ManageJusticeUsers.RolesCheckBox };
     };
 }
