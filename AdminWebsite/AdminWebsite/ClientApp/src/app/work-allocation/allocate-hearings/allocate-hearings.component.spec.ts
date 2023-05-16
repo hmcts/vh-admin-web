@@ -4,30 +4,40 @@ import { ActivatedRoute } from '@angular/router';
 import { ActivatedRouteStub } from '../../testing/stubs/activated-route-stub';
 import { FormBuilder } from '@angular/forms';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
-import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
-import { of, throwError } from 'rxjs';
-import { JusticeUserMenuStubComponent } from '../../testing/stubs/dropdown-menu/justice-user-menu-stub.component';
-import { CaseTypeMenuStubComponent } from '../../testing/stubs/dropdown-menu/case-type-menu-stub.component';
-import { AllocationHearingsResponse, BookHearingException } from '../../services/clients/api-client';
+import { BehaviorSubject, of, throwError } from 'rxjs';
+import { AllocationHearingsResponse, BookHearingException, JusticeUserResponse } from '../../services/clients/api-client';
 import { By } from '@angular/platform-browser';
 import { MinutesToHoursPipe } from '../../shared/pipes/minutes-to-hours.pipe';
 import { AllocateHearingItemModel, AllocateHearingModel } from './models/allocate-hearing.model';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { Constants } from 'src/app/common/constants';
+import { DatePipe } from '@angular/common';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { SharedModule } from '../../shared/shared.module';
+import { Logger } from 'src/app/services/logger';
+import { SelectComponent, SelectOption } from 'src/app/shared/select';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
     let fixture: ComponentFixture<AllocateHearingsComponent>;
     let activatedRoute: ActivatedRouteStub;
     let allocateServiceSpy: jasmine.SpyObj<AllocateHearingsService>;
+    let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
     let testData: AllocationHearingsResponse[];
 
     const loggerMock = jasmine.createSpyObj('Logger', ['debug']);
     const hearingServiceMock = jasmine.createSpyObj('VideoHearingsService', ['getUsers', 'getHearingTypes']);
-    const bookingPersistMock = jasmine.createSpyObj('BookingPersistService', ['selectedUsers', 'selectedCaseTypes']);
-
+    const allUsers$ = new BehaviorSubject<JusticeUserResponse[]>([]);
     beforeEach(async () => {
+        justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
+            'allUsers$',
+            'filteredUsers$',
+            'search'
+        ]);
+        justiceUsersServiceSpy.allUsers$ = allUsers$;
+
         testData = [
             new AllocationHearingsResponse({
                 hearing_id: '1',
@@ -54,12 +64,19 @@ describe('AllocateHearingsComponent', () => {
         activatedRoute = new ActivatedRouteStub();
         allocateServiceSpy = jasmine.createSpyObj('AllocateHearingsService', ['getAllocationHearings', 'allocateCsoToHearings']);
         await TestBed.configureTestingModule({
-            declarations: [AllocateHearingsComponent, JusticeUserMenuStubComponent, CaseTypeMenuStubComponent, MinutesToHoursPipe],
+            declarations: [AllocateHearingsComponent, MinutesToHoursPipe],
             providers: [
                 FormBuilder,
+                DatePipe,
+                HttpClient,
+                HttpHandler,
                 { provide: ActivatedRoute, useValue: activatedRoute },
-                { provide: AllocateHearingsService, useValue: allocateServiceSpy }
-            ]
+                { provide: AllocateHearingsService, useValue: allocateServiceSpy },
+                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy },
+                { provide: VideoHearingsService, useValue: hearingServiceMock },
+                { provide: Logger, useValue: loggerMock }
+            ],
+            imports: [SharedModule]
         }).compileComponents();
     });
 
@@ -67,14 +84,14 @@ describe('AllocateHearingsComponent', () => {
         fixture = TestBed.createComponent(AllocateHearingsComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        component.csoMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
-        component.caseTypeMenu = TestBed.createComponent(CaseTypeMenuStubComponent).componentInstance as CaseTypesMenuComponent;
-        component.csoAllocatedMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
-        component.csoFilterMenu = TestBed.createComponent(JusticeUserMenuStubComponent).componentInstance as JusticeUsersMenuComponent;
+        component.selectAllocateCso = TestBed.createComponent(SelectComponent).componentInstance as SelectComponent;
     });
 
     describe('ngOnInit', () => {
         let searchForHearingsSpy;
+
+        hearingServiceMock.getHearingTypes.and.returnValue(of(['Type1', 'Type2']));
+
         beforeEach(() => {
             searchForHearingsSpy = spyOn(component, 'searchForHearings');
             searchForHearingsSpy.calls.reset();
@@ -154,6 +171,30 @@ describe('AllocateHearingsComponent', () => {
             expect(component.displayMessage).toBe(false);
         });
 
+        it('should call the allocate service and return response when no allocated CSOs are selected', () => {
+            component.onJusticeUserForFilterSelected([]);
+            component.form.controls['fromDate'].setValue('2023-01-13');
+            component.form.controls['toDate'].setValue('2023-01-14');
+            component.caseTypeDropDownValues = ['test', 'case', 'type'];
+            component.form.controls['caseNumber'].setValue('testCaseNumber1234');
+            component.form.controls['isUnallocated'].setValue(true);
+            const responseObj = [new AllocationHearingsResponse()];
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
+
+            component.searchForHearings();
+
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalledWith(
+                new Date('2023-01-13'),
+                new Date('2023-01-14'),
+                [],
+                ['test', 'case', 'type'],
+                'testCaseNumber1234',
+                true
+            );
+            expect(component.allocationHearingViewModel.originalState).toEqual(responseObj);
+            expect(component.displayMessage).toBe(false);
+        });
+
         it('should call the allocate service and return 0 rows', () => {
             const responseObj: AllocationHearingsResponse[] = [];
 
@@ -183,6 +224,43 @@ describe('AllocateHearingsComponent', () => {
             expect(component.message).toBe('Showing only 20 Records, For more records please apply filter');
             expect(component.displayMessage).toBe(true);
         });
+
+        it('should call the allocate service and return only future hearings if date range no set', () => {
+            const responseObj: AllocationHearingsResponse[] = [];
+            const today = new Date();
+            for (let i = 0; i < 30; i++) {
+                const hearing = new AllocationHearingsResponse();
+                hearing.hearing_id = i.toString();
+                hearing.scheduled_date_time = today;
+                responseObj.push(hearing);
+            }
+
+            allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
+
+            component.searchForHearings();
+
+            const datePipe = new DatePipe('en-GB');
+
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
+            expect(component.form.value.fromDate).toEqual(datePipe.transform(today, 'yyyy-MM-dd'));
+            expect(component.allocationHearingViewModel.originalState.length).toBe(20);
+            expect(component.message).toBe('Showing only 20 Records, For more records please apply filter');
+            expect(component.displayMessage).toBe(true);
+            expect(allocateServiceSpy.getAllocationHearings).toHaveBeenCalled();
+        });
+
+        it('should map selected options for case types to id array', () => {
+            const id = newGuid();
+            const id2 = newGuid();
+            const label = '';
+            component.onCaseTypeSelected([
+                { entityId: id, label },
+                { entityId: id2, label }
+            ]);
+            expect(component.caseTypeDropDownValues.includes(id)).toBe(true);
+            expect(component.caseTypeDropDownValues.includes(id2)).toBe(true);
+            expect(component.caseTypeDropDownValues.length).toBe(2);
+        });
     });
 
     describe('clear', () => {
@@ -197,12 +275,11 @@ describe('AllocateHearingsComponent', () => {
             component.form.controls['caseType'].setValue(['test', 'case', 'type']);
             component.form.controls['caseNumber'].setValue('testCaseNumber1234');
             component.form.controls['isUnallocated'].setValue(true);
-            const formBuilder = new FormBuilder();
-            component.csoMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-            component.caseTypeMenu = new CaseTypesMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
+            component.selectFilterCso = new SelectComponent(loggerMock);
+            component.selectCaseType = new SelectComponent(loggerMock);
 
-            const caseMenuSpy = spyOn(component.caseTypeMenu, 'clear');
-            const csoMenuSpy = spyOn(component.csoMenu, 'clear');
+            const caseMenuSpy = spyOn(component.selectFilterCso, 'clear');
+            const csoMenuSpy = spyOn(component.selectCaseType, 'clear');
 
             component.clear();
 
@@ -220,34 +297,32 @@ describe('AllocateHearingsComponent', () => {
         });
 
         it('should clear and disable cso menu when IsAllocated filter checkbox is checked', () => {
-            const formBuilder = new FormBuilder();
-            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
-            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+            component.selectFilterCso = new SelectComponent(loggerMock);
+            const csoFilterClearSpy = spyOn(component.selectFilterCso, 'clear');
+            const csoFilterDisabledSpy = spyOn(component.selectFilterCso, 'disable');
 
             component.form.get('isUnallocated').setValue(true);
 
             expect(csoFilterClearSpy).toHaveBeenCalled();
-            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(false);
+            expect(csoFilterDisabledSpy).toHaveBeenCalled();
         });
 
         it('should enable cso menu when IsAllocated filter checkbox is not checked', () => {
-            const formBuilder = new FormBuilder();
-            component.csoFilterMenu = new JusticeUsersMenuComponent(bookingPersistMock, hearingServiceMock, formBuilder, loggerMock);
-            const csoFilterClearSpy = spyOn(component.csoFilterMenu, 'clear');
-            const csoFilterEnabledSpy = spyOn(component.csoFilterMenu, 'enabled');
+            component.selectFilterCso = new SelectComponent(loggerMock);
+            const csoFilterClearSpy = spyOn(component.selectFilterCso, 'clear');
+            const csoFilterEnabledSpy = spyOn(component.selectFilterCso, 'enable');
 
             component.form.get('isUnallocated').setValue(false);
 
             expect(csoFilterClearSpy).toHaveBeenCalledTimes(0);
-            expect(csoFilterEnabledSpy).toHaveBeenCalledWith(true);
+            expect(csoFilterEnabledSpy).toHaveBeenCalled();
         });
     });
 
     describe('Manual allocation', () => {
         it('should unset isAllocated when cso filter is selected', () => {
             component.form.get('isUnallocated').setValue(true);
-            component.onJusticeUserForFilterSelected(['1234']);
+            component.onJusticeUserForFilterSelected([{ entityId: '1234', label: '' }]);
             expect(component.form.get('isUnallocated').value).toBeFalsy();
         });
 
@@ -258,13 +333,12 @@ describe('AllocateHearingsComponent', () => {
             const hearingId = testData[0].hearing_id;
             const csoId = newGuid();
             const username = 'test@cso.com';
-            component.csoAllocatedMenu.selectedLabel = username;
 
             // act
             component.selectHearing(true, hearingId);
 
             // mimic cso selection
-            component.onJusticeUserForAllocationSelected(csoId);
+            component.onJusticeUserForAllocationSelected({ entityId: csoId, data: username, label: '' });
 
             // assert
             const postUpdateHearing = component.allocationHearingViewModel.hearings.find(x => x.hearingId === hearingId);
@@ -282,8 +356,11 @@ describe('AllocateHearingsComponent', () => {
             const originalUsername = testData[0].allocated_cso;
             const csoId = newGuid();
             const username = 'test@cso.com';
-            component.csoAllocatedMenu['selectedItems'] = csoId;
-            component.csoAllocatedMenu.selectedLabel = username;
+
+            const items: SelectOption[] = [{ label: '', entityId: csoId, data: username }];
+            component.selectAllocateCso.items = items;
+            component.selectAllocateCso.selectedEntityIds = [csoId];
+            component.selectAllocateCso.handleOnChange();
 
             // act
             // first allocate all hearings
@@ -318,7 +395,11 @@ describe('AllocateHearingsComponent', () => {
             const hearingId = testData[0].hearing_id;
             const csoId = newGuid();
             const username = 'test@cso.com';
-            component.csoAllocatedMenu.selectedLabel = username;
+
+            const items: SelectOption[] = [{ label: '', entityId: csoId, data: username }];
+            component.selectAllocateCso.items = items;
+            component.selectAllocateCso.selectedEntityIds = [csoId];
+            component.selectAllocateCso.handleOnChange();
 
             const updatedAllocation = new AllocationHearingsResponse({
                 hearing_id: '1',
@@ -332,11 +413,12 @@ describe('AllocateHearingsComponent', () => {
             component.selectHearing(true, hearingId);
 
             // mimic cso selection
-            component.onJusticeUserForAllocationSelected(csoId);
+            component.onJusticeUserForAllocationSelected({ entityId: csoId, label: '' });
 
             component.confirmAllocation();
             tick();
 
+            // assert
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.hasPendingChanges).toBeFalsy();
             expect(component.allocationHearingViewModel.selectedHearingIds.length).toBe(0);
@@ -344,13 +426,17 @@ describe('AllocateHearingsComponent', () => {
         }));
 
         it('should clear previous message when allocation has been confirmed', fakeAsync(() => {
-            // Given
+            // arrange
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
             const csoId = newGuid();
             const username = 'test@cso.com';
-            component.csoAllocatedMenu.selectedLabel = username;
+
+            const items: SelectOption[] = [{ label: '', entityId: csoId, data: username }];
+            component.selectAllocateCso.items = items;
+            component.selectAllocateCso.selectedEntityIds = [csoId];
+            component.selectAllocateCso.handleOnChange();
 
             const updatedAllocation = new AllocationHearingsResponse({
                 hearing_id: '1',
@@ -361,13 +447,13 @@ describe('AllocateHearingsComponent', () => {
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(of([updatedAllocation]));
             const spy = spyOn(component, 'clearHearingUpdatedMessage');
 
-            // When
+            // act
             component.selectHearing(true, hearingId);
-            component.onJusticeUserForAllocationSelected(csoId);
+            component.onJusticeUserForAllocationSelected({ entityId: csoId, label: '' });
             component.confirmAllocation();
             tick();
 
-            // Then
+            // assert
             expect(spy).toHaveBeenCalled();
             expect(component.message).toBe('Hearings have been updated.');
         }));
@@ -376,7 +462,11 @@ describe('AllocateHearingsComponent', () => {
             const responseObj = [new AllocationHearingsResponse()];
             allocateServiceSpy.getAllocationHearings.and.returnValue(of(responseObj));
             const csoId = newGuid();
-            component.csoAllocatedMenu['selectedItems'] = csoId;
+
+            const items: SelectOption[] = [{ label: '', entityId: csoId }];
+            component.selectAllocateCso.items = items;
+            component.selectAllocateCso.selectedEntityIds = [csoId];
+            component.selectAllocateCso.handleOnChange();
 
             const error = new BookHearingException('Bad Request', 500, 'invalid id', null, null);
             allocateServiceSpy.allocateCsoToHearings.and.returnValue(throwError(error));
@@ -388,33 +478,41 @@ describe('AllocateHearingsComponent', () => {
             expect(component.message).toBe('One or more hearings could not be allocated successfully.');
         }));
 
-        it('should reset whe allocation has been cancelled', fakeAsync(() => {
+        it('should reset when allocation has been cancelled', fakeAsync(() => {
             // arrange
             component.allocationHearingViewModel = new AllocateHearingModel(testData);
 
             const hearingId = testData[0].hearing_id;
             const csoId = newGuid();
-            const username = 'test@cso.com';
-            component.csoAllocatedMenu.selectedLabel = username;
-
-            const updatedAllocation = new AllocationHearingsResponse({
-                hearing_id: '1',
-                allocated_cso: username,
-                scheduled_date_time: new Date()
-            });
 
             // act
             component.selectHearing(true, hearingId);
-
-            // mimic cso selection
-            component.onJusticeUserForAllocationSelected(csoId);
 
             component.cancelAllocation();
 
             expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
             expect(component.allocationHearingViewModel.originalState).toEqual(testData);
         }));
+
+        it('should reset when allocate to CSO is cleared', fakeAsync(() => {
+            // arrange
+            component.allocationHearingViewModel = new AllocateHearingModel(testData);
+
+            const hearingId = testData[0].hearing_id;
+
+            // act
+            component.selectHearing(true, hearingId);
+
+            // mimic cso selection clear
+            component.onJusticeUserForAllocationSelected();
+
+            expect(component.allocationHearingViewModel.areAllChecked).toBeFalsy();
+            expect(component.allocationHearingViewModel.originalState).toEqual(testData);
+            expect(component.displayMessage).toBeFalsy();
+            expect(component.message).toBe('');
+        }));
     });
+
     describe('allocate hearings icon', () => {
         it('should show clock icon if there is nonavailability clash', () => {
             component.allocationHearingViewModel.hearings = [

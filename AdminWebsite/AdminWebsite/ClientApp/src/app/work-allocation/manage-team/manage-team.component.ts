@@ -1,143 +1,187 @@
-import { Component } from '@angular/core';
-import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { faCircleExclamation, faExclamationCircle, faTrash, faUserPen, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Constants } from 'src/app/common/constants';
 import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, takeUntil, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-manage-team',
     templateUrl: './manage-team.component.html',
-    styleUrls: ['./manage-team.component.scss']
+    styleUrls: ['./manage-team.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ManageTeamComponent {
+export class ManageTeamComponent implements OnInit, OnDestroy {
     private filterSize = 20;
     loggerPrefix = '[ManageTeamComponent] -';
-    displayMessage = false;
     faExclamation = faCircleExclamation;
     faError = faExclamationCircle;
     editUserIcon = faUserPen;
     deleteUserIcon = faTrash;
-    message: string;
-    users: JusticeUserResponse[];
     form: FormGroup<SearchForExistingJusticeUserForm>;
+
     isEditing = false;
     isSaving = false;
-    displayAddButton = false;
-    isAnErrorMessage = false;
-    showSpinner = false;
-    showForm = false;
-    justiceUser: JusticeUserResponse;
-    userFormMode: JusticeUserFormMode = 'add';
-    displayDeleteUserPopup = false;
+    restoreUserIcon = faRotateLeft;
     userToDelete: JusticeUserResponse;
+    displayRestoreUserPopup = false;
+    userToRestore: JusticeUserResponse;
+
+    message$ = new BehaviorSubject<string>(null);
+    users$: Observable<JusticeUserResponse[]>;
+    displayAddButton$ = new BehaviorSubject(false);
+    isAnErrorMessage$ = new BehaviorSubject(false);
+    showSpinner$ = new BehaviorSubject(false);
+    displayMessage$ = new BehaviorSubject(false);
+    showForm$ = new BehaviorSubject(false);
+    displayDeleteUserPopup$ = new BehaviorSubject(false);
+    userFormMode$ = new BehaviorSubject<JusticeUserFormMode>('add');
+    selectedUser$ = new BehaviorSubject<JusticeUserResponse>(null);
+
+    destroyed$ = new Subject<void>();
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({
             inputSearch: new FormControl('')
         });
-        this.form.controls.inputSearch.valueChanges.subscribe(() => (this.displayAddButton = false));
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next();
+    }
+
+    ngOnInit() {
+        this.form.controls.inputSearch.valueChanges.subscribe(() => this.displayAddButton$.next(false));
+
+        this.users$ = this.justiceUserService.filteredUsers$.pipe(
+            takeUntil(this.destroyed$),
+            tap(users => {
+                this.displayAddButton$.next(false);
+                this.isAnErrorMessage$.next(false);
+                this.displayMessage$.next(false);
+                this.message$.next(null);
+                if (users.length > this.filterSize) {
+                    this.displayMessage$.next(true);
+                    this.message$.next(
+                        `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`
+                    );
+                } else if (users.length === 0) {
+                    this.displayAddButton$.next(true);
+                    this.isAnErrorMessage$.next(true);
+                    this.displayMessage$.next(true);
+                    this.message$.next(Constants.ManageJusticeUsers.EmptySearchResults);
+                }
+            }),
+            map(users => this.sortUsers(users)),
+            map(users => users.slice(0, this.filterSize)),
+            tap(() => this.showSpinner$.next(false))
+        );
     }
 
     searchUsers() {
-        this.isAnErrorMessage = false;
-        this.displayAddButton = false;
-        this.displayMessage = false;
-        this.message = '';
+        this.showSpinner$.next(true);
+        this.justiceUserService.search(this.form.value.inputSearch);
         this.isEditing = false;
-        this.showSpinner = true;
-        this.justiceUserService.retrieveJusticeUserAccountsNoCache(this.form.value.inputSearch).subscribe({
-            next: (data: JusticeUserResponse[]) => this.onJusticeUserSearchComplete(data),
-            error: error => this.onJusticeUserSearchFailed(error),
-            complete: () => (this.showSpinner = false)
-        });
-    }
-
-    onJusticeUserSearchComplete(data: JusticeUserResponse[]) {
-        this.users = data;
-        this.logger.debug(`${this.loggerPrefix} Updating list of users.`, { users: data.length });
-        if (this.users.length > this.filterSize) {
-            this.users = this.users.slice(0, this.filterSize);
-            this.displayMessage = true;
-            this.message = `Only the first ${this.filterSize} results are shown, please refine your search to see more results.`;
-        } else if (this.users.length === 0) {
-            this.displayMessage = true;
-            this.isAnErrorMessage = true;
-            this.message = Constants.ManageJusticeUsers.EmptySearchResults;
-            this.displayAddButton = true;
-        }
     }
 
     onJusticeUserSearchFailed(errorMessage: string) {
         this.logger.error(`${this.loggerPrefix} There was an unexpected error searching for justice users`, new Error(errorMessage));
-        this.message = Constants.Error.ManageJusticeUsers.SearchFailure;
-        this.displayMessage = true;
+        this.message$.next(Constants.Error.ManageJusticeUsers.SearchFailure);
+        this.displayMessage$.next(true);
     }
 
-    displayForm() {
-        this.displayMessage = false;
-        this.showForm = true;
+    onUserFormCancelled() {
+        this.showForm$.next(false);
+        this.userFormMode$.next('add');
     }
 
-    onFormCancelled() {
-        this.showForm = false;
-        // reset form related properties
-        this.justiceUser = null;
-        this.userFormMode = 'add';
-    }
-
-    onJusticeSuccessfulSave(user: JusticeUserResponse) {
-        if (this.userFormMode === 'add') {
-            this.showForm = false;
-            this.displayAddButton = false;
-            this.message = Constants.ManageJusticeUsers.NewUserAdded;
-            this.isAnErrorMessage = false;
-            this.displayMessage = true;
-            this.users.push(user);
-        } else if (this.userFormMode === 'edit') {
-            const index = this.users.findIndex(x => x.id === user.id);
-            this.users[index] = user;
-            this.showForm = false;
-            this.displayAddButton = false;
-            this.message = Constants.ManageJusticeUsers.UserEdited;
-            this.isAnErrorMessage = false;
-            this.displayMessage = true;
-
-            // reset form related properties
-            this.justiceUser = null;
-            this.userFormMode = 'add';
+    onJusticeUserSuccessfulSave() {
+        if (this.userFormMode$.getValue() === 'add') {
+            this.resetAfterSave(Constants.ManageJusticeUsers.NewUserAdded);
+        } else if (this.userFormMode$.getValue() === 'edit') {
+            this.resetAfterSave(Constants.ManageJusticeUsers.UserEdited);
         }
     }
 
+    addUser = this.displayUserForm;
+
     editUser(user: JusticeUserResponse) {
-        this.justiceUser = user;
-        this.userFormMode = 'edit';
-        this.displayForm();
+        this.selectedUser$.next(user);
+        this.userFormMode$.next('edit');
+        this.displayUserForm();
     }
 
     onDeleteJusticeUser(user: JusticeUserResponse) {
         this.userToDelete = user;
-        this.displayDeleteUserPopup = true;
+        this.displayDeleteUserPopup$.next(true);
     }
 
     onCancelDeleteJusticeUser() {
-        this.userToDelete = null;
-        this.displayDeleteUserPopup = false;
+        this.resetUserToDelete();
     }
 
     onJusticeUserSuccessfulDelete() {
-        this.displayDeleteUserPopup = false;
-        this.message = Constants.ManageJusticeUsers.UserDeleted;
-        this.displayMessage = true;
-        this.removeJusticeUser();
+        this.resetUserToDelete();
+        this.message$.next(Constants.ManageJusticeUsers.UserDeleted);
+        this.displayMessage$.next(true);
     }
 
-    removeJusticeUser() {
-        const id = this.users.indexOf(this.userToDelete);
-        this.users.splice(id, 1);
+    restoreUser(user: JusticeUserResponse) {
+        this.userToRestore = user;
+        this.displayRestoreUserPopup = true;
+    }
+
+    onCancelRestoreJusticeUser() {
+        this.userToRestore = null;
+        this.displayRestoreUserPopup = false;
+    }
+
+    onJusticeUserSuccessfulRestore() {
+        this.displayRestoreUserPopup = false;
+        this.message$.next(Constants.ManageJusticeUsers.UserRestored);
+        this.displayMessage$.next(true);
+        this.updateRestoredJusticeUser();
+    }
+
+    displayUserForm() {
+        this.displayMessage$.next(false);
+        this.showForm$.next(true);
+    }
+
+    private sortUsers(users: JusticeUserResponse[]): JusticeUserResponse[] {
+        const deletedUsers = users.filter(user => user.deleted).sort(this.sortAlphanumerically);
+        const activeUsers = users.filter(user => !user.deleted).sort(this.sortAlphanumerically);
+        return deletedUsers.concat(activeUsers);
+    }
+
+    private sortAlphanumerically(a: JusticeUserResponse, b: JusticeUserResponse) {
+        return a.username.localeCompare(b.username, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+        });
+    }
+
+    private resetUserToDelete() {
         this.userToDelete = null;
+        this.displayDeleteUserPopup$.next(false);
+    }
+
+    private updateRestoredJusticeUser() {
+        this.userToRestore.deleted = false;
+    }
+
+    private resetAfterSave(message: string) {
+        this.showForm$.next(false);
+        this.message$.next(message);
+        this.displayAddButton$.next(false);
+        this.isAnErrorMessage$.next(false);
+        this.displayMessage$.next(true);
+        this.selectedUser$.next(null);
+        this.userFormMode$.next('add');
     }
 }
 

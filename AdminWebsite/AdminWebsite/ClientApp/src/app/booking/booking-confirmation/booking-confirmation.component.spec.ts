@@ -78,30 +78,28 @@ describe('BookingConfirmationComponent', () => {
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     const newHearing = initHearingRequest();
 
-    beforeEach(
-        waitForAsync(() => {
-            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-            routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-                'getHearingTypes',
-                'getCurrentRequest',
-                'updateHearingRequest',
-                'getHearingById',
-                'cancelRequest'
-            ]);
-            videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
+    beforeEach(waitForAsync(() => {
+        loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+        routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+            'getHearingTypes',
+            'getCurrentRequest',
+            'updateHearingRequest',
+            'getHearingById',
+            'cancelRequest'
+        ]);
+        videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
 
-            TestBed.configureTestingModule({
-                declarations: [BookingConfirmationComponent, LongDatetimePipe],
-                imports: [RouterTestingModule],
-                providers: [
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: routerSpy }
-                ]
-            }).compileComponents();
-        })
-    );
+        TestBed.configureTestingModule({
+            declarations: [BookingConfirmationComponent, LongDatetimePipe],
+            imports: [RouterTestingModule],
+            providers: [
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: Logger, useValue: loggerSpy },
+                { provide: Router, useValue: routerSpy }
+            ]
+        }).compileComponents();
+    }));
 
     describe('standard', () => {
         beforeEach(() => {

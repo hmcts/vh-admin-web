@@ -807,7 +807,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('a start date, but no end is selected, valid', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '' });
+            component.filterForm.setValue({ startDate: '2022-10-26', endDate: '' });
             // act
             component.filterByDate();
             // assert
@@ -817,7 +817,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('a start date, but no end is selected, invalid', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/23', endDate: '' });
+            component.filterForm.setValue({ startDate: '2022-10-23', endDate: '' });
             // act
             component.filterByDate();
             // assert
@@ -826,7 +826,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('a start date, and end date is selected', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '2022/10/30' });
+            component.filterForm.setValue({ startDate: '2022-10-26', endDate: '2022-10-30' });
             // act
             component.filterByDate();
             // assert
@@ -837,7 +837,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, within the rang of one workhours, but not on the specific dates', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/26', endDate: '2022/10/27' });
+            component.filterForm.setValue({ startDate: '2022-10-26', endDate: '2022-10-27' });
             // act
             component.filterByDate();
             // assert
@@ -845,9 +845,18 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.nonWorkHours[0].id).toBe(1);
         });
 
-        it('an end date, and a start is selected, on the same day', () => {
+        it('an end date, and a start is selected, on the same day with a BST date', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/24', endDate: '2022/10/24' });
+            component.filterForm.setValue({ startDate: '2022-10-24', endDate: '2022-10-24' });
+            // act
+            component.filterByDate();
+            // assert
+            expect(component.nonWorkHours.length).toBe(1);
+        });
+
+        it('an end date, and a start is selected, on the same day with a GMT date', () => {
+            // arrange
+            component.filterForm.setValue({ startDate: '2022-10-31', endDate: '2022-10-31' });
             // act
             component.filterByDate();
             // assert
@@ -856,7 +865,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, outside range', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/11/20', endDate: '2022/11/22' });
+            component.filterForm.setValue({ startDate: '2022-11-20', endDate: '2022-11-22' });
             // act
             component.filterByDate();
             // assert
@@ -865,7 +874,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('an end date, and a start is selected, across all range', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/11/02' });
+            component.filterForm.setValue({ startDate: '2022-10-20', endDate: '2022-11-02' });
             // act
             component.filterByDate();
             // assert
@@ -883,7 +892,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // arrange
             let startD = null;
             let endD = null;
-            component.filterForm.setValue({ startDate: '2022/10/20', endDate: '2022/10/20' });
+            component.filterForm.setValue({ startDate: '2022-10-20', endDate: '2022-10-20' });
             // act
             component.resetStartDateAndEndDate();
             startD = component.filterForm.value.startDate;
@@ -903,7 +912,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
         it('User somehow managed to enter an end date before the start date', () => {
             // arrange
-            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/10/29' });
+            component.filterForm.setValue({ startDate: '2022-10-31', endDate: '2022-10-29' });
             // act
             component.filterByDate();
             // assert
@@ -915,7 +924,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         it('User filter table without save changes', () => {
             // arrange
             component.switchToEditMode();
-            component.filterForm.setValue({ startDate: '2022/10/31', endDate: '2022/11/01' });
+            component.filterForm.setValue({ startDate: '2022-10-31', endDate: '2022-11-01' });
 
             component.nonWorkHours[2].start_date = '2022/10/29';
             // act
@@ -930,7 +939,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             const testData = MockWorkAllocationValues.NonAvailabilityWorkHoursResponses();
             component.result = testData;
             component.switchToEditMode();
-            component.filterForm.setValue({ startDate: '2023/01/01', endDate: '2023/01/05' });
+            component.filterForm.setValue({ startDate: '2023-01-01', endDate: '2023-01-05' });
             // act
             component.filterByDate();
             expect(component.nonWorkHours.length).toEqual(5);

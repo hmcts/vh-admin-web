@@ -204,6 +204,14 @@ stages:
             value: vh-admin-web-Feature-Toggle
             secret: true
 
+          # DOM1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
+            secret: true
+
           # AzureAd
           - name: AzureAd:ClientId
             value: vh-admin-web-appid-v2
@@ -312,6 +320,14 @@ stages:
           # Feature Toggle
           - name: FeatureToggle:SDKKey
             value: vh-admin-web-Feature-Toggle
+            secret: true
+
+          # DOM1
+          - name: DOM1:TenantId
+            value: dom1--tenant--id
+            secret: true
+          - name: DOM1:ClientId
+            value: dom1--adminweb--clientid
             secret: true
 
           # AzureAd

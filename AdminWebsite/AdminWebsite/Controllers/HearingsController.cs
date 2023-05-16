@@ -217,8 +217,9 @@ namespace AdminWebsite.Controllers
             try
             {
                 if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) && 
-                    !_hearingsService.IsUpdatingJudge(request, originalHearing))
+                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) &&
+                    !_hearingsService.IsUpdatingJudge(request, originalHearing) &&
+                    !_hearingsService.HasEndpointsBeenChanged(request, originalHearing))
                 {
                     var errorMessage =
                         $"You can't edit a confirmed hearing [{hearingId}] within {StartingSoonMinutesThreshold} minutes of it starting";
@@ -235,6 +236,7 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
+
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
@@ -258,43 +260,27 @@ namespace AdminWebsite.Controllers
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
             var newParticipants = new List<ParticipantRequest>();
-            var judgeContact =_hearingsService.GetJudgeInformationForUpdate(request.OtherInformation);
-            
             var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
 
             foreach (var participant in request.Participants)
-            {
-                if (!participant.Id.HasValue)
-                {
-                    if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
-                    {
-                        if (newParticipant.HearingRoleName == HearingRoleName.Judge)
-                        {
-                            newParticipant.ContactEmail = judgeContact.email ?? newParticipant.ContactEmail;
-                            newParticipant.TelephoneNumber =  judgeContact.phone ?? newParticipant.TelephoneNumber;
-                        }
-                        newParticipants.Add(newParticipant);
-                    }
-                }
-                else
-                {
-                    var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                    if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-                        continue;
-                    if (existingParticipant.HearingRoleName == HearingRoleName.Judge)
-                    {
-                        participant.ContactEmail = judgeContact.email ?? existingParticipant.ContactEmail;
-                        participant.TelephoneNumber = judgeContact.phone ?? existingParticipant.TelephoneNumber;
-                    }
-                    var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-                    existingParticipants.Add(updateParticipantRequest);
-                }
-            }
+                if (participant.Id.HasValue)
+                    ExtractExistingParticipants(originalHearing, participant, existingParticipants);
+                else if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
+                    newParticipants.Add(newParticipant);
+            
+            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
+            
+            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
+            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
+        }
 
+        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(EditHearingRequest request, HearingDetailsResponse originalHearing,
+            List<Guid> removedParticipantIds, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants)
+        {
             var linkedParticipants = new List<LinkedParticipantRequest>();
             var participantsWithLinks = request.Participants
-                .Where(x => x.LinkedParticipants.Any() && 
+                .Where(x => x.LinkedParticipants.Any() &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].LinkedId) &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].ParticipantId))
                 .ToList();
@@ -319,7 +305,8 @@ namespace AdminWebsite.Controllers
                     var secondaryParticipantInLinkContactEmail = originalHearing.Participants
                         .SingleOrDefault(x => x.Id == participantWithLinks.LinkedParticipants[0].LinkedId)?
                         .ContactEmail ?? newParticipants
-                        .SingleOrDefault(x => x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
+                        .SingleOrDefault(x =>
+                            x.ContactEmail == participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail)?
                         .ContactEmail;
 
                     // If the linked participant isn't an existing participant it will be a newly added participant                        
@@ -331,13 +318,23 @@ namespace AdminWebsite.Controllers
                     if (secondaryParticipantInLinkIndex >= 0)
                         participantsWithLinks.RemoveAt(secondaryParticipantInLinkIndex);
                 }
+
                 linkedParticipants.Add(linkedParticipantRequest);
             }
-            // participants
-            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants,
-                removedParticipantIds.ToList(), linkedParticipants.ToList());
-            // endpoints
-            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
+            return linkedParticipants;
+        }
+
+        private static void ExtractExistingParticipants(
+            HearingDetailsResponse originalHearing,
+            EditParticipantRequest participant, 
+            List<UpdateParticipantRequest> existingParticipants)
+        {
+            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
+                return;
+            
+            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
+            existingParticipants.Add(updateParticipantRequest);
         }
 
         private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
@@ -451,10 +448,8 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
                     return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
-                }
-
+                
                 return BadRequest(e.Response);
             }
         }

@@ -10,6 +10,7 @@ using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
@@ -18,6 +19,7 @@ namespace AdminWebsite.UnitTests.Controllers
     public class UserIdentityControllerTests
     {
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
+        private Mock<ILogger<UserIdentityController>> _loggerMock;
 
         private ClaimsPrincipal _claimsPrincipal;
         private JusticeUserResponse _justiceUserResponse;
@@ -33,11 +35,33 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             
-
+            _loggerMock = new Mock<ILogger<UserIdentityController>>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _bookingsApiClientMock.Setup(x => x.GetJusticeUserByUsernameAsync(It.IsAny<string>())).ReturnsAsync(_justiceUserResponse);
         }
 
+        [Test]
+        public async Task should_return_not_found_when_username_cannot_be_found_from_claims()
+        {
+            var claims = new List<Claim>
+            {
+                new("unique_user", "user@name.com"),
+                new(ClaimTypes.NameIdentifier, "userId"),
+                new("name", "John Doe")
+            };
+            
+            var identity = new ClaimsIdentity(claims, "TestAuthType", "preferred_username", ClaimTypes.Role);
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+            _controller = SetupControllerWithClaims(claimsPrincipal);
+            
+            var response = await _controller.GetUserProfile();
+            var result = response.Result.As<ObjectResult>();
+
+            result.Should().NotBeNull();
+
+            Assert.AreEqual(404, result.StatusCode);
+        }
+        
         [Test]
         public async Task should_return_status_code_result_when_api_errors_with_non_404()
         {
@@ -166,7 +190,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Lastname = "lastName1"
             };
             _justiceUserListResponse.Add(user);
-            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null)).ReturnsAsync(_justiceUserListResponse);
+            _bookingsApiClientMock.Setup(x => x.GetJusticeUserListAsync(null, true)).ReturnsAsync(_justiceUserListResponse);
             
             _claimsPrincipal = new ClaimsPrincipalBuilder()
                 .WithRole(AppRoles.CaseAdminRole)
@@ -192,7 +216,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 }
             };
 
-            return new UserIdentityController(_bookingsApiClientMock.Object)
+            return new UserIdentityController(_bookingsApiClientMock.Object, _loggerMock.Object)
             {
                 ControllerContext = context
             };

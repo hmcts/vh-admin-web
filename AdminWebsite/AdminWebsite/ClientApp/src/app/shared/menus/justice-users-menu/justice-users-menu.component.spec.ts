@@ -4,19 +4,24 @@ import { HttpClient, HttpHandler } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
-import { of, throwError } from 'rxjs';
-import { JusticeUserResponse } from '../../../services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { BehaviorSubject } from 'rxjs';
+import { JusticeUserResponse } from '../../../services/clients/api-client';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
     let fixture: ComponentFixture<JusticeUsersMenuComponent>;
     let justiceUsersServiceSpy: jasmine.SpyObj<JusticeUsersService>;
+    const users: JusticeUserResponse[] = [];
+    const user1 = new JusticeUserResponse({
+        id: '123',
+        full_name: 'Test User'
+    });
+    users.push(user1);
 
     beforeEach(async () => {
-        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['retrieveJusticeUserAccounts']);
-        justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(of([new JusticeUserResponse()]));
-
+        justiceUsersServiceSpy = jasmine.createSpyObj('JusticeUsersService', ['allUsers$']);
+        justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>(users);
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
             providers: [
@@ -55,21 +60,12 @@ describe('JusticeUsersMenuComponent', () => {
         });
     });
 
-    describe('loadItems', () => {
-        it('should call video hearing service', () => {
-            const expectedResponse = [new JusticeUserResponse()];
-            component.loadItems();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
-            expect(component.users).toEqual(expectedResponse);
-        });
-
-        it('should call video hearing service, and catch thrown exception', () => {
-            justiceUsersServiceSpy.retrieveJusticeUserAccounts.and.returnValue(throwError({ status: 404 }));
-
-            const handleListErrorSpy = spyOn(component, 'handleListError');
-            component.loadItems();
-            expect(justiceUsersServiceSpy.retrieveJusticeUserAccounts).toHaveBeenCalled();
-            expect(handleListErrorSpy).toHaveBeenCalled();
+    describe('ngOnInit', () => {
+        it('should load items', () => {
+            component.ngOnInit();
+            expect(component.items.length).toBe(users.length);
+            expect(component.items[0].id).toBe(user1.id);
+            expect(component.items[0].full_name).toBe(user1.full_name);
         });
     });
 });

@@ -10,6 +10,7 @@ using AdminWebsite.Helper;
 using System;
 using System.Collections.Generic;
 using BookingsApi.Contract.Responses;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.Controllers
 {
@@ -19,18 +20,29 @@ namespace AdminWebsite.Controllers
     {
 
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly ILogger<UserIdentityController> _logger;
 
-        public UserIdentityController(IBookingsApiClient bookingsApiClient)
+        public UserIdentityController(IBookingsApiClient bookingsApiClient, ILogger<UserIdentityController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
+            _logger = logger;
         }
 
         [HttpGet]
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
         {
-            var username = User.Claims.SingleOrDefault(x => x.Type == ClaimNames.PreferredUsername)?.Value;
+            var username = User.Identity?.Name;
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                const string message = "Username not found in claims. Check the Scheme's NameClaimType has been configured correctly.";
+                var ex = new NullReferenceException(message);
+                _logger.LogError(ex, message);
+                return StatusCode((int)HttpStatusCode.NotFound, message);
+            }
+
             JusticeUserResponse justiceUser = null;
 
             try
@@ -40,6 +52,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
+                _logger.LogError(e, "Failed to get justice user by username");
                 if (e.StatusCode != 404)
                     return StatusCode(e.StatusCode, e.Response);
             }
@@ -63,7 +76,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(List<JusticeUserResponse>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<ICollection<JusticeUserResponse>>> GetUserList([FromQuery] string term)
         {
-            var justiceUserList = await _bookingsApiClient.GetJusticeUserListAsync(term);
+            var justiceUserList = await _bookingsApiClient.GetJusticeUserListAsync(term, true);
             return Ok(justiceUserList);
         }
     }

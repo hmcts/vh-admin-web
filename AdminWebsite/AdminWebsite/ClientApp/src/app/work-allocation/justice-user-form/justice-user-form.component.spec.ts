@@ -3,7 +3,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { of, throwError } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
-import { BookHearingException, JusticeUserResponse, ValidationProblemDetails } from 'src/app/services/clients/api-client';
+import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { Logger } from 'src/app/services/logger';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
@@ -18,7 +18,7 @@ describe('JusticeUserFormComponent', () => {
 
     let component: JusticeUserFormComponent;
     let fixture: ComponentFixture<JusticeUserFormComponent>;
-    const existngUser = new JusticeUserResponse({
+    const existingUser = new JusticeUserResponse({
         contact_email: 'test@cso.com',
         first_name: 'John',
         lastname: 'Doe',
@@ -38,7 +38,36 @@ describe('JusticeUserFormComponent', () => {
         fixture = TestBed.createComponent(JusticeUserFormComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        component.justiceUser = existngUser;
+        component.justiceUser = existingUser;
+    });
+
+    describe('contact telephone validation on form', () => {
+        it('should have valid form for empty contact telephone', () => {
+            component.form.controls.username.setValue(existingUser.username);
+            component.form.controls.firstName.setValue(existingUser.first_name);
+            component.form.controls.lastName.setValue(existingUser.lastname);
+            component.form.controls.contactTelephone.setValue(existingUser.telephone);
+            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            expect(component.form.invalid).toBe(false);
+        });
+
+        it('should have valid form for valid contact telephone', () => {
+            component.form.controls.username.setValue(existingUser.username);
+            component.form.controls.firstName.setValue(existingUser.first_name);
+            component.form.controls.lastName.setValue(existingUser.lastname);
+            component.form.controls.contactTelephone.setValue('+441234567890');
+            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            expect(component.form.invalid).toBe(false);
+        });
+
+        it('should have invalid form for invalid contact telephone', () => {
+            component.form.controls.username.setValue(existingUser.username);
+            component.form.controls.firstName.setValue(existingUser.first_name);
+            component.form.controls.lastName.setValue(existingUser.lastname);
+            component.form.controls.contactTelephone.setValue('abcd');
+            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            expect(component.form.invalid).toBe(true);
+        });
     });
 
     describe('on form cancellation', () => {
@@ -137,7 +166,7 @@ describe('JusticeUserFormComponent', () => {
             const exception = new BookHearingException(
                 'Conflict',
                 409,
-                `Detected an existing user for the username ${existngUser.username}`,
+                `Detected an existing user for the username ${existingUser.username}`,
                 null,
                 null
             );
@@ -163,7 +192,10 @@ describe('JusticeUserFormComponent', () => {
                 title: 'One or more validation errors occurred.',
                 status: 400
             });
-            justiceUsersServiceSpy.addNewJusticeUser.and.returnValue(throwError(validationProblem));
+
+            justiceUsersServiceSpy.addNewJusticeUser.and.returnValue(
+                throwError(new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem))
+            );
 
             // act
             component.onSave();

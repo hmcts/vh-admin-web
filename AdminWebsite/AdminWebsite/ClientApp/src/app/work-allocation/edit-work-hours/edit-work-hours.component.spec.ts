@@ -47,6 +47,7 @@ describe('EditWorkHoursComponent', () => {
 
         fixture = TestBed.createComponent(EditWorkHoursComponent);
         component = fixture.componentInstance;
+        component.todayDate = new Date(2021, 1, 1);
         component.dataChange = jasmine.createSpyObj('dataChange', ['emit']);
         fixture.detectChanges();
     });
@@ -65,26 +66,6 @@ describe('EditWorkHoursComponent', () => {
             const componentOuterDiv = componentDebugElement.query(By.css('details')).nativeElement;
 
             expect(componentOuterDiv.innerText).toEqual('Edit working hours / non-availability');
-        });
-
-        it('should show upload successful message', () => {
-            component.isVhTeamLeader = true;
-            component.isUploadWorkHoursSuccessful = true;
-            fixture.detectChanges();
-
-            const successElement = fixture.debugElement.query(By.css('#edit-upload-hours-success')).nativeElement;
-
-            expect(successElement.innerText).toEqual('User working hours changes saved successfully ');
-        });
-
-        it('should show upload failure message', () => {
-            component.isVhTeamLeader = true;
-            component.isUploadWorkHoursFailure = true;
-            fixture.detectChanges();
-
-            const successElement = fixture.debugElement.query(By.css('#edit-upload-hours-failure')).nativeElement;
-
-            expect(successElement.innerText).toEqual(' Error: Work hour changes could not be saved. ');
         });
     });
 
@@ -333,6 +314,18 @@ describe('EditWorkHoursComponent', () => {
             component.dataChanged(true);
 
             expect(component.dataChange.emit).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('filter by future date', () => {
+        it('should show vho future data ', () => {
+            component.result = [
+                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2022/10/24'), end_time: new Date('2022/10/24') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2022/10/25'), end_time: new Date('2022/10/29') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2023/10/30'), end_time: new Date('2023/10/31') })
+            ];
+            fixture.detectChanges();
+            expect(component.filterByFutureDate).toBeTruthy();
         });
     });
 

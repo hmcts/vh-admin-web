@@ -27,20 +27,18 @@ describe('ParticipantListComponent', () => {
     pat1.addedDuringHearing = false;
     const participants: any[] = [pat1, pat1];
 
-    beforeEach(
-        waitForAsync(() => {
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
-            TestBed.configureTestingModule({
-                declarations: [ParticipantListComponent, ParticipantItemComponent],
-                providers: [
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: router },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
-                ],
-                imports: [RouterTestingModule]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        TestBed.configureTestingModule({
+            declarations: [ParticipantListComponent, ParticipantItemComponent],
+            providers: [
+                { provide: Logger, useValue: loggerSpy },
+                { provide: Router, useValue: router },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+            ],
+            imports: [RouterTestingModule]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantListComponent);
@@ -106,20 +104,18 @@ describe('ParticipantListComponent-SortParticipants', () => {
     let fixture: ComponentFixture<ParticipantListComponent>;
     let debugElement: DebugElement;
 
-    beforeEach(
-        waitForAsync(() => {
-            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
-            TestBed.configureTestingModule({
-                declarations: [ParticipantListComponent, ParticipantItemComponent],
-                providers: [
-                    { provide: Logger, useValue: loggerSpy },
-                    { provide: Router, useValue: router },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
-                ],
-                imports: [RouterTestingModule]
-            }).compileComponents();
-        })
-    );
+    beforeEach(waitForAsync(() => {
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        TestBed.configureTestingModule({
+            declarations: [ParticipantListComponent, ParticipantItemComponent],
+            providers: [
+                { provide: Logger, useValue: loggerSpy },
+                { provide: Router, useValue: router },
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+            ],
+            imports: [RouterTestingModule]
+        }).compileComponents();
+    }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ParticipantListComponent);

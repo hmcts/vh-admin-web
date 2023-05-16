@@ -62,6 +62,14 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         return <FormArray>this.form.get('endpoints');
     }
 
+    get hasEndpoints(): boolean {
+        return this.endpoints.length > 1;
+    }
+
+    get isHearingAboutToStart(): boolean {
+        return this.videoHearingService.isHearingAboutToStart();
+    }
+
     addEndpoint(): void {
         this.duplicateDa = false;
         if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
@@ -109,8 +117,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
 
     removeEndpoint(rowIndex: number): void {
-        this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
-        this.endpoints.removeAt(rowIndex);
+        if (!this.isHearingAboutToStart) {
+            this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
+            this.endpoints.removeAt(rowIndex);
+        } else {
+            this.logger.warn(`${this.loggerPrefix} Cannot remove an endpoint when hearing is about to start ${rowIndex}.`);
+        }
     }
 
     cancelBooking(): void {
@@ -240,7 +252,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
     const displayNameText: string = control.value;
-    if (displayNameText !== null && displayNameText.replace(/\s/g, '').length) {
+    if (displayNameText?.replace(/\s/g, '').length) {
         return null;
     } else {
         return { blankSpaceValidator: true };

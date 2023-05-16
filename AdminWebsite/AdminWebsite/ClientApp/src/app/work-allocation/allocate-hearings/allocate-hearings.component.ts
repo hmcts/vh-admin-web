@@ -1,14 +1,18 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AllocateHearingsService } from '../services/allocate-hearings.service';
-import { AllocationHearingsResponse } from '../../services/clients/api-client';
-import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
-import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
+import { AllocationHearingsResponse, HearingTypeResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { faCircleExclamation, faHourglassStart, faTriangleExclamation, faClock } from '@fortawesome/free-solid-svg-icons';
 import { AllocateHearingModel } from './models/allocate-hearing.model';
 import { Transform } from '@fortawesome/fontawesome-svg-core';
 import { Constants } from 'src/app/common/constants';
+import { DatePipe } from '@angular/common';
+import { SelectComponent, SelectOption } from 'src/app/shared/select/select.component';
+import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { BookingPersistService } from 'src/app/services/bookings-persist.service';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -16,7 +20,15 @@ import { Constants } from 'src/app/common/constants';
     styleUrls: ['./allocate-hearings.component.scss']
 })
 export class AllocateHearingsComponent implements OnInit {
-    constructor(private route: ActivatedRoute, private fb: FormBuilder, private allocateService: AllocateHearingsService) {
+    constructor(
+        private route: ActivatedRoute,
+        private fb: FormBuilder,
+        private allocateService: AllocateHearingsService,
+        private datePipe: DatePipe,
+        private justiceUserService: JusticeUsersService,
+        private videoHearingService: VideoHearingsService,
+        private bookingPersistService: BookingPersistService
+    ) {
         this.form = fb.group({
             fromDate: ['', Validators.required],
             toDate: [''],
@@ -25,11 +37,13 @@ export class AllocateHearingsComponent implements OnInit {
             caseNumber: [''],
             isUnallocated: [false]
         });
+        this.todayDate = new Date();
     }
-    @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
-    @ViewChild('csoAllocatedMenu', { static: false, read: JusticeUsersMenuComponent }) csoAllocatedMenu: JusticeUsersMenuComponent;
-    @ViewChild('csoFilterMenu', { static: false, read: JusticeUsersMenuComponent }) csoFilterMenu: JusticeUsersMenuComponent;
-    @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
+
+    @ViewChild('selectAllocateCso', { static: false, read: SelectComponent }) selectAllocateCso: SelectComponent;
+    @ViewChild('selectFilterCso', { static: false, read: SelectComponent }) selectFilterCso: SelectComponent;
+    @ViewChild('selectCaseType', { static: false, read: SelectComponent }) selectCaseType: SelectComponent;
+
     form: FormGroup;
     allocateHearingsDetailOpen: boolean;
     allocationHearingViewModel: AllocateHearingModel = new AllocateHearingModel([]);
@@ -43,7 +57,13 @@ export class AllocateHearingsComponent implements OnInit {
     faClock = faClock;
     customIconTransform: Transform = { rotate: 45 };
     private filterSize = 20;
-    dropDownUserLabelAllocateTo = 'Allocate to';
+    todayDate: Date;
+    dateFormat = 'yyyy-MM-dd';
+
+    justiceUsersSelectOptions: SelectOption[];
+    selectedJusticeUserIds: string[] = [];
+    caseTypesSelectOptions: SelectOption[];
+    selectedCaseTypeIds: string[] = [];
 
     ngOnInit() {
         this.route.queryParams.subscribe(params => {
@@ -66,20 +86,58 @@ export class AllocateHearingsComponent implements OnInit {
         this.form.get('isUnallocated').valueChanges.subscribe(val => {
             this.onIsAllocatedCheckboxChanged(val);
         });
+
+        this.selectedJusticeUserIds = this.bookingPersistService.selectedUsers;
+        this.selectedCaseTypeIds = this.bookingPersistService.selectedCaseTypes;
+
+        this.justiceUserService.allUsers$
+            .pipe(
+                map(users => users.filter(user => !user.deleted)),
+                tap(() => this.selectFilterCso?.clear())
+            )
+            .subscribe((data: JusticeUserResponse[]) => {
+                this.justiceUsersSelectOptions = data.map(item => ({
+                    label: item.full_name,
+                    entityId: item.id,
+                    data: item.username,
+                    ariaLabel: item.first_name
+                }));
+            });
+
+        const distinct = (value, index, array) => array.indexOf(value) === index;
+        this.videoHearingService.getHearingTypes().subscribe((data: HearingTypeResponse[]) => {
+            this.caseTypesSelectOptions = data
+                .map(item => item.group)
+                .filter(distinct)
+                .sort()
+                .map(group => ({ entityId: group, label: group }));
+        });
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {
         const retrieveDate = (date: any): Date => (date === null || date === '' ? null : new Date(date));
 
-        const fromDate = retrieveDate(this.form.value.fromDate);
-        const toDate = retrieveDate(this.form.value.toDate);
+        let fromDateValue = retrieveDate(this.form.value.fromDate);
+        let toDate = retrieveDate(this.form.value.toDate);
+        if (fromDateValue === null) {
+            fromDateValue = new Date();
+            this.form.patchValue({
+                fromDate: this.datePipe.transform(this.todayDate, this.dateFormat)
+            });
+            toDate = new Date(new Date().setFullYear(this.todayDate.getFullYear() + 1));
+            const dateString = this.datePipe.transform(toDate, this.dateFormat);
+            this.form.patchValue({
+                toDate: dateString
+            });
+        }
+
         const caseNumber = this.form.value.caseNumber;
         const cso = this.csoDropDownValues;
         const caseType = this.caseTypeDropDownValues;
         const isUnallocated = this.form.value.isUnallocated;
 
         this.allocateService
-            .getAllocationHearings(fromDate, toDate, cso, caseType, caseNumber, isUnallocated)
+            .getAllocationHearings(fromDateValue, toDate, cso, caseType, caseNumber, isUnallocated)
             .subscribe(result => this.displayResults(result, keepExistingMessage));
     }
 
@@ -97,8 +155,9 @@ export class AllocateHearingsComponent implements OnInit {
             isUnallocated: false
         });
 
-        this.csoMenu.clear();
-        this.caseTypeMenu.clear();
+        this.selectAllocateCso?.clear();
+        this.selectFilterCso.clear();
+        this.selectCaseType.clear();
     }
 
     messageCanBeDisplayed(): boolean {
@@ -115,30 +174,30 @@ export class AllocateHearingsComponent implements OnInit {
         this.message = '';
     }
 
-    onCaseTypeSelected($event: string[]) {
-        this.caseTypeDropDownValues = $event;
+    onCaseTypeSelected($event: SelectOption[]) {
+        this.caseTypeDropDownValues = $event.map(x => x.entityId);
     }
 
-    onJusticeUserForFilterSelected(selectedCsoIds: string[]) {
-        this.csoDropDownValues = selectedCsoIds;
-        if (selectedCsoIds.length > 0) {
+    onJusticeUserForFilterSelected(selectedOptions: SelectOption[]) {
+        this.csoDropDownValues = selectedOptions.map(x => x.entityId);
+        if (selectedOptions.length > 0) {
             this.form.get('isUnallocated').setValue(false);
         }
     }
 
     onIsAllocatedCheckboxChanged(checked: boolean) {
         if (checked) {
-            this.csoFilterMenu.clear();
-            this.csoFilterMenu.enabled(false);
+            this.selectFilterCso.clear();
+            this.selectFilterCso.disable();
         } else {
-            this.csoFilterMenu.enabled(true);
+            this.selectFilterCso.enable();
         }
     }
 
-    onJusticeUserForAllocationSelected(justiceUserId: string) {
-        this.clearHearingUpdatedMessage();
-        if (justiceUserId) {
-            const username = this.csoAllocatedMenu?.selectedLabel;
+    onJusticeUserForAllocationSelected(selectedItem?: SelectOption) {
+        if (selectedItem) {
+            const username = selectedItem.data;
+            const justiceUserId = selectedItem.entityId;
             this.attemptToAssignCsoToSelectedHearings(justiceUserId, username);
         } else {
             // without a selected CSO, unset selection
@@ -174,15 +233,15 @@ export class AllocateHearingsComponent implements OnInit {
 
     cancelAllocation() {
         this.toggleAll(false);
-        this.csoAllocatedMenu.clear();
+        this.selectAllocateCso.clear();
         this.clearMessage();
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
     }
 
     confirmAllocation() {
         this.clearHearingUpdatedMessage();
-        const csoId = this.csoAllocatedMenu?.selectedItems as string;
-        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, csoId).subscribe(
+        const selectedCso = this.selectAllocateCso?.selected as SelectOption;
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe(
             result => this.updateTableWithAllocatedCso(result),
             () => {
                 this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
@@ -194,10 +253,12 @@ export class AllocateHearingsComponent implements OnInit {
     toggleAll(checkAll: boolean) {
         if (checkAll) {
             this.allocationHearingViewModel.checkAllHearings();
-            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
-            // safe to cast to string
-            const csoId = this.csoAllocatedMenu?.selectedItems as string;
-            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+            const selectedCso = this.selectAllocateCso?.selected as SelectOption;
+            if (selectedCso) {
+                const csoId = selectedCso.entityId;
+                const csoUsername = selectedCso.data;
+                this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+            }
         } else {
             this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
         }
@@ -206,19 +267,22 @@ export class AllocateHearingsComponent implements OnInit {
     private updateTableWithAllocatedCso(updatedHearings: AllocationHearingsResponse[]) {
         this.allocationHearingViewModel.updateHearings(updatedHearings);
         this.allocationHearingViewModel.uncheckAllHearingsAndRevert();
-        this.csoAllocatedMenu.clear();
+        this.selectAllocateCso.clear();
         this.updateMessageAndDisplay(Constants.AllocateHearings.ConfirmationMessage);
     }
 
     selectHearing(checked: boolean, hearing_id: string) {
         if (checked) {
             this.clearHearingUpdatedMessage();
-            const csoUsername = this.csoAllocatedMenu?.selectedLabel;
-            // safe to cast to string
-            const csoId = this.csoAllocatedMenu?.selectedItems as string;
-
             this.allocationHearingViewModel.checkHearing(hearing_id);
-            this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+
+            const selectedCso = this.selectAllocateCso?.selected as SelectOption;
+            if (selectedCso) {
+                const csoId = selectedCso.entityId;
+                const csoUsername = selectedCso.data;
+
+                this.attemptToAssignCsoToSelectedHearings(csoId, csoUsername);
+            }
         } else {
             this.allocationHearingViewModel.uncheckHearingAndRevert(hearing_id);
         }

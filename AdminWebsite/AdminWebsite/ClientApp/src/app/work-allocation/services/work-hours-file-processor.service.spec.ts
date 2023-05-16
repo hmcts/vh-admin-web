@@ -40,10 +40,10 @@ describe('WorkHoursFileProcessorService', () => {
 
         it('should successfully parse valid input', () => {
             const input =
-                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday,,,\n' +
                 ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
-                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
-                'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+                'first.second@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,\n' +
+                'first.second.2@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,';
 
             const result = service.processWorkHours(input);
             expect(result.fileValidationErrors.length).toBe(0);
@@ -52,6 +52,18 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.uploadWorkHoursRequest[0].working_hours.length).toBe(7);
             expect(result.uploadWorkHoursRequest[1].username).toBe('first.second.2@xyz.com');
             expect(result.uploadWorkHoursRequest[1].working_hours.length).toBe(7);
+        });
+
+        it('show duplicate user errors', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+
+            const result = service.processWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(1);
+            expect(result.fileValidationErrors[0]).toContain('duplicate team member found');
         });
     });
 
@@ -78,6 +90,38 @@ describe('WorkHoursFileProcessorService', () => {
                 'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
                 'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
                 'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00';
+
+            const result = service.processNonWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(0);
+        });
+
+        it('should succesfully parse valid input with DD/MM/YYYY date format', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'manual.vhoteamlead1@hearings.reform.hmcts.net,01/01/2023,10:00,01/01/2023,17:00\n' +
+                'first.second2@xyz.com,02/01/2023,10:00,02/01/2023,17:00';
+
+            const result = service.processNonWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(0);
+        });
+
+        it('should show non-working hours file upload date errors', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'invalid.date@xyz.com,2023-25-01,10:00,2023-25-01,17:00';
+
+            const result = service.processNonWorkHours(input);
+
+            expect(result.fileValidationErrors.length).toBe(1);
+            expect(result.fileValidationErrors[0]).toContain('Contains an invalid date');
+        });
+
+        it('should not parse empty row in non-working hours file upload', () => {
+            const input =
+                'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
+                'manual.vhoteamlead1@hearings.reform.hmcts.net,2022-01-01,10:00,2022-01-08,17:00\n' +
+                'first.second2@xyz.com,2022-01-01,10:00,2022-01-07,17:00\n' +
+                '     ';
 
             const result = service.processNonWorkHours(input);
             expect(result.fileValidationErrors.length).toBe(0);
@@ -132,22 +176,20 @@ describe('WorkHoursFileProcessorService', () => {
     });
 
     describe('isDelimiterValid', () => {
-        it('should return false when incorrect delimeter is used in working hours file', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
+        it('should return false when delimeter is not used in working hours file', () => {
+            expect(service.isDelimiterValid('0900')).toBeFalsy();
+        });
 
-            const result = service.isDelimiterValid('0900');
+        it('should return false when input is undefined', () => {
+            const result = service.isDelimiterValid(undefined);
 
             expect(result).toBeFalsy();
         });
 
         it('should return true when correct delimeter is used', () => {
-            const rowNumber = 2;
-            const entryNumber = 3;
-
             const result = service.isDelimiterValid('09:00');
-
             expect(result).toBeTruthy();
+            expect(service.isDelimiterValid('09:00')).toBeTruthy();
         });
     });
 
@@ -211,6 +253,24 @@ describe('WorkHoursFileProcessorService', () => {
             Object.defineProperty(file, 'size', { value: 19999 });
 
             const result = service.isFileTooBig(file);
+
+            expect(result).toBeFalsy();
+        });
+    });
+
+    describe('isFileFormatValild', () => {
+        it('should return true when file extension is valid', () => {
+            const file = new File([''], 'filename.csv', { type: 'text/csv' });
+
+            const result = service.isFileFormatValild(file);
+
+            expect(result).toBeTruthy();
+        });
+
+        it('should return false when file extension is not csv', () => {
+            const file = new File([''], 'filename.xls', { type: 'application/vnd.ms-excel' });
+
+            const result = service.isFileFormatValild(file);
 
             expect(result).toBeFalsy();
         });
@@ -294,46 +354,40 @@ describe('WorkHoursFileProcessorService', () => {
     });
 
     describe('calling the API', () => {
-        it(
-            'should call the api to upload work hours',
-            waitForAsync(() => {
-                const requests: UploadWorkHoursRequest[] = [
-                    new UploadWorkHoursRequest({
-                        username: 'spoc@test.com',
-                        working_hours: [
-                            new WorkingHours({
-                                day_of_week_id: 1,
-                                start_time_hour: 10,
-                                start_time_minutes: 0,
-                                end_time_hour: 15,
-                                end_time_minutes: 0
-                            })
-                        ]
-                    })
-                ];
+        it('should call the api to upload work hours', waitForAsync(() => {
+            const requests: UploadWorkHoursRequest[] = [
+                new UploadWorkHoursRequest({
+                    username: 'spoc@test.com',
+                    working_hours: [
+                        new WorkingHours({
+                            day_of_week_id: 1,
+                            start_time_hour: 10,
+                            start_time_minutes: 0,
+                            end_time_hour: 15,
+                            end_time_minutes: 0
+                        })
+                    ]
+                })
+            ];
 
-                service.uploadWorkingHours(requests).subscribe(result => {
-                    expect(result.failed_usernames.length).toBe(0);
-                });
-            })
-        );
+            service.uploadWorkingHours(requests).subscribe(result => {
+                expect(result.failed_usernames.length).toBe(0);
+            });
+        }));
 
-        it(
-            'should call the api to upload non-work hours',
-            waitForAsync(() => {
-                const requests: UploadNonWorkingHoursRequest[] = [
-                    new UploadNonWorkingHoursRequest({
-                        username: 'john@doe.com',
-                        start_time: new Date(2023, 1, 1, 10, 30, 0, 0),
-                        end_time: new Date(2023, 1, 5, 10, 30, 0, 0)
-                    })
-                ];
+        it('should call the api to upload non-work hours', waitForAsync(() => {
+            const requests: UploadNonWorkingHoursRequest[] = [
+                new UploadNonWorkingHoursRequest({
+                    username: 'john@doe.com',
+                    start_time: new Date(2023, 1, 1, 10, 30, 0, 0),
+                    end_time: new Date(2023, 1, 5, 10, 30, 0, 0)
+                })
+            ];
 
-                service.uploadNonWorkingHours(requests).subscribe(result => {
-                    expect(result.failed_usernames.length).toBe(0);
-                });
-            })
-        );
+            service.uploadNonWorkingHours(requests).subscribe(result => {
+                expect(result.failed_usernames.length).toBe(0);
+            });
+        }));
     });
 
     describe('check for duplicate users', () => {

@@ -17,7 +17,7 @@ import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { EditWorkHoursService } from '../../services/edit-work-hours.service';
 
 const requiredFieldNames = ['start_date', 'end_date', 'start_time', 'end_time'] as const;
-type RequiredField = typeof requiredFieldNames[number];
+type RequiredField = (typeof requiredFieldNames)[number];
 
 @Component({
     selector: 'app-vho-work-hours-non-availability-table',
@@ -394,7 +394,12 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     retrieveDate(date: any): Date {
-        return date === '' ? null : new Date(date);
+        if (date === '') {
+            return null;
+        }
+        const result = new Date(date);
+        result.setHours(0, 0, 0, 0);
+        return result;
     }
 
     filterByDate() {

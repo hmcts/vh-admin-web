@@ -135,12 +135,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.WebConfig.SauceLabsConfiguration.RealDeviceApiKey.Should().NotBeNullOrWhiteSpace();
         }
 
-        private string GetTargetTestEnvironment()
+        private static string GetTargetTestEnvironment()
         {
             return NUnit.Framework.TestContext.Parameters["TargetTestEnvironment"] ?? string.Empty;
         }
 
-        private bool RunOnSauceLabsFromLocal()
+        private static bool RunOnSauceLabsFromLocal()
         {
             return NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"] != null &&
                    NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"].Equals("true");
@@ -152,12 +152,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.NotifyConfiguration);
         }
 
-        private void RunningAdminWebLocally(TestContext context)
+        private static void RunningAdminWebLocally(TestContext context)
         {
             context.WebConfig.VhServices.RunningAdminWebLocally = context.WebConfig.VhServices.AdminWebUrl.Contains("localhost");
         }
 
-        private async Task GenerateBearerTokens(TestContext context)
+        private static async Task GenerateBearerTokens(TestContext context)
         {
             var tokenProvider = new TokenProvider(Options.Create(context.WebConfig.AzureAdConfiguration));
             context.Token = await tokenProvider.GetClientAccessToken(context.WebConfig.AzureAdConfiguration.ClientId, context.WebConfig.AzureAdConfiguration.ClientSecret, context.WebConfig.VhServices.TestApiResourceId);
@@ -165,8 +165,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
         
         private void SetBookingConfirmToggleStatus(TestContext context)
-        { 
-            var featureToggle = new FeatureToggles(_configRoot["FeatureToggle:SDKKey"]);
+        {
+            var featureToggle =
+                new FeatureToggles(_configRoot["FeatureToggle:SDKKey"], _configRoot["AzureAd:ResourceId"]);
             context.WebConfig.BookingConfirmToggle = featureToggle.BookAndConfirmToggle();
         }
     }

@@ -10,7 +10,7 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { BookHearingException, BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -42,7 +42,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDuration: string;
     otherInformation: OtherInformationModel;
     audioChoice: string;
-    errors: any;
     showConfirmationRemoveParticipant = false;
     selectedParticipantEmail: string;
     removerFullName: string;
@@ -94,7 +93,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuardService.mandatoryRecordingForHearingRole(this.hearing.participants);
-        this.hearing.audio_recording_required = this.interpreterPresent ? true : this.hearing.audio_recording_required;
+        this.hearing.audio_recording_required = this.isAudioRecordingRequired();
         this.retrieveHearingSummary();
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
@@ -114,10 +113,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.bookinConfirmed = this.hearing.status === 'Created';
     }
 
+    isAudioRecordingRequired(): boolean {
+        // CACD hearings should always have recordings set to off
+        if (this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision) {
+            return false;
+        }
+        // Hearings with an interpreter should always have recording set to on
+        if (this.interpreterPresent) {
+            return true;
+        }
+        return this.hearing.audio_recording_required;
+    }
+
     private confirmRemoveParticipant() {
         const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
-        const isNotLast = filteredParticipants && filteredParticipants.length > 1;
         const title = participant && participant.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
 
@@ -315,7 +324,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
-            this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+            this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
         }
         await this.postProcessBooking(hearingDetailsResponse);
     }
@@ -348,7 +357,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                     if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
                         this.hearing.hearing_id = hearingDetailsResponse.id;
-                        this.setError(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `);
+                        this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
                         return;
                     }
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
@@ -365,10 +374,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         );
     }
 
-    private setError(error) {
+    private setError(error: BookHearingException | Error) {
         this.showWaitSaving = false;
         this.showErrorSaving = true;
-        this.errors = error;
     }
 
     cancel(): void {
