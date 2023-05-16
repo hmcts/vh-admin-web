@@ -925,8 +925,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "1.44.1",
-        "contentHash": "CtpIE9H2OI0dfH2jMOOLYaY/5GyCg6byPaHy6EK8HxrHOGALIHZaxBgbq46Rdfr6KJhKlibq+fg3TEQLiqI16g==",
+        "resolved": "1.44.2",
+        "contentHash": "zZ/reiiXi7niCDE+SObUbeGnq5ON394jHg4YCZX2ZNOM1tz0wnIendQOPOSl4IMuHsLYr/xv6rOB0VqnFdjH/A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.1"
@@ -1917,8 +1917,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.44.1",
-        "contentHash": "nmt5ZsHwxUbSL46uihtSGJTP4tTrSsyZNVhqIbaEL4zdaL+ybUAhE9we+Ye/DWyiKfMLddUg14bnUosQdyUQAA==",
+        "resolved": "1.44.2",
+        "contentHash": "sL9YCnF9D1MuXULRgMkz8pbUfuevzX78BLMtIbJcRLgOsv0X+FCIEImQa6ytPmqjQhl5PpuP/s72uC9bSzdxIA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1953,14 +1953,14 @@
           "Microsoft.OpenApi": "[1.4.2, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.17.0, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",
-          "NotificationApi.Client": "[1.44.1, )",
+          "NotificationApi.Client": "[1.44.2, )",
           "Polly": "[7.2.1, )",
           "Swashbuckle.AspNetCore": "[6.5.0, )",
           "Swashbuckle.AspNetCore.Annotations": "[6.5.0, )",
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.5.0, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.5.0, )",
           "TimeZoneConverter": "[6.0.1, )",
-          "UserApi.Client": "[1.44.1, )",
+          "UserApi.Client": "[1.44.2, )",
           "VH.Core.Configuration": "[0.1.13, )",
           "VideoApi.Client": "[1.44.2, )"
         }

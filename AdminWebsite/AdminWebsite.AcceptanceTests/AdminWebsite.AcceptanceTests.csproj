@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="GovukNotify" Version="6.0.0" />
-    <PackageReference Include="NotificationApi.Client" Version="1.44.1" />
+    <PackageReference Include="NotificationApi.Client" Version="1.44.2" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="TestApi.Client" Version="1.31.10" />
     <PackageReference Include="VH.AcceptanceTests.Common" Version="1.24.1" />
