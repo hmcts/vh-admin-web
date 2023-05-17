@@ -382,7 +382,7 @@ describe('SearchEmailComponent', () => {
             });
 
             component.searchTerm.next('a');
-            tick(500);
+            tick(2000);
         }));
     });
 });
