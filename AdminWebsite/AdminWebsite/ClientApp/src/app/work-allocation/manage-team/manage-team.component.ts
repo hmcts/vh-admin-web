@@ -183,7 +183,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.selectedUser$.next(null);
         this.userFormMode$.next('add');
     }
-
 }
 
 interface SearchForExistingJusticeUserForm {
