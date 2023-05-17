@@ -17,9 +17,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.9, )",
-        "resolved": "1.41.9",
-        "contentHash": "O+vKF9438qyEw+KPXUHvjwDj+FpNs85GoyeyaAcdQZYWjWb6nfzg2MzW72BwLKn7MrdOJCK/OpDpXxPJ7UNlrg==",
+        "requested": "[1.44.2, )",
+        "resolved": "1.44.2",
+        "contentHash": "zZ/reiiXi7niCDE+SObUbeGnq5ON394jHg4YCZX2ZNOM1tz0wnIendQOPOSl4IMuHsLYr/xv6rOB0VqnFdjH/A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.1"
@@ -50,9 +50,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.23.2, )",
-        "resolved": "1.23.2",
-        "contentHash": "IACJ9+e52/ibs0O2VvHkmMbq2dggC89bNf98XKpnQNyYH5pxISM82folDA7+i2Q61tUht46UmOKIBxi7ddqX7w==",
+        "requested": "[1.24.1, )",
+        "resolved": "1.24.1",
+        "contentHash": "QhyJpkUzoTHnV6OGf5PSDBU2Qoaeii76OL9FpKxgiiaitILLA1IuygXqnvvAYBdtvNr0FIU1mCkajkCz/6jjVg==",
         "dependencies": {
           "Appium.WebDriver": "4.4.0",
           "Azure.Storage.Blobs": "12.14.1",
@@ -80,7 +80,7 @@
           "Selenium.Firefox.WebDriver": "0.27.0",
           "Selenium.Support": "4.7.0",
           "Selenium.WebDriver": "4.7.0",
-          "Selenium.WebDriver.ChromeDriver": "108.0.5359.7100",
+          "Selenium.WebDriver.ChromeDriver": "111.0.5563.6400",
           "Selenium.WebDriver.IEDriver": "4.7.0",
           "Selenium.WebDriver.MicrosoftDriver": "17.17134.0",
           "SeleniumExtras.WaitHelpers": "1.0.2",
@@ -93,9 +93,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.41.19, )",
-        "resolved": "1.41.19",
-        "contentHash": "oKchf3PZ+qHcwz9jxmVdaHykoVxYv+vfnGK7dTRS3mb/44zF05knYlL3aSyrB1CL+jOUZ6/AY7gIRQS3CQOXcA==",
+        "requested": "[1.44.2, )",
+        "resolved": "1.44.2",
+        "contentHash": "0qEFVEAkUtVe2clT/gKgN/emQ069LkSlohZl47u5DtJw6Lb1ce44pfU/Rwlbdo3WPI75UX3+7kkwLfl1N2wfFw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -2619,8 +2619,8 @@
       },
       "VH.Core.Configuration": {
         "type": "Transitive",
-        "resolved": "0.1.12",
-        "contentHash": "uoDl/7HSRkueoe8e2uwPD1qCz1wuY0Tdzqf4HdQALuiK2qWXmFq/JYvnIl0g0IZmY4B1zsn7KKTOLvI4PMttuQ==",
+        "resolved": "0.1.13",
+        "contentHash": "fEtq8dy7GbJ8eUDc5kmwg3Ze+6C7JEPSHlmvz22W8UPX/x7ujBTr5MqUdpKNQganaHalt/6DHfHi+gxlPSUjiw==",
         "dependencies": {
           "Microsoft.AspNetCore.Http.Connections.Common": "3.1.10",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",

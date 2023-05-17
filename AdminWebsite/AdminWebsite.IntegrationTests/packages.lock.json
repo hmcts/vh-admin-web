@@ -2055,8 +2055,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.41.19",
-        "contentHash": "oKchf3PZ+qHcwz9jxmVdaHykoVxYv+vfnGK7dTRS3mb/44zF05knYlL3aSyrB1CL+jOUZ6/AY7gIRQS3CQOXcA==",
+        "resolved": "1.44.2",
+        "contentHash": "0qEFVEAkUtVe2clT/gKgN/emQ069LkSlohZl47u5DtJw6Lb1ce44pfU/Rwlbdo3WPI75UX3+7kkwLfl1N2wfFw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
