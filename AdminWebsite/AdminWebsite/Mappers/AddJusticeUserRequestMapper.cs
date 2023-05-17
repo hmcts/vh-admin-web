@@ -15,7 +15,7 @@ namespace AdminWebsite.Mappers
                 ContactEmail = request.Username,
                 ContactTelephone = request.ContactTelephone,
                 CreatedBy = createdBy,
-                Roles = request.Role,
+                Roles = request.Roles,
             };
         }
     }

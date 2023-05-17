@@ -31,5 +31,5 @@ public class AddNewJusticeUserRequest
     /// <summary>
     /// The user's role. This can be a VHO or a Team Lead.
     /// </summary>
-    public List<JusticeUserRole> Role { get; set;}
+    public List<JusticeUserRole> Roles { get; set;}
 }
