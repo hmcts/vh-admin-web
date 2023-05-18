@@ -27,10 +27,11 @@ export class WorkHoursFileProcessorService {
 
         // Remove headings rows
         userWorkAvailabilityRows.splice(0, 2);
+
         const workAvailabilities: UploadWorkHoursRequest[] = [];
         const workingHoursFileValidationErrors: string[] = [];
 
-        const numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
+        let numberOfUsernamesToUploadWorkHours = userWorkAvailabilityRows.length;
 
         const userWorkAvailabilityRowsSplit = userWorkAvailabilityRows.map(x => x.split(this.csvDelimiter));
         this.checkWorkAvailabilityForDuplicateUsers(userWorkAvailabilityRowsSplit);
@@ -38,7 +39,17 @@ export class WorkHoursFileProcessorService {
         const userNames: { [username: string]: number } = {};
 
         userWorkAvailabilityRows.forEach((row, index) => {
-            const values = row.split(this.csvDelimiter);
+            // Do not process a blank row
+            if (row === '\n' || row.trim().length === 0) {
+                numberOfUsernamesToUploadWorkHours -= 1;
+                return;
+            }
+
+            const values = row.replace(/\r/g, '').replace(/\n/g, '').split(this.csvDelimiter);
+            if (values.every(x => x === '')) {
+                numberOfUsernamesToUploadWorkHours -= 1;
+                return;
+            }
             const actualRow = index + 3;
 
             const uploadWorkHoursRequest = new UploadWorkHoursRequest();
@@ -139,7 +150,7 @@ export class WorkHoursFileProcessorService {
             if (row === '\n' || row.trim().length === 0) {
                 return;
             }
-            const values = row.replace(/\r/g, '').split(this.csvDelimiter);
+            const values = row.replace(/\r/g, '').replace(/\n/g, '').split(this.csvDelimiter);
 
             const uploadNonWorkHoursRequest = new UploadNonWorkingHoursRequest();
 

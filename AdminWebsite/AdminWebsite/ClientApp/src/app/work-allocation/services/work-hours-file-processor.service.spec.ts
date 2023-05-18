@@ -54,6 +54,24 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.uploadWorkHoursRequest[1].working_hours.length).toBe(7);
         });
 
+        it('should remove empty rows', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,,Saturday,,Sunday,\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second.1@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,\n' +
+                ',,,,,,,,,,,,,,\n' +
+                'first.second.2@xyz.com,10:00,17:00,09:00,17:30,08:00,17:30,09:00,17:00,09:00,17:00,,,,\n' +
+                '\n';
+
+            const result = service.processWorkHours(input);
+            console.log(result);
+            expect(result.fileValidationErrors.length).toBe(0);
+            expect(result.numberOfUserNameToUpload).toBe(2);
+            expect(result.uploadWorkHoursRequest[0].username).toBe('first.second.1@xyz.com');
+            expect(result.uploadWorkHoursRequest[0].working_hours.length).toBe(7);
+            expect(result.uploadWorkHoursRequest[1].username).toBe('first.second.2@xyz.com');
+        });
+
         it('show duplicate user errors', () => {
             const input =
                 'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
