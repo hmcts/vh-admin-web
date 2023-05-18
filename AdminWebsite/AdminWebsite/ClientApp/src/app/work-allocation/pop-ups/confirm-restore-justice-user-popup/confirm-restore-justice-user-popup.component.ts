@@ -10,7 +10,7 @@ import { JusticeUsersService } from 'src/app/services/justice-users.service';
 })
 export class ConfirmRestoreJusticeUserPopupComponent {
     errorIcon = faExclamationCircle;
-    showSpinner = false;
+    isRestoring = false;
     failedRestoreMessage: string;
 
     @Output() cancelEvent = new EventEmitter();
@@ -22,7 +22,7 @@ export class ConfirmRestoreJusticeUserPopupComponent {
 
     onConfirmRestore() {
         this.failedRestoreMessage = null;
-        this.showSpinner = true;
+        this.isRestoring = true;
         this.justiceUserService.restoreJusticeUser(this.user.id, this.user.username).subscribe({
             next: () => this.onRestoreSucceeded(),
             error: () => this.onRestoreFailed()
@@ -34,12 +34,12 @@ export class ConfirmRestoreJusticeUserPopupComponent {
     }
 
     onRestoreSucceeded() {
-        this.showSpinner = false;
+        this.isRestoring = false;
         this.restoreSuccessfulEvent.emit();
     }
 
     onRestoreFailed() {
-        this.showSpinner = false;
+        this.isRestoring = false;
         this.failedRestoreMessage = Constants.Error.RestoreJusticeUser.RestoreFailure;
     }
 }

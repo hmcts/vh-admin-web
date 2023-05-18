@@ -7,6 +7,7 @@
 
   <div class="govuk-width-container vh-content" id="master-container">
     <main #maincontent class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main" tabindex="-1">
+      <app-wait-popup [UseLoaderService]="true"></app-wait-popup>
       <router-outlet (activate)="onActivate($event)"></router-outlet>
     </main>
   </div>
