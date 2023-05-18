@@ -12,13 +12,7 @@
     <p class="govuk-body">Are you sure you want to proceed?</p>
 
     <div>
-      <div class="govuk-body" *ngIf="showSpinner">
-        <div class="vh-loader-small-container aligned-centre-flex">
-          <div class="vh-loader"></div>
-          <label class="loader-label"> Please wait... </label>
-        </div>
-      </div>
-      <div class="govuk-button-group aligned-centre-flex" *ngIf="!showSpinner">
+      <div class="govuk-button-group aligned-centre-flex" *ngIf="!isDeleting">
         <button
           id="btnConfirm"
           class="govuk-button vh-mr"

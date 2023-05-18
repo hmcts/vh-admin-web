@@ -35,7 +35,7 @@ describe('ConfirmDeleteJusticeUserPopupComponent', () => {
             component.onConfirmDelete();
 
             // Assert
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isDeleting).toBeFalsy();
             expect(spy).toHaveBeenCalled();
             expect(component.failedDeleteMessage).toBeNull();
         });
@@ -48,7 +48,7 @@ describe('ConfirmDeleteJusticeUserPopupComponent', () => {
             component.onConfirmDelete();
 
             // Assert
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isDeleting).toBeFalsy();
             expect(component.failedDeleteMessage).toBe(Constants.Error.DeleteJusticeUser.DeleteFailure);
         });
     });
