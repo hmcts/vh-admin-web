@@ -71,7 +71,7 @@ namespace AdminWebsite.Services
                 (int) JusticeUserRole.Vho => AppRoles.VhOfficerRole,
                 (int) JusticeUserRole.Judge => AppRoles.JudgeRole,
                 (int) JusticeUserRole.StaffMember => AppRoles.StaffMember,
-                (int) JusticeUserRole.VhTeamLead => AppRoles.VhOfficerRole,
+                (int) JusticeUserRole.VhTeamLead => AppRoles.AdministratorRole,
                 _ => null
             };
 

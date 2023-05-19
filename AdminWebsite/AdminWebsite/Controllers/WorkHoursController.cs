@@ -7,11 +7,14 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Contract.Responses;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AdminWebsite.Controllers
 {
     [Produces("application/json")]
+    [Consumes("application/json")]
     [Route("api/workhours")]
+    [Authorize(AppRoles.AdministratorRole)]
     public class WorkHoursController : ControllerBase
     {
 

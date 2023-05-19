@@ -5,8 +5,6 @@ using System.Net;
 using AdminWebsite.Models;
 using BookingsApi.Client;
 using System.Threading.Tasks;
-using System.Linq;
-using AdminWebsite.Helper;
 using System;
 using System.Collections.Generic;
 using BookingsApi.Contract.Responses;
@@ -58,8 +56,8 @@ namespace AdminWebsite.Controllers
             }
             var profile = new UserProfileResponse
             {
-                IsVhOfficerAdministratorRole = User.IsInRole(AppRoles.VhOfficerRole),
-                IsVhTeamLeader = justiceUser != null && justiceUser.IsVhTeamLeader,
+                IsVhOfficerAdministratorRole = User.IsInRole(AppRoles.VhOfficerRole) || User.IsInRole(AppRoles.AdministratorRole),
+                IsVhTeamLeader = justiceUser?.IsVhTeamLeader == true,
                 IsCaseAdministrator = User.IsInRole(AppRoles.CaseAdminRole)
             };
 

@@ -40,7 +40,7 @@ namespace AdminWebsite.Controllers
         {
             if(term.Length < 3)
             {
-                return BadRequest("Search term must be atleast 3 charecters.");
+                return BadRequest("Search term must be at least 3 characters.");
             }
 
             try
