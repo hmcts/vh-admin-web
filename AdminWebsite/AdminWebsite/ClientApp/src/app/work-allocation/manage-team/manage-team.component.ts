@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle, faRotateLeft, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { JusticeUserResponse, JusticeUserRole } from '../../services/clients/api-client';
+import { JusticeUserResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Constants } from 'src/app/common/constants';
