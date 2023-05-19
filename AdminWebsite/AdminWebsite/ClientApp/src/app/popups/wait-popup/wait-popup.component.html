@@ -1,20 +1,42 @@
-<div id="waitPopup" class="vh-popup-overlay">
-  <div class="vh-popup vh-popup-xsmall">
-    <h1 *ngIf="ConfirmationMode" class="govuk-heading-m vh-ml70 vh-mr70">Confirming bookings can take up to 60 seconds to complete.</h1>
-    <h1 *ngIf="!ConfirmationMode" class="govuk-heading-m vh-ml70 vh-mr70">Booking a hearing can take up to 60 seconds to complete.</h1>
-    <div class="content">
-      <div class="govuk-grid-row">
-        <div id="dot-loader">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+<div *ngIf="UseLoaderService; then serviceBlock; else confirmationBlock"></div>
+
+<ng-template #serviceBlock>
+  <div id="waitPopup" class="vh-popup-overlay" *ngIf="isLoading$ | async" aria-labelledby="loaderTitle">
+    <div class="vh-popup vh-popup-xsmall">
+      <h1 id="loaderTitle" class="govuk-heading-m vh-ml70 vh-mr70">Loading, please wait.</h1>
+      <ng-template [ngTemplateOutlet]="LoadingBlock"></ng-template>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmationBlock>
+  <div id="waitPopup" class="vh-popup-overlay" aria-labelledby="loaderTitle">
+    <div class="vh-popup vh-popup-xsmall">
+      <h1 id="loaderTitle" class="govuk-heading-m vh-ml70 vh-mr70">
+        {{
+          ConfirmationMode
+            ? 'Confirming bookings can take up to 60 seconds to complete.'
+            : 'Booking a hearing can take up to 60 seconds to complete.'
+        }}
+      </h1>
+      <ng-template [ngTemplateOutlet]="LoadingBlock"></ng-template>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #LoadingBlock>
+  <div class="content">
+    <div class="govuk-grid-row">
+      <div id="dot-loader">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
     </div>
   </div>
-</div>
+</ng-template>

@@ -79,17 +79,8 @@
     </div>
   </fieldset>
 
-  <div class="govuk-body" *ngIf="showSpinner">
-    <div class="vh-loader-small-container">
-      <div class="vh-loader"></div>
-      <label class="loader-label"> Please wait... </label>
-    </div>
-  </div>
-
-  <div class="govuk-button-group" *ngIf="!showSpinner">
-    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit" [disabled]="form.invalid">
-      Save
-    </button>
+  <div class="govuk-button-group" *ngIf="!isSaving">
+    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit">Save</button>
     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
       Discard Changes
     </button>

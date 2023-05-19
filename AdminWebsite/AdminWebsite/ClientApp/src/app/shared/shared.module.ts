@@ -22,6 +22,7 @@ import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { SelectComponent } from './select';
 import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
+import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 
 @NgModule({
     imports: [
@@ -50,7 +51,7 @@ import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
         TooltipDirective,
         SelectComponent
     ],
-    providers: [WindowRef, WindowScrolling],
+    providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
         HeaderComponent,
         FooterComponent,

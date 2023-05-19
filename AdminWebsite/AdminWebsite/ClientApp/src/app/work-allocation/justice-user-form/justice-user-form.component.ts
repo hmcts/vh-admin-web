@@ -16,7 +16,7 @@ export type JusticeUserFormMode = 'add' | 'edit';
 export class JusticeUserFormComponent implements OnChanges {
     errorMessages = Constants.Error;
     errorIcon = faExclamationCircle;
-    showSpinner = false;
+    isSaving = false;
     failedSaveMessage: string;
     availableRoles = AvailableRoles;
     form: FormGroup<JusticeUserForm>;
@@ -67,7 +67,7 @@ export class JusticeUserFormComponent implements OnChanges {
 
     onSave() {
         this.failedSaveMessage = null;
-        this.showSpinner = true;
+        this.isSaving = true;
         if (this.mode === 'add') {
             this.addNewUser();
         } else if (this.mode === 'edit') {
@@ -80,12 +80,12 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     onSaveSucceeded(newJusticeUser: JusticeUserResponse): void {
-        this.showSpinner = false;
+        this.isSaving = false;
         this.saveSuccessfulEvent.emit(newJusticeUser);
     }
 
     onSaveFailed(onSaveFailedError: string | BookHearingException | ValidationProblemDetails): void {
-        this.showSpinner = false;
+        this.isSaving = false;
         let message = Constants.Error.JusticeUserForm.SaveError;
         if (BookHearingException.isBookHearingException(onSaveFailedError)) {
             if (onSaveFailedError.status === 409) {

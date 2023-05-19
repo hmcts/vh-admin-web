@@ -35,7 +35,6 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     users$: Observable<JusticeUserResponse[]>;
     displayAddButton$ = new BehaviorSubject(false);
     isAnErrorMessage$ = new BehaviorSubject(false);
-    showSpinner$ = new BehaviorSubject(false);
     displayMessage$ = new BehaviorSubject(false);
     showForm$ = new BehaviorSubject(false);
     displayDeleteUserPopup$ = new BehaviorSubject(false);
@@ -77,13 +76,11 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
                 }
             }),
             map(users => this.sortUsers(users)),
-            map(users => users.slice(0, this.filterSize)),
-            tap(() => this.showSpinner$.next(false))
+            map(users => users.slice(0, this.filterSize))
         );
     }
 
     searchUsers() {
-        this.showSpinner$.next(true);
         this.justiceUserService.search(this.form.value.inputSearch);
         this.isEditing = false;
     }

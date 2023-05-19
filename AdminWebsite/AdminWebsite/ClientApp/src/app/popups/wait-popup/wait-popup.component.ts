@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { LoadingSpinnerService } from 'src/app/services/loading-spinner.service';
 
 @Component({
     selector: 'app-wait-popup',
@@ -8,4 +9,10 @@ import { Component, Input } from '@angular/core';
 export class WaitPopupComponent {
     @Input()
     ConfirmationMode = false;
+
+    @Input()
+    UseLoaderService = false;
+
+    isLoading$ = this.spinnerService.loading$;
+    constructor(public spinnerService: LoadingSpinnerService) {}
 }

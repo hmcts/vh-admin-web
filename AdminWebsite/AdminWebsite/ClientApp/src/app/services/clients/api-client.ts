@@ -4984,7 +4984,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     getNonAvailabilityWorkHours(vho: string | undefined): Observable<VhoNonAvailabilityWorkHoursResponse[]> {
-        let url_ = this.baseUrl + '/NonAvailability/VHO?';
+        let url_ = this.baseUrl + '/api/workhours/NonAvailability/VHO?';
         if (vho === null) throw new Error("The parameter 'vho' cannot be null.");
         else if (vho !== undefined) url_ += 'vho=' + encodeURIComponent('' + vho) + '&';
         url_ = url_.replace(/[?&]$/, '');
@@ -5093,7 +5093,7 @@ export class BHClient extends ApiClientBase {
      * @return No Content
      */
     updateNonAvailabilityWorkHours(username: string, body: UpdateNonWorkingHoursRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + '/NonAvailability/VHO/{username}';
+        let url_ = this.baseUrl + '/api/workhours/NonAvailability/VHO/{username}';
         if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
         url_ = url_.replace('{username}', encodeURIComponent('' + username));
         url_ = url_.replace(/[?&]$/, '');
@@ -5184,7 +5184,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     deleteNonAvailabilityWorkHours(id: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + '/NonAvailability?';
+        let url_ = this.baseUrl + '/api/workhours/NonAvailability?';
         if (id === null) throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined) url_ += 'id=' + encodeURIComponent('' + id) + '&';
         url_ = url_.replace(/[?&]$/, '');
