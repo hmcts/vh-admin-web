@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import { Constants } from 'src/app/common/constants';
+import { AvailableRoles, Constants } from 'src/app/common/constants';
 import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
@@ -18,7 +18,7 @@ export class JusticeUserFormComponent implements OnChanges {
     errorIcon = faExclamationCircle;
     showSpinner = false;
     failedSaveMessage: string;
-    availableRoles = JusticeUserRole;
+    availableRoles = AvailableRoles;
     form: FormGroup<JusticeUserForm>;
 
     _justiceUser: JusticeUserResponse;
@@ -33,13 +33,11 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            contactTelephone: value.telephone,
-            roles: value.user_roles
+            contactTelephone: value.telephone
         });
 
-        this.form.controls.rolevho.setValue(value.user_roles.includes(JusticeUserRole.Vho));
-        this.form.controls.roleadmin.setValue(value.user_roles.includes(JusticeUserRole.VhTeamLead));
-        this.form.controls.rolesm.setValue(value.user_roles.includes(JusticeUserRole.StaffMember));
+        const roleControls = this.availableRoles.map(x => value.user_roles.includes(x.value));
+        this.form.controls.roles.setValue(roleControls);
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
@@ -53,10 +51,10 @@ export class JusticeUserFormComponent implements OnChanges {
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
-            roles: new FormControl([], [justiceUserRoleValidator()]),
-            rolevho: new FormControl(false),
-            roleadmin: new FormControl(false),
-            rolesm: new FormControl(false)
+            roles: new FormArray(
+                this.availableRoles.map(x => new FormControl(false)),
+                justiceUserRoleValidator()
+            )
         });
     }
 
@@ -131,24 +129,13 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     private getRoles(): JusticeUserRole[] {
-        const roles: JusticeUserRole[] = [];
-        if (this.form.controls.rolevho.value) {
-            roles.push(JusticeUserRole.Vho);
-        }
-        if (this.form.controls.roleadmin.value) {
-            roles.push(JusticeUserRole.VhTeamLead);
-        }
-        if (this.form.controls.rolesm.value) {
-            roles.push(JusticeUserRole.StaffMember);
-        }
-
-        return roles;
+        return this.form.value.roles.map((checked, i) => (checked ? this.availableRoles[i].value : null)).filter(v => v !== null);
     }
 
-    onCheckBoxChange() {
-        const roles = this.getRoles();
-        this.form.controls.roles.setValue(roles);
-    }
+    // onCheckBoxChange() {
+    //     const roles = this.getRoles();
+    //     this.form.controls.roles.setValue(roles);
+    // }
 }
 
 interface JusticeUserForm {
@@ -156,8 +143,5 @@ interface JusticeUserForm {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     contactTelephone: FormControl<string>;
-    roles: FormControl<JusticeUserRole[]>;
-    rolevho: FormControl<boolean>;
-    roleadmin: FormControl<boolean>;
-    rolesm: FormControl<boolean>;
+    roles: FormArray<FormControl<boolean>>;
 }

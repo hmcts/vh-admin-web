@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { JusticeUserRole } from '../../services/clients/api-client';
+import { AvailableRoles } from '../../common/constants';
 
 @Pipe({
     name: 'rolesToDisplay'
@@ -7,14 +8,14 @@ import { JusticeUserRole } from '../../services/clients/api-client';
 export class RolesToDisplayPipe implements PipeTransform {
     transform(roles: JusticeUserRole[]): string {
         let rolesToDisplay = '';
-        if (roles.includes(JusticeUserRole.Vho)) {
-            rolesToDisplay += 'CSO' + this.addComma(roles.length);
+        if (roles.includes(AvailableRoles[0].value)) {
+            rolesToDisplay += AvailableRoles[0].shortText + this.addComma(roles.length);
         }
-        if (roles.includes(JusticeUserRole.VhTeamLead)) {
-            rolesToDisplay += 'ADMIN' + this.addComma(roles.length);
+        if (roles.includes(AvailableRoles[1].value)) {
+            rolesToDisplay += AvailableRoles[1].shortText + this.addComma(roles.length);
         }
-        if (roles.includes(JusticeUserRole.StaffMember)) {
-            rolesToDisplay += 'SM';
+        if (roles.includes(AvailableRoles[2].value)) {
+            rolesToDisplay += AvailableRoles[2].shortText;
         }
         return rolesToDisplay;
     }
