@@ -86,10 +86,10 @@ export const Constants = {
 };
 
 /*
-* Available roles for working allocation justice user
-* label is used for the checkBox in the add user form in manage team
-* shortText is used for displaying roles in the manage team table
-* */
+ * Available roles for working allocation justice user
+ * label is used for the checkBox in the add user form in manage team
+ * shortText is used for displaying roles in the manage team table
+ * */
 export const AvailableRoles = [
     { value: JusticeUserRole.Vho, label: 'CSO', shortText: 'CSO' },
     { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' },

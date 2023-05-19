@@ -114,7 +114,6 @@ describe('ManageTeamComponent', () => {
                 }
             );
         });
-
     });
 
     describe('displayForm', () => {
