@@ -80,7 +80,7 @@
   </fieldset>
 
   <div class="govuk-button-group" *ngIf="!isSaving">
-    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit">Save</button>
+    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit" [disabled]="!form.valid">Save</button>
     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
       Discard Changes
     </button>
