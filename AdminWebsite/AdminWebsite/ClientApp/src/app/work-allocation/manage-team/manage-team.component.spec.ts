@@ -12,6 +12,7 @@ import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
+import { RolesToDisplayPipe } from '../../shared/pipes/roles-to-display.pipe';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
 export class JusticeUserFormStubComponent {}
@@ -32,7 +33,7 @@ describe('ManageTeamComponent', () => {
         justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
         await TestBed.configureTestingModule({
-            declarations: [ManageTeamComponent, JusticeUserFormStubComponent],
+            declarations: [ManageTeamComponent, JusticeUserFormStubComponent, RolesToDisplayPipe],
             providers: [
                 FormBuilder,
                 HttpClient,
@@ -114,23 +115,6 @@ describe('ManageTeamComponent', () => {
             );
         });
 
-        // it('should display error when searching throws an error', fakeAsync((done: DoneFn) => {
-        //     // arrange
-        //     // justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(throwError('Random API error'));
-        //     component.form.controls.inputSearch.setValue('test@cso.com');
-
-        //     // act
-        //     component.searchUsers();
-        //     tick();
-
-        //     // assert
-        //     // expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
-
-        //     component.message$.subscribe(m => {
-        //         expect(m).toBe(Constants.Error.ManageJusticeUsers.SearchFailure);
-        //         done();
-        //     });
-        // }));
     });
 
     describe('displayForm', () => {

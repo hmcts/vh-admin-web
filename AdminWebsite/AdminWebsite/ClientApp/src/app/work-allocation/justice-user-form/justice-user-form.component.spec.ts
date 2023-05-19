@@ -48,8 +48,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue(existingUser.telephone);
-            component.form.controls.rolevho.setValue(true);
-            component.form.controls.roles.setValue([JusticeUserRole.Vho, JusticeUserRole.StaffMember]);
+            component.form.controls.roles.setValue([true, false, true]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -58,8 +57,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('+441234567890');
-            component.form.controls.rolevho.setValue(true);
-            component.form.controls.roles.setValue([JusticeUserRole.VhTeamLead, JusticeUserRole.StaffMember]);
+            component.form.controls.roles.setValue([true, false, true]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -68,8 +66,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('abcd');
-            component.form.controls.rolevho.setValue(true);
-            component.form.controls.roles.setValue([JusticeUserRole.Vho]);
+            component.form.controls.roles.setValue([true, false, false]);
             expect(component.form.invalid).toBe(true);
         });
     });

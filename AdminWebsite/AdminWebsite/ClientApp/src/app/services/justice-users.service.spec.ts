@@ -140,7 +140,7 @@ describe('JusticeUsersService', () => {
             const firstName = 'john';
             const lastName = 'doe';
             const telephone = '01234567890';
-            const role = [JusticeUserRole.VhTeamLead];
+            const roles = [JusticeUserRole.VhTeamLead];
 
             const newUser = new JusticeUserResponse({
                 id: '123',
@@ -160,10 +160,10 @@ describe('JusticeUsersService', () => {
                 first_name: firstName,
                 last_name: lastName,
                 contact_telephone: telephone,
-                role: role
+                roles: roles
             });
 
-            combineLatest([service.allUsers$, service.addNewJusticeUser(username, firstName, lastName, telephone, role)]).subscribe(
+            combineLatest([service.allUsers$, service.addNewJusticeUser(username, firstName, lastName, telephone, roles)]).subscribe(
                 ([_, userResponse]: [JusticeUserResponse[], JusticeUserResponse]) => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                     expect(userResponse).toEqual(newUser);
@@ -181,7 +181,7 @@ describe('JusticeUsersService', () => {
             const firstName = 'john';
             const lastName = 'doe';
             const telephone = '01234567890';
-            const role = [JusticeUserRole.VhTeamLead];
+            const roles = [JusticeUserRole.VhTeamLead];
 
             const existingUser = new JusticeUserResponse({
                 contact_email: username,
@@ -198,10 +198,10 @@ describe('JusticeUsersService', () => {
             const request = new EditJusticeUserRequest({
                 id,
                 username,
-                role
+                roles: roles
             });
 
-            combineLatest([service.allUsers$, service.editJusticeUser(id, username, role)]).subscribe(
+            combineLatest([service.allUsers$, service.editJusticeUser(id, username, roles)]).subscribe(
                 ([_, result]: [JusticeUserResponse[], JusticeUserResponse]) => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                     expect(result).toEqual(existingUser);
