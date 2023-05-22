@@ -17,8 +17,9 @@ export function justiceUserRoleValidator(): ValidatorFn {
             }
         });
 
-        if (roles.length == 0)
+        if (roles.length === 0) {
             return { errorMessage: Constants.Error.ManageJusticeUsers.RolesCheckBoxAtLeastOne };
+        }
 
         let userRoleValid = true;
 
