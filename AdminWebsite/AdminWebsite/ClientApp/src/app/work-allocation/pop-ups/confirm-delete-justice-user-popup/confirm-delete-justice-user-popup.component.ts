@@ -9,7 +9,7 @@ import { JusticeUsersService } from 'src/app/services/justice-users.service';
 })
 export class ConfirmDeleteJusticeUserPopupComponent {
     errorIcon = faExclamationCircle;
-    showSpinner = false;
+    isDeleting = false;
     failedDeleteMessage: string;
 
     @Output() cancelEvent = new EventEmitter();
@@ -22,7 +22,7 @@ export class ConfirmDeleteJusticeUserPopupComponent {
 
     onConfirmDelete() {
         this.failedDeleteMessage = null;
-        this.showSpinner = true;
+        this.isDeleting = true;
         this.justiceUserService.deleteJusticeUser(this.userId).subscribe({
             next: () => this.onDeleteSucceeded(),
             error: () => this.onDeleteFailed()
@@ -34,12 +34,12 @@ export class ConfirmDeleteJusticeUserPopupComponent {
     }
 
     onDeleteSucceeded() {
-        this.showSpinner = false;
+        this.isDeleting = false;
         this.deleteSuccessfulEvent.emit();
     }
 
     onDeleteFailed() {
-        this.showSpinner = false;
+        this.isDeleting = false;
         this.failedDeleteMessage = Constants.Error.DeleteJusticeUser.DeleteFailure;
     }
 }

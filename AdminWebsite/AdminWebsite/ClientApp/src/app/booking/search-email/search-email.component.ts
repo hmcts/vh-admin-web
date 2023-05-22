@@ -69,7 +69,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(
-                    debounceTime(500),
+                    debounceTime(2000),
                     distinctUntilChanged(),
                     switchMap(term => {
                         if (term.length > 2) {

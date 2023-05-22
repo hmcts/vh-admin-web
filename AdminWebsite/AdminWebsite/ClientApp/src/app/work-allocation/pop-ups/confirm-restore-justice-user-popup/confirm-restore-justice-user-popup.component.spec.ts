@@ -37,7 +37,7 @@ describe('ConfirmRestoreJusticeUserPopupComponent', () => {
             component.onConfirmRestore();
 
             // Assert
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isRestoring).toBeFalsy();
             expect(spy).toHaveBeenCalled();
             expect(component.failedRestoreMessage).toBeNull();
         });
@@ -50,7 +50,7 @@ describe('ConfirmRestoreJusticeUserPopupComponent', () => {
             component.onConfirmRestore();
 
             // Assert
-            expect(component.showSpinner).toBeFalsy();
+            expect(component.isRestoring).toBeFalsy();
             expect(component.failedRestoreMessage).toBe(Constants.Error.RestoreJusticeUser.RestoreFailure);
         });
     });

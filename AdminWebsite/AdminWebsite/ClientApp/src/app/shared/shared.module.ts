@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './footer/footer.component';
@@ -21,6 +21,7 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { SelectComponent } from './select';
+import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 
 @NgModule({
     imports: [
@@ -48,7 +49,7 @@ import { SelectComponent } from './select';
         TooltipDirective,
         SelectComponent
     ],
-    providers: [WindowRef, WindowScrolling],
+    providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
         HeaderComponent,
         FooterComponent,
