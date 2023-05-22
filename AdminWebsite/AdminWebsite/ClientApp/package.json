@@ -50,7 +50,7 @@
     "ngx-clipboard": "^14.0.1",
     "ngx-device-detector": "^5.0.1",
     "ngx-moment": "^5.0.0",
-    "rxjs": "^6.6.7",
+    "rxjs": "^7.4.0",
     "ts-case-convert": "^2.0.2",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
@@ -85,7 +85,7 @@
     "karma-jasmine": "~4.0.1",
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-junit-reporter": "^2.0.1",
-    "nswag": "^13.18.2",
+    "nswag": "^13.19.0",
     "pa11y": "^6.2.3",
     "prettier": "^2.8.8",
     "puppeteer": "^20.1.2",
