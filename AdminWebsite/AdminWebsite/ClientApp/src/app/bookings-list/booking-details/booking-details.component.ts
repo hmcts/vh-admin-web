@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { interval, Subscription } from 'rxjs';
+import { interval, lastValueFrom, Subscription } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -69,18 +69,15 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            this.videoHearingService
-                .getHearingById(this.hearingId)
-                .toPromise()
-                .then(hearingDetailsResponse => {
-                    this.mapHearing(hearingDetailsResponse);
-                    this.getConferencePhoneDetails();
-                    // mapping to Hearing model for edit on summary page
-                    this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
-                    this.setBookingInStorage();
-                    this.setTimeObserver();
-                    this.setSubscribers();
-                });
+            lastValueFrom(this.videoHearingService.getHearingById(this.hearingId)).then(hearingDetailsResponse => {
+                this.mapHearing(hearingDetailsResponse);
+                this.getConferencePhoneDetails();
+                // mapping to Hearing model for edit on summary page
+                this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+                this.setBookingInStorage();
+                this.setTimeObserver();
+                this.setSubscribers();
+            });
         }
         this.$subscriptions.push(
             this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -194,9 +191,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirming = true;
 
         try {
-            const updateBookingStatusResponse = await this.videoHearingService
-                .updateBookingStatus(this.hearingId, updateBookingStatus)
-                .toPromise();
+            const updateBookingStatusResponse = await lastValueFrom(
+                this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
+            );
             if (updateBookingStatusResponse.success) {
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
@@ -286,20 +283,17 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     async getConferencePhoneDetails() {
         if (this.hearing.Status === BookingStatus.Created) {
             try {
-                await this.videoHearingService
-                    .getTelephoneConferenceId(this.hearingId)
-                    .toPromise()
-                    .then(phoneResponse => {
-                        this.telephoneConferenceId = phoneResponse.telephone_conference_id;
-                        this.videoHearingService.getConferencePhoneNumber().then(conferencePhoneNumber => {
-                            this.conferencePhoneNumber = conferencePhoneNumber;
-                            this.updateWithConferencePhoneDetails();
-                        });
-                        this.videoHearingService.getConferencePhoneNumber(true).then(conferencePhoneNumberWelsh => {
-                            this.conferencePhoneNumberWelsh = conferencePhoneNumberWelsh;
-                            this.updateWithConferencePhoneDetails();
-                        });
+                await lastValueFrom(this.videoHearingService.getTelephoneConferenceId(this.hearingId)).then(phoneResponse => {
+                    this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+                    this.videoHearingService.getConferencePhoneNumber().then(conferencePhoneNumber => {
+                        this.conferencePhoneNumber = conferencePhoneNumber;
+                        this.updateWithConferencePhoneDetails();
                     });
+                    this.videoHearingService.getConferencePhoneNumber(true).then(conferencePhoneNumberWelsh => {
+                        this.conferencePhoneNumberWelsh = conferencePhoneNumberWelsh;
+                        this.updateWithConferencePhoneDetails();
+                    });
+                });
             } catch (error) {
                 this.logger.warn(
                     `${this.loggerPrefix} Could not get conference phone Id , the hearing ${this.hearingId} is closed`,

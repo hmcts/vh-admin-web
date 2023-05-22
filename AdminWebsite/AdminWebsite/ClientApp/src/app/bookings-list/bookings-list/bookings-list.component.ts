@@ -1,8 +1,8 @@
-import { DOCUMENT, DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { lastValueFrom, Observable, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -122,10 +122,9 @@ export class BookingsListComponent implements OnInit, OnDestroy {
                 this.bookingPersistService.selectedItemIndex
             ];
         this.logger.debug(`${this.loggerPrefix} Getting edited booking from storage`, { hearing: selectedRecord.HearingId });
-        const response = await this.videoHearingService.getHearingById(selectedRecord.HearingId).toPromise();
+        const response = await lastValueFrom(this.videoHearingService.getHearingById(selectedRecord.HearingId));
         this.logger.debug(`${this.loggerPrefix} Mapping hearing to edit hearing model`, { hearing: selectedRecord.HearingId });
-        const editHearing = this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
-        return editHearing;
+        return this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
     }
 
     resetBookingIndex(booking: BookingsDetailsModel) {

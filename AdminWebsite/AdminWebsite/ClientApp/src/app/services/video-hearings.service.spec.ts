@@ -17,7 +17,7 @@ import {
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 
@@ -601,7 +601,7 @@ describe('Video hearing service', () => {
         it('should return an allocated cso for the hearing id', done => {
             const allocatedCsoObj = new AllocatedCsoResponse({ hearing_id: 'id', cso: new JusticeUserResponse() });
             clientApiSpy.getAllocationForHearing.and.returnValue(of(allocatedCsoObj));
-            const response = clientApiSpy.getAllocationForHearing(allocatedCsoObj.hearing_id).toPromise();
+            const response = lastValueFrom(clientApiSpy.getAllocationForHearing(allocatedCsoObj.hearing_id));
             response.then(res => {
                 expect(clientApiSpy.getAllocationForHearing).toHaveBeenCalled();
                 expect(res).toEqual(allocatedCsoObj);

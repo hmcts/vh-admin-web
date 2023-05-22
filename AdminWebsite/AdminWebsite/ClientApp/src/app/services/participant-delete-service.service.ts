@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BHClient, HearingsByUsernameForDeletionResponse } from './clients/api-client';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantDeleteService {
@@ -7,13 +8,13 @@ export class ParticipantDeleteService {
 
     async getHearingsForUsername(username: string): Promise<HearingsByUsernameForDeletionResponse[]> {
         try {
-            return await this.bhClient.getHearingsByUsernameForDeletion(username).toPromise();
+            return await lastValueFrom(this.bhClient.getHearingsByUsernameForDeletion(username));
         } catch {
             return null;
         }
     }
 
     async deleteUserAccount(username: string): Promise<void> {
-        await this.bhClient.deletePersonWithUsername(username).toPromise();
+        await lastValueFrom(this.bhClient.deletePersonWithUsername(username));
     }
 }
