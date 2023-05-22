@@ -17,6 +17,9 @@ export function justiceUserRoleValidator(): ValidatorFn {
             }
         });
 
+        if (roles.length == 0)
+            return { errorMessage: Constants.Error.ManageJusticeUsers.RolesCheckBoxAtLeastOne };
+
         let userRoleValid = true;
 
         const isVho = roles.includes(JusticeUserRole.Vho);
@@ -29,6 +32,6 @@ export function justiceUserRoleValidator(): ValidatorFn {
             return null;
         }
 
-        return { userRoleInvalid: Constants.Error.ManageJusticeUsers.RolesCheckBox };
+        return { errorMessage: Constants.Error.ManageJusticeUsers.RolesCheckBoxCSOandAdmin };
     };
 }

@@ -52,7 +52,13 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             roles: new FormArray(
-                this.availableRoles.map(x => new FormControl(false)),
+                this.availableRoles.map(x => {
+                    if (x.value === JusticeUserRole.Vho) {
+                        return new FormControl(true);
+                    } else {
+                        return new FormControl(false);
+                    }
+                }),
                 justiceUserRoleValidator()
             )
         });
@@ -131,11 +137,6 @@ export class JusticeUserFormComponent implements OnChanges {
     private getRoles(): JusticeUserRole[] {
         return this.form.value.roles.map((checked, i) => (checked ? this.availableRoles[i].value : null)).filter(v => v !== null);
     }
-
-    // onCheckBoxChange() {
-    //     const roles = this.getRoles();
-    //     this.form.controls.roles.setValue(roles);
-    // }
 }
 
 interface JusticeUserForm {

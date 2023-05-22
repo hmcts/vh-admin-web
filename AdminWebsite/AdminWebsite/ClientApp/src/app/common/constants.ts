@@ -43,7 +43,8 @@ export const Constants = {
         JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account',
         ManageJusticeUsers: {
             SearchFailure: 'There was an unexpected error. Please try again',
-            RolesCheckBox: 'User cannot be both a CSO and an Administrator'
+            RolesCheckBoxCSOandAdmin: 'User cannot be both a CSO and an Administrator',
+            RolesCheckBoxAtLeastOne: 'Please select a role'
         },
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',
