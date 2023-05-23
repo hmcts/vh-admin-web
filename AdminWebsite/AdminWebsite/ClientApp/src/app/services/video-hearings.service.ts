@@ -181,7 +181,7 @@ export class VideoHearingsService {
         return lastValueFrom(this.bhClient.bookNewHearing(bookingRequest));
     }
 
-    async cloneMultiHearings(hearingId: string, request: MultiHearingRequest){
+    async cloneMultiHearings(hearingId: string, request: MultiHearingRequest) {
         await this.bhClient.cloneHearing(hearingId, request);
     }
 
