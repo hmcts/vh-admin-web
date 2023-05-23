@@ -83,7 +83,7 @@ describe('Video hearing service', () => {
         expect(clientApiSpy.getHearingTypes).toHaveBeenCalled();
     });
     it('should clone hearing', async () => {
-        clientApiSpy.cloneHearing.and.returnValue(of());
+        clientApiSpy.cloneHearing.and.returnValue(of(null));
 
         await service.cloneMultiHearings('hearingId', new MultiHearingRequest());
         expect(clientApiSpy.cloneHearing).toHaveBeenCalled();

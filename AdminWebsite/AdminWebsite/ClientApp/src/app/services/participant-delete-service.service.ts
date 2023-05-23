@@ -14,7 +14,7 @@ export class ParticipantDeleteService {
         }
     }
 
-    async deleteUserAccount(username: string): Promise<void> {
-        await lastValueFrom(this.bhClient.deletePersonWithUsername(username));
+    async deleteUserAccount(username: string) {
+        await this.bhClient.deletePersonWithUsername(username);
     }
 }
