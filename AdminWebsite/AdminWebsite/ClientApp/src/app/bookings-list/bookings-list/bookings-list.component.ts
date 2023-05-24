@@ -214,12 +214,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
         }
 
-        this.$subcription = bookingsList$.subscribe(
-            book => {
-                self.loadData(book);
-            },
-            err => self.handleListError(err, 'booking')
-        );
+        this.$subcription = bookingsList$.subscribe({
+            next: book => self.loadData(book),
+            error: err => self.handleListError(err, 'booking')
+        });
     }
 
     onSearch(): void {

@@ -91,7 +91,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     getUserRole(userProfile: UserProfileResponse) {
-        this.isVhOfficerAdmin = userProfile && userProfile.is_vh_officer_administrator_role;
+        this.isVhOfficerAdmin = userProfile?.is_vh_officer_administrator_role;
     }
 
     setSubscribers() {
