@@ -80,8 +80,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             });
         }
         this.$subscriptions.push(
-            this.userIdentityService.getUserInformation().subscribe(userProfile => {
-                this.getUserRole(userProfile);
+            this.userIdentityService.getUserInformation().subscribe({
+                next: userProfile => this.getUserRole(userProfile)
             })
         );
     }

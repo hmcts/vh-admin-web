@@ -182,7 +182,7 @@ export class VideoHearingsService {
     }
 
     async cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
-        await this.bhClient.cloneHearing(hearingId, request);
+        return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
