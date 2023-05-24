@@ -8,6 +8,6 @@ java:
     AZUREAD__POSTLOGOUTREDIRECTURI: https://${SERVICE_FQDN}/logout
     AZUREAD__REDIRECTURI: https://${SERVICE_FQDN}/home
     VHSERVICES__VIDEOWEBURL: https://${SERVICE_FQDN}
-    VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api-pr-626.dev.platform.hmcts.net
+    VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api-pr-643.dev.platform.hmcts.net
    
     
