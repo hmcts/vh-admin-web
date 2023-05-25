@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
     BHClient,
     BookNewHearingRequest,
@@ -137,7 +137,7 @@ export class VideoHearingsService {
         if (this.participantRoles.has(caseTypeName)) {
             return this.participantRoles.get(caseTypeName);
         }
-        const roles = await this.bhClient.getParticipantRoles(caseTypeName).toPromise();
+        const roles = await firstValueFrom(this.bhClient.getParticipantRoles(caseTypeName));
         this.participantRoles.set(caseTypeName, roles);
         return roles;
     }
@@ -149,11 +149,11 @@ export class VideoHearingsService {
     }
 
     getStatus(hearingId: string) {
-        return this.bhClient.getHearingConferenceStatus(hearingId).toPromise();
+        return lastValueFrom(this.bhClient.getHearingConferenceStatus(hearingId));
     }
 
     updateFailedStatus(hearingId: string) {
-        return this.bhClient.updateFailedBookingStatus(hearingId).toPromise();
+        return lastValueFrom(this.bhClient.updateFailedBookingStatus(hearingId));
     }
 
     saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
@@ -178,11 +178,11 @@ export class VideoHearingsService {
             }
         }
 
-        return this.bhClient.bookNewHearing(bookingRequest).toPromise();
+        return lastValueFrom(this.bhClient.bookNewHearing(bookingRequest));
     }
 
-    cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
-        return this.bhClient.cloneHearing(hearingId, request).toPromise();
+    async cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
+        return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
@@ -460,7 +460,7 @@ export class VideoHearingsService {
 
         const savedConferencePhoneNumber = sessionStorage.getItem(conferencePhoneNumberKey);
         if (savedConferencePhoneNumber === null) {
-            const response = await this.bhClient.getConfigSettings().toPromise();
+            const response = await lastValueFrom(this.bhClient.getConfigSettings());
             const conferencePhoneNumberValue = isWelsh ? response.conference_phone_number_welsh : response.conference_phone_number;
             sessionStorage.setItem(conferencePhoneNumberKey, conferencePhoneNumberValue);
             return isWelsh ? response.conference_phone_number_welsh : response.conference_phone_number;
