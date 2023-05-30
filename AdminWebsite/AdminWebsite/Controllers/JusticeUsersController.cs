@@ -3,9 +3,11 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,7 +15,9 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AdminWebsite.Controllers
 {
     [Produces("application/json")]
+    [Consumes("application/json")]
     [Route("api/justice-users")]
+    [Authorize(AppRoles.AdministratorRole)]
     public class JusticeUsersController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;

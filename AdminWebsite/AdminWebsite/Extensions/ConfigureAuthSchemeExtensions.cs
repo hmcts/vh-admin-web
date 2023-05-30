@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
@@ -86,6 +85,11 @@ namespace AdminWebsite.Extensions
         private static void AddPolicies(AuthorizationOptions options, IList<IProviderSchemes> schemes)
         {
             var allRoles = new[] {AppRoles.CaseAdminRole, AppRoles.VhOfficerRole};
+            
+            var rolePolicies = new Dictionary<string, string[]>
+            {
+                [AppRoles.AdministratorRole] = new []{AppRoles.AdministratorRole}
+            };
 
 
             foreach (var scheme in schemes.SelectMany(s => s.GetProviderSchemes()))
@@ -95,6 +99,15 @@ namespace AdminWebsite.Extensions
                     .RequireAuthenticatedUser()
                     .RequireRole(allRoles)
                     .Build());
+            }
+            
+            foreach (var policy in rolePolicies)
+            {
+                var policyBuilder = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireRole(policy.Value);
+                options.AddPolicy(policy.Key, policyBuilder.Build());
             }
         }
     }

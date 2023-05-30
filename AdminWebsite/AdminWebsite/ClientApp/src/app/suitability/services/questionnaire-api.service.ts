@@ -5,13 +5,14 @@ import { Injectable } from '@angular/core';
 import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
 import { QuestionnaireMapper } from './questionnaire-mapper';
 import { QuestionnaireMapperFactory } from './questionnaire-mapper-factory.service';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class QuestionnaireApiService implements ScrollableSuitabilityAnswersService {
     constructor(private client: BHClient, private mapperFactory: QuestionnaireMapperFactory) {}
 
     async getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage> {
-        const response = await this.client.getSuitabilityAnswers(cursor, limit).toPromise();
+        const response = await lastValueFrom(this.client.getSuitabilityAnswers(cursor, limit));
         const page = new SuitabilityAnswersPage();
         page.nextCursor = response.next_cursor;
         page.questionnaires = response.participant_suitability_answer_response.map(item => this.map(item));

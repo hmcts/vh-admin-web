@@ -8,5 +8,6 @@ namespace AdminWebsite.Models
         public const string JudgeRole = "Judge";
         public const string CaseAdminRole = "CaseAdmin";
         public const string StaffMember = "StaffMember";
+        public const string AdministratorRole = "Administrator";
     }
 }

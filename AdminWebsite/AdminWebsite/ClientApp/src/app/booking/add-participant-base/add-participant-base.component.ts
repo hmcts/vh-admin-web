@@ -234,6 +234,10 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             delete formControlsObj['interpreterFor'];
         }
         this.form.setValue(formControlsObj);
+        (<any>Object).values(this.form.controls).forEach(control => {
+            control.markAsTouched();
+            control.markAsDirty();
+        });
 
         setTimeout(() => {
             this.form.get('role').setValue(this.participantDetails.hearing_role_name);

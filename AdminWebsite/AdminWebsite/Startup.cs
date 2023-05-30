@@ -101,7 +101,9 @@ namespace AdminWebsite
             }
 
             app.UseAuthentication();
-            app.UseMiddleware<UserClaimsMiddleware>();
+            app.UseMiddleware<UserClaimsMiddleware>(); // this must be before authorization so that the claims can added before the authorization middleware runs
+            app.UseAuthorization();
+
             app.UseMiddleware<ExceptionMiddleware>();
 
             // HTTP Response Headers

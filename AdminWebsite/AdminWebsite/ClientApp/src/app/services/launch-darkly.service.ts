@@ -6,7 +6,8 @@ import { ConfigService } from './config.service';
 export const FeatureFlags = {
     adminSearch: 'admin_search',
     vhoWorkAllocation: 'vho-work-allocation',
-    eJudFeature: 'EJudFeature'
+    eJudFeature: 'EJudFeature',
+    hrsIntegration: 'hrs-integration'
 };
 
 @Injectable({

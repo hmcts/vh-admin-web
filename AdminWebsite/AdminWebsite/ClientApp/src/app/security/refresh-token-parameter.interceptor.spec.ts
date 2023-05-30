@@ -1,5 +1,5 @@
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
 
@@ -22,7 +22,7 @@ describe('RefreshTokenParameterInterceptor', () => {
         const request = new HttpRequest<any>('POST', '/oauth2/v2.0/token', 'params1');
 
         // Act
-        await sut.intercept(request, next).toPromise();
+        await lastValueFrom(sut.intercept(request, next));
 
         // Assert
         expect(result.body).toBe(`${request.body}&scope=openid%20profile%20offline_access`);
@@ -40,7 +40,7 @@ describe('RefreshTokenParameterInterceptor', () => {
         const request = new HttpRequest<any>('GET', '/oauth2/v2.0/token');
 
         // Act
-        await sut.intercept(request, next).toPromise();
+        await lastValueFrom(sut.intercept(request, next));
 
         // Assert
         expect(result.body).toBe(request.body);
@@ -58,7 +58,7 @@ describe('RefreshTokenParameterInterceptor', () => {
         const request = new HttpRequest<any>('POST', '/', 'params1');
 
         // Act
-        await sut.intercept(request, next).toPromise();
+        await lastValueFrom(sut.intercept(request, next));
 
         // Assert
         expect(result.body).toBe(request.body);
@@ -77,7 +77,7 @@ describe('RefreshTokenParameterInterceptor', () => {
         mockOidcSecurityService.configuration.scope = null;
 
         // Act
-        await sut.intercept(request, next).toPromise();
+        await lastValueFrom(sut.intercept(request, next));
 
         // Assert
         expect(result.body).toBe(request.body);
@@ -95,7 +95,7 @@ describe('RefreshTokenParameterInterceptor', () => {
         const request = new HttpRequest<any>('POST', '/oauth2/v2.0/token', null);
 
         // Act
-        await sut.intercept(request, next).toPromise();
+        await lastValueFrom(sut.intercept(request, next));
 
         // Assert
         expect(result.body).toBe(request.body);
