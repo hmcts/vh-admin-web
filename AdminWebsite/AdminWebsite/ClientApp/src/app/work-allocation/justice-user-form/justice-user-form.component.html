@@ -64,16 +64,25 @@
       />
     </div>
     <div class="govuk-form-group">
-      <label class="govuk-label" for="role"> Role </label>
-      <select class="govuk-select" id="role" formControlName="role" name="role">
-        <option value="{{ availableRoles.Vho }}">CSO</option>
-        <option value="{{ availableRoles.VhTeamLead }}">Administrator</option>
-      </select>
+      <label class="govuk-label"> Roles </label>
+      <p *ngIf="form.controls.roles.invalid" id="roles-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ form.controls.roles.errors.errorMessage }}
+      </p>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third" *ngFor="let role of form.controls.roles.controls; let i = index">
+          <label [htmlFor]="'role_' + availableRoles[i].value" formArrayName="roles">
+            <input [id]="'role_' + availableRoles[i].value" type="checkbox" [formControlName]="i" />
+            {{ availableRoles[i].label }}
+          </label>
+        </div>
+      </div>
     </div>
   </fieldset>
 
   <div class="govuk-button-group" *ngIf="!isSaving">
-    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit">Save</button>
+    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit" [disabled]="!form.valid">
+      Save
+    </button>
     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
       Discard Changes
     </button>

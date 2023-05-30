@@ -1,11 +1,12 @@
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { NEVER, catchError } from 'rxjs';
-import { Constants } from 'src/app/common/constants';
+import { Constants, AvailableRoles } from 'src/app/common/constants';
 import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
+import { justiceUserRoleValidator } from '../../common/custom-validations/justice-user-role-validator';
 
 export type JusticeUserFormMode = 'add' | 'edit';
 
@@ -18,7 +19,7 @@ export class JusticeUserFormComponent implements OnChanges {
     errorIcon = faExclamationCircle;
     isSaving = false;
     failedSaveMessage: string;
-    availableRoles = JusticeUserRole;
+    availableRoles = AvailableRoles;
     form: FormGroup<JusticeUserForm>;
 
     _justiceUser: JusticeUserResponse;
@@ -33,11 +34,11 @@ export class JusticeUserFormComponent implements OnChanges {
             firstName: value.first_name,
             lastName: value.lastname,
             username: value.username,
-            contactTelephone: value.telephone,
-            role: this.availableRoles.Vho
+            contactTelephone: value.telephone
         });
 
-        this.form.get('role').setValue(value.is_vh_team_leader ? this.availableRoles.VhTeamLead : this.availableRoles.Vho);
+        const roleControls = this.availableRoles.map(x => value.user_roles.includes(x.value));
+        this.form.controls.roles.setValue(roleControls);
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
@@ -51,7 +52,16 @@ export class JusticeUserFormComponent implements OnChanges {
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
             firstName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
             lastName: new FormControl('', [Validators.pattern(Constants.TextInputPatternName)]),
-            role: new FormControl(this.availableRoles.Vho)
+            roles: new FormArray(
+                this.availableRoles.map(x => {
+                    if (x.value === JusticeUserRole.Vho) {
+                        return new FormControl(true);
+                    } else {
+                        return new FormControl(false);
+                    }
+                }),
+                justiceUserRoleValidator()
+            )
         });
     }
 
@@ -102,13 +112,14 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     private addNewUser() {
+        const roles = this.getRoles();
         this.justiceUserService
             .addNewJusticeUser(
                 this.form.controls.username.value,
                 this.form.controls.firstName.value,
                 this.form.controls.lastName.value,
                 this.form.controls.contactTelephone.value,
-                this.form.value.role
+                roles
             )
             .pipe(
                 catchError((error: string | BookHearingException) => {
@@ -121,10 +132,15 @@ export class JusticeUserFormComponent implements OnChanges {
     }
 
     private updateExistingUser() {
-        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, this.form.value.role).subscribe({
+        const roles = this.getRoles();
+        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, roles).subscribe({
             next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
             error: (error: string | BookHearingException) => this.onSaveFailed(error)
         });
+    }
+
+    private getRoles(): JusticeUserRole[] {
+        return this.form.value.roles.map((checked, i) => (checked ? this.availableRoles[i].value : null)).filter(v => v !== null);
     }
 }
 
@@ -133,5 +149,5 @@ interface JusticeUserForm {
     firstName: FormControl<string>;
     lastName: FormControl<string>;
     contactTelephone: FormControl<string>;
-    role: FormControl<JusticeUserRole>;
+    roles: FormArray<FormControl<boolean>>;
 }

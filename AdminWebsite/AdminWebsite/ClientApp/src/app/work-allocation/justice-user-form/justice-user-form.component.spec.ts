@@ -23,7 +23,8 @@ describe('JusticeUserFormComponent', () => {
         first_name: 'John',
         lastname: 'Doe',
         username: 'test@cso.com',
-        telephone: null
+        telephone: null,
+        user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
     });
 
     beforeEach(async () => {
@@ -47,7 +48,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue(existingUser.telephone);
-            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            component.form.controls.roles.setValue([true, false, true]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -56,7 +57,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('+441234567890');
-            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            component.form.controls.roles.setValue([true, false, true]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -65,7 +66,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('abcd');
-            component.form.controls.role.setValue(JusticeUserRole.Vho);
+            component.form.controls.roles.setValue([true, false, false]);
             expect(component.form.invalid).toBe(true);
         });
     });
@@ -109,7 +110,7 @@ describe('JusticeUserFormComponent', () => {
                 first_name: 'Jack',
                 lastname: 'Jones',
                 full_name: 'Jack Jones',
-                user_role_name: 'Team Leader',
+                user_roles: [JusticeUserRole.VhTeamLead],
                 is_vh_team_leader: true,
                 username: 'new@cso.com',
                 telephone: '01234567890'
@@ -133,7 +134,7 @@ describe('JusticeUserFormComponent', () => {
                 first_name: 'Jack',
                 lastname: 'Jones',
                 full_name: 'Jack Jones',
-                user_role_name: 'Team Leader',
+                user_roles: [JusticeUserRole.VhTeamLead],
                 is_vh_team_leader: true,
                 username: 'new@cso.com',
                 telephone: '01234567890'
@@ -206,5 +207,26 @@ describe('JusticeUserFormComponent', () => {
             expect(component.form.controls.firstName.errors.errorMessage).toContain(validationProblem.errors.FirstName);
             expect(component.form.controls.lastName.errors.errorMessage).toContain(validationProblem.errors.LastName);
         }));
+    });
+
+    describe('on form creation', () => {
+        beforeEach(async () => {
+            fixture = TestBed.createComponent(JusticeUserFormComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('should create form with default values', () => {
+            // arrange / act
+            const form = component.form;
+
+            // assert
+            expect(form.controls.username.value).toBe('');
+            expect(form.controls.contactTelephone.value).toBe('');
+            expect(form.controls.firstName.value).toBe('');
+            expect(form.controls.lastName.value).toBe('');
+            // Assuming that the order in the formArray is VHO, ADMIN, STAFFMEMBER
+            expect(form.controls.roles.value).toEqual([true, false, false]);
+        });
     });
 });

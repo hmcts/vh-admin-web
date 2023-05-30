@@ -56,22 +56,22 @@ export class JusticeUsersService {
         );
     }
 
-    addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, role: JusticeUserRole) {
+    addNewJusticeUser(username: string, firstName: string, lastName: string, telephone: string, roles: JusticeUserRole[]) {
         const request = new AddNewJusticeUserRequest({
             username: username,
             first_name: firstName,
             last_name: lastName,
             contact_telephone: telephone,
-            role: role
+            roles: roles
         });
         return this.apiClient.addNewJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 
-    editJusticeUser(id: string, username: string, role: JusticeUserRole) {
+    editJusticeUser(id: string, username: string, roles: JusticeUserRole[]) {
         const request = new EditJusticeUserRequest({
             id,
             username,
-            role
+            roles
         });
         return this.apiClient.editJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }

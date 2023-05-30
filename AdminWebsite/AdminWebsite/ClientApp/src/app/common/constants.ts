@@ -1,3 +1,5 @@
+import { JusticeUserRole } from '../services/clients/api-client';
+
 export const Constants = {
     AllocateHearings: {
         ConfirmationMessage: 'Hearings have been updated.'
@@ -40,7 +42,9 @@ export const Constants = {
         NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.',
         JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account',
         ManageJusticeUsers: {
-            SearchFailure: 'There was an unexpected error. Please try again'
+            SearchFailure: 'There was an unexpected error. Please try again',
+            RolesCheckBoxCSOandAdmin: 'User cannot be both a CSO and an Administrator',
+            RolesCheckBoxAtLeastOne: 'Please select a role'
         },
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',
@@ -81,3 +85,14 @@ export const Constants = {
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
     CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division' }
 };
+
+/*
+ * Available roles for working allocation justice user
+ * label is used for the checkBox in the add user form in manage team
+ * shortText is used for displaying roles in the manage team table
+ * */
+export const AvailableRoles = [
+    { value: JusticeUserRole.Vho, label: 'CSO', shortText: 'CSO' },
+    { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' },
+    { value: JusticeUserRole.StaffMember, label: 'Staff Member', shortText: 'SM' }
+];

@@ -5293,7 +5293,8 @@ export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
     username?: string | undefined;
     /** The user's telephone */
     contact_telephone?: string | undefined;
-    role?: JusticeUserRole;
+    /** The user's role. This can be a VHO or a Team Lead. */
+    roles?: JusticeUserRole[] | undefined;
 
     constructor(data?: IAddNewJusticeUserRequest) {
         if (data) {
@@ -5309,7 +5310,10 @@ export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
             this.last_name = _data['last_name'];
             this.username = _data['username'];
             this.contact_telephone = _data['contact_telephone'];
-            this.role = _data['role'];
+            if (Array.isArray(_data['roles'])) {
+                this.roles = [] as any;
+                for (let item of _data['roles']) this.roles!.push(item);
+            }
         }
     }
 
@@ -5326,7 +5330,10 @@ export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
         data['last_name'] = this.last_name;
         data['username'] = this.username;
         data['contact_telephone'] = this.contact_telephone;
-        data['role'] = this.role;
+        if (Array.isArray(this.roles)) {
+            data['roles'] = [];
+            for (let item of this.roles) data['roles'].push(item);
+        }
         return data;
     }
 }
@@ -5341,7 +5348,8 @@ export interface IAddNewJusticeUserRequest {
     username?: string | undefined;
     /** The user's telephone */
     contact_telephone?: string | undefined;
-    role?: JusticeUserRole;
+    /** The user's role. This can be a VHO or a Team Lead. */
+    roles?: JusticeUserRole[] | undefined;
 }
 
 export class BookHearingRequest implements IBookHearingRequest {
@@ -7322,7 +7330,7 @@ export interface ICaseRequest {
 export class EditJusticeUserRequest implements IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
-    role?: JusticeUserRole;
+    roles?: JusticeUserRole[] | undefined;
 
     constructor(data?: IEditJusticeUserRequest) {
         if (data) {
@@ -7336,7 +7344,10 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
         if (_data) {
             this.id = _data['id'];
             this.username = _data['username'];
-            this.role = _data['role'];
+            if (Array.isArray(_data['roles'])) {
+                this.roles = [] as any;
+                for (let item of _data['roles']) this.roles!.push(item);
+            }
         }
     }
 
@@ -7351,7 +7362,10 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
         data['username'] = this.username;
-        data['role'] = this.role;
+        if (Array.isArray(this.roles)) {
+            data['roles'] = [];
+            for (let item of this.roles) data['roles'].push(item);
+        }
         return data;
     }
 }
@@ -7359,7 +7373,7 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
 export interface IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
-    role?: JusticeUserRole;
+    roles?: JusticeUserRole[] | undefined;
 }
 
 export class EndpointRequest implements IEndpointRequest {
@@ -7402,7 +7416,14 @@ export interface IEndpointRequest {
 }
 
 export enum JusticeUserRole {
+    CaseAdmin = 'CaseAdmin',
     Vho = 'Vho',
+    Clerk = 'Clerk',
+    Judge = 'Judge',
+    Individual = 'Individual',
+    Representative = 'Representative',
+    JudicialOfficeHolder = 'JudicialOfficeHolder',
+    StaffMember = 'StaffMember',
     VhTeamLead = 'VhTeamLead'
 }
 
@@ -8492,8 +8513,7 @@ export class JusticeUserResponse implements IJusticeUserResponse {
     contact_email?: string | undefined;
     username?: string | undefined;
     telephone?: string | undefined;
-    user_role_id?: number;
-    user_role_name?: string | undefined;
+    user_roles?: JusticeUserRole[] | undefined;
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;
@@ -8515,8 +8535,10 @@ export class JusticeUserResponse implements IJusticeUserResponse {
             this.contact_email = _data['contact_email'];
             this.username = _data['username'];
             this.telephone = _data['telephone'];
-            this.user_role_id = _data['user_role_id'];
-            this.user_role_name = _data['user_role_name'];
+            if (Array.isArray(_data['user_roles'])) {
+                this.user_roles = [] as any;
+                for (let item of _data['user_roles']) this.user_roles!.push(item);
+            }
             this.is_vh_team_leader = _data['is_vh_team_leader'];
             this.created_by = _data['created_by'];
             this.full_name = _data['full_name'];
@@ -8539,8 +8561,10 @@ export class JusticeUserResponse implements IJusticeUserResponse {
         data['contact_email'] = this.contact_email;
         data['username'] = this.username;
         data['telephone'] = this.telephone;
-        data['user_role_id'] = this.user_role_id;
-        data['user_role_name'] = this.user_role_name;
+        if (Array.isArray(this.user_roles)) {
+            data['user_roles'] = [];
+            for (let item of this.user_roles) data['user_roles'].push(item);
+        }
         data['is_vh_team_leader'] = this.is_vh_team_leader;
         data['created_by'] = this.created_by;
         data['full_name'] = this.full_name;
@@ -8556,8 +8580,7 @@ export interface IJusticeUserResponse {
     contact_email?: string | undefined;
     username?: string | undefined;
     telephone?: string | undefined;
-    user_role_id?: number;
-    user_role_name?: string | undefined;
+    user_roles?: JusticeUserRole[] | undefined;
     is_vh_team_leader?: boolean;
     created_by?: string | undefined;
     full_name?: string | undefined;

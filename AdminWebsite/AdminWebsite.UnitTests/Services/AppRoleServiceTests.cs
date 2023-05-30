@@ -8,12 +8,12 @@ using AdminWebsite.Services;
 using Autofac;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
+using BookingsApi.Contract.Requests.Enums;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -31,24 +31,23 @@ namespace AdminWebsite.UnitTests.Services
             _sut = _mocker.Create<AppRoleService>();
         }
 
-        [TestCase(AppRoleService.JusticeUserRole.VhTeamLead, AppRoles.AdministratorRole)]
-        [TestCase(AppRoleService.JusticeUserRole.Vho, AppRoles.VhOfficerRole)]
-        [TestCase(AppRoleService.JusticeUserRole.CaseAdmin, AppRoles.CaseAdminRole)]
-        [TestCase(AppRoleService.JusticeUserRole.Judge, AppRoles.JudgeRole)]
-        [TestCase(AppRoleService.JusticeUserRole.StaffMember, AppRoles.StaffMember)]
+        [TestCase(JusticeUserRole.VhTeamLead, AppRoles.AdministratorRole)]
+        [TestCase(JusticeUserRole.Vho, AppRoles.VhOfficerRole)]
+        [TestCase(JusticeUserRole.CaseAdmin, AppRoles.CaseAdminRole)]
+        [TestCase(JusticeUserRole.Judge, AppRoles.JudgeRole)]
+        [TestCase(JusticeUserRole.StaffMember, AppRoles.StaffMember)]
         public async Task should_map_justice_user_role_to_app_role_and_set_cache(
-            AppRoleService.JusticeUserRole justiceUserRole, string expectedAppRole)
+            JusticeUserRole justiceUserRole, string expectedAppRole)
         {
             // arrange
             var username = "random@claims.com";
             var uniqueId = Guid.NewGuid().ToString();
             var justiceUser = new JusticeUserResponse()
             {
-                UserRoleId = (int) justiceUserRole,
+                UserRoles = new List<JusticeUserRole>() { justiceUserRole },
                 Username = username,
                 Deleted = false,
-                Id = Guid.NewGuid(),
-                UserRoleName = justiceUserRole.ToString()
+                Id = Guid.NewGuid()
             };
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
                 .ReturnsAsync(justiceUser);
@@ -66,16 +65,15 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_return_an_empty_list_of_claims_if_justice_user_has_no_app_role()
         {
             // arrange
-            var justiceUserRole = AppRoleService.JusticeUserRole.Individual;
+            var justiceUserRole = JusticeUserRole.Individual;
             var username = "random@claims.com";
             var uniqueId = Guid.NewGuid().ToString();
             var justiceUser = new JusticeUserResponse()
             {
-                UserRoleId = (int) justiceUserRole,
+                UserRoles = new List<JusticeUserRole>() { justiceUserRole },
                 Username = username,
                 Deleted = false,
-                Id = Guid.NewGuid(),
-                UserRoleName = justiceUserRole.ToString()
+                Id = Guid.NewGuid()
             };
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
                 .ReturnsAsync(justiceUser);

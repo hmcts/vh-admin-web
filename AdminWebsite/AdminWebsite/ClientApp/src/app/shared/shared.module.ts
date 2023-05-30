@@ -21,6 +21,7 @@ import { VenuesMenuComponent } from './menus/venues-menu/venues-menu.component';
 import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { SelectComponent } from './select';
+import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
 import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 
 @NgModule({
@@ -46,6 +47,7 @@ import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
         JusticeUsersMenuComponent,
         VenuesMenuComponent,
         MinutesToHoursPipe,
+        RolesToDisplayPipe,
         TooltipDirective,
         SelectComponent
     ],
@@ -66,7 +68,8 @@ import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
         VenuesMenuComponent,
         MinutesToHoursPipe,
         TooltipDirective,
-        SelectComponent
+        SelectComponent,
+        RolesToDisplayPipe
     ]
 })
 export class SharedModule {

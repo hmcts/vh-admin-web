@@ -3,7 +3,7 @@ import { ManageTeamComponent } from './manage-team.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpHandler } from '@angular/common/http';
 import { Logger } from '../../services/logger';
-import { JusticeUserResponse } from '../../services/clients/api-client';
+import { JusticeUserResponse, JusticeUserRole } from '../../services/clients/api-client';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { JusticeUsersService } from '../../services/justice-users.service';
 import { Component } from '@angular/core';
@@ -12,6 +12,7 @@ import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
+import { RolesToDisplayPipe } from '../../shared/pipes/roles-to-display.pipe';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
 export class JusticeUserFormStubComponent {}
@@ -32,7 +33,7 @@ describe('ManageTeamComponent', () => {
         justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
         await TestBed.configureTestingModule({
-            declarations: [ManageTeamComponent, JusticeUserFormStubComponent],
+            declarations: [ManageTeamComponent, JusticeUserFormStubComponent, RolesToDisplayPipe],
             providers: [
                 FormBuilder,
                 HttpClient,
@@ -66,7 +67,8 @@ describe('ManageTeamComponent', () => {
                     i =>
                         new JusticeUserResponse({
                             id: newGuid(),
-                            username: `username${i + 1}@mail.com`
+                            username: `username${i + 1}@mail.com`,
+                            user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
                         })
                 )
             );
@@ -90,7 +92,8 @@ describe('ManageTeamComponent', () => {
                     i =>
                         new JusticeUserResponse({
                             id: newGuid(),
-                            username: `username${i + 1}@mail.com`
+                            username: `username${i + 1}@mail.com`,
+                            user_roles: [JusticeUserRole.Vho]
                         })
                 )
             );
@@ -111,24 +114,6 @@ describe('ManageTeamComponent', () => {
                 }
             );
         });
-
-        // it('should display error when searching throws an error', fakeAsync((done: DoneFn) => {
-        //     // arrange
-        //     // justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache.and.returnValue(throwError('Random API error'));
-        //     component.form.controls.inputSearch.setValue('test@cso.com');
-
-        //     // act
-        //     component.searchUsers();
-        //     tick();
-
-        //     // assert
-        //     // expect(justiceUsersServiceSpy.retrieveJusticeUserAccountsNoCache).toHaveBeenCalled();
-
-        //     component.message$.subscribe(m => {
-        //         expect(m).toBe(Constants.Error.ManageJusticeUsers.SearchFailure);
-        //         done();
-        //     });
-        // }));
     });
 
     describe('displayForm', () => {
@@ -155,7 +140,7 @@ describe('ManageTeamComponent', () => {
                     first_name: 'Test',
                     lastname: 'User',
                     full_name: 'Test User',
-                    user_role_name: 'Team Leader',
+                    user_roles: [JusticeUserRole.VhTeamLead, JusticeUserRole.StaffMember],
                     is_vh_team_leader: true,
                     username: 'user@email.com',
                     telephone: ''
@@ -215,7 +200,7 @@ describe('ManageTeamComponent', () => {
                 first_name: 'Test',
                 lastname: 'User',
                 full_name: 'Test User',
-                user_role_name: 'Team Leader',
+                user_roles: [JusticeUserRole.VhTeamLead],
                 is_vh_team_leader: true,
                 username: 'user@email.com',
                 telephone: ''
