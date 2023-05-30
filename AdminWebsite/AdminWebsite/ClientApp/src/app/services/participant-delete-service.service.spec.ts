@@ -44,7 +44,7 @@ describe('ParticipantDeleteServiceService', () => {
     });
 
     it('should call api when deleting person with username ', async () => {
-        apiClient.deletePersonWithUsername.and.returnValue(of());
+        apiClient.deletePersonWithUsername.and.returnValue(of(null));
         const username = 'test.unit@hmcts.net';
         await service.deleteUserAccount(username);
         expect(apiClient.deletePersonWithUsername).toHaveBeenCalledWith(username);

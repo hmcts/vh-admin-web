@@ -14,7 +14,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -32,7 +31,7 @@ namespace AdminWebsite.UnitTests.Services
             _sut = _mocker.Create<AppRoleService>();
         }
 
-        [TestCase(JusticeUserRole.VhTeamLead, AppRoles.VhOfficerRole)]
+        [TestCase(JusticeUserRole.VhTeamLead, AppRoles.AdministratorRole)]
         [TestCase(JusticeUserRole.Vho, AppRoles.VhOfficerRole)]
         [TestCase(JusticeUserRole.CaseAdmin, AppRoles.CaseAdminRole)]
         [TestCase(JusticeUserRole.Judge, AppRoles.JudgeRole)]

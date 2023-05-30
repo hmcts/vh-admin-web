@@ -1,6 +1,6 @@
 import { HttpBackend, HttpResponse } from '@angular/common/http';
 import { fakeAsync, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { ClientSettingsResponse } from './clients/api-client';
 import { ConfigService } from './config.service';
 import { SessionStorage } from './session-storage';
@@ -30,7 +30,7 @@ describe('ConfigService', () => {
     it('should have called method on httpClient', fakeAsync(() => {
         configService.loadConfig();
         tick();
-        configService.getClientSettings().toPromise();
+        lastValueFrom(configService.getClientSettings());
         tick();
         expect(httpBackendSpy.handle).toHaveBeenCalled();
     }));
@@ -39,7 +39,7 @@ describe('ConfigService', () => {
         clientSettingCache.set(clientSettings);
         configService.loadConfig();
         tick();
-        configService.getClientSettings().toPromise();
+        lastValueFrom(configService.getClientSettings());
         tick();
         expect(httpBackendSpy.handle).not.toHaveBeenCalled();
     }));

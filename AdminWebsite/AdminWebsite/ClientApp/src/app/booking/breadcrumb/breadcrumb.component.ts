@@ -6,6 +6,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { PageUrls } from '../../shared/page-url.constants';
+import { lastValueFrom } from 'rxjs';
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
@@ -32,13 +33,9 @@ export class BreadcrumbComponent implements OnInit {
                     this.breadcrumbItems[index].Name = 'Judge';
                 }
             });
-        await this.featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .toPromise()
-            .then(result => {
-                this.ejudFeatureFlag = result;
-            });
+        await lastValueFrom(this.featureService.getFeatureFlagByName('EJudFeature').pipe(first())).then(result => {
+            this.ejudFeatureFlag = result;
+        });
 
         this.initBreadcrumb();
     }

@@ -1,5 +1,4 @@
 using AdminWebsite.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AdminWebsite.Security.Authentication
 {

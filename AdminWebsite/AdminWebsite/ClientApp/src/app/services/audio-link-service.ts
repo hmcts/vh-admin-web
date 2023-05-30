@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, observeOn, take } from 'rxjs/operators';
-import {
-    BHClient,
-    BookHearingException,
-    CvpForAudioFileResponse,
-    HearingAudioRecordingResponse,
-    HearingsForAudioFileSearchResponse
-} from './clients/api-client';
+import { lastValueFrom, Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { BHClient, CvpForAudioFileResponse, HearingAudioRecordingResponse, HearingsForAudioFileSearchResponse } from './clients/api-client';
 import { Logger } from './logger';
 
 export const InvalidParametersError = (parameters: { [parameterName: string]: any }) =>
@@ -32,10 +26,9 @@ export class AudioLinkService {
 
     async searchForHearingsByCaseNumberOrDate(caseNumber: string, date?: Date): Promise<IVhAudioRecordingResult> {
         try {
-            return await this.bhClient
-                .searchForAudioRecordedHearings(caseNumber, date)
-                .pipe(this.toAudioRecordingResult(), take(1))
-                .toPromise();
+            return await lastValueFrom(
+                this.bhClient.searchForAudioRecordedHearings(caseNumber, date).pipe(this.toAudioRecordingResult(), take(1))
+            );
         } catch (error) {
             this.logger.error(`${this.loggerPrefix} Error retrieving hearing for: ${caseNumber}`, error);
             return null;
@@ -44,28 +37,24 @@ export class AudioLinkService {
 
     async getCvpAudioRecordings(cloudRoomName: string, date: string, caseReference: string): Promise<ICvpAudioRecordingResult> {
         if (cloudRoomName && date && caseReference) {
-            return await this.bhClient
-                .getCvpAudioRecordingsAll(cloudRoomName, date, caseReference)
-                .pipe(this.toAudioRecordingResult(), take(1))
-                .toPromise();
+            return await lastValueFrom(
+                this.bhClient.getCvpAudioRecordingsAll(cloudRoomName, date, caseReference).pipe(this.toAudioRecordingResult(), take(1))
+            );
         } else if (cloudRoomName && date) {
-            return await this.bhClient
-                .getCvpAudioRecordingsByCloudRoom(cloudRoomName, date)
-                .pipe(this.toAudioRecordingResult(), take(1))
-                .toPromise();
+            return await lastValueFrom(
+                this.bhClient.getCvpAudioRecordingsByCloudRoom(cloudRoomName, date).pipe(this.toAudioRecordingResult(), take(1))
+            );
         } else if (date) {
-            return await this.bhClient
-                .getCvpAudioRecordingsByDate(date, caseReference)
-                .pipe(this.toAudioRecordingResult(), take(1))
-                .toPromise();
+            return await lastValueFrom(
+                this.bhClient.getCvpAudioRecordingsByDate(date, caseReference).pipe(this.toAudioRecordingResult(), take(1))
+            );
         }
 
         throw InvalidParametersError({ cloudRoomName: cloudRoomName, date: date, caseReference: caseReference });
     }
 
     async getAudioLink(hearingId: string): Promise<HearingAudioRecordingResponse> {
-        const response = await this.bhClient.getAudioRecordingLink(hearingId).toPromise();
-        return response;
+        return await lastValueFrom(this.bhClient.getAudioRecordingLink(hearingId));
     }
 
     private toAudioRecordingResult() {
