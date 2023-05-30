@@ -350,3 +350,4 @@ jasmine-tests
 .DS_Store
 
 .env
+.angular/

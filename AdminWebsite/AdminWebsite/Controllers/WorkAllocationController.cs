@@ -5,9 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,8 +19,10 @@ namespace AdminWebsite.Controllers
     ///     Responsible for retrieving and storing work allocation information
     /// </summary>
     [Produces("application/json")]
+    [Consumes("application/json")]
     [Route("api/hearings")]
     [ApiController]
+    [Authorize(AppRoles.AdministratorRole)]
     public class WorkAllocationController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;

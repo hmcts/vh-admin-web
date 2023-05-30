@@ -31,7 +31,7 @@ namespace AdminWebsite.UnitTests.Services
             _sut = _mocker.Create<AppRoleService>();
         }
 
-        [TestCase(AppRoleService.JusticeUserRole.VhTeamLead, AppRoles.VhOfficerRole)]
+        [TestCase(AppRoleService.JusticeUserRole.VhTeamLead, AppRoles.AdministratorRole)]
         [TestCase(AppRoleService.JusticeUserRole.Vho, AppRoles.VhOfficerRole)]
         [TestCase(AppRoleService.JusticeUserRole.CaseAdmin, AppRoles.CaseAdminRole)]
         [TestCase(AppRoleService.JusticeUserRole.Judge, AppRoles.JudgeRole)]
