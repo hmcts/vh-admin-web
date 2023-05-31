@@ -38,7 +38,7 @@ namespace AdminWebsite.Services
                 return claims;
             }
 
-            JusticeUserResponse user;
+            JusticeUserResponse user = null;
             try
             {
                 user = await _bookingsApiClient!.GetJusticeUserByUsernameAsync(username);
@@ -50,11 +50,20 @@ namespace AdminWebsite.Services
                     var typedException = ex as BookingsApiException<ProblemDetails>;
                     _logger.LogWarning(typedException, "User {Username} not found as a JusticeUser in BookingsApi", username);
                 }
-                return new List<Claim>();
             }
 
-            if (user == null) return new List<Claim>();
-            claims = MapUserRoleToAppRole(user.UserRoles);
+            if (user == null)
+            {
+                claims = new List<Claim>();
+            }
+            else
+            {
+                claims = MapUserRoleToAppRole(user.UserRoles);
+                claims.Add(new Claim(ClaimTypes.GivenName, user.FirstName));
+                claims.Add(new Claim(ClaimTypes.Surname, user.Lastname));
+                claims.Add(new Claim(ClaimTypes.Name, user.FullName));
+            }
+
             _cache.Set(uniqueId, claims, new MemoryCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60),
