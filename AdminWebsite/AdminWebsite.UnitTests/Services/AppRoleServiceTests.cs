@@ -47,7 +47,10 @@ namespace AdminWebsite.UnitTests.Services
                 UserRoles = new List<JusticeUserRole>() { justiceUserRole },
                 Username = username,
                 Deleted = false,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                FirstName = "John",
+                Lastname = "Doe",
+                FullName = "John Doe"
             };
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
                 .ReturnsAsync(justiceUser);
@@ -56,7 +59,7 @@ namespace AdminWebsite.UnitTests.Services
             var claims = await _sut.GetClaimsForUserAsync(uniqueId, username);
 
             // assert
-            claims.Count.Should().Be(1);
+            claims.Count.Should().Be(4); // 1 role + 3 name claims
             claims[0].Value.Should().Be(expectedAppRole);
             _cache.Get(uniqueId).Should().Be(claims);
         }
@@ -70,10 +73,13 @@ namespace AdminWebsite.UnitTests.Services
             var uniqueId = Guid.NewGuid().ToString();
             var justiceUser = new JusticeUserResponse()
             {
-                UserRoles = new List<JusticeUserRole>() { justiceUserRole },
+                UserRoles = new List<JusticeUserRole>() {  },
                 Username = username,
                 Deleted = false,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                FirstName = "John",
+                Lastname = "Doe",
+                FullName = "John Doe"
             };
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetJusticeUserByUsernameAsync(username))
                 .ReturnsAsync(justiceUser);
@@ -82,7 +88,7 @@ namespace AdminWebsite.UnitTests.Services
             var claims = await _sut.GetClaimsForUserAsync(uniqueId, username);
 
             // assert
-            claims.Should().BeEmpty();
+            claims.Count.Should().Be(3); // 0 roles + 3 name claims
         }
 
         [Test]

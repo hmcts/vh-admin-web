@@ -1,15 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Models;
 using AdminWebsite.Security.Authentication;
+using AdminWebsite.Services;
+using AdminWebsite.Testing.Common.Builders;
+using Autofac.Extras.Moq;
 using FluentAssertions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
 {
     public class VhAadSchemeTests
     {
+        private AutoMock _mocker;
         private VhAadScheme _sut;
 
         private AzureAdConfiguration _configuration;
@@ -17,6 +28,11 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
         [SetUp]
         public void SetUp()
         {
+            _mocker = AutoMock.GetLoose();
+            _mocker.Mock<IServiceProvider>()
+                .Setup(x => x.GetService(typeof(IAppRoleService)))
+                .Returns(_mocker.Mock<IAppRoleService>().Object);
+            
             _configuration = new AzureAdConfiguration
             {
                 TenantId = "tenantId",
@@ -76,7 +92,7 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
         [Test]
         public void ShouldReturnFalseIfDoesntBelongsToScheme()
         {
-            // Arange
+            // Arrange
             var token = new JwtSecurityToken(issuer: "Issuer");
 
             // Act
@@ -89,7 +105,7 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
         [Test]
         public void ShouldReturnTrueIfDoesntBelongsToScheme()
         {
-            // Arange
+            // Arrange
             var token = new JwtSecurityToken(issuer: _configuration.TenantId.ToUpper());
 
             // Act
@@ -97,6 +113,34 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
 
             // Assert
             belongs.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task ShouldAddClaimsFromAppRoleService()
+        {
+            // arrange
+            var claimsPrincipal = new ClaimsPrincipalBuilder().Build();
+            var httpContext = new DefaultHttpContext()
+            {
+                User = claimsPrincipal,
+                RequestServices = _mocker.Mock<IServiceProvider>().Object
+            };
+            var options = new JwtBearerOptions();
+            _sut.SetJwtBearerOptions(options);
+            var tokenValidatedContext = new TokenValidatedContext(httpContext, new AuthenticationScheme("name", "displayName", typeof(AuthenticationHandler<JwtBearerOptions>)), options)
+            {
+                Principal = claimsPrincipal,
+                SecurityToken = new JwtSecurityToken(issuer: "Issuer", claims: claimsPrincipal.Claims)
+            };
+            
+            _mocker.Mock<IAppRoleService>().Setup(x => x.GetClaimsForUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<Claim>(){ new(ClaimTypes.Role, AppRoles.StaffMember) });
+            
+            // act
+            await _sut.GetClaimsPostTokenValidation(tokenValidatedContext, options);
+
+            // assert
+            claimsPrincipal.IsInRole(AppRoles.StaffMember).Should().BeTrue();
         }
     }
 }
