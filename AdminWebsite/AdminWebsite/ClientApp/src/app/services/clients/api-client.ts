@@ -2181,7 +2181,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -2293,7 +2293,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -2517,7 +2517,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -4265,7 +4265,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     getUnallocatedHearings(): Observable<UnallocatedHearingsForVhoResponse> {
-        let url_ = this.baseUrl + '/api/hearings/unallocated';
+        let url_ = this.baseUrl + '/api/work-allocation/unallocated';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -4366,7 +4366,7 @@ export class BHClient extends ApiClientBase {
         caseNumber: string | undefined,
         isUnallocated: boolean | undefined
     ): Observable<AllocationHearingsResponse[]> {
-        let url_ = this.baseUrl + '/api/hearings/allocation?';
+        let url_ = this.baseUrl + '/api/work-allocation/allocation?';
         if (fromDate === null) throw new Error("The parameter 'fromDate' cannot be null.");
         else if (fromDate !== undefined) url_ += 'FromDate=' + encodeURIComponent(fromDate ? '' + fromDate.toISOString() : '') + '&';
         if (toDate === null) throw new Error("The parameter 'toDate' cannot be null.");
@@ -4481,7 +4481,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     allocateHearingsToCso(body: UpdateHearingAllocationToCsoRequest | undefined): Observable<AllocationHearingsResponse[]> {
-        let url_ = this.baseUrl + '/api/hearings/allocations';
+        let url_ = this.baseUrl + '/api/work-allocation/allocations';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -4491,7 +4491,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -4590,7 +4590,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     getAllocationForHearing(hearingId: string | undefined): Observable<AllocatedCsoResponse> {
-        let url_ = this.baseUrl + '/api/hearings/allocations/cso?';
+        let url_ = this.baseUrl + '/api/work-allocation/allocations/cso?';
         if (hearingId === null) throw new Error("The parameter 'hearingId' cannot be null.");
         else if (hearingId !== undefined) url_ += 'hearingId=' + encodeURIComponent('' + hearingId) + '&';
         url_ = url_.replace(/[?&]$/, '');
@@ -4700,7 +4700,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -4793,7 +4793,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
+                'Content-Type': 'application/json',
                 Accept: 'application/json'
             })
         };
@@ -5105,7 +5105,7 @@ export class BHClient extends ApiClientBase {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json'
+                'Content-Type': 'application/json'
             })
         };
 

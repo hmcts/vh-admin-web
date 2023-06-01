@@ -120,9 +120,10 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
         {
             // arrange
             var claimsPrincipal = new ClaimsPrincipalBuilder().Build();
+            var userClaimsPrincipal = new ClaimsPrincipalBuilder().Build();
             var httpContext = new DefaultHttpContext()
             {
-                User = claimsPrincipal,
+                User = userClaimsPrincipal,
                 RequestServices = _mocker.Mock<IServiceProvider>().Object
             };
             var options = new JwtBearerOptions();
