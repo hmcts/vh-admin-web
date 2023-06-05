@@ -20,9 +20,8 @@ namespace AdminWebsite.Controllers
     /// </summary>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [Route("api/hearings")]
+    [Route("api/work-allocation")]
     [ApiController]
-    [Authorize(AppRoles.AdministratorRole)]
     public class WorkAllocationController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
@@ -74,6 +73,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "AllocateHearingsToCso")]
         [ProducesResponseType(typeof(List<AllocationHearingsResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
+        [Authorize(AppRoles.AdministratorRole)]
         public async Task<IActionResult> AllocateHearingsToCso(UpdateHearingAllocationToCsoRequest request)
         {
             var hearings = await _bookingsApiClient.AllocateHearingsToCsoAsync(request);

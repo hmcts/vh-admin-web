@@ -30,6 +30,7 @@
       </div>
       <div class="govuk-grid-column-one-third">
         <app-select
+          id="select-cso-search-filter"
           #selectFilterCso
           (selectionChange)="onJusticeUserForFilterSelected($event)"
           [items]="justiceUsersSelectOptions"
@@ -68,8 +69,17 @@
       </div>
     </div>
     <div class="govuk-!-margin-bottom-2">
-      <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="searchForHearings()">Search</button>
-      <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">Clear</button>
+      <button
+        id="allocate-hearings-search-btn"
+        class="govuk-button govuk-!-margin-right-6"
+        data-module="govuk-button"
+        (click)="searchForHearings()"
+      >
+        Search
+      </button>
+      <button id="allocate-hearings-clear-btn" class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="clear()">
+        Clear
+      </button>
     </div>
   </div>
   <div id="user-allocation" class="govuk-grid-row" *ngIf="allocationHearingViewModel.hearings.length > 0">
@@ -77,6 +87,7 @@
       <div>
         <div id="user-menu" class="govuk-grid-column-one-half">
           <app-select
+            id="select-cso-search-allocation"
             #selectAllocateCso
             (selectionChange)="onJusticeUserForAllocationSelected($event)"
             [items]="justiceUsersSelectOptions"
@@ -86,7 +97,11 @@
           ></app-select>
         </div>
 
-        <div *ngIf="messageCanBeDisplayed()" class="govuk-body govuk-!-font-weight-bold govuk-grid-column-one-half govuk-!-padding-top-6">
+        <div
+          id="allocation-actions-message-container"
+          *ngIf="messageCanBeDisplayed()"
+          class="govuk-body govuk-!-font-weight-bold govuk-grid-column-one-half govuk-!-padding-top-6"
+        >
           <fa-icon [icon]="faExclamation"></fa-icon>
           {{ message }}
         </div>
@@ -94,15 +109,29 @@
       <div id="user-allocation-button" class="govuk-grid-column-one-half govuk-!-padding-top-5">
         <div *ngIf="allocationHearingViewModel.hasPendingChanges">
           <div class="govuk-!-margin-bottom-2">
-            <button class="govuk-button govuk-!-margin-right-6" data-module="govuk-button" (click)="confirmAllocation()">Confirm</button>
-            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelAllocation()">Cancel</button>
+            <button
+              id="confirm-allocation-btn"
+              class="govuk-button govuk-!-margin-right-6"
+              data-module="govuk-button"
+              (click)="confirmAllocation()"
+            >
+              Confirm
+            </button>
+            <button
+              id="cancel-allocation-btn"
+              class="govuk-button govuk-button--secondary"
+              data-module="govuk-button"
+              (click)="cancelAllocation()"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <table class="govuk-table" aria-describedby="table of hearings with their assigned CSOs">
+  <table id="allocate-hearings-search-result-table" class="govuk-table" aria-describedby="table of hearings with their assigned CSOs">
     <caption class="govuk-table__caption govuk-table__caption--m">
       Hearings
     </caption>
