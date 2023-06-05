@@ -692,18 +692,19 @@ describe('SummaryComponent  with existing request', () => {
         expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalled();
     });
-    it('should update booking', () => {
+    it('should update booking', fakeAsync(() => {
         component.ngOnInit();
         fixture.detectChanges();
 
         component.bookHearing();
+        tick(5000);
         expect(component.bookingsSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalled();
         expect(sessionStorage.setItem).toHaveBeenCalled();
 
         expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
-    });
+    }));
 
     it('should set error when update booking request fails', () => {
         const response = {
