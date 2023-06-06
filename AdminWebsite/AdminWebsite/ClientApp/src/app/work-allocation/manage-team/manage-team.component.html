@@ -10,8 +10,11 @@
           <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" formControlName="inputSearch" />
         </div>
         <div class="govuk-grid-column-one-third">
-          <button class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+          <button id="manage-team-search-for-user-btn" class="govuk-button" data-module="govuk-button" (click)="searchUsers()">
+            Search
+          </button>
           <button
+            id="manage-team-add-user-btn"
             class="govuk-button govuk-!-margin-left-2"
             data-module="govuk-button"
             *ngIf="displayAddButton$ | async"
@@ -24,13 +27,24 @@
     </div>
   </div>
 
-  <div *ngIf="displayMessage$ | async" class="govuk-!-font-weight-bold" [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''">
+  <div
+    id="manage-team-messages-container"
+    *ngIf="displayMessage$ | async"
+    class="govuk-!-font-weight-bold"
+    [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''"
+  >
     <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
     {{ message$ | async }}
   </div>
 
   <ng-container *ngIf="users$ | async as users">
-    <table *ngIf="users.length > 0" class="govuk-table" data-module="moj-sortable-table" aria-describedby="justice user table">
+    <table
+      id="manage-team-justice-user-search-results-table"
+      *ngIf="users.length > 0"
+      class="govuk-table"
+      data-module="moj-sortable-table"
+      aria-describedby="justice user table"
+    >
       <thead class="govuk-table__head">
         <tr class="govuk-table__row">
           <th scope="col" class="govuk-table__header">Username</th>
