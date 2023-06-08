@@ -108,7 +108,7 @@ export class EditWorkHoursComponent implements OnInit {
                 break;
             case HoursType.NonWorkingHours:
                 this.result = this.filterByFutureDate(this.result as VhoNonAvailabilityWorkHoursResponse[]);
-                this.showNonWorkHoursTable = true;
+                this.showNonWorkHoursTable = this.result?.length >= 0;
                 break;
         }
 
@@ -202,6 +202,6 @@ export class EditWorkHoursComponent implements OnInit {
         this.dataChange.emit($event);
     }
     public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        return value.filter(d => d.start_time >= this.todayDate);
+        return value?.filter(d => d.start_time >= this.todayDate);
     }
 }
