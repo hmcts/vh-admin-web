@@ -86,16 +86,16 @@ export class EditWorkHoursComponent implements OnInit {
             uploadWorkHoursRequest.working_hours.push(workHour);
         });
 
-        this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe(
-            () => {
+        this.bhClient.uploadWorkHours([uploadWorkHoursRequest]).subscribe({
+            next: () => {
                 this.isUploadWorkHoursSuccessful = true;
             },
-            error => {
+            error: error => {
                 this.isUploadWorkHoursFailure = true;
                 this.vhoWorkHoursTableComponent.isEditing = true;
                 this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error, { workHours: this.workHours });
             }
-        );
+        });
     }
 
     setSearchResult($event: SearchResults) {
@@ -108,7 +108,7 @@ export class EditWorkHoursComponent implements OnInit {
                 break;
             case HoursType.NonWorkingHours:
                 this.result = this.filterByFutureDate(this.result as VhoNonAvailabilityWorkHoursResponse[]);
-                this.showNonWorkHoursTable = true;
+                this.showNonWorkHoursTable = this.result?.length >= 0;
                 break;
         }
 
@@ -150,18 +150,18 @@ export class EditWorkHoursComponent implements OnInit {
 
         updateNonWorkHoursRequest.hours = hours;
 
-        this.bhClient.updateNonAvailabilityWorkHours(username, updateNonWorkHoursRequest).subscribe(
-            () => {
+        this.bhClient.updateNonAvailabilityWorkHours(username, updateNonWorkHoursRequest).subscribe({
+            next: () => {
                 this.showSaveNonWorkHoursFailedPopup = false;
                 this.isUploadNonWorkHoursSuccessful = true;
                 this.saveNonWorkHoursCompleted$.next(true);
             },
-            error => {
+            error: error => {
                 this.showSaveNonWorkHoursFailedPopup = true;
                 this.logger.error(`${this.loggerPrefix} Non working hours could not be saved`, error, { nonWorkHours: this.nonWorkHours });
                 this.saveNonWorkHoursCompleted$.next(false);
             }
-        );
+        });
     }
 
     cancelSaveNonWorkHours() {
@@ -202,6 +202,6 @@ export class EditWorkHoursComponent implements OnInit {
         this.dataChange.emit($event);
     }
     public filterByFutureDate(value: VhoNonAvailabilityWorkHoursResponse[]) {
-        return value.filter(d => d.start_time >= this.todayDate);
+        return value?.filter(d => d.start_time >= this.todayDate);
     }
 }
