@@ -1,3 +1,4 @@
+using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
@@ -35,6 +36,11 @@ namespace AdminWebsite
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
 
             services.AddSwagger();
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
             services.AddJsonOptions();
             RegisterSettings(services);
 
@@ -110,7 +116,7 @@ namespace AdminWebsite
             app.UseReferrerPolicy(opts => opts.NoReferrer());
             app.UseXXssProtection(options => options.EnabledWithBlockMode());
             app.UseNoCacheHttpHeaders();
-            app.UseHsts(options => options.MaxAge(365).IncludeSubdomains());
+            app.UseHsts();
             app.UseXfo(options => options.SameOrigin());
 
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
