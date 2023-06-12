@@ -13,6 +13,30 @@ import { OtherInformationComponent } from './other-information.component';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { of } from 'rxjs';
+import { CaseModel } from 'src/app/common/model/case.model';
+import { HearingModel } from 'src/app/common/model/hearing.model';
+
+function initHearingRequest(): HearingModel {
+    const participants: ParticipantModel[] = [];
+
+    const cases: CaseModel[] = [];
+
+    const newHearing = new HearingModel();
+    newHearing.cases = cases;
+    newHearing.participants = participants;
+
+    const today = new Date();
+    today.setHours(14, 30);
+
+    newHearing.hearing_type_id = -1;
+    newHearing.hearing_venue_id = -1;
+    newHearing.scheduled_date_time = today;
+    newHearing.scheduled_duration = 0;
+
+    newHearing.other_information = 'some text';
+
+    return newHearing;
+}
 
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
@@ -62,10 +86,8 @@ describe('OtherInformationComponent', () => {
                 DiscardConfirmPopupComponent
             ]
         }).compileComponents();
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
-            participants: [],
-            other_information: 'some text'
-        });
+        const hearingRequest = initHearingRequest();
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearingRequest);
     }));
     beforeEach(() => {
         fixture = TestBed.createComponent(OtherInformationComponent);

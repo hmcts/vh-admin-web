@@ -163,7 +163,7 @@ describe('UploadWorkHoursComponent', () => {
                 fileValidationErrors: []
             };
             workHoursProcessorSpy.processWorkHours.and.returnValue(processorResult);
-            workHoursProcessorSpy.uploadWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+            workHoursProcessorSpy.uploadWorkingHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));
 
             component.readWorkAvailability(
                 'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
@@ -197,17 +197,17 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it('should call api to upload work hours', () => {
-            const processorResult: WorkHoursFileProcessResult = {
+            const processorResult: NonWorkHoursFileProcessResult = {
                 fileValidationErrors: [],
                 numberOfUserNameToUpload: 2,
-                uploadWorkHoursRequest: [
+                uploadNonWorkHoursRequest: [
                     new UploadNonWorkingHoursRequest({ username: 'manual.vhoteamlead1@hearings.reform.hmcts.net' }),
                     new UploadNonWorkingHoursRequest({ username: 'first.second2@xyz.com' })
                 ]
             };
 
             workHoursProcessorSpy.processNonWorkHours.and.returnValue(processorResult);
-            workHoursProcessorSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+            workHoursProcessorSpy.uploadNonWorkingHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));
 
             component.readNonWorkAvailability(
                 'Username,Start Date (YYYY-MM-DD),Start Time,End Date (YYYY-MM-DD),End Time\n' +
@@ -239,10 +239,9 @@ describe('UploadWorkHoursComponent', () => {
 
         it('should read file', () => {
             spyOn(component, 'resetWorkingHoursMessages');
-
-            const readFileSpy = spyOn(component, 'readFile').and.returnValue({
-                onload: () => 'fileContents'
-            });
+            const fileReaderSpy = jasmine.createSpyObj('FileReader', ['readAsText'], ['onload']);
+            fileReaderSpy.onload = () => 'fileContents';
+            const readFileSpy = spyOn(component, 'readFile').and.returnValue(fileReaderSpy);
 
             component.workingHoursFile = new File([''], 'filename', { type: 'text/html' });
 
@@ -273,9 +272,9 @@ describe('UploadWorkHoursComponent', () => {
         it('should read file', () => {
             spyOn(component, 'resetNonWorkingHoursMessages');
 
-            const readFileSpy = spyOn(component, 'readFile').and.returnValue({
-                onload: () => 'fileContents'
-            });
+            const fileReaderSpy = jasmine.createSpyObj('FileReader', ['readAsText'], ['onload']);
+            fileReaderSpy.onload = () => 'fileContents';
+            const readFileSpy = spyOn(component, 'readFile').and.returnValue(fileReaderSpy);
 
             component.nonWorkingHoursFile = new File([''], 'filename', { type: 'text/html' });
 

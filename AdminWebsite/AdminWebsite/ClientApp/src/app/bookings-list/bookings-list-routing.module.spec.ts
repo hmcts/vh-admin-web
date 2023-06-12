@@ -23,6 +23,8 @@ import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
 import { DatePipe } from '@angular/common';
+import { ClientSettingsResponse } from '../services/clients/api-client';
+import { of } from 'rxjs';
 
 describe('BookingsListRouting', () => {
     let location: Location;
@@ -32,8 +34,10 @@ describe('BookingsListRouting', () => {
     let oidcSecurityService;
     let bookingGuard;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
-    const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
-    configServiceSpy.getConfig.and.returnValue({ launch_darkly_client_id: 'client_id' });
+    const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig', 'getClientSettings']);
+    const clientSettingsResponse = new ClientSettingsResponse({ launch_darkly_client_id: 'client_id' });
+    configServiceSpy.getConfig.and.returnValue(clientSettingsResponse);
+    configServiceSpy.getClientSettings.and.returnValue(of(clientSettingsResponse));
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule.withRoutes(routes), MomentModule, ReactiveFormsModule],

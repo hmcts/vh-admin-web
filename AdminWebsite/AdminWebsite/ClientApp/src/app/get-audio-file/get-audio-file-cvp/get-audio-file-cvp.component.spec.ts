@@ -1,7 +1,7 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { CvpAudioSearchModel } from 'src/app/common/model/cvp-audio-search-model';
-import { AudioLinkService } from 'src/app/services/audio-link-service';
+import { AudioLinkService, ICvpAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { CvpForAudioFileResponse } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { GetAudioFileCvpComponent } from './get-audio-file-cvp.component';
@@ -119,10 +119,11 @@ describe('GetAudioFileCvpComponent', () => {
     });
     it('should get the results when cvp audio files are found and service returns result', async () => {
         const result = [
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })),
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }))
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }),
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })
         ];
-        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve({ result: result, status: 200, error: undefined }));
+        const response: ICvpAudioRecordingResult = { result: result, status: 200, error: undefined };
+        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve(response));
 
         component.caseReference.setValue('');
         component.cloudroomName.setValue('000101');
@@ -135,10 +136,11 @@ describe('GetAudioFileCvpComponent', () => {
     });
     it('should get the results when cvp audio files with case reference are found and service returns result', async () => {
         const result = [
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })),
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }))
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }),
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })
         ];
-        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve({ result: result, status: 200, error: undefined }));
+        const response: ICvpAudioRecordingResult = { result: result, status: 200, error: undefined };
+        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve(response));
 
         component.caseReference.setValue('123');
         component.cloudroomName.setValue('000101');
@@ -151,10 +153,11 @@ describe('GetAudioFileCvpComponent', () => {
     });
     it('should get the results when cvp audio files by date and case reference', async () => {
         const result = [
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })),
-            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }))
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }),
+            new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })
         ];
-        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve({ result: result, status: 200, error: undefined }));
+        const response: ICvpAudioRecordingResult = { result: result, status: 200, error: undefined };
+        audioLinkService.getCvpAudioRecordings.and.returnValue(Promise.resolve(response));
 
         component.caseReference.setValue('caseRef1');
         component.cloudroomName.setValue('');

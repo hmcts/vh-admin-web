@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UserIdentityService } from '../services/user-identity.service';
 import { of } from 'rxjs';
 import { Logger } from '../services/logger';
+import { UserProfileResponse } from '../services/clients/api-client';
 
 describe('admin-guard', () => {
     let adminGuard: AdminGuard;
@@ -27,10 +28,12 @@ describe('admin-guard', () => {
     describe('when logged in with vh office admin role', () => {
         it('canActivate should return true', () => {
             UserIdentityServiceSpy.getUserInformation.and.returnValue(
-                of({
-                    is_vh_officer_administrator_role: true,
-                    is_case_administrator: false
-                })
+                of(
+                    new UserProfileResponse({
+                        is_vh_officer_administrator_role: true,
+                        is_case_administrator: false
+                    })
+                )
             );
             adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeTruthy());
         });
@@ -39,10 +42,12 @@ describe('admin-guard', () => {
     describe('when login with case admin or vh officer admin role', () => {
         it('canActivate should return true', () => {
             UserIdentityServiceSpy.getUserInformation.and.returnValue(
-                of({
-                    is_vh_officer_administrator_role: false,
-                    is_case_administrator: true
-                })
+                of(
+                    new UserProfileResponse({
+                        is_vh_officer_administrator_role: false,
+                        is_case_administrator: true
+                    })
+                )
             );
             adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeTruthy());
         });
@@ -51,10 +56,12 @@ describe('admin-guard', () => {
     describe('when not logged in', () => {
         it('canActivate should return false', () => {
             UserIdentityServiceSpy.getUserInformation.and.returnValue(
-                of({
-                    is_vh_officer_administrator_role: false,
-                    is_case_administrator: false
-                })
+                of(
+                    new UserProfileResponse({
+                        is_vh_officer_administrator_role: false,
+                        is_case_administrator: false
+                    })
+                )
             );
             adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeFalsy());
         });

@@ -1,4 +1,4 @@
-import { AfterViewInit, DebugElement } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -11,16 +11,13 @@ import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { of, ReplaySubject } from 'rxjs';
-import { LaunchDarklyService } from '../../services/launch-darkly.service';
-import { ReturnUrlService } from '../../services/return-url.service';
-import { FeatureFlagService } from '../../services/feature-flag.service';
+import { of } from 'rxjs';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
-const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 describe('HearingDetailsComponent', () => {
-    launchDarklyServiceSpy.flagChange = new ReplaySubject();
-    launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
     let component: HearingDetailsComponent;
     let fixture: ComponentFixture<HearingDetailsComponent>;
     let debugElement: DebugElement;
@@ -32,7 +29,7 @@ describe('HearingDetailsComponent', () => {
         join_by_phone_from_date: '2019-10-22 13:58:40.3730067'
     });
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
-    configServiceSpy.getConfig.and.returnValue(of(clientSettings));
+    configServiceSpy.getConfig.and.returnValue(clientSettings);
     const h1 = new BookingsDetailsModel(
         '1',
         new Date('2019-10-22 13:58:40.3730067'),
@@ -153,7 +150,7 @@ describe('HearingDetailsComponent', () => {
     });
     describe('feature flag turn on and off ', () => {
         it('should not show allocated to label if work allocation feature flag is off', async () => {
-            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(false));
             await component.ngOnInit();
             fixture.detectChanges();
             const divToHide = fixture.debugElement.query(By.css('#hearing-allocated-to'));
@@ -161,7 +158,7 @@ describe('HearingDetailsComponent', () => {
         });
 
         it('should show allocated to label if work allocation feature flag is on', async () => {
-            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
             await component.ngOnInit();
             fixture.detectChanges();
             const divToHide = fixture.debugElement.query(By.css('#hearing-allocated-to'));

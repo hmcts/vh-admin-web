@@ -17,12 +17,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
-import {
-    BookHearingException,
-    BookingStatus,
-    HearingDetailsResponse,
-    UpdateBookingStatusResponse
-} from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -33,7 +28,7 @@ import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
-import { HttpTestingController } from '@angular/common/http/testing';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -118,7 +113,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'getStatus',
     'updateFailedStatus'
 ]);
-const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
+const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
@@ -133,11 +128,11 @@ describe('SummaryComponent with valid request', () => {
         mockResp.success = true;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
+        videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(ResponseTestData.getHearingResponseTestData()));
         videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
-        videoHearingsServiceSpy.getStatus.and.returnValue(of(mockResp));
+        videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve(mockResp));
         mockResp.success = false;
-        videoHearingsServiceSpy.updateFailedStatus.and.returnValue(of(mockResp));
+        videoHearingsServiceSpy.updateFailedStatus.and.returnValue(Promise.resolve(mockResp));
         TestBed.configureTestingModule({
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -820,7 +815,7 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
-    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>(['FeatureFlagService', 'getFeatureFlagByName']);
+    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
     featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
     const component = new SummaryComponent(

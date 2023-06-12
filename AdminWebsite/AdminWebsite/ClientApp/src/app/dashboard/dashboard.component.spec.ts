@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of, ReplaySubject, Subscription } from 'rxjs';
+import { of } from 'rxjs';
 import { UserProfileResponse } from '../services/clients/api-client';
-import { LaunchDarklyService } from '../services/launch-darkly.service';
+import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
 import { DashboardComponent } from './dashboard.component';
@@ -12,9 +12,9 @@ describe('DashboardComponent', () => {
     let fixture: ComponentFixture<DashboardComponent>;
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
 
-    const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
-    launchDarklyServiceSpy.flagChange = new ReplaySubject();
-    launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
 
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
@@ -97,7 +97,8 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(false));
+
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
@@ -111,14 +112,13 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeTruthy();
     });
 
     it('should unsubscribe from launch darkly flag changes', () => {
-        component.$ldSubcription = new Subscription();
-        const unsubscribeSpy = spyOn(component.$ldSubcription, 'unsubscribe');
+        const unsubscribeSpy = spyOn(component.destroyed$, 'next');
 
         component.ngOnDestroy();
 
@@ -146,7 +146,7 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.flagChange.next({ 'hrs-integration': true });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(true));
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeFalsy();
     });
@@ -160,7 +160,7 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.flagChange.next({ 'hrs-integration': false });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeTruthy();
     });

@@ -1,10 +1,10 @@
-import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import { fakeAsync, flush } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
-import { HearingAudioSearchModel } from 'src/app/common/model/hearing-audio-search-model';
-import { AudioLinkService } from 'src/app/services/audio-link-service';
+import { AudioLinkService, IVhAudioRecordingResult } from 'src/app/services/audio-link-service';
 import { Logger } from 'src/app/services/logger';
 
 import { GetAudioFileVhComponent } from './get-audio-file-vh.component';
+import { HearingsForAudioFileSearchResponse } from 'src/app/services/clients/api-client';
 
 describe('GetAudioFileVhComponent', () => {
     let component: GetAudioFileVhComponent;
@@ -56,14 +56,10 @@ describe('GetAudioFileVhComponent', () => {
     it('should set the results', async () => {
         // Arrange
         const result = [
-            new HearingAudioSearchModel({
-                init(_data?: any): void {},
-                toJSON(data?: any): any {},
+            new HearingsForAudioFileSearchResponse({
                 id: '363725D0-E3D6-4D4A-8D0A-E8E57575FBC1'
             }),
-            new HearingAudioSearchModel({
-                init(_data?: any): void {},
-                toJSON(data?: any): any {},
+            new HearingsForAudioFileSearchResponse({
                 id: '363725D0-E3D6-4D4A-8D0A-E8E57575FBC2'
             })
         ];
@@ -71,9 +67,8 @@ describe('GetAudioFileVhComponent', () => {
         component.vhDate.setValue(null);
         component.caseNumber.setValue('123');
 
-        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(
-            Promise.resolve({ result: result, status: 200, error: undefined })
-        );
+        const response: IVhAudioRecordingResult = { result: result, status: 200, error: undefined };
+        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(Promise.resolve(response));
 
         // Act
         await component.search();

@@ -1,6 +1,6 @@
 import { DateErrorMessagesComponent } from './date-error-messages';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { DebugElement, ElementRef } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 describe('Date error message test suite', () => {

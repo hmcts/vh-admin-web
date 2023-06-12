@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { VhoSearchComponent } from './vho-search.component';
-import { VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
+import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
 import { FormBuilder } from '@angular/forms';
 import { Logger } from '../../../services/logger';
@@ -60,10 +60,11 @@ describe('VhoSearchComponent', () => {
 
     describe('ngOnInit', () => {
         it('should reload non work hours when fetchNonWorkHours event streamed', fakeAsync(() => {
-            const vhoSearchResult: SearchResults = { result: [], refresh: true };
+            const apiRespone: VhoNonAvailabilityWorkHoursResponse[] = [];
+            const vhoSearchResult: SearchResults = { result: apiRespone, refresh: true };
             component.ngOnInit();
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
+            service.getNonWorkAvailabilityForVho.and.returnValue(Promise.resolve(apiRespone));
             fixture.detectChanges();
 
             service.fetchNonWorkHours$.next(true);
@@ -77,11 +78,12 @@ describe('VhoSearchComponent', () => {
 
     describe('search tests working hours', () => {
         it('should call searchForVho and emit vhoSearchResult', async () => {
-            const vhoSearchResult: SearchResults = { result: [], refresh: false };
+            const apiRespone: VhoWorkHoursResponse[] = [];
+            const vhoSearchResult: SearchResults = { result: apiRespone, refresh: false };
 
             component.form.setValue({ hoursType: HoursType.WorkingHours, username: 'username' });
 
-            service.getWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
+            service.getWorkAvailabilityForVho.and.returnValue(Promise.resolve(apiRespone));
 
             await component.search();
 
@@ -123,9 +125,10 @@ describe('VhoSearchComponent', () => {
 
     describe('search tests non working hours', () => {
         it('should call searchForVho and emit events', async () => {
-            const vhoSearchResult: SearchResults = { result: [], refresh: false };
+            const apiRespone: VhoNonAvailabilityWorkHoursResponse[] = [];
+            const vhoSearchResult: SearchResults = { result: apiRespone, refresh: false };
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult.result);
+            service.getNonWorkAvailabilityForVho.and.returnValue(Promise.resolve(apiRespone));
 
             await component.search();
 
@@ -135,20 +138,20 @@ describe('VhoSearchComponent', () => {
             expect(component.vhoSearchEmitter.emit).toHaveBeenCalledWith(vhoSearchResult);
         });
         it('should sort the dates in chronological order ', async () => {
-            const vhoSearchResult: Array<VhoNonAvailabilityWorkHoursResponse> = [];
+            const apiRespone: VhoNonAvailabilityWorkHoursResponse[] = [];
             component.form.setValue({ hoursType: HoursType.NonWorkingHours, username: 'username' });
-            service.getNonWorkAvailabilityForVho.and.returnValue(vhoSearchResult);
-            vhoSearchResult.push(
+            service.getNonWorkAvailabilityForVho.and.returnValue(Promise.resolve(apiRespone));
+            apiRespone.push(
                 new VhoNonAvailabilityWorkHoursResponse({
                     start_time: new Date('2022-03-08T17:53:01.8455023')
                 })
             );
-            vhoSearchResult.push(
+            apiRespone.push(
                 new VhoNonAvailabilityWorkHoursResponse({
                     start_time: new Date('2022-01-08T14:53:01.8455023')
                 })
             );
-            vhoSearchResult.push(
+            apiRespone.push(
                 new VhoNonAvailabilityWorkHoursResponse({
                     start_time: new Date('2022-09-08T14:53:01.8455023')
                 })

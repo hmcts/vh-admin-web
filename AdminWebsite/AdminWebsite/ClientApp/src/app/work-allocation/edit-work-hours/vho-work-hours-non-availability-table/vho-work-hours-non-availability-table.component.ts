@@ -366,16 +366,16 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     onDeletionAnswer($event: boolean) {
         this.displayConfirmPopup = false;
         if ($event) {
-            this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe(
-                res => {
+            this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe({
+                next: () => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.removeSlot();
                 },
-                error => {
+                error: error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
                     this.showMessage('Non-availability hours changes could not be saved successfully');
                 }
-            );
+            });
         }
     }
 

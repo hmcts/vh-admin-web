@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.
     templateUrl: 'hearing-details.component.html',
     styleUrls: ['hearing-details.component.css']
 })
-export class HearingDetailsComponent implements OnInit {
+export class HearingDetailsComponent implements OnInit, OnDestroy {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
 
@@ -27,7 +27,7 @@ export class HearingDetailsComponent implements OnInit {
     vhoWorkAllocationFeature = false;
     $subcription: Subscription;
 
-    $ldSubcription: Subscription;
+    destroyed$ = new Subject<void>();
     enableSearchFeature: boolean;
     ejudFeatureFlag: boolean;
 
@@ -39,9 +39,16 @@ export class HearingDetailsComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
-            this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-        });
+        this.lanchDarklyService
+            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.vhoWorkAllocationFeature = flag;
+            });
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next();
     }
 
     getParticipantInfo(participantId: string): string {

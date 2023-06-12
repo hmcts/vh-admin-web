@@ -1,6 +1,12 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { BHClient, UploadWorkHoursRequest, UploadNonWorkingHoursRequest, WorkingHours } from 'src/app/services/clients/api-client';
+import {
+    BHClient,
+    UploadWorkHoursRequest,
+    UploadNonWorkingHoursRequest,
+    WorkingHours,
+    UploadWorkHoursResponse
+} from 'src/app/services/clients/api-client';
 
 import { WorkHoursFileProcessorService } from './work-hours-file-processor.service';
 
@@ -11,8 +17,8 @@ describe('WorkHoursFileProcessorService', () => {
 
     beforeEach(() => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours']);
-        bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
-        bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+        bHClientSpy.uploadWorkHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));
+        bHClientSpy.uploadNonWorkingHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));
 
         TestBed.configureTestingModule({
             providers: [{ provide: BHClient, useValue: bHClientSpy }]
@@ -64,7 +70,7 @@ describe('WorkHoursFileProcessorService', () => {
                 '\n';
 
             const result = service.processWorkHours(input);
-            console.log(result);
+
             expect(result.fileValidationErrors.length).toBe(0);
             expect(result.numberOfUserNameToUpload).toBe(2);
             expect(result.uploadWorkHoursRequest[0].username).toBe('first.second.1@xyz.com');

@@ -198,7 +198,7 @@ describe('AppComponent - ConnectionService', () => {
             const service = TestBed.inject(ConnectionService);
 
             // make sure the observable from head errors
-            spyOn(http, 'head').and.returnValue(throwError);
+            spyOn(http, 'head').and.throwError('lost connection');
 
             // need this to start the timer in the async zone
             tick(0);

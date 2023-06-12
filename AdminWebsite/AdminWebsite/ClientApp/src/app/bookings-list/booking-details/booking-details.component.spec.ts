@@ -210,7 +210,7 @@ describe('BookingDetailsComponent', () => {
         videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
 
         bookingPersistServiceSpy.selectedHearingId = '44';
-        userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
+        userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_officer_administrator_role: true })));
 
         const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
         component = new BookingDetailsComponent(

@@ -1,9 +1,9 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { of, Subscription } from 'rxjs';
+import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { ClientSettingsResponse, PersonResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -95,21 +95,21 @@ describe('SearchEmailComponent', () => {
         searchField = debugElement.query(By.css(`#${component.locator}`));
         expect(searchField.nativeElement).toBeTruthy();
     });
-    it('should have empty list of participant models', waitForAsync(() => {
+    it('should have empty list of participant models', () => {
         expect(component.results).toBeTruthy();
         expect(component.results.length).toBe(0);
-    }));
-    it('should set up intial properties', waitForAsync(() => {
+    });
+    it('should set up intial properties', () => {
         expect(component.isValidEmail).toBeTruthy();
         expect(component.$subscriptions.length).toBeGreaterThan(0);
         expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
         expect(component.isJoh).toBeFalsy();
         expect(component.disabled).toBeTruthy();
-    }));
-    it('should return true if participant is a judge', waitForAsync(() => {
+    });
+    it('should return true if participant is a judge', () => {
         component.hearingRoleParticipant = 'Judge';
         expect(component.isJudge).toBeTruthy();
-    }));
+    });
     it('should set email to initialEmail', () => {
         const emailValue = 'email@value.com';
         component.initialValue = emailValue;

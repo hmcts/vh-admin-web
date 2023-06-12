@@ -36,7 +36,7 @@ import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-da
 import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService';
 import { ConfigService } from './services/config.service';
-import { ClientSettingsResponse } from './services/clients/api-client';
+import { ClientSettingsResponse, UserProfileResponse } from './services/clients/api-client';
 import { of } from 'rxjs';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HearingSearchResultsComponent } from './get-audio-file/get-audio-file-vh/hearing-search-results/hearing-search-results.component';
@@ -59,7 +59,7 @@ describe('app routing', () => {
     });
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig', 'getConfig']);
     configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
-    const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
@@ -118,10 +118,7 @@ describe('app routing', () => {
     it('it should navigate to unauthorised, if not correct role', fakeAsync(() => {
         oidcSecurityService.setAuthenticated(true);
         UserIdentityServiceSpy.getUserInformation.and.returnValue(
-            of({
-                is_vh_officer_administrator_role: false,
-                is_case_administrator: false
-            })
+            of(new UserProfileResponse({ is_vh_officer_administrator_role: false, is_case_administrator: false }))
         );
         router.navigate(['/dashboard']);
         tick();
