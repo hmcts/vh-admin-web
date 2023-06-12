@@ -9,12 +9,15 @@ import { Logger } from 'src/app/services/logger';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
 
 import { JusticeUserFormComponent } from './justice-user-form.component';
+import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 describe('JusticeUserFormComponent', () => {
     const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
         'addNewJusticeUser',
         'editJusticeUser'
     ]);
+
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
     let component: JusticeUserFormComponent;
     let fixture: ComponentFixture<JusticeUserFormComponent>;
@@ -24,15 +27,18 @@ describe('JusticeUserFormComponent', () => {
         lastname: 'Doe',
         username: 'test@cso.com',
         telephone: null,
-        user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
+        user_roles: [JusticeUserRole.Vho]
     });
 
     beforeEach(async () => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
+
         await TestBed.configureTestingModule({
             declarations: [JusticeUserFormComponent],
             providers: [
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy }
+                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 
@@ -48,7 +54,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue(existingUser.telephone);
-            component.form.controls.roles.setValue([true, false, true]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -57,7 +63,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('+441234567890');
-            component.form.controls.roles.setValue([true, false, true]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -66,7 +72,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('abcd');
-            component.form.controls.roles.setValue([true, false, false]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(true);
         });
     });
@@ -209,11 +215,36 @@ describe('JusticeUserFormComponent', () => {
         }));
     });
 
-    describe('on form creation', () => {
+    describe('on form creation dom1 off', () => {
         beforeEach(async () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
             fixture = TestBed.createComponent(JusticeUserFormComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
+            // await fixture.whenStable();
+        });
+
+        it('should create form with default values', () => {
+            // arrange / act
+            const form = component.form;
+
+            // assert
+            expect(form.controls.username.value).toBe('');
+            expect(form.controls.contactTelephone.value).toBe('');
+            expect(form.controls.firstName.value).toBe('');
+            expect(form.controls.lastName.value).toBe('');
+            // Assuming that the order in the formArray is VHO, ADMIN
+            expect(form.controls.roles.value).toEqual([true, false]);
+        });
+    });
+
+    describe('on form creation dom1 on', () => {
+        beforeEach(async () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(true));
+            fixture = TestBed.createComponent(JusticeUserFormComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+            // await fixture.whenStable();
         });
 
         it('should create form with default values', () => {

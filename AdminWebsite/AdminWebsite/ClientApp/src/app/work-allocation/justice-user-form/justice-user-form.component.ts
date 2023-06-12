@@ -2,11 +2,12 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { NEVER, catchError } from 'rxjs';
-import { Constants, AvailableRoles } from 'src/app/common/constants';
+import { Constants, AvailableRoles, AvailableRolesNonDom1 } from 'src/app/common/constants';
 import { BookHearingException, JusticeUserResponse, JusticeUserRole, ValidationProblemDetails } from 'src/app/services/clients/api-client';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { toCamel } from 'ts-case-convert';
 import { justiceUserRoleValidator } from '../../common/custom-validations/justice-user-role-validator';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 export type JusticeUserFormMode = 'add' | 'edit';
 
@@ -19,7 +20,7 @@ export class JusticeUserFormComponent implements OnChanges {
     errorIcon = faExclamationCircle;
     isSaving = false;
     failedSaveMessage: string;
-    availableRoles = AvailableRoles;
+    availableRoles = AvailableRolesNonDom1; // default to non-dom1 roles until go live
     form: FormGroup<JusticeUserForm>;
 
     _justiceUser: JusticeUserResponse;
@@ -30,15 +31,7 @@ export class JusticeUserFormComponent implements OnChanges {
             return;
         }
         this._justiceUser = value;
-        this.form.reset({
-            firstName: value.first_name,
-            lastName: value.lastname,
-            username: value.username,
-            contactTelephone: value.telephone
-        });
-
-        const roleControls = this.availableRoles.map(x => value.user_roles.includes(x.value));
-        this.form.controls.roles.setValue(roleControls);
+        this.populateForm(value);
     }
 
     @Input() mode: JusticeUserFormMode = 'add';
@@ -46,7 +39,21 @@ export class JusticeUserFormComponent implements OnChanges {
     @Output() saveSuccessfulEvent = new EventEmitter<JusticeUserResponse>();
     @Output() cancelFormEvent = new EventEmitter();
 
-    constructor(private formBuilder: FormBuilder, private justiceUserService: JusticeUsersService, private cdRef: ChangeDetectorRef) {
+    constructor(
+        private formBuilder: FormBuilder,
+        private justiceUserService: JusticeUsersService,
+        private cdRef: ChangeDetectorRef,
+        private ldService: LaunchDarklyService
+    ) {
+        this.createForm(false);
+        this.ldService.getFlag<boolean>(FeatureFlags.dom1Integration).subscribe(dom1Enabled => {
+            this.createForm(dom1Enabled);
+            this.populateForm(this._justiceUser); // repopulate form with new role options available
+        });
+    }
+
+    createForm(dom1Enabled: boolean) {
+        this.availableRoles = dom1Enabled ? AvailableRoles : AvailableRolesNonDom1;
         this.form = this.formBuilder.group<JusticeUserForm>({
             username: new FormControl('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
             contactTelephone: new FormControl('', [Validators.pattern(Constants.PhonePattern)]),
@@ -60,9 +67,10 @@ export class JusticeUserFormComponent implements OnChanges {
                         return new FormControl(false);
                     }
                 }),
-                justiceUserRoleValidator()
+                justiceUserRoleValidator(this.availableRoles)
             )
         });
+        this.cdRef.markForCheck();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -109,6 +117,21 @@ export class JusticeUserFormComponent implements OnChanges {
             }
         }
         this.failedSaveMessage = message;
+    }
+
+    populateForm(justiceUser: JusticeUserResponse) {
+        if (!justiceUser) {
+            return;
+        }
+        this.form.reset({
+            firstName: justiceUser.first_name,
+            lastName: justiceUser.lastname,
+            username: justiceUser.username,
+            contactTelephone: justiceUser.telephone
+        });
+
+        const roleControls = this.availableRoles.map(x => justiceUser.user_roles.includes(x.value));
+        this.form.controls.roles.setValue(roleControls);
     }
 
     private addNewUser() {
