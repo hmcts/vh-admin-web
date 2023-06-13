@@ -1,11 +1,12 @@
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, DebugElement, EventEmitter, Input, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { Subject, of, takeUntil } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 import { WorkAllocationComponent } from './work-allocation.component';
-import { BHClient, UserProfileResponse } from '../services/clients/api-client';
+import { UserProfileResponse } from '../services/clients/api-client';
+import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 
 @Component({
     selector: 'app-upload-work-hours',
@@ -17,13 +18,18 @@ class UploadWorkHoursStubComponent {}
     selector: 'app-edit-work-hours',
     template: '<span class="govuk-details__summary-text" id="edit-availability">  Edit working hours / non-availability  </span>'
 })
-class EditWorkHoursStubComponent {}
+class EditWorkHoursStubComponent {
+    @Input() isVhTeamLeader: boolean;
+    @Input() dataChangedBroadcast = new EventEmitter<boolean>();
+}
 
 @Component({
     selector: 'app-manage-team',
-    template: '<span class="govuk-details__summary-text" id="manage-team">  Manage team  </span>'
+    template: ''
 })
-class ManageTeamStubComponent {}
+class ManageTeamStubComponent {
+    @Input() showHeader = true;
+}
 
 @Component({
     selector: 'app-allocate-hearings',
@@ -35,16 +41,19 @@ describe('WorkAllocationComponent', () => {
     let component: WorkAllocationComponent;
     let fixture: ComponentFixture<WorkAllocationComponent>;
 
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
     const userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-    userIdentityServiceSpy.getUserInformation.and.returnValue(
-        of(
-            new UserProfileResponse({
-                is_vh_team_leader: true
-            })
-        )
-    );
 
     beforeEach(() => {
+        userIdentityServiceSpy.getUserInformation.and.returnValue(
+            of(
+                new UserProfileResponse({
+                    is_vh_team_leader: true
+                })
+            )
+        );
+
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(true));
         TestBed.configureTestingModule({
             imports: [FontAwesomeTestingModule],
             declarations: [
@@ -54,7 +63,10 @@ describe('WorkAllocationComponent', () => {
                 ManageTeamStubComponent,
                 AllocateHearingsStubComponent
             ],
-            providers: [{ provide: UserIdentityService, useValue: userIdentityServiceSpy }]
+            providers: [
+                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+            ]
         }).compileComponents();
     });
 
@@ -66,34 +78,75 @@ describe('WorkAllocationComponent', () => {
     });
 
     describe('rendering', () => {
-        it('should show vh team leader view', () => {
-            component.isVhTeamLeader = true;
+        describe('dom1 feature toggle on', () => {
+            beforeEach(() => {
+                component.dom1FeatureEnabled = true;
+            });
+            it('should show vh team leader view', () => {
+                component.isVhTeamLeader = true;
 
-            fixture.detectChanges();
+                fixture.detectChanges();
 
-            const componentDebugElement: DebugElement = fixture.debugElement;
-            const uploadHeader = componentDebugElement.query(By.css('#upload-availability')).nativeElement as HTMLSpanElement;
-            expect(uploadHeader.textContent.trim()).toEqual(`Upload working hours / non-availability`);
+                const componentDebugElement: DebugElement = fixture.debugElement;
+                const uploadHeader = componentDebugElement.query(By.css('#upload-availability')).nativeElement as HTMLSpanElement;
+                expect(uploadHeader.textContent.trim()).toEqual(`Upload working hours / non-availability`);
 
-            const manageTeamHeader = componentDebugElement.query(By.css('#manage-team')).nativeElement as HTMLSpanElement;
-            expect(manageTeamHeader.textContent.trim()).toEqual(`Manage team`);
+                const manageTeamHeader = componentDebugElement.query(By.css('#manage-team'));
+                expect(manageTeamHeader).toBeFalsy();
 
-            const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings')).nativeElement as HTMLSpanElement;
-            expect(allocateHearingHeader.textContent.trim()).toEqual(`Allocate hearings`);
+                const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings')).nativeElement as HTMLSpanElement;
+                expect(allocateHearingHeader.textContent.trim()).toEqual(`Allocate hearings`);
+            });
+
+            it('should show vho view', () => {
+                component.isVhTeamLeader = false;
+                fixture.detectChanges();
+
+                const componentDebugElement: DebugElement = fixture.debugElement;
+                const uploadHeader = componentDebugElement.query(By.css('#upload-availability'));
+                const manageTeamHeader = componentDebugElement.query(By.css('#manage-team'));
+                const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings'));
+
+                expect(uploadHeader).toBeFalsy();
+                expect(manageTeamHeader).toBeFalsy();
+                expect(allocateHearingHeader).toBeFalsy();
+            });
         });
 
-        it('should show vho view', () => {
-            component.isVhTeamLeader = false;
-            fixture.detectChanges();
+        describe('dom1 feature toggle off', () => {
+            beforeEach(() => {
+                component.dom1FeatureEnabled = false;
+            });
 
-            const componentDebugElement: DebugElement = fixture.debugElement;
-            const uploadHeader = componentDebugElement.query(By.css('#upload-availability'));
-            const manageTeamHeader = componentDebugElement.query(By.css('#manage-team'));
-            const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings'));
+            it('should show vh team leader view', () => {
+                component.isVhTeamLeader = true;
 
-            expect(uploadHeader).toBeFalsy();
-            expect(manageTeamHeader).toBeFalsy();
-            expect(allocateHearingHeader).toBeFalsy();
+                fixture.detectChanges();
+
+                const componentDebugElement: DebugElement = fixture.debugElement;
+                const uploadHeader = componentDebugElement.query(By.css('#upload-availability')).nativeElement as HTMLSpanElement;
+                expect(uploadHeader.textContent.trim()).toEqual(`Upload working hours / non-availability`);
+
+                const manageTeamHeader = componentDebugElement.query(By.css('#manage-team')).nativeElement as HTMLSpanElement;
+                expect(manageTeamHeader.textContent.trim()).toEqual(`Manage team`);
+
+                const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings')).nativeElement as HTMLSpanElement;
+                expect(allocateHearingHeader.textContent.trim()).toEqual(`Allocate hearings`);
+            });
+
+            it('should show vho view', () => {
+                component.isVhTeamLeader = false;
+                fixture.detectChanges();
+
+                const componentDebugElement: DebugElement = fixture.debugElement;
+                const uploadHeader = componentDebugElement.query(By.css('#upload-availability'));
+                const manageTeamHeader = componentDebugElement.query(By.css('#manage-team'));
+                const allocateHearingHeader = componentDebugElement.query(By.css('#allocate-hearings'));
+
+                expect(uploadHeader).toBeFalsy();
+                expect(manageTeamHeader).toBeFalsy();
+                expect(allocateHearingHeader).toBeFalsy();
+            });
         });
     });
 
@@ -122,5 +175,15 @@ describe('WorkAllocationComponent', () => {
             expect(component).toBeTruthy();
             expect(component.showSaveConfirmation).toBeTruthy();
         });
+    });
+
+    describe('ngOnDestroy', () => {
+        it('should call next to destroyed subject', fakeAsync(() => {
+            const unsubscribeSpy = spyOn(component.destroyed$, 'next');
+
+            component.ngOnDestroy();
+
+            expect(unsubscribeSpy).toHaveBeenCalled();
+        }));
     });
 });

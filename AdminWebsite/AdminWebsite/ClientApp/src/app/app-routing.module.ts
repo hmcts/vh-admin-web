@@ -36,6 +36,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard, VhOfficerAdminGuard, WorkAllocationFeatureGuard],
         loadChildren: () => import('./work-allocation/work-allocation.module').then(m => m.WorkAllocationModule)
     },
+    {
+        path: 'manage-team',
+        canActivate: [AuthGuard, VhOfficerAdminGuard, WorkAllocationFeatureGuard],
+        loadChildren: () => import('./manage-team/manage-team.module').then(m => m.ManageTeamModule)
+    },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
