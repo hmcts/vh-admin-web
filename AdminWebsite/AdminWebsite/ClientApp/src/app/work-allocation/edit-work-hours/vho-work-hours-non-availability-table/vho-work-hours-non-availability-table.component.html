@@ -24,11 +24,24 @@
         />
       </div>
       <div class="govuk-grid-column-one-third">
-        <button class="govuk-button" id="filter-btn" data-module="govuk-button" (click)="filterByDate()">Filter by date</button>
+        <button
+          id="non-available-table-filter-btn"
+          class="govuk-button"
+          id="filter-btn"
+          data-module="govuk-button"
+          (click)="filterByDate()"
+        >
+          Filter by date
+        </button>
       </div>
     </div>
   </div>
-  <table class="govuk-table" data-module="moj-sortable-table" aria-describedby="vho work non availability table">
+  <table
+    id="non-available-table-results"
+    class="govuk-table"
+    data-module="moj-sortable-table"
+    aria-describedby="vho work non availability table"
+  >
     <thead class="govuk-table__head">
       <tr class="govuk-table__row">
         <th scope="col" class="govuk-table__header" aria-sort="none">Start Date</th>
@@ -36,7 +49,12 @@
         <th scope="col" class="govuk-table__header" aria-sort="none">Start Time</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">End Time</th>
         <th scope="col" class="govuk-table__header" aria-sort="none">
-          <fa-icon [icon]="faCalendarPlus" class="pointer" (click)="addNewNonAvailabilityRow()"></fa-icon>
+          <fa-icon
+            id="non-available-table-add-new-btn"
+            [icon]="faCalendarPlus"
+            class="pointer"
+            (click)="addNewNonAvailabilityRow()"
+          ></fa-icon>
         </th>
       </tr>
     </thead>

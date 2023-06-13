@@ -2,19 +2,35 @@
   <h1 class="govuk-heading-s">Upcoming unallocated hearings:</h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.todayDate">{{ getTodayCount }}</a>
+      <a class="hearing-number" id="unallocated-hearings-today" [routerLink]="['/work-allocation']" [queryParams]="this.todayDate">{{
+        getTodayCount
+      }}</a>
       <p>Today</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.tomorrowDate">{{ getTomorrowsCount }}</a>
+      <a class="hearing-number" id="unallocated-hearings-tomorrow" [routerLink]="['/work-allocation']" [queryParams]="this.tomorrowDate">{{
+        getTomorrowsCount
+      }}</a>
       <p>Tomorrow</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.next7DaysDate">{{ getNext7DaysCount }}</a>
+      <a
+        class="hearing-number"
+        id="unallocated-hearings-next-seven-days"
+        [routerLink]="['/work-allocation']"
+        [queryParams]="this.next7DaysDate"
+        >{{ getNext7DaysCount }}</a
+      >
       <p>Next 7 Days</p>
     </div>
     <div class="govuk-grid-column-one-quarter">
-      <a class="hearing-number" [routerLink]="['/work-allocation']" [queryParams]="this.next30DaysDate">{{ getNext30DaysCount }}</a>
+      <a
+        class="hearing-number"
+        id="unallocated-hearings-next-thirty-days"
+        [routerLink]="['/work-allocation']"
+        [queryParams]="this.next30DaysDate"
+        >{{ getNext30DaysCount }}</a
+      >
       <p>Next 30 Days</p>
     </div>
   </div>

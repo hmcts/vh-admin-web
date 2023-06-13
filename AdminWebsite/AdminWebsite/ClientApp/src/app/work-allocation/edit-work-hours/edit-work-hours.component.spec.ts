@@ -91,6 +91,13 @@ describe('EditWorkHoursComponent', () => {
             expect(component.showNonWorkHoursTable).toBe(false);
         });
 
+        it('should not show non work hours table when result is null', () => {
+            component.hoursType = HoursType.NonWorkingHours;
+            component.setSearchResult({ result: null, refresh: false });
+            expect(component.showWorkHoursTable).toBe(false);
+            expect(component.showNonWorkHoursTable).toBe(false);
+        });
+
         it('should show non work hours table when non work hours selected', () => {
             const parameter: Array<VhoNonAvailabilityWorkHoursResponse> = [];
             parameter.push(new VhoNonAvailabilityWorkHoursResponse());

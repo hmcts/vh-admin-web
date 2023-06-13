@@ -24,15 +24,13 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
-        private readonly IUserIdentity _identity;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, IPublicHolidayRetriever publicHolidayRetriever)
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
-            _identity = identity;
             _publicHolidayRetriever = publicHolidayRetriever;
         }
 
@@ -46,14 +44,14 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
         {
             var caseTypes = await _bookingsApiClient.GetCaseTypesAsync();
-            var reult = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
+            var result = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
                 Id = hearingType.Id,
                 Name = hearingType.Name
             })).ToList();
 
-            return Ok(reult);
+            return Ok(result);
         }
 
         /// <summary>

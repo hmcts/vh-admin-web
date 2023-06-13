@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="onSave()">
+<form id="justice-user-form" [formGroup]="form" (ngSubmit)="onSave()">
   <fieldset class="govuk-fieldset">
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
       <h1 class="govuk-fieldset__heading">{{ mode === 'edit' ? 'Edit role' : 'Add a justice user' }}</h1>
@@ -80,10 +80,23 @@
   </fieldset>
 
   <div class="govuk-button-group" *ngIf="!isSaving">
-    <button class="govuk-button" data-prevent-double-click="true" data-module="govuk-button" type="submit" [disabled]="!form.valid">
+    <button
+      id="justice-user-form-save-btn"
+      class="govuk-button"
+      data-prevent-double-click="true"
+      data-module="govuk-button"
+      type="submit"
+      [disabled]="!form.valid"
+    >
       Save
     </button>
-    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button" (click)="onCancel()">
+    <button
+      id="justice-user-form-discard-btn"
+      class="govuk-button govuk-button--secondary"
+      data-module="govuk-button"
+      type="button"
+      (click)="onCancel()"
+    >
       Discard Changes
     </button>
   </div>
