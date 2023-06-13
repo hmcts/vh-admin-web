@@ -221,7 +221,6 @@ describe('JusticeUserFormComponent', () => {
             fixture = TestBed.createComponent(JusticeUserFormComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-            // await fixture.whenStable();
         });
 
         it('should create form with default values', () => {
@@ -244,7 +243,6 @@ describe('JusticeUserFormComponent', () => {
             fixture = TestBed.createComponent(JusticeUserFormComponent);
             component = fixture.componentInstance;
             fixture.detectChanges();
-            // await fixture.whenStable();
         });
 
         it('should create form with default values', () => {
