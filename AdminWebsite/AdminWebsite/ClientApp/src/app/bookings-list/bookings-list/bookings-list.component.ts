@@ -2,7 +2,7 @@ import { DatePipe, DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { lastValueFrom, Observable, Subscription } from 'rxjs';
+import { lastValueFrom, Observable, Subject, Subscription, takeUntil } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -41,7 +41,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedHearingId = '';
     bookingResponse: BookingsModel;
     $subcription: Subscription;
-    $ldSubcription: Subscription;
     searchForm: FormGroup;
     enableSearchFeature: boolean;
     title = this.initialTitle;
@@ -53,6 +52,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ejudFeatureFlag: boolean;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
+
+    destroyed$ = new Subject<void>();
 
     @ViewChild(JusticeUsersMenuComponent) csoMenu: JusticeUsersMenuComponent;
     @ViewChild(CaseTypesMenuComponent) caseTypeMenu: CaseTypesMenuComponent;
@@ -72,45 +73,38 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private returnUrlService: ReturnUrlService,
         private featureService: FeatureFlagService,
         @Inject(DOCUMENT) document
-    ) {
-        this.$ldSubcription = this.lanchDarklyService.flagChange.subscribe(value => {
-            if (value) {
-                this.enableSearchFeature = value[FeatureFlags.adminSearch];
-                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-                this.ejudFeatureFlag = value[FeatureFlags.eJudFeature];
-            }
-        });
-    }
+    ) {}
 
-    async ngOnInit() {
+    ngOnInit() {
+        this.subscribeToFeatureFlags();
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
         if (this.bookingPersistService.bookingList.length > 0) {
             this.cursor = this.bookingPersistService.nextCursor;
 
-            const editHearing = await this.getEditedBookingFromStorage();
+            this.getEditedBookingFromStorage().then(editHearing => {
+                // update item in the list by item from database
+                const updatedBooking = this.bookingPersistService.updateBooking(editHearing);
 
-            // update item in the list by item from database
-            const updatedBooking = this.bookingPersistService.updateBooking(editHearing);
+                if (updatedBooking.IsStartTimeChanged) {
+                    this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
+                        hearing: updatedBooking.HearingId
+                    });
+                    this.bookingsListService.replaceBookingRecord(updatedBooking, this.bookingPersistService.bookingList);
+                }
 
-            if (updatedBooking.IsStartTimeChanged) {
-                this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
-                    hearing: updatedBooking.HearingId
-                });
-                this.bookingsListService.replaceBookingRecord(updatedBooking, this.bookingPersistService.bookingList);
-            }
+                this.logger.debug(`${this.loggerPrefix} Clearing request from session storage`);
+                this.videoHearingService.cancelRequest();
+                Object.assign(this.bookings, this.bookingPersistService.bookingList);
+                this.loaded = true;
+                this.recordsLoaded = true;
+                this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
+                this.bookingPersistService.resetAll();
+                this.resetBookingIndex(updatedBooking);
 
-            this.logger.debug(`${this.loggerPrefix} Clearing request from session storage`);
-            this.videoHearingService.cancelRequest();
-            Object.assign(this.bookings, this.bookingPersistService.bookingList);
-            this.loaded = true;
-            this.recordsLoaded = true;
-            this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
-            this.bookingPersistService.resetAll();
-            this.resetBookingIndex(updatedBooking);
-
-            this.closeHearingDetails();
+                this.closeHearingDetails();
+            });
         } else {
             this.getList();
         }
@@ -448,7 +442,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.$subcription?.unsubscribe();
-        this.$ldSubcription?.unsubscribe();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     getFullName(item: JusticeUserResponse) {
@@ -490,5 +485,28 @@ export class BookingsListComponent implements OnInit, OnDestroy {
 
     selectedVenueEmitter($event: number[]) {
         this.bookingPersistService.selectedVenueIds = $event;
+    }
+
+    subscribeToFeatureFlags() {
+        this.lanchDarklyService
+            .getFlag<boolean>(FeatureFlags.adminSearch)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.enableSearchFeature = flag;
+            });
+
+        this.lanchDarklyService
+            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.vhoWorkAllocationFeature = flag;
+            });
+
+        this.lanchDarklyService
+            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.ejudFeatureFlag = flag;
+            });
     }
 }

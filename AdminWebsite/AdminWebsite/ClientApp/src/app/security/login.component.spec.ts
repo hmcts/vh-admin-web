@@ -7,6 +7,7 @@ import { LoggerService } from '../services/logger.service';
 import { WindowRef } from '../shared/window-ref';
 import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { LoginComponent } from './login.component';
+import { WindowLocation } from './window-ref';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -47,7 +48,7 @@ describe('LoginComponent', () => {
     };
 
     const whenInitializingComponent = async (): Promise<void> => {
-        window.getLocation.and.returnValue({ pathname: '/login' });
+        window.getLocation.and.returnValue(new WindowLocation('/login'));
         await component.ngOnInit();
     };
 

@@ -41,16 +41,17 @@ export class BookingConfirmationComponent implements OnInit {
     retrieveSavedHearing() {
         const hearingId = sessionStorage.getItem(this.newHearingSessionKey);
         this.logger.debug(`${this.loggerPrefix} Getting hearing.`, { hearing: hearingId });
-        this.hearingService.getHearingById(hearingId).subscribe(
-            (data: HearingDetailsResponse) => {
+        this.hearingService.getHearingById(hearingId).subscribe({
+            next: (data: HearingDetailsResponse) => {
                 this.caseNumber = data.cases[0].number;
                 this.caseName = data.cases[0].name;
                 this.hearingDate = new Date(data.scheduled_date_time);
                 this.status = data.status;
                 this.retrievedHearingResolver = Promise.resolve(true);
             },
-            error => this.logger.error(`${this.loggerPrefix} Cannot get the hearing by Id: ${hearingId}.`, error, { hearing: hearingId })
-        );
+            error: error =>
+                this.logger.error(`${this.loggerPrefix} Cannot get the hearing by Id: ${hearingId}.`, error, { hearing: hearingId })
+        });
     }
 
     viewBookingDetails(): void {

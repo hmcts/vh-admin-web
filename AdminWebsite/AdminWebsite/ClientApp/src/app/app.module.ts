@@ -1,5 +1,4 @@
 import { MomentModule } from 'ngx-moment';
-import { SuitabilityModule } from './suitability/suitability.module';
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
@@ -66,7 +65,6 @@ export function loadConfig(configService: ConfigService) {
         BookingsListModule,
         BrowserModule,
         FontAwesomeModule,
-        SuitabilityModule,
         AppRoutingModule,
         SharedModule,
         PopupModule,

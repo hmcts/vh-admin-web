@@ -1,57 +1,57 @@
-import { Injectable } from '@angular/core';
-import * as LDClient from 'launchdarkly-js-client-sdk';
-import { ReplaySubject } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { LDFlagValue, LDClient, LDContext, initialize } from 'launchdarkly-js-client-sdk';
 import { ConfigService } from './config.service';
+import { Observable, Subject } from 'rxjs';
+import { first, map } from 'rxjs/operators';
 
 export const FeatureFlags = {
     adminSearch: 'admin_search',
     vhoWorkAllocation: 'vho-work-allocation',
     eJudFeature: 'EJudFeature',
+    dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration'
 };
 
 @Injectable({
     providedIn: 'root'
 })
-export class LaunchDarklyService {
-    private flags: any;
-    ldClient: LDClient.LDClient;
-    flagChange = new ReplaySubject();
+export class LaunchDarklyService implements OnDestroy {
+    client: LDClient;
 
-    constructor(private config: ConfigService) {
+    constructor(private configService: ConfigService) {
         this.initialize();
+    }
 
-        this.onReady();
-
-        this.onChange();
+    async ngOnDestroy() {
+        await this.client.close();
     }
 
     initialize(): void {
-        this.flags = {};
-        const ldClientId = this.config.getConfig().launch_darkly_client_id;
-        const user: LDClient.LDUser = { key: 'AdminWeb', anonymous: true };
-        this.ldClient = LDClient.initialize(ldClientId, user);
+        this.configService
+            .getClientSettings()
+            .pipe(first())
+            .subscribe(config => {
+                const ldClientId = config.launch_darkly_client_id;
+                const envName = config.redirect_uri;
+
+                const context: LDContext = {
+                    kind: 'user',
+                    key: 'VideoWeb',
+                    name: envName
+                };
+
+                this.client = initialize(ldClientId, context);
+            });
     }
 
-    onReady(): void {
-        this.ldClient.on('ready', flags => {
-            this.setAllFlags();
+    getFlag<T>(flagKey: string, defaultValue: LDFlagValue = false): Observable<T> {
+        const fetchFlag = new Subject<void>();
+        this.client.on(`change:${flagKey}`, () => {
+            fetchFlag.next();
         });
-    }
-
-    onChange(): void {
-        this.ldClient.on('change', flags => {
-            for (const flag of Object.keys(flags)) {
-                this.flags[flag] = flags[flag].current;
-            }
-            this.flagChange.next(this.flags);
-            console.log('Flags updated', this.flags);
+        this.client.waitUntilReady().then(() => {
+            fetchFlag.next();
         });
-    }
-
-    private setAllFlags(): void {
-        this.flags = this.ldClient.allFlags();
-        this.flagChange.next(this.flags);
-        console.log('Flags initialized');
+        return fetchFlag.pipe(map(() => this.client.variation(flagKey, defaultValue) as T));
     }
 }

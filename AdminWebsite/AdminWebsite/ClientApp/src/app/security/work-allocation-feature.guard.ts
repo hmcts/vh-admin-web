@@ -11,10 +11,10 @@ export class WorkAllocationFeatureGuard implements CanActivate {
     constructor(private launchDarklyService: LaunchDarklyService, private router: Router) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-        return this.launchDarklyService.flagChange.pipe(
+        return this.launchDarklyService.getFlag<boolean>(FeatureFlags.vhoWorkAllocation).pipe(
             take(1),
-            map(value => {
-                if (value && value[FeatureFlags.vhoWorkAllocation]) {
+            map(featureEnabled => {
+                if (featureEnabled) {
                     return true;
                 }
                 this.router.navigate(['/']);

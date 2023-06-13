@@ -64,7 +64,7 @@ describe('GetAudioLinkButtonComponent', () => {
         expect(component.showLinkCopiedMessage[1]).toBe(false);
     }));
     it('should not get audio files link and set state to initial', fakeAsync(async () => {
-        audioLinkService.getAudioLink.and.returnValue(Promise.resolve([]));
+        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(new HearingAudioRecordingResponse({ audio_file_links: [] })));
 
         await component.onGetLinkClick();
 

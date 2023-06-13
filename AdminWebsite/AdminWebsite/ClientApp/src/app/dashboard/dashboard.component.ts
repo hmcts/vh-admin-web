@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, lastValueFrom } from 'rxjs';
+import { Subject, combineLatest, lastValueFrom } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
@@ -24,15 +24,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     vhoWorkAllocationFeature = false;
     showAudioFileLink = false;
     hrsIntegrationFeature: boolean;
-    $ldSubcription: Subscription;
+    destroyed$ = new Subject<void>();
 
     ngOnInit() {
-        this.$ldSubcription = this.launchDarklyService.flagChange.subscribe(value => {
-            if (value) {
-                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-                this.hrsIntegrationFeature = value[FeatureFlags.hrsIntegration];
-            }
+        const workAllocationFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.vhoWorkAllocation);
+        const hrsIntegrationFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.hrsIntegration);
 
+        combineLatest([workAllocationFlag$, hrsIntegrationFlag$]).subscribe(([workAllocationFlag, hrsIntegrationFlag]) => {
+            this.vhoWorkAllocationFeature = workAllocationFlag;
+            this.hrsIntegrationFeature = hrsIntegrationFlag;
             lastValueFrom(this.userIdentityService.getUserInformation()).then(profile => {
                 this.showCheckList = profile.is_vh_officer_administrator_role;
                 this.showWorkAllocation = profile.is_vh_team_leader && this.vhoWorkAllocationFeature;
@@ -48,6 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.$ldSubcription?.unsubscribe();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 }

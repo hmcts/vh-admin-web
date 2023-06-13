@@ -1,15 +1,15 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Directive, EventEmitter, Output, ViewChild } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { Component, Directive, EventEmitter, Output } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import * as moment from 'moment';
 import { MomentModule } from 'ngx-moment';
-import { of, ReplaySubject } from 'rxjs';
+import { of } from 'rxjs';
 import { ConfigService } from 'src/app/services/config.service';
-import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Logger } from 'src/app/services/logger';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
@@ -27,8 +27,7 @@ import {
     HearingDetailsResponse,
     HearingVenueResponse,
     HearingTypeResponse,
-    JusticeUserResponse,
-    UserProfileResponse
+    JusticeUserResponse
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
@@ -38,6 +37,8 @@ import { v4 as uuid } from 'uuid';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
+import { JusticeUsersService } from 'src/app/services/justice-users.service';
+import { JusticeUserMenuStubComponent } from 'src/app/testing/stubs/dropdown-menu/justice-user-menu-stub.component';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -57,7 +58,7 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getUsers'
 ]);
 const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
-const launchDarklyServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['flagChange']);
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
 
@@ -582,7 +583,7 @@ export class BookingPersistServiceSpy {
 let routerSpy: jasmine.SpyObj<Router>;
 const configServiceSpy = jasmine.createSpyObj('ConfigService', ['getConfig']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
-const justiceUserServiceSpy = jasmine.createSpyObj(['JusticeUsersService', ['retrieveJusticeUserAccounts']]);
+const justiceUserServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['allUsers$']);
 
 describe('BookingsListComponent', () => {
     beforeEach(waitForAsync(() => {
@@ -599,8 +600,11 @@ describe('BookingsListComponent', () => {
         videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
         videoHearingServiceSpy.getHearingTypes.and.returnValue(of(new Array<HearingTypeResponse>()));
         configServiceSpy.getConfig.and.returnValue({});
-        launchDarklyServiceSpy.flagChange = new ReplaySubject();
-        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
+
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
 
@@ -610,7 +614,7 @@ describe('BookingsListComponent', () => {
                 ScrollableDirective,
                 BookingDetailsComponent,
                 LongDatetimePipe,
-                JusticeUsersMenuComponent,
+                JusticeUserMenuStubComponent,
                 CaseTypesMenuComponent,
                 VenuesMenuComponent
             ],
@@ -626,6 +630,7 @@ describe('BookingsListComponent', () => {
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
                 { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: JusticeUsersService, useValue: justiceUserServiceSpy },
                 DatePipe
             ]
         }).compileComponents();
@@ -1059,29 +1064,33 @@ describe('BookingsListComponent', () => {
         expect(component.showSearch).toBe(false);
     });
 
-    it('should not load venues when search feature is disabled', () => {
+    it('should not load venues when search feature is disabled', fakeAsync(() => {
         referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
-        fixture.detectChanges();
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(false));
+
+        component.subscribeToFeatureFlags();
+        tick();
+
         expect(component.enableSearchFeature).toBeFalsy();
-    });
+    }));
 
     it('should load venues when search feature is enabled', () => {
         referenceDataServiceSpy.getCourts.calls.reset();
-        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
+
         fixture.detectChanges();
         expect(component.enableSearchFeature).toBeTruthy();
     });
 
     it('should hide the search panel on initial load when search feature enabled', () => {
-        launchDarklyServiceSpy.flagChange.next({ admin_search: true });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.showSearch).toBe(false);
     });
 
     it('should hide the search panel on initial load when search feature disabled', () => {
-        launchDarklyServiceSpy.flagChange.next({ admin_search: false });
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(false));
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.showSearch).toBe(false);
@@ -1283,7 +1292,7 @@ describe('BookingsListComponent', () => {
         });
 
         it('should not show allocated to label if work allocation feature flag is off', async () => {
-            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': false });
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(false));
             await component.ngOnInit();
             fixture.detectChanges();
             const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
@@ -1291,7 +1300,7 @@ describe('BookingsListComponent', () => {
         });
 
         it('should show allocated label to if work allocation feature flag is on', async () => {
-            launchDarklyServiceSpy.flagChange.next({ 'vho-work-allocation': true });
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
             await component.ngOnInit();
             fixture.detectChanges();
             const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));

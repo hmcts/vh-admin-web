@@ -111,7 +111,7 @@ describe('AssignJudgeComponent', () => {
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
-        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
+        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>('JudgeDataService', ['getJudges']);
         judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
         configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
@@ -413,10 +413,11 @@ describe('AssignJudgeComponent', () => {
     describe('saveJudgeAndStaffMember', () => {
         let testJudge: ParticipantModel;
         beforeEach(() => {
+            // setup judge so that isJudgeSelected returns true
             testJudge = Object.assign({}, judge);
+            testJudge.email = 'saveJudgeAndStaffMember@test.com';
             component.isJudgeParticipantError = false;
             component.failedSubmission = false;
-            spyOn(component, 'isJudgeSelected').and.returnValue(true);
             component.judge = testJudge;
         });
 

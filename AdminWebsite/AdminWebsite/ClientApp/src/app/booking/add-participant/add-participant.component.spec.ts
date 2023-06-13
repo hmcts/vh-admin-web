@@ -220,7 +220,7 @@ let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('Participan
 
 const searchService = {
     ...new SearchServiceStub(),
-    ...jasmine.createSpyObj<SearchService>(['search'])
+    ...jasmine.createSpyObj<SearchService>(['participantSearch'])
 } as jasmine.SpyObj<SearchService>;
 
 describe('AddParticipantComponent', () => {
@@ -243,7 +243,7 @@ describe('AddParticipantComponent', () => {
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(false);
 
-        searchServiceSpy = jasmine.createSpyObj<SearchService>(['search', 'searchEntries', 'searchJudiciaryEntries']);
+        searchServiceSpy = jasmine.createSpyObj<SearchService>(['participantSearch', 'searchEntries', 'searchJudiciaryEntries']);
 
         searchServiceSpy.searchJudiciaryEntries.and.returnValue(of([new PersonResponse()]));
 
@@ -1004,7 +1004,7 @@ describe('AddParticipantComponent edit mode', () => {
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
-        configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
+        configServiceSpy.getClientSettings.and.returnValue(of(new ClientSettingsResponse()));
         fixture = TestBed.createComponent(AddParticipantComponent);
 
         fixture.detectChanges();
@@ -1617,7 +1617,7 @@ describe('AddParticipantComponent set representer', () => {
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
-        const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
+        const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 
         component = new AddParticipantComponent(
             searchServiceStab,
@@ -1670,7 +1670,7 @@ describe('AddParticipantComponent set representer', () => {
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;
         component.searchEmail = new SearchEmailComponent(
-            jasmine.createSpyObj<SearchService>(['search']),
+            jasmine.createSpyObj<SearchService>(['participantSearch']),
             configServiceSpy,
             loggerSpy,
             featureFlagServiceSpy
