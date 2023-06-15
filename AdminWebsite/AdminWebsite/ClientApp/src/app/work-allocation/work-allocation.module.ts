@@ -9,14 +9,10 @@ import { WorkAllocationComponent } from './work-allocation.component';
 import { VhoWorkHoursTableComponent } from './edit-work-hours/vho-work-hours-table/vho-work-hours-table.component';
 import { VhoWorkHoursNonAvailabilityTableComponent } from './edit-work-hours/vho-work-hours-non-availability-table/vho-work-hours-non-availability-table.component';
 import { UploadWorkHoursComponent } from './upload-work-hours/upload-work-hours.component';
-import { ManageTeamComponent } from './manage-team/manage-team.component';
 import { AllocateHearingsComponent } from './allocate-hearings/allocate-hearings.component';
-import { ConfirmDeleteHoursPopupComponent } from './pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PopupModule } from '../popups/popup.module';
-import { JusticeUserFormComponent } from './justice-user-form/justice-user-form.component';
-import { ConfirmDeleteJusticeUserPopupComponent } from './pop-ups/confirm-delete-justice-user-popup/confirm-delete-justice-user-popup.component';
-import { ConfirmRestoreJusticeUserPopupComponent } from './pop-ups/confirm-restore-justice-user-popup/confirm-restore-justice-user-popup.component';
+import { ManageTeamModule } from '../manage-team/manage-team.module';
 
 @NgModule({
     declarations: [
@@ -26,13 +22,8 @@ import { ConfirmRestoreJusticeUserPopupComponent } from './pop-ups/confirm-resto
         VhoWorkHoursTableComponent,
         VhoWorkHoursNonAvailabilityTableComponent,
         UploadWorkHoursComponent,
-        ManageTeamComponent,
-        AllocateHearingsComponent,
-        ConfirmDeleteHoursPopupComponent,
-        ConfirmRestoreJusticeUserPopupComponent,
-        JusticeUserFormComponent,
-        ConfirmDeleteJusticeUserPopupComponent
+        AllocateHearingsComponent
     ],
-    imports: [SharedModule, WorkAllocationRoutingModule, FontAwesomeModule, PopupModule]
+    imports: [SharedModule, WorkAllocationRoutingModule, ManageTeamModule, FontAwesomeModule, PopupModule]
 })
 export class WorkAllocationModule {}

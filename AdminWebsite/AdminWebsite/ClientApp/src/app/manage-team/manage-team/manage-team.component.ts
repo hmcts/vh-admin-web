@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { faCircleExclamation, faExclamationCircle, faRotateLeft, faTrash, faUserPen } from '@fortawesome/free-solid-svg-icons';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { JusticeUserResponse } from '../../services/clients/api-client';
@@ -42,6 +42,8 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     selectedUser$ = new BehaviorSubject<JusticeUserResponse>(null);
 
     destroyed$ = new Subject<void>();
+
+    @Input() showHeader = true;
 
     constructor(private fb: FormBuilder, private justiceUserService: JusticeUsersService, private logger: Logger) {
         this.form = this.fb.group<SearchForExistingJusticeUserForm>({

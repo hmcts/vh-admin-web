@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { UserProfileResponse } from '../services/clients/api-client';
@@ -13,12 +13,13 @@ describe('DashboardComponent', () => {
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
 
     const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
-
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(waitForAsync(() => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
+
         TestBed.configureTestingModule({
             imports: [RouterTestingModule],
             declarations: [DashboardComponent],
@@ -33,6 +34,50 @@ describe('DashboardComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DashboardComponent);
         component = fixture.componentInstance;
+    });
+
+    describe('dom1 feature toggle', () => {
+        it('should showManageTeam true when dom1 toggle is on and user is a team leader', fakeAsync(() => {
+            userIdentitySpy.getUserInformation.and.returnValue(
+                of(
+                    new UserProfileResponse({
+                        is_vh_team_leader: true
+                    })
+                )
+            );
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(true));
+            component.ngOnInit();
+            tick();
+            expect(component.showManageTeam).toBeTruthy();
+        }));
+
+        it('should showManageTeam false when dom1 toggle is off and user is a team leader', fakeAsync(() => {
+            userIdentitySpy.getUserInformation.and.returnValue(
+                of(
+                    new UserProfileResponse({
+                        is_vh_team_leader: true
+                    })
+                )
+            );
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
+            component.ngOnInit();
+            tick();
+            expect(component.showManageTeam).toBeFalsy();
+        }));
+
+        it('should showManageTeam false when dom1 toggle is off and user is not a team leader', fakeAsync(() => {
+            userIdentitySpy.getUserInformation.and.returnValue(
+                of(
+                    new UserProfileResponse({
+                        is_vh_team_leader: false
+                    })
+                )
+            );
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
+            component.ngOnInit();
+            tick();
+            expect(component.showManageTeam).toBeFalsy();
+        }));
     });
 
     it('should show for VH officer checklist', async () => {
