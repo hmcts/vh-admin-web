@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { BHClient, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
-import { ConfirmDeleteHoursPopupComponent } from '../../pop-ups/confirm-delete-popup/confirm-delete-popup.component';
+import { ConfirmDeleteHoursPopupComponent } from '../../../manage-team/pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 import { of, throwError, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-justice-users-menu',
@@ -6,8 +6,10 @@ import { Component } from '@angular/core';
 })
 export class JusticeUserMenuStubComponent {
     selectedLabel: string;
-    multiSelect: boolean;
-    dropDownLabel: string;
+
+    @Output() selectedEmitter = new EventEmitter<string[] | string>();
+    @Input() dropDownLabel = 'Allocated CSO';
+    @Input() multiSelect = true;
     loadItems() {
         console.log('stub method');
     }
