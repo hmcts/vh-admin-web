@@ -28,6 +28,20 @@ export class JusticeUserFormComponent implements OnChanges {
     @Input()
     set justiceUser(value: JusticeUserResponse) {
         if (!value) {
+            const defaultRoles = this.availableRoles.map(x => {
+                if (x.value === JusticeUserRole.Vho) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            this.form.reset({
+                firstName: '',
+                lastName: '',
+                username: '',
+                contactTelephone: '',
+                roles: defaultRoles
+            });
             return;
         }
         this._justiceUser = value;

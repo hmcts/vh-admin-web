@@ -257,5 +257,19 @@ describe('JusticeUserFormComponent', () => {
             // Assuming that the order in the formArray is VHO, ADMIN, STAFFMEMBER
             expect(form.controls.roles.value).toEqual([true, false, false]);
         });
+
+        it('should clear form when user set to null', () => {
+            // arrange / act
+            component.justiceUser = null;
+            const form = component.form;
+
+            // assert
+            expect(form.controls.username.value).toBe('');
+            expect(form.controls.contactTelephone.value).toBe('');
+            expect(form.controls.firstName.value).toBe('');
+            expect(form.controls.lastName.value).toBe('');
+            // Assuming that the order in the formArray is VHO, ADMIN, STAFFMEMBER
+            expect(form.controls.roles.value).toEqual([true, false, false]);
+        });
     });
 });
