@@ -93,6 +93,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
 
     onUserFormCancelled() {
         this.showForm$.next(false);
+        this.selectedUser$.next(null);
         this.userFormMode$.next('add');
     }
 
