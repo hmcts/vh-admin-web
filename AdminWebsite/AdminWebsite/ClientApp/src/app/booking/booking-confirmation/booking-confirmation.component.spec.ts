@@ -9,6 +9,8 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
 import { BookingConfirmationComponent } from './booking-confirmation.component';
+import { BookingStatus, HearingDetailsResponse } from 'src/app/services/clients/api-client';
+import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -76,7 +78,8 @@ describe('BookingConfirmationComponent', () => {
     let routerSpy: jasmine.SpyObj<Router>;
     let loggerSpy: jasmine.SpyObj<Logger>;
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    const newHearing = initHearingRequest();
+    // const newHearing: HearingDetailsResponse = initHearingRequest();
+    const newHearing: HearingDetailsResponse = ResponseTestData.getHearingResponseTestData();
 
     beforeEach(waitForAsync(() => {
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
@@ -139,7 +142,7 @@ describe('BookingConfirmationComponent', () => {
     describe('bookingConfirmedSuccessfully', () => {
         it('should return true, when booking successful', () => {
             // arrange: set spy to return Failed status hearing
-            newHearing.status = 'Booked';
+            newHearing.status = BookingStatus.Booked;
             videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
             TestBed.overrideProvider(VideoHearingsService, { useValue: videoHearingsServiceSpy });
             TestBed.compileComponents();
@@ -154,7 +157,7 @@ describe('BookingConfirmationComponent', () => {
         });
         it('should return false, when booking unsuccessful', () => {
             // arrange: set spy to return Failed status hearing
-            newHearing.status = 'Failed';
+            newHearing.status = BookingStatus.Failed;
             videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
             TestBed.overrideProvider(VideoHearingsService, { useValue: videoHearingsServiceSpy });
             TestBed.compileComponents();

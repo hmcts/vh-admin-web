@@ -80,7 +80,7 @@ describe('VenuesMenuComponent', () => {
             component.loadItems();
             component.form.controls[component.formGroupName].setValue(venueId);
             component.onSelect();
-            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(venueId);
+            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(venueId as any);
         });
     });
 });

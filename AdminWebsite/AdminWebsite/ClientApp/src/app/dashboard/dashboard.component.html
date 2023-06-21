@@ -72,4 +72,15 @@
       </div>
     </a>
   </div>
+
+  <div class="govuk-grid-column-one-third" *ngIf="showManageTeam">
+    <a class="vhpanel-link" [routerLink]="['/manage-team']">
+      <div class="vhpanel vhpanel-manage-team" id="manageTeamBtn">
+        <h1 class="vhpanel-title">Manage Team</h1>
+        <div>
+          <fa-icon [icon]="faUsers" size="4x"></fa-icon>
+        </div>
+      </div>
+    </a>
+  </div>
 </div>

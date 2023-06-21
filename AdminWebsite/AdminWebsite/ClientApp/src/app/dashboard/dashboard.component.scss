@@ -59,11 +59,15 @@ $govuk-global-styles: true;
 }
 
 .vhpanel-orange {
-  background-color: #c55a11;
+  background-color: govuk-colour('orange');
 }
 
 .vhpanel-lightblue {
-  background-color: govuk-colour('purple');
+  background-color: govuk-colour('bright-purple');
+}
+
+.vhpanel-manage-team {
+  background-color: govuk-colour('light-purple');
 }
 
 .vhpanel-darkgrey {

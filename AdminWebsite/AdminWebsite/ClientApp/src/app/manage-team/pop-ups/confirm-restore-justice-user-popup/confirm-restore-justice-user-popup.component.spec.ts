@@ -3,6 +3,7 @@ import { of, throwError } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { ConfirmRestoreJusticeUserPopupComponent } from './confirm-restore-justice-user-popup.component';
+import { JusticeUserResponse } from 'src/app/services/clients/api-client';
 
 describe('ConfirmRestoreJusticeUserPopupComponent', () => {
     const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', ['restoreJusticeUser']);
@@ -31,7 +32,9 @@ describe('ConfirmRestoreJusticeUserPopupComponent', () => {
         it('should emit restore successful event on successful restore', () => {
             // Arrange
             const spy = spyOn(component.restoreSuccessfulEvent, 'emit');
-            justiceUsersServiceSpy.restoreJusticeUser.and.returnValue(of(''));
+            justiceUsersServiceSpy.restoreJusticeUser.and.returnValue(
+                of(new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' }))
+            );
 
             // Act
             component.onConfirmRestore();

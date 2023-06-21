@@ -4,7 +4,9 @@ import {
     BHClient,
     NonWorkingHours,
     UpdateNonWorkingHoursRequest,
+    UploadNonWorkingHoursResponse,
     UploadWorkHoursRequest,
+    UploadWorkHoursResponse,
     VhoNonAvailabilityWorkHoursResponse,
     VhoWorkHoursResponse,
     WorkingHours
@@ -32,8 +34,8 @@ describe('EditWorkHoursComponent', () => {
             'setVhoNonAvailabiltiesHaveChanged'
         ]);
         bHClientSpy = jasmine.createSpyObj('BHClient', ['uploadWorkHours', 'uploadNonWorkingHours', 'updateNonAvailabilityWorkHours']);
-        bHClientSpy.uploadWorkHours.and.returnValue(of({ failed_usernames: [] }));
-        bHClientSpy.uploadNonWorkingHours.and.returnValue(of({ failed_usernames: [] }));
+        bHClientSpy.uploadWorkHours.and.returnValue(of(new UploadWorkHoursResponse({ failed_usernames: [] })));
+        bHClientSpy.uploadNonWorkingHours.and.returnValue(of(new UploadNonWorkingHoursResponse({ failed_usernames: [] })));
         bHClientSpy.updateNonAvailabilityWorkHours.and.returnValue(of(undefined));
         loggerSpy = jasmine.createSpyObj('Logger', ['debug', 'error']);
 

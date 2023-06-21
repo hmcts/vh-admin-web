@@ -1,0 +1,130 @@
+<h1 *ngIf="showHeader" class="govuk-heading-l">Manage team</h1>
+
+<div class="govuk-form-group govuk-!-margin-left-6" [formGroup]="form">
+  <div class="govuk-form-group">
+    <label class="govuk-label govuk-!-font-weight-bold govuk-!-margin-bottom-2" for="search-team-member"> Search for team member </label>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+        <input class="govuk-input" id="search-team-member" name="search-team-member" type="text" formControlName="inputSearch" />
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <button id="manage-team-search-for-user-btn" class="govuk-button" data-module="govuk-button" (click)="searchUsers()">Search</button>
+        <button
+          id="manage-team-add-user-btn"
+          class="govuk-button govuk-!-margin-left-2"
+          data-module="govuk-button"
+          *ngIf="displayAddButton$ | async"
+          (click)="addUser()"
+        >
+          Add a team member
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="manage-team-messages-container"
+  *ngIf="displayMessage$ | async"
+  class="govuk-!-font-weight-bold"
+  [ngClass]="isAnErrorMessage ? 'vh-text-color-red' : ''"
+>
+  <fa-icon [icon]="isAnErrorMessage ? faError : faExclamation"></fa-icon>
+  {{ message$ | async }}
+</div>
+
+<ng-container *ngIf="users$ | async as users">
+  <table
+    id="manage-team-justice-user-search-results-table"
+    *ngIf="users.length > 0"
+    class="govuk-table"
+    data-module="moj-sortable-table"
+    aria-describedby="justice user table"
+  >
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Username</th>
+        <th scope="col" class="govuk-table__header">First name</th>
+        <th scope="col" class="govuk-table__header">Last name</th>
+        <th scope="col" class="govuk-table__header">Contact telephone</th>
+        <th scope="col" class="govuk-table__header">Role</th>
+        <th scope="col" class="govuk-table__header action-cell"></th>
+        <th scope="col" class="govuk-table__header action-cell"></th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row" *ngFor="let user of users">
+        <td class="govuk-table__cell"><span *ngIf="user.deleted" class="badge">Deleted</span>{{ user.username }}</td>
+        <td class="govuk-table__cell">
+          {{ user.first_name }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.lastname }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.telephone }}
+        </td>
+        <td class="govuk-table__cell">
+          {{ user.user_roles | rolesToDisplay }}
+        </td>
+        <td class="govuk-table__cell">
+          <fa-icon
+            *ngIf="!user.deleted"
+            id="editButton_{{ user.id }}"
+            [icon]="editUserIcon"
+            appTooltip
+            [text]="'Edit role'"
+            [colour]="'blue'"
+            (click)="editUser(user)"
+          ></fa-icon>
+        </td>
+        <td class="govuk-table__cell">
+          <fa-icon
+            *ngIf="!user.deleted"
+            class="red-trash"
+            id="deleteButton_{{ user.id }}"
+            [icon]="deleteUserIcon"
+            appTooltip
+            [text]="'Delete'"
+            [colour]="'red'"
+            (click)="onDeleteJusticeUser(user)"
+          ></fa-icon>
+          <fa-icon
+            *ngIf="user.deleted"
+            id="restoreButton_{{ user.id }}"
+            [icon]="restoreUserIcon"
+            appTooltip
+            [text]="'Restore team member'"
+            [colour]="'blue'"
+            (click)="restoreUser(user)"
+          ></fa-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<div *ngIf="showForm$ | async" class="popup-overlay">
+  <div class="vh-popup-aligned">
+    <app-justice-user-form
+      [justiceUser]="selectedUser$ | async"
+      [mode]="userFormMode$ | async"
+      (cancelFormEvent)="onUserFormCancelled()"
+      (saveSuccessfulEvent)="onJusticeUserSuccessfulSave()"
+    ></app-justice-user-form>
+  </div>
+</div>
+
+<app-confirm-delete-justice-user-popup
+  *ngIf="displayDeleteUserPopup$ | async"
+  (cancelEvent)="onCancelDeleteJusticeUser()"
+  (deleteSuccessfulEvent)="onJusticeUserSuccessfulDelete()"
+  userId="{{ userToDelete.id }}"
+  username="{{ userToDelete.username }}"
+></app-confirm-delete-justice-user-popup>
+<app-confirm-restore-justice-user-popup
+  *ngIf="displayRestoreUserPopup"
+  (cancelEvent)="onCancelRestoreJusticeUser()"
+  (restoreSuccessfulEvent)="onJusticeUserSuccessfulRestore()"
+  [user]="userToRestore"
+></app-confirm-restore-justice-user-popup>

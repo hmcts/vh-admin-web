@@ -97,18 +97,18 @@ participant2.display_name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
 const participantList: ParticipantModel[] = [participant1, participant2];
 
-const staffMember1 = new ParticipantModel();
+const staffMember1 = new PersonResponse();
 staffMember1.first_name = 'StaffMember1FirstName';
 staffMember1.last_name = 'StaffMember1LastName';
-staffMember1.display_name = 'StaffMember1DisplayName';
-staffMember1.email = 'StaffMember1Email';
-const staffMember2 = new ParticipantModel();
+staffMember1.contact_email = 'StaffMember1Email';
+
+const staffMember2 = new PersonResponse();
 staffMember2.first_name = 'StaffMember2FirstName';
 staffMember2.last_name = 'StaffMember2LastName';
-staffMember2.display_name = 'StaffMember2DisplayName';
-staffMember2.email = 'StaffMember2Email';
+staffMember2.contact_email = 'StaffMember2Email';
 
-const staffMemberList: ParticipantModel[] = [staffMember1, staffMember2, participant1];
+// const staffMemberList: ParticipantModel[] = [staffMember1, staffMember2, participant1];
+const staffMemberList: PersonResponse[] = [staffMember1, staffMember2];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 

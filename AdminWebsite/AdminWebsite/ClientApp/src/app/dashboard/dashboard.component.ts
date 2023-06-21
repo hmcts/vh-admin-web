@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, lastValueFrom } from 'rxjs';
+import { Subject, combineLatest, lastValueFrom, takeUntil } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-dashboard',
@@ -18,36 +19,50 @@ export class DashboardComponent implements OnInit, OnDestroy {
         private logger: Logger
     ) {}
 
+    faUsers = faUsers;
+
     showCheckList = false;
     showBooking = false;
     showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
-    showAudioFileLink = false;
+    dom1Feature = false;
     hrsIntegrationFeature: boolean;
-    $ldSubcription: Subscription;
+
+    showManageTeam = false;
+    showAudioFileLink = false;
+
+    destroyed$ = new Subject<void>();
 
     ngOnInit() {
-        this.$ldSubcription = this.launchDarklyService.flagChange.subscribe(value => {
-            if (value) {
-                this.vhoWorkAllocationFeature = value[FeatureFlags.vhoWorkAllocation];
-                this.hrsIntegrationFeature = value[FeatureFlags.hrsIntegration];
-            }
+        const workAllocationFlag$ = this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
+            .pipe(takeUntil(this.destroyed$));
+        const hrsIntegrationFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.hrsIntegration).pipe(takeUntil(this.destroyed$));
+        const dom1FeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.dom1Integration).pipe(takeUntil(this.destroyed$));
 
-            lastValueFrom(this.userIdentityService.getUserInformation()).then(profile => {
-                this.showCheckList = profile.is_vh_officer_administrator_role;
-                this.showWorkAllocation = profile.is_vh_team_leader && this.vhoWorkAllocationFeature;
-                this.showAudioFileLink = this.showCheckList && !this.hrsIntegrationFeature;
-                this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
-                this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
-                    showCheckList: this.showCheckList,
-                    showBooking: this.showBooking,
-                    showWorkAllocation: this.showWorkAllocation
+        combineLatest([workAllocationFlag$, hrsIntegrationFlag$, dom1FeatureFlag$]).subscribe(
+            ([workAllocationFlag, hrsIntegrationFlag, dom1FeatureFlag]) => {
+                this.vhoWorkAllocationFeature = workAllocationFlag;
+                this.hrsIntegrationFeature = hrsIntegrationFlag;
+                this.dom1Feature = dom1FeatureFlag;
+                lastValueFrom(this.userIdentityService.getUserInformation()).then(profile => {
+                    this.showCheckList = profile.is_vh_officer_administrator_role;
+                    this.showWorkAllocation = profile.is_vh_team_leader && this.vhoWorkAllocationFeature;
+                    this.showAudioFileLink = this.showCheckList && !this.hrsIntegrationFeature;
+                    this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
+                    this.showManageTeam = profile.is_vh_team_leader && this.dom1Feature;
+                    this.logger.debug(`${this.loggerPrefix} Landed on dashboard`, {
+                        showCheckList: this.showCheckList,
+                        showBooking: this.showBooking,
+                        showWorkAllocation: this.showWorkAllocation
+                    });
                 });
-            });
-        });
+            }
+        );
     }
 
     ngOnDestroy() {
-        this.$ldSubcription?.unsubscribe();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 }

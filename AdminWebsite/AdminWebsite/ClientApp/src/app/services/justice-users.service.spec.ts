@@ -228,7 +228,7 @@ describe('JusticeUsersService', () => {
 
     describe('restoreJusticeUser', () => {
         it('should call the api to restore the user', () => {
-            clientApiSpy.restoreJusticeUser.and.returnValue(of(''));
+            clientApiSpy.restoreJusticeUser.and.returnValue(of(new JusticeUserResponse({ id: '789', contact_email: 'user3@test.com' })));
             const id = '123';
             const username = 'user1@test.com';
             const request = new RestoreJusticeUserRequest({

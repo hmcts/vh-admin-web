@@ -1,7 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UnallocatedHearingsComponent } from './unallocated-hearings.component';
-import { BHClient, DateForUnallocatedHearings, UnallocatedHearingsForVhoResponse } from '../../services/clients/api-client';
+import {
+    BHClient,
+    DateForUnallocatedHearings,
+    UnallocatedHearingsForVhoResponse,
+    UserProfileResponse
+} from '../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
@@ -41,11 +46,7 @@ describe('UnallocatedHearingsComponent', () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['getUnallocatedHearings']);
         bHClientSpy.getUnallocatedHearings.and.returnValue(of(unallocatedHearings));
         userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-        userIdentityServiceSpy.getUserInformation.and.returnValue(
-            of({
-                is_vh_team_leader: true
-            })
-        );
+        userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_team_leader: true })));
 
         await TestBed.configureTestingModule({
             declarations: [UnallocatedHearingsComponent],

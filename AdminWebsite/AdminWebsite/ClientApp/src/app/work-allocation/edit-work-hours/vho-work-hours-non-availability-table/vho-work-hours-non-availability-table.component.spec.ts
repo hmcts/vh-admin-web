@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BHClient, VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { BHClient, VhoNonAvailabilityWorkHoursResponse } from '../../../services/clients/api-client';
 import { Logger } from '../../../services/logger';
-import { ConfirmDeleteHoursPopupComponent } from '../../pop-ups/confirm-delete-popup/confirm-delete-popup.component';
+import { ConfirmDeleteHoursPopupComponent } from '../../../manage-team/pop-ups/confirm-delete-popup/confirm-delete-popup.component';
 import { of, throwError, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
@@ -23,7 +23,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
 
     beforeEach(async () => {
         bHClientSpy = jasmine.createSpyObj('BHClient', ['deleteNonAvailabilityWorkHours']);
-        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of({ value: 0 }));
+        bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of(undefined));
         loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
             providers: [
@@ -107,17 +107,18 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         expect(component.nonWorkHours).toBe(null);
     });
 
-    it('check remove slot from result when confirm deletion', () => {
+    it('check remove slot from result when confirm deletion', fakeAsync(() => {
         const slot = new VhoNonAvailabilityWorkHoursResponse();
         component.result = [slot];
         const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+
         component.delete(slotMapped);
         component.onDeletionAnswer(true);
-        fixture.detectChanges();
+        tick();
 
         expect(component.nonWorkHours.length).toEqual(0);
         expect(component.displayConfirmPopup).toBeFalsy();
-    });
+    }));
 
     it('Delete newly created slot', () => {
         component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];

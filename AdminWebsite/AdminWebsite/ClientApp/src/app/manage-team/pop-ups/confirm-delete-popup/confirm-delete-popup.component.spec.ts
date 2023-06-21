@@ -1,6 +1,6 @@
 import { Logger } from 'src/app/services/logger';
 import { ConfirmDeleteHoursPopupComponent } from './confirm-delete-popup.component';
-import { EditVhoNonAvailabilityWorkHoursModel } from '../../edit-work-hours/edit-non-work-hours-model';
+import { EditVhoNonAvailabilityWorkHoursModel } from '../../../work-allocation/edit-work-hours/edit-non-work-hours-model';
 import { CombineDateAndTime } from 'src/app/common/formatters/combine-date-and-time';
 
 describe('ConfirmDeleteHoursPopupComponent', () => {

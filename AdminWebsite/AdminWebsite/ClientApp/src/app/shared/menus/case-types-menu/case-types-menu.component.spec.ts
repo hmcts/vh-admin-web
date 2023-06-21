@@ -79,7 +79,7 @@ describe('CaseTypesMenuComponent', () => {
             component.loadItems();
             component.form.controls[component.formGroupName].setValue(caseType);
             component.onSelect();
-            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(caseType);
+            expect(component.selectedEmitter.emit).toHaveBeenCalledWith(caseType as any);
         });
     });
 });
