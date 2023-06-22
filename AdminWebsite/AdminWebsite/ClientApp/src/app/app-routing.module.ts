@@ -16,6 +16,7 @@ import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './security/auth.guard';
+import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -38,7 +39,7 @@ export const routes: Routes = [
     },
     {
         path: 'manage-team',
-        canActivate: [AuthGuard, VhOfficerAdminGuard, WorkAllocationFeatureGuard],
+        canActivate: [AuthGuard, VhOfficerAdminGuard, ManageTeamFeatureGuard],
         loadChildren: () => import('./manage-team/manage-team.module').then(m => m.ManageTeamModule)
     },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }

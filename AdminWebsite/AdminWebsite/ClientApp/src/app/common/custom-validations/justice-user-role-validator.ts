@@ -1,8 +1,9 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { JusticeUserRole } from '../../services/clients/api-client';
-import { AvailableRoles, Constants } from '../constants';
+import { AvailableRole } from '../model/available-role.interface';
+import { Constants } from '../constants';
 
-export function justiceUserRoleValidator(): ValidatorFn {
+export function justiceUserRoleValidator(availableRoles: AvailableRole[]): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
         const valuesArray: boolean[] = control.value;
 
@@ -11,7 +12,7 @@ export function justiceUserRoleValidator(): ValidatorFn {
         }
 
         const roles: JusticeUserRole[] = [];
-        AvailableRoles.forEach((item, i) => {
+        availableRoles.forEach((item, i) => {
             if (valuesArray[i]) {
                 roles.push(item.value);
             }
