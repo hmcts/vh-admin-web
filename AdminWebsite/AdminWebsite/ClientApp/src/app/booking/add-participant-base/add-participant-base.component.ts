@@ -219,7 +219,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         const formControlsObj = {
             party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
-            title: this.participantDetails.title === undefined ? this.constants.PleaseSelect : this.participantDetails.title,
+            title: this.participantDetails.title ?? this.constants.PleaseSelect,
             firstName: this.participantDetails.first_name.trim(),
             lastName: this.participantDetails.last_name.trim(),
             email: this.participantDetails.email.trim() || '',
