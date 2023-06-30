@@ -170,7 +170,7 @@ namespace AdminWebsite.Services
         {
             if (hearing.Endpoints == null) return;
 
-            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
+            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.TrueForAll(re => re.Id != e.Id));
             await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
             
             foreach (var endpoint in request.Endpoints)
@@ -230,8 +230,8 @@ namespace AdminWebsite.Services
 
         private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint)
         {
-            var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
-            var endpointRequestDefenceAdvocate = hearing.Participants.FirstOrDefault(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
+            var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
+            var endpointRequestDefenceAdvocate = hearing.Participants.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
             if (existingEndpointToEdit == null ||
                 existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
                 existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id)
