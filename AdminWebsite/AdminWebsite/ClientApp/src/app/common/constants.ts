@@ -1,4 +1,5 @@
 import { JusticeUserRole } from '../services/clients/api-client';
+import { AvailableRole } from './model/available-role.interface';
 
 export const Constants = {
     AllocateHearings: {
@@ -91,8 +92,13 @@ export const Constants = {
  * label is used for the checkBox in the add user form in manage team
  * shortText is used for displaying roles in the manage team table
  * */
-export const AvailableRoles = [
+export const AvailableRoles: AvailableRole[] = [
     { value: JusticeUserRole.Vho, label: 'CSO', shortText: 'CSO' },
     { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' },
     { value: JusticeUserRole.StaffMember, label: 'Staff Member', shortText: 'SM' }
+];
+
+export const AvailableRolesNonDom1: AvailableRole[] = [
+    { value: JusticeUserRole.Vho, label: 'CSO', shortText: 'CSO' },
+    { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' }
 ];
