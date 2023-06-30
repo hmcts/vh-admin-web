@@ -168,33 +168,31 @@ namespace AdminWebsite.Services
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList)
         {
-            if (hearing.Endpoints == null)
-            {
-                return;
-            }
+            if (hearing.Endpoints == null) return;
 
             var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
             await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
+            
             foreach (var endpoint in request.Endpoints)
             {
-                var epToUpdate = newParticipantList
-                    .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
-                        StringComparison.CurrentCultureIgnoreCase));
-                if (epToUpdate != null)
-                {
-                    endpoint.DefenceAdvocateContactEmail = epToUpdate.ContactEmail;
-                }
+                UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
 
                 if (endpoint.Id.HasValue)
-                {
                     await UpdateEndpointInHearing(hearingId, hearing, endpoint);
-                }
                 else
-                {
                     await AddEndpointToHearing(hearingId, hearing, endpoint);
-                }
             }
         }
+
+        private static void UpdateEndpointWithNewlyAddedParticipant(List<ParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
+        {
+            var epToUpdate = newParticipantList
+                .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
+                    StringComparison.CurrentCultureIgnoreCase));
+            if (epToUpdate != null)
+                endpoint.DefenceAdvocateContactEmail = epToUpdate.ContactEmail;
+        }
+
         public async Task UpdateFailedBookingStatus(Guid hearingId)
         {
             await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
@@ -230,13 +228,13 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
         }
 
-        private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing,
-            EditEndpointRequest endpoint)
+        private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint)
         {
             var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
+            var endpointRequestDefenceAdvocate = hearing.Participants.FirstOrDefault(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
             if (existingEndpointToEdit == null ||
                 existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-                existingEndpointToEdit.DefenceAdvocateId.ToString() == endpoint.DefenceAdvocateContactEmail)
+                existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id)
                 return;
 
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
@@ -246,8 +244,7 @@ namespace AdminWebsite.Services
                 DisplayName = endpoint.DisplayName,
                 DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
             };
-            await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value,
-                updateEndpointRequest);
+            await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);
         }
     }
 }
