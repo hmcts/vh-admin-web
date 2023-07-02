@@ -64,7 +64,7 @@ namespace AdminWebsite.Services
             var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
                 .Select(EditParticipantRequestMapper.MapFrom).ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
-            var hearingCase = hearingDetailsResponse.Cases.First();
+            var hearingCase = hearingDetailsResponse.Cases[0];
             
             var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
 
@@ -82,10 +82,10 @@ namespace AdminWebsite.Services
             HearingDetailsResponse hearingDetailsResponse)
         {
             var existingJudge =
-                hearingDetailsResponse.Participants.FirstOrDefault(
+                hearingDetailsResponse.Participants.Find(
                     x => x.HearingRoleName == HearingRoleName.Judge);
             var newJudge =
-                editHearingRequest.Participants.FirstOrDefault(x => x.HearingRoleName == HearingRoleName.Judge);
+                editHearingRequest.Participants.Find(x => x.HearingRoleName == HearingRoleName.Judge);
             var existingJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(hearingDetailsResponse.OtherInformation);
             var newJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(editHearingRequest.OtherInformation);
 
@@ -151,7 +151,7 @@ namespace AdminWebsite.Services
                 || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
             {
                 if (hearing.Participants != null &&
-                    hearing.Participants.Any(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
+                    hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
                     return null;
