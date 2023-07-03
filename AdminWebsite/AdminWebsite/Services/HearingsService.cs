@@ -151,7 +151,7 @@ namespace AdminWebsite.Services
                 || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
             {
                 if (hearing.Participants != null &&
-                    hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.All(removedParticipantId => removedParticipantId != p.Id)))
+                    hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.TrueForAll(removedParticipantId => removedParticipantId != p.Id)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
                     return null;
