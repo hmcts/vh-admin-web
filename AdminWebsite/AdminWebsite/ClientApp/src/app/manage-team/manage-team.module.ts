@@ -18,6 +18,11 @@ import { ConfirmRestoreJusticeUserPopupComponent } from './pop-ups/confirm-resto
         ConfirmRestoreJusticeUserPopupComponent
     ],
     imports: [SharedModule, FontAwesomeModule, ManageTeamRoutingModule],
-    exports: [ManageTeamComponent]
+    exports: [
+        ManageTeamComponent,
+        ConfirmDeleteHoursPopupComponent,
+        ConfirmDeleteJusticeUserPopupComponent,
+        ConfirmRestoreJusticeUserPopupComponent
+    ]
 })
 export class ManageTeamModule {}
