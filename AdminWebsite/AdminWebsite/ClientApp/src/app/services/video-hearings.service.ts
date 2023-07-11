@@ -25,7 +25,8 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    AllocatedCsoResponse
+    AllocatedCsoResponse,
+    RebookHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -183,6 +184,10 @@ export class VideoHearingsService {
 
     async cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
         return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
+    }
+
+    rebookHearing(hearingId: string, request: RebookHearingRequest): Promise<void> {
+        return lastValueFrom(this.bhClient.rebookHearing(hearingId, request));
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {

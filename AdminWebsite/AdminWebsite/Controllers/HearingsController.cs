@@ -108,6 +108,18 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        [HttpPost("{hearingId}/conferences")]
+        [SwaggerOperation(OperationId = "RebookHearing")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RebookHearing(Guid hearingId, RebookHearingRequest request)
+        {
+            await _bookingsApiClient.RebookHearingAsync(hearingId, request);
+
+            return Ok();
+        }
+
         /// <summary>
         ///     Clone hearings with the details of a given hearing on given dates
         /// </summary>

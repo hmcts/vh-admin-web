@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { interval, lastValueFrom, Subscription } from 'rxjs';
+import { interval, lastValueFrom, Subscription, timer } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -12,8 +12,10 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     BookingStatus,
     HearingDetailsResponse,
+    RebookHearingRequest,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
+    UpdateBookingStatusResponse,
     UserProfileResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -28,6 +30,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';
+    private newHearingSessionKey = 'newHearingId';
     hearing: BookingsDetailsModel;
     booking: HearingModel;
     participants: Array<ParticipantDetailsModel> = [];
@@ -175,6 +178,33 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
+    async rebookHearing() {
+        this.showConfirming = true;
+        const hearingId = this.hearingId;
+        const request = new RebookHearingRequest({ is_multi_day_hearing: this.booking.multiDays ?? false });
+        
+        await this.videoHearingService.rebookHearing(hearingId, request);
+
+        // Poll Video-Api for booking confirmation
+        const schedule = timer(0, 5000).subscribe(async counter => {
+            const hearingStatusResponse = await this.videoHearingService.getStatus(hearingId);
+            if (hearingStatusResponse?.success || counter === 10) {
+                schedule.unsubscribe();
+                await this.processBooking(hearingStatusResponse);
+            }
+        });
+    }
+
+    async processBooking(hearingStatusResponse: UpdateBookingStatusResponse): Promise<void> {
+        let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
+        if (hearingStatusResponse?.success) {
+            // TODO handle this
+            //await this.processMultiHearing(hearingDetailsResponse);
+            updateBookingStatus = UpdateBookingStatus.Created;
+        }
+        await this.updateHearingStatusDisplay(hearingStatusResponse, updateBookingStatus);
+    }
+
     keepBooking() {
         this.showCancelBooking = false;
     }
@@ -194,20 +224,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             const updateBookingStatusResponse = await lastValueFrom(
                 this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
             );
-            if (updateBookingStatusResponse.success) {
-                this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
-                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-                this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
-                this.updateStatusHandler(status);
-                this.booking.isConfirmed = true;
-            } else {
-                this.showConfirmingFailed = true;
-                this.updateStatusHandler(UpdateBookingStatus.Failed);
-            }
-
-            this.showConfirming = false;
-            this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-            this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+            
+            await this.updateHearingStatusDisplay(updateBookingStatusResponse, status);
         } catch (error) {
             if (status === UpdateBookingStatus.Cancelled) {
                 this.showCancelBooking = false;
@@ -219,6 +237,23 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.errorHandler(error, status);
             this.updateStatusHandler(UpdateBookingStatus.Failed);
         }
+    }
+
+    async updateHearingStatusDisplay(statusResponse: UpdateBookingStatusResponse, status: UpdateBookingStatus) {
+        if (statusResponse.success) {
+            this.telephoneConferenceId = statusResponse.telephone_conference_id;
+            this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+            this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
+            this.updateStatusHandler(status);
+            this.booking.isConfirmed = true;
+        } else {
+            this.showConfirmingFailed = true;
+            this.updateStatusHandler(UpdateBookingStatus.Failed);
+        }
+
+        this.showConfirming = false;
+        this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: statusResponse });
+        this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: statusResponse });
     }
 
     updateStatusHandler(status: UpdateBookingStatus) {
