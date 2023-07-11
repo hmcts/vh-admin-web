@@ -184,18 +184,22 @@ function initExistHearingRequest(): HearingModel {
     return newHearing;
 }
 
-const participant = new ParticipantModel();
-participant.email = 'email@hmcts.net';
-participant.first_name = 'Sam';
-participant.last_name = 'Green';
-participant.phone = '12345';
-participant.is_judge = false;
-participant.display_name = 'Sam Green';
-participant.title = 'Mr';
-participant.hearing_role_name = 'Representative';
-participant.case_role_name = 'Applicant';
-participant.company = 'CN';
-participant.representee = 'test representee';
+let participant = new ParticipantModel();
+
+function initParticipant() {
+    participant = new ParticipantModel();
+    participant.email = 'email@hmcts.net';
+    participant.first_name = 'Sam';
+    participant.last_name = 'Green';
+    participant.phone = '12345';
+    participant.is_judge = false;
+    participant.display_name = 'Sam Green';
+    participant.title = 'Mr';
+    participant.hearing_role_name = 'Representative';
+    participant.case_role_name = 'Applicant';
+    participant.company = 'CN';
+    participant.representee = 'test representee';
+}
 
 const routerSpy: jasmine.SpyObj<Router> = {
     events: of(new NavigationEnd(2, '/', '/')),
@@ -225,6 +229,8 @@ const searchService = {
 
 describe('AddParticipantComponent', () => {
     beforeEach(waitForAsync(() => {
+        initParticipant();
+
         const hearing = initHearingRequest();
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
             'getParticipantRoles',
@@ -392,11 +398,15 @@ describe('AddParticipantComponent', () => {
         component.isRoleSelected = true;
         component.form.get('role').setValue('Representative');
 
+        const originalFirstName = participant.first_name;
+        const originalLastName = participant.last_name;
+        participant.first_name = participant.first_name + ' ';
+        participant.last_name = participant.last_name + ' ';
         component.getParticipant(participant);
         expect(role.value).toBe(participant.hearing_role_name);
         expect(party.value).toBe(participant.case_role_name);
-        expect(firstName.value).toBe(participant.first_name);
-        expect(lastName.value).toBe(participant.last_name);
+        expect(firstName.value).toBe(originalFirstName);
+        expect(lastName.value).toBe(originalLastName);
         expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
