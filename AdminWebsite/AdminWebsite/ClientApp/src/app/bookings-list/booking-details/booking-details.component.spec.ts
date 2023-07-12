@@ -530,7 +530,7 @@ CY: 54321 (ID: 7777)`);
             component.isVhOfficerAdmin = true;
         });
 
-        it('should update display when rebook hearing succeeds', fakeAsync(async() => {
+        it('should update display when rebook hearing succeeds', fakeAsync(async () => {
             const getStatusResponse = new UpdateBookingStatusResponse({
                 success: true,
                 telephone_conference_id: '123'
@@ -542,11 +542,11 @@ CY: 54321 (ID: 7777)`);
                     resolve(conferencePhoneNumber);
                 })
             );
-    
+
             component.ngOnInit();
             await component.rebookHearing();
             tick(50000);
-    
+
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
             expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(1);
             expect(component.telephoneConferenceId).toBe(getStatusResponse.telephone_conference_id);
@@ -554,26 +554,26 @@ CY: 54321 (ID: 7777)`);
             expect(component.conferencePhoneNumberWelsh).toBe(conferencePhoneNumber);
             expect(component.booking.isConfirmed).toBeTruthy();
             expect(component.showConfirming).toBeFalsy();
-    
+
             discardPeriodicTasks();
         }));
-    
-        it('should update display when rebook hearing fails', fakeAsync(async() => {
+
+        it('should update display when rebook hearing fails', fakeAsync(async () => {
             const getStatusResponse = new UpdateBookingStatusResponse({
                 success: false
             });
             videoHearingServiceSpy.getStatus.and.returnValue(Promise.resolve(getStatusResponse));
-    
+
             component.ngOnInit();
             await component.rebookHearing();
             tick(60000);
-    
+
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
             expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
             expect(component.showConfirmingFailed).toBeTruthy();
             expect(component.hearing.Status).toBe(UpdateBookingStatus.Failed);
             expect(component.showConfirming).toBeFalsy();
-    
+
             discardPeriodicTasks();
         }));
 
