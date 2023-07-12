@@ -173,12 +173,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showCancelBooking = true;
     }
 
-    confirmHearing() {
-        if (this.isVhOfficerAdmin) {
-            this.updateHearingStatus(UpdateBookingStatus.Created, '');
-        }
-    }
-
     async rebookHearing() {
         if (!this.isVhOfficerAdmin) {
             this.logger.warn(`${this.loggerPrefix} Cannot rebook hearing - user is not a Vh Officer Admin`);

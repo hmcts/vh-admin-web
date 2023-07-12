@@ -324,11 +324,6 @@ describe('BookingDetailsComponent', () => {
         component.setTimeObserver();
         expect(component.isConfirmationTimeValid).toBeTruthy();
     }));
-    it('should confirm booking', () => {
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
-    });
     it('should show that user role is Vh office admin', () => {
         const profile = new UserProfileResponse({ is_vh_officer_administrator_role: true });
         component.getUserRole(profile);
@@ -339,15 +334,6 @@ describe('BookingDetailsComponent', () => {
         component.getUserRole(profile);
         expect(component.isVhOfficerAdmin).toBeFalsy();
     });
-    it('should not confirm booking if not the VH officer admin role', fakeAsync(() => {
-        component.ngOnInit();
-        tick(1000);
-        const initialStatus = component.booking.status;
-        component.isVhOfficerAdmin = false;
-        component.confirmHearing();
-        expect(component.booking.status).toBe(initialStatus);
-        discardPeriodicTasks();
-    }));
     it('should persist status in the model', () => {
         component.booking = null;
         component.persistStatus(UpdateBookingStatus.Created);
@@ -382,23 +368,6 @@ describe('BookingDetailsComponent', () => {
         component.navigateBack();
         expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
-    it('should not show pop up if the confirm not failed', () => {
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        expect(component.showConfirmingFailed).toBeFalsy();
-    });
-    it('should show pop up if the confirm failed', fakeAsync(() => {
-        component.ngOnInit();
-        tick(1000);
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
-        component.hearing.Status = '';
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        tick(1000);
-        discardPeriodicTasks();
-        expect(component.showConfirmingFailed).toBeTruthy();
-    }));
     it('should hide pop up if the close confirm failed ok button was clicked', () => {
         component.showConfirmingFailed = true;
         component.closeConfirmFailed();
