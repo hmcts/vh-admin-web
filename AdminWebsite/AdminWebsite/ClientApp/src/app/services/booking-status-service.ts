@@ -1,7 +1,11 @@
 import { Observable, timer } from 'rxjs';
 import { VideoHearingsService } from './video-hearings.service';
 import { UpdateBookingStatusResponse } from './clients/api-client';
+import { Injectable } from '@angular/core';
 
+@Injectable({
+    providedIn: 'root'
+})
 export class BookingStatusService {
     constructor(private videoHearingService: VideoHearingsService) {}
 
