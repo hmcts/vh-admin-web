@@ -12,7 +12,6 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     BookingStatus,
     HearingDetailsResponse,
-    RebookHearingRequest,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
@@ -181,9 +180,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     async rebookHearing() {
         this.showConfirming = true;
         const hearingId = this.hearingId;
-        const request = new RebookHearingRequest({ is_multi_day_hearing: this.booking.multiDays ?? false });
-        
-        await this.videoHearingService.rebookHearing(hearingId, request);
+
+        await this.videoHearingService.rebookHearing(hearingId);
 
         // Poll Video-Api for booking confirmation
         const schedule = timer(0, 5000).subscribe(async counter => {
@@ -224,7 +222,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             const updateBookingStatusResponse = await lastValueFrom(
                 this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
             );
-            
+
             await this.updateHearingStatusDisplay(updateBookingStatusResponse, status);
         } catch (error) {
             if (status === UpdateBookingStatus.Cancelled) {

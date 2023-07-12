@@ -1060,24 +1060,20 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional)
-     * @return Success
+     * Rebook an existing hearing with a booking status of Failed
+     * @param hearingId Id of the hearing with a status of Failed
+     * @return No Content
      */
-    rebookHearing(hearingId: string, body: RebookHearingRequest | undefined): Observable<void> {
+    rebookHearing(hearingId: string): Observable<void> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/conferences';
         if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
         url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
         url_ = url_.replace(/[?&]$/, '');
 
-        const content_ = JSON.stringify(body);
-
         let options_: any = {
-            body: content_,
             observe: 'response',
             responseType: 'blob',
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json'
-            })
+            headers: new HttpHeaders({})
         };
 
         return _observableFrom(this.transformOptions(options_))
@@ -1128,7 +1124,7 @@ export class BHClient extends ApiClientBase {
                     return throwException('Server Error', status, _responseText, _headers, result500);
                 })
             );
-        } else if (status === 200) {
+        } else if (status === 204) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap((_responseText: string) => {
                     return _observableOf(null as any);
@@ -1148,7 +1144,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap((_responseText: string) => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
@@ -7706,44 +7702,6 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
-}
-
-export class RebookHearingRequest implements IRebookHearingRequest {
-    is_multi_day_hearing?: boolean;
-
-    constructor(data?: IRebookHearingRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.is_multi_day_hearing = false;
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
-        }
-    }
-
-    static fromJS(data: any): RebookHearingRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new RebookHearingRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['is_multi_day_hearing'] = this.is_multi_day_hearing;
-        return data;
-    }
-}
-
-export interface IRebookHearingRequest {
-    is_multi_day_hearing?: boolean;
 }
 
 export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {

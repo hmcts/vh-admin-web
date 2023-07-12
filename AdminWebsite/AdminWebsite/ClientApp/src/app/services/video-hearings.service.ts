@@ -25,9 +25,7 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    AllocatedCsoResponse,
-    RebookHearingRequest
-} from './clients/api-client';
+    AllocatedCsoResponse} from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
@@ -186,8 +184,8 @@ export class VideoHearingsService {
         return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
     }
 
-    rebookHearing(hearingId: string, request: RebookHearingRequest): Promise<void> {
-        return lastValueFrom(this.bhClient.rebookHearing(hearingId, request));
+    rebookHearing(hearingId: string): Promise<void> {
+        return lastValueFrom(this.bhClient.rebookHearing(hearingId));
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {

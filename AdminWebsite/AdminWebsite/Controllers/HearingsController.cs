@@ -108,16 +108,33 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        /// <summary>
+        /// Rebook an existing hearing with a booking status of Failed
+        /// </summary>
+        /// <param name="hearingId">Id of the hearing with a status of Failed</param>
+        /// <returns></returns>
         [HttpPost("{hearingId}/conferences")]
         [SwaggerOperation(OperationId = "RebookHearing")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RebookHearing(Guid hearingId, RebookHearingRequest request)
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RebookHearing(Guid hearingId)
         {
-            await _bookingsApiClient.RebookHearingAsync(hearingId, request);
-
-            return Ok();
+            try
+            {
+                await _bookingsApiClient.RebookHearingAsync(hearingId);
+                
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                _logger.LogError(e,
+                    "There was a problem rebooking the hearing. Status Code {StatusCode} - Message {Message}",
+                    e.StatusCode, e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                throw;
+            }
         }
 
         /// <summary>
