@@ -24,6 +24,7 @@ import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -203,6 +204,7 @@ describe('BookingDetailsComponent', () => {
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     const defaultUpdateBookingStatusResponse = new UpdateBookingStatusResponse({ success: true, telephone_conference_id: '1234' });
+    const bookingStatusService = new BookingStatusService(videoHearingServiceSpy);
 
     beforeEach(() => {
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
@@ -223,7 +225,8 @@ describe('BookingDetailsComponent', () => {
             bookingServiceSpy,
             bookingPersistServiceSpy,
             loggerSpy,
-            returnUrlServiceSpy
+            returnUrlServiceSpy,
+            bookingStatusService
         );
         component.hearingId = '1';
     });

@@ -21,6 +21,7 @@ import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 @Component({
     selector: 'app-booking-details',
@@ -61,7 +62,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private bookingService: BookingService,
         private bookingPersistService: BookingPersistService,
         private logger: Logger,
-        private returnUrlService: ReturnUrlService
+        private returnUrlService: ReturnUrlService,
+        private bookingStatusService: BookingStatusService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -188,22 +190,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
         await this.videoHearingService.rebookHearing(hearingId);
 
-        // Poll Video-Api for booking confirmation
-        const schedule = timer(0, 5000).subscribe(async counter => {
-            const hearingStatusResponse = await this.videoHearingService.getStatus(hearingId);
-            if (hearingStatusResponse?.success || counter === 10) {
-                schedule.unsubscribe();
-                await this.getStatusPollOnComplete(hearingStatusResponse);
+        this.bookingStatusService.pollForStatus(hearingId).subscribe(async response => {
+            let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
+            if (response?.success) {
+                updateBookingStatus = UpdateBookingStatus.Created;
             }
+            await this.updateHearingStatusDisplay(response, updateBookingStatus);
         });
-    }
-
-    async getStatusPollOnComplete(hearingStatusResponse: UpdateBookingStatusResponse): Promise<void> {
-        let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
-        if (hearingStatusResponse?.success) {
-            updateBookingStatus = UpdateBookingStatus.Created;
-        }
-        await this.updateHearingStatusDisplay(hearingStatusResponse, updateBookingStatus);
     }
 
     keepBooking() {
