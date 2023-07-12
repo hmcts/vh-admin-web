@@ -178,6 +178,11 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     async rebookHearing() {
+        if (!this.isVhOfficerAdmin) {
+            this.logger.warn(`${this.loggerPrefix} Cannot rebook hearing - user is not a Vh Officer Admin`);
+            return;
+        }
+
         this.showConfirming = true;
         const hearingId = this.hearingId;
 
@@ -188,16 +193,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             const hearingStatusResponse = await this.videoHearingService.getStatus(hearingId);
             if (hearingStatusResponse?.success || counter === 10) {
                 schedule.unsubscribe();
-                await this.processBooking(hearingStatusResponse);
+                await this.getStatusPollOnComplete(hearingStatusResponse);
             }
         });
     }
 
-    async processBooking(hearingStatusResponse: UpdateBookingStatusResponse): Promise<void> {
+    async getStatusPollOnComplete(hearingStatusResponse: UpdateBookingStatusResponse): Promise<void> {
         let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
         if (hearingStatusResponse?.success) {
-            // TODO handle this
-            //await this.processMultiHearing(hearingDetailsResponse);
             updateBookingStatus = UpdateBookingStatus.Created;
         }
         await this.updateHearingStatusDisplay(hearingStatusResponse, updateBookingStatus);

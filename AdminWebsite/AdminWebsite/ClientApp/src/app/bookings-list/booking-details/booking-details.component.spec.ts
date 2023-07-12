@@ -186,7 +186,9 @@ describe('BookingDetailsComponent', () => {
         'getConferencePhoneNumber',
         'isHearingAboutToStart',
         'isConferenceClosed',
-        'getAllocatedCsoForHearing'
+        'getAllocatedCsoForHearing',
+        'rebookHearing',
+        'getStatus'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -519,5 +521,70 @@ CY: 54321 (ID: 7777)`);
         component.booking.scheduled_date_time = date;
 
         expect(component.canRetryConfirmation).toBeTruthy();
+    });
+
+    describe('rebookHearing', () => {
+        beforeEach(() => {
+            videoHearingServiceSpy.rebookHearing.calls.reset();
+            videoHearingServiceSpy.getStatus.calls.reset();
+            component.isVhOfficerAdmin = true;
+        });
+
+        it('should update display when rebook hearing succeeds', fakeAsync(async() => {
+            const getStatusResponse = new UpdateBookingStatusResponse({
+                success: true,
+                telephone_conference_id: '123'
+            });
+            const conferencePhoneNumber = '1234';
+            videoHearingServiceSpy.getStatus.and.returnValue(Promise.resolve(getStatusResponse));
+            videoHearingServiceSpy.getConferencePhoneNumber.and.returnValue(
+                new Promise<string>(resolve => {
+                    resolve(conferencePhoneNumber);
+                })
+            );
+    
+            component.ngOnInit();
+            await component.rebookHearing();
+            tick(50000);
+    
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
+            expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(1);
+            expect(component.telephoneConferenceId).toBe(getStatusResponse.telephone_conference_id);
+            expect(component.conferencePhoneNumber).toBe(conferencePhoneNumber);
+            expect(component.conferencePhoneNumberWelsh).toBe(conferencePhoneNumber);
+            expect(component.booking.isConfirmed).toBeTruthy();
+            expect(component.showConfirming).toBeFalsy();
+    
+            discardPeriodicTasks();
+        }));
+    
+        it('should update display when rebook hearing fails', fakeAsync(async() => {
+            const getStatusResponse = new UpdateBookingStatusResponse({
+                success: false
+            });
+            videoHearingServiceSpy.getStatus.and.returnValue(Promise.resolve(getStatusResponse));
+    
+            component.ngOnInit();
+            await component.rebookHearing();
+            tick(60000);
+    
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
+            expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
+            expect(component.showConfirmingFailed).toBeTruthy();
+            expect(component.hearing.Status).toBe(UpdateBookingStatus.Failed);
+            expect(component.showConfirming).toBeFalsy();
+    
+            discardPeriodicTasks();
+        }));
+
+        it('should not rebook hearing when user is not in the VH officer role', fakeAsync(async () => {
+            component.isVhOfficerAdmin = false;
+
+            await component.rebookHearing();
+
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledTimes(0);
+
+            discardPeriodicTasks();
+        }));
     });
 });
