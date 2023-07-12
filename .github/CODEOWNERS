@@ -1,6 +1,7 @@
-* @hmcts/vh
-* @hmcts/vh-qa
-azure-pipelines.yml @vh-DevOps
-azure-pipelines.release.yml @vh-DevOps
-azure-pipelines.nightly.yml @vh-DevOps
-azure-pipelines.beta.yml @vh-DevOps
+* @hmcts/vh @hmcts/vh-qa
+/variables/ @hmcts/vh
+/charts/ @hmcts/vh
+/.github/ @hmcts/vh-devops
+/.githooks/ @hmcts/vh-devops
+/.config/ @hmcts/vh-devops
+azure-pipelines* @hmcts/vh-devops
