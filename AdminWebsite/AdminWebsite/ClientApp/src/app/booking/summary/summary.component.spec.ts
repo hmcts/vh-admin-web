@@ -29,6 +29,7 @@ import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { ResponseTestData } from 'src/app/testing/data/response-test-data';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -115,6 +116,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
 ]);
 const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
+const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
+
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
@@ -139,7 +142,8 @@ describe('SummaryComponent with valid request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             declarations: [
                 SummaryComponent,
@@ -568,7 +572,8 @@ describe('SummaryComponent  with invalid request', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
             declarations: [
@@ -626,7 +631,8 @@ describe('SummaryComponent  with existing request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
             declarations: [
@@ -825,7 +831,8 @@ describe('SummaryComponent  with multi days request', () => {
         loggerSpy,
         recordingGuardServiceSpy,
         participantServiceSpy,
-        featureFlagServiceSpy
+        featureFlagServiceSpy,
+        bookingStatusService
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();

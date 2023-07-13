@@ -14,12 +14,14 @@ import {
     HearingDetailsResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
+    UpdateBookingStatusResponse,
     UserProfileResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 @Component({
     selector: 'app-booking-details',
@@ -28,6 +30,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';
+    private newHearingSessionKey = 'newHearingId';
     hearing: BookingsDetailsModel;
     booking: HearingModel;
     participants: Array<ParticipantDetailsModel> = [];
@@ -59,7 +62,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private bookingService: BookingService,
         private bookingPersistService: BookingPersistService,
         private logger: Logger,
-        private returnUrlService: ReturnUrlService
+        private returnUrlService: ReturnUrlService,
+        private bookingStatusService: BookingStatusService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -169,10 +173,24 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showCancelBooking = true;
     }
 
-    confirmHearing() {
-        if (this.isVhOfficerAdmin) {
-            this.updateHearingStatus(UpdateBookingStatus.Created, '');
+    async rebookHearing() {
+        if (!this.isVhOfficerAdmin) {
+            this.logger.warn(`${this.loggerPrefix} Cannot rebook hearing - user is not a Vh Officer Admin`);
+            return;
         }
+
+        this.showConfirming = true;
+        const hearingId = this.hearingId;
+
+        await this.videoHearingService.rebookHearing(hearingId);
+
+        this.bookingStatusService.pollForStatus(hearingId).subscribe(async response => {
+            let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
+            if (response?.success) {
+                updateBookingStatus = UpdateBookingStatus.Created;
+            }
+            await this.updateHearingStatusDisplay(response, updateBookingStatus);
+        });
     }
 
     keepBooking() {
@@ -194,20 +212,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             const updateBookingStatusResponse = await lastValueFrom(
                 this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
             );
-            if (updateBookingStatusResponse.success) {
-                this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
-                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-                this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
-                this.updateStatusHandler(status);
-                this.booking.isConfirmed = true;
-            } else {
-                this.showConfirmingFailed = true;
-                this.updateStatusHandler(UpdateBookingStatus.Failed);
-            }
 
-            this.showConfirming = false;
-            this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-            this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+            await this.updateHearingStatusDisplay(updateBookingStatusResponse, status);
         } catch (error) {
             if (status === UpdateBookingStatus.Cancelled) {
                 this.showCancelBooking = false;
@@ -219,6 +225,23 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.errorHandler(error, status);
             this.updateStatusHandler(UpdateBookingStatus.Failed);
         }
+    }
+
+    async updateHearingStatusDisplay(statusResponse: UpdateBookingStatusResponse, status: UpdateBookingStatus) {
+        if (statusResponse.success) {
+            this.telephoneConferenceId = statusResponse.telephone_conference_id;
+            this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+            this.conferencePhoneNumberWelsh = await this.videoHearingService.getConferencePhoneNumber(true);
+            this.updateStatusHandler(status);
+            this.booking.isConfirmed = true;
+        } else {
+            this.showConfirmingFailed = true;
+            this.updateStatusHandler(UpdateBookingStatus.Failed);
+        }
+
+        this.showConfirming = false;
+        this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: statusResponse });
+        this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: statusResponse });
     }
 
     updateStatusHandler(status: UpdateBookingStatus) {

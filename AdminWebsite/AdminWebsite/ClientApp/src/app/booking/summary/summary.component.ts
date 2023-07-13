@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -20,6 +20,7 @@ import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 @Component({
     selector: 'app-summary',
@@ -74,7 +75,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
         private participantService: ParticipantService,
-        private featureService: FeatureFlagService
+        private featureService: FeatureFlagService,
+        private bookingStatusService: BookingStatusService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
@@ -253,13 +255,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
                 if (this.judgeAssigned) {
-                    // Poll Video-Api for booking confirmation
-                    const schedule = timer(0, 5000).subscribe(async counter => {
-                        const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
-                        if (hearingStatusResponse?.success || counter === 10) {
-                            schedule.unsubscribe();
-                            await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
-                        }
+                    this.bookingStatusService.pollForStatus(hearingDetailsResponse.id).subscribe(async response => {
+                        await this.processBooking(hearingDetailsResponse, response);
                     });
                 } else {
                     await this.processMultiHearing(hearingDetailsResponse);

@@ -185,6 +185,10 @@ export class VideoHearingsService {
         return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
     }
 
+    rebookHearing(hearingId: string): Promise<void> {
+        return lastValueFrom(this.bhClient.rebookHearing(hearingId));
+    }
+
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
         const hearingRequest = this.mapExistingHearing(booking);
         return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
