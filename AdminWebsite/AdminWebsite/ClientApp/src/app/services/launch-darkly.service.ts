@@ -9,7 +9,8 @@ export const FeatureFlags = {
     vhoWorkAllocation: 'vho-work-allocation',
     eJudFeature: 'EJudFeature',
     dom1Integration: 'dom1',
-    hrsIntegration: 'hrs-integration'
+    hrsIntegration: 'hrs-integration',
+    referenceData: 'reference-data'
 };
 
 @Injectable({
@@ -52,6 +53,9 @@ export class LaunchDarklyService implements OnDestroy {
         this.client.waitUntilReady().then(() => {
             fetchFlag.next();
         });
-        return fetchFlag.pipe(map(() => this.client.variation(flagKey, defaultValue) as T));
+        return fetchFlag.pipe(
+            map(() => (flagKey === 'reference-data' ? (true as T) : (this.client.variation(flagKey, defaultValue) as T)))
+        );
+        //return fetchFlag.pipe(map(() => this.client.variation(flagKey, defaultValue) as T));
     }
 }

@@ -21,6 +21,7 @@ export class HearingModel {
     participants?: ParticipantModel[] | undefined;
     created_by?: string | undefined;
     case_type?: string | undefined;
+    case_type_service_id?: string | undefined;
     other_information?: string | undefined;
     judge_email?: string | undefined;
     judge_phone?: string | undefined;
@@ -28,6 +29,7 @@ export class HearingModel {
     hearing_venue_id?: number | undefined;
     case_type_id?: number | undefined;
     hearing_type_name?: string | undefined;
+    hearing_type_code?: string | undefined;
     court_id?: number | undefined;
     court_name?: string | undefined;
     created_date?: Date | undefined;

@@ -48,7 +48,9 @@ namespace AdminWebsite.Controllers
             {
                 Group = caseType.Name,
                 Id = hearingType.Id,
-                Name = hearingType.Name
+                Name = hearingType.Name,
+                ServiceId = caseType.ServiceId,
+                Code = hearingType.Code
             })).ToList();
 
             return Ok(result);
