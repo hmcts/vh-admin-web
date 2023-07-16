@@ -8014,6 +8014,7 @@ export interface IWorkingHours {
 export class AllocatedCsoResponse implements IAllocatedCsoResponse {
     hearing_id?: string;
     cso?: JusticeUserResponse;
+    supports_work_allocation?: boolean;
 
     constructor(data?: IAllocatedCsoResponse) {
         if (data) {
@@ -8027,6 +8028,7 @@ export class AllocatedCsoResponse implements IAllocatedCsoResponse {
         if (_data) {
             this.hearing_id = _data['hearing_id'];
             this.cso = _data['cso'] ? JusticeUserResponse.fromJS(_data['cso']) : <any>undefined;
+            this.supports_work_allocation = _data['supports_work_allocation'];
         }
     }
 
@@ -8041,6 +8043,7 @@ export class AllocatedCsoResponse implements IAllocatedCsoResponse {
         data = typeof data === 'object' ? data : {};
         data['hearing_id'] = this.hearing_id;
         data['cso'] = this.cso ? this.cso.toJSON() : <any>undefined;
+        data['supports_work_allocation'] = this.supports_work_allocation;
         return data;
     }
 }
@@ -8048,6 +8051,7 @@ export class AllocatedCsoResponse implements IAllocatedCsoResponse {
 export interface IAllocatedCsoResponse {
     hearing_id?: string;
     cso?: JusticeUserResponse;
+    supports_work_allocation?: boolean;
 }
 
 export class BookingsByDateResponse implements IBookingsByDateResponse {
