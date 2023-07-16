@@ -13,6 +13,7 @@ import {
     AllocatedCsoResponse,
     BookingStatus,
     HearingDetailsResponse,
+    JusticeUserResponse,
     PhoneConferenceResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
@@ -141,7 +142,7 @@ export class BookingDetailsTestData {
 }
 
 const hearingResponse = new HearingDetailsResponse();
-const allocatedCsoResponse = new AllocatedCsoResponse();
+let allocatedCsoResponse = new AllocatedCsoResponse();
 
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
@@ -207,6 +208,7 @@ describe('BookingDetailsComponent', () => {
     const bookingStatusService = new BookingStatusService(videoHearingServiceSpy);
 
     beforeEach(() => {
+        allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
@@ -254,8 +256,29 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.cases[0].number).toBe('XX3456234565');
         expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
+        expect(component.hearing.AllocatedTo).toBe('Unallocated');
         discardPeriodicTasks();
     }));
+
+    it('should get allocated cso details', fakeAsync(() => {
+        const username = 'foo@test.com';
+        allocatedCsoResponse.cso = new JusticeUserResponse({ username });
+        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
+        component.ngOnInit();
+        tick();
+        expect(component.hearing.AllocatedTo).toBe(username);
+        discardPeriodicTasks();
+    }));
+
+    it('should set hearing AllocatedTo "Not Required" when venue does not support work allocation', fakeAsync(() => {
+        allocatedCsoResponse.supports_work_allocation = false;
+        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
+        component.ngOnInit();
+        tick();
+        expect(component.hearing.AllocatedTo).toBe('Not Required');
+        discardPeriodicTasks();
+    }));
+
     it('should call service to map hearing response to HearingModel', () => {
         component.mapResponseToModel(new HearingDetailsResponse());
         expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
