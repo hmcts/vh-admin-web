@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
@@ -17,8 +17,7 @@ import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
-import { FeatureFlagService } from '../../services/feature-flag.service';
-import { first, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
@@ -63,25 +62,21 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        protected featureFlagService: FeatureFlagService,
         protected logger: Logger,
         private launchDarklyService: LaunchDarklyService
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
-        featureFlagService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     ngOnInit() {
-        this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.referenceData)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.referenceDataFeatureFlag = flag;
-            });
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+
+        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
+            this.referenceDataFeatureFlag = referenceDataFlag;
+            this.judiciaryRoles = ejudFeatureFlag ? Constants.JudiciaryRoles : [];
+        });
 
         this.checkForExistingRequest();
         this.initialiseForm();
