@@ -246,7 +246,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.availableCaseTypes = this.availableHearingTypes
             .map(h => h.group)
             .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
+            .sort((a, b) => a.localeCompare(b));
 
         if (this.availableCaseTypes.length === 1) {
             this.selectedCaseType = this.availableCaseTypes[0];
