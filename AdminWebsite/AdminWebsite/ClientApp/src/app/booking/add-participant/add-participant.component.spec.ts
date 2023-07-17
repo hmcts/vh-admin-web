@@ -26,6 +26,7 @@ import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -211,6 +212,7 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+let launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
@@ -245,6 +247,8 @@ describe('AddParticipantComponent', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication', 'removeParticipant']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -268,7 +272,7 @@ describe('AddParticipantComponent', () => {
             participantServiceSpy,
             routerSpy,
             bookingServiceSpy,
-            featureFlagServiceSpy,
+            launchDarklyServiceSpy,
             loggerSpy
         );
 
@@ -1002,11 +1006,14 @@ describe('AddParticipantComponent edit mode', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                { provide: ConfigService, useValue: configServiceSpy }
+                { provide: ConfigService, useValue: configServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -1383,6 +1390,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1394,6 +1403,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy }
             ]
         }).compileComponents();
@@ -1626,6 +1636,8 @@ describe('AddParticipantComponent set representer', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 
@@ -1635,7 +1647,7 @@ describe('AddParticipantComponent set representer', () => {
             participantServiceSpy,
             { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
             bookingServiceSpy,
-            featureFlagServiceSpy,
+            launchDarklyServiceSpy,
             loggerSpy
         );
         component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, featureFlagServiceSpy);

@@ -62,8 +62,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        protected logger: Logger,
-        private launchDarklyService: LaunchDarklyService
+        private launchDarklyService: LaunchDarklyService,
+        protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
