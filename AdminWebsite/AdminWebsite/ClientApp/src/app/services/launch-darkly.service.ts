@@ -53,9 +53,6 @@ export class LaunchDarklyService implements OnDestroy {
         this.client.waitUntilReady().then(() => {
             fetchFlag.next();
         });
-        return fetchFlag.pipe(
-            map(() => (flagKey === 'reference-data' ? (true as T) : (this.client.variation(flagKey, defaultValue) as T)))
-        );
-        //return fetchFlag.pipe(map(() => this.client.variation(flagKey, defaultValue) as T));
+        return fetchFlag.pipe(map(() => this.client.variation(flagKey, defaultValue) as T));
     }
 }
