@@ -1167,7 +1167,7 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
     }));
 
-    it('gets participant roles by case type service id when reference data flag is on', fakeAsync(async() => {
+    it('gets participant roles by case type service id when reference data flag is on', fakeAsync(async () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
 
         component.ngOnInit();
@@ -1180,7 +1180,7 @@ describe('AddParticipantComponent edit mode', () => {
         });
     }));
 
-    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async() => {
+    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         component.ngOnInit();
