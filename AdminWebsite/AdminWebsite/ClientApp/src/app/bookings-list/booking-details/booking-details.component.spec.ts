@@ -256,7 +256,7 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.cases[0].number).toBe('XX3456234565');
         expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
-        expect(component.hearing.AllocatedTo).toBe('Unallocated');
+        expect(component.hearing.AllocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();
     }));
 

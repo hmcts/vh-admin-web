@@ -144,7 +144,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             .subscribe(
                 response =>
                     (this.hearing.AllocatedTo = response.supports_work_allocation
-                        ? response?.cso?.username ?? 'Unallocated'
+                        ? response?.cso?.username ?? 'Not Allocated'
                         : 'Not Required')
             );
     }
