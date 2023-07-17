@@ -1,7 +1,7 @@
-import { ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, Validators } from '@angular/forms';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { AbstractControl } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { Observable, of, Subject, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
@@ -169,6 +169,8 @@ function initHearingRequest(): HearingModel {
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
+    newHearing.case_type = 'Test Case Type';
+    newHearing.case_type_service_id = 'AA1';
     return newHearing;
 }
 
@@ -209,6 +211,15 @@ const routerSpy: jasmine.SpyObj<Router> = {
 } as jasmine.SpyObj<Router>;
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+    'getParticipantRoles',
+    'getCurrentRequest',
+    'setBookingHasChanged',
+    'updateHearingRequest',
+    'cancelRequest',
+    'isConferenceClosed',
+    'isHearingAboutToStart'
+]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
@@ -234,15 +245,6 @@ describe('AddParticipantComponent', () => {
         initParticipant();
 
         const hearing = initHearingRequest();
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getParticipantRoles',
-            'getCurrentRequest',
-            'setBookingHasChanged',
-            'updateHearingRequest',
-            'cancelRequest',
-            'isConferenceClosed',
-            'isHearingAboutToStart'
-        ]);
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication', 'removeParticipant']);
@@ -1043,6 +1045,10 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee = component.form.controls['interpreterFor'];
     }));
 
+    afterEach(() => {
+        videoHearingsServiceSpy.getParticipantRoles.calls.reset();
+    });
+
     it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
         component.form.setValue({
             party: 'Panel Member',
@@ -1159,6 +1165,32 @@ describe('AddParticipantComponent edit mode', () => {
         });
         tick(100);
         fixture.detectChanges();
+    }));
+
+    it('gets participant roles by case type service id when reference data flag is on', fakeAsync(async() => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
+
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        flush();
+        fixture.detectChanges();
+
+        fixture.whenStable().then(() => {
+            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type_service_id);
+        });
+    }));
+
+    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async() => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        flush();
+        fixture.detectChanges();
+
+        fixture.whenStable().then(() => {
+            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type);
+        });
     }));
 
     it('should update participant and clear form', () => {
