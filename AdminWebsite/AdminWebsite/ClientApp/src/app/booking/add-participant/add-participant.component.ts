@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
@@ -17,8 +17,8 @@ import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
-import { FeatureFlagService } from '../../services/feature-flag.service';
-import { first } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-add-participant',
@@ -45,6 +45,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     existingPerson: boolean;
     bookingHasParticipants: boolean;
     $subscriptions: Subscription[] = [];
+    referenceDataFeatureFlag = false;
+    destroyed$ = new Subject<void>();
 
     interpreteeList: ParticipantModel[] = [];
     showConfirmRemoveInterpretee = false;
@@ -60,18 +62,22 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        protected featureFlagService: FeatureFlagService,
+        private launchDarklyService: LaunchDarklyService,
         protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
-        featureFlagService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     ngOnInit() {
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+
+        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
+            this.referenceDataFeatureFlag = referenceDataFlag;
+            this.judiciaryRoles = ejudFeatureFlag ? Constants.JudiciaryRoles : [];
+        });
+
         this.checkForExistingRequest();
         this.initialiseForm();
         super.ngOnInit();
@@ -113,9 +119,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         setTimeout(() => {
             const self = this;
+            const caseTypeIdentifier = this.referenceDataFeatureFlag ? this.hearing.case_type_service_id : this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
             this.videoHearingService
-                .getParticipantRoles(this.hearing.case_type)
+                .getParticipantRoles(caseTypeIdentifier)
                 .then((data: CaseAndHearingRolesResponse[]) => {
                     self.setupRoles(data);
                     if (self.editMode) {

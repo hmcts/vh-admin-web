@@ -24,5 +24,10 @@
         /// Hearing type display name
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The service id for the type
+        /// </summary>
+        public string ServiceId { get; set; }
     }
 }

@@ -5885,6 +5885,8 @@ export class HearingTypeResponse implements IHearingTypeResponse {
     id?: number | undefined;
     /** Hearing type display name */
     name?: string | undefined;
+    /** The service id for the type */
+    service_id?: string | undefined;
 
     constructor(data?: IHearingTypeResponse) {
         if (data) {
@@ -5900,6 +5902,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
             this.group = _data['group'];
             this.id = _data['id'];
             this.name = _data['name'];
+            this.service_id = _data['service_id'];
         }
     }
 
@@ -5916,6 +5919,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
         data['group'] = this.group;
         data['id'] = this.id;
         data['name'] = this.name;
+        data['service_id'] = this.service_id;
         return data;
     }
 }
@@ -5930,6 +5934,8 @@ export interface IHearingTypeResponse {
     id?: number | undefined;
     /** Hearing type display name */
     name?: string | undefined;
+    /** The service id for the type */
+    service_id?: string | undefined;
 }
 
 /** A judge existing in the system */
