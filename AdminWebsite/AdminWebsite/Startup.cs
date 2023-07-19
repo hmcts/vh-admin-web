@@ -29,8 +29,7 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(options =>
-                options.ConnectionString = Configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddApplicationInsightsTelemetry();
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
             var envName = Configuration["AzureAd:RedirectUri"]; // resource ID is a GUID, 
             services.AddSingleton<IFeatureToggles>(new FeatureToggles(Configuration["FeatureToggle:SdkKey"], envName));
