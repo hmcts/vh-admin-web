@@ -276,7 +276,9 @@ export class VideoHearingsService {
         const newHearingRequest = new BookNewHearingRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_name = newRequest.case_type;
+        newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
+        newHearingRequest.hearing_type_code = newRequest.hearing_type_code;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
         newHearingRequest.hearing_venue_name = newRequest.court_name;

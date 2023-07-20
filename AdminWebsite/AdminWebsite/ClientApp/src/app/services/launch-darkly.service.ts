@@ -9,7 +9,8 @@ export const FeatureFlags = {
     vhoWorkAllocation: 'vho-work-allocation',
     eJudFeature: 'EJudFeature',
     dom1Integration: 'dom1',
-    hrsIntegration: 'hrs-integration'
+    hrsIntegration: 'hrs-integration',
+    referenceData: 'reference-data'
 };
 
 @Injectable({
