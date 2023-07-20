@@ -207,8 +207,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearing.cases[0] = hearingCase;
         this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
         this.hearing.hearing_type_id = this.isExistingHearing ? this.hearing.hearing_type_id : this.form.getRawValue().hearingType;
-        this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
+        const hearingType = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id);
+        this.hearing.hearing_type_name = hearingType.name;
+        this.hearing.hearing_type_code = hearingType.code;
         this.hearing.questionnaire_not_required = false;
+        this.hearing.case_type_service_id = this.availableHearingTypes.find(c => c.group === this.hearing.case_type).service_id;
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
     }
@@ -243,7 +246,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.availableCaseTypes = this.availableHearingTypes
             .map(h => h.group)
             .filter((value, index, self) => self.indexOf(value) === index)
-            .sort();
+            .sort((a, b) => a.localeCompare(b));
 
         if (this.availableCaseTypes.length === 1) {
             this.selectedCaseType = this.availableCaseTypes[0];
