@@ -141,7 +141,12 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
         this.videoHearingService
             .getAllocatedCsoForHearing(hearingResponse.id)
-            .subscribe(response => (this.hearing.AllocatedTo = response?.cso?.username ?? 'Unallocated'));
+            .subscribe(
+                response =>
+                    (this.hearing.AllocatedTo = response.supports_work_allocation
+                        ? response?.cso?.username ?? 'Not Allocated'
+                        : 'Not Required')
+            );
     }
 
     mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {
@@ -254,14 +259,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             return;
         }
         this.$subscriptions.push(
-            this.videoHearingService.getHearingById(this.hearingId).subscribe(
-                newData => {
+            this.videoHearingService.getHearingById(this.hearingId).subscribe({
+                next: newData => {
                     this.mapHearing(newData);
                 },
-                error => {
+                error: error => {
                     this.logger.error(`${this.loggerPrefix} Error to get hearing Id: ${this.hearingId}`, error);
                 }
-            )
+            })
         );
         this.logger.info(`${this.loggerPrefix} updateStatusHandler --> Hearing status changed`, {
             hearingId: this.hearingId,
