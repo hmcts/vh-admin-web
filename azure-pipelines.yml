@@ -153,12 +153,6 @@ parameters:
   - name: appSettings
     type: object
     default:
-      - name: ApplicationInsights:ConnectionString
-        value: vh-core-infra-AppInsightsKey
-        secret: true
-      - name: AppInsightsKey
-        value: vh-core-infra-AppInsightsKey
-        secret: true
       - name: IsLive
         value: $(IsLive)
 
