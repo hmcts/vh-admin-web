@@ -70,8 +70,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorEndTimeRequired = 'End time is required';
     public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
     public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
-    public static readonly DeleteNonWorkinghoursconfirmation = 'Work Hours Deleted Sucessfully';
-
+    
     private static DateTimeErrors = {
         start_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired,
         end_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired,
