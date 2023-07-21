@@ -371,7 +371,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 next: () => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.removeSlot();
-                    this.showMessage('Non working hours deleted sucessfully');
+                    this.showMessage('Non-availability hours deleted sucessfully');
                 },
                 error: error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
