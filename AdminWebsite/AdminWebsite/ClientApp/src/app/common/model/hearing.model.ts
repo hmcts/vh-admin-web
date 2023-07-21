@@ -32,6 +32,7 @@ export class HearingModel {
     hearing_type_code?: string;
     court_id?: number;
     court_name?: string;
+    court_code?: string;
     created_date?: Date;
     updated_by?: string;
     updated_date: Date;

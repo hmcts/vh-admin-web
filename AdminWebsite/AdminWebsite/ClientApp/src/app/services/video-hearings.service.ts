@@ -282,6 +282,7 @@ export class VideoHearingsService {
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
         newHearingRequest.hearing_venue_name = newRequest.court_name;
+        newHearingRequest.hearing_venue_code = newRequest.court_code;
         newHearingRequest.hearing_room_name = newRequest.court_room;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
         newHearingRequest.other_information = newRequest.other_information;
