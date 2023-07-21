@@ -996,6 +996,17 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             // assert
             expect(component.displayMessage).toBeFalsy();
         });
+
+        it('it should display a message when non-availability hour row deleted', () => {
+            const slot = new VhoNonAvailabilityWorkHoursResponse();
+            component.result = [slot];
+            const slotMapped = component.mapNonWorkingHoursToEditModel(slot);
+
+            component.delete(slotMapped);
+            component.onDeletionAnswer(true);
+            tick();
+            expect(component.displayMessage).toBeTruthy();
+        });
     });
 
     describe('handleContinue', () => {
