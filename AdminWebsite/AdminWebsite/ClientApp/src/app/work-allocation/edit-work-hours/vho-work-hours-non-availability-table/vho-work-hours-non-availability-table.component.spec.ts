@@ -997,7 +997,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.displayMessage).toBeFalsy();
         });
 
-        fit('it should display a message when non-availability hour row deleted', () => {
+        it('it should display a message when non-availability hour row deleted', () => {
             component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
             component.addNewNonAvailabilityRow();
             const slot = component.nonWorkHours[component.nonWorkHours.length - 1];
