@@ -36,7 +36,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Should_return_a_list_of_venues()
         {
             var hearingVenues = Builder<HearingVenueResponse>.CreateListOfSize(2).Build().ToList();
-            _bookingsApiClientMock.Setup(x => x.GetHearingVenuesAsync()).ReturnsAsync(hearingVenues);
+            _bookingsApiClientMock.Setup(x => x.GetHearingVenuesAsync(true)).ReturnsAsync(hearingVenues);
 
             var response = _controller.GetCourts();
             var result = (OkObjectResult)response.Result.Result;

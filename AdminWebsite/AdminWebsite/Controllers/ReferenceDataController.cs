@@ -93,7 +93,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingVenueResponse>>> GetCourts()
         {
-            var response = await _bookingsApiClient.GetHearingVenuesAsync();
+            var response = await _bookingsApiClient.GetHearingVenuesAsync(true);
             return Ok(response);
         }
 
