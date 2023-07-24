@@ -70,6 +70,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     public static readonly ErrorEndTimeRequired = 'End time is required';
     public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
     public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
+    public static readonly DeleteRowMessageNonAvailabilityHours = 'Non-availability hours deleted successfully';
 
     private static DateTimeErrors = {
         start_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired,
@@ -371,7 +372,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 next: () => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.removeSlot();
-                    this.showMessage('Non-availability hours deleted successfully');
+                    this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.DeleteRowMessageNonAvailabilityHours);
                 },
                 error: error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);

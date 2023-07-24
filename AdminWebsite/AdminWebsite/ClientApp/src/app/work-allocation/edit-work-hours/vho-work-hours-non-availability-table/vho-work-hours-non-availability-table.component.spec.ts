@@ -997,15 +997,17 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             expect(component.displayMessage).toBeFalsy();
         });
 
-        it('it should display a message when non-availability hour row deleted', () => {
+        fit('it should display a message when non-availability hour row deleted', () => {
             component.nonWorkHours = [new EditVhoNonAvailabilityWorkHoursModel()];
             component.addNewNonAvailabilityRow();
             const slot = component.nonWorkHours[component.nonWorkHours.length - 1];
 
             component.delete(slot);
+            component.onDeletionAnswer(true);
             fixture.detectChanges();
-
-            expect(component.displayMessage).toBeFalsy();
+            // assert
+            expect(component.displayMessage).toBeTruthy();
+            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.DeleteRowMessageNonAvailabilityHours);
         });
     });
 
