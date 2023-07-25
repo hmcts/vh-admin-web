@@ -51,7 +51,7 @@ namespace AdminWebsite.Controllers
         {
             var clientSettings = new ClientSettingsResponse
             {
-                InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
+                ConnectionString = _applicationInsightsConfiguration.ConnectionString,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
                 ConferencePhoneNumberWelsh = _kinlyConfiguration.ConferencePhoneNumberWelsh,

@@ -13,7 +13,7 @@ export class AppInsightsLogger implements LogAdapter {
         this.configService.getClientSettings().subscribe(settings => {
             this.appInsights = new ApplicationInsights({
                 config: {
-                    instrumentationKey: settings.instrumentation_key
+                    connectionString: settings.connection_string
                 }
             });
             this.appInsights.loadAppInsights();
