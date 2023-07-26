@@ -66,8 +66,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistinHearing = this.hearing && !!this.hearing.hearing_type_name;
-        this.isBookedHearing =
-            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
+        this.isBookedHearing = this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`, {
             hearingExists: this.isExistinHearing,
             isBookedHearing: this.isBookedHearing,
@@ -338,8 +337,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private retrieveCourts() {
         this.logger.debug(`${this.loggerPrefix} Retrieving courts.`);
 
-        this.refDataService.getCourts().subscribe(
-            (data: HearingVenueResponse[]) => {
+        this.refDataService.getCourts().subscribe({
+            next: data => {
                 this.availableCourts = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of available courts.`, { courts: data.length });
                 const pleaseSelect = new HearingVenueResponse();
@@ -348,11 +347,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                 this.availableCourts.unshift(pleaseSelect);
                 this.setVenueForExistingHearing();
             },
-            error => {
+            error: error => {
                 this.logger.error(`${this.loggerPrefix} Failed to get courts available.`, error);
                 this.errorService.handleError(error);
             }
-        );
+        });
     }
 
     setVenueForExistingHearing() {
