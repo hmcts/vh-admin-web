@@ -5739,8 +5739,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     redirect_uri?: string | undefined;
     /** The Uri to redirect back to after a successful logout */
     post_logout_redirect_uri?: string | undefined;
-    /** The Application Insight Instrumentation Key */
-    instrumentation_key?: string | undefined;
+    /** The Application Insights Connection String */
+    connection_string?: string | undefined;
     /** The reform email */
     test_username_stem?: string | undefined;
     /** To join the conference phone number */
@@ -5769,7 +5769,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.resource_id = _data['resource_id'];
             this.redirect_uri = _data['redirect_uri'];
             this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
-            this.instrumentation_key = _data['instrumentation_key'];
+            this.connection_string = _data['connection_string'];
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
             this.conference_phone_number_welsh = _data['conference_phone_number_welsh'];
@@ -5793,7 +5793,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['resource_id'] = this.resource_id;
         data['redirect_uri'] = this.redirect_uri;
         data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
-        data['instrumentation_key'] = this.instrumentation_key;
+        data['connection_string'] = this.connection_string;
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
         data['conference_phone_number_welsh'] = this.conference_phone_number_welsh;
@@ -5816,8 +5816,8 @@ export interface IClientSettingsResponse {
     redirect_uri?: string | undefined;
     /** The Uri to redirect back to after a successful logout */
     post_logout_redirect_uri?: string | undefined;
-    /** The Application Insight Instrumentation Key */
-    instrumentation_key?: string | undefined;
+    /** The Application Insights Connection String */
+    connection_string?: string | undefined;
     /** The reform email */
     test_username_stem?: string | undefined;
     /** To join the conference phone number */
