@@ -4,9 +4,9 @@
     "net6.0": {
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.45.21, )",
-        "resolved": "1.45.21",
-        "contentHash": "fmmGE+E/5/xyy4n4x2ir+5yzCZ2KCKdV9sdzjPLVYwZPdHztk73sYvs52gAsN+eTEQg6XHoBQUuoPB/Oeh8bqA==",
+        "requested": "[1.45.26, )",
+        "resolved": "1.45.26",
+        "contentHash": "0Qd0LK9BYvYA3UIAlsEzbXJJgL6SxcX8VI4DipM8l/h0PBLLPKVdfGAOiMV81jtUOLvm+eYMusHXfi8Juncusg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
