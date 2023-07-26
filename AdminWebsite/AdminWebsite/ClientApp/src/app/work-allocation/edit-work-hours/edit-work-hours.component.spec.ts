@@ -328,13 +328,16 @@ describe('EditWorkHoursComponent', () => {
 
     describe('filter by future date', () => {
         it('should show vho future data ', () => {
-            component.result = [
-                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2022/10/24'), end_time: new Date('2022/10/24') }),
-                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2022/10/25'), end_time: new Date('2022/10/29') }),
-                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2023/10/30'), end_time: new Date('2023/10/31') })
+            component.todayDate = new Date('2022/07/25');
+            const input = [
+                new VhoNonAvailabilityWorkHoursResponse({ id: 0, start_time: new Date('2021/07/30'), end_time: new Date('2022/07/30') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 1, start_time: new Date('2022/07/25'), end_time: new Date('2022/07/26') }),
+                new VhoNonAvailabilityWorkHoursResponse({ id: 2, start_time: new Date('2022/06/25'), end_time: new Date('2022/06/25') })
             ];
-            fixture.detectChanges();
-            expect(component.filterByFutureDate).toBeTruthy();
+            const result = component.filterByFutureDate(input);
+            expect(result.length).toBe(2);
+            expect(result).toContain(input[0]);
+            expect(result).toContain(input[1]);
         });
     });
 
