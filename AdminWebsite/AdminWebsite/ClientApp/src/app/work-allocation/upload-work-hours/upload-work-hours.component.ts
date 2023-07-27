@@ -22,10 +22,12 @@ export class UploadWorkHoursComponent {
 
     public workingHoursFile: File | null = null;
     public nonWorkingHoursFile: File | null = null;
+    public disableNonWorkHoursButton: boolean;
+    public disableWorkHoursButton: boolean;
 
     constructor(private workHoursProcessor: WorkHoursFileProcessorService) {}
 
-    handleFileInput(file: File, fileType: FileType) {
+    handleFileInput(file: File, fileType) {
         if (!file) {
             this.handleFileInputCancel(fileType);
             return;
@@ -34,21 +36,41 @@ export class UploadWorkHoursComponent {
         if (!this.workHoursProcessor.isFileFormatValild(file)) {
             const message = `File format is not supported, Supported file format is .CSV`;
             if (fileType === FileType.UploadNonWorkingHours) {
+                this.disableNonWorkHoursButton = true;
+                this.resetNonWorkingHoursMessages();
                 this.nonWorkingHoursFileValidationErrors.push(message);
             } else {
+                this.disableWorkHoursButton = true;
+                this.resetWorkingHoursMessages();
                 this.workingHoursFileValidationErrors.push(message);
             }
             return;
+        } else {
+            if (fileType === FileType.UploadWorkingHours) {
+                this.disableWorkHoursButton = false;
+            } else {
+                this.disableNonWorkHoursButton = false;
+            }
         }
 
         if (this.workHoursProcessor.isFileTooBig(file)) {
             const message = `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`;
             if (fileType === FileType.UploadNonWorkingHours) {
+                this.disableNonWorkHoursButton = true;
+                this.resetNonWorkingHoursMessages();
                 this.nonWorkingHoursFileValidationErrors.push(message);
             } else {
+                this.disableWorkHoursButton = true;
+                this.resetWorkingHoursMessages();
                 this.workingHoursFileValidationErrors.push(message);
             }
             return;
+        } else {
+            if (fileType === FileType.UploadWorkingHours) {
+                this.disableWorkHoursButton = false;
+            } else {
+                this.disableNonWorkHoursButton = false;
+            }
         }
 
         if (fileType === FileType.UploadWorkingHours) {

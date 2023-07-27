@@ -70,6 +70,31 @@ describe('UploadWorkHoursComponent', () => {
             expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
+        it('should disable upload button for work hours if file is invalid', () => {
+            const resetErrorsSpy = spyOn(component, 'resetWorkingHoursMessages');
+            workHoursProcessorSpy.isFileFormatValild.and.returnValue(false);
+            const file = new File([''], 'filename.xlsx', { type: 'xlsx' });
+
+            component.handleFileInput(file, FileType.UploadWorkingHours);
+
+            expect(component.disableWorkHoursButton).toBe(true);
+            expect(resetErrorsSpy).toHaveBeenCalled();
+            expect(component.workingHoursFileValidationErrors.length).toBeGreaterThan(0);
+        });
+
+        it('should disable upload button for non work hours if file is invalid', () => {
+            const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
+            component.disableNonWorkHoursButton = false;
+            workHoursProcessorSpy.isFileFormatValild.and.returnValue(false);
+            const file = new File([''], 'filename.xlsx', { type: 'xlsx' });
+
+            component.handleFileInput(file, FileType.UploadNonWorkingHours);
+
+            expect(component.disableNonWorkHoursButton).toBe(true);
+            expect(resetErrorsSpy).toHaveBeenCalled();
+            expect(component.nonWorkingHoursFileValidationErrors.length).toBeGreaterThan(0);
+        });
+
         it('should not assign non-working hours file if file is null', () => {
             const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
             const file = new File([''], 'filename.csv', { type: 'text/csv' });
@@ -82,6 +107,8 @@ describe('UploadWorkHoursComponent', () => {
         });
 
         it(`should set errors when maximum working hours file size is exceeded`, () => {
+            component.disableWorkHoursButton = false;
+            const resetErrorsSpy = spyOn(component, 'resetWorkingHoursMessages');
             const file = new File([''], 'filename.csv', { type: 'text/csv' });
             Object.defineProperty(file, 'size', { value: 2000001 });
             workHoursProcessorSpy.isFileTooBig.and.returnValue(true);
@@ -89,9 +116,13 @@ describe('UploadWorkHoursComponent', () => {
             component.handleFileInput(file, FileType.UploadWorkingHours);
 
             expect(component.workingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
+            expect(component.disableWorkHoursButton).toBe(true);
+            expect(resetErrorsSpy).toHaveBeenCalled();
         });
 
         it(`should set errors when maximum non-working hours file size is exceeded`, () => {
+            component.disableNonWorkHoursButton = false;
+            const resetErrorsSpy = spyOn(component, 'resetNonWorkingHoursMessages');
             const file = new File([''], 'filename.csv', { type: 'text/csv' });
             Object.defineProperty(file, 'size', { value: 2000001 });
             workHoursProcessorSpy.isFileTooBig.and.returnValue(true);
@@ -99,6 +130,8 @@ describe('UploadWorkHoursComponent', () => {
             component.handleFileInput(file, FileType.UploadNonWorkingHours);
 
             expect(component.nonWorkingHoursFileValidationErrors[0]).toBe('File cannot be larger than 200kb');
+            expect(component.disableNonWorkHoursButton).toBe(true);
+            expect(resetErrorsSpy).toHaveBeenCalled();
         });
     });
 
