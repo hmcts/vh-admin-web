@@ -27,7 +27,7 @@ export class UploadWorkHoursComponent {
 
     constructor(private workHoursProcessor: WorkHoursFileProcessorService) {}
 
-    handleFileInput(file: File, fileType) {
+    handleFileInput(file: File, fileType: FileType) {
         if (!file) {
             this.handleFileInputCancel(fileType);
             return;
@@ -35,42 +35,18 @@ export class UploadWorkHoursComponent {
 
         if (!this.workHoursProcessor.isFileFormatValild(file)) {
             const message = `File format is not supported, Supported file format is .CSV`;
-            if (fileType === FileType.UploadNonWorkingHours) {
-                this.disableNonWorkHoursButton = true;
-                this.resetNonWorkingHoursMessages();
-                this.nonWorkingHoursFileValidationErrors.push(message);
-            } else {
-                this.disableWorkHoursButton = true;
-                this.resetWorkingHoursMessages();
-                this.workingHoursFileValidationErrors.push(message);
-            }
+            this.handleFileInputError(fileType, message);
             return;
         } else {
-            if (fileType === FileType.UploadWorkingHours) {
-                this.disableWorkHoursButton = false;
-            } else {
-                this.disableNonWorkHoursButton = false;
-            }
+            this.reenableUploadButton(fileType);
         }
 
         if (this.workHoursProcessor.isFileTooBig(file)) {
             const message = `File cannot be larger than ${this.workHoursProcessor.maxFileUploadSize / 1000}kb`;
-            if (fileType === FileType.UploadNonWorkingHours) {
-                this.disableNonWorkHoursButton = true;
-                this.resetNonWorkingHoursMessages();
-                this.nonWorkingHoursFileValidationErrors.push(message);
-            } else {
-                this.disableWorkHoursButton = true;
-                this.resetWorkingHoursMessages();
-                this.workingHoursFileValidationErrors.push(message);
-            }
+            this.handleFileInputError(fileType, message);
             return;
         } else {
-            if (fileType === FileType.UploadWorkingHours) {
-                this.disableWorkHoursButton = false;
-            } else {
-                this.disableNonWorkHoursButton = false;
-            }
+            this.reenableUploadButton(fileType);
         }
 
         if (fileType === FileType.UploadWorkingHours) {
@@ -164,5 +140,25 @@ export class UploadWorkHoursComponent {
 
         const reader = this.readFile(this.nonWorkingHoursFile);
         reader.onload = e => this.readNonWorkAvailability(e.target.result as string);
+    }
+
+    private handleFileInputError(fileType: FileType, message: string) {
+        if (fileType === FileType.UploadNonWorkingHours) {
+            this.disableNonWorkHoursButton = true;
+            this.resetNonWorkingHoursMessages();
+            this.nonWorkingHoursFileValidationErrors.push(message);
+        } else {
+            this.disableWorkHoursButton = true;
+            this.resetWorkingHoursMessages();
+            this.workingHoursFileValidationErrors.push(message);
+        }
+    }
+
+    private reenableUploadButton(fileType: FileType) {
+        if (fileType === FileType.UploadWorkingHours) {
+            this.disableWorkHoursButton = false;
+        } else {
+            this.disableNonWorkHoursButton = false;
+        }
     }
 }
