@@ -125,7 +125,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "new@hmcts.net",
+                        ContactEmail = "new@domain.net.",
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName"
                     }
@@ -147,8 +147,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
-                        ContactEmail = "old@hmcts.net",
-                        Username = "old@hmcts.net"
+                        ContactEmail = "old@domain.net",
+                        Username = "old@domain.net"
                     }
                 },
                 Cases = cases,
@@ -215,7 +215,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<EditParticipantRequest>(),
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@domain.net" },
                     new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
                     new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
                     new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
@@ -234,7 +234,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         HearingRoleName = HearingRoleName.Judge,
                         FirstName = "FirstName",
                         LastName = "LastName",
-                        ContactEmail = "judge@email.com",
+                        ContactEmail = "judge@domain.com",
                         DisplayName = "FirstName LastName",
                         LinkedParticipants = new List<LinkedParticipant>(),
                         OrganisationName = "Org1",
@@ -246,7 +246,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@domain.net" },
                     new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
                     new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
                     new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
@@ -407,7 +407,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "new@hmcts.net",
+                        ContactEmail = "new@domain.net",
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName",
                         HearingRoleName = HearingRoleName.Judge
@@ -589,7 +589,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
-                ContactEmail = "new2@hmcts.net",
+                ContactEmail = "new2@domain.net",
                 FirstName = "Test2_FirstName",
                 LastName = "Test2_LastName"
             });
@@ -690,8 +690,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _addNewParticipantRequest.Participants = new List<EditParticipantRequest> {new EditParticipantRequest
             {
                 HearingRoleName = RoleNames.PanelMember,
-                ContactEmail = "new.contactactemail@hmcts.net",
-                DisplayName = "new.displayName@hmcts.net",
+                ContactEmail = "new.contactactemail@domain.net",
+                DisplayName = "new.displayName@domain.net",
                 CaseRoleName = RoleNames.PanelMember
             } };
 
@@ -739,8 +739,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
+                ContactEmail = "new@domain.net",
+                Username = "new@domain.net",
                 UserRoleName = "Individual"
             });
 
@@ -784,15 +784,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 FirstName = "Existing",
                 LastName = "Judge",
-                ContactEmail = "existing@hmcts.net",
-                Username = "existing@hmcts.net",
+                ContactEmail = "existing@domain.net",
+                Username = "existing@domain.net",
                 CaseRoleName = "Judge",
                 UserRoleName = "Judge",
                 HearingRoleName = "Judge",
                 Id = existingJudgeId
             });
 
-            const string newJudgeEmail = "new@hmcts.net";
+            const string newJudgeEmail = "new@domain.net";
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
@@ -807,8 +807,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             newPats.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
+                ContactEmail = "new@domain.net",
+                Username = "new@domain.net",
                 UserRoleName = "Individual"
             });
             newPats.Add(new ParticipantResponse
@@ -1429,7 +1429,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             // arrange
             var hearingId = _updatedExistingParticipantHearingOriginal.Id;
-            var newJudgeEmailOtherInfo = new OtherInformationDetails { JudgeEmail = "judgenew@hmcts.net" };
+            var newJudgeEmailOtherInfo = new OtherInformationDetails { JudgeEmail = "judgene@domain.net" };
             var updatedHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -1519,7 +1519,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "test@hmcts.net",
+                        ContactEmail = "test@domain.net.",
                         FirstName = "FirstName",
                         LastName = "LastName",
                         HearingRoleName = HearingRoleName.Judge
