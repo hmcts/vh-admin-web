@@ -6,5 +6,6 @@
         /// Application insights instrumentation key to specify target of logging
         /// </summary>
         public string InstrumentationKey { get; set; }
+        public string ConnectionString { get; set; }
     }
 }
