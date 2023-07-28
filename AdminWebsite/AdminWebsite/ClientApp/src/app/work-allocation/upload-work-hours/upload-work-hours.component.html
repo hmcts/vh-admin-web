@@ -31,7 +31,14 @@
           type="file"
           accept=".CSV"
         />
-        <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadWorkingHours()">Upload</button>
+        <button
+          class="govuk-button govuk-!-margin-left-6"
+          data-module="govuk-button"
+          (click)="uploadWorkingHours()"
+          [disabled]="disableWorkHoursButton"
+        >
+          Upload
+        </button>
       </div>
     </div>
     <ng-container
@@ -122,7 +129,14 @@
           type="file"
           accept=".CSV"
         />
-        <button class="govuk-button govuk-!-margin-left-6" data-module="govuk-button" (click)="uploadNonWorkingHours()">Upload</button>
+        <button
+          class="govuk-button govuk-!-margin-left-6"
+          data-module="govuk-button"
+          (click)="uploadNonWorkingHours()"
+          [disabled]="disableNonWorkHoursButton"
+        >
+          Upload
+        </button>
       </div>
     </div>
 
