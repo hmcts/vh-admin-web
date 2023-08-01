@@ -19,6 +19,8 @@ export class WorkHoursFileProcessorService {
 
     private incorrectDelimiterErrorMessage = 'Incorrect delimiter used. Please use a colon to separate the hours and minutes.';
     private duplicateUserErrorMessage = 'duplicate team member found.';
+    private invalidRow =
+        'Invalid row detected. Please ensure that the structure of the row matches the provided template, with blank values if a user does not work on a particular day.';
 
     constructor(private bhClient: BHClient) {}
 
@@ -51,6 +53,12 @@ export class WorkHoursFileProcessorService {
                 return;
             }
             const actualRow = index + 3;
+
+            const expectedValueCount = 15;
+            if (values.length !== expectedValueCount) {
+                workingHoursFileValidationErrors.push(`Row ${actualRow} - ${this.invalidRow}`);
+                return;
+            }
 
             const uploadWorkHoursRequest = new UploadWorkHoursRequest();
             uploadWorkHoursRequest.username = values[0];

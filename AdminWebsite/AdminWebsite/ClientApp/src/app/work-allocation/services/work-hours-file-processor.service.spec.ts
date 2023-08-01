@@ -89,6 +89,38 @@ describe('WorkHoursFileProcessorService', () => {
             expect(result.fileValidationErrors.length).toBe(1);
             expect(result.fileValidationErrors[0]).toContain('duplicate team member found');
         });
+
+        it('should show invalid row error when too few values provided', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00\n' +
+                'first.second.2@xyz.com,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00';
+
+            const result = service.processWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(2);
+            result.fileValidationErrors.forEach(error => {
+                expect(error).toContain(
+                    'Invalid row detected. Please ensure that the structure of the row matches the provided template, with blank values if a user does not work on a particular day.'
+                );
+            });
+        });
+
+        it('should show invalid row error when too many values provided', () => {
+            const input =
+                'Username,Monday,,Tuesday,,Wednesday,,Thursday,,Friday,Saturday,Sunday\n' +
+                ',Start,End,Start,End,Start,End,Start,End,Start,End,Start,End,Start,End\n' +
+                'first.second@xyz.com,,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,\n' +
+                'first.second.2@xyz.com,,,9:00,17:00,09:00,17:30,9:30,18:00,08:00,18:00,9:00,17:00,,,,';
+
+            const result = service.processWorkHours(input);
+            expect(result.fileValidationErrors.length).toBe(2);
+            result.fileValidationErrors.forEach(error => {
+                expect(error).toContain(
+                    'Invalid row detected. Please ensure that the structure of the row matches the provided template, with blank values if a user does not work on a particular day.'
+                );
+            });
+        });
     });
 
     describe('processNonWorkHour', () => {
