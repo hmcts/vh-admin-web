@@ -81,12 +81,13 @@ export class BookingDetailsService {
         const endpoints: EndpointModel[] = [];
         if (hearingResponse.endpoints && hearingResponse.endpoints.length > 0) {
             hearingResponse.endpoints.forEach(e => {
+                const defenceAdvocate = hearingResponse.participants.find(p => p.id === e.defence_advocate_id);
                 const epModel = new EndpointModel();
                 epModel.id = e.id;
                 epModel.displayName = e.display_name;
                 epModel.pin = e.pin;
                 epModel.sip = e.sip;
-                epModel.defenceAdvocate = e.defence_advocate_id;
+                epModel.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoints.push(epModel);
             });
         }

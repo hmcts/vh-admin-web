@@ -187,7 +187,7 @@ namespace AdminWebsite.Services
         private static void UpdateEndpointWithNewlyAddedParticipant(List<ParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
         {
             var epToUpdate = newParticipantList
-                .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
+                .FirstOrDefault(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
                     StringComparison.CurrentCultureIgnoreCase));
             if (epToUpdate != null)
                 endpoint.DefenceAdvocateContactEmail = epToUpdate.ContactEmail;
