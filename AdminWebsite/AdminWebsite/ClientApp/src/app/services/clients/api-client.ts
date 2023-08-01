@@ -7273,6 +7273,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
+    hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
     case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
@@ -7304,6 +7305,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_name = _data['hearing_venue_name'];
+            this.hearing_venue_code = _data['hearing_venue_code'];
             this.case_type_name = _data['case_type_name'];
             this.case_type_service_id = _data['case_type_service_id'];
             this.hearing_type_name = _data['hearing_type_name'];
@@ -7345,6 +7347,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_name'] = this.hearing_venue_name;
+        data['hearing_venue_code'] = this.hearing_venue_code;
         data['case_type_name'] = this.case_type_name;
         data['case_type_service_id'] = this.case_type_service_id;
         data['hearing_type_name'] = this.hearing_type_name;
@@ -7379,6 +7382,7 @@ export interface IBookNewHearingRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
+    hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
     case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
@@ -8534,6 +8538,7 @@ export interface IHearingDetailsResponse {
 export class HearingVenueResponse implements IHearingVenueResponse {
     id?: number;
     name?: string | undefined;
+    code?: string | undefined;
 
     constructor(data?: IHearingVenueResponse) {
         if (data) {
@@ -8547,6 +8552,7 @@ export class HearingVenueResponse implements IHearingVenueResponse {
         if (_data) {
             this.id = _data['id'];
             this.name = _data['name'];
+            this.code = _data['code'];
         }
     }
 
@@ -8561,6 +8567,7 @@ export class HearingVenueResponse implements IHearingVenueResponse {
         data = typeof data === 'object' ? data : {};
         data['id'] = this.id;
         data['name'] = this.name;
+        data['code'] = this.code;
         return data;
     }
 }
@@ -8568,6 +8575,7 @@ export class HearingVenueResponse implements IHearingVenueResponse {
 export interface IHearingVenueResponse {
     id?: number;
     name?: string | undefined;
+    code?: string | undefined;
 }
 
 export class HearingsByUsernameForDeletionResponse implements IHearingsByUsernameForDeletionResponse {
