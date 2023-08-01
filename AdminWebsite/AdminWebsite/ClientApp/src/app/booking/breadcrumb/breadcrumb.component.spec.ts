@@ -6,7 +6,7 @@ import { FeatureFlagService } from '../../services/feature-flag.service';
 import { of } from 'rxjs';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
-fdescribe('BreadcrumbComponent', () => {
+describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
         'validCurrentRequest',
         'isConferenceClosed',
