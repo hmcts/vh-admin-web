@@ -30,6 +30,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     today = new Date();
     canNavigate = true;
     selectedCourtName: string;
+    selectedCourtCode: string;
     isExistinHearing: boolean;
     endDateEarlierThanStartDate: boolean;
     isStartHoursInPast = false;
@@ -65,8 +66,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistinHearing = this.hearing && !!this.hearing.hearing_type_name;
-        this.isBookedHearing =
-            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
+        this.isBookedHearing = this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`, {
             hearingExists: this.isExistinHearing,
             isBookedHearing: this.isBookedHearing,
@@ -160,7 +160,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.courtAddressControl.valueChanges.subscribe(val => {
             const id = val;
             if (id !== null) {
-                this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
+                const venue = this.availableCourts.find(c => c.id === id);
+                this.selectedCourtName = venue.name;
+                this.selectedCourtCode = venue.code;
             }
         });
     }
@@ -335,8 +337,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private retrieveCourts() {
         this.logger.debug(`${this.loggerPrefix} Retrieving courts.`);
 
-        this.refDataService.getCourts().subscribe(
-            (data: HearingVenueResponse[]) => {
+        this.refDataService.getCourts().subscribe({
+            next: data => {
                 this.availableCourts = data;
                 this.logger.debug(`${this.loggerPrefix} Updating list of available courts.`, { courts: data.length });
                 const pleaseSelect = new HearingVenueResponse();
@@ -345,11 +347,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                 this.availableCourts.unshift(pleaseSelect);
                 this.setVenueForExistingHearing();
             },
-            error => {
+            error: error => {
                 this.logger.error(`${this.loggerPrefix} Failed to get courts available.`, error);
                 this.errorService.handleError(error);
             }
-        );
+        });
     }
 
     setVenueForExistingHearing() {
@@ -357,6 +359,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             const selectedCourts = this.availableCourts.filter(x => x.name === this.hearing.court_name);
             if (selectedCourts && selectedCourts.length > 0) {
                 this.selectedCourtName = selectedCourts[0].name;
+                this.selectedCourtCode = selectedCourts[0].code;
                 this.form.get('courtAddress').setValue(selectedCourts[0].id);
             }
         }
@@ -453,6 +456,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.hearing.hearing_venue_id = this.form.value.courtAddress;
         this.hearing.court_room = this.form.value.courtRoom;
         this.hearing.court_name = this.selectedCourtName;
+        this.hearing.court_code = this.selectedCourtCode;
         const hearingDate = new Date(this.form.value.hearingDate);
 
         hearingDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
@@ -471,6 +475,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.hearing.hearing_venue_id = this.form.value.courtAddress;
         this.hearing.court_room = this.form.value.courtRoom;
         this.hearing.court_name = this.selectedCourtName;
+        this.hearing.court_code = this.selectedCourtCode;
 
         const hearingDate = this.hearingDates[0];
         hearingDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
