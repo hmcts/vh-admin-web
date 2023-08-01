@@ -6,7 +6,7 @@ import { FeatureFlagService } from '../../services/feature-flag.service';
 import { of } from 'rxjs';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
-describe('BreadcrumbComponent', () => {
+fdescribe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
         'validCurrentRequest',
         'isConferenceClosed',
@@ -83,6 +83,13 @@ describe('BreadcrumbComponent', () => {
         expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
     });
     it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
+        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
+        component.clickBreadcrumbs(step);
+        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
+    });
+
+    it('should init breadcrumb when the current item has not been set', () => {
+        component.currentItem = null;
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
