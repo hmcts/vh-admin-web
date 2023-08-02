@@ -51,9 +51,9 @@ export class HearingDetailsComponent implements OnInit, OnDestroy {
         this.destroyed$.next();
     }
 
-    getParticipantInfo(participantId: string): string {
+    getDefenceAdvocateByContactEmail(defenceAdvocateContactEmail: string): string {
         let represents = '';
-        const participant = this.participants.find(p => p.ParticipantId === participantId);
+        const participant = this.participants.find(p => p.Email === defenceAdvocateContactEmail);
         if (participant) {
             represents = participant.DisplayName + ', representing ' + participant.Representee;
         }

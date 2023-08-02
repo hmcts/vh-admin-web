@@ -300,7 +300,7 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_throws_InvalidOperationException()
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
-            Assert.Throws<InvalidOperationException>(() => _service.IsAddingParticipantOnly(_editHearingRequest,
+            Assert.Throws<ArgumentOutOfRangeException>(() => _service.IsAddingParticipantOnly(_editHearingRequest,
                 _updatedExistingParticipantHearingOriginal));
         }
 

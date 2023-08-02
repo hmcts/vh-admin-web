@@ -421,7 +421,7 @@ describe('Video hearing service', () => {
         endpoint.display_name = 'endpoint 001';
         endpoints.push(endpoint);
 
-        const model = service.mapEndpointResponseToEndpointModel(endpoints);
+        const model = service.mapEndpointResponseToEndpointModel(endpoints, []);
         expect(model[0].displayName).toEqual(endpoint.display_name);
     });
 

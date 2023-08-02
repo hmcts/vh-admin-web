@@ -312,7 +312,7 @@ export class VideoHearingsService {
         hearing.questionnaire_not_required = response.questionnaire_not_required;
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
-        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints);
+        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
         hearing.isConfirmed = Boolean(response.confirmed_date);
         return hearing;
     }
@@ -426,17 +426,18 @@ export class VideoHearingsService {
         return linkedParticipants;
     }
 
-    mapEndpointResponseToEndpointModel(response: EndpointResponse[]): EndpointModel[] {
+    mapEndpointResponseToEndpointModel(response: EndpointResponse[], participants: ParticipantResponse[]): EndpointModel[] {
         const endpoints: EndpointModel[] = [];
         let endpoint: EndpointModel;
         if (response && response.length > 0) {
             response.forEach(e => {
+                const defenceAdvocate = participants.find(p => p.id === e.defence_advocate_id);
                 endpoint = new EndpointModel();
                 endpoint.id = e.id;
                 endpoint.displayName = e.display_name;
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;
-                endpoint.defenceAdvocate = e.defence_advocate_id;
+                endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoints.push(endpoint);
             });
         }

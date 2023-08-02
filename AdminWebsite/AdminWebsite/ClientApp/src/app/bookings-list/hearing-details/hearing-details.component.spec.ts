@@ -119,7 +119,7 @@ describe('HearingDetailsComponent', () => {
         );
         participants.push(participant);
         component.participants = participants;
-        const result = component.getParticipantInfo('123-123');
+        const result = component.getDefenceAdvocateByContactEmail(participant.Email);
         expect(result).toBe('display_name, representing representee');
     });
     it('it should display the participant and representee', () => {
@@ -145,7 +145,7 @@ describe('HearingDetailsComponent', () => {
         );
         participants.push(participant);
         component.participants = participants;
-        const result = component.getParticipantInfo('123-1234');
+        const result = component.getDefenceAdvocateByContactEmail('madeup@doesnotexist.com');
         expect(result).toBe('');
     });
     describe('feature flag turn on and off ', () => {
