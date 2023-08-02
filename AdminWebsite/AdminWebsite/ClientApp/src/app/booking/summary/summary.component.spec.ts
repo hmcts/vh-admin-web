@@ -748,12 +748,14 @@ describe('SummaryComponent  with existing request', () => {
     });
     it('it should display the participant and representee', () => {
         component.hearing = initExistingHearingRequest();
-        const result = component.getParticipantInfo('123123-123');
+        const result = component.getDefenceAdvocateByContactEmail(
+            component.hearing.participants.find(x => x.id === '123123-123').contact_email
+        );
         expect(result).toBe('solicitor 01, representing citizen 01');
     });
     it('it should display the participant and representee', () => {
         component.hearing = initExistingHearingRequest();
-        const result = component.getParticipantInfo('123123-1231');
+        const result = component.getDefenceAdvocateByContactEmail('madeup@doesnotexist.com');
         expect(result).toBe('');
     });
     it('should remove an existing interpretee and interpreter', () => {

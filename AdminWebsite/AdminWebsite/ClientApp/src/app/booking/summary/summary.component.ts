@@ -129,7 +129,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private confirmRemoveParticipant() {
         const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const title = participant && participant.title ? `${participant.title}` : '';
+        const title = participant?.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
 
         const isInterpretee =
@@ -344,8 +344,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     updateHearing() {
         this.$subscriptions.push(
-            this.hearingService.updateHearing(this.hearing).subscribe(
-                (hearingDetailsResponse: HearingDetailsResponse) => {
+            this.hearingService.updateHearing(this.hearing).subscribe({
+                next: (hearingDetailsResponse: HearingDetailsResponse) => {
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
@@ -360,14 +360,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
                     this.router.navigate([PageUrls.BookingConfirmation]);
                 },
-                error => {
+                error: error => {
                     this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
                         hearing: this.hearing.hearing_id,
                         payload: this.hearing
                     });
                     this.setError(error);
                 }
-            )
+            })
         );
     }
 
@@ -393,9 +393,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         });
     }
 
-    getParticipantInfo(defenceAdvocate: string): string {
+    getDefenceAdvocateByContactEmail(defenceAdvocateConactEmail: string): string {
         let represents = '';
-        const participant = this.hearing.participants.find(p => p.id === defenceAdvocate);
+        const participant = this.hearing.participants.find(p => p.contact_email === defenceAdvocateConactEmail);
         if (participant) {
             represents = participant.display_name + ', representing ' + participant.representee;
         }
