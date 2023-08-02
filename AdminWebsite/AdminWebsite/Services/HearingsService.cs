@@ -64,7 +64,7 @@ namespace AdminWebsite.Services
             var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
                 .Select(EditParticipantRequestMapper.MapFrom).ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
-            var hearingCase = hearingDetailsResponse.Cases.First();
+            var hearingCase = hearingDetailsResponse.Cases[0];
             
             var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
 
@@ -187,7 +187,7 @@ namespace AdminWebsite.Services
         private static void UpdateEndpointWithNewlyAddedParticipant(List<ParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
         {
             var epToUpdate = newParticipantList
-                .FirstOrDefault(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
+                .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
                     StringComparison.CurrentCultureIgnoreCase));
             if (epToUpdate != null)
                 endpoint.DefenceAdvocateContactEmail = epToUpdate.ContactEmail;
