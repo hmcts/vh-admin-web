@@ -14,9 +14,6 @@ export class RolesToDisplayPipe implements PipeTransform {
         if (roles.includes(AvailableRoles[1].value)) {
             rolesToDisplay += AvailableRoles[1].shortText + this.addComma(roles.length);
         }
-        if (roles.includes(AvailableRoles[2].value)) {
-            rolesToDisplay += AvailableRoles[2].shortText;
-        }
         return rolesToDisplay;
     }
 

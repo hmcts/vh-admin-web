@@ -93,6 +93,5 @@ export const Constants = {
  * */
 export const AvailableRoles = [
     { value: JusticeUserRole.Vho, label: 'CSO', shortText: 'CSO' },
-    { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' },
-    { value: JusticeUserRole.StaffMember, label: 'Staff Member', shortText: 'SM' }
+    { value: JusticeUserRole.VhTeamLead, label: 'Administrator', shortText: 'ADMIN' }
 ];

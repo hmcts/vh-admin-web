@@ -24,7 +24,7 @@ describe('JusticeUserFormComponent', () => {
         lastname: 'Doe',
         username: 'test@cso.com',
         telephone: null,
-        user_roles: [JusticeUserRole.Vho, JusticeUserRole.StaffMember]
+        user_roles: [JusticeUserRole.Vho]
     });
 
     beforeEach(async () => {
@@ -48,7 +48,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue(existingUser.telephone);
-            component.form.controls.roles.setValue([true, false, true]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -57,7 +57,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('+441234567890');
-            component.form.controls.roles.setValue([true, false, true]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(false);
         });
 
@@ -66,7 +66,7 @@ describe('JusticeUserFormComponent', () => {
             component.form.controls.firstName.setValue(existingUser.first_name);
             component.form.controls.lastName.setValue(existingUser.lastname);
             component.form.controls.contactTelephone.setValue('abcd');
-            component.form.controls.roles.setValue([true, false, false]);
+            component.form.controls.roles.setValue([true, false]);
             expect(component.form.invalid).toBe(true);
         });
     });
@@ -225,8 +225,8 @@ describe('JusticeUserFormComponent', () => {
             expect(form.controls.contactTelephone.value).toBe('');
             expect(form.controls.firstName.value).toBe('');
             expect(form.controls.lastName.value).toBe('');
-            // Assuming that the order in the formArray is VHO, ADMIN, STAFFMEMBER
-            expect(form.controls.roles.value).toEqual([true, false, false]);
+            // Assuming that the order in the formArray is VHO, ADMIN
+            expect(form.controls.roles.value).toEqual([true, false]);
         });
 
         it('should clear form when user set to null', () => {
@@ -239,8 +239,8 @@ describe('JusticeUserFormComponent', () => {
             expect(form.controls.contactTelephone.value).toBe('');
             expect(form.controls.firstName.value).toBe('');
             expect(form.controls.lastName.value).toBe('');
-            // Assuming that the order in the formArray is VHO, ADMIN, STAFFMEMBER
-            expect(form.controls.roles.value).toEqual([true, false, false]);
+            // Assuming that the order in the formArray is VHO, ADMIN
+            expect(form.controls.roles.value).toEqual([true, false]);
         });
     });
 });
