@@ -134,9 +134,9 @@
 </form>
 
 <div *ngIf="attemptingCancellation">
-  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"> </app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking()" (cancelBooking)="cancelBooking()"> </app-cancel-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">
-  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
+  <app-discard-confirm-popup (continueEditing)="continueBooking()" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
 </div>
