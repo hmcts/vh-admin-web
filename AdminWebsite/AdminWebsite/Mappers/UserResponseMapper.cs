@@ -1,4 +1,5 @@
-﻿using BookingsApi.Contract.Responses;
+﻿
+using BookingsApi.Contract.V1.Responses;
 using UserApi.Contract.Responses;
 
 namespace AdminWebsite.Mappers

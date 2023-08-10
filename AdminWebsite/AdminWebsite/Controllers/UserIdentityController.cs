@@ -7,7 +7,7 @@ using BookingsApi.Client;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.Controllers

@@ -1,4 +1,4 @@
-﻿using BookingsApi.Contract.Requests;
+﻿using BookingsApi.Contract.V1.Requests;
 using FluentValidation;
 
 namespace AdminWebsite.Validators

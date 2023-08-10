@@ -12,17 +12,16 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using Autofac.Extras.Moq;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
-using BookingsApi.Contract.Enums;
+using BookingsApi.Contract.V1.Enums;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -93,7 +92,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
         }
@@ -135,7 +134,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
         }
@@ -176,7 +175,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
         }
@@ -230,7 +229,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
         }
@@ -263,7 +262,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             badRequestObjectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             badRequestObjectResult.Value.Should().Be(expectedExceptionResponse);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()), Times.Once);
         }
@@ -306,37 +305,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // request with existing person, new user, existing user in AD but not in persons table 
             var bookNewHearingRequest = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
                 {
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name1",
                         FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
                         OrganisationName = "", Representee = "", TelephoneNumber = ""
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact2@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name2",
                         FirstName = "fname2", MiddleNames = "", LastName = "lname2", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username2@hmcts.net"
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact3@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name3",
                         FirstName = "fname3", MiddleNames = "", LastName = "lname3", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username3@hmcts.net"
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "Panel Member", ContactEmail = "contact4@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name4",
                         FirstName = "fname4", MiddleNames = "", LastName = "lname4", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username4@hmcts.net"
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "Judge", ContactEmail = "judge@hmcts.net",
                         HearingRoleName = "Judge", DisplayName = "Judge Fudge",

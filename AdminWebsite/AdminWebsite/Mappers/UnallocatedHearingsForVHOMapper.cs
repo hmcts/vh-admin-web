@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Extensions;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.Mappers;
 

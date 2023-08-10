@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions

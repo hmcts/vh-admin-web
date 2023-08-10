@@ -9,18 +9,18 @@ using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Requests.Enums;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -334,7 +334,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_participants()
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<BookingsApi.Contract.Requests.ParticipantRequest>();
+            var newParticipants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>();
             var removedParticipantIds = new List<Guid>();
             var linkedParticipants = new List<LinkedParticipantRequest>();
 

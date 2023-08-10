@@ -1,8 +1,8 @@
 ﻿using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

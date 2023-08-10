@@ -10,6 +10,7 @@ namespace AdminWebsite.Configuration
     {
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
+        public bool ReferenceDataToggle();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -19,6 +20,7 @@ namespace AdminWebsite.Configuration
         private const string LdUser = "vh-admin-web";
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
+        private const string ReferenceDataToggleKey = "reference-data";
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -46,6 +48,16 @@ namespace AdminWebsite.Configuration
             }
 
             return _ldClient.BoolVariation(Dom1EnabledToggleKey, _context);
+        }
+        
+        public bool ReferenceDataToggle()
+        {
+            if (!_ldClient.Initialized)
+            {
+                throw new InvalidOperationException("LaunchDarkly client not initialized");
+            }
+
+            return _ldClient.BoolVariation(ReferenceDataToggleKey, _context);
         }
     }
 }

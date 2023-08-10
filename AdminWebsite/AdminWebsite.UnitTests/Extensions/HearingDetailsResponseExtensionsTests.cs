@@ -1,6 +1,6 @@
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using NUnit.Framework;

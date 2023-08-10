@@ -1,13 +1,9 @@
 ﻿using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,12 +11,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Responses;
-using VideoApi.Client;
-using AdminWebsite.Configuration;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Responses;
 using Autofac.Extras.Moq;
-using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -62,9 +55,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _guid = Guid.NewGuid();
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsApi.Contract.Responses.CaseResponse>()
+                Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
                 {
-                    new BookingsApi.Contract.Responses.CaseResponse()
+                    new BookingsApi.Contract.V1.Responses.CaseResponse()
                         {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
                 CaseTypeName = "Generic",

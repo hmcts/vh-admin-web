@@ -3,20 +3,16 @@ using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Consts;
-using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
-using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
-using UpdateEndpointRequest = BookingsApi.Contract.Requests.UpdateEndpointRequest;
-using UpdateParticipantRequest = BookingsApi.Contract.Requests.UpdateParticipantRequest;
 
 namespace AdminWebsite.Services
 {
@@ -36,11 +32,13 @@ namespace AdminWebsite.Services
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly IFeatureToggles _featureFlag;
 #pragma warning disable S107
-        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureFlag)
         {
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _featureFlag = featureFlag;
         }
 
         public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
@@ -120,9 +118,13 @@ namespace AdminWebsite.Services
                 : new List<EditParticipantRequest>();
         }
 
-        public async Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
-            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants)
+        public async Task ProcessParticipants(Guid hearingId, 
+            List<UpdateParticipantRequest> existingParticipants, 
+            List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, 
+            List<LinkedParticipantRequest> linkedParticipants)
         {
+
             var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
             {
                 ExistingParticipants = existingParticipants,
@@ -130,7 +132,23 @@ namespace AdminWebsite.Services
                 RemovedParticipantIds = removedParticipantIds,
                 LinkedParticipants = linkedParticipants
             };
+            await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
+        }
 
+        public async Task ProcessParticipantsV2(Guid hearingId, 
+            List<UpdateParticipantRequest> existingParticipants, 
+            List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, 
+            List<LinkedParticipantRequest> linkedParticipants)
+        {
+
+            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
+            {
+                ExistingParticipants = existingParticipants,
+                NewParticipants = newParticipants,
+                RemovedParticipantIds = removedParticipantIds,
+                LinkedParticipants = linkedParticipants
+            };
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
 
@@ -198,7 +216,7 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
                 new UpdateBookingStatusRequest
                 {
-                    Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                    Status = BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Failed,
                     UpdatedBy = "System",
                     CancelReason = string.Empty
                 });

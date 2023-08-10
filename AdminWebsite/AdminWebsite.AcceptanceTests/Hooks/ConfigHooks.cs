@@ -8,7 +8,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;

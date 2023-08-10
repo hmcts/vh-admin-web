@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Data.Questions;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {

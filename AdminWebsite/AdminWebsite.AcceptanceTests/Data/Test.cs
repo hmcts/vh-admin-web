@@ -2,7 +2,7 @@
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Data

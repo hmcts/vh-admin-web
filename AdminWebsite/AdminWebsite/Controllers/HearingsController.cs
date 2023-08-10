@@ -13,16 +13,15 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
-using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Controllers
 {
@@ -500,7 +499,7 @@ namespace AdminWebsite.Controllers
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
-                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
+                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
 
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);

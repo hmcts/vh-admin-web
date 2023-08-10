@@ -21,18 +21,18 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
-using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -102,7 +102,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
+            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object, _featureToggle.Object);
 
             _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
 

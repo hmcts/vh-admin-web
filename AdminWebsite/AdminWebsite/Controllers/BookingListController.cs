@@ -1,8 +1,6 @@
 ﻿using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -10,6 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Controllers
 {
@@ -43,7 +44,7 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearings list</returns>
         [HttpPost("bookingsList")]
         [SwaggerOperation(OperationId = "BookingsList")]
-        [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BookingsListResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetBookingsList([FromBody]BookingSearchRequest request)
@@ -88,7 +89,7 @@ namespace AdminWebsite.Controllers
                         NoAllocated = request.NoAllocated
                     });
 
-                return Ok(bookingsResponse);
+                return Ok(bookingsResponse.Map());
             }
             catch (BookingsApiException e)
             {
