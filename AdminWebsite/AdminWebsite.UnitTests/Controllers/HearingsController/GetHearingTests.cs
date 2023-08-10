@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Enums;
-using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AutoMock _mocker;
         private AdminWebsite.Controllers.HearingsController _controller;
         
-        private HearingDetailsResponse _vhExistingHearing;
+        private BookingsApi.Contract.V1.Responses.HearingDetailsResponse _vhExistingHearing;
         private Guid _guid;
 
         [SetUp]
@@ -50,7 +50,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void Initialise()
         {
             _guid = Guid.NewGuid();
-            _vhExistingHearing = new HearingDetailsResponse
+            _vhExistingHearing = new BookingsApi.Contract.V1.Responses.HearingDetailsResponse
             {
                 Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
                 {
@@ -65,22 +65,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 OtherInformation = "Any other information about the hearing",
-                Participants = new List<ParticipantResponse>()
+                Participants = new List<BookingsApi.Contract.V1.Responses.ParticipantResponse>()
                 {
-                    new ParticipantResponse()
+                    new ()
                     {
                         CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net", DisplayName = "Judge Lumb",
                         FirstName = "Judge", HearingRoleName = "Judge", LastName = "Lumb", MiddleNames = string.Empty,
                         TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hmcts.net"
                     },
-                    new ParticipantResponse()
+                    new ()
                     {
                         CaseRoleName = "Applicant", ContactEmail = "test.applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hmcts.net"
                     },
-                    new ParticipantResponse()
+                    new ()
                     {
                         CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",

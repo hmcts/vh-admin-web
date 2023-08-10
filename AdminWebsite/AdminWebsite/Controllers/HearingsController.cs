@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
@@ -13,15 +14,14 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
+using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.Controllers
 {
@@ -37,6 +37,7 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
         private const int StartingSoonMinutesThreshold = 30;
@@ -50,7 +51,8 @@ namespace AdminWebsite.Controllers
             IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService)
+            IConferenceDetailsService conferenceDetailsService,
+            IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -58,6 +60,7 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
+            _featureToggles = featureToggles;
         }
 #pragma warning restore S107
         /// <summary>
@@ -67,10 +70,10 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(BookingsApi.Contract.V1.Responses.HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
-        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
+        public async Task<ActionResult<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
             var newBookingRequest = request.BookingDetails;
             newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
@@ -207,7 +210,7 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BookingsApi.Contract.V1.Responses.HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
@@ -233,7 +236,18 @@ namespace AdminWebsite.Controllers
             HearingDetailsResponse originalHearing;
             try
             {
-                originalHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    originalHearing = response.Map();
+                }
+                else
+                {
+                    
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    originalHearing = response.Map();
+                }
             }
             catch (BookingsApiException e)
             {
@@ -264,8 +278,18 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
+                HearingDetailsResponse updatedHearing;
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    updatedHearing = updatedHearing2.Map();
+                }
+                else
+                {
+                    var updatedHearing1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    updatedHearing = updatedHearing1.Map();
+                }
 
-                var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
@@ -302,9 +326,33 @@ namespace AdminWebsite.Controllers
             await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
             await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
         }
+        
+        
+        private async Task UpdateParticipantsV2(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
+        {
+            var existingParticipants = new List<UpdateParticipantRequest>();
+            var newParticipants = new List<ParticipantRequest>();
+            var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
+                .Select(x => x.Id).ToList();
 
-        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(EditHearingRequest request, HearingDetailsResponse originalHearing,
-            List<Guid> removedParticipantIds, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants)
+            foreach (var participant in request.Participants)
+                if (participant.Id.HasValue)
+                    ExtractExistingParticipants(originalHearing, participant, existingParticipants);
+                else if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
+                    newParticipants.Add(newParticipant);
+            
+            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
+            
+            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
+            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
+        }
+
+        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
+            EditHearingRequest request, 
+            HearingDetailsResponse originalHearing,
+            List<Guid> removedParticipantIds, 
+            List<UpdateParticipantRequest> existingParticipants, 
+            List<ParticipantRequest> newParticipants)
         {
             var linkedParticipants = new List<LinkedParticipantRequest>();
             var participantsWithLinks = request.Participants
@@ -385,7 +433,17 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var hearingResponse = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                HearingDetailsResponse hearingResponse;
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    hearingResponse = response.Map();
+                }
+                else
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    hearingResponse = response.Map();
+                }
                 return Ok(hearingResponse);
             }
             catch (BookingsApiException e)
@@ -441,7 +499,7 @@ namespace AdminWebsite.Controllers
                 VideoApi.Contract.Responses.ConferenceDetailsResponse conferenceDetailsResponse;
                 var response = await _bookingsApiClient.GetBookingStatusByIdAsync(hearingId);
 
-                if (response == BookingStatus.Created)
+                if ((BookingStatus)response == BookingStatus.Created)
                 {
                     try
                     {

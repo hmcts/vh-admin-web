@@ -22,7 +22,6 @@ using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Configuration;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using NotificationApi.Client;
@@ -30,9 +29,11 @@ using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
+using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -111,7 +112,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object);
+                _conferencesServiceMock.Object,
+                 _featureToggle.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest
@@ -168,7 +170,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var defenceAdvocate2 = "defenceAdvocate2";
             var defenceAdvocate3 = "defenceAdvocate3";
             var defenceAdvocate4 = "defenceAdvocate4";
-            _existingHearingWithLinkedParticipants = new HearingDetailsResponse
+            _existingHearingWithLinkedParticipants = new HearingDetailsResponse()
             {
                 Id = _validId,
                 GroupId = _validId,
@@ -749,7 +751,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var hearing = (HearingDetailsResponse)((OkObjectResult)result.Result).Value;
+            var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(_updatedExistingParticipantHearingOriginal.Id);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
@@ -1494,7 +1496,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var result = await _controller.EditHearing(_validId, request);  
 
-            var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
+            var response = ((ObjectResult)result.Result)?.Value as AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 
             response.Status.Should().Be(BookingStatus.Failed);
 

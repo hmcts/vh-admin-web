@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using VideoApi.Client;
@@ -26,6 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IConferenceDetailsService> _conferenceDetailsServiceMock;
         private Mock<IHearingsService> _hearingServiceMock;
         private HearingDetailsResponse _vhExistingHearing;
+        private Mock<IFeatureToggles> _featureFlag;
         private Guid _guid;
         
         private AutoMock _mocker;
@@ -38,9 +40,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _conferenceDetailsServiceMock = new Mock<IConferenceDetailsService>();
             _hearingServiceMock = new Mock<IHearingsService>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, new Mock<IUserIdentity>().Object,
-                new Mock<IValidator<EditHearingRequest>>().Object, new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingServiceMock.Object, _conferenceDetailsServiceMock.Object);
+            _featureFlag = new Mock<IFeatureToggles>();
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, 
+                new Mock<IUserIdentity>().Object,
+                new Mock<IValidator<EditHearingRequest>>().Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
+                _hearingServiceMock.Object,
+                _conferenceDetailsServiceMock.Object,
+                _featureFlag.Object);
                 
 
             Initialise();

@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Services
@@ -32,13 +32,11 @@ namespace AdminWebsite.Services
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
-        private readonly IFeatureToggles _featureFlag;
 #pragma warning disable S107
         public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureFlag)
         {
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
-            _featureFlag = featureFlag;
         }
 
         public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
@@ -56,11 +54,11 @@ namespace AdminWebsite.Services
             }
         }
 
-        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
+        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
         {
             var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
-                .Select(EditParticipantRequestMapper.MapFrom).ToList();
+                .Select(EditParticipantRequestMapper.MapFrom)
+                .ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
             var hearingCase = hearingDetailsResponse.Cases[0];
             
@@ -91,13 +89,11 @@ namespace AdminWebsite.Services
                    newJudgeOtherInformation != existingJudgeOtherInformation;
         }
         
-        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
+        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
         {
             var originalEndpoints = hearingDetailsResponse.Endpoints == null
                 ? new List<EditEndpointRequest>()
-                : hearingDetailsResponse.Endpoints
-                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+                : hearingDetailsResponse.Endpoints.Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
 
             var ogEndpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();

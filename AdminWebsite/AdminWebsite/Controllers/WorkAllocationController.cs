@@ -12,6 +12,7 @@ using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.Controllers
 {
