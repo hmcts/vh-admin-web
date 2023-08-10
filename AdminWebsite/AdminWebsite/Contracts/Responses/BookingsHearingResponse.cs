@@ -3,7 +3,7 @@ using BookingsApi.Contract.V1.Enums;
 
 namespace AdminWebsite.Contracts.Responses;
 
-public class HearingResponse
+public class BookingsHearingResponse
 {
     public Guid HearingId { get; set; }
     public string HearingNumber { get; set; }

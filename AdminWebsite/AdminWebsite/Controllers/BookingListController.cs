@@ -44,7 +44,7 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearings list</returns>
         [HttpPost("bookingsList")]
         [SwaggerOperation(OperationId = "BookingsList")]
-        [ProducesResponseType(typeof(BookingsListResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetBookingsList([FromBody]BookingSearchRequest request)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace AdminWebsite.Contracts.Responses;
 
-public class BookingsListResponse
+public class BookingsResponse
 {
     public string NextCursor { get; set; }
     public int Limit { get; set; }
@@ -14,5 +14,5 @@ public class BookingsListResponse
 public class BookingsByDateResponse
 {
     public DateTime ScheduledDate { get; set; }
-    public List<HearingResponse> Hearings { get; set; }
+    public List<BookingsHearingResponse> Hearings { get; set; }
 }

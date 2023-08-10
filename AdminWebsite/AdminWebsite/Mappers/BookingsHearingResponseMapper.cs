@@ -1,13 +1,14 @@
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.V1.Responses;
+using BookingsHearingResponse = AdminWebsite.Contracts.Responses.BookingsHearingResponse;
 
 namespace AdminWebsite.Mappers;
 
 public static class BookingsHearingResponseMapper
 {
-    public static HearingResponse Map(this BookingsHearingResponse hearingResponse)
+    public static BookingsHearingResponse Map(this BookingsApi.Contract.V1.Responses.BookingsHearingResponse hearingResponse)
     {
-        return new HearingResponse
+        return new BookingsHearingResponse
         {
             HearingId = hearingResponse.HearingId,
             HearingNumber = hearingResponse.HearingNumber,

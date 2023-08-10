@@ -70,10 +70,10 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(BookingsApi.Contract.V1.Responses.HearingDetailsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
-        public async Task<ActionResult<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
             var newBookingRequest = request.BookingDetails;
             newBookingRequest.IsMultiDayHearing = request.IsMultiDay;
@@ -92,7 +92,7 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                return Created("",hearingDetailsResponse);
+                return Created("",hearingDetailsResponse.Map());
             }
             catch (BookingsApiException e)
             {
@@ -210,7 +210,7 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
-        [ProducesResponseType(typeof(BookingsApi.Contract.V1.Responses.HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
