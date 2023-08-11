@@ -131,23 +131,6 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
 
-        public async Task ProcessParticipantsV2(Guid hearingId, 
-            List<UpdateParticipantRequest> existingParticipants, 
-            List<ParticipantRequest> newParticipants,
-            List<Guid> removedParticipantIds, 
-            List<LinkedParticipantRequest> linkedParticipants)
-        {
-
-            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
-            {
-                ExistingParticipants = existingParticipants,
-                NewParticipants = newParticipants,
-                RemovedParticipantIds = removedParticipantIds,
-                LinkedParticipants = linkedParticipants
-            };
-            await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
-        }
-
         public async Task<ParticipantRequest> ProcessNewParticipant(
             Guid hearingId, 
             EditParticipantRequest participant,
