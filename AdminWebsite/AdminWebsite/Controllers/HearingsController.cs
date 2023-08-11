@@ -326,26 +326,6 @@ namespace AdminWebsite.Controllers
             await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
             await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
         }
-        
-        
-        private async Task UpdateParticipantsV2(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
-        {
-            var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<ParticipantRequest>();
-            var removedParticipantIds = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
-                .Select(x => x.Id).ToList();
-
-            foreach (var participant in request.Participants)
-                if (participant.Id.HasValue)
-                    ExtractExistingParticipants(originalHearing, participant, existingParticipants);
-                else if (await _hearingsService.ProcessNewParticipant(hearingId, participant, removedParticipantIds, originalHearing) is { } newParticipant)
-                    newParticipants.Add(newParticipant);
-            
-            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
-            
-            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
-            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
-        }
 
         private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
             EditHearingRequest request, 

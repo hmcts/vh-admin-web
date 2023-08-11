@@ -179,8 +179,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             // Arrange
             _featureToggle.Setup(e => e.ReferenceDataToggle()).Returns(true);
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
-                .ReturnsAsync(_vhExistingHearingV2);
+            _mocker.Mock<IBookingsApiClient>().Setup(x => 
+                    x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>())).ReturnsAsync(_vhExistingHearingV2);
 
             // Act
             var result = await _controller.GetHearingById(_guid);
