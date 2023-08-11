@@ -18,7 +18,6 @@ namespace AdminWebsite.UnitTests.Controllers
     {
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
-
         private AdminWebsite.Controllers.BookingListController _controller;
 
         [SetUp]
@@ -27,7 +26,8 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
 
-            _controller = new AdminWebsite.Controllers.BookingListController(_bookingsApiClient.Object,
+            _controller = new AdminWebsite.Controllers.BookingListController(
+                _bookingsApiClient.Object,
                 _userIdentity.Object,
                 JavaScriptEncoder.Default);
         }
