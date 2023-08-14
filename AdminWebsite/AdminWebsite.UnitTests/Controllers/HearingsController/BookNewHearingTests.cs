@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
