@@ -22,6 +22,9 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
+using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
+using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -88,8 +91,11 @@ namespace AdminWebsite.Controllers
                 }
 
                 newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
+            
+                var newBookingRequestV1 = newBookingRequest.MapToV1();
                 _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequestV1);
+            
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
                 return Created("",hearingDetailsResponse.Map());
@@ -322,8 +328,9 @@ namespace AdminWebsite.Controllers
                     newParticipants.Add(newParticipant);
             
             var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
+            var linkedParticipantsV1 = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
             
-            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
+            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV1);
             await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
         }
 
@@ -344,12 +351,11 @@ namespace AdminWebsite.Controllers
             for (int i = 0; i < participantsWithLinks.Count; i++)
             {
                 var participantWithLinks = participantsWithLinks[i];
-                var linkedParticipantRequest = new LinkedParticipantRequest
+                var linkedParticipantRequest = new LinkedParticipantRequest()
                 {
                     LinkedParticipantContactEmail = participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail,
-                    ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ??
-                                              participantWithLinks.ContactEmail,
-                    Type = participantWithLinks.LinkedParticipants[0].Type
+                    ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ?? participantWithLinks.ContactEmail,
+                    Type = (Contracts.Enums.LinkedParticipantType) participantWithLinks.LinkedParticipants[0].Type
                 };
 
                 // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.

@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
 using BookingsApi.Contract.V1.Enums;
+using V1 = BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -73,7 +74,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
                 .WithParticipant("Staff Member","staff.member@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
             
@@ -92,9 +93,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
         
         [Test]
@@ -116,7 +117,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
                 .WithParticipant("Staff Member", "staff.member@hmcts.net");
             
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
@@ -134,9 +135,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
         
         [Test]
@@ -158,7 +159,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
@@ -175,9 +176,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
 
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
 
         [Test]
@@ -214,7 +215,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
             
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             
             // Act
@@ -229,9 +231,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
         
         [Test]
@@ -249,7 +251,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .Throws(new BookingsApiException("", (int) HttpStatusCode.BadRequest, expectedExceptionResponse, null, null));
             
 
@@ -262,9 +264,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             badRequestObjectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             badRequestObjectResult.Value.Should().Be(expectedExceptionResponse);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<BookingsApi.Contract.V1.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<AdminWebsite.Contracts.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
 
         [Test]
@@ -283,7 +285,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             hearingDetailsResponse.Status = BookingStatus.Failed;
 
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(bookingDetails))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
             _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
@@ -296,18 +298,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             ((ObjectResult)result.Result).StatusCode.Should().Be(201);
           
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(y => y == bookingDetails)), Times.Once);
+            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
         }
 
 
-        private BookNewHearingRequest InitHearingForTest()
+        private BookingDetailsRequest InitHearingForTest()
         {
             // request with existing person, new user, existing user in AD but not in persons table 
-            var bookNewHearingRequest = new BookNewHearingRequest
+            var bookNewHearingRequest = new BookingDetailsRequest
             {
-                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
+                Participants = new List<AdminWebsite.Contracts.Requests.ParticipantRequest>
                 {
-                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
+                    new ()
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name1",

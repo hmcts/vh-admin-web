@@ -18,7 +18,7 @@ namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants);
+        void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<ParticipantRequest> newParticipantList);
@@ -39,17 +39,15 @@ namespace AdminWebsite.Services
             _logger = logger;
         }
 
-        public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
-            IReadOnlyCollection<ParticipantRequest> participants)
+        public void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants)
         {
             // update the username of defence advocate 
             foreach (var endpoint in endpointsWithDa)
             {
                 _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
                     endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
-                var defenceAdvocate = participants.Single(x =>
-                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
-                        StringComparison.CurrentCultureIgnoreCase));
+                var defenceAdvocate = participants.Single(x => 
+                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,StringComparison.CurrentCultureIgnoreCase));
                 endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
             }
         }

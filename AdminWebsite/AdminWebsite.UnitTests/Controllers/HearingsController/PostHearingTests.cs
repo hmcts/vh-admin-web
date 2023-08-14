@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Client;
@@ -21,6 +22,9 @@ using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using VideoApi.Contract.Responses;
+using EndpointRequest = AdminWebsite.Contracts.Requests.EndpointRequest;
+using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
+using ParticipantRequest = AdminWebsite.Contracts.Requests.ParticipantRequest;
 using V1 = BookingsApi.Contract.V1;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -66,9 +70,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_create_a_hearing_with_endpoints()
         {
             
-            var newHearingRequest = new V1.Requests.BookNewHearingRequest
+            var newHearingRequest = new BookingDetailsRequest
             {
-                Participants = new List<V1.Requests.ParticipantRequest>
+                Participants = new List<ParticipantRequest>
                 {
                     new ()
                     {
@@ -93,7 +97,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneNumber = ""
                     },
                 },
-                Endpoints = new List<V1.Requests.EndpointRequest>
+                Endpoints = new List<EndpointRequest>
                 {
                     new () {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
                     new () {DisplayName = "displayname2", DefenceAdvocateContactEmail = "username2@hmcts.net"},
@@ -110,7 +114,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                         .WithEndPoints(2)
                                         .WithParticipant("Representative", "username1@hmcts.net")
                                         .WithParticipant("Individual", "username2@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(newHearingRequest))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
@@ -125,9 +129,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_create_a_hearing_with_LinkedParticipants()
         {
             // request.
-            var newHearingRequest = new V1.Requests.BookNewHearingRequest()
+            var newHearingRequest = new BookingDetailsRequest()
             {
-                Participants = new List<V1.Requests.ParticipantRequest>
+                Participants = new List<ParticipantRequest>
                 {
                     new () { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
                         DisplayName = "firstName1 lastName1", FirstName = "firstName1", HearingRoleName = "Litigant in person", LastName = "lastName1", MiddleNames = "",
@@ -137,10 +141,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
 
                 },
-                LinkedParticipants = new List<V1.Requests.LinkedParticipantRequest>
+                LinkedParticipants = new List<LinkedParticipantRequest>
                     {
-                        new () { ParticipantContactEmail = "firstName1.lastName1@email.com", LinkedParticipantContactEmail = "firstName2.lastName2@email.com", Type = V1.Enums.LinkedParticipantType.Interpreter },
-                        new () { ParticipantContactEmail = "firstName2.lastName2@email.com", LinkedParticipantContactEmail = "firstName1.lastName1@email.com", Type = V1.Enums.LinkedParticipantType.Interpreter }
+                        new () { ParticipantContactEmail = "firstName1.lastName1@email.com", LinkedParticipantContactEmail = "firstName2.lastName2@email.com", Type = LinkedParticipantType.Interpreter },
+                        new () { ParticipantContactEmail = "firstName2.lastName2@email.com", LinkedParticipantContactEmail = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
                     }
             };
             
@@ -163,7 +167,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Cases = Builder<V1.Responses.CaseResponse>.CreateListOfSize(2).Build().ToList())
                 .With(x => x.Endpoints = Builder<V1.Responses.EndpointResponse>.CreateListOfSize(2).Build().ToList())
                 .With(x => x.Participants = new List<V1.Responses.ParticipantResponse> { participant1, participant2 }).Build();
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(newHearingRequest))
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
@@ -176,9 +180,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
-            var hearing = new BookNewHearingRequest
+            var hearing = new BookingDetailsRequest()
             {
-                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>()
+                Participants = new List<ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -196,9 +200,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_throw_BookingsApiException()
         {
-            var hearing = new BookNewHearingRequest
+            var hearing = new BookingDetailsRequest()
             {
-                Participants = new List<V1.Requests.ParticipantRequest>()
+                Participants = new List<ParticipantRequest>()
             };
 
             var bookingRequest = new BookHearingRequest
@@ -215,9 +219,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_throw_Exception()
         {
-            var hearing = new BookNewHearingRequest
+            var hearing = new BookingDetailsRequest
             {
-                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>()
+                Participants = new List<ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -539,12 +543,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             return PostWithParticipants();
         }
 
-        private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
-            params V1.Requests.ParticipantRequest[] participants)
+        private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(params ParticipantRequest[] participants)
         {
-            var hearing = new BookNewHearingRequest
+            var hearing = new BookingDetailsRequest
             {
-                Participants = new List<V1.Requests.ParticipantRequest>(participants)
+                Participants = new List<ParticipantRequest>(participants)
             };
             
             var bookingRequest = new BookHearingRequest
