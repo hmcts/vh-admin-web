@@ -40,7 +40,7 @@ export class CaseTypesMenuComponent extends MenuBase {
                         data
                             .map(item => item.group)
                             .filter(distinct)
-                            .sort()
+                            .sort((a, b) => a.localeCompare(b))
                     )
                 ];
                 this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });

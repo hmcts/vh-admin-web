@@ -109,7 +109,7 @@ export class AllocateHearingsComponent implements OnInit {
             this.caseTypesSelectOptions = data
                 .map(item => item.group)
                 .filter(distinct)
-                .sort()
+                .sort((a, b) => a.localeCompare(b))
                 .map(group => ({ entityId: group, label: group }));
         });
     }
