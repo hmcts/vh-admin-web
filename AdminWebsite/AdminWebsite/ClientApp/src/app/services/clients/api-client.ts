@@ -3243,10 +3243,13 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Gets a list hearing types
+     * @param includeDeleted (optional)
      * @return Success
      */
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        let url_ = this.baseUrl + '/api/reference/types';
+    getHearingTypes(includeDeleted: boolean | undefined): Observable<HearingTypeResponse[]> {
+        let url_ = this.baseUrl + '/api/reference/types?';
+        if (includeDeleted === null) throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined) url_ += 'includeDeleted=' + encodeURIComponent('' + includeDeleted) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {

@@ -105,7 +105,7 @@ export class AllocateHearingsComponent implements OnInit {
             });
 
         const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes().subscribe((data: HearingTypeResponse[]) => {
+        this.videoHearingService.getHearingTypes(true).subscribe((data: HearingTypeResponse[]) => {
             this.caseTypesSelectOptions = data
                 .map(item => item.group)
                 .filter(distinct)

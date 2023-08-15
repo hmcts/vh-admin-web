@@ -104,7 +104,7 @@ namespace AdminWebsite.Controllers
         private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
-            var types = await _bookingsApiClient.GetCaseTypesAsync();
+            var types = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted:true);
             if (types != null && types.Any())
                 foreach (var item in caseTypes)
                 {

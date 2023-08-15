@@ -47,18 +47,19 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_return_all_hearing_types()
         {
             // Arrange
+            var includeDeleted = true;
             _userIdentityMock.Setup(x => x.IsAdministratorRole()).Returns(true);
             _bookingsApiClientMock.Setup(x =>
-                    x.GetCaseTypesAsync())
+                    x.GetCaseTypesAsync(includeDeleted))
                     .ReturnsAsync(GetCaseTypesList());
 
             // Act
-            var result = await _controller.GetHearingTypes();
+            var result = await _controller.GetHearingTypes(includeDeleted);
 
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(GetHearingTypes());
-            _bookingsApiClientMock.Verify(x => x.GetCaseTypesAsync(), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.GetCaseTypesAsync(includeDeleted), Times.Once);
         }
 
         [Test]

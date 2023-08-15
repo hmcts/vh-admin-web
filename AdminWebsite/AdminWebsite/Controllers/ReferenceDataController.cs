@@ -40,9 +40,9 @@ namespace AdminWebsite.Controllers
         [HttpGet("types", Name = "GetHearingTypes")]
         [ProducesResponseType(typeof(IList<HearingTypeResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
+        public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes([FromQuery] bool includeDeleted = false)
         {
-            var caseTypes = await _bookingsApiClient.GetCaseTypesAsync();
+            var caseTypes = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted);
             var result = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,

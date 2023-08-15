@@ -61,7 +61,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ReturnsAsync(new BookingsResponse());
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(new List<CaseTypeResponse>());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(new List<CaseTypeResponse>());
 
             var request = new BookingSearchRequest
             {
@@ -121,7 +121,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
             List<CaseTypeResponse> response = null;
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(response);
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -141,7 +141,7 @@ namespace AdminWebsite.UnitTests.Controllers
             SetupTestCase();
 
             var response = new List<CaseTypeResponse>();
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(response);
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -173,7 +173,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 }
             };
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(response);
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(response);
 
             var request = new BookingSearchRequest
             {
@@ -199,7 +199,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(() => GetCaseTypesList());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(() => GetCaseTypesList());
 
             var request = new BookingSearchRequest
             {
@@ -212,7 +212,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
 
             _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
-            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(), Times.Once);
+            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
 
@@ -229,7 +229,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2", "type2" });
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(() => GetCaseTypesList());
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(() => GetCaseTypesList());
 
             var request = new BookingSearchRequest
             {
@@ -243,7 +243,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okResult.StatusCode.Should().Be(200);
 
             _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
-            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(), Times.Once);
+            _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
 
@@ -252,7 +252,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -273,7 +273,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -293,7 +293,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -316,7 +316,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -339,7 +339,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var startDate = new DateTime(2022, 3, 25);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -364,7 +364,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var endDate = new DateTime(2022, 3, 25);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -389,7 +389,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var startDate = new DateTime(2022, 3, 24);
             var endDate = new DateTime(2022, 3, 25);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -416,7 +416,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var startDate = new DateTime(2022, 3, 25);
             var endDate = new DateTime(2022, 3, 24);
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {
@@ -438,7 +438,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync()).ReturnsAsync(default(List<CaseTypeResponse>));
+            _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
             var request = new BookingSearchRequest
             {

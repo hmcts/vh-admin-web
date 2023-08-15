@@ -107,8 +107,8 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes();
+    getHearingTypes(includeDeleted: boolean = false): Observable<HearingTypeResponse[]> {
+        return this.bhClient.getHearingTypes(includeDeleted);
     }
 
     getCurrentRequest(): HearingModel {
