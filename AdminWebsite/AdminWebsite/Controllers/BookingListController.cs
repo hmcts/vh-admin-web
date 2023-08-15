@@ -50,23 +50,19 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult> GetBookingsList([FromBody]BookingSearchRequest request)
         {
             if (request.StartDate > request.EndDate)
-            {
                 return BadRequest("startDate must be less than or equal to endDate");
-            }
 
             if (request.Cursor != null)
-            {
                 request.Cursor = _encoder.Encode(request.Cursor);
-            }
+            
             if (_userIdentity.IsAdministratorRole())
             {
                 request.CaseTypes ??= new List<string>();
                 request.CaseTypes.AddRange(_userIdentity.GetGroupDisplayNames());
             }
             else
-            {
                 return Unauthorized();
-            }
+            
             try
             {
                 var caseTypesIds = await GetCaseTypesId(request.CaseTypes);
@@ -94,10 +90,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
                     return BadRequest(e.Response);
-                }
-
                 throw;
             }
         }

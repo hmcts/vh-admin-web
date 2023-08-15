@@ -536,8 +536,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
-            UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             try
             {
