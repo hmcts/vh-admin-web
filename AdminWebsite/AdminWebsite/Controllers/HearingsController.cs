@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
@@ -13,16 +14,17 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Requests;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
-using VideoApi.Contract.Consts;
+using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
+using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
+using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -38,6 +40,7 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
         private const int StartingSoonMinutesThreshold = 30;
@@ -51,7 +54,8 @@ namespace AdminWebsite.Controllers
             IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService)
+            IConferenceDetailsService conferenceDetailsService,
+            IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -59,6 +63,7 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
+            _featureToggles = featureToggles;
         }
 #pragma warning restore S107
         /// <summary>
@@ -86,11 +91,14 @@ namespace AdminWebsite.Controllers
                 }
 
                 newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
+            
+                var newBookingRequestV1 = newBookingRequest.MapToV1();
                 _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequestV1);
+            
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                return Created("",hearingDetailsResponse);
+                return Created("",hearingDetailsResponse.Map());
             }
             catch (BookingsApiException e)
             {
@@ -234,7 +242,18 @@ namespace AdminWebsite.Controllers
             HearingDetailsResponse originalHearing;
             try
             {
-                originalHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    originalHearing = response.Map();
+                }
+                else
+                {
+                    
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    originalHearing = response.Map();
+                }
             }
             catch (BookingsApiException e)
             {
@@ -265,8 +284,18 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
+                HearingDetailsResponse updatedHearing;
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    updatedHearing = updatedHearing2.Map();
+                }
+                else
+                {
+                    var updatedHearing1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    updatedHearing = updatedHearing1.Map();
+                }
 
-                var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 //Save hearing details
                 var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
@@ -299,13 +328,18 @@ namespace AdminWebsite.Controllers
                     newParticipants.Add(newParticipant);
             
             var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, existingParticipants, newParticipants);
+            var linkedParticipantsV1 = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
             
-            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipants.ToList());
+            await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV1);
             await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipants);
         }
 
-        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(EditHearingRequest request, HearingDetailsResponse originalHearing,
-            List<Guid> removedParticipantIds, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants)
+        private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
+            EditHearingRequest request, 
+            HearingDetailsResponse originalHearing,
+            List<Guid> removedParticipantIds, 
+            List<UpdateParticipantRequest> existingParticipants, 
+            List<ParticipantRequest> newParticipants)
         {
             var linkedParticipants = new List<LinkedParticipantRequest>();
             var participantsWithLinks = request.Participants
@@ -317,12 +351,11 @@ namespace AdminWebsite.Controllers
             for (int i = 0; i < participantsWithLinks.Count; i++)
             {
                 var participantWithLinks = participantsWithLinks[i];
-                var linkedParticipantRequest = new LinkedParticipantRequest
+                var linkedParticipantRequest = new LinkedParticipantRequest()
                 {
                     LinkedParticipantContactEmail = participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail,
-                    ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ??
-                                              participantWithLinks.ContactEmail,
-                    Type = participantWithLinks.LinkedParticipants[0].Type
+                    ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ?? participantWithLinks.ContactEmail,
+                    Type = (Contracts.Enums.LinkedParticipantType) participantWithLinks.LinkedParticipants[0].Type
                 };
 
                 // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
@@ -386,7 +419,17 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var hearingResponse = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                HearingDetailsResponse hearingResponse;
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                    hearingResponse = response.Map();
+                }
+                else
+                {
+                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                    hearingResponse = response.Map();
+                }
                 return Ok(hearingResponse);
             }
             catch (BookingsApiException e)
@@ -442,7 +485,7 @@ namespace AdminWebsite.Controllers
                 VideoApi.Contract.Responses.ConferenceDetailsResponse conferenceDetailsResponse;
                 var response = await _bookingsApiClient.GetBookingStatusByIdAsync(hearingId);
 
-                if (response == BookingStatus.Created)
+                if ((BookingStatus)response == BookingStatus.Created)
                 {
                     try
                     {
@@ -493,14 +536,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
-            UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             try
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
-                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
+                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
 
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);

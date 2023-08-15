@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Linq;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.UnitTests.Validators
 {

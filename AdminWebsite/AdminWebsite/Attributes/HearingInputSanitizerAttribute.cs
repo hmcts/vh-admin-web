@@ -1,7 +1,7 @@
 ﻿using AdminWebsite.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.RegularExpressions;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Attributes
 {

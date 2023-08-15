@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Runtime.Serialization;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.UnitTests.Security
 {

@@ -9,7 +9,6 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using UserApi.Client;
@@ -114,25 +113,17 @@ namespace AdminWebsite.Services
         {
             try
             {
-                _logger.LogDebug($"{nameof(GetAdUserIdForUsername)} - Attempting to get an AD user with username {username} found.", username);
                 var user = await _userApiClient.GetUserByAdUserIdAsync(username);
-                _logger.LogDebug($"{nameof(GetAdUserIdForUsername)} - AD User with username {username} found.", username);
-
-                if(user.HasValidUserRole())
-                {
-                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD user with username {username} does not have a user role.");
-                }
-                
                 return user.UserId;
             }
             catch (UserApiException e)
             {
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD User with username {username} not found.", username);
+                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD User not found.");
                     return null;
                 }
-                _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user with username {username}.", username);
+                _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user");
                 throw;
             }
         }
@@ -177,43 +168,27 @@ namespace AdminWebsite.Services
 
         public async Task ResetParticipantPassword(string userName)
         {
-            _logger.LogDebug("Attempting to reset AD user {Username}", userName);
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
 
             if (userProfile == null)
-            {
-                var e = new UserServiceException
-                {
-                    Reason = "Unable to generate new password"
-                };
-                _logger.LogError(e, "Unable to reset password for AD user {Username}", userName);
-                throw e;
-            }
-
-            _logger.LogDebug("AD user {Username} found", userName);
+                throw new UserServiceException { Reason = "Unable to generate new password" };
+            
             var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
-            _logger.LogDebug("AD user {Username} password has been reset", userName);
-            var passwordResetNotificationRequest = AddNotificationRequestMapper.MapToPasswordResetNotification(
-                $"{userProfile.FirstName} {userProfile.LastName}", passwordResetResponse.NewPassword,
-                userProfile.Email);
+            var passwordResetNotificationRequest = 
+                AddNotificationRequestMapper.MapToPasswordResetNotification(
+                    $"{userProfile.FirstName} {userProfile.LastName}", 
+                    passwordResetResponse.NewPassword, 
+                    userProfile.Email);
             await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
         }
 
         public async Task DeleteParticipantAccountAsync(string username)
         {
             if (await CheckUsernameExistsInAdAsync(username))
-            {
-                _logger.LogDebug("Attempting to delete AD User {username}.", username);
                 await _userApiClient.DeleteUserAsync(username);
-                _logger.LogDebug("Successfully deleted AD User {username}.", username);
-            }
-
+            
             if (await CheckPersonExistsInBookingsAsync(username))
-            {
-                _logger.LogDebug("Attempting to anonymise person in Bookings API {username}.", username);
                 await _bookingsApiClient.AnonymisePersonWithUsernameAsync(username);
-                _logger.LogDebug("Successfully anonymised person in Bookings API {username}.", username);
-            }
         }
 
         public async Task AssignParticipantToGroup(string username, string userRole)
@@ -266,12 +241,10 @@ namespace AdminWebsite.Services
                     GroupName = groupName
                 };
                 await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-                _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
             }
             catch (UserApiException e)
             {
-                _logger.LogError(e,
-                    $"Failed to add user {username} to {groupName} in User API. " +
+                _logger.LogError(e, $"Failed to add user to {groupName} in User API. " +
                     $"Status Code {e.StatusCode} - Message {e.Message}");
                 throw;
             }
@@ -281,7 +254,6 @@ namespace AdminWebsite.Services
         {
             try
             {
-                _logger.LogDebug("Attempting to check if {username} exists in AD", username);
                 var person = await _userApiClient.GetUserByAdUserNameAsync(username);
                 Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult);
                 if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
@@ -290,24 +262,19 @@ namespace AdminWebsite.Services
                     {
                         Reason = $"Unable to delete account with role {userRoleResult}"
                     };
-                    _logger.LogError(e, "Not allowed to delete {username}", username);
+                    _logger.LogError(e, "Not allowed to delete user");
                     throw e;
                 }
-
-                _logger.LogDebug("{username} exists in AD", username);
                 return true;
             }
             catch (UserApiException e)
             {
-                _logger.LogError(e, "Failed to get user {username} in User API. Status Code {StatusCode} - Message {Message}",
-                    username, e.StatusCode, e.Response);
+                _logger.LogError(e, "Failed to get user in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning(e, "{username} not found. Status Code {StatusCode} - Message {Message}",
-                        username, e.StatusCode, e.Response);
+                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
                     return false;
                 }
-
                 throw;
             }
         }
@@ -316,22 +283,17 @@ namespace AdminWebsite.Services
         {
             try
             {
-                _logger.LogDebug("Attempting to check if {username} exists in Bookings API", username);
                 await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
-                _logger.LogDebug("{username} exists in Bookings API", username);
                 return true;
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "Failed to get person {username} in User API. Status Code {StatusCode} - Message {Message}",
-                    username, e.StatusCode, e.Response);
+                _logger.LogError(e, "Failed to get person in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning(e, "{username} not found. Status Code {StatusCode} - Message {Message}",
-                        username, e.StatusCode, e.Response);
+                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
                     return false;
                 }
-
                 throw;
             }
         }

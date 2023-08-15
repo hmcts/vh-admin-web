@@ -5,7 +5,7 @@ using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
 using AdminWebsite.AcceptanceTests.Helpers;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using VideoApi.Contract.Responses;

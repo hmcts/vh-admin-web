@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Requests;
 using FluentAssertions;
 using NUnit.Framework;
 

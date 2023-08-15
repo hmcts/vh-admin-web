@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using AdminWebsite.Contracts.Enums;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Responses;
 using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions
@@ -19,8 +19,7 @@ namespace AdminWebsite.Extensions
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
-        public static bool JudgeHasNotChangedForGenericHearing(this HearingDetailsResponse newHearingJudge,
-            HearingDetailsResponse originalHearingJudge)
+        public static bool JudgeHasNotChangedForGenericHearing(this HearingDetailsResponse newHearingJudge, HearingDetailsResponse originalHearingJudge)
         {
             var judgeFromUpdatedHearing = newHearingJudge.GetJudgeById();
             var judgeFromOriginalHearing = originalHearingJudge.GetJudgeById();
@@ -35,8 +34,7 @@ namespace AdminWebsite.Extensions
             return judgeId;
         }
 
-        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,
-            HearingDetailsResponse originalHearing)
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse originalHearing)
         {
             var isNewJudgeEJud = IsJudgeEmailEJud(hearing);
             var isOriginalJudgeEJud = IsJudgeEmailEJud(originalHearing);
@@ -150,6 +148,12 @@ namespace AdminWebsite.Extensions
         {
             var json = JsonConvert.SerializeObject(hearingDetailsResponse);
             return JsonConvert.DeserializeObject<HearingDetailsResponse>(json);
+        }
+        
+        public static BookingsApi.Contract.V1.Responses.HearingDetailsResponse Duplicate(this BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearingDetailsResponse)
+        {
+            var json = JsonConvert.SerializeObject(hearingDetailsResponse);
+            return JsonConvert.DeserializeObject<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>(json);
         }
 
         public static string GetJudgeOtherInformationString(string otherInformation)
