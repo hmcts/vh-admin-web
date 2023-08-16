@@ -27,7 +27,7 @@ namespace AdminWebsite.Mappers
                     }
                 },
                 QuestionnaireNotRequired = false,
-                AudioRecordingRequired = editHearingRequest.Participants.Any(x=>x.LinkedParticipants.Any(s=>s.Type == LinkedParticipantType.Interpreter)) || editHearingRequest.AudioRecordingRequired,
+                AudioRecordingRequired = editHearingRequest.Participants.Any(x=>x.LinkedParticipants.Any(s=>(int) s.Type == (int) LinkedParticipantType.Interpreter)) || editHearingRequest.AudioRecordingRequired,
             };
             return updateHearingRequest;
         }
