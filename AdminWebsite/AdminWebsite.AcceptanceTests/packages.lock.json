@@ -150,6 +150,14 @@
         "resolved": "1.5.0",
         "contentHash": "CzIPzdIAFSd2zuLxI+0K9s48Qv3HQDbWiApn9h96j284rHs2bSPrn/PMca3mi4q3xLSEqOp+GUJ6+mXDD9prKg=="
       },
+      "BookingsApi.Client": {
+        "type": "Transitive",
+        "resolved": "1.46.6-pr-0694-0009",
+        "contentHash": "rY9CAdOuy9rPPVwyu9anu8bgxyvgde+l8Ww+wFdQFN0ZSLZEprzuESpCpB4Sm/s4ips5JPcMqj3uXheWp8lKlg==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
+        }
+      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "4.4.0",
