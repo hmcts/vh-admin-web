@@ -368,7 +368,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         this.displayConfirmPopup = false;
 
         if ($event) {
-            this.bhClient.deleteNonAvailabilityWorkHours(this.slotToDelete.id).subscribe({
+            this.bhClient.deleteNonAvailabilityWorkHours(this.userName, this.slotToDelete.id).subscribe({
                 next: () => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.removeSlot();

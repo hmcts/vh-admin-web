@@ -1293,7 +1293,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             {
                                 ParticipantContactEmail = "interpreter.user@email.com",
                                 LinkedParticipantContactEmail = newUserContactEmail,
-                                Type = LinkedParticipantType.Interpreter
+                                Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
                             }
                         }
                     }
@@ -1469,7 +1469,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             new LinkedParticipant
                             {
                                 LinkedId = partipant4,
-                                Type = LinkedParticipantType.Interpreter,
+                                Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter,
                                 LinkedParticipantContactEmail = null
                             }
                         }

@@ -1,6 +1,5 @@
 using System;
 using AdminWebsite.Contracts.Enums;
-using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.Models
 {
