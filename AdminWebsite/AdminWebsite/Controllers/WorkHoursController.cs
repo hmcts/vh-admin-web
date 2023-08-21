@@ -133,26 +133,29 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        [HttpDelete("NonAvailability")]
+        [HttpDelete("NonAvailability/{username}/{nonAvailabilityId}")]
         [SwaggerOperation(OperationId = "DeleteNonAvailabilityWorkHours")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<IActionResult> DeleteNonAvailabilityWorkHours(long id)
+        public async Task<IActionResult> DeleteNonAvailabilityWorkHours([FromRoute] string username, [FromRoute] long nonAvailabilityId)
         {
             try
             {
-                await _bookingsApiClient.DeleteVhoNonAvailabilityHoursAsync(id);
+                await _bookingsApiClient.DeleteVhoNonAvailabilityHoursAsync(username, nonAvailabilityId);
                 return Ok();
             }
             catch (BookingsApiException ex)
             {
                 switch (ex.StatusCode)
                 {
-                    case (int) HttpStatusCode.NotFound:
+                    case (int)HttpStatusCode.BadRequest:
+                    {
+                        var typedException = ex as BookingsApiException<ValidationProblemDetails>;
+                        return ValidationProblem(typedException!.Result);
+                    }
+                    case (int)HttpStatusCode.NotFound:
                         return NotFound("Record could not be found. Please check the id and try again");
-                    case (int) HttpStatusCode.BadRequest:
-                        return BadRequest(ex.Response);
                     default:
                         throw;
                 }
