@@ -1,7 +1,6 @@
-﻿using AdminWebsite.Contracts.Enums;
-using AdminWebsite.Contracts.Responses;
+﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
-using BookingsApi.Contract.V1.Responses;
+using V1 = BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.Mappers
 {
@@ -18,5 +17,17 @@ namespace AdminWebsite.Mappers
             };
 
         }
+        public static EditEndpointRequest MapFrom(V1.EndpointResponse response)
+        {
+            return new EditEndpointRequest
+            {
+                Id = response.Id,
+                DisplayName = response.DisplayName,
+                DefenceAdvocateContactEmail =
+                    response.DefenceAdvocateId == null ? null : response.DefenceAdvocateId.ToString()
+            };
+
+        }
+        
     }
 }

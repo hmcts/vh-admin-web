@@ -1,13 +1,9 @@
 ﻿using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -17,10 +13,7 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
-using VideoApi.Client;
-using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
-using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController

@@ -1,8 +1,6 @@
 ﻿using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -10,6 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Controllers
 {
@@ -88,7 +89,7 @@ namespace AdminWebsite.Controllers
                         NoAllocated = request.NoAllocated
                     });
 
-                return Ok(bookingsResponse);
+                return Ok(bookingsResponse.Map());
             }
             catch (BookingsApiException e)
             {

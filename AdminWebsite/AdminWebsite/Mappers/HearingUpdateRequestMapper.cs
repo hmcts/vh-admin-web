@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Models;
-using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.Mappers
 {

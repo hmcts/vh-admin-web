@@ -1,11 +1,11 @@
 ﻿using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Authorization;
 

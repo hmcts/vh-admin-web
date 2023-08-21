@@ -3349,13 +3349,13 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get available participant roles
-     * @param caseTypeName (optional)
+     * @param caseTypeParameter (optional)
      * @return Success
      */
-    getParticipantRoles(caseTypeName: string | undefined): Observable<CaseAndHearingRolesResponse[]> {
+    getParticipantRoles(caseTypeParameter: string | undefined): Observable<CaseAndHearingRolesResponse[]> {
         let url_ = this.baseUrl + '/api/reference/participantroles?';
-        if (caseTypeName === null) throw new Error("The parameter 'caseTypeName' cannot be null.");
-        else if (caseTypeName !== undefined) url_ += 'caseTypeName=' + encodeURIComponent('' + caseTypeName) + '&';
+        if (caseTypeParameter === null) throw new Error("The parameter 'caseTypeParameter' cannot be null.");
+        else if (caseTypeParameter !== undefined) url_ += 'caseTypeParameter=' + encodeURIComponent('' + caseTypeParameter) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -5386,9 +5386,20 @@ export class BHClient extends ApiClientBase {
     }
 }
 
+export enum BookingStatus {
+    Booked = 'Booked',
+    Created = 'Created',
+    Cancelled = 'Cancelled',
+    Failed = 'Failed'
+}
+
 export enum JudgeAccountType {
     Courtroom = 'Courtroom',
     Judiciary = 'Judiciary'
+}
+
+export enum LinkedParticipantType {
+    Interpreter = 'Interpreter'
 }
 
 /** Create a new Justice User */
@@ -5461,7 +5472,7 @@ export interface IAddNewJusticeUserRequest {
 }
 
 export class BookHearingRequest implements IBookHearingRequest {
-    booking_details?: BookNewHearingRequest;
+    booking_details?: BookingDetailsRequest;
     is_multi_day?: boolean;
     multi_hearing_details?: MultiHearingRequest;
     other_information_details?: string | undefined;
@@ -5476,7 +5487,7 @@ export class BookHearingRequest implements IBookHearingRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.booking_details = _data['booking_details'] ? BookNewHearingRequest.fromJS(_data['booking_details']) : <any>undefined;
+            this.booking_details = _data['booking_details'] ? BookingDetailsRequest.fromJS(_data['booking_details']) : <any>undefined;
             this.is_multi_day = _data['is_multi_day'];
             this.multi_hearing_details = _data['multi_hearing_details']
                 ? MultiHearingRequest.fromJS(_data['multi_hearing_details'])
@@ -5503,10 +5514,128 @@ export class BookHearingRequest implements IBookHearingRequest {
 }
 
 export interface IBookHearingRequest {
-    booking_details?: BookNewHearingRequest;
+    booking_details?: BookingDetailsRequest;
     is_multi_day?: boolean;
     multi_hearing_details?: MultiHearingRequest;
     other_information_details?: string | undefined;
+}
+
+export class BookingDetailsRequest implements IBookingDetailsRequest {
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    cases?: CaseRequest[] | undefined;
+    participants?: ParticipantRequest[] | undefined;
+    hearing_room_name?: string | undefined;
+    other_information?: string | undefined;
+    created_by?: string | undefined;
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    is_multi_day_hearing?: boolean;
+    endpoints?: EndpointRequest[] | undefined;
+    linked_participants?: LinkedParticipantRequest[] | undefined;
+
+    constructor(data?: IBookingDetailsRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.is_multi_day_hearing = false;
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
+            this.scheduled_duration = _data['scheduled_duration'];
+            this.hearing_venue_name = _data['hearing_venue_name'];
+            this.case_type_name = _data['case_type_name'];
+            this.hearing_type_name = _data['hearing_type_name'];
+            if (Array.isArray(_data['cases'])) {
+                this.cases = [] as any;
+                for (let item of _data['cases']) this.cases!.push(CaseRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['participants'])) {
+                this.participants = [] as any;
+                for (let item of _data['participants']) this.participants!.push(ParticipantRequest.fromJS(item));
+            }
+            this.hearing_room_name = _data['hearing_room_name'];
+            this.other_information = _data['other_information'];
+            this.created_by = _data['created_by'];
+            this.questionnaire_not_required = _data['questionnaire_not_required'];
+            this.audio_recording_required = _data['audio_recording_required'];
+            this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
+            if (Array.isArray(_data['endpoints'])) {
+                this.endpoints = [] as any;
+                for (let item of _data['endpoints']) this.endpoints!.push(EndpointRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantRequest.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingDetailsRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingDetailsRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data['scheduled_duration'] = this.scheduled_duration;
+        data['hearing_venue_name'] = this.hearing_venue_name;
+        data['case_type_name'] = this.case_type_name;
+        data['hearing_type_name'] = this.hearing_type_name;
+        if (Array.isArray(this.cases)) {
+            data['cases'] = [];
+            for (let item of this.cases) data['cases'].push(item.toJSON());
+        }
+        if (Array.isArray(this.participants)) {
+            data['participants'] = [];
+            for (let item of this.participants) data['participants'].push(item.toJSON());
+        }
+        data['hearing_room_name'] = this.hearing_room_name;
+        data['other_information'] = this.other_information;
+        data['created_by'] = this.created_by;
+        data['questionnaire_not_required'] = this.questionnaire_not_required;
+        data['audio_recording_required'] = this.audio_recording_required;
+        data['is_multi_day_hearing'] = this.is_multi_day_hearing;
+        if (Array.isArray(this.endpoints)) {
+            data['endpoints'] = [];
+            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
+        }
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBookingDetailsRequest {
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    cases?: CaseRequest[] | undefined;
+    participants?: ParticipantRequest[] | undefined;
+    hearing_room_name?: string | undefined;
+    other_information?: string | undefined;
+    created_by?: string | undefined;
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    is_multi_day_hearing?: boolean;
+    endpoints?: EndpointRequest[] | undefined;
+    linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
 export class BookingSearchRequest implements IBookingSearchRequest {
@@ -5600,6 +5729,210 @@ export interface IBookingSearchRequest {
     lastName?: string | undefined;
     noJudge?: boolean;
     noAllocated?: boolean;
+}
+
+export class CaseRequest implements ICaseRequest {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
+
+    constructor(data?: ICaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.number = _data['number'];
+            this.name = _data['name'];
+            this.is_lead_case = _data['is_lead_case'];
+        }
+    }
+
+    static fromJS(data: any): CaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['number'] = this.number;
+        data['name'] = this.name;
+        data['is_lead_case'] = this.is_lead_case;
+        return data;
+    }
+}
+
+export interface ICaseRequest {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
+}
+
+export class EndpointRequest implements IEndpointRequest {
+    display_name?: string | undefined;
+    defence_advocate_contact_email?: string | undefined;
+
+    constructor(data?: IEndpointRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.display_name = _data['display_name'];
+            this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+        }
+    }
+
+    static fromJS(data: any): EndpointRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EndpointRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['display_name'] = this.display_name;
+        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        return data;
+    }
+}
+
+export interface IEndpointRequest {
+    display_name?: string | undefined;
+    defence_advocate_contact_email?: string | undefined;
+}
+
+export class LinkedParticipantRequest implements ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.participant_contact_email = _data['participant_contact_email'];
+            this.linked_participant_contact_email = _data['linked_participant_contact_email'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['participant_contact_email'] = this.participant_contact_email;
+        data['linked_participant_contact_email'] = this.linked_participant_contact_email;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+}
+
+export class ParticipantRequest implements IParticipantRequest {
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    representee?: string | undefined;
+    organisation_name?: string | undefined;
+
+    constructor(data?: IParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.username = _data['username'];
+            this.display_name = _data['display_name'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.representee = _data['representee'];
+            this.organisation_name = _data['organisation_name'];
+        }
+    }
+
+    static fromJS(data: any): ParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['username'] = this.username;
+        data['display_name'] = this.display_name;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['representee'] = this.representee;
+        data['organisation_name'] = this.organisation_name;
+        return data;
+    }
+}
+
+export interface IParticipantRequest {
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    representee?: string | undefined;
+    organisation_name?: string | undefined;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -5728,6 +6061,278 @@ export interface IAllocationHearingsResponse {
     has_non_availability_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
+}
+
+export class BookingsByDateResponse implements IBookingsByDateResponse {
+    scheduled_date?: Date;
+    hearings?: BookingsHearingResponse[] | undefined;
+
+    constructor(data?: IBookingsByDateResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.scheduled_date = _data['scheduled_date'] ? new Date(_data['scheduled_date'].toString()) : <any>undefined;
+            if (Array.isArray(_data['hearings'])) {
+                this.hearings = [] as any;
+                for (let item of _data['hearings']) this.hearings!.push(BookingsHearingResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingsByDateResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsByDateResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['scheduled_date'] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
+        if (Array.isArray(this.hearings)) {
+            data['hearings'] = [];
+            for (let item of this.hearings) data['hearings'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBookingsByDateResponse {
+    scheduled_date?: Date;
+    hearings?: BookingsHearingResponse[] | undefined;
+}
+
+export class BookingsHearingResponse implements IBookingsHearingResponse {
+    hearing_id?: string;
+    hearing_number?: string | undefined;
+    hearing_name?: string | undefined;
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    court_room?: string | undefined;
+    court_address?: string | undefined;
+    judge_name?: string | undefined;
+    created_by?: string | undefined;
+    created_date?: Date;
+    last_edit_by?: string | undefined;
+    last_edit_date?: Date | undefined;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
+    hearing_date?: Date;
+    status?: BookingStatus2;
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    cancel_reason?: string | undefined;
+    group_id?: string | undefined;
+    court_room_account?: string | undefined;
+    allocated_to?: string | undefined;
+
+    constructor(data?: IBookingsHearingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hearing_id = _data['hearing_id'];
+            this.hearing_number = _data['hearing_number'];
+            this.hearing_name = _data['hearing_name'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
+            this.scheduled_duration = _data['scheduled_duration'];
+            this.case_type_name = _data['case_type_name'];
+            this.hearing_type_name = _data['hearing_type_name'];
+            this.court_room = _data['court_room'];
+            this.court_address = _data['court_address'];
+            this.judge_name = _data['judge_name'];
+            this.created_by = _data['created_by'];
+            this.created_date = _data['created_date'] ? new Date(_data['created_date'].toString()) : <any>undefined;
+            this.last_edit_by = _data['last_edit_by'];
+            this.last_edit_date = _data['last_edit_date'] ? new Date(_data['last_edit_date'].toString()) : <any>undefined;
+            this.confirmed_by = _data['confirmed_by'];
+            this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
+            this.hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
+            this.status = _data['status'];
+            this.questionnaire_not_required = _data['questionnaire_not_required'];
+            this.audio_recording_required = _data['audio_recording_required'];
+            this.cancel_reason = _data['cancel_reason'];
+            this.group_id = _data['group_id'];
+            this.court_room_account = _data['court_room_account'];
+            this.allocated_to = _data['allocated_to'];
+        }
+    }
+
+    static fromJS(data: any): BookingsHearingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsHearingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['hearing_id'] = this.hearing_id;
+        data['hearing_number'] = this.hearing_number;
+        data['hearing_name'] = this.hearing_name;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data['scheduled_duration'] = this.scheduled_duration;
+        data['case_type_name'] = this.case_type_name;
+        data['hearing_type_name'] = this.hearing_type_name;
+        data['court_room'] = this.court_room;
+        data['court_address'] = this.court_address;
+        data['judge_name'] = this.judge_name;
+        data['created_by'] = this.created_by;
+        data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        data['last_edit_by'] = this.last_edit_by;
+        data['last_edit_date'] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
+        data['confirmed_by'] = this.confirmed_by;
+        data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
+        data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
+        data['status'] = this.status;
+        data['questionnaire_not_required'] = this.questionnaire_not_required;
+        data['audio_recording_required'] = this.audio_recording_required;
+        data['cancel_reason'] = this.cancel_reason;
+        data['group_id'] = this.group_id;
+        data['court_room_account'] = this.court_room_account;
+        data['allocated_to'] = this.allocated_to;
+        return data;
+    }
+}
+
+export interface IBookingsHearingResponse {
+    hearing_id?: string;
+    hearing_number?: string | undefined;
+    hearing_name?: string | undefined;
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    court_room?: string | undefined;
+    court_address?: string | undefined;
+    judge_name?: string | undefined;
+    created_by?: string | undefined;
+    created_date?: Date;
+    last_edit_by?: string | undefined;
+    last_edit_date?: Date | undefined;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
+    hearing_date?: Date;
+    status?: BookingStatus2;
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    cancel_reason?: string | undefined;
+    group_id?: string | undefined;
+    court_room_account?: string | undefined;
+    allocated_to?: string | undefined;
+}
+
+export class BookingsResponse implements IBookingsResponse {
+    next_cursor?: string | undefined;
+    limit?: number;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+    hearings?: BookingsByDateResponse[] | undefined;
+
+    constructor(data?: IBookingsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.next_cursor = _data['next_cursor'];
+            this.limit = _data['limit'];
+            this.prev_page_url = _data['prev_page_url'];
+            this.next_page_url = _data['next_page_url'];
+            if (Array.isArray(_data['hearings'])) {
+                this.hearings = [] as any;
+                for (let item of _data['hearings']) this.hearings!.push(BookingsByDateResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['next_cursor'] = this.next_cursor;
+        data['limit'] = this.limit;
+        data['prev_page_url'] = this.prev_page_url;
+        data['next_page_url'] = this.next_page_url;
+        if (Array.isArray(this.hearings)) {
+            data['hearings'] = [];
+            for (let item of this.hearings) data['hearings'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IBookingsResponse {
+    next_cursor?: string | undefined;
+    limit?: number;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+    hearings?: BookingsByDateResponse[] | undefined;
+}
+
+export class CaseResponse implements ICaseResponse {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
+
+    constructor(data?: ICaseResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.number = _data['number'];
+            this.name = _data['name'];
+            this.is_lead_case = _data['is_lead_case'];
+        }
+    }
+
+    static fromJS(data: any): CaseResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['number'] = this.number;
+        data['name'] = this.name;
+        data['is_lead_case'] = this.is_lead_case;
+        return data;
+    }
+}
+
+export interface ICaseResponse {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
 }
 
 /** Configuration to initialise the UI application */
@@ -5878,6 +6483,233 @@ export interface IDateForUnallocatedHearings {
     date_end?: Date | undefined;
 }
 
+export class EndpointResponse implements IEndpointResponse {
+    id?: string;
+    display_name?: string | undefined;
+    sip?: string | undefined;
+    pin?: string | undefined;
+    defence_advocate_id?: string | undefined;
+
+    constructor(data?: IEndpointResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.display_name = _data['display_name'];
+            this.sip = _data['sip'];
+            this.pin = _data['pin'];
+            this.defence_advocate_id = _data['defence_advocate_id'];
+        }
+    }
+
+    static fromJS(data: any): EndpointResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new EndpointResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['display_name'] = this.display_name;
+        data['sip'] = this.sip;
+        data['pin'] = this.pin;
+        data['defence_advocate_id'] = this.defence_advocate_id;
+        return data;
+    }
+}
+
+export interface IEndpointResponse {
+    id?: string;
+    display_name?: string | undefined;
+    sip?: string | undefined;
+    pin?: string | undefined;
+    defence_advocate_id?: string | undefined;
+}
+
+export class HearingDetailsResponse implements IHearingDetailsResponse {
+    id?: string;
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    /** V1 only */
+    hearing_venue_name?: string | undefined;
+    /** V2 only */
+    hearing_venue_code?: string | undefined;
+    /** V1 only */
+    case_type_name?: string | undefined;
+    /** V2 only */
+    service_id?: string | undefined;
+    /** V1 only */
+    hearing_type_name?: string | undefined;
+    /** V2 only */
+    hearing_type_code?: string | undefined;
+    cases?: CaseResponse[] | undefined;
+    participants?: ParticipantResponse[] | undefined;
+    /** V1 only */
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
+    hearing_room_name?: string | undefined;
+    other_information?: string | undefined;
+    created_date?: Date;
+    created_by?: string | undefined;
+    updated_by?: string | undefined;
+    updated_date?: Date;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
+    status?: BookingStatus;
+    /** V1 only */
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    cancel_reason?: string | undefined;
+    endpoints?: EndpointResponse[] | undefined;
+    group_id?: string | undefined;
+
+    constructor(data?: IHearingDetailsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
+            this.scheduled_duration = _data['scheduled_duration'];
+            this.hearing_venue_name = _data['hearing_venue_name'];
+            this.hearing_venue_code = _data['hearing_venue_code'];
+            this.case_type_name = _data['case_type_name'];
+            this.service_id = _data['service_id'];
+            this.hearing_type_name = _data['hearing_type_name'];
+            this.hearing_type_code = _data['hearing_type_code'];
+            if (Array.isArray(_data['cases'])) {
+                this.cases = [] as any;
+                for (let item of _data['cases']) this.cases!.push(CaseResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['participants'])) {
+                this.participants = [] as any;
+                for (let item of _data['participants']) this.participants!.push(ParticipantResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['telephone_participants'])) {
+                this.telephone_participants = [] as any;
+                for (let item of _data['telephone_participants'])
+                    this.telephone_participants!.push(TelephoneParticipantResponse.fromJS(item));
+            }
+            this.hearing_room_name = _data['hearing_room_name'];
+            this.other_information = _data['other_information'];
+            this.created_date = _data['created_date'] ? new Date(_data['created_date'].toString()) : <any>undefined;
+            this.created_by = _data['created_by'];
+            this.updated_by = _data['updated_by'];
+            this.updated_date = _data['updated_date'] ? new Date(_data['updated_date'].toString()) : <any>undefined;
+            this.confirmed_by = _data['confirmed_by'];
+            this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
+            this.status = _data['status'];
+            this.questionnaire_not_required = _data['questionnaire_not_required'];
+            this.audio_recording_required = _data['audio_recording_required'];
+            this.cancel_reason = _data['cancel_reason'];
+            if (Array.isArray(_data['endpoints'])) {
+                this.endpoints = [] as any;
+                for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
+            }
+            this.group_id = _data['group_id'];
+        }
+    }
+
+    static fromJS(data: any): HearingDetailsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingDetailsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data['scheduled_duration'] = this.scheduled_duration;
+        data['hearing_venue_name'] = this.hearing_venue_name;
+        data['hearing_venue_code'] = this.hearing_venue_code;
+        data['case_type_name'] = this.case_type_name;
+        data['service_id'] = this.service_id;
+        data['hearing_type_name'] = this.hearing_type_name;
+        data['hearing_type_code'] = this.hearing_type_code;
+        if (Array.isArray(this.cases)) {
+            data['cases'] = [];
+            for (let item of this.cases) data['cases'].push(item.toJSON());
+        }
+        if (Array.isArray(this.participants)) {
+            data['participants'] = [];
+            for (let item of this.participants) data['participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.telephone_participants)) {
+            data['telephone_participants'] = [];
+            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
+        }
+        data['hearing_room_name'] = this.hearing_room_name;
+        data['other_information'] = this.other_information;
+        data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        data['created_by'] = this.created_by;
+        data['updated_by'] = this.updated_by;
+        data['updated_date'] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
+        data['confirmed_by'] = this.confirmed_by;
+        data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
+        data['status'] = this.status;
+        data['questionnaire_not_required'] = this.questionnaire_not_required;
+        data['audio_recording_required'] = this.audio_recording_required;
+        data['cancel_reason'] = this.cancel_reason;
+        if (Array.isArray(this.endpoints)) {
+            data['endpoints'] = [];
+            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
+        }
+        data['group_id'] = this.group_id;
+        return data;
+    }
+}
+
+export interface IHearingDetailsResponse {
+    id?: string;
+    scheduled_date_time?: Date;
+    scheduled_duration?: number;
+    /** V1 only */
+    hearing_venue_name?: string | undefined;
+    /** V2 only */
+    hearing_venue_code?: string | undefined;
+    /** V1 only */
+    case_type_name?: string | undefined;
+    /** V2 only */
+    service_id?: string | undefined;
+    /** V1 only */
+    hearing_type_name?: string | undefined;
+    /** V2 only */
+    hearing_type_code?: string | undefined;
+    cases?: CaseResponse[] | undefined;
+    participants?: ParticipantResponse[] | undefined;
+    /** V1 only */
+    telephone_participants?: TelephoneParticipantResponse[] | undefined;
+    hearing_room_name?: string | undefined;
+    other_information?: string | undefined;
+    created_date?: Date;
+    created_by?: string | undefined;
+    updated_by?: string | undefined;
+    updated_date?: Date;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
+    status?: BookingStatus;
+    /** V1 only */
+    questionnaire_not_required?: boolean;
+    audio_recording_required?: boolean;
+    cancel_reason?: string | undefined;
+    endpoints?: EndpointResponse[] | undefined;
+    group_id?: string | undefined;
+}
+
 /** Defines a type of hearing based on case */
 export class HearingTypeResponse implements IHearingTypeResponse {
     /** The short code for the type */
@@ -6008,6 +6840,142 @@ export interface IJudgeResponse {
     account_type?: JudgeAccountType;
 }
 
+export class LinkedParticipantResponse implements ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.linked_id = _data['linked_id'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['linked_id'] = this.linked_id;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+}
+
+export class ParticipantResponse implements IParticipantResponse {
+    id?: string;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+
+    constructor(data?: IParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.display_name = _data['display_name'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.user_role_name = _data['user_role_name'];
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.username = _data['username'];
+            this.organisation = _data['organisation'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['display_name'] = this.display_name;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['user_role_name'] = this.user_role_name;
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['username'] = this.username;
+        data['organisation'] = this.organisation;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IParticipantResponse {
+    id?: string;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+}
+
 /** A public holiday */
 export class PublicHolidayResponse implements IPublicHolidayResponse {
     /** Name of a public holiday */
@@ -6051,6 +7019,83 @@ export interface IPublicHolidayResponse {
     name?: string | undefined;
     /** Date of a public holiday */
     date?: Date;
+}
+
+export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+
+    constructor(data?: ITelephoneParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.mobile_number = _data['mobile_number'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): TelephoneParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new TelephoneParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['mobile_number'] = this.mobile_number;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ITelephoneParticipantResponse {
+    id?: string;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    mobile_number?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
 export class UnallocatedHearingsForVhoResponse implements IUnallocatedHearingsForVhoResponse {
@@ -7261,188 +8306,11 @@ export interface IUploadWorkHoursResponse {
     failed_usernames?: string[] | undefined;
 }
 
-export enum BookingStatus {
+export enum BookingStatus2 {
     Booked = 'Booked',
     Created = 'Created',
     Cancelled = 'Cancelled',
     Failed = 'Failed'
-}
-
-export enum LinkedParticipantType {
-    Interpreter = 'Interpreter'
-}
-
-export class BookNewHearingRequest implements IBookNewHearingRequest {
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
-    hearing_venue_code?: string | undefined;
-    case_type_name?: string | undefined;
-    case_type_service_id?: string | undefined;
-    hearing_type_name?: string | undefined;
-    cases?: CaseRequest[] | undefined;
-    participants?: ParticipantRequest[] | undefined;
-    hearing_room_name?: string | undefined;
-    other_information?: string | undefined;
-    created_by?: string | undefined;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    hearing_type_code?: string | undefined;
-    is_multi_day_hearing?: boolean;
-    endpoints?: EndpointRequest[] | undefined;
-    linked_participants?: LinkedParticipantRequest[] | undefined;
-
-    constructor(data?: IBookNewHearingRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.is_multi_day_hearing = false;
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
-            this.scheduled_duration = _data['scheduled_duration'];
-            this.hearing_venue_name = _data['hearing_venue_name'];
-            this.hearing_venue_code = _data['hearing_venue_code'];
-            this.case_type_name = _data['case_type_name'];
-            this.case_type_service_id = _data['case_type_service_id'];
-            this.hearing_type_name = _data['hearing_type_name'];
-            if (Array.isArray(_data['cases'])) {
-                this.cases = [] as any;
-                for (let item of _data['cases']) this.cases!.push(CaseRequest.fromJS(item));
-            }
-            if (Array.isArray(_data['participants'])) {
-                this.participants = [] as any;
-                for (let item of _data['participants']) this.participants!.push(ParticipantRequest.fromJS(item));
-            }
-            this.hearing_room_name = _data['hearing_room_name'];
-            this.other_information = _data['other_information'];
-            this.created_by = _data['created_by'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
-            this.audio_recording_required = _data['audio_recording_required'];
-            this.hearing_type_code = _data['hearing_type_code'];
-            this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
-            if (Array.isArray(_data['endpoints'])) {
-                this.endpoints = [] as any;
-                for (let item of _data['endpoints']) this.endpoints!.push(EndpointRequest.fromJS(item));
-            }
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantRequest.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookNewHearingRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookNewHearingRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data['scheduled_duration'] = this.scheduled_duration;
-        data['hearing_venue_name'] = this.hearing_venue_name;
-        data['hearing_venue_code'] = this.hearing_venue_code;
-        data['case_type_name'] = this.case_type_name;
-        data['case_type_service_id'] = this.case_type_service_id;
-        data['hearing_type_name'] = this.hearing_type_name;
-        if (Array.isArray(this.cases)) {
-            data['cases'] = [];
-            for (let item of this.cases) data['cases'].push(item.toJSON());
-        }
-        if (Array.isArray(this.participants)) {
-            data['participants'] = [];
-            for (let item of this.participants) data['participants'].push(item.toJSON());
-        }
-        data['hearing_room_name'] = this.hearing_room_name;
-        data['other_information'] = this.other_information;
-        data['created_by'] = this.created_by;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
-        data['audio_recording_required'] = this.audio_recording_required;
-        data['hearing_type_code'] = this.hearing_type_code;
-        data['is_multi_day_hearing'] = this.is_multi_day_hearing;
-        if (Array.isArray(this.endpoints)) {
-            data['endpoints'] = [];
-            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
-        }
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IBookNewHearingRequest {
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
-    hearing_venue_code?: string | undefined;
-    case_type_name?: string | undefined;
-    case_type_service_id?: string | undefined;
-    hearing_type_name?: string | undefined;
-    cases?: CaseRequest[] | undefined;
-    participants?: ParticipantRequest[] | undefined;
-    hearing_room_name?: string | undefined;
-    other_information?: string | undefined;
-    created_by?: string | undefined;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    hearing_type_code?: string | undefined;
-    is_multi_day_hearing?: boolean;
-    endpoints?: EndpointRequest[] | undefined;
-    linked_participants?: LinkedParticipantRequest[] | undefined;
-}
-
-export class CaseRequest implements ICaseRequest {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
-
-    constructor(data?: ICaseRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.number = _data['number'];
-            this.name = _data['name'];
-            this.is_lead_case = _data['is_lead_case'];
-        }
-    }
-
-    static fromJS(data: any): CaseRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new CaseRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['number'] = this.number;
-        data['name'] = this.name;
-        data['is_lead_case'] = this.is_lead_case;
-        return data;
-    }
-}
-
-export interface ICaseRequest {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
 }
 
 export class EditJusticeUserRequest implements IEditJusticeUserRequest {
@@ -7494,45 +8362,6 @@ export interface IEditJusticeUserRequest {
     roles?: JusticeUserRole[] | undefined;
 }
 
-export class EndpointRequest implements IEndpointRequest {
-    display_name?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
-
-    constructor(data?: IEndpointRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.display_name = _data['display_name'];
-            this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
-        }
-    }
-
-    static fromJS(data: any): EndpointRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new EndpointRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['display_name'] = this.display_name;
-        data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
-        return data;
-    }
-}
-
-export interface IEndpointRequest {
-    display_name?: string | undefined;
-    defence_advocate_contact_email?: string | undefined;
-}
-
 export enum JusticeUserRole {
     CaseAdmin = 'CaseAdmin',
     Vho = 'Vho',
@@ -7550,49 +8379,6 @@ export enum UpdateBookingStatus {
     Created = 'Created',
     Cancelled = 'Cancelled',
     Failed = 'Failed'
-}
-
-export class LinkedParticipantRequest implements ILinkedParticipantRequest {
-    participant_contact_email?: string | undefined;
-    linked_participant_contact_email?: string | undefined;
-    type?: LinkedParticipantType;
-
-    constructor(data?: ILinkedParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.participant_contact_email = _data['participant_contact_email'];
-            this.linked_participant_contact_email = _data['linked_participant_contact_email'];
-            this.type = _data['type'];
-        }
-    }
-
-    static fromJS(data: any): LinkedParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkedParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['participant_contact_email'] = this.participant_contact_email;
-        data['linked_participant_contact_email'] = this.linked_participant_contact_email;
-        data['type'] = this.type;
-        return data;
-    }
-}
-
-export interface ILinkedParticipantRequest {
-    participant_contact_email?: string | undefined;
-    linked_participant_contact_email?: string | undefined;
-    type?: LinkedParticipantType;
 }
 
 export class NonWorkingHours implements INonWorkingHours {
@@ -7636,85 +8422,6 @@ export interface INonWorkingHours {
     id?: number;
     start_time?: Date;
     end_time?: Date;
-}
-
-export class ParticipantRequest implements IParticipantRequest {
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    representee?: string | undefined;
-    organisation_name?: string | undefined;
-
-    constructor(data?: IParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.username = _data['username'];
-            this.display_name = _data['display_name'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.representee = _data['representee'];
-            this.organisation_name = _data['organisation_name'];
-        }
-    }
-
-    static fromJS(data: any): ParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['username'] = this.username;
-        data['display_name'] = this.display_name;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['representee'] = this.representee;
-        data['organisation_name'] = this.organisation_name;
-        return data;
-    }
-}
-
-export interface IParticipantRequest {
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    representee?: string | undefined;
-    organisation_name?: string | undefined;
 }
 
 export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {
@@ -8067,477 +8774,6 @@ export interface IAllocatedCsoResponse {
     supports_work_allocation?: boolean;
 }
 
-export class BookingsByDateResponse implements IBookingsByDateResponse {
-    scheduled_date?: Date;
-    hearings?: BookingsHearingResponse[] | undefined;
-
-    constructor(data?: IBookingsByDateResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.scheduled_date = _data['scheduled_date'] ? new Date(_data['scheduled_date'].toString()) : <any>undefined;
-            if (Array.isArray(_data['hearings'])) {
-                this.hearings = [] as any;
-                for (let item of _data['hearings']) this.hearings!.push(BookingsHearingResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookingsByDateResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsByDateResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['scheduled_date'] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
-        if (Array.isArray(this.hearings)) {
-            data['hearings'] = [];
-            for (let item of this.hearings) data['hearings'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IBookingsByDateResponse {
-    scheduled_date?: Date;
-    hearings?: BookingsHearingResponse[] | undefined;
-}
-
-export class BookingsHearingResponse implements IBookingsHearingResponse {
-    hearing_id?: string;
-    hearing_number?: string | undefined;
-    hearing_name?: string | undefined;
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    case_type_name?: string | undefined;
-    hearing_type_name?: string | undefined;
-    court_room?: string | undefined;
-    court_address?: string | undefined;
-    judge_name?: string | undefined;
-    created_by?: string | undefined;
-    created_date?: Date;
-    last_edit_by?: string | undefined;
-    last_edit_date?: Date | undefined;
-    confirmed_by?: string | undefined;
-    confirmed_date?: Date | undefined;
-    readonly hearing_date?: Date;
-    status?: BookingStatus;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    cancel_reason?: string | undefined;
-    group_id?: string | undefined;
-    court_room_account?: string | undefined;
-    allocated_to?: string | undefined;
-
-    constructor(data?: IBookingsHearingResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.hearing_id = _data['hearing_id'];
-            this.hearing_number = _data['hearing_number'];
-            this.hearing_name = _data['hearing_name'];
-            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
-            this.scheduled_duration = _data['scheduled_duration'];
-            this.case_type_name = _data['case_type_name'];
-            this.hearing_type_name = _data['hearing_type_name'];
-            this.court_room = _data['court_room'];
-            this.court_address = _data['court_address'];
-            this.judge_name = _data['judge_name'];
-            this.created_by = _data['created_by'];
-            this.created_date = _data['created_date'] ? new Date(_data['created_date'].toString()) : <any>undefined;
-            this.last_edit_by = _data['last_edit_by'];
-            this.last_edit_date = _data['last_edit_date'] ? new Date(_data['last_edit_date'].toString()) : <any>undefined;
-            this.confirmed_by = _data['confirmed_by'];
-            this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
-            (<any>this).hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
-            this.status = _data['status'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
-            this.audio_recording_required = _data['audio_recording_required'];
-            this.cancel_reason = _data['cancel_reason'];
-            this.group_id = _data['group_id'];
-            this.court_room_account = _data['court_room_account'];
-            this.allocated_to = _data['allocated_to'];
-        }
-    }
-
-    static fromJS(data: any): BookingsHearingResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsHearingResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['hearing_id'] = this.hearing_id;
-        data['hearing_number'] = this.hearing_number;
-        data['hearing_name'] = this.hearing_name;
-        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data['scheduled_duration'] = this.scheduled_duration;
-        data['case_type_name'] = this.case_type_name;
-        data['hearing_type_name'] = this.hearing_type_name;
-        data['court_room'] = this.court_room;
-        data['court_address'] = this.court_address;
-        data['judge_name'] = this.judge_name;
-        data['created_by'] = this.created_by;
-        data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
-        data['last_edit_by'] = this.last_edit_by;
-        data['last_edit_date'] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
-        data['confirmed_by'] = this.confirmed_by;
-        data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
-        data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
-        data['status'] = this.status;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
-        data['audio_recording_required'] = this.audio_recording_required;
-        data['cancel_reason'] = this.cancel_reason;
-        data['group_id'] = this.group_id;
-        data['court_room_account'] = this.court_room_account;
-        data['allocated_to'] = this.allocated_to;
-        return data;
-    }
-}
-
-export interface IBookingsHearingResponse {
-    hearing_id?: string;
-    hearing_number?: string | undefined;
-    hearing_name?: string | undefined;
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    case_type_name?: string | undefined;
-    hearing_type_name?: string | undefined;
-    court_room?: string | undefined;
-    court_address?: string | undefined;
-    judge_name?: string | undefined;
-    created_by?: string | undefined;
-    created_date?: Date;
-    last_edit_by?: string | undefined;
-    last_edit_date?: Date | undefined;
-    confirmed_by?: string | undefined;
-    confirmed_date?: Date | undefined;
-    hearing_date?: Date;
-    status?: BookingStatus;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    cancel_reason?: string | undefined;
-    group_id?: string | undefined;
-    court_room_account?: string | undefined;
-    allocated_to?: string | undefined;
-}
-
-export class BookingsResponse implements IBookingsResponse {
-    hearings?: BookingsByDateResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
-
-    constructor(data?: IBookingsResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data['hearings'])) {
-                this.hearings = [] as any;
-                for (let item of _data['hearings']) this.hearings!.push(BookingsByDateResponse.fromJS(item));
-            }
-            this.next_cursor = _data['next_cursor'];
-            this.limit = _data['limit'];
-            this.prev_page_url = _data['prev_page_url'];
-            this.next_page_url = _data['next_page_url'];
-        }
-    }
-
-    static fromJS(data: any): BookingsResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.hearings)) {
-            data['hearings'] = [];
-            for (let item of this.hearings) data['hearings'].push(item.toJSON());
-        }
-        data['next_cursor'] = this.next_cursor;
-        data['limit'] = this.limit;
-        data['prev_page_url'] = this.prev_page_url;
-        data['next_page_url'] = this.next_page_url;
-        return data;
-    }
-}
-
-export interface IBookingsResponse {
-    hearings?: BookingsByDateResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
-}
-
-export class CaseResponse implements ICaseResponse {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
-
-    constructor(data?: ICaseResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.number = _data['number'];
-            this.name = _data['name'];
-            this.is_lead_case = _data['is_lead_case'];
-        }
-    }
-
-    static fromJS(data: any): CaseResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new CaseResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['number'] = this.number;
-        data['name'] = this.name;
-        data['is_lead_case'] = this.is_lead_case;
-        return data;
-    }
-}
-
-export interface ICaseResponse {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
-}
-
-export class EndpointResponse implements IEndpointResponse {
-    id?: string;
-    display_name?: string | undefined;
-    sip?: string | undefined;
-    pin?: string | undefined;
-    defence_advocate_id?: string | undefined;
-
-    constructor(data?: IEndpointResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.display_name = _data['display_name'];
-            this.sip = _data['sip'];
-            this.pin = _data['pin'];
-            this.defence_advocate_id = _data['defence_advocate_id'];
-        }
-    }
-
-    static fromJS(data: any): EndpointResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new EndpointResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['display_name'] = this.display_name;
-        data['sip'] = this.sip;
-        data['pin'] = this.pin;
-        data['defence_advocate_id'] = this.defence_advocate_id;
-        return data;
-    }
-}
-
-export interface IEndpointResponse {
-    id?: string;
-    display_name?: string | undefined;
-    sip?: string | undefined;
-    pin?: string | undefined;
-    defence_advocate_id?: string | undefined;
-}
-
-export class HearingDetailsResponse implements IHearingDetailsResponse {
-    id?: string;
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
-    case_type_name?: string | undefined;
-    hearing_type_name?: string | undefined;
-    cases?: CaseResponse[] | undefined;
-    participants?: ParticipantResponse[] | undefined;
-    telephone_participants?: TelephoneParticipantResponse[] | undefined;
-    hearing_room_name?: string | undefined;
-    other_information?: string | undefined;
-    created_date?: Date;
-    created_by?: string | undefined;
-    updated_by?: string | undefined;
-    updated_date?: Date;
-    confirmed_by?: string | undefined;
-    confirmed_date?: Date | undefined;
-    status?: BookingStatus;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    cancel_reason?: string | undefined;
-    endpoints?: EndpointResponse[] | undefined;
-    group_id?: string | undefined;
-
-    constructor(data?: IHearingDetailsResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
-            this.scheduled_duration = _data['scheduled_duration'];
-            this.hearing_venue_name = _data['hearing_venue_name'];
-            this.case_type_name = _data['case_type_name'];
-            this.hearing_type_name = _data['hearing_type_name'];
-            if (Array.isArray(_data['cases'])) {
-                this.cases = [] as any;
-                for (let item of _data['cases']) this.cases!.push(CaseResponse.fromJS(item));
-            }
-            if (Array.isArray(_data['participants'])) {
-                this.participants = [] as any;
-                for (let item of _data['participants']) this.participants!.push(ParticipantResponse.fromJS(item));
-            }
-            if (Array.isArray(_data['telephone_participants'])) {
-                this.telephone_participants = [] as any;
-                for (let item of _data['telephone_participants'])
-                    this.telephone_participants!.push(TelephoneParticipantResponse.fromJS(item));
-            }
-            this.hearing_room_name = _data['hearing_room_name'];
-            this.other_information = _data['other_information'];
-            this.created_date = _data['created_date'] ? new Date(_data['created_date'].toString()) : <any>undefined;
-            this.created_by = _data['created_by'];
-            this.updated_by = _data['updated_by'];
-            this.updated_date = _data['updated_date'] ? new Date(_data['updated_date'].toString()) : <any>undefined;
-            this.confirmed_by = _data['confirmed_by'];
-            this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
-            this.status = _data['status'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
-            this.audio_recording_required = _data['audio_recording_required'];
-            this.cancel_reason = _data['cancel_reason'];
-            if (Array.isArray(_data['endpoints'])) {
-                this.endpoints = [] as any;
-                for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
-            }
-            this.group_id = _data['group_id'];
-        }
-    }
-
-    static fromJS(data: any): HearingDetailsResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingDetailsResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data['scheduled_duration'] = this.scheduled_duration;
-        data['hearing_venue_name'] = this.hearing_venue_name;
-        data['case_type_name'] = this.case_type_name;
-        data['hearing_type_name'] = this.hearing_type_name;
-        if (Array.isArray(this.cases)) {
-            data['cases'] = [];
-            for (let item of this.cases) data['cases'].push(item.toJSON());
-        }
-        if (Array.isArray(this.participants)) {
-            data['participants'] = [];
-            for (let item of this.participants) data['participants'].push(item.toJSON());
-        }
-        if (Array.isArray(this.telephone_participants)) {
-            data['telephone_participants'] = [];
-            for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
-        }
-        data['hearing_room_name'] = this.hearing_room_name;
-        data['other_information'] = this.other_information;
-        data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
-        data['created_by'] = this.created_by;
-        data['updated_by'] = this.updated_by;
-        data['updated_date'] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
-        data['confirmed_by'] = this.confirmed_by;
-        data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
-        data['status'] = this.status;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
-        data['audio_recording_required'] = this.audio_recording_required;
-        data['cancel_reason'] = this.cancel_reason;
-        if (Array.isArray(this.endpoints)) {
-            data['endpoints'] = [];
-            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
-        }
-        data['group_id'] = this.group_id;
-        return data;
-    }
-}
-
-export interface IHearingDetailsResponse {
-    id?: string;
-    scheduled_date_time?: Date;
-    scheduled_duration?: number;
-    hearing_venue_name?: string | undefined;
-    case_type_name?: string | undefined;
-    hearing_type_name?: string | undefined;
-    cases?: CaseResponse[] | undefined;
-    participants?: ParticipantResponse[] | undefined;
-    telephone_participants?: TelephoneParticipantResponse[] | undefined;
-    hearing_room_name?: string | undefined;
-    other_information?: string | undefined;
-    created_date?: Date;
-    created_by?: string | undefined;
-    updated_by?: string | undefined;
-    updated_date?: Date;
-    confirmed_by?: string | undefined;
-    confirmed_date?: Date | undefined;
-    status?: BookingStatus;
-    questionnaire_not_required?: boolean;
-    audio_recording_required?: boolean;
-    cancel_reason?: string | undefined;
-    endpoints?: EndpointResponse[] | undefined;
-    group_id?: string | undefined;
-}
-
 export class HearingVenueResponse implements IHearingVenueResponse {
     id?: number;
     name?: string | undefined;
@@ -8711,142 +8947,6 @@ export interface IJusticeUserResponse {
     created_by?: string | undefined;
     full_name?: string | undefined;
     deleted?: boolean;
-}
-
-export class LinkedParticipantResponse implements ILinkedParticipantResponse {
-    linked_id?: string;
-    type?: LinkedParticipantType;
-
-    constructor(data?: ILinkedParticipantResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.linked_id = _data['linked_id'];
-            this.type = _data['type'];
-        }
-    }
-
-    static fromJS(data: any): LinkedParticipantResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkedParticipantResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['linked_id'] = this.linked_id;
-        data['type'] = this.type;
-        return data;
-    }
-}
-
-export interface ILinkedParticipantResponse {
-    linked_id?: string;
-    type?: LinkedParticipantType;
-}
-
-export class ParticipantResponse implements IParticipantResponse {
-    id?: string;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    user_role_name?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
-
-    constructor(data?: IParticipantResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.display_name = _data['display_name'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.user_role_name = _data['user_role_name'];
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.username = _data['username'];
-            this.organisation = _data['organisation'];
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ParticipantResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['display_name'] = this.display_name;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['user_role_name'] = this.user_role_name;
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['username'] = this.username;
-        data['organisation'] = this.organisation;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IParticipantResponse {
-    id?: string;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    user_role_name?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
 export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabilityAnswerResponse {
@@ -9089,83 +9189,6 @@ export interface ISuitabilityAnswersResponse {
     limit?: number;
     prev_page_url?: string | undefined;
     next_page_url?: string | undefined;
-}
-
-export class TelephoneParticipantResponse implements ITelephoneParticipantResponse {
-    id?: string;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    mobile_number?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
-
-    constructor(data?: ITelephoneParticipantResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.mobile_number = _data['mobile_number'];
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): TelephoneParticipantResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new TelephoneParticipantResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['mobile_number'] = this.mobile_number;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface ITelephoneParticipantResponse {
-    id?: string;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    mobile_number?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
 export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityWorkHoursResponse {

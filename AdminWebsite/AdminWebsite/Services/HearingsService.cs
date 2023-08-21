@@ -3,26 +3,22 @@ using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Configuration;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Responses;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Requests;
 using VideoApi.Contract.Consts;
-using AddEndpointRequest = BookingsApi.Contract.V1.Requests.AddEndpointRequest;
-using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
-using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
-using UpdateEndpointRequest = BookingsApi.Contract.V1.Requests.UpdateEndpointRequest;
-using UpdateParticipantRequest = BookingsApi.Contract.V1.Requests.UpdateParticipantRequest;
 
 namespace AdminWebsite.Services
 {
     public interface IHearingsService
     {
-        void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants);
+        void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<ParticipantRequest> newParticipantList);
@@ -37,32 +33,30 @@ namespace AdminWebsite.Services
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
 #pragma warning disable S107
-        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureFlag)
         {
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
         }
 
-        public void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
-            IReadOnlyCollection<ParticipantRequest> participants)
+        public void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants)
         {
             // update the username of defence advocate 
             foreach (var endpoint in endpointsWithDa)
             {
                 _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
                     endpoint.DefenceAdvocateContactEmail, endpoint.DisplayName);
-                var defenceAdvocate = participants.Single(x =>
-                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,
-                        StringComparison.CurrentCultureIgnoreCase));
+                var defenceAdvocate = participants.Single(x => 
+                    x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,StringComparison.CurrentCultureIgnoreCase));
                 endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
             }
         }
 
-        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
+        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
         {
             var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
-                .Select(EditParticipantRequestMapper.MapFrom).ToList();
+                .Select(EditParticipantRequestMapper.MapFrom)
+                .ToList();
             var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
             var hearingCase = hearingDetailsResponse.Cases[0];
             
@@ -93,13 +87,11 @@ namespace AdminWebsite.Services
                    newJudgeOtherInformation != existingJudgeOtherInformation;
         }
         
-        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
+        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
         {
             var originalEndpoints = hearingDetailsResponse.Endpoints == null
                 ? new List<EditEndpointRequest>()
-                : hearingDetailsResponse.Endpoints
-                    .Select(EditEndpointRequestMapper.MapFrom).ToList();
+                : hearingDetailsResponse.Endpoints.Select(EditEndpointRequestMapper.MapFrom).ToList();
             var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
 
             var ogEndpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
@@ -120,9 +112,13 @@ namespace AdminWebsite.Services
                 : new List<EditParticipantRequest>();
         }
 
-        public async Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants,
-            List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants)
+        public async Task ProcessParticipants(Guid hearingId, 
+            List<UpdateParticipantRequest> existingParticipants, 
+            List<ParticipantRequest> newParticipants,
+            List<Guid> removedParticipantIds, 
+            List<LinkedParticipantRequest> linkedParticipants)
         {
+
             var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
             {
                 ExistingParticipants = existingParticipants,
@@ -130,7 +126,6 @@ namespace AdminWebsite.Services
                 RemovedParticipantIds = removedParticipantIds,
                 LinkedParticipants = linkedParticipants
             };
-
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
 

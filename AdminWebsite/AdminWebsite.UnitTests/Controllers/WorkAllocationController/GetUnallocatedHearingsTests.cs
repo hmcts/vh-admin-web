@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.WorkAllocationController;
 

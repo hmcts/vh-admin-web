@@ -1,8 +1,8 @@
 ﻿namespace AdminWebsite.UnitTests
 {
-    internal class ParticipantRequest
+    internal class TestParticipantRequest
     {
-        public ParticipantRequest()
+        public TestParticipantRequest()
         {
         }
 

@@ -6,13 +6,11 @@ using AdminWebsite.Controllers;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {

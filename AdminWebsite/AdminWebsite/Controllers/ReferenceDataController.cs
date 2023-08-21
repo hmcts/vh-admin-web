@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.Interfaces.Response;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.Controllers
@@ -23,14 +25,19 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
+        private readonly IFeatureToggles _featureToggles;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IPublicHolidayRetriever publicHolidayRetriever)
+        public ReferenceDataController(
+            IBookingsApiClient bookingsApiClient, 
+            IPublicHolidayRetriever publicHolidayRetriever,
+            IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _publicHolidayRetriever = publicHolidayRetriever;
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -62,19 +69,39 @@ namespace AdminWebsite.Controllers
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
         [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
+        public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeParameter)
         {
             var response = new List<CaseAndHearingRolesResponse>();
-
-            var caseRoles = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
-            if (caseRoles != null && caseRoles.Any())
+            List<ICaseRoleResponse> iCaseRoles;
+            if (_featureToggles.ReferenceDataToggle())
             {
-                foreach (var item in caseRoles)
+                var caseRoles2 = await _bookingsApiClient.GetCaseRolesForCaseServiceAsync(caseTypeParameter);
+                iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
+            }
+            else
+            {
+                var caseRoles1 = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeParameter);
+                iCaseRoles = caseRoles1?.Select(e => (ICaseRoleResponse)e).ToList();
+            }
+        
+            if (iCaseRoles != null && iCaseRoles.Any())
+            {
+                foreach (var item in iCaseRoles)
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
-                    var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
+                    List<IHearingRoleResponse> iHearingRoles;
+                    if (_featureToggles.ReferenceDataToggle())
+                    {
+                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, item.Name);
+                        iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
+                    }
+                    else
+                    {
+                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, item.Name);  
+                        iHearingRoles = hearingRoles2.Select(e => (IHearingRoleResponse)e).ToList();
+                    }
                     
-                    caseRole.HearingRoles = hearingRoles.ToList().ConvertAll(x => new HearingRole(x.Name, x.UserRole));
+                    caseRole.HearingRoles = iHearingRoles.ConvertAll(x => new HearingRole(x.Name, x.UserRole));
 
                     response.Add(caseRole);
                 }

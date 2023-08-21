@@ -128,9 +128,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _editHearingRequest.HearingRoomName = "Updated HearingRoomName";
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -138,20 +136,15 @@ namespace AdminWebsite.UnitTests.Services
         {
             _editHearingRequest.HearingRoomName = "Updated HearingVenueName";
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_false_if_OtherInformation_is_changed()
         {
             _editHearingRequest.OtherInformation = "Updated OtherInformation";
-
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -160,9 +153,7 @@ namespace AdminWebsite.UnitTests.Services
             _editHearingRequest.ScheduledDuration =
                 _updatedExistingParticipantHearingOriginal.ScheduledDuration + 1;
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -172,8 +163,7 @@ namespace AdminWebsite.UnitTests.Services
                 !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -187,16 +177,14 @@ namespace AdminWebsite.UnitTests.Services
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
-            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_true_when_endpoint_displayName_is_changed()
         {
             _editHearingRequest.Endpoints.First().DisplayName = "test1";
-            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -210,32 +198,28 @@ namespace AdminWebsite.UnitTests.Services
             });
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
 
-            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_true_when_endpoint_defenceAdvocateUsername_is_changed()
         {
             _updatedExistingParticipantHearingOriginal.Endpoints.First().DefenceAdvocateId = Guid.NewGuid();
-            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.True(_service.HasEndpointsBeenChanged(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_false_when_participant_removed()
         {
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse { Id = Guid.NewGuid() });
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_true_when_participant_added()
         {
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-            Assert.True(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.True(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -282,43 +266,35 @@ namespace AdminWebsite.UnitTests.Services
         public void Should_return_false_if_participant_displayName_changed()
         {
             _editHearingRequest.Participants.First().DisplayName = "DisplayName changed";
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_false_if_participant_lastName_changed()
         {
             _editHearingRequest.Participants.First().LastName = "LastName changed";
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_throws_InvalidOperationException()
         {
             _updatedExistingParticipantHearingOriginal.Cases = new List<CaseResponse>();
-            Assert.Throws<ArgumentOutOfRangeException>(() => _service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.Throws<ArgumentOutOfRangeException>(() => _service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_false_if_case_name_is_different()
         {
             _editHearingRequest.Case.Name = "Updated Case Name";
-
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
         public void Should_return_false_if_case_number_is_different()
         {
             _editHearingRequest.Case.Number = "Updated Number";
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -326,8 +302,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _editHearingRequest.ScheduledDateTime = DateTime.Now;
 
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest,
-                _updatedExistingParticipantHearingOriginal));
+            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 
         [Test]
@@ -367,7 +342,7 @@ namespace AdminWebsite.UnitTests.Services
             var removedParticipantIds = new List<Guid>();
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -390,7 +365,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -412,7 +387,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -440,7 +415,7 @@ namespace AdminWebsite.UnitTests.Services
             var removedParticipantIds = new List<Guid>();
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().BeNull();
@@ -470,7 +445,7 @@ namespace AdminWebsite.UnitTests.Services
             };
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -491,7 +466,7 @@ namespace AdminWebsite.UnitTests.Services
             var removedParticipantIds = new List<Guid>();
 
             // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing);
+            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
 
             // Assert
             newParticipant.Should().NotBeNull();
@@ -515,7 +490,7 @@ namespace AdminWebsite.UnitTests.Services
                     .First(x => x.UserRoleName == "Judge")
                     .ContactEmail = "Different.Judge@court.com";
             //Act
-            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            var response = _service.IsUpdatingJudge(editHearing, hearing.Map());
             //Assert
             response.Should().Be(shouldUpdateJudge);
         }
@@ -537,7 +512,7 @@ namespace AdminWebsite.UnitTests.Services
             if(shouldUpdateJudge)
                 hearing.OtherInformation = "JudgePhone|loremIpsum2";
             //Act
-            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            var response = _service.IsUpdatingJudge(editHearing, hearing.Map());
             //Assert
             response.Should().Be(shouldUpdateJudge);
         }
@@ -557,7 +532,7 @@ namespace AdminWebsite.UnitTests.Services
             hearing.Participants.Remove(hearing.Participants.Single(x => x.HearingRoleName == "Judge"));
             hearing.OtherInformation = "JudgePhone|loremIpsum";
             //Act
-            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            var response = _service.IsUpdatingJudge(editHearing, hearing.Map());
             //Assert
             response.Should().Be(false);
         }
@@ -577,7 +552,7 @@ namespace AdminWebsite.UnitTests.Services
             hearing.Participants.Remove(hearing.Participants.Single(x => x.HearingRoleName == "Judge"));
             hearing.OtherInformation = string.Empty;
             //Act
-            var response = _service.IsUpdatingJudge(editHearing, hearing);
+            var response = _service.IsUpdatingJudge(editHearing, hearing.Map());
             //Assert
             response.Should().Be(false);
         }

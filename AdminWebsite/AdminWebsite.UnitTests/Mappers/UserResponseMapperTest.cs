@@ -1,6 +1,4 @@
-﻿using System;
-using AdminWebsite.Mappers;
-using BookingsApi.Contract.V1.Responses;
+﻿using AdminWebsite.Mappers;
 using FluentAssertions;
 using NUnit.Framework;
 using UserApi.Contract.Responses;
