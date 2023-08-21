@@ -9,7 +9,7 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using UserApi.Client;

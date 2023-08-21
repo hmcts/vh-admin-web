@@ -5,7 +5,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;

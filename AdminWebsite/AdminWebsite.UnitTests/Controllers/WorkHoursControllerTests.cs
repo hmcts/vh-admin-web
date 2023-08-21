@@ -2,14 +2,14 @@ using System;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 
 namespace AdminWebsite.UnitTests.Controllers

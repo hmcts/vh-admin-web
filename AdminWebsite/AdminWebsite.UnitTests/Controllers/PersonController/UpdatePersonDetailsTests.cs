@@ -7,7 +7,7 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

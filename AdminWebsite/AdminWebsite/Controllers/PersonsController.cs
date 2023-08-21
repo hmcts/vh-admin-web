@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers

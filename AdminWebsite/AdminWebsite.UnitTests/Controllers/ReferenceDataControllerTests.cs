@@ -11,8 +11,8 @@ using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
-using HearingTypeResponse = BookingsApi.Contract.Responses.HearingTypeResponse;
+using BookingsApi.Contract.V1.Responses;
+using HearingTypeResponse = BookingsApi.Contract.V1.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.UnitTests.Controllers
 {

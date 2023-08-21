@@ -25,7 +25,7 @@ namespace AdminWebsite.UnitTests.Validators
 
 
             var longString = new String('a', 257);
-            var testRequest = new BookingsApi.Contract.Requests.ParticipantRequest
+            var testRequest = new BookingsApi.Contract.V1.Requests.ParticipantRequest
             {
                 ContactEmail = longString,
                 DisplayName = longString,
@@ -45,7 +45,7 @@ namespace AdminWebsite.UnitTests.Validators
         public void Should_validate_fields_with_length_zero_as_error()
         {
             var shortString = "";
-            var testRequest = new BookingsApi.Contract.Requests.ParticipantRequest
+            var testRequest = new BookingsApi.Contract.V1.Requests.ParticipantRequest
             {
                 ContactEmail = shortString,
                 DisplayName = shortString,
@@ -60,7 +60,7 @@ namespace AdminWebsite.UnitTests.Validators
         [Test]
         public void Should_validate_participant_request()
         {
-            var testRequest = new BookingsApi.Contract.Requests.ParticipantRequest
+            var testRequest = new BookingsApi.Contract.V1.Requests.ParticipantRequest
             {
                 ContactEmail = "aa@hmcts.net",
                 FirstName = "Adam",

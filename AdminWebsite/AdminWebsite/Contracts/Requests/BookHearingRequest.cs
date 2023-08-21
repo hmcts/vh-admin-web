@@ -1,5 +1,5 @@
 using AdminWebsite.Models;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Contracts.Requests
 {

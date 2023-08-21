@@ -8,7 +8,7 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.Controllers

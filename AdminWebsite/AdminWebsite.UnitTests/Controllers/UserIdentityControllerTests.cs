@@ -6,7 +6,7 @@ using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using AdminWebsite.Testing.Common.Builders;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

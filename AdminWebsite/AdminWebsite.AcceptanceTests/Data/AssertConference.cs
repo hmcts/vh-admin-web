@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using VideoApi.Contract.Enums;
 using VideoApi.Contract.Responses;
@@ -39,7 +39,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             conference.MeetingRoom.TelephoneConferenceId.Should().NotBeNullOrWhiteSpace();
         }
 
-        private static void AssertEndpoints(IReadOnlyCollection<BookingsApi.Contract.Responses.EndpointResponse> hearingEndpoints,
+        private static void AssertEndpoints(IReadOnlyCollection<BookingsApi.Contract.V1.Responses.EndpointResponse> hearingEndpoints,
             IEnumerable<VideoApi.Contract.Responses.EndpointResponse> conferenceEndpoints, IReadOnlyCollection<ParticipantResponse> hearingParticipants)
         {
             foreach (var conferenceEndpoint in conferenceEndpoints)

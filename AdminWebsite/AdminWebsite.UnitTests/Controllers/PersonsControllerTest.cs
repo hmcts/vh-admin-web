@@ -12,8 +12,8 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.UnitTests.Controllers

@@ -1,5 +1,5 @@
 ﻿using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;

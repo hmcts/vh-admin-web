@@ -6,7 +6,7 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Steps;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {

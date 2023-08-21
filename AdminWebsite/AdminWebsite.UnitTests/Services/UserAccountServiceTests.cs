@@ -11,7 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using NotificationApi.Contract;

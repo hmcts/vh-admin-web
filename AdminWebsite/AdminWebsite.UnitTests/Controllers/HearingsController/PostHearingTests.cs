@@ -15,17 +15,17 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Requests.Enums;
-using BookingsApi.Contract.Responses;
-using LinkedParticipantRequest = BookingsApi.Contract.Requests.LinkedParticipantRequest;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
-using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
-using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
-using LinkedParticipantType = BookingsApi.Contract.Enums.LinkedParticipantType;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V1.Responses;
+using LinkedParticipantRequest = BookingsApi.Contract.V1.Requests.LinkedParticipantRequest;
+using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
-using BookingsApi.Contract.Configuration;
+using BookingsApi.Contract.V1.Configuration;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -72,16 +72,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             var newHearingRequest = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
                 {
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name1",
                         FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
                         OrganisationName = "", Representee = "", TelephoneNumber = ""
                     },
-                    new BookingsApi.Contract.Requests.ParticipantRequest
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest
                     {
                         CaseRoleName = "CaseRole", ContactEmail = "contact2@hmcts.net",
                         HearingRoleName = "HearingRole", DisplayName = "display name2",
@@ -126,12 +126,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // request.
             var newHearingRequest = new BookNewHearingRequest()
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
                 {
-                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
                         DisplayName = "firstName1 lastName1", FirstName = "firstName1", HearingRoleName = "Litigant in person", LastName = "lastName1", MiddleNames = "",
                         OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
-                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName2.lastName2@email.com",
+                    new BookingsApi.Contract.V1.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName2.lastName2@email.com",
                         DisplayName = "firstName2 lastName2", FirstName = "firstName2", HearingRoleName = "Interpreter", LastName = "lastName2", MiddleNames = "",
                         OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
 
@@ -179,7 +179,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -199,7 +199,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>()
             };
 
             var bookingRequest = new BookHearingRequest
@@ -218,7 +218,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -323,7 +323,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 new HearingDetailsResponse
                 {
-                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    Status = BookingsApi.Contract.V1.Enums.BookingStatus.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
@@ -357,7 +357,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 groupedHearings.Add(new HearingDetailsResponse
                 {
-                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    Status = BookingsApi.Contract.V1.Enums.BookingStatus.Booked,
                     GroupId = hearingGroupId,
                     Id = Guid.NewGuid()
                 });
@@ -421,7 +421,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 new()
                 {
-                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    Status = BookingsApi.Contract.V1.Enums.BookingStatus.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
@@ -457,7 +457,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 new()
                 {
-                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    Status = BookingsApi.Contract.V1.Enums.BookingStatus.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
@@ -500,7 +500,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 new()
                 {
-                    Status = BookingsApi.Contract.Enums.BookingStatus.Booked,
+                    Status = BookingsApi.Contract.V1.Enums.BookingStatus.Booked,
                     GroupId = Guid.NewGuid(),
                     Id = Guid.NewGuid(),
                 }
@@ -541,11 +541,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
-            params BookingsApi.Contract.Requests.ParticipantRequest[] participants)
+            params BookingsApi.Contract.V1.Requests.ParticipantRequest[] participants)
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>(participants)
+                Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>(participants)
             };
             
             var bookingRequest = new BookHearingRequest

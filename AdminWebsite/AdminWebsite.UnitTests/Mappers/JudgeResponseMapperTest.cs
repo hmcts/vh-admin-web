@@ -1,5 +1,5 @@
 ﻿using AdminWebsite.Mappers;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using NUnit.Framework;
 

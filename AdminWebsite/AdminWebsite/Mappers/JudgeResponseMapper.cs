@@ -1,6 +1,6 @@
 ﻿using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.Mappers
 {

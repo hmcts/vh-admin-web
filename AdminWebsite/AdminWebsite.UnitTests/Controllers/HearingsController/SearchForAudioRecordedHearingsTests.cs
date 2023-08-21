@@ -15,8 +15,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Responses;
 using VideoApi.Client;
 using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
@@ -62,9 +62,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _guid = Guid.NewGuid();
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsApi.Contract.Responses.CaseResponse>()
+                Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
                 {
-                    new BookingsApi.Contract.Responses.CaseResponse()
+                    new BookingsApi.Contract.V1.Responses.CaseResponse()
                         {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
                 CaseTypeName = "Generic",

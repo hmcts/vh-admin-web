@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

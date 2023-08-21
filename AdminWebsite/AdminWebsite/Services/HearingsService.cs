@@ -3,20 +3,20 @@ using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VideoApi.Contract.Consts;
-using AddEndpointRequest = BookingsApi.Contract.Requests.AddEndpointRequest;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
-using ParticipantRequest = BookingsApi.Contract.Requests.ParticipantRequest;
-using UpdateEndpointRequest = BookingsApi.Contract.Requests.UpdateEndpointRequest;
-using UpdateParticipantRequest = BookingsApi.Contract.Requests.UpdateParticipantRequest;
+using AddEndpointRequest = BookingsApi.Contract.V1.Requests.AddEndpointRequest;
+using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
+using UpdateEndpointRequest = BookingsApi.Contract.V1.Requests.UpdateEndpointRequest;
+using UpdateParticipantRequest = BookingsApi.Contract.V1.Requests.UpdateParticipantRequest;
 
 namespace AdminWebsite.Services
 {
@@ -198,7 +198,7 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
                 new UpdateBookingStatusRequest
                 {
-                    Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                    Status = BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Failed,
                     UpdatedBy = "System",
                     CancelReason = string.Empty
                 });
