@@ -72,7 +72,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     debounceTime(2000),
                     distinctUntilChanged(),
                     switchMap(term => {
-                        if (term.length > 2) {
+                        if (this.emailIsValid() && term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant, this.caseRole);
                         } else {
                             this.lessThanThreeLetters();
