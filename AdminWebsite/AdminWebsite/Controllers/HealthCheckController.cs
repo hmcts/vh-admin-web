@@ -74,7 +74,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                await _bookingsApiClient.GetCaseTypesAsync();
+                await _bookingsApiClient.GetCaseTypesAsync(includeDeleted:false);
             }
             catch (BookingsApiException baEx)
             {

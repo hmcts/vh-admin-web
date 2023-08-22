@@ -64,11 +64,22 @@
 
   <div *ngIf="availableCaseTypes.length > 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseType"> Case type </label>
-    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
+    <!--suppress XmlDuplicatedId -->
+    <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
       <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
         {{ availableCaseType }}
       </option>
     </select>
+    <!--suppress XmlDuplicatedId -->
+    <input
+      *ngIf="this.editMode"
+      id="caseType"
+      [placeholder]="this.hearing.case_type"
+      class="govuk-input govuk-!-width-one-half"
+      type="text"
+      formControlName="caseType"
+      [value]="this.hearing.case_type"
+    />
     <div *ngIf="caseTypeInvalid" class="alert alert-danger">
       <span id="caseType-error" class="govuk-error-message"> Please select a case type </span>
     </div>
@@ -76,11 +87,21 @@
 
   <div [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
-    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
+    <!--suppress XmlDuplicatedId -->
+    <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
         {{ availableHearingType.name }}
       </option>
     </select>
+    <!--suppress XmlDuplicatedId -->
+    <input
+      *ngIf="this.editMode"
+      id="hearingType"
+      class="govuk-input govuk-!-width-one-half"
+      type="text"
+      formControlName="hearingType"
+      [value]="this.hearing.hearing_type_name"
+    />
     <div *ngIf="hearingTypeInvalid" class="alert alert-danger">
       <span id="hearingType-error" class="govuk-error-message"> Please select a hearing type </span>
     </div>
@@ -113,9 +134,9 @@
 </form>
 
 <div *ngIf="attemptingCancellation">
-  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"> </app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking()" (cancelBooking)="cancelBooking()"> </app-cancel-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">
-  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
+  <app-discard-confirm-popup (continueEditing)="continueBooking()" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
 </div>

@@ -50,19 +50,23 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult> GetBookingsList([FromBody]BookingSearchRequest request)
         {
             if (request.StartDate > request.EndDate)
+            {
                 return BadRequest("startDate must be less than or equal to endDate");
+            }
 
             if (request.Cursor != null)
+            {
                 request.Cursor = _encoder.Encode(request.Cursor);
-            
+            }
             if (_userIdentity.IsAdministratorRole())
             {
                 request.CaseTypes ??= new List<string>();
                 request.CaseTypes.AddRange(_userIdentity.GetGroupDisplayNames());
             }
             else
+            {
                 return Unauthorized();
-            
+            }
             try
             {
                 var caseTypesIds = await GetCaseTypesId(request.CaseTypes);
@@ -90,7 +94,10 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
                     return BadRequest(e.Response);
+                }
+
                 throw;
             }
         }
@@ -98,12 +105,12 @@ namespace AdminWebsite.Controllers
         private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
-            var types = await _bookingsApiClient.GetCaseTypesAsync();
+            var types = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted:true);
             if (types != null && types.Any())
                 foreach (var item in caseTypes)
                 {
                     var caseType = types.FirstOrDefault(s => s.Name == item);
-                    if (caseType != null && typeIds.All(s => s != caseType.Id))
+                    if (caseType != null && typeIds.TrueForAll(s => s != caseType.Id))
                     {
                         typeIds.Add(caseType.Id);
                     }

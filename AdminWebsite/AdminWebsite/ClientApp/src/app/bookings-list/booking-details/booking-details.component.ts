@@ -30,7 +30,6 @@ import { BookingStatusService } from 'src/app/services/booking-status-service';
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[BookingDetails] -';
-    private newHearingSessionKey = 'newHearingId';
     hearing: BookingsDetailsModel;
     booking: HearingModel;
     participants: Array<ParticipantDetailsModel> = [];
@@ -100,7 +99,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setSubscribers() {
         if (this.isConfirmationTimeValid) {
-            this.timeSubscription = this.$timeObserver.subscribe(x => {
+            this.timeSubscription = this.$timeObserver.subscribe(() => {
                 this.setTimeObserver();
             });
         }
@@ -171,6 +170,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     editHearing() {
+        this.bookingService.setEditMode();
         this.router.navigate([PageUrls.Summary]);
     }
 
