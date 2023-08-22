@@ -241,13 +241,13 @@ export class AllocateHearingsComponent implements OnInit {
     confirmAllocation() {
         this.clearHearingUpdatedMessage();
         const selectedCso = this.selectAllocateCso?.selected as SelectOption;
-        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe(
-            result => this.updateTableWithAllocatedCso(result),
-            () => {
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe({
+            next: result => this.updateTableWithAllocatedCso(result),
+            error: () => {
                 this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
                 this.searchForHearings(true);
             }
-        );
+        });
     }
 
     toggleAll(checkAll: boolean) {

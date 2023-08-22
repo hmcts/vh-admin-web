@@ -161,21 +161,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     confirmCancelBooking() {
         this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
         if (this.editMode) {
-            if (this.form.dirty || this.form.touched) {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
-                this.attemptingDiscardChanges = true;
-            } else {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
-                this.router.navigate([PageUrls.Summary]);
-            }
+            this.cancelBookingInEditMode();
         } else {
-            if (this.form.dirty || this.form.touched) {
-                this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
-                this.attemptingCancellation = true;
-            } else {
-                this.logger.debug(`${this.loggerPrefix} New booking. No changes found. Cancelling booking.`);
-                this.cancelBooking();
-            }
+            this.cancelBookingInCreateMode();
         }
     }
 
@@ -271,6 +259,26 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearingType.setValue(null);
     }
 
+    private cancelBookingInCreateMode() {
+        if (this.form.dirty || this.form.touched) {
+            this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
+            this.attemptingCancellation = true;
+        } else {
+            this.logger.debug(`${this.loggerPrefix} New booking. No changes found. Cancelling booking.`);
+            this.cancelBooking();
+        }
+    }
+
+    private cancelBookingInEditMode() {
+        if (this.form.dirty || this.form.touched) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
+            this.attemptingDiscardChanges = true;
+        } else {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
+        }
+    }
+
     private dynamicSort(property) {
         let sortOrder = 1;
         if (property[0] === '-') {
@@ -278,7 +286,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             property = property.substr(1);
         }
         return function (a, b) {
-            const result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+            if(a[property] < b[property])
+            {
+                return -1 * sortOrder;
+            }
+            const result = a[property] > b[property] ? 1 : 0;
             return result * sortOrder;
         };
     }

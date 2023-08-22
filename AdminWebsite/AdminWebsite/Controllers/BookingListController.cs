@@ -110,7 +110,7 @@ namespace AdminWebsite.Controllers
                 foreach (var item in caseTypes)
                 {
                     var caseType = types.FirstOrDefault(s => s.Name == item);
-                    if (caseType != null && typeIds.All(s => s != caseType.Id))
+                    if (caseType != null && typeIds.TrueForAll(s => s != caseType.Id))
                     {
                         typeIds.Add(caseType.Id);
                     }
