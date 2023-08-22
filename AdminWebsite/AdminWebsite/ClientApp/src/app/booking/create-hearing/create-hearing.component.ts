@@ -286,8 +286,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             property = property.substr(1);
         }
         return function (a, b) {
-            if(a[property] < b[property])
-            {
+            if (a[property] < b[property]) {
                 return -1 * sortOrder;
             }
             const result = a[property] > b[property] ? 1 : 0;
