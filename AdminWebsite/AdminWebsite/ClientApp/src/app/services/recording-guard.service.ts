@@ -5,7 +5,7 @@ import { ParticipantModel } from '../common/model/participant.model';
     providedIn: 'root'
 })
 export class RecordingGuardService {
-    excludedCaseTypes: string[] = ['Court of Appeal Criminal Division'];
+    excludedCaseTypes: string[] = ['Court of Appeal Criminal Division', 'Crime Crown Court'];
     mandatoryRecordingRoles: string[] = ['Interpreter'];
 
     switchOffRecording(caseType: string): boolean {
