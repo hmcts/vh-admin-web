@@ -77,7 +77,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var exception = new AggregateException("kinly api error");
 
             _bookingsApiClientMock
-                .Setup(x => x.GetCaseTypesAsync())
+                .Setup(x => x.GetCaseTypesAsync(It.IsAny<bool?>()))
                 .ThrowsAsync(exception);
 
             var response = await GetResponseFromHealthCheck(HttpStatusCode.InternalServerError);
@@ -91,7 +91,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var exception = new UriFormatException("Test format is invalid");
 
             _bookingsApiClientMock
-                .Setup(x => x.GetCaseTypesAsync())
+                .Setup(x => x.GetCaseTypesAsync(It.IsAny<bool?>()))
                 .ThrowsAsync(exception);
 
             var response = await GetResponseFromHealthCheck(HttpStatusCode.InternalServerError);
@@ -105,7 +105,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var exception = new BookingsApiException("Bookings api error", 404, "response", null, new Exception());
 
             _bookingsApiClientMock
-                .Setup(x => x.GetCaseTypesAsync())
+                .Setup(x => x.GetCaseTypesAsync(It.IsAny<bool?>()))
                 .ThrowsAsync(exception);
 
             var response = await GetResponseFromHealthCheck();

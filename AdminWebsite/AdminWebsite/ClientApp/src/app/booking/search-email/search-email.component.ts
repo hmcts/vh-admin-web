@@ -4,7 +4,7 @@ import { Constants } from '../../common/constants';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, filter, first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 
@@ -72,6 +72,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     debounceTime(2000),
                     distinctUntilChanged(),
                     switchMap(term => {
+                        // do not wait for valid email to be completed, partial search is allowed
                         if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant, this.caseRole);
                         } else {
@@ -176,7 +177,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     blurEmail() {
-        const userAlreadyExists = this.results && this.results.find(p => p.email === this.email) ? true : false;
+        const userAlreadyExists = this.results?.some(p => p.email === this.email);
         const emailIsValid = this.emailIsValid();
 
         if (!this.results || this.results.length === 0 || (emailIsValid && !userAlreadyExists)) {
@@ -198,7 +199,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     populateParticipantInfo(email: string) {
-        if (this.results && this.results.length) {
+        if (this.results?.length) {
             const participant = this.results.find(p => p.email === email);
             if (participant) {
                 this.selectItemClick(participant);

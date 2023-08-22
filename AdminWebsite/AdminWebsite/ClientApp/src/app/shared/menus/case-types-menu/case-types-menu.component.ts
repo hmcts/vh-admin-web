@@ -33,19 +33,19 @@ export class CaseTypesMenuComponent extends MenuBase {
 
     loadItems(): void {
         const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes().subscribe(
-            (data: HearingTypeResponse[]) => {
+        this.videoHearingService.getHearingTypes(true).subscribe({
+            next: (data: HearingTypeResponse[]) => {
                 this.caseTypes = this.items = [
                     ...Array.from(
                         data
                             .map(item => item.group)
                             .filter(distinct)
-                            .sort()
+                            .sort((a, b) => a.localeCompare(b))
                     )
                 ];
                 this.logger.debug(`${this.loggerPrefix} Updating list of case-types.`, { caseTypes: data.length });
             },
-            error => this.handleListError(error, 'case types')
-        );
+            error: error => this.handleListError(error, 'case types')
+        });
     }
 }

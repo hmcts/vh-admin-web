@@ -3243,10 +3243,13 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Gets a list hearing types
+     * @param includeDeleted (optional)
      * @return Success
      */
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        let url_ = this.baseUrl + '/api/reference/types';
+    getHearingTypes(includeDeleted: boolean | undefined): Observable<HearingTypeResponse[]> {
+        let url_ = this.baseUrl + '/api/reference/types?';
+        if (includeDeleted === null) throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined) url_ += 'includeDeleted=' + encodeURIComponent('' + includeDeleted) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -5285,13 +5288,15 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @param id (optional)
      * @return Success
      */
-    deleteNonAvailabilityWorkHours(id: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + '/api/workhours/NonAvailability?';
-        if (id === null) throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined) url_ += 'id=' + encodeURIComponent('' + id) + '&';
+    deleteNonAvailabilityWorkHours(username: string, nonAvailabilityId: number): Observable<void> {
+        let url_ = this.baseUrl + '/api/workhours/NonAvailability/{username}/{nonAvailabilityId}';
+        if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
+        url_ = url_.replace('{username}', encodeURIComponent('' + username));
+        if (nonAvailabilityId === undefined || nonAvailabilityId === null)
+            throw new Error("The parameter 'nonAvailabilityId' must be defined.");
+        url_ = url_.replace('{nonAvailabilityId}', encodeURIComponent('' + nonAvailabilityId));
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {

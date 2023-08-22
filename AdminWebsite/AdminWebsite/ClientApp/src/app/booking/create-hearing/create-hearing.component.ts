@@ -11,7 +11,6 @@ import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 
 @Component({
@@ -78,11 +77,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     private setHearingTypeForExistingHearing() {
         if (this.hasSaved && this.filteredHearingTypes.length > 0) {
-            const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
-            if (!!selectedHearingTypes && selectedHearingTypes.length > 0) {
-                this.hearing.hearing_type_id = selectedHearingTypes[0].id;
-                this.form.get('hearingType').setValue(selectedHearingTypes[0].id);
-            }
+            this.form.get('hearingType').setValue(this.hearing.hearing_type_name);
         }
     }
 
@@ -166,21 +161,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     confirmCancelBooking() {
         this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
         if (this.editMode) {
-            if (this.form.dirty || this.form.touched) {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
-                this.attemptingDiscardChanges = true;
-            } else {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
-                this.router.navigate([PageUrls.Summary]);
-            }
+            this.cancelBookingInEditMode();
         } else {
-            if (this.form.dirty || this.form.touched) {
-                this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
-                this.attemptingCancellation = true;
-            } else {
-                this.logger.debug(`${this.loggerPrefix} New booking. No changes found. Cancelling booking.`);
-                this.cancelBooking();
-            }
+            this.cancelBookingInCreateMode();
         }
     }
 
@@ -208,24 +191,27 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.getRawValue().caseType;
         this.hearing.hearing_type_id = this.isExistingHearing ? this.hearing.hearing_type_id : this.form.getRawValue().hearingType;
         const hearingType = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id);
-        this.hearing.hearing_type_name = hearingType.name;
-        this.hearing.hearing_type_code = hearingType.code;
+        // hearing type will be null if editing an expired hearing type
+        this.hearing.hearing_type_name = hearingType?.name ?? this.hearing.hearing_type_name;
+        this.hearing.hearing_type_code = hearingType?.code ?? this.hearing.hearing_type_code;
         this.hearing.questionnaire_not_required = false;
-        this.hearing.case_type_service_id = this.availableHearingTypes.find(c => c.group === this.hearing.case_type).service_id;
+        const hearingTypeGroup = this.availableHearingTypes.find(c => c.group === this.hearing.case_type);
+        // hearing type group will be null if editing an expired case type
+        this.hearing.case_type_service_id = hearingTypeGroup?.service_id ?? this.hearing.case_type_service_id;
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
     }
 
     private retrieveHearingTypes() {
         this.logger.debug(`${this.loggerPrefix} Retrieving hearing type`);
-        this.hearingService.getHearingTypes().subscribe(
-            (data: HearingTypeResponse[]) => {
+        this.hearingService.getHearingTypes().subscribe({
+            next: (data: HearingTypeResponse[]) => {
                 this.setupCaseTypeAndHearingTypes(data);
                 this.filterHearingTypes();
                 this.setHearingTypeForExistingHearing();
             },
-            error => this.errorService.handleError(error)
-        );
+            error: error => this.errorService.handleError(error)
+        });
     }
 
     private setupCaseTypeAndHearingTypes(hearingTypes: HearingTypeResponse[]) {
@@ -273,6 +259,26 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearingType.setValue(null);
     }
 
+    private cancelBookingInCreateMode() {
+        if (this.form.dirty || this.form.touched) {
+            this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
+            this.attemptingCancellation = true;
+        } else {
+            this.logger.debug(`${this.loggerPrefix} New booking. No changes found. Cancelling booking.`);
+            this.cancelBooking();
+        }
+    }
+
+    private cancelBookingInEditMode() {
+        if (this.form.dirty || this.form.touched) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
+            this.attemptingDiscardChanges = true;
+        } else {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
+        }
+    }
+
     private dynamicSort(property) {
         let sortOrder = 1;
         if (property[0] === '-') {
@@ -280,7 +286,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             property = property.substr(1);
         }
         return function (a, b) {
-            const result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+            if (a[property] < b[property]) {
+                return -1 * sortOrder;
+            }
+            const result = a[property] > b[property] ? 1 : 0;
             return result * sortOrder;
         };
     }

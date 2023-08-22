@@ -107,8 +107,8 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes();
+    getHearingTypes(includeDeleted: boolean = false): Observable<HearingTypeResponse[]> {
+        return this.bhClient.getHearingTypes(includeDeleted);
     }
 
     getCurrentRequest(): HearingModel {
@@ -276,13 +276,10 @@ export class VideoHearingsService {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_name = newRequest.case_type;
-        //newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
-        //newHearingRequest.hearing_type_code = newRequest.hearing_type_code;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
         newHearingRequest.hearing_venue_name = newRequest.court_name;
-        //newHearingRequest.hearing_venue_code = newRequest.court_code;
         newHearingRequest.hearing_room_name = newRequest.court_room;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
         newHearingRequest.other_information = newRequest.other_information;
