@@ -72,7 +72,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     debounceTime(2000),
                     distinctUntilChanged(),
                     switchMap(term => {
-                        if (this.emailIsValid() && term.length > 2) {
+                        // do not wait for valid email to be completed, partial search is allowed
+                        if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant, this.caseRole);
                         } else {
                             this.lessThanThreeLetters();
