@@ -970,14 +970,14 @@ describe('AddParticipantComponent', () => {
         it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with notFoundEmailEvent as false', () => {
             component.errorAlternativeEmail = true;
             component.errorJohAccountNotFound = true;
-            component.subcribeForSeachEmailEvents();
+            component.subscribeForSearchEmailEvents();
             component.searchEmail.notFoundEmailEvent.next(false);
             expect(component.errorAlternativeEmail).toBeFalsy();
             expect(component.errorJohAccountNotFound).toBeFalsy();
         });
         it('should have called Not Found Participant if Not Found Email Event has been called', () => {
             spyOn(component, 'notFoundParticipant');
-            component.subcribeForSeachEmailEvents();
+            component.subscribeForSearchEmailEvents();
             component.searchEmail.notFoundEmailEvent.next(true);
             expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
         });
