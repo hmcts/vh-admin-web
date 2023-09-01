@@ -1158,10 +1158,10 @@ describe('AddParticipantComponent edit mode', () => {
             expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
             expect(component.showDetails).toBeTruthy();
             expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
-            expect(component.displayNextButton).toBeTruthy();
-            expect(component.displayClearButton).toBeFalsy();
+            expect(component.displayNextButton).toBeFalsy();
+            expect(component.displayClearButton).toBeTruthy();
             expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayUpdateButton).toBeFalsy();
+            expect(component.displayUpdateButton).toBeTruthy();
         });
         tick(100);
         fixture.detectChanges();
@@ -1512,17 +1512,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
         flush();
         expect(component.showDetails).toBeTruthy();
-    }));
-
-    it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
-        const debugElement = fixture.debugElement;
-        component.selectedParticipantEmail = 'test2@hmcts.net';
-        fixture.detectChanges();
-        const clearFormBtn = debugElement.query(By.css('#clearFormBtn'));
-        const updateFormBtn = debugElement.query(By.css('#updateParticipantBtn'));
-        tick(600);
-        expect(updateFormBtn).toBeTruthy();
-        expect(clearFormBtn).toBeTruthy();
     }));
 
     it('should show confirmation to remove participant', fakeAsync(() => {

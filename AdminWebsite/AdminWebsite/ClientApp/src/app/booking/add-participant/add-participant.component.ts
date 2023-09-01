@@ -188,8 +188,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                             self.firstName.value === '' &&
                             self.lastName.value === '' &&
                             self.phone.value === '' &&
-                            self.displayName.value === '') ||
-                        self.editMode
+                            self.displayName.value === '')
                     ) {
                         self.displayNext();
                     } else if (
