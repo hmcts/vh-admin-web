@@ -181,14 +181,14 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             this.form.valueChanges.subscribe(result => {
                 setTimeout(() => {
                     if (
-                        (self.showDetails &&
-                            self.role.value === self.constants.PleaseSelect &&
-                            self.party.value === self.constants.PleaseSelect &&
-                            self.title.value === self.constants.PleaseSelect &&
-                            self.firstName.value === '' &&
-                            self.lastName.value === '' &&
-                            self.phone.value === '' &&
-                            self.displayName.value === '')
+                        self.showDetails &&
+                        self.role.value === self.constants.PleaseSelect &&
+                        self.party.value === self.constants.PleaseSelect &&
+                        self.title.value === self.constants.PleaseSelect &&
+                        self.firstName.value === '' &&
+                        self.lastName.value === '' &&
+                        self.phone.value === '' &&
+                        self.displayName.value === ''
                     ) {
                         self.displayNext();
                     } else if (
