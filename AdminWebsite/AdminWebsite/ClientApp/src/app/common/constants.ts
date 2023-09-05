@@ -84,7 +84,7 @@ export const Constants = {
         UserRestored: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
-    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division' }
+    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division', CrimeCrownCourt: 'Crime Crown Court' }
 };
 
 /*
