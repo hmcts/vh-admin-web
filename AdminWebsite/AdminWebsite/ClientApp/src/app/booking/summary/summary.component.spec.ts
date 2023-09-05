@@ -309,6 +309,18 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         expect(component.hearing.audio_recording_required).toBe(false);
     });
+    it('should set audio recording to false if case type is Crime Crown Court', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should set audio recording to false if case type is Crime Crown Court and an interpreter is present', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
+        component.interpreterPresent = true;
+        component.isAudioRecordingRequired();
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
     it('should display valid court address when room number is empty', () => {
         component.hearing.court_room = '';
         component.ngOnInit();
