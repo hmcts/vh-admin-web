@@ -171,11 +171,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
         if (this.form.valid && this.validEmail()) {
             this.disableCaseAndHearingRoles();
-            if (this.editMode) {
-                this.displayNext();
-            } else {
-                this.displayAdd();
-            }
+            this.displayAdd();
         }
     }
 
