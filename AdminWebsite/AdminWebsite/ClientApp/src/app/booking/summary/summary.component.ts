@@ -172,7 +172,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
             this.removeLinkedParticipant(this.selectedParticipantEmail);
-            this.hearing = Object.assign({}, this.hearing);
+            this.hearing = { ...this.hearing };
             this.hearingService.updateHearingRequest(this.hearing);
             this.hearingService.setBookingHasChanged(true);
             this.bookingService.removeParticipantEmail();
@@ -436,7 +436,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = Object.assign({}, this.hearing);
+        this.hearing = { ...this.hearing };
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();
