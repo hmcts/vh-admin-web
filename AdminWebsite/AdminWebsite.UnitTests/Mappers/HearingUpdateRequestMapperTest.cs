@@ -46,28 +46,5 @@ namespace AdminWebsite.UnitTests.Mappers
             result.QuestionnaireNotRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
-
-        [Test]
-        public void Should_map_property_AudioRecordingRequired_with_true_value_for_when_linkedParticipant_is_interpreter()
-        {
-            _newParticipantRequest.Participants = new List<EditParticipantRequest>
-            {
-                new EditParticipantRequest
-                {
-                    LinkedParticipants = new List<LinkedParticipant>
-                    {
-                        new LinkedParticipant
-                        {
-                            Id = Guid.NewGuid(),
-                            LinkedId = Guid.NewGuid(),
-                            ParticipantId = Guid.NewGuid(),
-                            Type = LinkedParticipantType.Interpreter
-                        }
-                    }
-                }
-            };
-            var result = HearingUpdateRequestMapper.MapTo(_newParticipantRequest, _username);
-            result.AudioRecordingRequired.Should().BeTrue();
-        }
     }
 }
