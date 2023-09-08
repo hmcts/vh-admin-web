@@ -28,9 +28,22 @@
     <form [formGroup]="form" (ngSubmit)="saveEndpoints()">
       <div formArrayName="endpoints" *ngFor="let endpoint of endpoints.controls; let i = index; let lst = last">
         <div [formGroupName]="i">
-          <div class="govuk-form-group" [ngClass]="{ 'has-error': endpoints.controls[i].invalid && endpoints.controls[i].touched }">
+          <div [ngClass]="endpoints.controls[i].invalid ? 'govuk-form-group--error' : 'govuk-form-group'"></div>
+          <div
+            [ngClass]="
+              endpoints.controls[i].invalid && (endpoints.controls[i].dirty || endpoints.controls[i].touched)
+                ? 'govuk-form-group--error'
+                : 'govuk-form-group'
+            "
+          >
             <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayName' + i"> Display name </label>
             <input [id]="'displayName' + i" class="govuk-input govuk-!-width-three-quarters" type="text" formControlName="displayName" />
+            <div
+              *ngIf="endpoints.controls[i].invalid && (endpoints.controls[i].dirty || endpoints.controls[i].touched)"
+              class="alert alert-danger"
+            >
+              <span [id]="endpoints[0] - error" class="govuk-error-message"> Please enter a valid display name </span>
+            </div>
             <ng-container *ngIf="hasEndpoints">
               <a
                 *ngIf="!isHearingAboutToStart"
@@ -89,6 +102,7 @@
         data-module="govuk-button"
         alt="Save endpoints"
         (click)="saveEndpoints()"
+        [disabled]="form.invalid && (form.touched || form.dirty)"
       >
         {{ buttonAction }}
       </button>
