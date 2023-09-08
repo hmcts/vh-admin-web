@@ -87,6 +87,13 @@ describe('BreadcrumbComponent', () => {
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
     });
+
+    it('should init breadcrumb when the current item has not been set', () => {
+        component.currentItem = null;
+        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
+        component.clickBreadcrumbs(step);
+        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
+    });
     describe('when other checks fail', () => {
         const route = '/add-participants';
         let step: BreadcrumbItemModel;

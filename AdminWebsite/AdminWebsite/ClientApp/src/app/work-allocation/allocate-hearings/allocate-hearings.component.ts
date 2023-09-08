@@ -105,11 +105,11 @@ export class AllocateHearingsComponent implements OnInit {
             });
 
         const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes().subscribe((data: HearingTypeResponse[]) => {
+        this.videoHearingService.getHearingTypes(true).subscribe((data: HearingTypeResponse[]) => {
             this.caseTypesSelectOptions = data
                 .map(item => item.group)
                 .filter(distinct)
-                .sort()
+                .sort((a, b) => a.localeCompare(b))
                 .map(group => ({ entityId: group, label: group }));
         });
     }
@@ -241,13 +241,13 @@ export class AllocateHearingsComponent implements OnInit {
     confirmAllocation() {
         this.clearHearingUpdatedMessage();
         const selectedCso = this.selectAllocateCso?.selected as SelectOption;
-        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe(
-            result => this.updateTableWithAllocatedCso(result),
-            () => {
+        this.allocateService.allocateCsoToHearings(this.allocationHearingViewModel.selectedHearingIds, selectedCso.entityId).subscribe({
+            next: result => this.updateTableWithAllocatedCso(result),
+            error: () => {
                 this.updateMessageAndDisplay('One or more hearings could not be allocated successfully.');
                 this.searchForHearings(true);
             }
-        );
+        });
     }
 
     toggleAll(checkAll: boolean) {

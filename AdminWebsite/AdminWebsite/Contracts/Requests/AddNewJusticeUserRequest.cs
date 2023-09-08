@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using BookingsApi.Contract.Requests.Enums;
+using BookingsApi.Contract.V1.Requests.Enums;
 
 namespace AdminWebsite.Contracts.Requests;
 

@@ -13,6 +13,7 @@ import {
     AllocatedCsoResponse,
     BookingStatus,
     HearingDetailsResponse,
+    JusticeUserResponse,
     PhoneConferenceResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
@@ -24,6 +25,7 @@ import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -140,7 +142,7 @@ export class BookingDetailsTestData {
 }
 
 const hearingResponse = new HearingDetailsResponse();
-const allocatedCsoResponse = new AllocatedCsoResponse();
+let allocatedCsoResponse = new AllocatedCsoResponse();
 
 const caseModel = new CaseModel();
 caseModel.name = 'X vs Y';
@@ -186,7 +188,9 @@ describe('BookingDetailsComponent', () => {
         'getConferencePhoneNumber',
         'isHearingAboutToStart',
         'isConferenceClosed',
-        'getAllocatedCsoForHearing'
+        'getAllocatedCsoForHearing',
+        'rebookHearing',
+        'getStatus'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -201,8 +205,10 @@ describe('BookingDetailsComponent', () => {
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     const defaultUpdateBookingStatusResponse = new UpdateBookingStatusResponse({ success: true, telephone_conference_id: '1234' });
+    const bookingStatusService = new BookingStatusService(videoHearingServiceSpy);
 
     beforeEach(() => {
+        allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
@@ -221,7 +227,8 @@ describe('BookingDetailsComponent', () => {
             bookingServiceSpy,
             bookingPersistServiceSpy,
             loggerSpy,
-            returnUrlServiceSpy
+            returnUrlServiceSpy,
+            bookingStatusService
         );
         component.hearingId = '1';
     });
@@ -249,8 +256,29 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.cases[0].number).toBe('XX3456234565');
         expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
+        expect(component.hearing.AllocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();
     }));
+
+    it('should get allocated cso details', fakeAsync(() => {
+        const username = 'foo@test.com';
+        allocatedCsoResponse.cso = new JusticeUserResponse({ username });
+        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
+        component.ngOnInit();
+        tick();
+        expect(component.hearing.AllocatedTo).toBe(username);
+        discardPeriodicTasks();
+    }));
+
+    it('should set hearing AllocatedTo "Not Required" when venue does not support work allocation', fakeAsync(() => {
+        allocatedCsoResponse.supports_work_allocation = false;
+        videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
+        component.ngOnInit();
+        tick();
+        expect(component.hearing.AllocatedTo).toBe('Not Required');
+        discardPeriodicTasks();
+    }));
+
     it('should call service to map hearing response to HearingModel', () => {
         component.mapResponseToModel(new HearingDetailsResponse());
         expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
@@ -319,11 +347,6 @@ describe('BookingDetailsComponent', () => {
         component.setTimeObserver();
         expect(component.isConfirmationTimeValid).toBeTruthy();
     }));
-    it('should confirm booking', () => {
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
-    });
     it('should show that user role is Vh office admin', () => {
         const profile = new UserProfileResponse({ is_vh_officer_administrator_role: true });
         component.getUserRole(profile);
@@ -334,15 +357,6 @@ describe('BookingDetailsComponent', () => {
         component.getUserRole(profile);
         expect(component.isVhOfficerAdmin).toBeFalsy();
     });
-    it('should not confirm booking if not the VH officer admin role', fakeAsync(() => {
-        component.ngOnInit();
-        tick(1000);
-        const initialStatus = component.booking.status;
-        component.isVhOfficerAdmin = false;
-        component.confirmHearing();
-        expect(component.booking.status).toBe(initialStatus);
-        discardPeriodicTasks();
-    }));
     it('should persist status in the model', () => {
         component.booking = null;
         component.persistStatus(UpdateBookingStatus.Created);
@@ -377,23 +391,6 @@ describe('BookingDetailsComponent', () => {
         component.navigateBack();
         expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
-    it('should not show pop up if the confirm not failed', () => {
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        expect(component.showConfirmingFailed).toBeFalsy();
-    });
-    it('should show pop up if the confirm failed', fakeAsync(() => {
-        component.ngOnInit();
-        tick(1000);
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
-        component.hearing.Status = '';
-        component.isVhOfficerAdmin = true;
-        component.confirmHearing();
-        tick(1000);
-        discardPeriodicTasks();
-        expect(component.showConfirmingFailed).toBeTruthy();
-    }));
     it('should hide pop up if the close confirm failed ok button was clicked', () => {
         component.showConfirmingFailed = true;
         component.closeConfirmFailed();
@@ -519,5 +516,70 @@ CY: 54321 (ID: 7777)`);
         component.booking.scheduled_date_time = date;
 
         expect(component.canRetryConfirmation).toBeTruthy();
+    });
+
+    describe('rebookHearing', () => {
+        beforeEach(() => {
+            videoHearingServiceSpy.rebookHearing.calls.reset();
+            videoHearingServiceSpy.getStatus.calls.reset();
+            component.isVhOfficerAdmin = true;
+        });
+
+        it('should update display when rebook hearing succeeds', fakeAsync(async () => {
+            const getStatusResponse = new UpdateBookingStatusResponse({
+                success: true,
+                telephone_conference_id: '123'
+            });
+            const conferencePhoneNumber = '1234';
+            videoHearingServiceSpy.getStatus.and.returnValue(Promise.resolve(getStatusResponse));
+            videoHearingServiceSpy.getConferencePhoneNumber.and.returnValue(
+                new Promise<string>(resolve => {
+                    resolve(conferencePhoneNumber);
+                })
+            );
+
+            component.ngOnInit();
+            await component.rebookHearing();
+            tick(50000);
+
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
+            expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(1);
+            expect(component.telephoneConferenceId).toBe(getStatusResponse.telephone_conference_id);
+            expect(component.conferencePhoneNumber).toBe(conferencePhoneNumber);
+            expect(component.conferencePhoneNumberWelsh).toBe(conferencePhoneNumber);
+            expect(component.booking.isConfirmed).toBeTruthy();
+            expect(component.showConfirming).toBeFalsy();
+
+            discardPeriodicTasks();
+        }));
+
+        it('should update display when rebook hearing fails', fakeAsync(async () => {
+            const getStatusResponse = new UpdateBookingStatusResponse({
+                success: false
+            });
+            videoHearingServiceSpy.getStatus.and.returnValue(Promise.resolve(getStatusResponse));
+
+            component.ngOnInit();
+            await component.rebookHearing();
+            tick(60000);
+
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
+            expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
+            expect(component.showConfirmingFailed).toBeTruthy();
+            expect(component.hearing.Status).toBe(UpdateBookingStatus.Failed);
+            expect(component.showConfirming).toBeFalsy();
+
+            discardPeriodicTasks();
+        }));
+
+        it('should not rebook hearing when user is not in the VH officer role', fakeAsync(async () => {
+            component.isVhOfficerAdmin = false;
+
+            await component.rebookHearing();
+
+            expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledTimes(0);
+
+            discardPeriodicTasks();
+        }));
     });
 });

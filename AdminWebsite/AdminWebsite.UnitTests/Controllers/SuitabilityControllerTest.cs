@@ -10,7 +10,7 @@ using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {

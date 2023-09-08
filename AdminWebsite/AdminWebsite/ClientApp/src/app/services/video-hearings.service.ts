@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom, lastValueFrom, Observable } from 'rxjs';
 import {
     BHClient,
-    BookNewHearingRequest,
+    BookingDetailsRequest,
     CaseAndHearingRolesResponse,
     CaseRequest,
     CaseResponse,
@@ -107,8 +107,8 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.vhoNonAvailabiltiesHaveChangesKey);
     }
 
-    getHearingTypes(): Observable<HearingTypeResponse[]> {
-        return this.bhClient.getHearingTypes();
+    getHearingTypes(includeDeleted: boolean = false): Observable<HearingTypeResponse[]> {
+        return this.bhClient.getHearingTypes(includeDeleted);
     }
 
     getCurrentRequest(): HearingModel {
@@ -183,6 +183,10 @@ export class VideoHearingsService {
 
     async cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
         return await lastValueFrom(this.bhClient.cloneHearing(hearingId, request));
+    }
+
+    rebookHearing(hearingId: string): Promise<void> {
+        return lastValueFrom(this.bhClient.rebookHearing(hearingId));
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
@@ -268,8 +272,8 @@ export class VideoHearingsService {
         return editEndpoint;
     }
 
-    mapHearing(newRequest: HearingModel): BookNewHearingRequest {
-        const newHearingRequest = new BookNewHearingRequest();
+    mapHearing(newRequest: HearingModel): BookingDetailsRequest {
+        const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_name = newRequest.case_type;
         newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
@@ -305,7 +309,7 @@ export class VideoHearingsService {
         hearing.questionnaire_not_required = response.questionnaire_not_required;
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
-        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints);
+        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
         hearing.isConfirmed = Boolean(response.confirmed_date);
         return hearing;
     }
@@ -419,17 +423,18 @@ export class VideoHearingsService {
         return linkedParticipants;
     }
 
-    mapEndpointResponseToEndpointModel(response: EndpointResponse[]): EndpointModel[] {
+    mapEndpointResponseToEndpointModel(response: EndpointResponse[], participants: ParticipantResponse[]): EndpointModel[] {
         const endpoints: EndpointModel[] = [];
         let endpoint: EndpointModel;
         if (response && response.length > 0) {
             response.forEach(e => {
+                const defenceAdvocate = participants.find(p => p.id === e.defence_advocate_id);
                 endpoint = new EndpointModel();
                 endpoint.id = e.id;
                 endpoint.displayName = e.display_name;
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;
-                endpoint.defenceAdvocate = e.defence_advocate_id;
+                endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
                 endpoints.push(endpoint);
             });
         }

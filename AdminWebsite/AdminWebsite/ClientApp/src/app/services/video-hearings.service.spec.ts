@@ -36,7 +36,8 @@ describe('Video hearing service', () => {
             'getTelephoneConferenceIdById',
             'getConfigSettings',
             'getUserList',
-            'getAllocationForHearing'
+            'getAllocationForHearing',
+            'rebookHearing'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -420,7 +421,7 @@ describe('Video hearing service', () => {
         endpoint.display_name = 'endpoint 001';
         endpoints.push(endpoint);
 
-        const model = service.mapEndpointResponseToEndpointModel(endpoints);
+        const model = service.mapEndpointResponseToEndpointModel(endpoints, []);
         expect(model[0].displayName).toEqual(endpoint.display_name);
     });
 
@@ -515,6 +516,13 @@ describe('Video hearing service', () => {
         const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
         expect(model[0].linkType).toEqual(linkedParticipant.type);
         expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
+    });
+
+    it('should rebook hearing', async () => {
+        clientApiSpy.rebookHearing.and.returnValue(of(null));
+
+        await service.rebookHearing('hearingId');
+        expect(clientApiSpy.rebookHearing).toHaveBeenCalled();
     });
 
     describe('isConferenceClosed', () => {

@@ -171,11 +171,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
 
         if (this.form.valid && this.validEmail()) {
             this.disableCaseAndHearingRoles();
-            if (this.editMode) {
-                this.displayNext();
-            } else {
-                this.displayAdd();
-            }
+            this.displayAdd();
         }
     }
 
@@ -219,16 +215,16 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         const formControlsObj = {
             party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
-            title: this.participantDetails.title === undefined ? this.constants.PleaseSelect : this.participantDetails.title,
-            firstName: this.participantDetails.first_name,
-            lastName: this.participantDetails.last_name,
-            email: this.participantDetails.email || '',
-            phone: this.participantDetails.phone || '',
-            displayName: this.participantDetails.display_name || '',
-            companyName: this.participantDetails.company || '',
-            companyNameIndividual: this.participantDetails.company || '',
-            representing: this.participantDetails.representee || '',
-            interpreterFor: this.setInterpretee(this.participantDetails) || this.constants.PleaseSelect
+            title: this.participantDetails.title ?? this.constants.PleaseSelect,
+            firstName: this.participantDetails.first_name.trim(),
+            lastName: this.participantDetails.last_name.trim(),
+            email: this.participantDetails.email.trim() || '',
+            phone: this.participantDetails.phone.trim() || '',
+            displayName: this.participantDetails.display_name?.trim() || '',
+            companyName: this.participantDetails.company?.trim() || '',
+            companyNameIndividual: this.participantDetails.company?.trim() || '',
+            representing: this.participantDetails.representee?.trim() || '',
+            interpreterFor: this.setInterpretee(this.participantDetails)?.trim() || this.constants.PleaseSelect
         };
         if (this.participantDetails.hearing_role_name === Constants.HearingRoles.StaffMember) {
             delete formControlsObj['interpreterFor'];

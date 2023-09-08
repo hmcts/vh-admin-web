@@ -9,10 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Requests.Enums;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
 using Autofac.Extras.Moq;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController

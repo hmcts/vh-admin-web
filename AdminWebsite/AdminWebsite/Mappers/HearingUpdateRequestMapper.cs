@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.Mappers
 {
@@ -27,7 +27,7 @@ namespace AdminWebsite.Mappers
                     }
                 },
                 QuestionnaireNotRequired = false,
-                AudioRecordingRequired = editHearingRequest.Participants.Any(x=>x.LinkedParticipants.Any(s=>s.Type == LinkedParticipantType.Interpreter)) || editHearingRequest.AudioRecordingRequired,
+                AudioRecordingRequired = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;
         }

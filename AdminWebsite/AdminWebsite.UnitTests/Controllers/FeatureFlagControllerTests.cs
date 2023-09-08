@@ -1,7 +1,7 @@
 ﻿using AdminWebsite.Controllers;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
+using BookingsApi.Contract.V1.Configuration;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;

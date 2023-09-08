@@ -13,7 +13,7 @@ export const Constants = {
     TextInputPatternDisplayName: /^([-A-Za-z0-9 ',._])*$/,
     TextInputPatternName: /^(\w+(?:\w|['._-](?!['._-]))*\w+)$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
-    EmailPattern: /^([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)*)@([!#-'*/-9=?A-Z^-~-]+(\.[!#-'*/-9=?A-Z^-~-]+)+)$/,
+    EmailPattern: /^([!#-'*/-9=?A-Z^-~-][^&]+(\.[!#-'*/-9=?A-Z^-~-][^&]+)*)@([!#-'*/-9=?A-Z^-~-][^&]+(\.[!#-'*/-9=?A-Z^-~-][^&]+)+)$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
     Citizen: 'Citizen',
@@ -84,7 +84,7 @@ export const Constants = {
         UserRestored: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
-    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division' }
+    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division', CrimeCrownCourt: 'Crime Crown Court' }
 };
 
 /*

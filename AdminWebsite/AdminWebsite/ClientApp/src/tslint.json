@@ -1,5 +1,5 @@
 {
-  "extends": "../tslint.json",
+  "extends": "../tsconfig.json",
   "linterOptions": {
     "exclude": ["**/api-client.ts"]
   },

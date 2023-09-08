@@ -45,6 +45,9 @@ export class BreadcrumbComponent implements OnInit {
         if (!nextItem) {
             return;
         }
+        if (!this.currentItem) {
+            this.initBreadcrumb();
+        }
         if (nextItem && nextItem.Id < this.currentItem.Id) {
             this.router.navigate([nextItem.Url]);
             return;

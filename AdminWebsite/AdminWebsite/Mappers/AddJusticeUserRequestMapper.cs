@@ -1,5 +1,5 @@
 using AdminWebsite.Contracts.Requests;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Mappers
 {

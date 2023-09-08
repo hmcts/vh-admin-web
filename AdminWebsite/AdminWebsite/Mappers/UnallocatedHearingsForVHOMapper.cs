@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Extensions;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
+using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 
 namespace AdminWebsite.Mappers;
 

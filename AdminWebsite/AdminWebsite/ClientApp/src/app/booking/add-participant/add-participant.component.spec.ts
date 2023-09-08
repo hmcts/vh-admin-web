@@ -1,7 +1,7 @@
-import { ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, Validators } from '@angular/forms';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { AbstractControl } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { Observable, of, Subject, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
@@ -26,6 +26,7 @@ import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -168,6 +169,8 @@ function initHearingRequest(): HearingModel {
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
+    newHearing.case_type = 'Test Case Type';
+    newHearing.case_type_service_id = 'AA1';
     return newHearing;
 }
 
@@ -184,18 +187,22 @@ function initExistHearingRequest(): HearingModel {
     return newHearing;
 }
 
-const participant = new ParticipantModel();
-participant.email = 'email@hmcts.net';
-participant.first_name = 'Sam';
-participant.last_name = 'Green';
-participant.phone = '12345';
-participant.is_judge = false;
-participant.display_name = 'Sam Green';
-participant.title = 'Mr';
-participant.hearing_role_name = 'Representative';
-participant.case_role_name = 'Applicant';
-participant.company = 'CN';
-participant.representee = 'test representee';
+let participant = new ParticipantModel();
+
+function initParticipant() {
+    participant = new ParticipantModel();
+    participant.email = 'email@hmcts.net';
+    participant.first_name = 'Sam';
+    participant.last_name = 'Green';
+    participant.phone = '12345';
+    participant.is_judge = false;
+    participant.display_name = 'Sam Green';
+    participant.title = 'Mr';
+    participant.hearing_role_name = 'Representative';
+    participant.case_role_name = 'Applicant';
+    participant.company = 'CN';
+    participant.representee = 'test representee';
+}
 
 const routerSpy: jasmine.SpyObj<Router> = {
     events: of(new NavigationEnd(2, '/', '/')),
@@ -204,9 +211,19 @@ const routerSpy: jasmine.SpyObj<Router> = {
 } as jasmine.SpyObj<Router>;
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+    'getParticipantRoles',
+    'getCurrentRequest',
+    'setBookingHasChanged',
+    'updateHearingRequest',
+    'cancelRequest',
+    'isConferenceClosed',
+    'isHearingAboutToStart'
+]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
@@ -225,20 +242,15 @@ const searchService = {
 
 describe('AddParticipantComponent', () => {
     beforeEach(waitForAsync(() => {
+        initParticipant();
+
         const hearing = initHearingRequest();
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getParticipantRoles',
-            'getCurrentRequest',
-            'setBookingHasChanged',
-            'updateHearingRequest',
-            'cancelRequest',
-            'isConferenceClosed',
-            'isHearingAboutToStart'
-        ]);
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication', 'removeParticipant']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -262,7 +274,7 @@ describe('AddParticipantComponent', () => {
             participantServiceSpy,
             routerSpy,
             bookingServiceSpy,
-            featureFlagServiceSpy,
+            launchDarklyServiceSpy,
             loggerSpy
         );
 
@@ -392,11 +404,15 @@ describe('AddParticipantComponent', () => {
         component.isRoleSelected = true;
         component.form.get('role').setValue('Representative');
 
+        const originalFirstName = participant.first_name;
+        const originalLastName = participant.last_name;
+        participant.first_name = participant.first_name + ' ';
+        participant.last_name = participant.last_name + ' ';
         component.getParticipant(participant);
         expect(role.value).toBe(participant.hearing_role_name);
         expect(party.value).toBe(participant.case_role_name);
-        expect(firstName.value).toBe(participant.first_name);
-        expect(lastName.value).toBe(participant.last_name);
+        expect(firstName.value).toBe(originalFirstName);
+        expect(lastName.value).toBe(originalLastName);
         expect(email.value).toBe(participant.email);
         expect(phone.value).toBe(participant.phone);
         expect(title.value).toBe(participant.title);
@@ -954,14 +970,14 @@ describe('AddParticipantComponent', () => {
         it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with notFoundEmailEvent as false', () => {
             component.errorAlternativeEmail = true;
             component.errorJohAccountNotFound = true;
-            component.subcribeForSeachEmailEvents();
+            component.subscribeForSearchEmailEvents();
             component.searchEmail.notFoundEmailEvent.next(false);
             expect(component.errorAlternativeEmail).toBeFalsy();
             expect(component.errorJohAccountNotFound).toBeFalsy();
         });
         it('should have called Not Found Participant if Not Found Email Event has been called', () => {
             spyOn(component, 'notFoundParticipant');
-            component.subcribeForSeachEmailEvents();
+            component.subscribeForSearchEmailEvents();
             component.searchEmail.notFoundEmailEvent.next(true);
             expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
         });
@@ -992,11 +1008,14 @@ describe('AddParticipantComponent edit mode', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                { provide: ConfigService, useValue: configServiceSpy }
+                { provide: ConfigService, useValue: configServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -1025,6 +1044,10 @@ describe('AddParticipantComponent edit mode', () => {
         companyNameIndividual = component.form.controls['companyNameIndividual'];
         interpretee = component.form.controls['interpreterFor'];
     }));
+
+    afterEach(() => {
+        videoHearingsServiceSpy.getParticipantRoles.calls.reset();
+    });
 
     it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
         component.form.setValue({
@@ -1135,13 +1158,39 @@ describe('AddParticipantComponent edit mode', () => {
             expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
             expect(component.showDetails).toBeTruthy();
             expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
-            expect(component.displayNextButton).toBeTruthy();
-            expect(component.displayClearButton).toBeFalsy();
+            expect(component.displayNextButton).toBeFalsy();
+            expect(component.displayClearButton).toBeTruthy();
             expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayUpdateButton).toBeFalsy();
+            expect(component.displayUpdateButton).toBeTruthy();
         });
         tick(100);
         fixture.detectChanges();
+    }));
+
+    it('gets participant roles by case type service id when reference data flag is on', fakeAsync(async () => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
+
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        flush();
+        fixture.detectChanges();
+
+        fixture.whenStable().then(() => {
+            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type_service_id);
+        });
+    }));
+
+    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        flush();
+        fixture.detectChanges();
+
+        fixture.whenStable().then(() => {
+            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type);
+        });
     }));
 
     it('should update participant and clear form', () => {
@@ -1373,6 +1422,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1384,6 +1435,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy }
             ]
         }).compileComponents();
@@ -1460,17 +1512,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
         flush();
         expect(component.showDetails).toBeTruthy();
-    }));
-
-    it('should show update participant and clear details links when tries to edit a participant in hearing', fakeAsync(() => {
-        const debugElement = fixture.debugElement;
-        component.selectedParticipantEmail = 'test2@hmcts.net';
-        fixture.detectChanges();
-        const clearFormBtn = debugElement.query(By.css('#clearFormBtn'));
-        const updateFormBtn = debugElement.query(By.css('#updateParticipantBtn'));
-        tick(600);
-        expect(updateFormBtn).toBeTruthy();
-        expect(clearFormBtn).toBeTruthy();
     }));
 
     it('should show confirmation to remove participant', fakeAsync(() => {
@@ -1616,6 +1657,8 @@ describe('AddParticipantComponent set representer', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 
@@ -1625,7 +1668,7 @@ describe('AddParticipantComponent set representer', () => {
             participantServiceSpy,
             { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
             bookingServiceSpy,
-            featureFlagServiceSpy,
+            launchDarklyServiceSpy,
             loggerSpy
         );
         component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, featureFlagServiceSpy);

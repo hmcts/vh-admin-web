@@ -29,6 +29,7 @@ import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 import { FeatureFlagService } from '../../services/feature-flag.service';
 import { ResponseTestData } from 'src/app/testing/data/response-test-data';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -115,6 +116,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
 ]);
 const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
 featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
+const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
+
 describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
@@ -139,7 +142,8 @@ describe('SummaryComponent with valid request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             declarations: [
                 SummaryComponent,
@@ -299,6 +303,18 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should set audio recording to false if case type is CACD and an interpreter is present', () => {
         component.hearing.case_type = component.constants.CaseTypes.CourtOfAppealCriminalDivision;
+        component.interpreterPresent = true;
+        component.isAudioRecordingRequired();
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should set audio recording to false if case type is Crime Crown Court', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
+        component.ngOnInit();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should set audio recording to false if case type is Crime Crown Court and an interpreter is present', () => {
+        component.hearing.case_type = component.constants.CaseTypes.CrimeCrownCourt;
         component.interpreterPresent = true;
         component.isAudioRecordingRequired();
         component.ngOnInit();
@@ -568,7 +584,8 @@ describe('SummaryComponent  with invalid request', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
             declarations: [
@@ -626,7 +643,8 @@ describe('SummaryComponent  with existing request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy }
+                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
             declarations: [
@@ -742,12 +760,14 @@ describe('SummaryComponent  with existing request', () => {
     });
     it('it should display the participant and representee', () => {
         component.hearing = initExistingHearingRequest();
-        const result = component.getParticipantInfo('123123-123');
+        const result = component.getDefenceAdvocateByContactEmail(
+            component.hearing.participants.find(x => x.id === '123123-123').contact_email
+        );
         expect(result).toBe('solicitor 01, representing citizen 01');
     });
     it('it should display the participant and representee', () => {
         component.hearing = initExistingHearingRequest();
-        const result = component.getParticipantInfo('123123-1231');
+        const result = component.getDefenceAdvocateByContactEmail('madeup@doesnotexist.com');
         expect(result).toBe('');
     });
     it('should remove an existing interpretee and interpreter', () => {
@@ -825,7 +845,8 @@ describe('SummaryComponent  with multi days request', () => {
         loggerSpy,
         recordingGuardServiceSpy,
         participantServiceSpy,
-        featureFlagServiceSpy
+        featureFlagServiceSpy,
+        bookingStatusService
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();

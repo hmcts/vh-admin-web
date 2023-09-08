@@ -21,18 +21,21 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.Configuration;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Configuration;
+using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
+using BookingsApi.Contract.V2.Responses;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
-using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
-using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
+using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
+using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -69,6 +72,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Guid _validId;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IFeatureToggles> _featureToggle;
+        private HearingDetailsResponseV2 _v2HearingDetailsResponse;
 
         [SetUp]
         public void Setup()
@@ -102,7 +106,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object);
+            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object, _featureToggle.Object);
 
             _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
 
@@ -111,7 +115,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                _conferencesServiceMock.Object);
+                _conferencesServiceMock.Object,
+                 _featureToggle.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest
@@ -125,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "new@hmcts.net",
+                        ContactEmail = "new@domain.net.",
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName"
                     }
@@ -147,8 +152,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
-                        ContactEmail = "old@hmcts.net",
-                        Username = "old@hmcts.net"
+                        ContactEmail = "old@domain.net",
+                        Username = "old@domain.net"
                     }
                 },
                 Cases = cases,
@@ -156,11 +161,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 OtherInformation = ""
             };
-
-            var participant1 = Guid.NewGuid();
-            var participant2 = Guid.NewGuid();
-            var participant3 = Guid.NewGuid();
-            _existingHearingWithLinkedParticipants = new HearingDetailsResponse
+            var participantId1 = Guid.NewGuid();
+            var participantId2 = Guid.NewGuid();
+            var participantId3 = Guid.NewGuid();
+            var participantId4 = Guid.NewGuid();
+            var endpointGuid1 = Guid.NewGuid();
+            var endpointGuid2 = Guid.NewGuid();
+            var endpointGuid3 = Guid.NewGuid();
+            var endpointGuid4 = Guid.NewGuid();
+            var defenceAdvocate1 = "defenceAdvocate1";
+            var defenceAdvocate2 = "defenceAdvocate2";
+            var defenceAdvocate3 = "defenceAdvocate3";
+            var defenceAdvocate4 = "defenceAdvocate4";
+            _existingHearingWithLinkedParticipants = new HearingDetailsResponse()
             {
                 Id = _validId,
                 GroupId = _validId,
@@ -171,52 +184,47 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new ParticipantResponse
                     {
-                        Id = participant1, CaseRoleName = "judge", HearingRoleName = "hearingrole",
+                        Id = participantId1, CaseRoleName = "judge", HearingRoleName = "hearingrole",
                         ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
                         LinkedParticipants = new List<LinkedParticipantResponse>()
                     },
                     new ParticipantResponse
                     {
-                        Id = participant2, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
+                        Id = participantId2, CaseRoleName = "caserole", HearingRoleName = "litigant in person",
                         ContactEmail = "individual.user@email.com", UserRoleName = "Individual",
                         FirstName = "testuser1",
                         LinkedParticipants = new List<LinkedParticipantResponse>
                         {
                             new LinkedParticipantResponse
-                                {Type = LinkedParticipantType.Interpreter, LinkedId = participant3}
+                                {Type = LinkedParticipantType.Interpreter, LinkedId = participantId3}
                         }
                     },
                     new ParticipantResponse
                     {
-                        Id = participant3, CaseRoleName = "caserole", HearingRoleName = "interpreter",
+                        Id = participantId3, CaseRoleName = "caserole", HearingRoleName = "interpreter",
                         ContactEmail = "interpreter.user@email.com", UserRoleName = "Individual",
                         FirstName = "testuser1",
                         LinkedParticipants = new List<LinkedParticipantResponse>
                         {
                             new LinkedParticipantResponse
-                                {Type = LinkedParticipantType.Interpreter, LinkedId = participant2}
+                                {Type = LinkedParticipantType.Interpreter, LinkedId = participantId2}
                         }
                     }
                 },
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
                 OtherInformation = ""
             };
-
-            var guid1 = Guid.NewGuid();
-            var guid2 = Guid.NewGuid();
-            var guid3 = Guid.NewGuid();
-            var guid4 = Guid.NewGuid();
             _addEndpointToHearingRequest = new EditHearingRequest
             {
                 Case = new EditCaseRequest { Name = "Case", Number = "123" },
                 Participants = new List<EditParticipantRequest>(),
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
-                    new EditEndpointRequest { Id = guid4, DisplayName = "data4", DefenceAdvocateContactEmail = guid4.ToString() }
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@domain.net" },
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
+                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
                 }
             };
 
@@ -226,12 +234,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<EditParticipantRequest>() 
                 { 
                     new EditParticipantRequest() { 
-                        Id = guid1,
+                        Id = participantId1,
                         CaseRoleName = "judge",
                         HearingRoleName = HearingRoleName.Judge,
                         FirstName = "FirstName",
                         LastName = "LastName",
-                        ContactEmail = "judge@email.com",
+                        ContactEmail = "judge@domain.com",
                         DisplayName = "FirstName LastName",
                         LinkedParticipants = new List<LinkedParticipant>(),
                         OrganisationName = "Org1",
@@ -243,11 +251,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@hmcts.net" },
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
-                    new EditEndpointRequest { Id = guid4, DisplayName = "data4", DefenceAdvocateContactEmail = guid4.ToString() }
+                    new EditEndpointRequest { Id = null, DisplayName = "New Endpoint", DefenceAdvocateContactEmail = "username@domain.net" },
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
+                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
                 }
             };
 
@@ -260,10 +268,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
-                    new EditEndpointRequest { Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = guid4.ToString() }
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
+                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
                 }
             };
 
@@ -277,7 +285,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<EditParticipantRequest>()
                 {
                     new EditParticipantRequest() {
-                        Id = guid1,
+                        Id = participantId1,
                         CaseRoleName = "judge",
                         HearingRoleName = HearingRoleName.Judge,
                         FirstName = "FirstName",
@@ -294,10 +302,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() },
-                    new EditEndpointRequest { Id = guid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = guid4.ToString() }
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
+                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4-edit", DefenceAdvocateContactEmail = defenceAdvocate4 }
                 }
             };
 
@@ -310,9 +318,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() }
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 }
                 }
             };
 
@@ -326,7 +334,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<EditParticipantRequest>()
                 {
                     new EditParticipantRequest() {
-                        Id = guid1,
+                        Id = participantId1,
                         CaseRoleName = "judge",
                         HearingRoleName = HearingRoleName.Judge,
                         FirstName = "FirstName",
@@ -343,22 +351,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
-                    new EditEndpointRequest { Id = guid1, DisplayName = "data1", DefenceAdvocateContactEmail = guid1.ToString() },
-                    new EditEndpointRequest { Id = guid2, DisplayName = "data2", DefenceAdvocateContactEmail = guid2.ToString() },
-                    new EditEndpointRequest { Id = guid3, DisplayName = "data3", DefenceAdvocateContactEmail = guid3.ToString() }
+                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
+                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
+                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 }
                 }
             };
 
             _existingHearingWithEndpointsOriginal = new HearingDetailsResponse
             {
                 Id = _validId,
-                Participants = new List<ParticipantResponse>(),
+                Participants = new List<ParticipantResponse>
+                {
+                    new ParticipantResponse { Id = participantId1, ContactEmail = defenceAdvocate1 },
+                    new ParticipantResponse { Id = participantId2, ContactEmail = defenceAdvocate2 },
+                    new ParticipantResponse { Id = participantId3, ContactEmail = defenceAdvocate3 },
+                    new ParticipantResponse { Id = participantId4, ContactEmail = defenceAdvocate4 }
+                },
                 Endpoints = new List<EndpointResponse>
                 {
-                    new EndpointResponse { Id = guid1, DisplayName = "data1", Pin = "0000", Sip = "1111111111", DefenceAdvocateId = guid1 },
-                    new EndpointResponse { Id = guid2, DisplayName = "data2", Pin = "1111", Sip = "2222222222", DefenceAdvocateId = guid2 },
-                    new EndpointResponse { Id = guid3, DisplayName = "data3", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = guid3 },
-                    new EndpointResponse { Id = guid4, DisplayName = "data4", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = guid4 }
+                    new EndpointResponse { Id = endpointGuid1, DisplayName = "data1", Pin = "0000", Sip = "1111111111", DefenceAdvocateId = participantId1 },
+                    new EndpointResponse { Id = endpointGuid2, DisplayName = "data2", Pin = "1111", Sip = "2222222222", DefenceAdvocateId = participantId2 },
+                    new EndpointResponse { Id = endpointGuid3, DisplayName = "data3", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = participantId3 },
+                    new EndpointResponse { Id = endpointGuid4, DisplayName = "data4", Pin = "2222", Sip = "5544332234", DefenceAdvocateId = participantId4 }
                 },
                 Cases = cases,
                 CaseTypeName = "Unit Test",
@@ -373,10 +387,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new ParticipantResponse
                     {
-                        Id = participant1, CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
+                        Id = Guid.NewGuid(), CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
                         ContactEmail = "judge.user@email.com", UserRoleName = "Judge", FirstName = "Judge",
                         LinkedParticipants = new List<LinkedParticipantResponse>()
-                    }
+                    },
+                    new ParticipantResponse { Id = participantId1, ContactEmail = defenceAdvocate1 },
+                    new ParticipantResponse { Id = participantId2, ContactEmail = defenceAdvocate2 },
+                    new ParticipantResponse { Id = participantId3, ContactEmail = defenceAdvocate3 },
+                    new ParticipantResponse { Id = participantId4, ContactEmail = defenceAdvocate4 }
                 },
                 Cases = cases,
                 CaseTypeName = "Unit Test",
@@ -394,7 +412,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "new@hmcts.net",
+                        ContactEmail = "new@domain.net",
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName",
                         HearingRoleName = HearingRoleName.Judge
@@ -413,7 +431,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        Id = participant1, CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
+                        Id = participantId1, CaseRoleName = "judge", HearingRoleName = HearingRoleName.Judge,
                         ContactEmail = "judge.user@email.com", FirstName = "Judge"
                     }
                 },
@@ -425,6 +443,56 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
                 .Returns(new ValidationResult());
+
+            _v2HearingDetailsResponse = new HearingDetailsResponseV2
+            {
+                Id = _validId,
+                ScheduledDateTime = new DateTime(),
+                ServiceId = "ServiceId",
+                HearingTypeCode = "HearingTypeCode",
+                Participants = new List<ParticipantResponseV2>
+                {
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        UserRoleName = "Individual",
+                        ContactEmail = "old@domain.net",
+                        Username = "old@domain.net",
+                        CaseRoleName = "caseRoleName",
+                    }
+                },
+                Cases = new List<CaseResponseV2>
+                {
+                    new()
+                    {
+                        Name = "caseName",
+                        Number = "caseNumber",
+                        IsLeadCase = true,
+                    }
+                },
+                HearingRoomName = "hearingRoomName",
+                OtherInformation = "otherInformation",
+                CreatedDate = new DateTime(),
+                CreatedBy = "createdBy",
+                UpdatedBy = "updatedBy",
+                UpdatedDate = new DateTime(),
+                ConfirmedBy = "confirmedBy",
+                ConfirmedDate = new DateTime(),
+                Status = BookingStatusV2.Booked,
+                AudioRecordingRequired = true,
+                CancelReason = null,
+                Endpoints = new List<EndpointResponseV2>()
+                {
+                    new()
+                    {
+                        DefenceAdvocateId = Guid.NewGuid(),
+                        DisplayName = "displayName",
+                        Id = Guid.NewGuid(),
+                        Pin = "pin",
+                        Sip = "sip"
+                    }
+                }
+            };
         }
 
         [Test]
@@ -520,18 +588,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _updateJudgeOtherInformationRequest);
             
             ((ObjectResult)result.Result).StatusCode.Should().Be(200);
-            _bookingsApiClient.Verify(
-                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()),
-                Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
+                It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
         }
 
         [Test]
-        public async Task 
-            Should_allow_edit_confirmed_hearing_up_until_30_minutes_before_starting()
+        public async Task Should_allow_edit_confirmed_hearing_up_until_30_minutes_before_starting()
         {
             _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(1);
             _addNewParticipantRequest.ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime;
@@ -545,12 +609,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(
-                x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()),
-                Times.Once);
+                x
+                    => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
+                        It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
-                Times.Once);
+                It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
         }
 
         [Test]
@@ -576,7 +639,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
-                ContactEmail = "new2@hmcts.net",
+                ContactEmail = "new2@domain.net",
                 FirstName = "Test2_FirstName",
                 LastName = "Test2_LastName"
             });
@@ -677,8 +740,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _addNewParticipantRequest.Participants = new List<EditParticipantRequest> {new EditParticipantRequest
             {
                 HearingRoleName = RoleNames.PanelMember,
-                ContactEmail = "new.contactactemail@hmcts.net",
-                DisplayName = "new.displayName@hmcts.net",
+                ContactEmail = "new.contactactemail@domain.net",
+                DisplayName = "new.displayName@domain.net",
                 CaseRoleName = RoleNames.PanelMember
             } };
 
@@ -726,8 +789,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
+                ContactEmail = "new@domain.net",
+                Username = "new@domain.net",
                 UserRoleName = "Individual"
             });
 
@@ -736,8 +799,26 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var hearing = (HearingDetailsResponse)((OkObjectResult)result.Result).Value;
+            var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(_updatedExistingParticipantHearingOriginal.Id);
+            _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
+                    It.Is<UpdateHearingRequest>(u =>
+                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_return_updated_hearingV2()
+        {
+            _featureToggle.Setup(e => e.ReferenceDataToggle()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+            var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
+            hearing.Id.Should().Be(updatedHearing.Id);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
@@ -771,15 +852,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 FirstName = "Existing",
                 LastName = "Judge",
-                ContactEmail = "existing@hmcts.net",
-                Username = "existing@hmcts.net",
+                ContactEmail = "existing@domain.net",
+                Username = "existing@domain.net",
                 CaseRoleName = "Judge",
                 UserRoleName = "Judge",
                 HearingRoleName = "Judge",
                 Id = existingJudgeId
             });
 
-            const string newJudgeEmail = "new@hmcts.net";
+            const string newJudgeEmail = "new@domain.net";
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
@@ -794,8 +875,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             newPats.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                ContactEmail = "new@hmcts.net",
-                Username = "new@hmcts.net",
+                ContactEmail = "new@domain.net",
+                Username = "new@domain.net",
                 UserRoleName = "Individual"
             });
             newPats.Add(new ParticipantResponse
@@ -873,12 +954,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.Is<UpdateHearingRequest>(u =>
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
 
-            _bookingsApiClient.Verify(
-                x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
-                    It.IsAny<UpdateEndpointRequest>()), Times.Never);
+            _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(
+                It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Never);
 
-            _bookingsApiClient.Verify(
-                x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+            _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]
@@ -886,10 +965,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithEndpointsOriginal);
-            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequest);
+            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequestWithJudge);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            _bookingsApiClient.Verify(
-                x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
+            _bookingsApiClient.Verify(x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
                         !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
@@ -1215,7 +1293,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             {
                                 ParticipantContactEmail = "interpreter.user@email.com",
                                 LinkedParticipantContactEmail = newUserContactEmail,
-                                Type = LinkedParticipantType.Interpreter
+                                Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
                             }
                         }
                     }
@@ -1391,7 +1469,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             new LinkedParticipant
                             {
                                 LinkedId = partipant4,
-                                Type = LinkedParticipantType.Interpreter,
+                                Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter,
                                 LinkedParticipantContactEmail = null
                             }
                         }
@@ -1419,7 +1497,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             // arrange
             var hearingId = _updatedExistingParticipantHearingOriginal.Id;
-            var newJudgeEmailOtherInfo = new OtherInformationDetails { JudgeEmail = "judgenew@hmcts.net" };
+            var newJudgeEmailOtherInfo = new OtherInformationDetails { JudgeEmail = "judgene@domain.net" };
             var updatedHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -1484,7 +1562,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var result = await _controller.EditHearing(_validId, request);  
 
-            var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
+            var response = ((ObjectResult)result.Result)?.Value as AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 
             response.Status.Should().Be(BookingStatus.Failed);
 
@@ -1509,7 +1587,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "test@hmcts.net",
+                        ContactEmail = "test@domain.net.",
                         FirstName = "FirstName",
                         LastName = "LastName",
                         HearingRoleName = HearingRoleName.Judge

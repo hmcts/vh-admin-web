@@ -294,7 +294,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     it('should repopulate form with existing request', fakeAsync(() => {
         expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
         expect(component.caseName.value).toBe(existingRequest.cases[0].name);
-        expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
+        expect(component.hearingType.value).toBe(existingRequest.hearing_type_name);
     }));
 
     it('should hide cancel and discard pop up confirmation', () => {

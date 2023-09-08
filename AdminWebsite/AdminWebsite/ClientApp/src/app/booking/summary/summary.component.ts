@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -20,6 +20,7 @@ import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { BookingStatusService } from 'src/app/services/booking-status-service';
 
 @Component({
     selector: 'app-summary',
@@ -74,7 +75,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
         private participantService: ParticipantService,
-        private featureService: FeatureFlagService
+        private featureService: FeatureFlagService,
+        private bookingStatusService: BookingStatusService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
@@ -115,7 +117,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     isAudioRecordingRequired(): boolean {
         // CACD hearings should always have recordings set to off
-        if (this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision) {
+        if (
+            this.caseType === this.constants.CaseTypes.CourtOfAppealCriminalDivision ||
+            this.caseType === this.constants.CaseTypes.CrimeCrownCourt
+        ) {
             return false;
         }
         // Hearings with an interpreter should always have recording set to on
@@ -127,7 +132,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private confirmRemoveParticipant() {
         const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const title = participant && participant.title ? `${participant.title}` : '';
+        const title = participant?.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
 
         const isInterpretee =
@@ -167,7 +172,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
             this.removeLinkedParticipant(this.selectedParticipantEmail);
-            this.hearing = Object.assign({}, this.hearing);
+            this.hearing = { ...this.hearing };
             this.hearingService.updateHearingRequest(this.hearing);
             this.hearingService.setBookingHasChanged(true);
             this.bookingService.removeParticipantEmail();
@@ -253,13 +258,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
 
                 if (this.judgeAssigned) {
-                    // Poll Video-Api for booking confirmation
-                    const schedule = timer(0, 5000).subscribe(async counter => {
-                        const hearingStatusResponse = await this.hearingService.getStatus(hearingDetailsResponse.id);
-                        if (hearingStatusResponse?.success || counter === 10) {
-                            schedule.unsubscribe();
-                            await this.processBooking(hearingDetailsResponse, hearingStatusResponse);
-                        }
+                    this.bookingStatusService.pollForStatus(hearingDetailsResponse.id).subscribe(async response => {
+                        await this.processBooking(hearingDetailsResponse, response);
                     });
                 } else {
                     await this.processMultiHearing(hearingDetailsResponse);
@@ -347,8 +347,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     updateHearing() {
         this.$subscriptions.push(
-            this.hearingService.updateHearing(this.hearing).subscribe(
-                (hearingDetailsResponse: HearingDetailsResponse) => {
+            this.hearingService.updateHearing(this.hearing).subscribe({
+                next: (hearingDetailsResponse: HearingDetailsResponse) => {
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
@@ -363,14 +363,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
                     this.router.navigate([PageUrls.BookingConfirmation]);
                 },
-                error => {
+                error: error => {
                     this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
                         hearing: this.hearing.hearing_id,
                         payload: this.hearing
                     });
                     this.setError(error);
                 }
-            )
+            })
         );
     }
 
@@ -396,9 +396,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         });
     }
 
-    getParticipantInfo(defenceAdvocate: string): string {
+    getDefenceAdvocateByContactEmail(defenceAdvocateConactEmail: string): string {
         let represents = '';
-        const participant = this.hearing.participants.find(p => p.id === defenceAdvocate);
+        const participant = this.hearing.participants.find(p => p.contact_email === defenceAdvocateConactEmail);
         if (participant) {
             represents = participant.display_name + ', representing ' + participant.representee;
         }
@@ -436,7 +436,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = Object.assign({}, this.hearing);
+        this.hearing = { ...this.hearing };
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();

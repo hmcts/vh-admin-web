@@ -31,9 +31,9 @@
         public string PostLogoutRedirectUri { get; set; }
 
         /// <summary>
-        /// The Application Insight Instrumentation Key
+        /// The Application Insights Connection String
         /// </summary>
-        public string InstrumentationKey { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// The reform email

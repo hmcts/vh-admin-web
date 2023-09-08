@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using AdminWebsite.Models;
 using AdminWebsite.UnitTests.Controllers;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.UnitTests.Attributes
 {
@@ -114,9 +114,9 @@ namespace AdminWebsite.UnitTests.Attributes
                         {
                             new CaseRequest{Name = text, Number = text}
                         },
-                        Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
+                        Participants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>
                         {
-                            new BookingsApi.Contract.Requests.ParticipantRequest
+                            new BookingsApi.Contract.V1.Requests.ParticipantRequest
                             {
                                 Title = text,
                                 FirstName = text,

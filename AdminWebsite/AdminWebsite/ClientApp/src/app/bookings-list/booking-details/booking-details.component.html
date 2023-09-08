@@ -55,22 +55,13 @@
             Cancel booking
           </button>
         </span>
-        <button
-          *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin && !hearing.hasBookingConfirmationFailed && judgeExists"
-          data-module="govuk-button"
-          class="govuk-button vh-mt20 hmcts-button--secondary"
-          id="confirm-button"
-          (click)="confirmHearing()"
-        >
-          Confirm booking
-        </button>
 
         <button
           *ngIf="hearing.hasBookingConfirmationFailed && canRetryConfirmation && judgeExists"
           data-module="govuk-button"
           class="govuk-button govuk-button--warning"
           id="retry-confirm-button"
-          (click)="confirmHearing()"
+          (click)="rebookHearing()"
         >
           Retry booking confirmation
         </button>

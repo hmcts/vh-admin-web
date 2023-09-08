@@ -7,7 +7,7 @@ using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using BookingsApi.Contract.Responses;
+using BookingsApi.Contract.V1.Responses;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;

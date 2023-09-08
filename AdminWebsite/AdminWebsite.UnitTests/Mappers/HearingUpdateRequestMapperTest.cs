@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.V1.Requests;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -45,29 +45,6 @@ namespace AdminWebsite.UnitTests.Mappers
             result.Cases.Should().BeEquivalentTo(_caseRequest);
             result.QuestionnaireNotRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
-        }
-
-        [Test]
-        public void Should_map_property_AudioRecordingRequired_with_true_value_for_when_linkedParticipant_is_interpreter()
-        {
-            _newParticipantRequest.Participants = new List<EditParticipantRequest>
-            {
-                new EditParticipantRequest
-                {
-                    LinkedParticipants = new List<LinkedParticipant>
-                    {
-                        new LinkedParticipant
-                        {
-                            Id = Guid.NewGuid(),
-                            LinkedId = Guid.NewGuid(),
-                            ParticipantId = Guid.NewGuid(),
-                            Type = LinkedParticipantType.Interpreter
-                        }
-                    }
-                }
-            };
-            var result = HearingUpdateRequestMapper.MapTo(_newParticipantRequest, _username);
-            result.AudioRecordingRequired.Should().BeTrue();
         }
     }
 }

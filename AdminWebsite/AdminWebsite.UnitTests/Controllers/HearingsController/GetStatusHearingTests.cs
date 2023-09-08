@@ -7,13 +7,14 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.Enums;
-using BookingsApi.Contract.Responses;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using AdminWebsite.Security;
+using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Contract.V1.Responses;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IConferenceDetailsService> _conferenceDetailsServiceMock;
         private Mock<IHearingsService> _hearingServiceMock;
         private HearingDetailsResponse _vhExistingHearing;
+        private Mock<IFeatureToggles> _featureFlag;
         private Guid _guid;
         
         private AutoMock _mocker;
@@ -38,9 +40,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _conferenceDetailsServiceMock = new Mock<IConferenceDetailsService>();
             _hearingServiceMock = new Mock<IHearingsService>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, new Mock<IUserIdentity>().Object,
-                new Mock<IValidator<EditHearingRequest>>().Object, new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingServiceMock.Object, _conferenceDetailsServiceMock.Object);
+            _featureFlag = new Mock<IFeatureToggles>();
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClientMock.Object, 
+                new Mock<IUserIdentity>().Object,
+                new Mock<IValidator<EditHearingRequest>>().Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
+                _hearingServiceMock.Object,
+                _conferenceDetailsServiceMock.Object,
+                _featureFlag.Object);
                 
 
             Initialise();
@@ -51,9 +58,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _guid = Guid.NewGuid();
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsApi.Contract.Responses.CaseResponse>()
+                Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
                 {
-                    new BookingsApi.Contract.Responses.CaseResponse
+                    new BookingsApi.Contract.V1.Responses.CaseResponse
                         {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
                 CaseTypeName = "Generic",

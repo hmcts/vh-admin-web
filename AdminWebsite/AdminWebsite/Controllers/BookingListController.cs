@@ -1,8 +1,6 @@
 ﻿using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Security;
 using BookingsApi.Client;
-using BookingsApi.Contract.Requests;
-using BookingsApi.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
@@ -10,6 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
+using BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.Controllers
 {
@@ -88,7 +89,7 @@ namespace AdminWebsite.Controllers
                         NoAllocated = request.NoAllocated
                     });
 
-                return Ok(bookingsResponse);
+                return Ok(bookingsResponse.Map());
             }
             catch (BookingsApiException e)
             {
@@ -104,12 +105,12 @@ namespace AdminWebsite.Controllers
         private async Task<List<int>> GetCaseTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
-            var types = await _bookingsApiClient.GetCaseTypesAsync();
+            var types = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted:true);
             if (types != null && types.Any())
                 foreach (var item in caseTypes)
                 {
                     var caseType = types.FirstOrDefault(s => s.Name == item);
-                    if (caseType != null && typeIds.All(s => s != caseType.Id))
+                    if (caseType != null && typeIds.TrueForAll(s => s != caseType.Id))
                     {
                         typeIds.Add(caseType.Id);
                     }

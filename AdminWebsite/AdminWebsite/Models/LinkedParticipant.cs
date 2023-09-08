@@ -1,5 +1,5 @@
 using System;
-using BookingsApi.Contract.Enums;
+using AdminWebsite.Contracts.Enums;
 
 namespace AdminWebsite.Models
 {

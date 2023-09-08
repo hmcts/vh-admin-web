@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using AcceptanceTests.Common.Api.Helpers;
+﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using TestApi.Contract.Dtos;

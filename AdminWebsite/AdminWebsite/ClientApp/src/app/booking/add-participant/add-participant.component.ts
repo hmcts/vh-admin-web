@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
@@ -17,8 +17,8 @@ import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
-import { FeatureFlagService } from '../../services/feature-flag.service';
-import { first } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-add-participant',
@@ -45,6 +45,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     existingPerson: boolean;
     bookingHasParticipants: boolean;
     $subscriptions: Subscription[] = [];
+    referenceDataFeatureFlag = false;
+    destroyed$ = new Subject<void>();
 
     interpreteeList: ParticipantModel[] = [];
     showConfirmRemoveInterpretee = false;
@@ -60,18 +62,22 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        protected featureFlagService: FeatureFlagService,
+        private launchDarklyService: LaunchDarklyService,
         protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
-        featureFlagService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
     }
 
     ngOnInit() {
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+
+        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
+            this.referenceDataFeatureFlag = referenceDataFlag;
+            this.judiciaryRoles = ejudFeatureFlag ? Constants.JudiciaryRoles : [];
+        });
+
         this.checkForExistingRequest();
         this.initialiseForm();
         super.ngOnInit();
@@ -113,9 +119,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         setTimeout(() => {
             const self = this;
+            const caseTypeIdentifier = this.referenceDataFeatureFlag ? this.hearing.case_type_service_id : this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
             this.videoHearingService
-                .getParticipantRoles(this.hearing.case_type)
+                .getParticipantRoles(caseTypeIdentifier)
                 .then((data: CaseAndHearingRolesResponse[]) => {
                     self.setupRoles(data);
                     if (self.editMode) {
@@ -141,12 +148,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         if (this.editMode) {
             if (this.searchEmail && this.participantDetails) {
                 this.setParticipantEmail();
-                this.subcribeForSeachEmailEvents();
+                this.subscribeForSearchEmailEvents();
             }
         }
     }
 
-    subcribeForSeachEmailEvents() {
+    subscribeForSearchEmailEvents() {
         this.searchEmail.notFoundEmailEvent$.subscribe(notFound => {
             if (notFound) {
                 this.notFoundParticipant();
@@ -171,18 +178,17 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         const self = this;
         this.$subscriptions.push(
-            this.form.valueChanges.subscribe(result => {
+            this.form.valueChanges.subscribe(() => {
                 setTimeout(() => {
                     if (
-                        (self.showDetails &&
-                            self.role.value === self.constants.PleaseSelect &&
-                            self.party.value === self.constants.PleaseSelect &&
-                            self.title.value === self.constants.PleaseSelect &&
-                            self.firstName.value === '' &&
-                            self.lastName.value === '' &&
-                            self.phone.value === '' &&
-                            self.displayName.value === '') ||
-                        self.editMode
+                        self.showDetails &&
+                        self.role.value === self.constants.PleaseSelect &&
+                        self.party.value === self.constants.PleaseSelect &&
+                        self.title.value === self.constants.PleaseSelect &&
+                        self.firstName.value === '' &&
+                        self.lastName.value === '' &&
+                        self.phone.value === '' &&
+                        self.displayName.value === ''
                     ) {
                         self.displayNext();
                     } else if (
@@ -282,17 +288,15 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     validateJudiciaryEmailAndRole() {
-        if (this.searchEmail && this.searchEmail.email.length) {
+        if (this.searchEmail?.email?.length) {
             this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(judiciaryEntries => {
                 this.errorJudiciaryAccount = false;
-                if (judiciaryEntries && judiciaryEntries.length) {
+                if (judiciaryEntries?.length) {
                     if (!this.judiciaryRoles.includes(this.role.value)) {
                         this.setErrorForJudiciaryAccount();
                     }
-                } else {
-                    if (this.judiciaryRoles.includes(this.role.value)) {
-                        this.setErrorForJudiciaryAccount();
-                    }
+                } else if (this.judiciaryRoles.includes(this.role.value)) {
+                    this.setErrorForJudiciaryAccount();
                 }
             });
         }
@@ -335,7 +339,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = Object.assign({}, this.hearing);
+                this.hearing = { ...this.hearing };
 
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
@@ -360,8 +364,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     username: newParticipant.username
                 });
                 this.showConfirmationPopup = true;
-                const message = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
-                this.confirmationMessage = message;
+                this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
             }
         } else {
             this.isShowErrorSummary = true;
@@ -393,7 +396,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = Object.assign({}, this.hearing);
+                this.hearing = { ...this.hearing };
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -417,7 +420,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     confirmRemoveParticipant() {
         if (this.selectedParticipantEmail) {
             const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-            const title = participant && participant.title ? `${participant.title}` : '';
+            const title = participant?.title ? `${participant.title}` : '';
             this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
             const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
             this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
@@ -442,7 +445,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = Object.assign({}, this.hearing);
+        this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }
@@ -471,10 +474,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
-        const userRole = this.caseAndHearingRoles
+        return this.caseAndHearingRoles
             .find(c => c.name === newParticipant.case_role_name)
             ?.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
-        return userRole;
     }
 
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
@@ -738,7 +740,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = Object.assign({}, this.hearing);
+        this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }
