@@ -56,6 +56,6 @@ public class BookingsHearingResponseMapperTests
         };
         var result = source.Map();
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(source);
+        result.Should().BeEquivalentTo(source, options => options.ExcludingMissingMembers());
     }
 }

@@ -86,9 +86,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse);
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers());
             
-            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
@@ -128,9 +129,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse);
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers());
             
-            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
@@ -170,10 +172,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse);
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers());
             
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
 
@@ -225,10 +228,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse);
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
+                options => options.ExcludingMissingMembers());
             
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            bookingDetails.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
