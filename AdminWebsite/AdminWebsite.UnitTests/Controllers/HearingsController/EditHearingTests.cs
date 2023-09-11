@@ -74,11 +74,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            new Mock<IVideoApiClient>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            new Mock<IPollyRetryService>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _featureToggle = new Mock<IFeatureToggles>();
             _featureToggle.Setup(e => e.BookAndConfirmToggle()).Returns(true);
@@ -254,22 +251,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            new EditHearingRequest
-            {
-                Case = new EditCaseRequest 
-                { 
-                    Name = "Case", 
-                    Number = "123" 
-                },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
-                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
-                }
-            };
-
             _editEndpointOnHearingRequestWithJudge = new EditHearingRequest
             {
                 Case = new EditCaseRequest
@@ -310,39 +291,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     Name = "Case",
                     Number = "123"
-                },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 }
-                }
-            };
-
-            new EditHearingRequest
-            {
-                Case = new EditCaseRequest
-                {
-                    Name = "Case",
-                    Number = "123"
-                },
-                Participants = new List<EditParticipantRequest>()
-                {
-                    new EditParticipantRequest() {
-                        Id = participantId1,
-                        CaseRoleName = "judge",
-                        HearingRoleName = HearingRoleName.Judge,
-                        FirstName = "FirstName",
-                        LastName = "LastName",
-                        ContactEmail = "judge@email.com",
-                        DisplayName = "FirstName LastName",
-                        LinkedParticipants = new List<LinkedParticipant>(),
-                        OrganisationName = "Org1",
-                        Representee = "Rep1",
-                        TelephoneNumber = "+44 123 1234",
-                        Title = "Mr",
-                        MiddleNames = "MiddleNames"
-                    }
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
