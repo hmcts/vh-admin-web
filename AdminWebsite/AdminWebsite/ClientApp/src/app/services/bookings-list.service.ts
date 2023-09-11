@@ -134,13 +134,15 @@ export class BookingsListService {
     private insertDateGroup(element: BookingsListModel, bookings: Array<BookingsListModel>) {
         bookings.push(element);
         bookings.sort((a, b) => {
-            if (new Date(a.BookingsDate) < new Date(b.BookingsDate)) {
+            const dateA = moment(a.BookingsDate);
+            const dateB = moment(b.BookingsDate);
+            if (dateA.isBefore(dateB)) {
                 return -1;
             }
-            if (new Date(a.BookingsDate) > new Date(b.BookingsDate)) {
+            if (dateA.isAfter(dateB)) {
                 return 1;
             }
-            if (new Date(a.BookingsDate) === new Date(b.BookingsDate)) {
+            if (dateA.isSame(dateB)) {
                 return 0;
             }
         });
