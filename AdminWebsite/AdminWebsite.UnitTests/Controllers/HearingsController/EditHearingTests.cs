@@ -573,7 +573,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -591,7 +591,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
                 It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         [Test]
@@ -613,7 +613,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
                         It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         [Test]
@@ -627,7 +627,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 OtherInformation = _updatedExistingParticipantHearingOriginal.OtherInformation,
                 ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime,
                 ScheduledDuration = _updatedExistingParticipantHearingOriginal.ScheduledDuration,
-                QuestionnaireNotRequired = _updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired,
                 AudioRecordingRequired = _updatedExistingParticipantHearingOriginal.AudioRecordingRequired,
                 Case = new EditCaseRequest
                 {

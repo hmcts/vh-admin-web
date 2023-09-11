@@ -24,7 +24,7 @@ public static class LinkedParticipantRequestMapper
         {
             LinkedParticipantContactEmail = linkedParticipant.LinkedParticipantContactEmail,
             ParticipantContactEmail = linkedParticipant.ParticipantContactEmail,
-            TypeV2 = (V2.Enums.LinkedParticipantTypeV2)linkedParticipant.Type
+            Type = (V2.Enums.LinkedParticipantTypeV2)linkedParticipant.Type
         };
     }
 }

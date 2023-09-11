@@ -22,7 +22,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly HearingScheduleSteps _hearingScheduleSteps;
         private readonly LoginSteps _loginSteps;
         private readonly OtherInformationSteps _otherInformationSteps;
-        private readonly QuestionnaireSteps _questionnaireSteps;
         private readonly SummarySteps _summarySteps;
         private readonly VideoAccessPointsSteps _videoAccessPointsSteps;
 
@@ -39,7 +38,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingScheduleSteps hearingScheduleSteps,
             LoginSteps loginSteps,
             OtherInformationSteps otherInformationSteps,
-            QuestionnaireSteps questionnaireSteps,
             SummarySteps summarySteps,
             VideoAccessPointsSteps videoAccessPointsSteps)
         {
@@ -55,7 +53,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingScheduleSteps = hearingScheduleSteps;
             _loginSteps = loginSteps;
             _otherInformationSteps = otherInformationSteps;
-            _questionnaireSteps = questionnaireSteps;
             _summarySteps = summarySteps;
             _videoAccessPointsSteps = videoAccessPointsSteps;
         }
@@ -184,7 +181,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Page.HearingSchedule, _hearingScheduleSteps},
                 {Page.Login, _loginSteps},
                 {Page.OtherInformation, _otherInformationSteps},
-                {Page.Questionnaire, _questionnaireSteps},
                 {Page.Summary, _summarySteps},
                 {Page.VideoAccessPoints, _videoAccessPointsSteps}
             };

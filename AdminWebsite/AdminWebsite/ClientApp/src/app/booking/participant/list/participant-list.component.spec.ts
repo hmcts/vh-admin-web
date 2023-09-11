@@ -44,7 +44,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), questionnaire_not_required: true, participants };
+        component.hearing = { updated_date: new Date() };
         fixture.detectChanges();
     });
 
@@ -121,7 +121,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        component.hearing = { updated_date: new Date(), questionnaire_not_required: true };
+        component.hearing = { updated_date: new Date() };
         fixture.detectChanges();
     });
     it('should produce a sorted list with no duplicates', () => {

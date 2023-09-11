@@ -28,7 +28,6 @@ function MockBookedHearing(): BookingsDetailsModel {
         'last.confirmed@hmcts.net',
         new Date(),
         'booked',
-        false,
         true,
         'reason',
         'Financial Remedy',
@@ -48,7 +47,6 @@ describe('BookingsPersistService', () => {
         it('should not update if there are no loaded hearings', () => {
             const model: HearingModel = {
                 updated_date: new Date(),
-                questionnaire_not_required: false,
                 audio_recording_required: true
             };
             service.updateBooking(model);

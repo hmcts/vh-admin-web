@@ -16,7 +16,6 @@ public class BookingDetailsRequest
     public string HearingRoomName { get; set; }
     public string OtherInformation { get; set; }
     public string CreatedBy { get; set; }
-    public bool QuestionnaireNotRequired { get; set; }
     public bool AudioRecordingRequired { get; set; }
     [DefaultValue(false)]
     public bool IsMultiDayHearing { get; set; }

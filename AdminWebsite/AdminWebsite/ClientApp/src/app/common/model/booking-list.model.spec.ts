@@ -19,7 +19,6 @@ describe('BookingsDetailsModel', () => {
             '',
             new Date(),
             'Cancelled',
-            false,
             true,
             'reason',
             'Financial Remedy',

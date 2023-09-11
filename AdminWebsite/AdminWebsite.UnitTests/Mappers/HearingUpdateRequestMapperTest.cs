@@ -27,7 +27,6 @@ namespace AdminWebsite.UnitTests.Mappers
                 ScheduledDateTime = _scheduledDateTime,
                 ScheduledDuration = 45,
                 Case = new EditCaseRequest {Name = _caseRequest.Name, Number = _caseRequest.Number},
-                QuestionnaireNotRequired = false,
                 AudioRecordingRequired = false
             };
         }
@@ -43,7 +42,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
             result.Cases.Should().BeEquivalentTo(_caseRequest);
-            result.QuestionnaireNotRequired.Should().Be(_newParticipantRequest.QuestionnaireNotRequired);
+            result.QuestionnaireNotRequired.Should().Be(false);
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
     }
