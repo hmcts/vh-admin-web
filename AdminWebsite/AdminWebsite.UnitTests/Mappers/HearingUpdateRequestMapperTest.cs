@@ -42,7 +42,6 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
             result.Cases.Should().BeEquivalentTo(_caseRequest);
-            result.QuestionnaireNotRequired.Should().Be(false);
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
     }
