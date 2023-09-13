@@ -197,7 +197,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
-        this.participantDetails = Object.assign({}, participantDetails);
+        this.participantDetails = { ...participantDetails };
 
         if (participantDetails.is_exist_person) {
             this.disableLastFirstNames();
@@ -216,10 +216,10 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
             title: this.participantDetails.title ?? this.constants.PleaseSelect,
-            firstName: this.participantDetails.first_name.trim(),
-            lastName: this.participantDetails.last_name.trim(),
-            email: this.participantDetails.email.trim() || '',
-            phone: this.participantDetails.phone.trim() || '',
+            firstName: this.participantDetails.first_name?.trim(),
+            lastName: this.participantDetails.last_name?.trim(),
+            email: this.participantDetails.email?.trim() || '',
+            phone: this.participantDetails.phone?.trim() || '',
             displayName: this.participantDetails.display_name?.trim() || '',
             companyName: this.participantDetails.company?.trim() || '',
             companyNameIndividual: this.participantDetails.company?.trim() || '',

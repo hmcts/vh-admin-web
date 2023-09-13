@@ -423,6 +423,19 @@ describe('AddParticipantComponent', () => {
         expect(component.displayAddButton).toBeTruthy();
         expect(component.displayUpdateButton).toBeFalsy();
     });
+    it('should populate the form fields when values are null', () => {
+        participant.email = null;
+        participant.phone = null;
+        participant.display_name = null;
+        participant.company = null;
+        participant.representee = null;
+        component.getParticipant(participant);
+        expect(email.value).toBe('');
+        expect(phone.value).toBe('');
+        expect(displayName.value).toBe('');
+        expect(companyName.value).toBe('');
+        expect(representing.value).toBe('');
+    });
     it('should clear all fields and reset to initial value', () => {
         component.getParticipant(participant);
         component.clearForm();
