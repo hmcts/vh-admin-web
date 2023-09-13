@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.V1.Requests;
