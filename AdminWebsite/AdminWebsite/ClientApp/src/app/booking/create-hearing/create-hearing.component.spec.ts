@@ -30,7 +30,6 @@ function initExistingHearingRequest(): HearingModel {
     const existingRequest = new HearingModel();
     existingRequest.hearing_type_id = 2;
     existingRequest.hearing_venue_id = 1;
-    existingRequest.questionnaire_not_required = false;
     existingRequest.case_type = 'Generic';
 
     return existingRequest;
@@ -176,7 +175,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === component.hearing.hearing_type_id).name;
         expect(component.hearing.hearing_type_name).toBe(hearingTypeName);
         expect(component.hearing.cases.length).toBe(1);
-        expect(component.hearing.questionnaire_not_required).toBeFalsy();
     });
 });
 

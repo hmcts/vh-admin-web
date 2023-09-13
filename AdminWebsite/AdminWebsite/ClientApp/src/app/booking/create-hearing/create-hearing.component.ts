@@ -194,7 +194,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         // hearing type will be null if editing an expired hearing type
         this.hearing.hearing_type_name = hearingType?.name ?? this.hearing.hearing_type_name;
         this.hearing.hearing_type_code = hearingType?.code ?? this.hearing.hearing_type_code;
-        this.hearing.questionnaire_not_required = false;
         const hearingTypeGroup = this.availableHearingTypes.find(c => c.group === this.hearing.case_type);
         // hearing type group will be null if editing an expired case type
         this.hearing.case_type_service_id = hearingTypeGroup?.service_id ?? this.hearing.case_type_service_id;

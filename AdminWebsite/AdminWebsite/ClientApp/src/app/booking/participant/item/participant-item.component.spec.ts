@@ -50,7 +50,6 @@ describe('ParticipantItemComponent', () => {
         component = debugElement.componentInstance;
         component.hearing = {
             updated_date: new Date(),
-            questionnaire_not_required: true,
             other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789'
         };
 

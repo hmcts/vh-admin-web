@@ -43,10 +43,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     {
         private EditHearingRequest _addEndpointToHearingRequest;
         private EditHearingRequest _addEndpointToHearingRequestWithJudge;
-        private EditHearingRequest _editEndpointOnHearingRequest;
         private EditHearingRequest _editEndpointOnHearingRequestWithJudge;
         private EditHearingRequest _removeEndpointOnHearingRequest;
-        private EditHearingRequest _removeEndpointOnHearingRequestWithJudge;
         private EditHearingRequest _addNewParticipantRequest;
         private EditHearingRequest _switchJudgeRequest;
         private EditHearingRequest _updateJudgeOtherInformationRequest;
@@ -61,16 +59,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<INotificationApiClient> _notificationApiMock;
 
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
-        private Mock<IUserAccountService> _userAccountService;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IConferenceDetailsService> _conferencesServiceMock;
         private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
         private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
         private Guid _validId;
-        private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IFeatureToggles> _featureToggle;
         private HearingDetailsResponseV2 _v2HearingDetailsResponse;
 
@@ -79,11 +74,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            _videoApiMock = new Mock<IVideoApiClient>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _featureToggle = new Mock<IFeatureToggles>();
             _featureToggle.Setup(e => e.BookAndConfirmToggle()).Returns(true);
@@ -259,22 +251,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _editEndpointOnHearingRequest = new EditHearingRequest
-            {
-                Case = new EditCaseRequest 
-                { 
-                    Name = "Case", 
-                    Number = "123" 
-                },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 },
-                    new EditEndpointRequest { Id = endpointGuid4, DisplayName = "data4", DefenceAdvocateContactEmail = defenceAdvocate4 }
-                }
-            };
-
             _editEndpointOnHearingRequestWithJudge = new EditHearingRequest
             {
                 Case = new EditCaseRequest
@@ -315,39 +291,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     Name = "Case",
                     Number = "123"
-                },
-                Endpoints = new List<EditEndpointRequest>
-                {
-                    new EditEndpointRequest { Id = endpointGuid1, DisplayName = "data1", DefenceAdvocateContactEmail = defenceAdvocate1 },
-                    new EditEndpointRequest { Id = endpointGuid2, DisplayName = "data2", DefenceAdvocateContactEmail = defenceAdvocate2 },
-                    new EditEndpointRequest { Id = endpointGuid3, DisplayName = "data3", DefenceAdvocateContactEmail = defenceAdvocate3 }
-                }
-            };
-
-            _removeEndpointOnHearingRequestWithJudge = new EditHearingRequest
-            {
-                Case = new EditCaseRequest
-                {
-                    Name = "Case",
-                    Number = "123"
-                },
-                Participants = new List<EditParticipantRequest>()
-                {
-                    new EditParticipantRequest() {
-                        Id = participantId1,
-                        CaseRoleName = "judge",
-                        HearingRoleName = HearingRoleName.Judge,
-                        FirstName = "FirstName",
-                        LastName = "LastName",
-                        ContactEmail = "judge@email.com",
-                        DisplayName = "FirstName LastName",
-                        LinkedParticipants = new List<LinkedParticipant>(),
-                        OrganisationName = "Org1",
-                        Representee = "Rep1",
-                        TelephoneNumber = "+44 123 1234",
-                        Title = "Mr",
-                        MiddleNames = "MiddleNames"
-                    }
                 },
                 Endpoints = new List<EditEndpointRequest>
                 {
@@ -573,7 +516,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -591,7 +534,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
                 It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         [Test]
@@ -613,7 +556,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), 
                         It.IsAny<UpdateHearingParticipantsRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         [Test]
@@ -627,12 +570,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 OtherInformation = _updatedExistingParticipantHearingOriginal.OtherInformation,
                 ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime,
                 ScheduledDuration = _updatedExistingParticipantHearingOriginal.ScheduledDuration,
-                QuestionnaireNotRequired = _updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired,
                 AudioRecordingRequired = _updatedExistingParticipantHearingOriginal.AudioRecordingRequired,
                 Case = new EditCaseRequest
                 {
-                    Name = _updatedExistingParticipantHearingOriginal.Cases.First().Name,
-                    Number = _updatedExistingParticipantHearingOriginal.Cases.First().Number,
+                    Name = _updatedExistingParticipantHearingOriginal.Cases[0].Name,
+                    Number = _updatedExistingParticipantHearingOriginal.Cases[0].Number,
                 },
                 Participants = _updatedExistingParticipantHearingOriginal.Participants.Select(EditParticipantRequestMapper.MapFrom).ToList()
             };
@@ -656,7 +598,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -772,7 +714,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.Is<AddNotificationRequest>(r => r.ParticipantId == newParticipantId)), Times.Never);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -803,7 +745,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             hearing.Id.Should().Be(_updatedExistingParticipantHearingOriginal.Id);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
         
@@ -821,7 +763,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             hearing.Id.Should().Be(updatedHearing.Id);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -909,7 +851,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     participants => participants.NewParticipants.Any(p => p.Username == newJudgeEmail))), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
         }
 
@@ -925,7 +867,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)),
+                        !u.Cases.IsNullOrEmpty())),
                 Times.Once);
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
@@ -952,7 +894,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                        !u.Cases.IsNullOrEmpty())), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(
                 It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Never);
@@ -970,7 +912,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Never);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                        !u.Cases.IsNullOrEmpty())), Times.Once);
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
                     It.IsAny<UpdateEndpointRequest>()), Times.Once);
@@ -997,7 +939,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                        !u.Cases.IsNullOrEmpty())), Times.Once);
 
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
@@ -1023,7 +965,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                        !u.Cases.IsNullOrEmpty())), Times.Once);
 
             _bookingsApiClient.Verify(
                 x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(),
@@ -1091,7 +1033,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                     It.Is<UpdateHearingRequest>(u =>
-                        !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                        !u.Cases.IsNullOrEmpty())), Times.Once);
 
             // Endpoints[3] has had their details changed, and so will be updated
             _bookingsApiClient.Verify(
@@ -1103,7 +1045,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_process_participants()
         {
             //Arrange
-            var existingLinkedParticipantOne = _existingHearingWithLinkedParticipants.Participants.FirstOrDefault(x => x.LinkedParticipants.Any());
+            var existingLinkedParticipantOne = _existingHearingWithLinkedParticipants.Participants.Find(x => x.LinkedParticipants.Any());
             var existingLinkedParticipantTwo =
                 _existingHearingWithLinkedParticipants.Participants
                 .SingleOrDefault(x => x.Id == existingLinkedParticipantOne.LinkedParticipants[0].LinkedId);
@@ -1158,7 +1100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             var removedParticipantIds = _existingHearingWithLinkedParticipants.Participants
-                .Where(p => _addNewParticipantRequest.Participants.All(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
+                .Where(p => _addNewParticipantRequest.Participants.TrueForAll(rp => rp.Id != p.Id)).Select(x => x.Id).ToList();
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithLinkedParticipants);
@@ -1309,7 +1251,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == newUserContactEmail))), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         
@@ -1486,7 +1428,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingParticipantsRequest>(x => x.LinkedParticipants.Any(x => x.LinkedParticipantContactEmail == linkedParticipantEmail))), Times.Once);
 
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
-                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.QuestionnaireNotRequired == false)), Times.Once);
+                    It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
         }
 
         [TestCase(BookingStatus.Booked, 0)]

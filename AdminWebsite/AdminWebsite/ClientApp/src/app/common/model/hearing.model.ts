@@ -37,7 +37,6 @@ export class HearingModel {
     updated_by?: string;
     updated_date: Date;
     status?: string;
-    questionnaire_not_required: boolean;
     audio_recording_required?: boolean;
     endpoints?: EndpointModel[];
     multiDays?: boolean;

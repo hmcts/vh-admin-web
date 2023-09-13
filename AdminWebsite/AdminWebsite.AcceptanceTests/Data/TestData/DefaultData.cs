@@ -9,7 +9,6 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public AssignJudge AssignJudge { get; set; }
         public AddParticipant AddParticipant { get; set; }
         public OtherInformationDetails OtherInformationDetails { get; set; }
-        public Questionnaire Questionnaire { get; set; }
         public BookingDetailsPage BookingDetailsPage { get; set; }
         public VideoAccessPoints VideoAccessPoints { get; set; }
     }

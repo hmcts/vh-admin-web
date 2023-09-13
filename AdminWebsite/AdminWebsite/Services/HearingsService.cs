@@ -68,7 +68,6 @@ namespace AdminWebsite.Services
                    editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
                    editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
                    editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
-                   editHearingRequest.QuestionnaireNotRequired == hearingDetailsResponse.QuestionnaireNotRequired &&
                    hearingCase.Number == editHearingRequest.Case.Number;
         }
         

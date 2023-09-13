@@ -10,6 +10,7 @@ import {
 import { Observable } from 'rxjs';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { BookingsModel } from '../common/model/bookings.model';
+import moment from 'moment';
 
 @Injectable({
     providedIn: 'root'
@@ -116,13 +117,15 @@ export class BookingsListService {
     private insertBookingIntoGroup(element: BookingsDetailsModel, groupBookings: BookingsListModel) {
         groupBookings.BookingsDetails.push(element);
         groupBookings.BookingsDetails.sort((a, b) => {
-            if (new Date(a.StartTime) < new Date(b.StartTime)) {
+            const dateA = moment(a.StartTime);
+            const dateB = moment(b.StartTime);
+            if (dateA.isBefore(dateB)) {
                 return -1;
             }
-            if (new Date(a.StartTime) > new Date(b.StartTime)) {
+            if (dateA.isAfter(dateB)) {
                 return 1;
             }
-            if (new Date(a.StartTime) === new Date(b.StartTime)) {
+            if (dateA.isSame(dateB)) {
                 return 0;
             }
         });
@@ -131,13 +134,15 @@ export class BookingsListService {
     private insertDateGroup(element: BookingsListModel, bookings: Array<BookingsListModel>) {
         bookings.push(element);
         bookings.sort((a, b) => {
-            if (new Date(a.BookingsDate) < new Date(b.BookingsDate)) {
+            const dateA = moment(a.BookingsDate);
+            const dateB = moment(b.BookingsDate);
+            if (dateA.isBefore(dateB)) {
                 return -1;
             }
-            if (new Date(a.BookingsDate) > new Date(b.BookingsDate)) {
+            if (dateA.isAfter(dateB)) {
                 return 1;
             }
-            if (new Date(a.BookingsDate) === new Date(b.BookingsDate)) {
+            if (dateA.isSame(dateB)) {
                 return 0;
             }
         });
@@ -169,7 +174,6 @@ export class BookingsListService {
             hearing.confirmed_by,
             hearing.confirmed_date,
             hearing.status,
-            hearing.questionnaire_not_required,
             hearing.audio_recording_required,
             hearing.cancel_reason,
             hearing.case_type_name,

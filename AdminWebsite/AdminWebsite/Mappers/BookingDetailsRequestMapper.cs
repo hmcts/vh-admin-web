@@ -30,7 +30,6 @@ public static class BookingDetailsRequestMapper
             HearingRoomName = bookingDetails.HearingRoomName,
             OtherInformation = bookingDetails.OtherInformation,
             CreatedBy = bookingDetails.CreatedBy,
-            QuestionnaireNotRequired = bookingDetails.QuestionnaireNotRequired,
             AudioRecordingRequired = bookingDetails.AudioRecordingRequired,
             IsMultiDayHearing = bookingDetails.IsMultiDayHearing,
             Endpoints = bookingDetails.Endpoints?

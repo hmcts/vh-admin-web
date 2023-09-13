@@ -23,7 +23,6 @@ public class BookingsHearingResponse
     public DateTime? ConfirmedDate { get; set; }
     public DateTime HearingDate { get; set; }
     public BookingStatus Status { get; set; }
-    public bool QuestionnaireNotRequired { get; set; }
     public bool AudioRecordingRequired { get; set; }
     public string CancelReason { get; set; }
     public Guid? GroupId { get; set; }

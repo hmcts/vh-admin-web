@@ -35,7 +35,6 @@ public static class HearingDetailsResponseMapper
             ConfirmedBy = hearingDetails.ConfirmedBy,
             ConfirmedDate = hearingDetails.ConfirmedDate,
             Status = (Contracts.Enums.BookingStatus)hearingDetails.Status,
-            QuestionnaireNotRequired = hearingDetails.QuestionnaireNotRequired,
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),

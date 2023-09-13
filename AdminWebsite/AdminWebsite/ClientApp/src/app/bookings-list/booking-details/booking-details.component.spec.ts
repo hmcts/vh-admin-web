@@ -55,7 +55,6 @@ export class BookingDetailsTestData {
             null,
             'Booked',
             true,
-            true,
             'reason',
             'Financial Remedy',
             'judge.green@hmcts.net',
@@ -155,7 +154,6 @@ let now = new Date();
 now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
-hearingModel.questionnaire_not_required = false;
 hearingModel.audio_recording_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
@@ -241,7 +239,6 @@ describe('BookingDetailsComponent', () => {
         expect(component.hearing.HearingId).toBe('44');
         expect(component.hearing.Duration).toBe(120);
         expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
         discardPeriodicTasks();
     }));
@@ -254,7 +251,6 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.hearing_id).toBe('44');
         expect(component.booking.scheduled_duration).toBe(120);
         expect(component.booking.cases[0].number).toBe('XX3456234565');
-        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
         expect(component.hearing.AllocatedTo).toBe('Not Allocated');
         discardPeriodicTasks();

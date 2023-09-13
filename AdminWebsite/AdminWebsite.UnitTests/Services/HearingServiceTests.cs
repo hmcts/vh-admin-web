@@ -107,7 +107,6 @@ namespace AdminWebsite.UnitTests.Services
                 OtherInformation = _updatedExistingParticipantHearingOriginal.OtherInformation,
                 ScheduledDateTime = _updatedExistingParticipantHearingOriginal.ScheduledDateTime,
                 ScheduledDuration = _updatedExistingParticipantHearingOriginal.ScheduledDuration,
-                QuestionnaireNotRequired = _updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired,
                 AudioRecordingRequired = _updatedExistingParticipantHearingOriginal.AudioRecordingRequired,
                 Case = new EditCaseRequest
                 {
@@ -153,16 +152,6 @@ namespace AdminWebsite.UnitTests.Services
             _editHearingRequest.ScheduledDuration =
                 _updatedExistingParticipantHearingOriginal.ScheduledDuration + 1;
             _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-            Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
-        }
-
-        [Test]
-        public void Should_return_false_when_QuestionnaireNotRequired_is_changed()
-        {
-            _editHearingRequest.QuestionnaireNotRequired =
-                !_updatedExistingParticipantHearingOriginal.QuestionnaireNotRequired;
-            _editHearingRequest.Participants.Add(new EditParticipantRequest { Id = Guid.NewGuid() });
-
             Assert.False(_service.IsAddingParticipantOnly(_editHearingRequest, _updatedExistingParticipantHearingOriginal.Map()));
         }
 

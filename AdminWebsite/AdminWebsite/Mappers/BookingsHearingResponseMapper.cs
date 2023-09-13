@@ -1,5 +1,3 @@
-using AdminWebsite.Contracts.Responses;
-using BookingsApi.Contract.V1.Responses;
 using BookingsHearingResponse = AdminWebsite.Contracts.Responses.BookingsHearingResponse;
 
 namespace AdminWebsite.Mappers;
@@ -28,7 +26,6 @@ public static class BookingsHearingResponseMapper
             ConfirmedDate = hearingResponse.ConfirmedDate,
             HearingDate = hearingResponse.HearingDate,
             Status = hearingResponse.Status,
-            QuestionnaireNotRequired = hearingResponse.QuestionnaireNotRequired,
             AudioRecordingRequired = hearingResponse.AudioRecordingRequired,
             CancelReason = hearingResponse.CancelReason,
             GroupId = hearingResponse.GroupId,

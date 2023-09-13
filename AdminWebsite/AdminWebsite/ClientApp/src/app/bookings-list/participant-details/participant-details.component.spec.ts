@@ -38,7 +38,6 @@ describe('ParticipantDetailsComponent', () => {
             null,
             null,
             'Booked',
-            false,
             true,
             'reason1',
             'Financial Remedy',

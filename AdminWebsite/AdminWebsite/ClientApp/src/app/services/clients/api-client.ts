@@ -3766,110 +3766,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Gets the all latest participants suitability answers for a VH officer.
-     * @param cursor (optional) The unique sequential value of participant ID.
-     * @param limit (optional) The max number of participants with suitability answers to be returned.
-     * @return Success
-     */
-    getSuitabilityAnswers(cursor: string | undefined, limit: number | undefined): Observable<SuitabilityAnswersResponse> {
-        let url_ = this.baseUrl + '/api/suitability-answers?';
-        if (cursor === null) throw new Error("The parameter 'cursor' cannot be null.");
-        else if (cursor !== undefined) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
-        if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
-        else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
-        url_ = url_.replace(/[?&]$/, '');
-
-        let options_: any = {
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('get', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processGetSuitabilityAnswers(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processGetSuitabilityAnswers(response_ as any);
-                        } catch (e) {
-                            return _observableThrow(e) as any as Observable<SuitabilityAnswersResponse>;
-                        }
-                    } else return _observableThrow(response_) as any as Observable<SuitabilityAnswersResponse>;
-                })
-            );
-    }
-
-    protected processGetSuitabilityAnswers(response: HttpResponseBase): Observable<SuitabilityAnswersResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = SuitabilityAnswersResponse.fromJS(resultData200);
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
      * Get Judges
      * @return Success
      */
@@ -5533,7 +5429,6 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_by?: string | undefined;
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
@@ -5568,7 +5463,6 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
             this.created_by = _data['created_by'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
             if (Array.isArray(_data['endpoints'])) {
@@ -5607,7 +5501,6 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
         data['created_by'] = this.created_by;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         data['is_multi_day_hearing'] = this.is_multi_day_hearing;
         if (Array.isArray(this.endpoints)) {
@@ -5633,7 +5526,6 @@ export interface IBookingDetailsRequest {
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_by?: string | undefined;
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     is_multi_day_hearing?: boolean;
     endpoints?: EndpointRequest[] | undefined;
@@ -6129,7 +6021,6 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     confirmed_date?: Date | undefined;
     hearing_date?: Date;
     status?: BookingStatus2;
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     group_id?: string | undefined;
@@ -6164,7 +6055,6 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
             this.hearing_date = _data['hearing_date'] ? new Date(_data['hearing_date'].toString()) : <any>undefined;
             this.status = _data['status'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             this.cancel_reason = _data['cancel_reason'];
             this.group_id = _data['group_id'];
@@ -6200,7 +6090,6 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
         data['hearing_date'] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
         data['status'] = this.status;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         data['cancel_reason'] = this.cancel_reason;
         data['group_id'] = this.group_id;
@@ -6229,7 +6118,6 @@ export interface IBookingsHearingResponse {
     confirmed_date?: Date | undefined;
     hearing_date?: Date;
     status?: BookingStatus2;
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     group_id?: string | undefined;
@@ -6565,8 +6453,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     confirmed_by?: string | undefined;
     confirmed_date?: Date | undefined;
     status?: BookingStatus;
-    /** V1 only */
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
@@ -6613,7 +6499,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.confirmed_by = _data['confirmed_by'];
             this.confirmed_date = _data['confirmed_date'] ? new Date(_data['confirmed_date'].toString()) : <any>undefined;
             this.status = _data['status'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             this.cancel_reason = _data['cancel_reason'];
             if (Array.isArray(_data['endpoints'])) {
@@ -6663,7 +6548,6 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data['confirmed_by'] = this.confirmed_by;
         data['confirmed_date'] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
         data['status'] = this.status;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         data['cancel_reason'] = this.cancel_reason;
         if (Array.isArray(this.endpoints)) {
@@ -6704,8 +6588,6 @@ export interface IHearingDetailsResponse {
     confirmed_by?: string | undefined;
     confirmed_date?: Date | undefined;
     status?: BookingStatus;
-    /** V1 only */
-    questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
@@ -7458,8 +7340,6 @@ export class EditHearingRequest implements IEditHearingRequest {
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
-    /** QuestionnaireNotRequired */
-    questionnaire_not_required?: boolean;
     /** Gets or sets audio recording required flag */
     audio_recording_required?: boolean;
     /** List of endpoints for the hearing */
@@ -7493,7 +7373,6 @@ export class EditHearingRequest implements IEditHearingRequest {
                     this.telephone_participants!.push(EditTelephoneParticipantRequest.fromJS(item));
             }
             this.other_information = _data['other_information'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
@@ -7525,7 +7404,6 @@ export class EditHearingRequest implements IEditHearingRequest {
             for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
         }
         data['other_information'] = this.other_information;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         if (Array.isArray(this.endpoints)) {
             data['endpoints'] = [];
@@ -7551,8 +7429,6 @@ export interface IEditHearingRequest {
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
-    /** QuestionnaireNotRequired */
-    questionnaire_not_required?: boolean;
     /** Gets or sets audio recording required flag */
     audio_recording_required?: boolean;
     /** List of endpoints for the hearing */
@@ -8951,79 +8827,6 @@ export interface IJusticeUserResponse {
     deleted?: boolean;
 }
 
-export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabilityAnswerResponse {
-    participant_id?: string;
-    case_number?: string | undefined;
-    hearing_role?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    updated_at?: Date;
-    representee?: string | undefined;
-    answers?: SuitabilityAnswerResponse[] | undefined;
-
-    constructor(data?: IParticipantSuitabilityAnswerResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.participant_id = _data['participant_id'];
-            this.case_number = _data['case_number'];
-            this.hearing_role = _data['hearing_role'];
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.updated_at = _data['updated_at'] ? new Date(_data['updated_at'].toString()) : <any>undefined;
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['answers'])) {
-                this.answers = [] as any;
-                for (let item of _data['answers']) this.answers!.push(SuitabilityAnswerResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ParticipantSuitabilityAnswerResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantSuitabilityAnswerResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['participant_id'] = this.participant_id;
-        data['case_number'] = this.case_number;
-        data['hearing_role'] = this.hearing_role;
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['updated_at'] = this.updated_at ? this.updated_at.toISOString() : <any>undefined;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.answers)) {
-            data['answers'] = [];
-            for (let item of this.answers) data['answers'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IParticipantSuitabilityAnswerResponse {
-    participant_id?: string;
-    case_number?: string | undefined;
-    hearing_role?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    updated_at?: Date;
-    representee?: string | undefined;
-    answers?: SuitabilityAnswerResponse[] | undefined;
-}
-
 export class PersonResponse implements IPersonResponse {
     id?: string;
     title?: string | undefined;
@@ -9089,108 +8892,6 @@ export interface IPersonResponse {
     telephone_number?: string | undefined;
     username?: string | undefined;
     organisation?: string | undefined;
-}
-
-export class SuitabilityAnswerResponse implements ISuitabilityAnswerResponse {
-    key?: string | undefined;
-    answer?: string | undefined;
-    extended_answer?: string | undefined;
-
-    constructor(data?: ISuitabilityAnswerResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.key = _data['key'];
-            this.answer = _data['answer'];
-            this.extended_answer = _data['extended_answer'];
-        }
-    }
-
-    static fromJS(data: any): SuitabilityAnswerResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new SuitabilityAnswerResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['key'] = this.key;
-        data['answer'] = this.answer;
-        data['extended_answer'] = this.extended_answer;
-        return data;
-    }
-}
-
-export interface ISuitabilityAnswerResponse {
-    key?: string | undefined;
-    answer?: string | undefined;
-    extended_answer?: string | undefined;
-}
-
-export class SuitabilityAnswersResponse implements ISuitabilityAnswersResponse {
-    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
-
-    constructor(data?: ISuitabilityAnswersResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data['participant_suitability_answer_response'])) {
-                this.participant_suitability_answer_response = [] as any;
-                for (let item of _data['participant_suitability_answer_response'])
-                    this.participant_suitability_answer_response!.push(ParticipantSuitabilityAnswerResponse.fromJS(item));
-            }
-            this.next_cursor = _data['next_cursor'];
-            this.limit = _data['limit'];
-            this.prev_page_url = _data['prev_page_url'];
-            this.next_page_url = _data['next_page_url'];
-        }
-    }
-
-    static fromJS(data: any): SuitabilityAnswersResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new SuitabilityAnswersResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.participant_suitability_answer_response)) {
-            data['participant_suitability_answer_response'] = [];
-            for (let item of this.participant_suitability_answer_response)
-                data['participant_suitability_answer_response'].push(item.toJSON());
-        }
-        data['next_cursor'] = this.next_cursor;
-        data['limit'] = this.limit;
-        data['prev_page_url'] = this.prev_page_url;
-        data['next_page_url'] = this.next_page_url;
-        return data;
-    }
-}
-
-export interface ISuitabilityAnswersResponse {
-    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
 }
 
 export class VhoNonAvailabilityWorkHoursResponse implements IVhoNonAvailabilityWorkHoursResponse {

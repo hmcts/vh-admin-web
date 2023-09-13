@@ -207,7 +207,6 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
-        hearing.questionnaire_not_required = booking.questionnaire_not_required;
         hearing.audio_recording_required = booking.audio_recording_required;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         return hearing;
@@ -283,7 +282,6 @@ export class VideoHearingsService {
         newHearingRequest.hearing_room_name = newRequest.court_room;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
         newHearingRequest.other_information = newRequest.other_information;
-        newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
         newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
@@ -306,7 +304,6 @@ export class VideoHearingsService {
         hearing.created_by = response.created_by;
         hearing.updated_date = new Date(response.updated_date);
         hearing.updated_by = response.updated_by;
-        hearing.questionnaire_not_required = response.questionnaire_not_required;
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);

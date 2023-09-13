@@ -48,10 +48,6 @@ public class HearingDetailsResponse
     public string ConfirmedBy { get; set; }
     public DateTime? ConfirmedDate { get; set; }
     public BookingStatus Status { get; set; }
-    /// <summary>
-    /// V1 only
-    /// </summary>
-    public bool QuestionnaireNotRequired { get; set; }
     public bool AudioRecordingRequired { get; set; }
     public string CancelReason { get; set; }
     public List<EndpointResponse> Endpoints { get; set; }

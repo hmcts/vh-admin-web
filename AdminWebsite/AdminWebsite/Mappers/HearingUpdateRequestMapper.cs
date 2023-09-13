@@ -20,13 +20,12 @@ namespace AdminWebsite.Mappers
                 UpdatedBy = userName,
                 Cases = new List<CaseRequest>
                 {
-                    new CaseRequest
+                    new()
                     {
                         Name = editHearingRequest.Case.Name,
                         Number = editHearingRequest.Case.Number
                     }
                 },
-                QuestionnaireNotRequired = false,
                 AudioRecordingRequired = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;
