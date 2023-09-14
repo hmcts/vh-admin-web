@@ -1,18 +1,25 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
+using AdminWebsite.Health;
 using AdminWebsite.Middleware;
 using AdminWebsite.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
+using Newtonsoft.Json;
 
 namespace AdminWebsite
 {
@@ -45,6 +52,8 @@ namespace AdminWebsite
 
             services.AddCustomTypes();
 
+            services.AddVhHealthChecks();
+
             services.RegisterAuthSchemes(Configuration);
             services.AddMvc(opt =>
             {
@@ -59,11 +68,13 @@ namespace AdminWebsite
         {
             Settings = Configuration.Get<Settings>();
 
-            services.Configure<Dom1AdConfiguration>(options => Configuration.Bind(Dom1AdConfiguration.ConfigSectionKey, options));
+            services.Configure<Dom1AdConfiguration>(options =>
+                Configuration.Bind(Dom1AdConfiguration.ConfigSectionKey, options));
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
-            services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));
+            services.Configure<ApplicationInsightsConfiguration>(options =>
+                Configuration.Bind("ApplicationInsights", options));
 
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
         }
@@ -118,13 +129,31 @@ namespace AdminWebsite
             app.UseHsts();
             // this is a workaround to set HSTS in a docker
             // reference from https://github.com/dotnet/dotnet-docker/issues/2268#issuecomment-714613811
-            app.Use(async (context, next) => {
+            app.Use(async (context, next) =>
+            {
                 context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
                 await next.Invoke();
             });
             app.UseXfo(options => options.SameOrigin());
 
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+
+                // TODO: need to update the config. currently this route is used for liveness and readiness checks
+                endpoints.MapHealthChecks("/healthcheck/health", new HealthCheckOptions()
+                {
+                    Predicate = check => check.Tags.Contains("self"),
+                    ResponseWriter = HealthCheckResponseWriter
+                });
+
+                // TODO: need to update the config. currently the liveness route is used for startup
+                endpoints.MapHealthChecks("health/liveness", new HealthCheckOptions()
+                {
+                    Predicate = check => check.Tags.Contains("services"),
+                    ResponseWriter = HealthCheckResponseWriter
+                });
+            });
 
             app.UseSpa(spa =>
             {
@@ -139,6 +168,21 @@ namespace AdminWebsite
                     spa.UseProxyToSpaDevelopmentServer(ngBaseUri);
                 }
             });
+        }
+
+        private async Task HealthCheckResponseWriter(HttpContext context, HealthReport report)
+        {
+            var result = JsonConvert.SerializeObject(new
+            {
+                status = report.Status.ToString(),
+                details = report.Entries.Select(e => new
+                {
+                    key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status),
+                    error = e.Value.Exception?.Message
+                })
+            });
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(result);
         }
     }
 }
