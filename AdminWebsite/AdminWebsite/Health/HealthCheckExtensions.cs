@@ -20,21 +20,21 @@ public static class HealthCheckExtensions
                     "/healthcheck/health"),
                 name: "Video API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"services"})
+                tags: new[] {"startup", "readiness"})
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.BookingsApiUrl),
                     "/healthcheck/health"),
                 name: "Bookings API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"services"})
+                tags: new[] {"startup", "readiness"})
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.UserApiUrl),
                     "/healthcheck/health"),
                 name: "User API",
                 failureStatus: HealthStatus.Unhealthy,
-                tags: new[] {"services"});
+                tags: new[] {"startup", "readiness"});
         return services;
     }
 }
