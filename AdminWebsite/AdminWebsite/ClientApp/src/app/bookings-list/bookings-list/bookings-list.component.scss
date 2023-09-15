@@ -65,28 +65,28 @@ p {
   font-weight: normal;
   text-decoration: none;
 }
+.vh-status {
+    color: #ffffff;
+    margin-left: 9px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 50%;
+    font-weight: 200;
+    text-align: center;
+}
 
 .vh-cancelled-booking,
 .vh-confirmation-failed {
-  color: #ffffff;
-  background-color: #d4351c;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
-  text-align: center;
+    background-color: #d4351c;
 }
 
-.vh-created-booking {
-  color: #ffffff;
-  background-color: #3868c2;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
-  text-align: center;
+
+.vh-created-booking{
+    background-color: #3868c2;
+}
+.vh-confirmed-booking-no-judge,
+.vh-created-booking-no-judge{
+    background-color: #d53880;
 }
 
 .vh-row-cancelled {

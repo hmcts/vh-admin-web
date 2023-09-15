@@ -129,9 +129,8 @@
     float: left;
 }
 
-.vh-created-booking {
+.vh-status{
     color: #ffffff;
-    background-color: #3868c2;
     padding-top: 7px;
     padding-bottom: 7px;
     width: 10%;
@@ -143,18 +142,17 @@
     float: left;
 }
 
+.vh-created-booking {
+    background-color: #3868c2;
+}
+
 .vh-created-confirmation-failed {
-    color: #ffffff;
     background-color: #d4351c;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    width: 10%;
-    font-weight: 300;
-    text-align: center;
-    margin-top: 1px;
-    font-size: 18px;
-    font-family: 'nta', Arial, sans-serif;
-    float: left;
+}
+
+.vh-created-booking-with-no-judge,
+.vh-confirmed-booking-with-no-judge{
+    background-color: #d53880;
 }
 
 .vh-btncancel {

@@ -105,4 +105,12 @@ export class BookingsDetailsModel {
     public get hasBookingConfirmationFailed(): boolean {
         return this.Status === 'Failed';
     }
+
+    public get hasBookingWithNoJudge(): boolean {
+        return this.Status === 'BookedWithoutJudge';
+    }
+
+    public get hasConfirmationWithNoJudge(): boolean {
+        return this.Status === 'ConfirmedWithoutJudge';
+    }
 }

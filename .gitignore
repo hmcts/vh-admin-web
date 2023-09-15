@@ -351,3 +351,4 @@ jasmine-tests
 
 .env
 .angular/
+/AdminWebsite/AdminWebsite/ClientApp/karma.conf.js
