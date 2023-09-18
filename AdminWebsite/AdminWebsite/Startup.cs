@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
@@ -10,16 +8,12 @@ using AdminWebsite.Services;
 using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
-using Newtonsoft.Json;
 
 namespace AdminWebsite
 {
@@ -140,23 +134,7 @@ namespace AdminWebsite
             {
                 endpoints.MapDefaultControllerRoute();
 
-                endpoints.MapHealthChecks("/healthcheck/liveness", new HealthCheckOptions()
-                {
-                    Predicate = check => check.Tags.Contains("self"),
-                    ResponseWriter = HealthCheckResponseWriter
-                });
-
-                endpoints.MapHealthChecks("/healthcheck/startup", new HealthCheckOptions()
-                {
-                    Predicate = check => check.Tags.Contains("startup"),
-                    ResponseWriter = HealthCheckResponseWriter
-                });
-                
-                endpoints.MapHealthChecks("/healthcheck/readiness", new HealthCheckOptions()
-                {
-                    Predicate = check => check.Tags.Contains("readiness"),
-                    ResponseWriter = HealthCheckResponseWriter
-                });
+                endpoints.AddVhHealthCheckRouteMaps();
             });
 
             app.UseSpa(spa =>
@@ -174,19 +152,6 @@ namespace AdminWebsite
             });
         }
 
-        private async Task HealthCheckResponseWriter(HttpContext context, HealthReport report)
-        {
-            var result = JsonConvert.SerializeObject(new
-            {
-                status = report.Status.ToString(),
-                details = report.Entries.Select(e => new
-                {
-                    key = e.Key, value = Enum.GetName(typeof(HealthStatus), e.Value.Status),
-                    error = e.Value.Exception?.Message
-                })
-            });
-            context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(result);
-        }
+        
     }
 }
