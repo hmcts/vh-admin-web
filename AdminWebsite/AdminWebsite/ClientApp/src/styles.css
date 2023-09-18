@@ -150,11 +150,6 @@
     background-color: #d4351c;
 }
 
-.vh-created-booking-with-no-judge,
-.vh-confirmed-booking-with-no-judge{
-    background-color: #d53880;
-}
-
 .vh-btncancel {
     background-color: #dee0e2 !important;
     color: #0b0b0b !important;

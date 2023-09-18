@@ -144,14 +144,14 @@
       >
         <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
-            <span *ngIf="!detail?.JudgeName && ejudFeatureFlag" class="vh-sml vh-nojudge">NO JUDGE ASSIGNED</span>
+            <span *ngIf="detail.hasBookingWithNoJudge || detail.hasConfirmationWithNoJudge" class="vh-sml vh-nojudge"
+              >NO JUDGE ASSIGNED</span
+            >
             <div class="vh-sml vh-col govuk-!-margin-top-2">{{ detail.StartTime | amLocal | amDateFormat : 'h:mm a' }}</div>
             <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{ detail.DurationInHoursAndMinutes }}</div>
             <div *ngIf="detail.isCancelled" class="vh-status vh-cancelled-booking">{{ detail.Status }}</div>
-            <div *ngIf="detail.isCreated" class="vh-status vh-created-booking">Confirmed</div>
+            <div *ngIf="detail.isCreated || detail.hasConfirmationWithNoJudge" class="vh-status vh-created-booking">Confirmed</div>
             <div *ngIf="detail.hasBookingConfirmationFailed" class="vh-status vh-confirmation-failed">Failed</div>
-            <div *ngIf="detail.hasBookingWithNoJudge" class="vh-status vh-created-booking-no-judge">No Judge</div>
-            <div *ngIf="detail.hasConfirmationWithNoJudge" class="vh-status vh-confirmed-booking-no-judge">Confirmed No Judge</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <div class="vh-sml">{{ detail.HearingCaseNumber }}</div>
