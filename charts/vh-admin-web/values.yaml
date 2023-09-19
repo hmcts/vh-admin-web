@@ -5,10 +5,9 @@ java:
   replicas: 2
   ingressHost: vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
   releaseNameOverride: vh-admin-web
-  readinessPath: /health/liveness
   livenessPath: /health/liveness
-  livenessDelay: 360
-  livenessPeriod: 120
+  readinessPath: /health/readiness
+  startupPath: /health/startup
   aadIdentityName: vh-aad-identity
   keyVaults:
     vh-infra-core:
