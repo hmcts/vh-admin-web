@@ -24,21 +24,21 @@ public static class HealthCheckExtensions
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.VideoApiUrl),
-                    "/healthcheck/health"),
+                    "/health/health"),
                 name: "Video API",
                 failureStatus: HealthStatus.Unhealthy,
                 tags: new[] {"startup", "readiness"})
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.BookingsApiUrl),
-                    "/healthcheck/health"),
+                    "/health/health"),
                 name: "Bookings API",
                 failureStatus: HealthStatus.Unhealthy,
                 tags: new[] {"startup", "readiness"})
             .AddUrlGroup(
                 new Uri(
                     new Uri(servicesConfiguration.UserApiUrl),
-                    "/healthcheck/health"),
+                    "/health/health"),
                 name: "User API",
                 failureStatus: HealthStatus.Unhealthy,
                 tags: new[] {"startup", "readiness"});
@@ -47,19 +47,19 @@ public static class HealthCheckExtensions
     
     public static IEndpointRouteBuilder AddVhHealthCheckRouteMaps(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapHealthChecks("/healthcheck/liveness", new HealthCheckOptions()
+        endpoints.MapHealthChecks("/health/liveness", new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("self"),
             ResponseWriter = HealthCheckResponseWriter
         });
 
-        endpoints.MapHealthChecks("/healthcheck/startup", new HealthCheckOptions()
+        endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("startup"),
             ResponseWriter = HealthCheckResponseWriter
         });
                 
-        endpoints.MapHealthChecks("/healthcheck/readiness", new HealthCheckOptions()
+        endpoints.MapHealthChecks("/health/readiness", new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("readiness"),
             ResponseWriter = HealthCheckResponseWriter
