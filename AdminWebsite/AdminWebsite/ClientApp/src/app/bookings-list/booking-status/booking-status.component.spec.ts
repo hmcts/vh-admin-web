@@ -2,7 +2,7 @@ import { BookingStatusComponent } from './booking-status.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MomentModule } from 'ngx-moment';
 
-fdescribe('BookingStatusComponent', () => {
+describe('BookingStatusComponent', () => {
     let component: BookingStatusComponent;
     let fixture: ComponentFixture<BookingStatusComponent>;
 
