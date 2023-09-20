@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 
 namespace AdminWebsite.Health;
 
+[ExcludeFromCodeCoverage]
 public static class HealthCheckExtensions
 {
     public static IServiceCollection AddVhHealthChecks(this IServiceCollection services)
