@@ -3,7 +3,7 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 @Component({
     selector: 'app-booking-status',
     templateUrl: './booking-status.component.html',
-    styleUrls: ['./booking-status.component.css']
+    styleUrls: ['./booking-status.component.scss']
 })
 export class BookingStatusComponent {
     @Input() bookingDetails: BookingsDetailsModel;
