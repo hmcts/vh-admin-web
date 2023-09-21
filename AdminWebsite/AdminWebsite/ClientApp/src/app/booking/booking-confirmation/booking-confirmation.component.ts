@@ -31,10 +31,12 @@ export class BookingConfirmationComponent implements OnInit {
     ) {}
 
     get bookingConfirmedSuccessfully(): boolean {
-        return this.status === BookingStatus.Booked ||
+        return (
+            this.status === BookingStatus.Booked ||
             this.status === BookingStatus.Created ||
             this.status === BookingStatus.BookedWithoutJudge ||
-            this.status === BookingStatus.ConfirmedWithoutJudge;
+            this.status === BookingStatus.ConfirmedWithoutJudge
+        );
     }
 
     ngOnInit() {
