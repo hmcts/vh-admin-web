@@ -11,11 +11,13 @@ import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
+import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
     isShowErrorSummary = false;
     caseAndHearingRoles: PartyModel[] = [];
+    hearingRoles: HearingRoleModel[] = [];
 
     participantDetails: ParticipantModel;
     existingParticipant: boolean;
@@ -27,6 +29,8 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     isRoleSelected = true;
     isPartySelected = true;
     isInterpreter = false;
+    representeeLabelText: string;
+    representeeErrorMessage: string;
 
     hearing: HearingModel;
 
@@ -53,6 +57,8 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     phone: FormControl;
     representing: FormControl;
     title: FormControl;
+
+    public judiciaryRoles = Constants.JudiciaryRoles;
 
     protected constants = Constants;
 
@@ -302,6 +308,14 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
     }
 
+    setupHearingRolesWithoutCaseRole() {
+        this.hearingRoleList = this.hearingRoles ? this.hearingRoles.map(x => x.name) : [];
+        this.updateHearingRoleList(this.hearingRoleList);
+        if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
+            this.hearingRoleList.unshift(this.constants.PleaseSelect);
+        }
+    }
+
     private setInterpretee(participant: ParticipantModel): string {
         let interpreteeEmail = '';
         if (participant.interpreterFor) {
@@ -335,16 +349,28 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     isRoleRepresentative(hearingRole: string, party: string): boolean {
-        const partyHearingRoles = this.caseAndHearingRoles.find(
-            x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
-        );
+        if (party === this.constants.PleaseSelect) {
+            // Assume that there is no party (ie ref data flag is on)
+            // TODO check that this won't cause issues with the flag off
+            const role = this.hearingRoles.find(x => x.name === hearingRole);
 
-        if (!partyHearingRoles) {
-            return false;
+            if (!role) {
+                return false;
+            }
+
+            return role && role.userRole === 'Representative';
+        } else {
+            const partyHearingRoles = this.caseAndHearingRoles.find(
+                x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
+            );
+
+            if (!partyHearingRoles) {
+                return false;
+            }
+
+            const findHearingRole = partyHearingRoles.hearingRoles.find(x => x.name === hearingRole);
+            return findHearingRole && findHearingRole.userRole === 'Representative';
         }
-
-        const findHearingRole = partyHearingRoles.hearingRoles.find(x => x.name === hearingRole);
-        return findHearingRole && findHearingRole.userRole === 'Representative';
     }
 
     roleSelected() {
@@ -378,6 +404,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         this.showDetails = true;
         this.isRepresentative = this.isRoleRepresentative(this.role.value, this.party.value);
         this.setInterpreterForValidation();
+        this.setRepresenteeLabel();
     }
 
     private isRoleInterpreter(hearingRole: string): boolean {
@@ -402,5 +429,16 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             participant.hearing_role_name === Constants.HearingRoles.Observer ||
             participant.case_role_name === Constants.HearingRoles.Observer
         );
+    }
+
+    private setRepresenteeLabel() {
+        let labelText = 'Representing';
+        let validationError = Constants.Error.RepresenteeErrorMsg;
+        if (this.role.value === 'Intermediaries') {
+            labelText = 'Intermediary for';
+            validationError = Constants.Error.IntermediaryForErrorMsg;
+        }
+        this.representeeLabelText = labelText;
+        this.representeeErrorMessage = validationError;
     }
 }

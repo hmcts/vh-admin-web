@@ -25,7 +25,8 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    AllocatedCsoResponse
+    AllocatedCsoResponse,
+    HearingRoleResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -139,6 +140,11 @@ export class VideoHearingsService {
         }
         const roles = await firstValueFrom(this.bhClient.getParticipantRoles(caseTypeName));
         this.participantRoles.set(caseTypeName, roles);
+        return roles;
+    }
+
+    async getHearingRoles(): Promise<HearingRoleResponse[]> {
+        const roles = await firstValueFrom(this.bhClient.getHearingRoles());
         return roles;
     }
 

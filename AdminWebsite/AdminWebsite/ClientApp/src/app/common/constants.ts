@@ -31,6 +31,7 @@ export const Constants = {
         CompanyErrorMsg: 'Please enter an organisation name',
         ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
+        IntermediaryForErrorMsg: 'Please enter an intermediary for',
         JudgeUserAccountErrorMsg: 'Please enter a valid judge or courtroom account',
         JudgeDisplayNameErrorMsg: 'Please enter a judge name',
         DisplayNameErrorMsg: 'Please enter a display name',
@@ -85,7 +86,12 @@ export const Constants = {
         UserRestored: 'Changes saved successfully.'
     },
     OtherParticipantRoles: ['Staff Member', 'Observer', 'Panel Member', 'Winger'],
-    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division', CrimeCrownCourt: 'Crime Crown Court' }
+    CaseTypes: { CourtOfAppealCriminalDivision: 'Court of Appeal Criminal Division', CrimeCrownCourt: 'Crime Crown Court' },
+    HearingRoleCodes: {
+        Judge: 'JUDG',
+        PanelMember: 'PANL',
+        StaffMember: 'STAF'
+    }
 };
 
 /*
