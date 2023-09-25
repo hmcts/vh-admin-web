@@ -96,6 +96,15 @@
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
       },
+      "AspNetCore.HealthChecks.Uris": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "eUljGsTGtRhwPuiduxu7z4Ju7n62Y4zk6CC/xp3NVagZFRJHk+i1Wew9Gwt2AkRxyWFDpZExVXL/trcy+V4HQg==",
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics.HealthChecks": "7.0.9",
+          "Microsoft.Extensions.Http": "7.0.0"
+        }
+      },
       "BookingsApi.Client": {
         "type": "Transitive",
         "resolved": "1.47.1-pr-0720-0003",
@@ -582,10 +591,10 @@
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.11",
-        "contentHash": "vdGEMIhzMGPgeb4WduWqJjgWK+WpkcLwssHJ5zKHQgqAaUdwbaMzMFz8bpOPkRfzwDVPomXmZChUh4fgpuxUjQ==",
+        "resolved": "7.0.0",
+        "contentHash": "f34u2eaqIjNO9YLHBz8rozVZ+TcFiFs0F3r7nUJd7FRkVSxk8u4OpoK226mi49MwexHOR2ibP9MFvRUaLilcQQ==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "3.1.11"
+          "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
       "Microsoft.Extensions.Configuration.Binder": {
@@ -633,16 +642,16 @@
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "Jg48cM12C8iqjpFMNXWEmJR/2jnmScV8Y8txVOayycLqHatLV2Cn4wuwj56KSOc/xVWwlWmq9Y5ebDH6awnexw==",
+        "resolved": "7.0.0",
+        "contentHash": "elNeOmkeX3eDVG6pYVeV82p29hr+UKDaBhrZyWvWLw/EVZSYEkZlQdkp0V39k/Xehs2Qa0mvoCvkVj3eQxNQ1Q==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.1"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "uKZr5b4w9nQE6UAXS4PqBFbg2qe6kS+pdsCbDG2kHjUaWT/B7EOcDraoR52H/4BoBIEH3By5co6Wioru7+v9Zg=="
+        "resolved": "7.0.0",
+        "contentHash": "h3j/QfmFN4S0w4C2A6X7arXij/M/OVw3uQHSOFxnND4DyAzO1F9eMX7Eti7lU/OkSthEE0WzRsfT/Dmx86jzCw=="
       },
       "Microsoft.Extensions.DependencyModel": {
         "type": "Transitive",
@@ -652,12 +661,28 @@
           "System.Text.Json": "4.7.2"
         }
       },
+      "Microsoft.Extensions.Diagnostics.HealthChecks": {
+        "type": "Transitive",
+        "resolved": "7.0.9",
+        "contentHash": "ubVLIa7GbGZrC7OWcMuFo/GJRYdVvqyMj7M4JFgWobXgh4QT2km40T46zLlXJfQWH68mh+g4iBJeg7VN3pldJA==",
+        "dependencies": {
+          "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions": "7.0.9",
+          "Microsoft.Extensions.Hosting.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.1",
+          "Microsoft.Extensions.Options": "7.0.1"
+        }
+      },
+      "Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions": {
+        "type": "Transitive",
+        "resolved": "7.0.9",
+        "contentHash": "myuiz5s14NEWffeiRH94GM1W9PkPyU/TLWCPjEIJ+Tck6QwRV89KHNwlJ+ZebRMlMTd64hwECybjLp1vIS4gTA=="
+      },
       "Microsoft.Extensions.FileProviders.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "0pd4/fho0gC12rQswaGQxbU34jOS1TPS8lZPpkFCH68ppQjHNHYle9iRuHeev1LhrJ94YPvzcRd8UmIuFk23Qw==",
+        "resolved": "7.0.0",
+        "contentHash": "NyawiW9ZT/liQb34k9YqBSNPLuuPkrjMgQZ24Y/xXX1RoiBkLUdPMaQTmxhZ5TYu8ZKZ9qayzil75JX95vGQUg==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "6.0.0"
+          "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
       "Microsoft.Extensions.FileProviders.Physical": {
@@ -677,30 +702,40 @@
       },
       "Microsoft.Extensions.Hosting.Abstractions": {
         "type": "Transitive",
-        "resolved": "2.2.0",
-        "contentHash": "+k4AEn68HOJat5gj1TWa6X28WlirNQO9sPIIeQbia+91n03esEtMSSoekSTpMjUzjqtJWQN3McVx0GvSPFHF/Q==",
+        "resolved": "7.0.0",
+        "contentHash": "43n9Je09z0p/7ViPxfRqs5BUItRLNVh5b6JH40F2Agkh2NBsY/jpNYTtbCcxrHCsA3oRmbR6RJBzUutB4VZvNQ==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "2.2.0",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "Microsoft.Extensions.FileProviders.Abstractions": "2.2.0",
-          "Microsoft.Extensions.Logging.Abstractions": "2.2.0"
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.FileProviders.Abstractions": "7.0.0"
+        }
+      },
+      "Microsoft.Extensions.Http": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "9Pq9f/CvOSz0t9yQa6g1uWpxa2sm13daLFm8EZwy9MaQUjKXWdNUXQwIxwhmba5N83UIqURiPHSNqGK1vfWF2w==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Logging": "7.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.0"
         }
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "SykGku44CIQJRM+eUzB61bGVNv0Lmgx70UAmhu1XLFXhP4I0rBSNJusfOlEpDN8T5JQsykIuM2lOd8J8nTnfAg==",
+        "resolved": "7.0.0",
+        "contentHash": "Nw2muoNrOG5U5qa2ZekXwudUn2BJcD41e65zwmDHb1fQegTX66UokLWZkJRpqSSHXDOWZ5V0iqhbxOEky91atA==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Binder": "3.1.1",
-          "Microsoft.Extensions.DependencyInjection": "3.1.1",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.1",
-          "Microsoft.Extensions.Options": "3.1.1"
+          "Microsoft.Extensions.DependencyInjection": "7.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.0"
         }
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA=="
+        "resolved": "7.0.1",
+        "contentHash": "pkeBFx0vqMW/A3aUVHh7MPu3WkBhaVlezhSZeb1c9XD0vUReYH1TLFSy5MxJgZfmz5LZzYoErMorlYZiwpOoNA=="
       },
       "Microsoft.Extensions.Logging.ApplicationInsights": {
         "type": "Transitive",
@@ -737,11 +772,11 @@
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "p2faCNhzXyG5oLLOV8n8dwg2rfqS4aRpIWu4qgwZMq+al3133mAQ+Hb822iwRoj3qnKM8zY4A6Jz/Vm/xWHvrA==",
+        "resolved": "7.0.1",
+        "contentHash": "pZRDYdN1FpepOIfHU62QoBQ6zdAoTvnjxFfqAzEd9Jhb2dfhA5i6jeTdgGgcgTWFRC7oT0+3XrbQu4LjvgX1Nw==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.1",
-          "Microsoft.Extensions.Primitives": "3.1.1"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
       "Microsoft.Extensions.Options.ConfigurationExtensions": {
@@ -757,8 +792,8 @@
       },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "9+PnzmQFfEFNR9J2aDTfJGGupShHjOuGw4VUv+JB044biSHrnmCIMD+mJHmb2H7YryrfBEXDurxQ47gJZdCKNQ==",
+        "resolved": "7.0.0",
+        "contentHash": "um1KU5kxcRp3CNuI8o/GrZtD4AIOXDk+RLsytjZ9QPok3ttLUelLKpilVPuaFT3TFjOhSibUAso0odbOaCDj3Q==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
@@ -1938,6 +1973,7 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
+          "AspNetCore.HealthChecks.Uris": "[7.0.0, )",
           "BookingsApi.Client": "[1.47.1-pr-0720-0003, )",
           "FluentValidation.AspNetCore": "[10.4.0, )",
           "LaunchDarkly.ServerSdk": "[7.0.3, )",
