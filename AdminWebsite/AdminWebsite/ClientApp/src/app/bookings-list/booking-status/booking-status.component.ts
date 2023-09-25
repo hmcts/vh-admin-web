@@ -11,7 +11,7 @@ export class BookingStatusComponent {
     public get statusMessage(): string {
         switch (this.bookingDetails.Status) {
             case 'Created':
-            case 'hasConfirmationWithNoJudge':
+            case 'ConfirmedWithoutJudge':
                 return 'Confirmed';
             case 'Cancelled':
                 return 'Cancelled';
