@@ -12,7 +12,9 @@
         <div *ngIf="hearing.isCancelled" id="lblCancelled" class="vh-cancelled-booking">{{ hearing.Status }}</div>
         <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
       </div>
-      <div *ngIf="hearing.isCreated || hearing.hasConfirmationWithNoJudge" id="lblCreated" class="vh-status vh-created-booking">Confirmed</div>
+      <div *ngIf="hearing.isCreated || hearing.hasConfirmationWithNoJudge" id="lblCreated" class="vh-status vh-created-booking">
+        Confirmed
+      </div>
       <div *ngIf="hearing.hasBookingConfirmationFailed" id="lblFailedConfirmation" class="vh-status vh-created-confirmation-failed">
         Failed
       </div>

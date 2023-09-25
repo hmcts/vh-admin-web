@@ -27,8 +27,8 @@ describe('BookingStatusComponent', () => {
             component.bookingDetails = { Status: 'Created' } as any;
             expect(component.statusMessage).toBe('Confirmed');
         });
-        it('should return Confirmed when status is hasConfirmationWithNoJudge', () => {
-            component.bookingDetails = { Status: 'hasConfirmationWithNoJudge' } as any;
+        it('should return Confirmed when status is ConfirmedWithoutJudge', () => {
+            component.bookingDetails = { Status: 'ConfirmedWithoutJudge' } as any;
             expect(component.statusMessage).toBe('Confirmed');
         });
         it('should return Cancelled when status is Cancelled', () => {
