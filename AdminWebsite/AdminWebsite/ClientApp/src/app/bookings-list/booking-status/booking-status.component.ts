@@ -7,6 +7,7 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 })
 export class BookingStatusComponent {
     @Input() bookingDetails: BookingsDetailsModel;
+    @Input() showTime = false;
 
     public get statusMessage(): string {
         switch (this.bookingDetails.Status) {

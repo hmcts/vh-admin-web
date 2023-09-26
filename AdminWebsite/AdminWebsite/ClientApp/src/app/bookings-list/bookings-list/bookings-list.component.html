@@ -144,7 +144,7 @@
       >
         <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
-            <app-booking-status [bookingDetails]="detail"></app-booking-status>
+            <app-booking-status [bookingDetails]="detail" [showTime]="true"></app-booking-status>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <div class="vh-sml">{{ detail.HearingCaseNumber }}</div>

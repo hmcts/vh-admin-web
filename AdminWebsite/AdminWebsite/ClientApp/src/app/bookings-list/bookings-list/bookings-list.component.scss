@@ -103,3 +103,10 @@ p {
 .ng-select.custom ::ng-deep .ng-placeholder {
   color: govuk-colour('black');
 }
+
+.vh-booking-detail-status {
+  width: 90%;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  float: left;
+}
