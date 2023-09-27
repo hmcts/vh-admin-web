@@ -155,6 +155,21 @@ describe('BookingConfirmationComponent', () => {
             // assert
             expect(component.bookingConfirmedSuccessfully).toBe(true);
         });
+        it('should return true, when booking successful but without a judge', () => {
+            // arrange: set spy to return Failed status hearing
+            newHearing.status = BookingStatus.BookedWithoutJudge;
+            videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
+            TestBed.overrideProvider(VideoHearingsService, { useValue: videoHearingsServiceSpy });
+            TestBed.compileComponents();
+            fixture = TestBed.createComponent(BookingConfirmationComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+            // act
+            component.ngOnInit();
+            component.retrieveSavedHearing();
+            // assert
+            expect(component.bookingConfirmedSuccessfully).toBe(true);
+        });
         it('should return false, when booking unsuccessful', () => {
             // arrange: set spy to return Failed status hearing
             newHearing.status = BookingStatus.Failed;
