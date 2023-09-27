@@ -4,9 +4,9 @@
     "net6.0": {
       "AspNetCore.HealthChecks.Uris": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "HjcyxnBr9JYhPozdhBsCaAGeJEQeQXN94AWnFxPnxw+wEGYIHandC8NwHg6e2CxTOE12lxMlVrBqnfuW8/6AZQ==",
+        "requested": "[6.0.3, )",
+        "resolved": "6.0.3",
+        "contentHash": "EY0Vh8s2UrbnyvM/QhbyYuCnbrBw36BKkdh5LqdINxqAGnlPFQXf+/UoNlH/76MTEyg+nvdp2wjr5MqWDkVFaQ==",
         "dependencies": {
           "Microsoft.Extensions.Diagnostics.HealthChecks": "6.0.0",
           "Microsoft.Extensions.Http": "6.0.0"
@@ -14,9 +14,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.47.1-pr-0720-0003, )",
-        "resolved": "1.47.1-pr-0720-0003",
-        "contentHash": "xxk51jERKtcoNU8L1iLENJLJJFD1Hwxffwo1gbsyZLzhVVx5MmRKS+ypFy/wzkk9zhP3mHZsCPYG2HuAgl4q8g==",
+        "requested": "[1.47.6, )",
+        "resolved": "1.47.6",
+        "contentHash": "O9oihWH0vAm2A4l3SFRCyq/cyQR+in3JmkLLotnf0kvVk1Uk5MqScYcthHlCmIUa1EODQfFZBaMrkGKGl488bA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
