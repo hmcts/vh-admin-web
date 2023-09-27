@@ -126,8 +126,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.videoHearingService
                     .getHearingRoles()
                     .then((data: CaseAndHearingRolesResponse[]) => {
-                        this.setupRolesWithoutCaseRole(data);
-                        this.removePartyValidators(); // TODO we should try and do this as part of initialiseForm()
+                        self.setupRolesWithoutCaseRole(data);
+                        self.removePartyValidators(); // TODO we should try and do this as part of initialiseForm()
+                        self.handleRoleSetupForEditMode(self);
                     })
                     .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
             } else {
@@ -135,20 +136,21 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     .getParticipantRoles(caseTypeIdentifier)
                     .then((data: CaseAndHearingRolesResponse[]) => {
                         self.setupRoles(data);
-                        if (self.editMode) {
-                            self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+                        self.handleRoleSetupForEditMode(self);
+                        // if (self.editMode) {
+                        //     self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
 
-                            if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
-                                // no participants, we need to add one
-                                self.showDetails = false;
-                                self.displayAdd();
-                            } else {
-                                self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
-                                self.displayNext();
-                            }
-                        }
+                        //     if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
+                        //         // no participants, we need to add one
+                        //         self.showDetails = false;
+                        //         self.displayAdd();
+                        //     } else {
+                        //         self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
+                        //         self.displayNext();
+                        //     }
+                        // }
 
-                        self.populateInterpretedForList();
+                        // self.populateInterpretedForList();
                     })
                     .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
             }
@@ -162,6 +164,23 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.subscribeForSearchEmailEvents();
             }
         }
+    }
+
+    handleRoleSetupForEditMode(self: AddParticipantComponent) {
+        if (self.editMode) {
+            self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+
+            if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
+                // no participants, we need to add one
+                self.showDetails = false;
+                self.displayAdd();
+            } else {
+                self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
+                self.displayNext();
+            }
+        }
+
+        self.populateInterpretedForList();
     }
 
     subscribeForSearchEmailEvents() {
@@ -492,9 +511,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.title = this.title.value === this.constants.PleaseSelect ? null : this.title.value;
         newParticipant.case_role_name = this.party.value;
         if (this.referenceDataFeatureFlag) {
-            newParticipant.case_role_name = '';
+            newParticipant.case_role_name = null;
         }
         newParticipant.hearing_role_name = this.role.value;
+        if (this.referenceDataFeatureFlag) {
+            newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
+        }
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
         newParticipant.display_name = this.displayName.value;
         if (this.isRoleRepresentative(this.role.value, this.party.value)) {

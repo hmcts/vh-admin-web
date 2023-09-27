@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AdminWebsite.Contracts.Requests;
 using V1 = BookingsApi.Contract.V1.Requests;
@@ -43,13 +42,15 @@ public static class BookingDetailsRequestMapper
         };
     }
     
-    [ExcludeFromCodeCoverage] //Remove once used
     public static V2.BookNewHearingRequestV2 MapToV2(this BookingDetailsRequest bookingDetails)
     {
         return new V2.BookNewHearingRequestV2
         {
             ScheduledDateTime = bookingDetails.ScheduledDateTime,
             ScheduledDuration = bookingDetails.ScheduledDuration,
+            HearingVenueCode = bookingDetails.HearingVenueCode,
+            ServiceId = bookingDetails.CaseTypeServiceId,
+            HearingTypeCode = bookingDetails.HearingTypeCode,
             Cases = bookingDetails.Cases
                 .Select(cr => new V2.CaseRequestV2
                 {

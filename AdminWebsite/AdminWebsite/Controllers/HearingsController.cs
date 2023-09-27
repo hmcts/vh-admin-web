@@ -91,14 +91,10 @@ namespace AdminWebsite.Controllers
                 }
 
                 newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
-            
-                var newBookingRequestV1 = newBookingRequest.MapToV1();
-                _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequestV1);
-            
-                _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                return Created("",hearingDetailsResponse.Map());
+                var response = await BookNewHearing(newBookingRequest);
+                
+                return Created("", response);
             }
             catch (BookingsApiException e)
             {
@@ -114,6 +110,39 @@ namespace AdminWebsite.Controllers
                     e.Message, JsonConvert.SerializeObject(newBookingRequest));
                 throw;
             }
+        }
+
+        private async Task<object> BookNewHearing(BookingDetailsRequest newBookingRequest)
+        {
+            object response;
+            Guid hearingId;
+                
+            _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
+                
+            if (_featureToggles.ReferenceDataToggle())
+            {
+                var newBookingRequestV2 = newBookingRequest.MapToV2();
+                    
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingWithCodeAsync(newBookingRequestV2);
+
+                hearingId = hearingDetailsResponse.Id;
+                    
+                response = hearingDetailsResponse.Map();
+            }
+            else
+            {
+                var newBookingRequestV1 = newBookingRequest.MapToV1();
+
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequestV1);
+                    
+                hearingId = hearingDetailsResponse.Id;
+                    
+                response = hearingDetailsResponse.Map();
+            }
+
+            _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingId);
+
+            return response;
         }
 
         /// <summary>
@@ -297,8 +326,16 @@ namespace AdminWebsite.Controllers
                 }
 
                 //Save hearing details
-                var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
-                await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
+                if (_featureToggles.ReferenceDataToggle())
+                {
+                    var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
+                    await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
+                }
+                else
+                {
+                    var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
+                    await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
+                }
                 await UpdateParticipants(hearingId, request, originalHearing);
                 
                 if (updatedHearing.Status == BookingStatus.Failed) return Ok(updatedHearing);

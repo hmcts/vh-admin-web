@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using AdminWebsite.Contracts.Requests;
 using V1 = BookingsApi.Contract.V1.Requests;
 using V2 = BookingsApi.Contract.V2.Requests;
@@ -25,7 +24,6 @@ public static class ParticipantRequestMapper
         };
     }
     
-    [ExcludeFromCodeCoverage] //remove once used
     public static V2.ParticipantRequestV2 MapToV2(this ParticipantRequest participantRequest)
     {
         return new V2.ParticipantRequestV2
@@ -35,6 +33,7 @@ public static class ParticipantRequestMapper
             DisplayName = participantRequest.DisplayName,
             FirstName = participantRequest.FirstName,
             HearingRoleName = participantRequest.HearingRoleName,
+            HearingRoleCode = participantRequest.HearingRoleCode,
             LastName = participantRequest.LastName,
             MiddleNames = participantRequest.MiddleNames,
             Representee = participantRequest.Representee,

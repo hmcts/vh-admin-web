@@ -52,12 +52,15 @@ namespace AdminWebsite.Configuration
         
         public bool ReferenceDataToggle()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
+            // TODO for testing only - don't merge
+            return true;
 
-            return _ldClient.BoolVariation(ReferenceDataToggleKey, _context);
+            // if (!_ldClient.Initialized)
+            // {
+            //     throw new InvalidOperationException("LaunchDarkly client not initialized");
+            // }
+            //
+            // return _ldClient.BoolVariation(ReferenceDataToggleKey, _context);
         }
     }
 }

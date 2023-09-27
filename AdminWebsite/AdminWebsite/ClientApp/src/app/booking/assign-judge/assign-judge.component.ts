@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, combineLatest } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -15,8 +15,9 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { first, map } from 'rxjs/operators';
+import { first, map, takeUntil } from 'rxjs/operators';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -50,6 +51,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isValidEmail = true;
     showStaffMemberFeature: boolean;
     ejudFeatureFlag = false;
+    referenceDataFeatureFlag = false;
+    destroyed$ = new Subject<void>();
 
     constructor(
         private fb: FormBuilder,
@@ -60,18 +63,28 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
         private configService: ConfigService,
-        private featureService: FeatureFlagService
+        //private featureService: FeatureFlagService,
+        private launchDarklyService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
-        featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
+        // featureService
+        //     .getFeatureFlagByName('EJudFeature')
+        //     .pipe(first())
+        //     .subscribe(result => {
+        //         this.ejudFeatureFlag = result;
+        //     });
     }
 
     ngOnInit() {
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+
+        // TODO move to BookingBaseComponent
+        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
+            this.referenceDataFeatureFlag = referenceDataFlag;
+            this.ejudFeatureFlag = ejudFeatureFlag;
+        });
+
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.initForm();
@@ -372,7 +385,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
                 judge.case_role_name = 'Judge';
+                if (this.referenceDataFeatureFlag) {
+                    judge.case_role_name = null;
+                }
                 judge.hearing_role_name = 'Judge';
+                judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
                 this.hearing.participants.unshift(judge);
                 this.canNavigate = true;

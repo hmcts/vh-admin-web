@@ -49,6 +49,7 @@ public static class HearingDetailsResponseMapper
             Id = hearingDetails.Id,
             ScheduledDateTime = hearingDetails.ScheduledDateTime,
             ScheduledDuration = hearingDetails.ScheduledDuration,
+            HearingVenueName = hearingDetails.HearingVenueName,
             HearingVenueCode = hearingDetails.HearingVenueCode,
             ServiceId = hearingDetails.ServiceId,
             HearingTypeCode = hearingDetails.HearingTypeCode,

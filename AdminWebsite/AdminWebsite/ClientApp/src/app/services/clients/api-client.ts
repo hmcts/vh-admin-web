@@ -5515,8 +5515,11 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
+    hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
+    hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
@@ -5543,8 +5546,11 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_name = _data['hearing_venue_name'];
+            this.hearing_venue_code = _data['hearing_venue_code'];
             this.case_type_name = _data['case_type_name'];
+            this.case_type_service_id = _data['case_type_service_id'];
             this.hearing_type_name = _data['hearing_type_name'];
+            this.hearing_type_code = _data['hearing_type_code'];
             if (Array.isArray(_data['cases'])) {
                 this.cases = [] as any;
                 for (let item of _data['cases']) this.cases!.push(CaseRequest.fromJS(item));
@@ -5581,8 +5587,11 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_name'] = this.hearing_venue_name;
+        data['hearing_venue_code'] = this.hearing_venue_code;
         data['case_type_name'] = this.case_type_name;
+        data['case_type_service_id'] = this.case_type_service_id;
         data['hearing_type_name'] = this.hearing_type_name;
+        data['hearing_type_code'] = this.hearing_type_code;
         if (Array.isArray(this.cases)) {
             data['cases'] = [];
             for (let item of this.cases) data['cases'].push(item.toJSON());
@@ -5612,8 +5621,11 @@ export interface IBookingDetailsRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
     hearing_venue_name?: string | undefined;
+    hearing_venue_code?: string | undefined;
     case_type_name?: string | undefined;
+    case_type_service_id?: string | undefined;
     hearing_type_name?: string | undefined;
+    hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
@@ -5854,6 +5866,7 @@ export class ParticipantRequest implements IParticipantRequest {
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
+    hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
 
@@ -5877,6 +5890,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.display_name = _data['display_name'];
             this.case_role_name = _data['case_role_name'];
             this.hearing_role_name = _data['hearing_role_name'];
+            this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
         }
@@ -5901,6 +5915,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data['display_name'] = this.display_name;
         data['case_role_name'] = this.case_role_name;
         data['hearing_role_name'] = this.hearing_role_name;
+        data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
         return data;
@@ -5918,6 +5933,7 @@ export interface IParticipantRequest {
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
+    hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
 }
@@ -6691,7 +6707,6 @@ export class HearingRoleResponse implements IHearingRoleResponse {
     name?: string | undefined;
     user_role?: string | undefined;
     code?: string | undefined;
-    welsh_name?: string | undefined;
 
     constructor(data?: IHearingRoleResponse) {
         if (data) {
@@ -6706,7 +6721,6 @@ export class HearingRoleResponse implements IHearingRoleResponse {
             this.name = _data['name'];
             this.user_role = _data['user_role'];
             this.code = _data['code'];
-            this.welsh_name = _data['welsh_name'];
         }
     }
 
@@ -6722,7 +6736,6 @@ export class HearingRoleResponse implements IHearingRoleResponse {
         data['name'] = this.name;
         data['user_role'] = this.user_role;
         data['code'] = this.code;
-        data['welsh_name'] = this.welsh_name;
         return data;
     }
 }
@@ -6731,7 +6744,6 @@ export interface IHearingRoleResponse {
     name?: string | undefined;
     user_role?: string | undefined;
     code?: string | undefined;
-    welsh_name?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */
@@ -6908,6 +6920,7 @@ export class ParticipantResponse implements IParticipantResponse {
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
+    hearing_role_code?: string | undefined;
     user_role_name?: string | undefined;
     title?: string | undefined;
     first_name?: string | undefined;
@@ -6934,6 +6947,7 @@ export class ParticipantResponse implements IParticipantResponse {
             this.display_name = _data['display_name'];
             this.case_role_name = _data['case_role_name'];
             this.hearing_role_name = _data['hearing_role_name'];
+            this.hearing_role_code = _data['hearing_role_code'];
             this.user_role_name = _data['user_role_name'];
             this.title = _data['title'];
             this.first_name = _data['first_name'];
@@ -6964,6 +6978,7 @@ export class ParticipantResponse implements IParticipantResponse {
         data['display_name'] = this.display_name;
         data['case_role_name'] = this.case_role_name;
         data['hearing_role_name'] = this.hearing_role_name;
+        data['hearing_role_code'] = this.hearing_role_code;
         data['user_role_name'] = this.user_role_name;
         data['title'] = this.title;
         data['first_name'] = this.first_name;
@@ -6987,6 +7002,7 @@ export interface IParticipantResponse {
     display_name?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
+    hearing_role_code?: string | undefined;
     user_role_name?: string | undefined;
     title?: string | undefined;
     first_name?: string | undefined;
@@ -7472,6 +7488,8 @@ export class EditHearingRequest implements IEditHearingRequest {
     scheduled_duration?: number;
     /** The name of the hearing venue */
     hearing_venue_name?: string | undefined;
+    /** The code of the hearing venue */
+    hearing_venue_code?: string | undefined;
     /** The hearing room name at the hearing venue */
     hearing_room_name?: string | undefined;
     case!: EditCaseRequest;
@@ -7501,6 +7519,7 @@ export class EditHearingRequest implements IEditHearingRequest {
             this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
             this.scheduled_duration = _data['scheduled_duration'];
             this.hearing_venue_name = _data['hearing_venue_name'];
+            this.hearing_venue_code = _data['hearing_venue_code'];
             this.hearing_room_name = _data['hearing_room_name'];
             this.case = _data['case'] ? EditCaseRequest.fromJS(_data['case']) : new EditCaseRequest();
             if (Array.isArray(_data['participants'])) {
@@ -7533,6 +7552,7 @@ export class EditHearingRequest implements IEditHearingRequest {
         data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data['scheduled_duration'] = this.scheduled_duration;
         data['hearing_venue_name'] = this.hearing_venue_name;
+        data['hearing_venue_code'] = this.hearing_venue_code;
         data['hearing_room_name'] = this.hearing_room_name;
         data['case'] = this.case ? this.case.toJSON() : <any>undefined;
         if (Array.isArray(this.participants)) {
@@ -7561,6 +7581,8 @@ export interface IEditHearingRequest {
     scheduled_duration?: number;
     /** The name of the hearing venue */
     hearing_venue_name?: string | undefined;
+    /** The code of the hearing venue */
+    hearing_venue_code?: string | undefined;
     /** The hearing room name at the hearing venue */
     hearing_room_name?: string | undefined;
     case: EditCaseRequest;
@@ -7597,6 +7619,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     case_role_name?: string | undefined;
     /** The name of the participant's hearing role */
     hearing_role_name?: string | undefined;
+    /** The code of the participant's hearing role */
+    hearing_role_code?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
     /** Organisation name */
@@ -7624,6 +7648,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.display_name = _data['display_name'];
             this.case_role_name = _data['case_role_name'];
             this.hearing_role_name = _data['hearing_role_name'];
+            this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
             if (Array.isArray(_data['linked_participants'])) {
@@ -7652,6 +7677,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['display_name'] = this.display_name;
         data['case_role_name'] = this.case_role_name;
         data['hearing_role_name'] = this.hearing_role_name;
+        data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
         if (Array.isArray(this.linked_participants)) {
@@ -7684,6 +7710,8 @@ export interface IEditParticipantRequest {
     case_role_name?: string | undefined;
     /** The name of the participant's hearing role */
     hearing_role_name?: string | undefined;
+    /** The code of the participant's hearing role */
+    hearing_role_code?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
     /** Organisation name */

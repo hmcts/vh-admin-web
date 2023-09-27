@@ -11,8 +11,7 @@ namespace AdminWebsite.Mappers
             {
                 Name = hearingRoleResponse.Name,
                 UserRole = hearingRoleResponse.UserRole,
-                Code = hearingRoleResponse.Code,
-                WelshName = hearingRoleResponse.WelshName
+                Code = hearingRoleResponse.Code
             };
         }
     }

@@ -5,6 +5,5 @@ namespace AdminWebsite.Contracts.Responses
         public string Name { get; set; }
         public string UserRole { get; set; }
         public string Code { get; set; }
-        public string WelshName { get; set; }
     }
 }
