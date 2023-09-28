@@ -127,7 +127,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     .getHearingRoles()
                     .then((data: CaseAndHearingRolesResponse[]) => {
                         self.setupRolesWithoutCaseRole(data);
-                        self.removePartyValidators(); // TODO we should try and do this as part of initialiseForm()
+                        self.removePartyValidators();
                         self.handleRoleSetupForEditMode(self);
                     })
                     .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
@@ -137,20 +137,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     .then((data: CaseAndHearingRolesResponse[]) => {
                         self.setupRoles(data);
                         self.handleRoleSetupForEditMode(self);
-                        // if (self.editMode) {
-                        //     self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
-
-                        //     if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
-                        //         // no participants, we need to add one
-                        //         self.showDetails = false;
-                        //         self.displayAdd();
-                        //     } else {
-                        //         self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
-                        //         self.displayNext();
-                        //     }
-                        // }
-
-                        // self.populateInterpretedForList();
                     })
                     .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
             }

@@ -9,7 +9,13 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, PersonResponse } from '../../services/clients/api-client';
+import {
+    CaseAndHearingRolesResponse,
+    ClientSettingsResponse,
+    HearingRole,
+    HearingRoleResponse,
+    PersonResponse
+} from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -40,6 +46,33 @@ const roleList: CaseAndHearingRolesResponse[] = [
             new HearingRole({ name: 'presenting officer', user_role: 'Representative' }),
             new HearingRole({ name: 'Interpreter', user_role: 'Individual' })
         ]
+    })
+];
+const flatRoleList: HearingRoleResponse[] = [
+    new HearingRoleResponse({
+        name: 'Applicant',
+        code: 'APPL',
+        user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Interpreter',
+        code: 'INTP',
+        user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Interpreter',
+        code: 'INTP',
+        user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Judge',
+        code: 'JUDG',
+        user_role: 'Judge'
+    }),
+    new HearingRoleResponse({
+        name: 'Panel Member',
+        code: 'PANL',
+        user_role: 'Judicial Office Holder'
     })
 ];
 
@@ -218,7 +251,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
     'updateHearingRequest',
     'cancelRequest',
     'isConferenceClosed',
-    'isHearingAboutToStart'
+    'isHearingAboutToStart',
+    'getHearingRoles'
 ]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
@@ -247,6 +281,7 @@ describe('AddParticipantComponent', () => {
         const hearing = initHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication', 'removeParticipant']);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
@@ -1006,7 +1041,8 @@ describe('AddParticipantComponent edit mode', () => {
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',
-            'isHearingAboutToStart'
+            'isHearingAboutToStart',
+            'getHearingRoles'
         ]);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
@@ -1033,6 +1069,7 @@ describe('AddParticipantComponent edit mode', () => {
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(roleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
@@ -1425,11 +1462,13 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',
-            'isHearingAboutToStart'
+            'isHearingAboutToStart',
+            'getHearingRoles'
         ]);
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
@@ -1666,6 +1705,7 @@ describe('AddParticipantComponent set representer', () => {
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');

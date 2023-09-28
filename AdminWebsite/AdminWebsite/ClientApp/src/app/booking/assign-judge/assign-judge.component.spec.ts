@@ -27,6 +27,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
 import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -76,7 +77,7 @@ let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let clientApiSpy: jasmine.SpyObj<BHClient>;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
@@ -88,7 +89,6 @@ describe('AssignJudgeComponent', () => {
     beforeEach(waitForAsync(() => {
         const newHearing = initHearingRequest();
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureFlag']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
         emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
@@ -107,7 +107,8 @@ describe('AssignJudgeComponent', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         emailValidationServiceSpy.validateEmail.and.returnValue(true);
         emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -124,7 +125,7 @@ describe('AssignJudgeComponent', () => {
                 { provide: JudgeDataService, useValue: judgeDataServiceSpy },
                 { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: BHClient, useValue: clientApiSpy },
                 {
                     provide: Router,

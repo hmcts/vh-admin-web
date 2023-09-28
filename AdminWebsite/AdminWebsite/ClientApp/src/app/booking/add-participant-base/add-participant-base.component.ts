@@ -351,7 +351,6 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     isRoleRepresentative(hearingRole: string, party: string): boolean {
         if (party === this.constants.PleaseSelect) {
             // Assume that there is no party (ie ref data flag is on)
-            // TODO check that this won't cause issues with the flag off
             const role = this.hearingRoles.find(x => x.name === hearingRole);
 
             if (!role) {

@@ -79,7 +79,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
         const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
 
-        // TODO move to BookingBaseComponent
         combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
             this.referenceDataFeatureFlag = referenceDataFlag;
             this.ejudFeatureFlag = ejudFeatureFlag;
