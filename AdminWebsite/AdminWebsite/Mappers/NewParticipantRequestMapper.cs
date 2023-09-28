@@ -29,12 +29,10 @@ namespace AdminWebsite.Mappers
         {
             var newParticipant = new ParticipantRequestV2
             {
-                CaseRoleName = participant.CaseRoleName,
                 ContactEmail = participant.ContactEmail,
                 DisplayName = participant.DisplayName,
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
-                HearingRoleName = participant.HearingRoleName,
                 HearingRoleCode = participant.HearingRoleCode,
                 MiddleNames = participant.MiddleNames,
                 Representee = participant.Representee,

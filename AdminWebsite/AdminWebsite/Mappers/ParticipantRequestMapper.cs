@@ -28,11 +28,9 @@ public static class ParticipantRequestMapper
     {
         return new V2.ParticipantRequestV2
         {
-            CaseRoleName = participantRequest.CaseRoleName,
             ContactEmail = participantRequest.ContactEmail,
             DisplayName = participantRequest.DisplayName,
             FirstName = participantRequest.FirstName,
-            HearingRoleName = participantRequest.HearingRoleName,
             HearingRoleCode = participantRequest.HearingRoleCode,
             LastName = participantRequest.LastName,
             MiddleNames = participantRequest.MiddleNames,
