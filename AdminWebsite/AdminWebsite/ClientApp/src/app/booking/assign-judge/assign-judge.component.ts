@@ -378,9 +378,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 judge.case_role_name = 'Judge';
                 if (this.referenceDataFeatureFlag) {
                     judge.case_role_name = null;
+                    judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 }
                 judge.hearing_role_name = 'Judge';
-                judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
                 this.hearing.participants.unshift(judge);
                 this.canNavigate = true;

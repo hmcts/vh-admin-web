@@ -26,7 +26,6 @@ import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.co
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 function initHearingRequest(): HearingModel {
@@ -618,6 +617,7 @@ describe('AssignJudgeComponent', () => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
                     videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
                     component.judge.display_name = updatedJudgeDisplayName;
+                    component.referenceDataFeatureFlag = false;
                 });
 
                 it('should add judge account when none present', () => {
@@ -626,6 +626,10 @@ describe('AssignJudgeComponent', () => {
 
                 it('should update judge account when one previously present', () => {
                     component.hearing.participants.unshift(alternateJudge);
+                });
+
+                it('should add update judge when reference data flag is on', () => {
+                    component.referenceDataFeatureFlag = true;
                 });
                 afterEach(() => {
                     component.updateJudge(judge);
@@ -636,6 +640,10 @@ describe('AssignJudgeComponent', () => {
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
                     expect(updatedJudges[0]).toBe(judge);
+                    if (component.referenceDataFeatureFlag) {
+                        expect(updatedJudges[0].case_role_name).toBeNull();
+                        expect(updatedJudges[0].hearing_role_code).toBe(Constants.HearingRoleCodes.Judge);
+                    }
 
                     expect(component.canNavigate).toBe(true);
                     expect(component.isJudgeParticipantError).toBe(false);

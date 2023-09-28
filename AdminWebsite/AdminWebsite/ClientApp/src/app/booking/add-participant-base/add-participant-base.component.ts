@@ -433,7 +433,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     private setRepresenteeLabel() {
         let labelText = 'Representing';
         let validationError = Constants.Error.RepresenteeErrorMsg;
-        if (this.role.value === 'Intermediaries') {
+        if (this.role.value === 'Intermediary') {
             labelText = 'Intermediary for';
             validationError = Constants.Error.IntermediaryForErrorMsg;
         }

@@ -125,7 +125,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             if (this.referenceDataFeatureFlag) {
                 this.videoHearingService
                     .getHearingRoles()
-                    .then((data: CaseAndHearingRolesResponse[]) => {
+                    .then((data: HearingRoleResponse[]) => {
                         self.setupRolesWithoutCaseRole(data);
                         self.removePartyValidators();
                         self.handleRoleSetupForEditMode(self);
