@@ -51,14 +51,14 @@ public static class BookingDetailsRequestMapper
             HearingVenueCode = bookingDetails.HearingVenueCode,
             ServiceId = bookingDetails.CaseTypeServiceId,
             HearingTypeCode = bookingDetails.HearingTypeCode,
-            Cases = bookingDetails.Cases
+            Cases = bookingDetails.Cases?
                 .Select(cr => new V2.CaseRequestV2
                 {
                     Number = cr.Number,
                     Name = cr.Name,
                     IsLeadCase = cr.IsLeadCase
                 }).ToList(),
-            Participants = bookingDetails.Participants
+            Participants = bookingDetails.Participants?
                 .Select(p => p.MapToV2())
                 .ToList(),
             HearingRoomName = bookingDetails.HearingRoomName,
@@ -66,12 +66,12 @@ public static class BookingDetailsRequestMapper
             CreatedBy = bookingDetails.CreatedBy,
             AudioRecordingRequired = bookingDetails.AudioRecordingRequired,
             IsMultiDayHearing = bookingDetails.IsMultiDayHearing,
-            Endpoints = bookingDetails.Endpoints.Select(e => new V2.EndpointRequestV2
+            Endpoints = bookingDetails.Endpoints?.Select(e => new V2.EndpointRequestV2
             {
                 DisplayName = e.DisplayName,
                 DefenceAdvocateContactEmail = e.DefenceAdvocateContactEmail,
             }).ToList(),
-            LinkedParticipants = bookingDetails.LinkedParticipants.Select(lp => lp.MapToV2()).ToList()
+            LinkedParticipants = bookingDetails.LinkedParticipants?.Select(lp => lp.MapToV2()).ToList()
         };
     }
 }

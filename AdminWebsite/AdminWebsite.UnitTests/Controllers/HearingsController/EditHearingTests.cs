@@ -758,6 +758,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
+            var existingParticipant = updatedHearing.Participants.First(x => x.ContactEmail == "old@domain.net");
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
+            {
+                Id = Guid.NewGuid(),
+                ContactEmail = "interpreter@domain.net",
+                HearingRoleCode = "INTP",
+                LinkedParticipants = new List<LinkedParticipant>
+                {
+                    new()
+                    {
+                        ParticipantContactEmail = "interpreter@domain.net",
+                        LinkedParticipantContactEmail = existingParticipant.ContactEmail,
+                        Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
+                    }
+                }
+            });
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
+            {
+                Id = existingParticipant.Id,
+                ContactEmail = existingParticipant.ContactEmail,
+                HearingRoleCode = "APPL",
+                LinkedParticipants = new List<LinkedParticipant>
+                {
+                    new()
+                    {
+                        ParticipantContactEmail = existingParticipant.ContactEmail,
+                        LinkedParticipantContactEmail = "interpreter@domain.net",
+                        Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
+                    }
+                }
+            });
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
