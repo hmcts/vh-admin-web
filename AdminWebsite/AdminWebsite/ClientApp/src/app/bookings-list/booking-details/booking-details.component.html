@@ -9,11 +9,11 @@
         <div class="vh-title">
           <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }}</h1>
         </div>
-        <div *ngIf="hearing.isCancelled" id="lblCancelled" class="vh-cancelled-booking">{{ hearing.Status }}</div>
+        <div class="vh-booking-detail-status">
+          <app-booking-status [bookingDetails]="hearing"></app-booking-status>
+        </div>
         <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
       </div>
-      <div *ngIf="hearing.isCreated" id="lblCreated" class="vh-created-booking">Confirmed</div>
-      <div *ngIf="hearing.hasBookingConfirmationFailed" id="lblFailedConfirmation" class="vh-created-confirmation-failed">Failed</div>
     </div>
   </div>
 

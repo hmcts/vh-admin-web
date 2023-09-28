@@ -5381,7 +5381,9 @@ export enum BookingStatus {
     Booked = 'Booked',
     Created = 'Created',
     Cancelled = 'Cancelled',
-    Failed = 'Failed'
+    Failed = 'Failed',
+    BookedWithoutJudge = 'BookedWithoutJudge',
+    ConfirmedWithoutJudge = 'ConfirmedWithoutJudge'
 }
 
 export enum JudgeAccountType {
@@ -8356,7 +8358,9 @@ export enum BookingStatus2 {
     Booked = 'Booked',
     Created = 'Created',
     Cancelled = 'Cancelled',
-    Failed = 'Failed'
+    Failed = 'Failed',
+    BookedWithoutJudge = 'BookedWithoutJudge',
+    ConfirmedWithoutJudge = 'ConfirmedWithoutJudge'
 }
 
 export class EditJusticeUserRequest implements IEditJusticeUserRequest {

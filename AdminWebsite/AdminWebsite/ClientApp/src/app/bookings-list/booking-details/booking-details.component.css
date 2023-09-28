@@ -14,3 +14,10 @@
     color: #ffffff;
     background-color: #d4351c;
 }
+
+.vh-booking-detail-status {
+    width: 25%;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    float: left;
+}
