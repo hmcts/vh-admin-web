@@ -15,8 +15,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { first, map, takeUntil } from 'rxjs/operators';
-import { FeatureFlagService } from '../../services/feature-flag.service';
+import { map, takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 @Component({
     selector: 'app-assign-judge',
@@ -63,16 +62,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
         private configService: ConfigService,
-        //private featureService: FeatureFlagService,
         private launchDarklyService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
-        // featureService
-        //     .getFeatureFlagByName('EJudFeature')
-        //     .pipe(first())
-        //     .subscribe(result => {
-        //         this.ejudFeatureFlag = result;
-        //     });
     }
 
     ngOnInit() {

@@ -170,9 +170,9 @@ namespace AdminWebsite.Services
             // Map the request except the username
             var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
 
-            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge
-                                     || participant.HearingRoleName == RoleNames.PanelMember
-                                     || participant.HearingRoleName == RoleNames.Winger))
+            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge 
+                || participant.HearingRoleName == RoleNames.PanelMember
+                || participant.HearingRoleName == RoleNames.Winger))
                 || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
             {
                 if (hearing.Participants != null &&
