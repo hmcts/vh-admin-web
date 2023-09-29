@@ -1770,6 +1770,7 @@ describe('AddParticipantComponent set representer', () => {
         displayName = component.form.controls['displayName'];
         companyName = component.form.controls['companyName'];
         representing = component.form.controls['representing'];
+        component.hearingRoles = [];
     }));
 
     it('should show company and name of representing person', () => {
@@ -1796,6 +1797,8 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.form.get('representing').value).toEqual('');
     });
     it('should set representee label for representatives', () => {
+        const representative = new HearingRoleModel('Representative', 'Representative', 'RPTT');
+        component.hearingRoles.push(representative);
         component.form.get('role').setValue('Representative');
         component.roleSelected();
 
@@ -1803,6 +1806,8 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.representeeErrorMessage).toBe(Constants.Error.RepresenteeErrorMsg);
     });
     it('should set representee label for intermediaries', () => {
+        const intermediary = new HearingRoleModel('Intermediary', 'Representative', 'INTE');
+        component.hearingRoles.push(intermediary);
         component.form.get('role').setValue('Intermediary');
         component.roleSelected();
 

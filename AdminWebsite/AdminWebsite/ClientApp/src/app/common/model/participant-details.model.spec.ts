@@ -297,4 +297,26 @@ describe('participant details model', () => {
         );
         expect(model.isRepOrInterpreter).toBeTruthy();
     });
+    it('should not show case role when case role name is null', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            null,
+            'Interpreter',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678',
+            'interpretee',
+            false,
+            null
+        );
+        expect(model.showCaseRole()).toBeFalsy();
+    });
 });
