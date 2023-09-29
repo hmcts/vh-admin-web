@@ -273,18 +273,7 @@ namespace AdminWebsite.Controllers
             HearingDetailsResponse originalHearing;
             try
             {
-
-                if (_featureToggles.ReferenceDataToggle())
-                {
-                    var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                    originalHearing = response.Map();
-                }
-                else
-                {
-                    
-                    var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                    originalHearing = response.Map();
-                }
+                originalHearing = await GetHearing(hearingId);
             }
             catch (BookingsApiException e)
             {
@@ -330,6 +319,18 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
+        {
+            if (_featureToggles.ReferenceDataToggle())
+            {
+                var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                return responseV2.Map();
+            }
+            
+            var responseV1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            return responseV1.Map();
         }
 
         private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
