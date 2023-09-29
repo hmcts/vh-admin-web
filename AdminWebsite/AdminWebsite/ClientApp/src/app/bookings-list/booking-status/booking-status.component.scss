@@ -1,0 +1,41 @@
+@import 'govuk-frontend/govuk/base';
+.vh-sml {
+  font-size: smaller;
+}
+
+.vh-status {
+  color: govuk-colour('white');
+  margin-left: 9px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  width: 50%;
+  font-weight: 200;
+  text-align: center;
+}
+
+.vh-cancelled-booking,
+.vh-confirmation-failed {
+  background-color: govuk-colour('red');
+}
+
+.vh-created-booking {
+  background-color: govuk-colour('blue');
+}
+
+.vh-nojudge {
+  background: govuk-colour('red');
+  color: govuk-colour('white');
+  padding: 0px 4px;
+}
+
+.vh-col {
+  margin-left: 10px;
+}
+
+.govuk-hint {
+  margin-bottom: 0;
+}
+
+.vh-font-black {
+  color: govuk-colour('black');
+}

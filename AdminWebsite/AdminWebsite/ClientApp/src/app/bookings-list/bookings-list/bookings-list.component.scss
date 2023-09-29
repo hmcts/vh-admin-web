@@ -66,29 +66,6 @@ p {
   text-decoration: none;
 }
 
-.vh-cancelled-booking,
-.vh-confirmation-failed {
-  color: #ffffff;
-  background-color: #d4351c;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
-  text-align: center;
-}
-
-.vh-created-booking {
-  color: #ffffff;
-  background-color: #3868c2;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
-  text-align: center;
-}
-
 .vh-row-cancelled {
   background-color: lightgray;
   padding-top: 3px;
@@ -114,12 +91,6 @@ p {
   box-shadow: none;
 }
 
-.vh-nojudge {
-  background: govuk-colour('red');
-  color: govuk-colour('white');
-  padding: 0px 4px;
-}
-
 .vh-searchicon {
   height: 12px;
   margin-right: 6px;
@@ -131,4 +102,11 @@ p {
 
 .ng-select.custom ::ng-deep .ng-placeholder {
   color: govuk-colour('black');
+}
+
+.vh-booking-detail-status {
+  width: 90%;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  float: left;
 }

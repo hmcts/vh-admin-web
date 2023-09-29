@@ -12,6 +12,7 @@ import { CopySipComponent } from './copy-sip/copy-sip.component';
 import { CopyConferencePhoneComponent } from './copy-conference-phone/copy-conference-phone.component';
 import { CopyJoinLinkComponent } from './copy-join-link/copy-join-link.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { BookingStatusComponent } from './booking-status/booking-status.component';
 
 @NgModule({
     imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule, NgSelectModule],
@@ -23,7 +24,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
         HearingDetailsComponent,
         CopySipComponent,
         CopyConferencePhoneComponent,
-        CopyJoinLinkComponent
+        CopyJoinLinkComponent,
+        BookingStatusComponent
     ],
     providers: [],
     exports: [
@@ -31,7 +33,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
         BookingDetailsComponent,
         ParticipantDetailsComponent,
         BookingParticipantListComponent,
-        HearingDetailsComponent
+        HearingDetailsComponent,
+        BookingStatusComponent
     ]
 })
 export class BookingsListModule {}
