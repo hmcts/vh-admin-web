@@ -315,32 +315,10 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), errorMessage);
                     return BadRequest(ModelState);
                 }
-                HearingDetailsResponse updatedHearing;
-                if (_featureToggles.ReferenceDataToggle())
-                {
-                    var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                    updatedHearing = updatedHearing2.Map();
-                }
-                else
-                {
-                    var updatedHearing1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                    updatedHearing = updatedHearing1.Map();
-                }
+                var updatedHearing = await MapHearingToUpdate(hearingId);
 
-                //Save hearing details
-                if (_featureToggles.ReferenceDataToggle())
-                {
-                    var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
-                    await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
-                    await UpdateParticipantsV2(hearingId, request, originalHearing);
-                }
-                else
-                {
-                    var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
-                    await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
-                    await UpdateParticipantsV1(hearingId, request, originalHearing);
-                }
-                
+                await UpdateHearing(request, hearingId, updatedHearing);
+
                 if (updatedHearing.Status == BookingStatus.Failed) return Ok(updatedHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
                 return Ok(updatedHearing);
@@ -352,6 +330,35 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
+        {
+            if (_featureToggles.ReferenceDataToggle())
+            {
+                var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+                return updatedHearing2.Map();
+            }
+            
+            var updatedHearing1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            return updatedHearing1.Map();
+        }
+
+        private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
+        {
+            //Save hearing details
+            if (_featureToggles.ReferenceDataToggle())
+            {
+                var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
+                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
+                await UpdateParticipantsV2(hearingId, request, originalHearing);
+
+                return;
+            }
+            
+            var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
+            await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
+            await UpdateParticipantsV1(hearingId, request, originalHearing);
         }
 
         private async Task UpdateParticipantsV1(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
