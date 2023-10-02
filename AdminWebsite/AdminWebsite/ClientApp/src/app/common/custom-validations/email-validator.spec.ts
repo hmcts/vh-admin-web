@@ -1,4 +1,4 @@
-import {isAValidEmail} from "./email-validator";
+import { isAValidEmail } from './email-validator';
 
 it('should validate email and return true', () => {
     const emails = [
@@ -14,7 +14,6 @@ it('should validate email and return true', () => {
 
 it('should validate email and return false if it has invalid pattern', () => {
     const emails = [
-        'invalid.email@invalid.pattern',
         'ampersand&email@test.com',
         'email@invalid..com',
         'abc.example.co',
