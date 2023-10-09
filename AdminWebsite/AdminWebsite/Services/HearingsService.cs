@@ -10,8 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
+using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V2.Requests;
 using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Services
@@ -20,8 +22,10 @@ namespace AdminWebsite.Services
     {
         void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
+        Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
-        Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<ParticipantRequest> newParticipantList);
+        Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
+        Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
         bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
         bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
         Task UpdateFailedBookingStatus(Guid hearingId);
@@ -127,6 +131,23 @@ namespace AdminWebsite.Services
             };
             await _bookingsApiClient.UpdateHearingParticipantsAsync(hearingId, updateHearingParticipantsRequest);
         }
+        
+        public async Task ProcessParticipantsV2(Guid hearingId, 
+            List<UpdateParticipantRequestV2> existingParticipants, 
+            List<ParticipantRequestV2> newParticipants,
+            List<Guid> removedParticipantIds, 
+            List<LinkedParticipantRequestV2> linkedParticipants)
+        {
+
+            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequestV2
+            {
+                ExistingParticipants = existingParticipants,
+                NewParticipants = newParticipants,
+                RemovedParticipantIds = removedParticipantIds,
+                LinkedParticipants = linkedParticipants
+            };
+            await _bookingsApiClient.UpdateHearingParticipants2Async(hearingId, updateHearingParticipantsRequest);
+        }
 
         public async Task<ParticipantRequest> ProcessNewParticipant(
             Guid hearingId, 
@@ -134,12 +155,22 @@ namespace AdminWebsite.Services
             List<Guid> removedParticipantIds,
             HearingDetailsResponse hearing)
         {
+            var newParticipant = NewParticipantRequestMapper.MapTo(participant);
+            return (ParticipantRequest)await ProcessNewParticipant(hearingId, participant, newParticipant, removedParticipantIds, hearing);
+        }
+    
+        public async Task<IParticipantRequest> ProcessNewParticipant(
+            Guid hearingId,
+            EditParticipantRequest participant,
+            IParticipantRequest newParticipant,
+            List<Guid> removedParticipantIds,
+            HearingDetailsResponse hearing)
+        {
             // Add a new participant
             // Map the request except the username
-            var newParticipant = NewParticipantRequestMapper.MapTo(participant);
             var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
 
-            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge
+            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge 
                 || participant.HearingRoleName == RoleNames.PanelMember
                 || participant.HearingRoleName == RoleNames.Winger))
                 || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
@@ -160,7 +191,7 @@ namespace AdminWebsite.Services
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
-            List<ParticipantRequest> newParticipantList)
+            List<IParticipantRequest> newParticipantList)
         {
             if (hearing.Endpoints == null) return;
 
@@ -178,7 +209,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        private static void UpdateEndpointWithNewlyAddedParticipant(List<ParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
+        private static void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint)
         {
             var epToUpdate = newParticipantList
                 .Find(p => p.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,

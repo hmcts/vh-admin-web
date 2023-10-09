@@ -33,7 +33,11 @@
   <div class="govuk-grid-column-one-half">
     <h2 class="govuk-heading-m">Add a participant</h2>
     <form [formGroup]="form" (ngSubmit)="saveParticipant()" autocomplete="off">
-      <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': partyInvalid || !isPartySelected }">
+      <div
+        *ngIf="!referenceDataFeatureFlag"
+        class="govuk-form-group"
+        [ngClass]="{ 'govuk-form-group--error': partyInvalid || !isPartySelected }"
+      >
         <legend id="party-error" *ngIf="partyInvalid || !isPartySelected">
           <span class="govuk-error-message">
             {{ constants.Error.PartyErrorMsg }}
@@ -188,10 +192,10 @@
           <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': representeeInvalid }">
             <legend id="display-name-error" *ngIf="representeeInvalid">
               <span class="govuk-error-message">
-                {{ constants.Error.RepresenteeErrorMsg }}
+                {{ representeeErrorMessage }}
               </span>
             </legend>
-            <label class="govuk-label" for="representing"> Representing </label>
+            <label class="govuk-label" for="representing">{{ representeeLabelText }}</label>
             <input
               id="representing"
               formControlName="representing"

@@ -49,8 +49,10 @@ public static class HearingDetailsResponseMapper
             Id = hearingDetails.Id,
             ScheduledDateTime = hearingDetails.ScheduledDateTime,
             ScheduledDuration = hearingDetails.ScheduledDuration,
+            HearingVenueName = hearingDetails.HearingVenueName,
             HearingVenueCode = hearingDetails.HearingVenueCode,
             ServiceId = hearingDetails.ServiceId,
+            CaseTypeName = hearingDetails.ServiceName,
             HearingTypeCode = hearingDetails.HearingTypeCode,
             Cases = hearingDetails.Cases?.Select(e => new CaseResponse
             {

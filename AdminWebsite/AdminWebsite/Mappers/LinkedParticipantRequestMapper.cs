@@ -17,7 +17,6 @@ public static class LinkedParticipantRequestMapper
         };
     }   
     
-    [ExcludeFromCodeCoverage] //remove once used
     public static V2.Requests.LinkedParticipantRequestV2 MapToV2(this LinkedParticipantRequest linkedParticipant)
     {
         return new V2.Requests.LinkedParticipantRequestV2

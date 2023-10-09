@@ -25,7 +25,8 @@ import {
     LinkedParticipantResponse,
     LinkedParticipant,
     BookingStatus,
-    AllocatedCsoResponse
+    AllocatedCsoResponse,
+    HearingRoleResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -142,6 +143,11 @@ export class VideoHearingsService {
         return roles;
     }
 
+    async getHearingRoles(): Promise<HearingRoleResponse[]> {
+        const roles = await firstValueFrom(this.bhClient.getHearingRoles());
+        return roles;
+    }
+
     cancelRequest() {
         this.modelHearing = new HearingModel();
         sessionStorage.removeItem(this.newRequestKey);
@@ -203,6 +209,7 @@ export class VideoHearingsService {
 
         hearing.hearing_room_name = booking.court_room;
         hearing.hearing_venue_name = booking.court_name;
+        hearing.hearing_venue_code = booking.court_code;
         hearing.other_information = booking.other_information;
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
@@ -237,6 +244,7 @@ export class VideoHearingsService {
         editParticipant.first_name = participant.first_name;
         editParticipant.last_name = participant.last_name;
         editParticipant.hearing_role_name = participant.hearing_role_name;
+        editParticipant.hearing_role_code = participant.hearing_role_code;
         editParticipant.middle_names = participant.middle_names;
         editParticipant.representee = participant.representee;
         editParticipant.telephone_number = participant.phone;
@@ -275,10 +283,13 @@ export class VideoHearingsService {
         const newHearingRequest = new BookingDetailsRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_name = newRequest.case_type;
+        newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
         newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
+        newHearingRequest.hearing_type_code = newRequest.hearing_type_code;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
         newHearingRequest.hearing_venue_name = newRequest.court_name;
+        newHearingRequest.hearing_venue_code = newRequest.court_code;
         newHearingRequest.hearing_room_name = newRequest.court_room;
         newHearingRequest.participants = this.mapParticipants(newRequest.participants);
         newHearingRequest.other_information = newRequest.other_information;
@@ -293,10 +304,12 @@ export class VideoHearingsService {
         hearing.hearing_id = response.id;
         hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
         hearing.hearing_type_name = response.hearing_type_name;
+        hearing.hearing_type_code = response.hearing_type_code;
         hearing.case_type = response.case_type_name;
         hearing.scheduled_date_time = new Date(response.scheduled_date_time);
         hearing.scheduled_duration = response.scheduled_duration;
         hearing.court_name = response.hearing_venue_name;
+        hearing.court_code = response.hearing_venue_code;
         hearing.court_room = response.hearing_room_name;
         hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
         hearing.other_information = response.other_information;
@@ -355,6 +368,7 @@ export class VideoHearingsService {
                 participant.telephone_number = p.phone;
                 participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
+                participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
                 participants.push(participant);
@@ -394,10 +408,14 @@ export class VideoHearingsService {
                 participant.phone = p.telephone_number;
                 participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
+                participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.company = p.organisation;
-                participant.is_judge = p.case_role_name === Constants.HearingRoles.Judge;
-                participant.is_staff_member = p.case_role_name === Constants.HearingRoles.StaffMember;
+                participant.is_judge =
+                    p.case_role_name === Constants.HearingRoles.Judge || p.hearing_role_code === Constants.HearingRoleCodes.Judge;
+                participant.is_staff_member =
+                    p.case_role_name === Constants.HearingRoles.StaffMember ||
+                    p.hearing_role_code === Constants.HearingRoleCodes.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);
