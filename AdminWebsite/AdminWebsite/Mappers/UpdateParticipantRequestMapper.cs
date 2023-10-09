@@ -31,8 +31,7 @@ namespace AdminWebsite.Mappers
                 OrganisationName = participant.OrganisationName,
                 TelephoneNumber = participant.TelephoneNumber,
                 Representee = participant.Representee,
-                ParticipantId = participant.Id ?? Guid.Empty,
-                ContactEmail = participant.ContactEmail 
+                ParticipantId = participant.Id ?? Guid.Empty
             };
             return updateParticipantRequest;
         }
