@@ -442,10 +442,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_bad_request_if_invalid_hearing_id()
         {
             var invalidId = Guid.Empty;
+            var key = "hearingId";
+            var errorMessage = "Please provide a valid hearingId";
             var result = await _controller.EditHearing(invalidId, _addNewParticipantRequest);
-            var badRequestResult = (BadRequestObjectResult)result.Result;
-            var errors = (SerializableError)badRequestResult.Value;
-            errors["hearingId"].Should().BeEquivalentTo(new[] { "Please provide a valid hearingId" });
+            
+            result.Result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result.Result;
+            var validationProblems = (ValidationProblemDetails)objectResult.Value;
+            validationProblems.Should().NotBeNull();
+            validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
+            validationProblems.Errors[key][0].Should().Be(errorMessage);
         }
 
         [Test]
