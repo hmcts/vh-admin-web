@@ -44,7 +44,6 @@ namespace AdminWebsite.Controllers
         private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
-        private const int StartingSoonMinutesThreshold = 30;
 
         /// <summary>
         ///     Instantiates the controller
@@ -207,7 +206,8 @@ namespace AdminWebsite.Controllers
 
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
 
-                var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false);
+                var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?
+                    .Exists(x => x.HearingRoleName == RoleNames.Judge) ?? false);
                 var tasks = conferenceStatusToGet.Select(x => GetHearingConferenceStatus(x.Id)).ToList();
                 await Task.WhenAll(tasks);
                 
@@ -399,7 +399,7 @@ namespace AdminWebsite.Controllers
         
         private static List<Guid> GetRemovedParticipantIds(EditHearingRequest request, HearingDetailsResponse originalHearing)
         {
-            return originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
+            return originalHearing.Participants.Where(p => request.Participants.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
         }
 
@@ -420,11 +420,11 @@ namespace AdminWebsite.Controllers
             for (int i = 0; i < participantsWithLinks.Count; i++)
             {
                 var participantWithLinks = participantsWithLinks[i];
-                var linkedParticipantRequest = new LinkedParticipantRequest()
+                var linkedParticipantRequest = new LinkedParticipantRequest
                 {
                     LinkedParticipantContactEmail = participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail,
                     ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ?? participantWithLinks.ContactEmail,
-                    Type = (Contracts.Enums.LinkedParticipantType) participantWithLinks.LinkedParticipants[0].Type
+                    Type = participantWithLinks.LinkedParticipants[0].Type
                 };
 
                 // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
@@ -460,7 +460,7 @@ namespace AdminWebsite.Controllers
             EditParticipantRequest participant, 
             List<UpdateParticipantRequest> existingParticipants)
         {
-            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
             if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                 return;
             
@@ -473,18 +473,12 @@ namespace AdminWebsite.Controllers
             EditParticipantRequest participant, 
             List<UpdateParticipantRequestV2> existingParticipants)
         {
-            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
             if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                 return;
             
             var updateParticipantRequest = UpdateParticipantRequestMapper.MapToV2(participant);
             existingParticipants.Add(updateParticipantRequest);
-        }
-
-        private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
-        {
-            var timeToCheckHearingAgainst = DateTime.UtcNow.AddMinutes(StartingSoonMinutesThreshold);
-            return originalHearing.ScheduledDateTime < timeToCheckHearingAgainst;
         }
 
         /// <summary>
@@ -623,7 +617,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
+                var judgeExists = hearing?.Participants?.Exists(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
 

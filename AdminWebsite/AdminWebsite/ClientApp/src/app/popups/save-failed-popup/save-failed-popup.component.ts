@@ -10,7 +10,6 @@ export class SaveFailedPopupComponent implements OnInit {
 
     @Input() errorMessages: string[];
 
-    constructor() {}
     ngOnInit() {}
 
     trySaveAgain(): void {

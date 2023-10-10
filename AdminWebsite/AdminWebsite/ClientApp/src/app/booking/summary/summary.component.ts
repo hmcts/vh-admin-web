@@ -392,7 +392,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private handleValidationProblem(validationErrors: ValidationProblemDetails) {
         this.saveFailedMessages = [];
-        Object.keys(validationErrors.errors).map(key => {
+        Object.keys(validationErrors.errors).forEach(key => {
             const messages = validationErrors.errors[key];
             this.saveFailedMessages.push(...messages);
         });
