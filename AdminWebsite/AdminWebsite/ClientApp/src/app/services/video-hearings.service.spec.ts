@@ -37,7 +37,8 @@ describe('Video hearing service', () => {
             'getConfigSettings',
             'getUserList',
             'getAllocationForHearing',
-            'rebookHearing'
+            'rebookHearing',
+            'getHearingRoles'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -608,5 +609,12 @@ describe('Video hearing service', () => {
                 done();
             });
         });
+    });
+
+    it('should get hearing roles', async () => {
+        clientApiSpy.getHearingRoles.and.returnValue(of(null));
+
+        await service.getHearingRoles();
+        expect(clientApiSpy.getHearingRoles).toHaveBeenCalled();
     });
 });

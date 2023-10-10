@@ -9,6 +9,7 @@ public class ParticipantResponse
     public string DisplayName { get; set; }
     public string CaseRoleName { get; set; }
     public string HearingRoleName { get; set; }
+    public string HearingRoleCode { get; set; }
     public string UserRoleName { get; set; }
     public string Title { get; set; }
     public string FirstName { get; set; }

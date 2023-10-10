@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from '@angular/core/testing';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -9,7 +9,13 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, PersonResponse } from '../../services/clients/api-client';
+import {
+    CaseAndHearingRolesResponse,
+    ClientSettingsResponse,
+    HearingRole,
+    HearingRoleResponse,
+    PersonResponse
+} from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -42,6 +48,33 @@ const roleList: CaseAndHearingRolesResponse[] = [
         ]
     })
 ];
+const flatRoleList: HearingRoleResponse[] = [
+    new HearingRoleResponse({
+        name: 'Applicant',
+        code: 'APPL',
+        user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Interpreter',
+        code: 'INTP',
+        user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Judge',
+        code: 'JUDG',
+        user_role: 'Judge'
+    }),
+    new HearingRoleResponse({
+        name: 'Panel Member',
+        code: 'PANL',
+        user_role: 'Judicial Office Holder'
+    }),
+    new HearingRoleResponse({
+        name: 'Litigant in person',
+        code: 'LIP',
+        user_role: 'Individual'
+    })
+];
 
 const partyR = new PartyModel('Applicant');
 partyR.hearingRoles = [
@@ -51,6 +84,8 @@ partyR.hearingRoles = [
     new HearingRoleModel('Interpreter', 'Interpreter')
 ];
 const partyList: PartyModel[] = [partyR];
+
+const mappedHearingRoles: HearingRoleModel[] = flatRoleList.map(x => new HearingRoleModel(x.name, x.user_role, x.code));
 
 let role: AbstractControl;
 let party: AbstractControl;
@@ -202,6 +237,7 @@ function initParticipant() {
     participant.case_role_name = 'Applicant';
     participant.company = 'CN';
     participant.representee = 'test representee';
+    participant.user_role_name = 'Individual';
 }
 
 const routerSpy: jasmine.SpyObj<Router> = {
@@ -218,7 +254,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
     'updateHearingRequest',
     'cancelRequest',
     'isConferenceClosed',
-    'isHearingAboutToStart'
+    'isHearingAboutToStart',
+    'getHearingRoles'
 ]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
@@ -232,7 +269,8 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
     'removeParticipant',
-    'mapParticipantsRoles'
+    'mapParticipantsRoles',
+    'mapParticipantHearingRoles'
 ]);
 
 const searchService = {
@@ -247,11 +285,18 @@ describe('AddParticipantComponent', () => {
         const hearing = initHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication', 'removeParticipant']);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
+        participantServiceSpy = jasmine.createSpyObj<ParticipantService>([
+            'mapParticipantsRoles',
+            'checkDuplication',
+            'removeParticipant',
+            'mapParticipantHearingRoles'
+        ]);
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(false);
 
@@ -485,6 +530,7 @@ describe('AddParticipantComponent', () => {
             companyName.setValue('CC');
             component.isRoleSelected = true;
             component.isPartySelected = true;
+            component.referenceDataFeatureFlag = false;
 
             component.participantDetails = participant;
         });
@@ -532,6 +578,15 @@ describe('AddParticipantComponent', () => {
             const addedParticipant = component.hearing.participants[0];
             expect(addedParticipant.addedDuringHearing).toBe(false);
         });
+        it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
+            component.hearing.participants = [];
+            component.referenceDataFeatureFlag = true;
+            component.ngAfterViewInit();
+            tick(600);
+            component.saveParticipant();
+            expect(component.hearingRoleList).toContain('Interpreter');
+            flush();
+        }));
     });
     it('press button cancel display pop up confirmation dialog', () => {
         component.addParticipantCancel();
@@ -1006,7 +1061,8 @@ describe('AddParticipantComponent edit mode', () => {
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',
-            'isHearingAboutToStart'
+            'isHearingAboutToStart',
+            'getHearingRoles'
         ]);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
@@ -1033,7 +1089,9 @@ describe('AddParticipantComponent edit mode', () => {
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
         configServiceSpy.getClientSettings.and.returnValue(of(new ClientSettingsResponse()));
@@ -1180,7 +1238,7 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
     }));
 
-    it('gets participant roles by case type service id when reference data flag is on', fakeAsync(async () => {
+    it('shows single role list when reference data flag is on', fakeAsync(async () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
 
         component.ngOnInit();
@@ -1189,7 +1247,16 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
 
         fixture.whenStable().then(() => {
-            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type_service_id);
+            const partyControl = component.form.controls['party'];
+            const partyElement = fixture.debugElement.query(By.css('#party'));
+            expect(videoHearingsServiceSpy.getHearingRoles).toHaveBeenCalled();
+            expect(partyControl.hasValidator(Validators.required)).toBeFalsy();
+            expect(component.hearingRoleList).toEqual(['Please select', 'Applicant', 'Litigant in person']);
+            expect(partyElement).toBeNull();
+            expect(component.displayNextButton).toBeTruthy();
+            expect(component.displayClearButton).toBeFalsy();
+            expect(component.displayAddButton).toBeFalsy();
+            expect(component.displayUpdateButton).toBeFalsy();
         });
     }));
 
@@ -1425,12 +1492,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             'updateHearingRequest',
             'cancelRequest',
             'isConferenceClosed',
-            'isHearingAboutToStart'
+            'isHearingAboutToStart',
+            'getHearingRoles'
         ]);
         featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
@@ -1666,7 +1736,9 @@ describe('AddParticipantComponent set representer', () => {
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
@@ -1698,6 +1770,7 @@ describe('AddParticipantComponent set representer', () => {
         displayName = component.form.controls['displayName'];
         companyName = component.form.controls['companyName'];
         representing = component.form.controls['representing'];
+        component.hearingRoles = [];
     }));
 
     it('should show company and name of representing person', () => {
@@ -1722,6 +1795,24 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.isRepresentative).toBeFalsy();
         expect(component.form.get('companyName').value).toEqual('');
         expect(component.form.get('representing').value).toEqual('');
+    });
+    it('should set representee label for representatives', () => {
+        const representative = new HearingRoleModel('Representative', 'Representative', 'RPTT');
+        component.hearingRoles.push(representative);
+        component.form.get('role').setValue('Representative');
+        component.roleSelected();
+
+        expect(component.representeeLabelText).toBe('Representing');
+        expect(component.representeeErrorMessage).toBe(Constants.Error.RepresenteeErrorMsg);
+    });
+    it('should set representee label for intermediaries', () => {
+        const intermediary = new HearingRoleModel('Intermediary', 'Representative', 'INTE');
+        component.hearingRoles.push(intermediary);
+        component.form.get('role').setValue('Intermediary');
+        component.roleSelected();
+
+        expect(component.representeeLabelText).toBe('Intermediary for');
+        expect(component.representeeErrorMessage).toBe(Constants.Error.IntermediaryForErrorMsg);
     });
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;

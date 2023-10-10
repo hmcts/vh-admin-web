@@ -78,6 +78,10 @@ export class ParticipantDetailsModel {
     }
 
     showCaseRole(): boolean {
+        if (!this.CaseRoleName) {
+            return false;
+        }
+
         return !(
             this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
             this.CaseRoleName.toLowerCase() === CaseRoles.OBSERVER.toLowerCase() ||

@@ -12,6 +12,7 @@ export class ParticipantModel {
     email?: string | undefined;
     case_role_name?: string | undefined;
     hearing_role_name?: string | undefined;
+    hearing_role_code?: string | undefined;
     phone?: string | undefined;
     representee?: string | undefined;
     company?: string | undefined;

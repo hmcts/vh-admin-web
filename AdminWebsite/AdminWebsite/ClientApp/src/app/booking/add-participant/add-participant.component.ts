@@ -7,7 +7,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, HearingRoleResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -121,26 +121,25 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             const self = this;
             const caseTypeIdentifier = this.referenceDataFeatureFlag ? this.hearing.case_type_service_id : this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
-            this.videoHearingService
-                .getParticipantRoles(caseTypeIdentifier)
-                .then((data: CaseAndHearingRolesResponse[]) => {
-                    self.setupRoles(data);
-                    if (self.editMode) {
-                        self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
 
-                        if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
-                            // no participants, we need to add one
-                            self.showDetails = false;
-                            self.displayAdd();
-                        } else {
-                            self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
-                            self.displayNext();
-                        }
-                    }
-
-                    self.populateInterpretedForList();
-                })
-                .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
+            if (this.referenceDataFeatureFlag) {
+                this.videoHearingService
+                    .getHearingRoles()
+                    .then((data: HearingRoleResponse[]) => {
+                        self.setupRolesWithoutCaseRole(data);
+                        self.removePartyValidators();
+                        self.handleRoleSetupForEditMode(self);
+                    })
+                    .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
+            } else {
+                this.videoHearingService
+                    .getParticipantRoles(caseTypeIdentifier)
+                    .then((data: CaseAndHearingRolesResponse[]) => {
+                        self.setupRoles(data);
+                        self.handleRoleSetupForEditMode(self);
+                    })
+                    .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
+            }
         }, 500);
     }
 
@@ -151,6 +150,23 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 this.subscribeForSearchEmailEvents();
             }
         }
+    }
+
+    handleRoleSetupForEditMode(self: AddParticipantComponent) {
+        if (self.editMode) {
+            self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+
+            if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
+                // no participants, we need to add one
+                self.showDetails = false;
+                self.displayAdd();
+            } else {
+                self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
+                self.displayNext();
+            }
+        }
+
+        self.populateInterpretedForList();
     }
 
     subscribeForSearchEmailEvents() {
@@ -211,6 +227,11 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         );
     }
 
+    private removePartyValidators() {
+        this.party.clearValidators();
+        this.party.updateValueAndValidity();
+    }
+
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
@@ -244,6 +265,21 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.caseAndHearingRoles.forEach(x => {
             this.setupHearingRoles(x.name);
         });
+    }
+
+    setupRolesWithoutCaseRole(data: HearingRoleResponse[]) {
+        this.hearingRoles = this.participantService
+            .mapParticipantHearingRoles(data)
+            .filter(
+                x =>
+                    x.code !== Constants.HearingRoleCodes.Judge &&
+                    x.code !== Constants.HearingRoleCodes.StaffMember &&
+                    x.code !== Constants.HearingRoleCodes.PanelMember
+            )
+            .sort((a, b) => a.name.localeCompare(b.name));
+        this.roleList = this.hearingRoles.map(x => x.name);
+        this.roleList.unshift(this.constants.PleaseSelect);
+        this.setupHearingRolesWithoutCaseRole();
     }
 
     notFoundParticipant() {
@@ -352,6 +388,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 });
                 this.participantDetails = null;
                 this.clearForm();
+                if (this.referenceDataFeatureFlag) {
+                    // Refresh the list in case an interpreter can now be added
+                    this.setupHearingRolesWithoutCaseRole();
+                }
                 this.displayNext();
                 this.form.markAsPristine();
                 this.showDetails = false;
@@ -456,7 +496,13 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.phone = this.phone.value;
         newParticipant.title = this.title.value === this.constants.PleaseSelect ? null : this.title.value;
         newParticipant.case_role_name = this.party.value;
+        if (this.referenceDataFeatureFlag) {
+            newParticipant.case_role_name = null;
+        }
         newParticipant.hearing_role_name = this.role.value;
+        if (this.referenceDataFeatureFlag) {
+            newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
+        }
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
         newParticipant.display_name = this.displayName.value;
         if (this.isRoleRepresentative(this.role.value, this.party.value)) {
@@ -474,9 +520,13 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
-        return this.caseAndHearingRoles
-            .find(c => c.name === newParticipant.case_role_name)
-            ?.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
+        if (this.referenceDataFeatureFlag) {
+            return this.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
+        } else {
+            return this.caseAndHearingRoles
+                .find(c => c.name === newParticipant.case_role_name)
+                ?.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
+        }
     }
 
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
