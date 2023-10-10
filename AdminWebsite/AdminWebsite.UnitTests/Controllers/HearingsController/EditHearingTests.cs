@@ -482,25 +482,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task
-            Should_return_bad_request_if_edit_confirmed_hearing_except_only_adding_participant_prior_30_minutes_of_it_starting()
-        {
-            _updatedExistingParticipantHearingOriginal.ScheduledDateTime = DateTime.UtcNow.AddHours(-1);
-            _updatedExistingParticipantHearingOriginal.Status = BookingStatus.Created;
-            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
-            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
-            var badRequestResult = (BadRequestObjectResult)result.Result;
-            var errors = (SerializableError)badRequestResult.Value;
-            errors["hearingId"]
-                .Should()
-                .BeEquivalentTo(new[]
-                {
-                    $"You can't edit a confirmed hearing [{_updatedExistingParticipantHearingOriginal.Id}] within 30 minutes of it starting"
-                });
-        }
-
-        [Test]
         public async Task Should_allow_switching_judge_prior_30_minutes_of_hearing_starting()
         {
             _existingHearingWithJudge.ScheduledDateTime = DateTime.UtcNow.AddMinutes(20);
@@ -630,8 +611,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithLinkedParticipants);
+            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                {"Hearing", new[] {"Cannot remove a participant from hearing that is close to start time"}},
+            });
+            
             _bookingsApiClient.Setup(x => x.UpdateHearingParticipantsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingParticipantsRequest>()))
-                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+                .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));
 
             //Act
             var response = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -801,7 +787,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_on_bad_request_from_bookings_api()
         {
-            GivenApiThrowsExceptionOnUpdate(HttpStatusCode.BadRequest);
+            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                {"Hearing", new[] {"Cannot remove a participant from hearing that is close to start time"}},
+            });
+
+            _bookingsApiClient.Setup(x =>
+                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
+                .ThrowsAsync(ClientException.ForBookingsAPIValidation(validationProblemDetails));
 
             var response = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             response.Result.Should().BeOfType<BadRequestObjectResult>();
@@ -1504,25 +1497,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_be_able_to_remove_judge_from_confirmed_hearing()
-        {
-            // arrange
-            var hearingId = _updatedExistingParticipantHearingOriginal.Id;
-            var updatedHearing = _updatedExistingParticipantHearingOriginal.Duplicate();
-            updatedHearing.Status = BookingStatus.Created;
-            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ReturnsAsync(updatedHearing);
-            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(updatedHearing.GroupId.Value))
-                .ReturnsAsync(new List<HearingDetailsResponse> { updatedHearing });
-            
-            // act
-            var result = await _controller.EditHearing(hearingId, It.IsAny<EditHearingRequest>());
-
-            // assert
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-        }
-
-        [Test]
         public async Task Should_handle_failed_booking_request_on_retry()
         {
             _existingHearingWithJudge.ScheduledDateTime = DateTime.UtcNow.AddMinutes(10);
@@ -1569,11 +1543,5 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
         }
 
-        private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
-        {
-            _bookingsApiClient.Setup(x =>
-                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
-                .ThrowsAsync(ClientException.ForBookingsAPI(code));
-        }
     }
 }

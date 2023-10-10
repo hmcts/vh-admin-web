@@ -1,6 +1,7 @@
 <div id="saveFailedPopup" class="vh-popup-overlay">
   <div class="vh-popup vh-popup-xsmall">
     <h1 class="govuk-heading-m vh-ml70 vh-mr70">Your booking could not be saved. Please try again.</h1>
+    <p *ngFor="let message of errorMessages" class="govuk-body">{{ message }}</p>
 
     <div class="content">
       <div class="govuk-grid-row">

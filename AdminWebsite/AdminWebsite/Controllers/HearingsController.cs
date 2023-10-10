@@ -25,7 +25,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
-using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
@@ -249,7 +248,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "EditHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
@@ -277,6 +276,12 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+                
                 _logger.LogError(e, "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
@@ -284,26 +289,6 @@ namespace AdminWebsite.Controllers
             }
             try
             {
-                if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) &&
-                    !_hearingsService.IsUpdatingJudge(request, originalHearing) &&
-                    !_hearingsService.HasEndpointsBeenChanged(request, originalHearing))
-                {
-                    var errorMessage =
-                        $"You can't edit a confirmed hearing [{hearingId}] within {StartingSoonMinutesThreshold} minutes of it starting";
-                    _logger.LogWarning(errorMessage);
-                    ModelState.AddModelError(nameof(hearingId), errorMessage);
-                    return BadRequest(ModelState);
-                }
-
-                var judgeExistsInRequest = request?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
-                if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
-                {
-                    const string errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
-                    _logger.LogWarning(errorMessage);
-                    ModelState.AddModelError(nameof(hearingId), errorMessage);
-                    return BadRequest(ModelState);
-                }
                 var updatedHearing = await MapHearingToUpdate(hearingId);
 
                 await UpdateHearing(request, hearingId, updatedHearing);
@@ -316,7 +301,13 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+                
                 throw;
             }
         }
