@@ -40,6 +40,7 @@ public static class ParticipantResponseMapper
                 DisplayName = p.DisplayName,
                 CaseRoleName = p.CaseRoleName,
                 HearingRoleName = p.HearingRoleName,
+                HearingRoleCode = p.HearingRoleCode,
                 UserRoleName = p.UserRoleName,
                 Title = p.Title,
                 FirstName = p.FirstName,

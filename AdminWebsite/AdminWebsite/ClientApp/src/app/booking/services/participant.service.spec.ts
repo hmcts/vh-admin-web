@@ -1,10 +1,11 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
-import { CaseAndHearingRolesResponse, HearingRole } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, HearingRole, HearingRoleResponse } from '../../services/clients/api-client';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { Logger } from '../../services/logger';
+import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
 
 describe('ParticipantService', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
@@ -38,6 +39,27 @@ describe('ParticipantService', () => {
         const models = service.mapParticipantsRoles(responses);
         expect(models).toBeTruthy();
         expect(models.length).toBe(0);
+    }));
+    it('should map roles to hearing role array', inject([ParticipantService], (service: ParticipantService) => {
+        const responses: HearingRoleResponse[] = [
+            new HearingRoleResponse({
+                name: 'Applicant',
+                code: 'APPL',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Interpreter',
+                code: 'INTP',
+                user_role: 'Individual'
+            })
+        ];
+
+        const models = service.mapParticipantHearingRoles(responses);
+        expect(models).toBeTruthy();
+        expect(models).toEqual([
+            new HearingRoleModel('Applicant', 'Individual', 'APPL'),
+            new HearingRoleModel('Interpreter', 'Individual', 'INTP')
+        ]);
     }));
     it('should check email duplication and return false', inject([ParticipantService], (service: ParticipantService) => {
         const part1 = new ParticipantModel();
