@@ -201,7 +201,9 @@ describe('JusticeUserFormComponent', () => {
             });
 
             justiceUsersServiceSpy.addNewJusticeUser.and.returnValue(
-                throwError(new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem))
+                throwError(
+                    () => new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem)
+                )
             );
 
             // act

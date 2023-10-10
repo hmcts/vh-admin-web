@@ -257,7 +257,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogWarning("No hearing id found to edit");
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
@@ -276,12 +276,6 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
-                {
-                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
-                    return ValidationProblem(typedException!.Result);
-                }
-                
                 _logger.LogError(e, "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
