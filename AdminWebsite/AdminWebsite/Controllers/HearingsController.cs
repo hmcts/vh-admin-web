@@ -266,7 +266,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogWarning("Failed edit hearing validation");
                 ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             HearingDetailsResponse originalHearing;
