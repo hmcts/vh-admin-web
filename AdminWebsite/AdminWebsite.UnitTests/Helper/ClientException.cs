@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using BookingsApi.Client;
+using Microsoft.AspNetCore.Mvc;
 using UserApi.Client;
 
 namespace AdminWebsite.UnitTests.Helper
@@ -20,6 +21,13 @@ namespace AdminWebsite.UnitTests.Helper
                 new Dictionary<string, IEnumerable<string>>(),
                 null
             );
+        }
+        
+        public static BookingsApiException ForBookingsAPIValidation(ValidationProblemDetails validationProblemDetails)
+        {
+            return  new BookingsApiException<ValidationProblemDetails>("BadRequest",
+                (int) HttpStatusCode.BadRequest,
+                "There were errors", null, validationProblemDetails, null);
         }
 
         public static Exception ForUserService(HttpStatusCode statusCode)

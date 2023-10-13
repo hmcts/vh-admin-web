@@ -19,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{36
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.AcceptanceTests", "AdminWebsite.AcceptanceTests\AdminWebsite.AcceptanceTests.csproj", "{B0F83938-CBCF-4059-9B42-8961B4D075A1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.Testing.Common", "AdminWebsite.Testing.Common\AdminWebsite.Testing.Common.csproj", "{44DA56ED-92B9-4A84-8B13-7B8B66A7717E}"
 EndProject
 Global
@@ -41,10 +39,6 @@ Global
 		{F1B76C25-C9A2-4A2E-B946-514C44ECF4CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1B76C25-C9A2-4A2E-B946-514C44ECF4CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1B76C25-C9A2-4A2E-B946-514C44ECF4CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0F83938-CBCF-4059-9B42-8961B4D075A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0F83938-CBCF-4059-9B42-8961B4D075A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0F83938-CBCF-4059-9B42-8961B4D075A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0F83938-CBCF-4059-9B42-8961B4D075A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44DA56ED-92B9-4A84-8B13-7B8B66A7717E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44DA56ED-92B9-4A84-8B13-7B8B66A7717E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44DA56ED-92B9-4A84-8B13-7B8B66A7717E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -56,7 +50,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{938CA652-20EC-413A-8D82-7318DBAAB771} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 		{F1B76C25-C9A2-4A2E-B946-514C44ECF4CD} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
-		{B0F83938-CBCF-4059-9B42-8961B4D075A1} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 		{44DA56ED-92B9-4A84-8B13-7B8B66A7717E} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

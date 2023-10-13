@@ -10,7 +10,13 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookHearingException, BookingStatus, HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import {
+    BookHearingException,
+    BookingStatus,
+    HearingDetailsResponse,
+    MultiHearingRequest,
+    ValidationProblemDetails
+} from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -67,6 +73,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     judgeAssigned: boolean;
     ejudFeatureFlag = false;
+    saveFailedMessages: string[];
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -346,6 +353,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     updateHearing() {
+        this.saveFailedMessages = null;
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
@@ -375,12 +383,25 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private setError(error: BookHearingException | Error) {
+        if (BookHearingException.isBookHearingException(error) && error.result instanceof ValidationProblemDetails) {
+            this.handleValidationProblem(error.result);
+        }
         this.showWaitSaving = false;
         this.showErrorSaving = true;
     }
 
+    private handleValidationProblem(validationErrors: ValidationProblemDetails) {
+        this.saveFailedMessages = [];
+        Object.keys(validationErrors.errors).forEach(key => {
+            const messages = validationErrors.errors[key];
+            this.saveFailedMessages.push(...messages);
+        });
+    }
+
     cancel(): void {
         this.showErrorSaving = false;
+        this.bookingsSaving = false;
+        this.saveFailedMessages = null;
     }
 
     tryAgain(): void {

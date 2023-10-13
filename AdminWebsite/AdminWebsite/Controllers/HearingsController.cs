@@ -25,7 +25,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
-using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
@@ -45,7 +44,6 @@ namespace AdminWebsite.Controllers
         private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
-        private const int StartingSoonMinutesThreshold = 30;
 
         /// <summary>
         ///     Instantiates the controller
@@ -208,7 +206,8 @@ namespace AdminWebsite.Controllers
 
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
 
-                var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?.Any(x => x.HearingRoleName == RoleNames.Judge) ?? false);
+                var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?
+                    .Exists(x => x.HearingRoleName == RoleNames.Judge) ?? false);
                 var tasks = conferenceStatusToGet.Select(x => GetHearingConferenceStatus(x.Id)).ToList();
                 await Task.WhenAll(tasks);
                 
@@ -249,7 +248,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "EditHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
@@ -258,7 +257,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogWarning("No hearing id found to edit");
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
@@ -267,7 +266,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogWarning("Failed edit hearing validation");
                 ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
+                return ValidationProblem(ModelState);
             }
 
             HearingDetailsResponse originalHearing;
@@ -284,26 +283,6 @@ namespace AdminWebsite.Controllers
             }
             try
             {
-                if (IsHearingStartingSoon(originalHearing) && originalHearing.Status == BookingStatus.Created &&
-                    !_hearingsService.IsAddingParticipantOnly(request, originalHearing) &&
-                    !_hearingsService.IsUpdatingJudge(request, originalHearing) &&
-                    !_hearingsService.HasEndpointsBeenChanged(request, originalHearing))
-                {
-                    var errorMessage =
-                        $"You can't edit a confirmed hearing [{hearingId}] within {StartingSoonMinutesThreshold} minutes of it starting";
-                    _logger.LogWarning(errorMessage);
-                    ModelState.AddModelError(nameof(hearingId), errorMessage);
-                    return BadRequest(ModelState);
-                }
-
-                var judgeExistsInRequest = request?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
-                if (originalHearing.Status == BookingStatus.Created && !judgeExistsInRequest)
-                {
-                    const string errorMessage = "You can't edit a confirmed hearing if the update removes the judge";
-                    _logger.LogWarning(errorMessage);
-                    ModelState.AddModelError(nameof(hearingId), errorMessage);
-                    return BadRequest(ModelState);
-                }
                 var updatedHearing = await MapHearingToUpdate(hearingId);
 
                 await UpdateHearing(request, hearingId, updatedHearing);
@@ -316,7 +295,13 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
+                
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+                
                 throw;
             }
         }
@@ -408,7 +393,7 @@ namespace AdminWebsite.Controllers
         
         private static List<Guid> GetRemovedParticipantIds(EditHearingRequest request, HearingDetailsResponse originalHearing)
         {
-            return originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id))
+            return originalHearing.Participants.Where(p => request.Participants.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
         }
 
@@ -429,11 +414,11 @@ namespace AdminWebsite.Controllers
             for (int i = 0; i < participantsWithLinks.Count; i++)
             {
                 var participantWithLinks = participantsWithLinks[i];
-                var linkedParticipantRequest = new LinkedParticipantRequest()
+                var linkedParticipantRequest = new LinkedParticipantRequest
                 {
                     LinkedParticipantContactEmail = participantWithLinks.LinkedParticipants[0].LinkedParticipantContactEmail,
                     ParticipantContactEmail = participantWithLinks.LinkedParticipants[0].ParticipantContactEmail ?? participantWithLinks.ContactEmail,
-                    Type = (Contracts.Enums.LinkedParticipantType) participantWithLinks.LinkedParticipants[0].Type
+                    Type = participantWithLinks.LinkedParticipants[0].Type
                 };
 
                 // If the participant link is not new and already existed, then the ParticipantContactEmail will be null. We find it here and populate it.
@@ -469,7 +454,7 @@ namespace AdminWebsite.Controllers
             EditParticipantRequest participant, 
             List<UpdateParticipantRequest> existingParticipants)
         {
-            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
             if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                 return;
             
@@ -482,18 +467,12 @@ namespace AdminWebsite.Controllers
             EditParticipantRequest participant, 
             List<UpdateParticipantRequestV2> existingParticipants)
         {
-            var existingParticipant = originalHearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
             if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
                 return;
             
             var updateParticipantRequest = UpdateParticipantRequestMapper.MapToV2(participant);
             existingParticipants.Add(updateParticipantRequest);
-        }
-
-        private static bool IsHearingStartingSoon(HearingDetailsResponse originalHearing)
-        {
-            var timeToCheckHearingAgainst = DateTime.UtcNow.AddMinutes(StartingSoonMinutesThreshold);
-            return originalHearing.ScheduledDateTime < timeToCheckHearingAgainst;
         }
 
         /// <summary>
@@ -632,7 +611,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists = hearing?.Participants?.Any(p => p.HearingRoleName == RoleNames.Judge) ?? false;
+                var judgeExists = hearing?.Participants?.Exists(p => p.HearingRoleName == RoleNames.Judge) ?? false;
                 if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Created)
                     return BadRequest("This hearing has no judge");
 
