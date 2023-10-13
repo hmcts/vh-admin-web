@@ -25,8 +25,8 @@ import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { first } from 'rxjs/operators';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-summary',
@@ -82,17 +82,19 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
         private participantService: ParticipantService,
-        private featureService: FeatureFlagService,
+        private featureService: LaunchDarklyService,
         private bookingStatusService: BookingStatusService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
-        featureService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
+        this.$subscriptions.push(
+            this.featureService
+                .getFlag<boolean>(FeatureFlags.eJudFeature, false)
+                .pipe(first())
+                .subscribe(result => {
+                    this.ejudFeatureFlag = result;
+                })
+        );
     }
 
     ngOnInit() {

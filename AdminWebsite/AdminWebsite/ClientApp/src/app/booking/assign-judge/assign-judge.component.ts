@@ -68,13 +68,23 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     ngOnInit() {
-        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
-        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.referenceData)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(enabled => {
+                this.referenceDataFeatureFlag = enabled;
+            });
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(enabled => {
+                this.ejudFeatureFlag = enabled;
+            });
 
-        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
-            this.referenceDataFeatureFlag = referenceDataFlag;
-            this.ejudFeatureFlag = ejudFeatureFlag;
-        });
+        // combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
+        //     this.referenceDataFeatureFlag = referenceDataFlag;
+        //     this.ejudFeatureFlag = ejudFeatureFlag;
+        // });
 
         this.failedSubmission = false;
         this.checkForExistingRequest();

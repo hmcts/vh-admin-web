@@ -5,7 +5,7 @@ import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
-import { FeatureFlagService } from './feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from './launch-darkly.service';
 
 @Injectable({
     providedIn: 'root'
@@ -62,11 +62,10 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient, private featureFlagService: FeatureFlagService) {
-        featureFlagService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
-            .subscribe(result => (this.judiciaryRoles = result ? Constants.JudiciaryRoles : []));
+    constructor(private bhClient: BHClient, private featureToggleService: LaunchDarklyService) {
+        this.featureToggleService.getFlag<boolean>(FeatureFlags.eJudFeature).subscribe(flagEnabled => {
+            this.judiciaryRoles = flagEnabled ? Constants.JudiciaryRoles : [];
+        });
     }
 
     participantSearch(term: string, hearingRole: string, caseRole: string = null): Observable<Array<ParticipantModel>> {

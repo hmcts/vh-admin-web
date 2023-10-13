@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { VideoHearingsService } from '../services/video-hearings.service';
 import { Observable } from 'rxjs';
-import { FeatureFlagService } from '../services/feature-flag.service';
 import { first } from 'rxjs/operators';
 import { Logger } from '../services/logger';
+import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 
 @Injectable()
 export class LastMinuteAmendmentsGuard implements CanActivate {
@@ -12,11 +12,11 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
     constructor(
         private videoHearingsService: VideoHearingsService,
         private router: Router,
-        private featureService: FeatureFlagService,
+        private featureService: LaunchDarklyService,
         private logger: Logger
     ) {
-        featureService
-            .getFeatureFlagByName('EJudFeature')
+        this.featureService
+            .getFlag<boolean>(FeatureFlags.eJudFeature, false)
             .pipe(first())
             .subscribe(result => {
                 this.eJudFeatureFlag = result;
