@@ -17,7 +17,13 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse } from '../../services/clients/api-client';
+import {
+    BookHearingException,
+    BookingStatus,
+    HearingDetailsResponse,
+    UpdateBookingStatusResponse,
+    ValidationProblemDetails
+} from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -577,7 +583,21 @@ describe('SummaryComponent  with invalid request', () => {
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.throwError('Fake error');
+
+        const validationProblem = new ValidationProblemDetails({
+            errors: {
+                FirstName: ['First name is required'],
+                LastName: ['Last Name is required'],
+                ContactEmail: ['Contact Email is required']
+            },
+            type: 'https://tools.ietf.org/html/rfc7231#section-6.5.1',
+            title: 'One or more validation errors occurred.',
+            status: 400
+        });
+
+        videoHearingsServiceSpy.saveHearing.and.throwError(
+            new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem)
+        );
 
         TestBed.configureTestingModule({
             providers: [

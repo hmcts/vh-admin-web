@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-save-failed-popup',
@@ -8,7 +8,8 @@ export class SaveFailedPopupComponent implements OnInit {
     @Output() tryAgain: EventEmitter<any> = new EventEmitter<any>();
     @Output() cancel: EventEmitter<any> = new EventEmitter<any>();
 
-    constructor() {}
+    @Input() errorMessages: string[];
+
     ngOnInit() {}
 
     trySaveAgain(): void {

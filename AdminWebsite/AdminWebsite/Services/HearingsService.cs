@@ -1,5 +1,4 @@
 ﻿using AdminWebsite.Contracts.Enums;
-using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
@@ -14,7 +13,6 @@ using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V2.Requests;
-using VideoApi.Contract.Consts;
 
 namespace AdminWebsite.Services
 {
@@ -26,10 +24,7 @@ namespace AdminWebsite.Services
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
-        bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
-        bool IsUpdatingJudge(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
         Task UpdateFailedBookingStatus(Guid hearingId);
-        bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse);
     }
 
     public class HearingsService : IHearingsService
@@ -54,53 +49,6 @@ namespace AdminWebsite.Services
                     x.ContactEmail.Equals(endpoint.DefenceAdvocateContactEmail,StringComparison.CurrentCultureIgnoreCase));
                 endpoint.DefenceAdvocateContactEmail = defenceAdvocate.ContactEmail;
             }
-        }
-
-        public bool IsAddingParticipantOnly(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
-        {
-            var originalParticipants = hearingDetailsResponse.Participants.Where(x=>x.HearingRoleName != HearingRoleName.StaffMember)
-                .Select(EditParticipantRequestMapper.MapFrom)
-                .ToList();
-            var requestParticipants = editHearingRequest.Participants.FindAll(x=>x.HearingRoleName != HearingRoleName.StaffMember);
-            var hearingCase = hearingDetailsResponse.Cases[0];
-            
-            var addedParticipant = GetAddedParticipant(originalParticipants, requestParticipants);
-
-            return addedParticipant.Any() &&
-                   editHearingRequest.HearingRoomName == hearingDetailsResponse.HearingRoomName &&
-                   editHearingRequest.HearingVenueName == hearingDetailsResponse.HearingVenueName &&
-                   editHearingRequest.OtherInformation == hearingDetailsResponse.OtherInformation &&
-                   editHearingRequest.ScheduledDateTime == hearingDetailsResponse.ScheduledDateTime &&
-                   editHearingRequest.ScheduledDuration == hearingDetailsResponse.ScheduledDuration &&
-                   hearingCase.Number == editHearingRequest.Case.Number;
-        }
-        
-        public bool IsUpdatingJudge(EditHearingRequest editHearingRequest,
-            HearingDetailsResponse hearingDetailsResponse)
-        {
-            var existingJudge =
-                hearingDetailsResponse.Participants.Find(
-                    x => x.HearingRoleName == HearingRoleName.Judge);
-            var newJudge =
-                editHearingRequest.Participants.Find(x => x.HearingRoleName == HearingRoleName.Judge);
-            var existingJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(hearingDetailsResponse.OtherInformation);
-            var newJudgeOtherInformation = HearingDetailsResponseExtensions.GetJudgeOtherInformationString(editHearingRequest.OtherInformation);
-
-            return (newJudge?.ContactEmail != existingJudge?.ContactEmail) ||
-                   newJudgeOtherInformation != existingJudgeOtherInformation;
-        }
-        
-        public bool HasEndpointsBeenChanged(EditHearingRequest editHearingRequest, HearingDetailsResponse hearingDetailsResponse)
-        {
-            var originalEndpoints = hearingDetailsResponse.Endpoints == null
-                ? new List<EditEndpointRequest>()
-                : hearingDetailsResponse.Endpoints.Select(EditEndpointRequestMapper.MapFrom).ToList();
-            var requestEndpoints = editHearingRequest.Endpoints ?? new List<EditEndpointRequest>();
-
-            var ogEndpoints = originalEndpoints.Except(requestEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
-            var newEndpoints = requestEndpoints.Except(originalEndpoints, EditEndpointRequest.EditEndpointRequestComparer).ToList();
-
-            return ogEndpoints.Count != 0 || newEndpoints.Count != 0;
         }
         
         public List<EditParticipantRequest> GetAddedParticipant(List<EditParticipantRequest> originalParticipants, List<EditParticipantRequest> requestParticipants)
