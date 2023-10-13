@@ -25,15 +25,15 @@ namespace AdminWebsite.UnitTests.Helper
             return hearingDetailsResponse;
         }
 
-        public static HearingDetailsResponseV2 WithParticipant(this HearingDetailsResponseV2 hearingDetailsResponse, string userRoleName, string userName =null)
+        public static HearingDetailsResponseV2 WithParticipant(this HearingDetailsResponseV2 hearingDetailsResponse, string userRoleName, string contactEmail =null)
         {
             var participant = Builder<ParticipantResponseV2>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = userRoleName);
 
-            if(!string.IsNullOrEmpty(userName))
+            if(!string.IsNullOrEmpty(contactEmail))
             {
-                participant.With(x => x.Username = userName);
+                participant.With(x => x.ContactEmail = contactEmail);
             }
 
             hearingDetailsResponse.Participants.Add(participant.Build());

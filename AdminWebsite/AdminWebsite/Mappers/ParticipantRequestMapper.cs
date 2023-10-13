@@ -37,7 +37,6 @@ public static class ParticipantRequestMapper
             Representee = participantRequest.Representee,
             TelephoneNumber = participantRequest.TelephoneNumber,
             Title = participantRequest.Title,
-            Username = participantRequest.Username,
             OrganisationName = participantRequest.OrganisationName,
         };
     }

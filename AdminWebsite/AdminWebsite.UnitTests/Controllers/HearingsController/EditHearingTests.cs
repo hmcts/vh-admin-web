@@ -390,18 +390,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _v2HearingDetailsResponse = new HearingDetailsResponseV2
             {
                 Id = _validId,
-                ScheduledDateTime = new DateTime(),
+                ScheduledDateTime = DateTime.UtcNow,
                 ServiceId = "ServiceId",
-                HearingTypeCode = "HearingTypeCode",
                 Participants = new List<ParticipantResponseV2>
                 {
                     new()
                     {
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
-                        ContactEmail = "old@domain.net",
-                        Username = "old@domain.net",
-                        CaseRoleName = "caseRoleName",
+                        ContactEmail = "old@domain.net"
                     }
                 },
                 Cases = new List<CaseResponseV2>
@@ -415,12 +412,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 HearingRoomName = "hearingRoomName",
                 OtherInformation = "otherInformation",
-                CreatedDate = new DateTime(),
+                CreatedDate = DateTime.UtcNow,
                 CreatedBy = "createdBy",
                 UpdatedBy = "updatedBy",
-                UpdatedDate = new DateTime(),
+                UpdatedDate = DateTime.UtcNow,
                 ConfirmedBy = "confirmedBy",
-                ConfirmedDate = new DateTime(),
+                ConfirmedDate = DateTime.UtcNow,
                 Status = BookingStatusV2.Booked,
                 AudioRecordingRequired = true,
                 CancelReason = null,

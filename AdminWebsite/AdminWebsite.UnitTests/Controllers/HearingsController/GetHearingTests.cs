@@ -15,7 +15,6 @@ using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
-using Moq.Language.Flow;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -105,9 +104,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _vhExistingHearingV2 = new HearingDetailsResponseV2
             {
                 Id = _guid,
-                ScheduledDateTime = new DateTime(),
+                ScheduledDateTime = DateTime.UtcNow,
                 ServiceId = "ServiceId",
-                HearingTypeCode = "HearingTypeCode",
                 Participants = new List<ParticipantResponseV2>
                 {
                     new()
@@ -115,8 +113,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
                         ContactEmail = "old@domain.net",
-                        Username = "old@domain.net",
-                        CaseRoleName = "caseRoleName",
                     }
                 },
                 Cases = new List<CaseResponseV2>
@@ -130,12 +126,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 HearingRoomName = "hearingRoomName",
                 OtherInformation = "otherInformation",
-                CreatedDate = new DateTime(),
+                CreatedDate = DateTime.UtcNow,
                 CreatedBy = "createdBy",
                 UpdatedBy = "updatedBy",
-                UpdatedDate = new DateTime(),
+                UpdatedDate = DateTime.UtcNow,
                 ConfirmedBy = "confirmedBy",
-                ConfirmedDate = new DateTime(),
+                ConfirmedDate = DateTime.UtcNow,
                 Status = BookingStatusV2.Booked,
                 AudioRecordingRequired = true,
                 CancelReason = null,

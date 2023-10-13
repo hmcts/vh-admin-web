@@ -53,7 +53,6 @@ public static class HearingDetailsResponseMapper
             HearingVenueCode = hearingDetails.HearingVenueCode,
             ServiceId = hearingDetails.ServiceId,
             CaseTypeName = hearingDetails.ServiceName,
-            HearingTypeCode = hearingDetails.HearingTypeCode,
             Cases = hearingDetails.Cases?.Select(e => new CaseResponse
             {
                 IsLeadCase = e.IsLeadCase,
