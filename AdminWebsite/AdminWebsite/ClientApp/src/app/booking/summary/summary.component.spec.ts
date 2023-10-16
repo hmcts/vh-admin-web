@@ -33,9 +33,9 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -120,8 +120,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'getStatus',
     'updateFailedStatus'
 ]);
-const featureFlagSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
-featureFlagSpy.getFeatureFlagByName.and.returnValue(of(true));
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
 describe('SummaryComponent with valid request', () => {
@@ -148,7 +148,7 @@ describe('SummaryComponent with valid request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             declarations: [
@@ -604,7 +604,7 @@ describe('SummaryComponent  with invalid request', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
@@ -663,7 +663,7 @@ describe('SummaryComponent  with existing request', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: RecordingGuardService, useValue: recordingGuardServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: BookingStatusService, useValue: bookingStatusService }
             ],
             imports: [RouterTestingModule],
@@ -855,8 +855,8 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
-    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureFlagService', ['getFeatureFlagByName']);
-    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
     const component = new SummaryComponent(
         videoHearingsServiceSpy,
@@ -865,7 +865,7 @@ describe('SummaryComponent  with multi days request', () => {
         loggerSpy,
         recordingGuardServiceSpy,
         participantServiceSpy,
-        featureFlagServiceSpy,
+        launchDarklyServiceSpy,
         bookingStatusService
     );
     component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);

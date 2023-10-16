@@ -4,7 +4,6 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { Logger } from 'src/app/services/logger';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -17,6 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -36,11 +36,11 @@ function initExistingHearingRequest(): HearingModel {
 }
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 let routerSpy: jasmine.SpyObj<Router>;
 const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
 
 describe('CreateHearingComponent with multiple case types', () => {
     let component: CreateHearingComponent;
@@ -53,6 +53,9 @@ describe('CreateHearingComponent with multiple case types', () => {
     const newHearing = initHearingRequest();
 
     beforeEach(() => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -60,8 +63,6 @@ describe('CreateHearingComponent with multiple case types', () => {
             'setBookingHasChanged'
         ]);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
@@ -71,11 +72,11 @@ describe('CreateHearingComponent with multiple case types', () => {
             imports: [SharedModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
@@ -184,6 +185,9 @@ describe('CreateHearingComponent with single case type', () => {
     const newHearing = initHearingRequest();
 
     beforeEach(() => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -195,18 +199,16 @@ describe('CreateHearingComponent with single case type', () => {
         bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
@@ -242,6 +244,9 @@ describe('CreateHearingComponent with existing request in session', () => {
     existingRequest.hearing_type_name = 'Automated Test';
 
     beforeEach(() => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
             'getCurrentRequest',
@@ -254,18 +259,16 @@ describe('CreateHearingComponent with existing request in session', () => {
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();

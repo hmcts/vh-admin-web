@@ -16,7 +16,7 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
         private logger: Logger
     ) {
         this.featureService
-            .getFlag<boolean>(FeatureFlags.eJudFeature, false)
+            .getFlag<boolean>(FeatureFlags.eJudFeature)
             .pipe(first())
             .subscribe(result => {
                 this.eJudFeatureFlag = result;

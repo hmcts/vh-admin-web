@@ -9,7 +9,7 @@ import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { DebugElement, ElementRef } from '@angular/core';
-import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 describe('SearchEmailComponent', () => {
     let component: SearchEmailComponent;
@@ -51,16 +51,16 @@ describe('SearchEmailComponent', () => {
     let searchServiceSpy: jasmine.SpyObj<SearchService>;
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
-    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(() => {
         searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             declarations: [SearchEmailComponent],
@@ -69,7 +69,7 @@ describe('SearchEmailComponent', () => {
                 { provide: SearchService, useValue: searchServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 
@@ -391,15 +391,15 @@ describe('SearchEmailComponent email validate', () => {
     const configSettings = new ClientSettingsResponse();
     configSettings.test_username_stem = '@hmcts.net';
 
-    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
     const searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
-    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
-    const component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+    const component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
     it('should config service return email pattern for validation', fakeAsync(() => {
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         component.getEmailPattern();

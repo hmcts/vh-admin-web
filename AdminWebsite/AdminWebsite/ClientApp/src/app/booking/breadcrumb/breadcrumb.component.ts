@@ -27,7 +27,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         this.currentRouter = this.router.url;
         this.featureService
-            .getFlag<boolean>(FeatureFlags.eJudFeature, false)
+            .getFlag<boolean>(FeatureFlags.eJudFeature)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.ejudFeatureFlag = result;

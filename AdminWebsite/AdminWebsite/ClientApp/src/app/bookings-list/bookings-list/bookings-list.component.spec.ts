@@ -32,7 +32,6 @@ import {
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsListComponent } from './bookings-list.component';
 import { DatePipe } from '@angular/common';
-import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { v4 as uuid } from 'uuid';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
@@ -616,7 +615,6 @@ describe('BookingsListComponent', () => {
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: JusticeUsersService, useValue: justiceUserServiceSpy },
                 DatePipe
             ]

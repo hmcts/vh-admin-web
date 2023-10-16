@@ -89,7 +89,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showErrorSaving = false;
         this.$subscriptions.push(
             this.featureService
-                .getFlag<boolean>(FeatureFlags.eJudFeature, false)
+                .getFlag<boolean>(FeatureFlags.eJudFeature)
                 .pipe(first())
                 .subscribe(result => {
                     this.ejudFeatureFlag = result;

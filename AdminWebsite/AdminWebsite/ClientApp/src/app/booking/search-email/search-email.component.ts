@@ -61,7 +61,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.email = this.initialValue;
         this.featureFlagService
-            .getFlag(FeatureFlags.eJudFeature, false)
+            .getFlag(FeatureFlags.eJudFeature)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.judiciaryRoles = result ? Constants.JudiciaryRoles : [];
