@@ -112,7 +112,7 @@ staffMember2.contact_email = 'StaffMember2Email';
 const staffMemberList: PersonResponse[] = [staffMember1, staffMember2];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
-let launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 describe('SearchService', () => {
     beforeEach(() => {
