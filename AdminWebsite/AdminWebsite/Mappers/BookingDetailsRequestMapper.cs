@@ -50,7 +50,6 @@ public static class BookingDetailsRequestMapper
             ScheduledDuration = bookingDetails.ScheduledDuration,
             HearingVenueCode = bookingDetails.HearingVenueCode,
             ServiceId = bookingDetails.CaseTypeServiceId,
-            HearingTypeCode = bookingDetails.HearingTypeCode,
             Cases = bookingDetails.Cases?
                 .Select(cr => new V2.CaseRequestV2
                 {

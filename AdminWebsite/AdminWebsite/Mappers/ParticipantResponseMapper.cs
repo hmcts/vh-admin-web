@@ -38,8 +38,6 @@ public static class ParticipantResponseMapper
             {
                 Id = p.Id,
                 DisplayName = p.DisplayName,
-                CaseRoleName = p.CaseRoleName,
-                HearingRoleName = p.HearingRoleName,
                 HearingRoleCode = p.HearingRoleCode,
                 UserRoleName = p.UserRoleName,
                 Title = p.Title,
@@ -48,7 +46,6 @@ public static class ParticipantResponseMapper
                 LastName = p.LastName,
                 ContactEmail = p.ContactEmail,
                 TelephoneNumber = p.TelephoneNumber,
-                Username = p.Username,
                 Organisation = p.Organisation,
                 Representee = p.Representee,
                 LinkedParticipants = p.LinkedParticipants?.Select(lp => lp.Map()).ToList()
