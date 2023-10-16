@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Subscription, combineLatest } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -80,11 +80,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             .subscribe(enabled => {
                 this.ejudFeatureFlag = enabled;
             });
-
-        // combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
-        //     this.referenceDataFeatureFlag = referenceDataFlag;
-        //     this.ejudFeatureFlag = ejudFeatureFlag;
-        // });
 
         this.failedSubmission = false;
         this.checkForExistingRequest();
@@ -239,7 +234,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const text = SanitizeInputText(this.judgeDisplayNameFld.value);
         this.judgeDisplayNameFld.setValue(text);
 
-        if (this.judge && this.judge.display_name) {
+        if (this.judge?.display_name) {
             const judge = this.hearing.participants.find(x => x.is_judge);
             if (judge) {
                 this.hearing.participants.find(x => x.is_judge).display_name = this.judge.display_name;
@@ -276,7 +271,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             return;
         }
 
-        if (this.judge && this.judge.email) {
+        if (this.judge?.email) {
             if (!this.judge.display_name) {
                 this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
                 this.failedSubmission = true;

@@ -4,7 +4,7 @@ import { Constants } from '../../common/constants';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, first, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, zip } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
