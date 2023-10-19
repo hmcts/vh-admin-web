@@ -15,7 +15,6 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
-import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
 import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-types-menu.component';
 import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
@@ -71,7 +70,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private refDataService: ReferenceDataService,
         private datePipe: DatePipe,
         private returnUrlService: ReturnUrlService,
-        private featureService: FeatureFlagService,
         @Inject(DOCUMENT) document
     ) {}
 

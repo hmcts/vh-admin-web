@@ -4,9 +4,9 @@ import { Constants } from '../../common/constants';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, first, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
-import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-search-email',
@@ -32,6 +32,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
+    private destroyed$ = new Subject<void>();
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
     private cannotAddNewUsersRoles = [this.judgeHearingRole];
@@ -54,14 +55,14 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         private searchService: SearchService,
         private configService: ConfigService,
         private logger: Logger,
-        private featureFlagService: FeatureFlagService
+        private featureFlagService: LaunchDarklyService
     ) {}
 
     ngOnInit() {
         this.email = this.initialValue;
         this.featureFlagService
-            .getFeatureFlagByName('EJudFeature')
-            .pipe(first())
+            .getFlag(FeatureFlags.eJudFeature)
+            .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.judiciaryRoles = result ? Constants.JudiciaryRoles : [];
             });

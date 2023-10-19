@@ -11,10 +11,10 @@ import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { FeatureFlagService } from 'src/app/services/feature-flag.service';
 import { of } from 'rxjs';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
+import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -41,7 +41,7 @@ function initHearingRequest(): HearingModel {
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const interpreter: ParticipantModel = {
@@ -58,6 +58,8 @@ const notInterpreter: ParticipantModel = {
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
     let fixture: ComponentFixture<OtherInformationComponent>;
+    launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
         'getCurrentRequest',
         'cancelRequest',
@@ -67,16 +69,14 @@ describe('OtherInformationComponent', () => {
 
     beforeEach(waitForAsync(() => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, SharedModule],
             providers: [
                 { provide: Router, useValue: routerSpy },
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [
                 OtherInformationComponent,

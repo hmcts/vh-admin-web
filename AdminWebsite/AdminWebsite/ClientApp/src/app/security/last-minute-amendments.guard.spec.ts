@@ -2,9 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Data, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { LastMinuteAmendmentsGuard } from './last-minute-amendments.guard';
 import { VideoHearingsService } from '../services/video-hearings.service';
-import { FeatureFlagService } from '../services/feature-flag.service';
 import { of } from 'rxjs';
 import { Logger } from '../services/logger';
+import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 
 describe('LastMinuteAmendmentsGuard', () => {
     let guard: LastMinuteAmendmentsGuard;
@@ -15,8 +15,8 @@ describe('LastMinuteAmendmentsGuard', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['warn', 'debug']);
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
-    const featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -24,7 +24,7 @@ describe('LastMinuteAmendmentsGuard', () => {
                 LastMinuteAmendmentsGuard,
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: router },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();

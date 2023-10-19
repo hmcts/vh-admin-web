@@ -8,7 +8,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { BHClient, ClientSettingsResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -75,7 +75,6 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
-let clientApiSpy: jasmine.SpyObj<BHClient>;
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
@@ -87,7 +86,6 @@ let configServiceSpy: jasmine.SpyObj<ConfigService>;
 describe('AssignJudgeComponent', () => {
     beforeEach(waitForAsync(() => {
         const newHearing = initHearingRequest();
-        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getFeatureFlag']);
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
         emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
@@ -115,7 +113,6 @@ describe('AssignJudgeComponent', () => {
         judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
         configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
-        clientApiSpy.getFeatureFlag.and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterTestingModule],
@@ -125,7 +122,6 @@ describe('AssignJudgeComponent', () => {
                 { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
-                { provide: BHClient, useValue: clientApiSpy },
                 {
                     provide: Router,
                     useValue: {
