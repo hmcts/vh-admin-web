@@ -1,43 +1,44 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { first } from 'rxjs/operators';
-import { FeatureFlagService } from '../../services/feature-flag.service';
-import { PageUrls } from '../../shared/page-url.constants';
-import { lastValueFrom } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
     styleUrls: ['./breadcrumb.component.css']
 })
-export class BreadcrumbComponent implements OnInit {
+export class BreadcrumbComponent implements OnInit, OnDestroy {
     breadcrumbItems: BreadcrumbItemModel[];
     currentRouter: string;
     currentItem: BreadcrumbItemModel;
     @Input()
     canNavigate: boolean;
     ejudFeatureFlag = false;
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: FeatureFlagService) {
+    destroyed$ = new Subject<void>();
+
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {
         this.breadcrumbItems = JSON.parse(JSON.stringify(BreadcrumbItems));
     }
+
     async ngOnInit() {
         this.currentRouter = this.router.url;
         this.featureService
-            .getFeatureFlagByName('StaffMemberFeature')
-            .pipe(first())
+            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
-                const index = this.breadcrumbItems.findIndex(b => b.Url === PageUrls.AssignJudge);
-                if (!result && index !== -1) {
-                    this.breadcrumbItems[index].Name = 'Judge';
-                }
+                this.ejudFeatureFlag = result;
             });
-        await lastValueFrom(this.featureService.getFeatureFlagByName('EJudFeature').pipe(first())).then(result => {
-            this.ejudFeatureFlag = result;
-        });
 
         this.initBreadcrumb();
+    }
+
+    ngOnDestroy(): void {
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     clickBreadcrumbs(step: BreadcrumbItemModel) {

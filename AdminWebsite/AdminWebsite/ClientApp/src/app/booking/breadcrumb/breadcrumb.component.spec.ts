@@ -2,26 +2,26 @@ import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 import { of } from 'rxjs';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
         'validCurrentRequest',
         'isConferenceClosed',
         'isHearingAboutToStart'
     ]);
-    let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     let component: BreadcrumbComponent;
     const router = {
         url: '/hearing-schedule',
         ...jasmine.createSpyObj<Router>(['navigate'])
     } as jasmine.SpyObj<Router>;
     beforeEach(async () => {
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
-        component = new BreadcrumbComponent(router, videoHearingsServiceSpy, featureFlagServiceSpy);
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        component = new BreadcrumbComponent(router, videoHearingsServiceSpy, launchDarklyServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
         await component.ngOnInit();
@@ -78,7 +78,7 @@ describe('BreadcrumbComponent', () => {
     });
 
     it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
         component.ngOnInit();
         expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
     });
@@ -258,7 +258,7 @@ describe('BreadcrumbComponent', () => {
                 });
 
                 it('when ejud feature flag is off, assign judge should NOT be marked as active', async () => {
-                    featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
+                    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
                     await component.ngOnInit();
                     const assignJudgeCrumb = breadCrumbs.find(e => e.Url === '/assign-judge');
                     expect(assignJudgeCrumb.Active).toBe(false);

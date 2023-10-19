@@ -31,7 +31,6 @@ import { PopupModule } from 'src/app/popups/popup.module';
 import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
-import { FeatureFlagService } from '../../services/feature-flag.service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 let component: AddParticipantComponent;
@@ -259,12 +258,11 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
 ]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
-let featureFlagServiceSpy: jasmine.SpyObj<FeatureFlagService>;
-const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
-featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
@@ -292,7 +290,6 @@ describe('AddParticipantComponent', () => {
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
@@ -323,7 +320,7 @@ describe('AddParticipantComponent', () => {
             loggerSpy
         );
 
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
         component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
 
         component.ngOnInit();
@@ -1065,7 +1062,6 @@ describe('AddParticipantComponent edit mode', () => {
             'getHearingRoles'
         ]);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1076,13 +1072,11 @@ describe('AddParticipantComponent edit mode', () => {
                 { provide: ParticipantService, useValue: participantServiceSpy },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
@@ -1214,7 +1208,7 @@ describe('AddParticipantComponent edit mode', () => {
     });
 
     it('should set edit mode and populate participant data', fakeAsync(async () => {
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
         component.searchEmail.email = 'test3@hmcts.net';
 
         component.ngOnInit();
@@ -1495,7 +1489,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             'isHearingAboutToStart',
             'getHearingRoles'
         ]);
-        featureFlagServiceSpy = jasmine.createSpyObj<FeatureFlagService>('FeatureToggleService', ['getFeatureFlagByName']);
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(flatRoleList));
@@ -1504,7 +1498,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
@@ -1517,7 +1510,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 { provide: ParticipantService, useValue: participantServiceSpy },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: FeatureFlagService, useValue: featureFlagServiceSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy }
             ]
@@ -1526,7 +1518,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         fixture = TestBed.createComponent(AddParticipantComponent);
         component = fixture.componentInstance;
         component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
         component.editMode = true;
         component.ngOnInit();
 
@@ -1741,7 +1733,6 @@ describe('AddParticipantComponent set representer', () => {
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
-        featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
@@ -1756,7 +1747,7 @@ describe('AddParticipantComponent set representer', () => {
             launchDarklyServiceSpy,
             loggerSpy
         );
-        component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, featureFlagServiceSpy);
+        component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
 
         component.ngOnInit();
 
@@ -1820,7 +1811,7 @@ describe('AddParticipantComponent set representer', () => {
             jasmine.createSpyObj<SearchService>(['participantSearch']),
             configServiceSpy,
             loggerSpy,
-            featureFlagServiceSpy
+            launchDarklyServiceSpy
         );
         component.participantDetails = participants[0];
         component.ngAfterContentInit();

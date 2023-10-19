@@ -7,7 +7,7 @@ import { first, map } from 'rxjs/operators';
 export const FeatureFlags = {
     adminSearch: 'admin_search',
     vhoWorkAllocation: 'vho-work-allocation',
-    eJudFeature: 'EJudFeature',
+    eJudFeature: 'ejud-feature',
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data'

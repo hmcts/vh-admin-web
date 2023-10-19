@@ -1,10 +1,11 @@
 import { SearchService } from './search.service';
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeResponse, PersonResponse } from './clients/api-client';
 import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
+import { FeatureFlags, LaunchDarklyService } from './launch-darkly.service';
 
 let service: SearchService;
 
@@ -111,6 +112,7 @@ staffMember2.contact_email = 'StaffMember2Email';
 const staffMemberList: PersonResponse[] = [staffMember1, staffMember2];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
+const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 describe('SearchService', () => {
     beforeEach(() => {
@@ -118,22 +120,25 @@ describe('SearchService', () => {
             'postPersonBySearchTerm',
             'postJudiciaryPersonBySearchTerm',
             'postJudgesBySearchTerm',
-            'getStaffMembersBySearchTerm',
-            'getFeatureFlag'
+            'getStaffMembersBySearchTerm'
         ]);
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.getStaffMembersBySearchTerm.and.returnValue(of(staffMemberList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
-        clientApiSpy.getFeatureFlag.and.returnValue(of(true));
+
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
         spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
         spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [{ provide: BHClient, useValue: clientApiSpy }]
+            providers: [
+                { provide: BHClient, useValue: clientApiSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+            ]
         });
 
         service = TestBed.inject(SearchService);
@@ -145,8 +150,7 @@ describe('SearchService', () => {
                 'postPersonBySearchTerm',
                 'postJudiciaryPersonBySearchTerm',
                 'postJudgesBySearchTerm',
-                'getStaffMembersBySearchTerm',
-                'getFeatureFlag'
+                'getStaffMembersBySearchTerm'
             ]);
 
             spyOn(service, 'searchStaffMemberAccounts').and.returnValue(of(staffMemberList));
@@ -235,7 +239,7 @@ describe('SearchService', () => {
         });
 
         it('should method searchJudiciaryEntries call api and return person array when EJudFeature flag is OFF', () => {
-            clientApiSpy.getFeatureFlag.and.returnValue(of(false));
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
 
             const terms = validSearchTerms;
             service.participantSearch(terms, Constants.HearingRoles.PanelMember).subscribe(participants => {
