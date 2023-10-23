@@ -58,7 +58,7 @@ namespace AdminWebsite.Controllers
             {
                 request.Cursor = _encoder.Encode(request.Cursor);
             }
-            if (_userIdentity.IsAdministratorRole())
+            if (_userIdentity.IsATeamLead() || _userIdentity.IsACso())
             {
                 request.CaseTypes ??= new List<string>();
                 request.CaseTypes.AddRange(_userIdentity.GetGroupDisplayNames());

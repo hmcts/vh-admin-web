@@ -53,7 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             // Arrange
             var includeDeleted = true;
-            _userIdentityMock.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentityMock.Setup(x => x.IsATeamLead()).Returns(true);
             _bookingsApiClientMock.Setup(x =>
                     x.GetCaseTypesAsync(includeDeleted))
                     .ReturnsAsync(GetCaseTypesList());

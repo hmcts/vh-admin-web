@@ -8,10 +8,20 @@ namespace AdminWebsite.Security
     public interface IUserIdentity
     {
         IEnumerable<string> GetGroupDisplayNames();
-        bool IsAdministratorRole();
+        
+        /// <summary>
+        /// Does a user have a CSO role (aka VHO but not a team lead)
+        /// </summary>
+        /// <returns></returns>
+        bool IsACso();
+        
+        /// <summary>
+        /// Does a user have a Team Lead role
+        /// </summary>
+        /// <returns></returns>
+        bool IsATeamLead();
+        
         string GetUserIdentityName();
-        bool IsVhOfficerAdministratorRole();
-        bool IsCaseAdministratorRole();
         IEnumerable<string> GetAdministratorCaseTypes();
     }
 
@@ -36,20 +46,15 @@ namespace AdminWebsite.Security
         {
             return _administratorRoleClaims.UserCaseTypes;
         }
-
-        public bool IsAdministratorRole()
-        {
-            return IsVhOfficerAdministratorRole() || IsCaseAdministratorRole();
-        }
-
-        public bool IsVhOfficerAdministratorRole()
+        
+        public bool IsACso()
         {
             return _currentUser.IsInRole(AppRoles.VhOfficerRole);
         }
 
-        public bool IsCaseAdministratorRole()
+        public bool IsATeamLead()
         {
-            return _currentUser.IsInRole(AppRoles.CaseAdminRole);
+            return _currentUser.IsInRole(AppRoles.AdministratorRole);
         }
 
         public string GetUserIdentityName()

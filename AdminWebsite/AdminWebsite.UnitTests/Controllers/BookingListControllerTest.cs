@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_booking_list_if_cursor_is_null()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
             x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
@@ -55,7 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_booking_list_if_cursor_is_not_null()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
             _bookingsApiClient.Setup(x =>
                     x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
                 .ReturnsAsync(new BookingsResponse());
@@ -78,7 +78,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_unauthorized_for_booking_list_if_user_is_not_admin()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(false);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(false);
 
             _bookingsApiClient.Setup(x =>
            x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
@@ -99,7 +99,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_throw_exception_for_booking_list_and_returns_bad_result()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
            x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
@@ -191,7 +191,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok_for_booking_list_with_defined_types_list()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
                     x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
@@ -211,7 +211,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             okResult.StatusCode.Should().Be(200);
 
-            _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
+            _userIdentity.Verify(x => x.IsATeamLead(), Times.Once);
             _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
@@ -221,7 +221,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             var hearingTypesIds = new List<string> { "1", "2" };
 
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
 
             _bookingsApiClient.Setup(x =>
                     x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))
@@ -242,7 +242,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             okResult.StatusCode.Should().Be(200);
 
-            _userIdentity.Verify(x => x.IsAdministratorRole(), Times.Once);
+            _userIdentity.Verify(x => x.IsATeamLead(), Times.Once);
             _bookingsApiClient.Verify(s => s.GetCaseTypesAsync(true), Times.Once);
             _bookingsApiClient.Verify(x => x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()), Times.Once);
         }
@@ -478,7 +478,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
         private void SetupTestCase()
         {
-            _userIdentity.Setup(x => x.IsAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsATeamLead()).Returns(true);
             _userIdentity.Setup(x => x.GetGroupDisplayNames()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClient.Setup(x =>
                     x.GetHearingsByTypesAsync(It.IsAny<GetHearingRequest>()))

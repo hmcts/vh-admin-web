@@ -50,36 +50,25 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(AppRoles.JudgeRole, false)]
         [TestCase(AppRoles.RepresentativeRole, false)]
         [TestCase(AppRoles.CaseAdminRole, false)]
-        [TestCase(AppRoles.VhOfficerRole, true)]
+        [TestCase(AppRoles.VhOfficerRole, false)]
+        [TestCase(AppRoles.AdministratorRole, true)]
         public void Should_set_the_isvhofficeradministratorrole_property(string appRole, bool expectedValue)
         {
             var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
             var userIdentity = new UserIdentity(user);
-            userIdentity.IsVhOfficerAdministratorRole().Should().Be(expectedValue);
+            userIdentity.IsATeamLead().Should().Be(expectedValue);
         }
 
         [TestCase(AppRoles.CitizenRole, false)]
         [TestCase(AppRoles.JudgeRole, false)]
         [TestCase(AppRoles.RepresentativeRole, false)]
-        [TestCase(AppRoles.CaseAdminRole, true)]
-        [TestCase(AppRoles.VhOfficerRole, false)]
-        public void Should_set_the_iscaseadministratorrole_property(string appRole, bool expectedValue)
-        {
-            var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
-            var userIdentity = new UserIdentity(user);
-            userIdentity.IsCaseAdministratorRole().Should().Be(expectedValue);
-        }
-
-        [TestCase(AppRoles.CitizenRole, false)]
-        [TestCase(AppRoles.JudgeRole, false)]
-        [TestCase(AppRoles.RepresentativeRole, false)]
-        [TestCase(AppRoles.CaseAdminRole, true)]
         [TestCase(AppRoles.VhOfficerRole, true)]
-        public void Should_set_the_isadministratorrole_property(string appRole, bool expectedValue)
+        [TestCase(AppRoles.AdministratorRole, false)]
+        public void Should_set_the_is_a_cso_role_property(string appRole, bool expectedValue)
         {
             var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
             var userIdentity = new UserIdentity(user);
-            userIdentity.IsAdministratorRole().Should().Be(expectedValue);
+            userIdentity.IsACso().Should().Be(expectedValue);
         }
 
         [Test]
