@@ -7,7 +7,9 @@
     <div class="govuk-grid-column-full">
       <div>
         <div class="vh-title">
-          <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }}</h1>
+          <h1 class="govuk-heading-l" id="hearingNumber">
+            <app-truncatable-text [text]="hearing?.HearingCaseNumber" [maxLimit]="50"></app-truncatable-text>
+          </h1>
         </div>
         <div class="vh-booking-detail-status">
           <app-booking-status [bookingDetails]="hearing"></app-booking-status>

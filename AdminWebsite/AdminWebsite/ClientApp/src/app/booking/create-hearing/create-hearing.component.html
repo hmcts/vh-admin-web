@@ -39,6 +39,7 @@
       type="text"
       formControlName="caseNumber"
       required
+      maxlength="255"
       (blur)="caseNumberOnBlur()"
     />
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
@@ -55,6 +56,7 @@
       type="text"
       formControlName="caseName"
       required
+      maxlength="255"
       (blur)="caseNameOnBlur()"
     />
     <div *ngIf="caseNameInvalid" class="alert alert-danger">

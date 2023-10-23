@@ -1,7 +1,9 @@
 <app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <h1 class="govuk-heading-l">{{ isExistingBooking ? caseNumber : constants.BookHearingTitle }}</h1>
+    <h1 class="govuk-heading-l">
+      <app-truncatable-text [text]="isExistingBooking ? caseNumber : constants.BookHearingTitle" [maxLimit]="50"></app-truncatable-text>
+    </h1>
   </div>
 </div>
 <div class="govuk-grid-row">
@@ -28,8 +30,8 @@
     </h2>
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>
-      <div id="caseName" class="vh-text-break">{{ caseName }}</div>
+      <div id="caseNumber" class="vh-text-break"><app-truncatable-text [text]="caseNumber" [maxLimit]="50"></app-truncatable-text></div>
+      <div id="caseName" class="vh-text-break"><app-truncatable-text [text]="caseName" [maxLimit]="50"></app-truncatable-text></div>
       <div id="caseType">{{ caseType }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>
