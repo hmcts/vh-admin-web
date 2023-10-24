@@ -30,8 +30,8 @@
     </h2>
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="caseNumber" class="vh-text-break"><app-truncatable-text [text]="caseNumber" [maxLimit]="50"></app-truncatable-text></div>
-      <div id="caseName" class="vh-text-break"><app-truncatable-text [text]="caseName" [maxLimit]="50"></app-truncatable-text></div>
+      <div class="vh-text-break"><app-truncatable-text [id]="'caseNumber'" [text]="caseNumber" [maxLimit]="50"></app-truncatable-text></div>
+      <div class="vh-text-break"><app-truncatable-text [id]="'caseName'" [text]="caseName" [maxLimit]="50"></app-truncatable-text></div>
       <div id="caseType">{{ caseType }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>

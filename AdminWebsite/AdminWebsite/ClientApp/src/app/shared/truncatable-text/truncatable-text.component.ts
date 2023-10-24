@@ -10,6 +10,7 @@ export class TruncatableTextComponent implements OnInit {
 
     @Input() maxLimit = 95;
     @Input() hideShowMore = false;
+    @Input() id = '';
 
     displayTooltip: boolean;
     displayText: string;
