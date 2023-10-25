@@ -23,6 +23,7 @@ import { TooltipDirective } from './directives/tooltip.directive';
 import { SelectComponent } from './select';
 import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
 import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
+import { TruncatableTextComponent } from './truncatable-text/truncatable-text.component';
 
 @NgModule({
     imports: [
@@ -49,7 +50,8 @@ import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
         MinutesToHoursPipe,
         RolesToDisplayPipe,
         TooltipDirective,
-        SelectComponent
+        SelectComponent,
+        TruncatableTextComponent
     ],
     providers: [WindowRef, WindowScrolling, { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true }],
     exports: [
@@ -69,7 +71,8 @@ import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
         MinutesToHoursPipe,
         TooltipDirective,
         SelectComponent,
-        RolesToDisplayPipe
+        RolesToDisplayPipe,
+        TruncatableTextComponent
     ]
 })
 export class SharedModule {

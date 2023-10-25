@@ -42,7 +42,9 @@
       (blur)="caseNumberOnBlur()"
     />
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
-      <span id="caseNumber-error" class="govuk-error-message"> Please enter a case number </span>
+      <span id="caseNumber-error" class="govuk-error-message">
+        {{ caseNumber.hasError('maxlength') ? 'Character limit exceeeded' : 'Please enter a case number' }}
+      </span>
     </div>
   </div>
 
@@ -58,7 +60,9 @@
       (blur)="caseNameOnBlur()"
     />
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
-      <span id="caseName-error" class="govuk-error-message"> Please enter a case name </span>
+      <span id="caseName-error" class="govuk-error-message">
+        {{ caseName.hasError('maxlength') ? 'Character limit exceeeded' : 'Please enter a case name' }}
+      </span>
     </div>
   </div>
 

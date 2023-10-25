@@ -27,6 +27,7 @@ body {
   display: none;
   opacity: 1;
   pointer-events: none;
+  word-break: break-all;
 }
 
 .vh-tooltip-blue {
@@ -71,7 +72,7 @@ body {
   max-width: 560px !important;
   max-height: 80vh;
   overflow-y: scroll;
-  
+
   &::-webkit-scrollbar {
     width: 10px;
   }
@@ -81,11 +82,11 @@ body {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: govuk-colour("mid-grey")
+    background: govuk-colour('mid-grey');
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: govuk-colour("mid-grey");
+    background: govuk-colour('mid-grey');
     filter: opacity(50%);
   }
 }
