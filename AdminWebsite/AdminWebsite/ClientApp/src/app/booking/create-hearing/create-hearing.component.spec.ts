@@ -55,6 +55,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -187,6 +188,7 @@ describe('CreateHearingComponent with single case type', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -237,6 +239,57 @@ describe('CreateHearingComponent with single case type', () => {
     });
 });
 
+describe('CreateHearingComponent with ref data toggle on', () => {
+    let component: CreateHearingComponent;
+    let fixture: ComponentFixture<CreateHearingComponent>;
+    let hearingTypeControl: AbstractControl;
+    const newHearing = initHearingRequest();
+
+    beforeEach(() => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
+
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+            'getHearingTypes',
+            'getCurrentRequest',
+            'updateHearingRequest',
+            'cancelRequest',
+            'setBookingHasChanged'
+        ]);
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+            providers: [
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: Router, useValue: routerSpy },
+                { provide: ErrorService, useValue: errorService },
+                { provide: BookingService, useValue: bookingServiceSpy },
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+            ],
+            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(CreateHearingComponent);
+        component = fixture.componentInstance;
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        hearingTypeControl = component.form.controls['hearingType'];
+    });
+
+    it('should pass validation when no hearing type is not set', () => {
+        expect(hearingTypeControl.valid).toBeTruthy();
+        hearingTypeControl.setValue(2);
+        expect(hearingTypeControl.valid).toBeTruthy();
+    });
+});
+
 describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
@@ -246,6 +299,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
