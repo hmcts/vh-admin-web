@@ -13,6 +13,7 @@ import { OtherInformationModel } from '../../common/model/other-information.mode
 import { ConfigService } from 'src/app/services/config.service';
 import { of } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
@@ -57,7 +58,7 @@ describe('HearingDetailsComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [HearingDetailsComponent, LongDatetimePipe],
-            imports: [RouterTestingModule],
+            imports: [RouterTestingModule, SharedModule],
             providers: [
                 Logger,
                 { provide: ConfigService, useValue: configServiceSpy },
@@ -84,6 +85,7 @@ describe('HearingDetailsComponent', () => {
         const phoneDetails = '11111 (ID: 1234567)';
         fixture.whenStable().then(() => {
             fixture.detectChanges();
+            console.log(component.hearing);
             const divElementRole = debugElement.queryAll(By.css('#hearing-name'));
             expect(divElementRole.length).toBeGreaterThan(0);
             expect(divElementRole.length).toBe(1);
