@@ -2,6 +2,7 @@ import { CaseModel } from './case.model';
 import { ParticipantModel } from './participant.model';
 import { EndpointModel } from './endpoint.model';
 import { LinkedParticipantModel } from './linked-participant.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 export class HearingModel {
     constructor() {
@@ -19,6 +20,7 @@ export class HearingModel {
     hearing_type_id?: number;
     cases?: CaseModel[];
     participants?: ParticipantModel[];
+    judiciaryParticipants?: JudicialMemberDto[];
     created_by?: string;
     case_type?: string;
     case_type_service_id?: string;

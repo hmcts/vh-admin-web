@@ -1,3 +1,6 @@
+export type JudicaryRoleCode = 'Judge' | 'PanelMember';
+
 export class JudicialMemberDto {
-    constructor(public firstName: string, public lastName: string, contactTelephone: string, contactEmail: string) {}
+    public roleCode: JudicaryRoleCode;
+    constructor(public firstName: string, public lastName: string, public email: string, public personalCode: string) {}
 }

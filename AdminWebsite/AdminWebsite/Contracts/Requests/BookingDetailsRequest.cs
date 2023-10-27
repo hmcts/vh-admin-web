@@ -16,6 +16,7 @@ public class BookingDetailsRequest
     public string HearingTypeCode { get; set; }
     public List<CaseRequest> Cases { get; set; }
     public List<ParticipantRequest> Participants { get; set; }
+    public List<JudiciaryParticipantRequest> JudiciaryParticipants { get; set; }
     public string HearingRoomName { get; set; }
     public string OtherInformation { get; set; }
     public string CreatedBy { get; set; }

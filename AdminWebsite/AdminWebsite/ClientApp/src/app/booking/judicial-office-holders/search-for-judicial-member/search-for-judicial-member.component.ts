@@ -1,8 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JudicialService } from '../../services/judicial.service';
-import { PersonResponse } from 'src/app/services/clients/api-client';
-import { debounce, debounceTime } from 'rxjs';
+import { JudiciaryPersonResponse, PersonResponse } from 'src/app/services/clients/api-client';
+import { debounceTime } from 'rxjs';
+import { JudicialMemberDto } from '../models/add-judicial-member.model';
 
 @Component({
     selector: 'app-search-for-judicial-member',
@@ -11,9 +12,9 @@ import { debounce, debounceTime } from 'rxjs';
 })
 export class SearchForJudicialMemberComponent implements OnInit {
     form: FormGroup<SearchForJudicialMemberForm>;
-    result: PersonResponse[] = [];
-
-    @Output() judicialMemberSelected = new EventEmitter<PersonResponse>();
+    searchResult: JudiciaryPersonResponse[] = [];
+    showResult = false;
+    @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
     constructor(private judiciaryService: JudicialService) {}
 
@@ -22,14 +23,21 @@ export class SearchForJudicialMemberComponent implements OnInit {
     }
 
     searchForJudicialMember() {
-        this.judiciaryService
-            .getJudicialUsers(this.form.value.judiciaryEmail)
-            .pipe(debounceTime(2000))
-            .subscribe(result => (this.result = result));
+        this.judiciaryService.getJudicialUsers(this.form.value.judiciaryEmail).subscribe(result => {
+            this.searchResult = result;
+            this.showResult = true;
+        });
     }
 
-    selectJudicialMember(judicialMember: PersonResponse) {
-        this.judicialMemberSelected.emit(judicialMember);
+    selectJudicialMember(judicialMember: JudiciaryPersonResponse) {
+        const judicialMemberDto = new JudicialMemberDto(
+            judicialMember.first_name,
+            judicialMember.last_name,
+            judicialMember.email,
+            judicialMember.personal_code
+        );
+        this.judicialMemberSelected.emit(judicialMemberDto);
+        this.showResult = false;
     }
 
     private createForm() {
@@ -37,7 +45,7 @@ export class SearchForJudicialMemberComponent implements OnInit {
             judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)])
         });
 
-        this.form.valueChanges.subscribe(() => {
+        this.form.valueChanges.pipe(debounceTime(1200)).subscribe(() => {
             if (this.form.invalid) return;
             this.searchForJudicialMember();
         });

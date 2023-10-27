@@ -20,6 +20,7 @@ import { DateErrorMessagesComponent } from './hearing-schedule/date-error-messag
 import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add-judicial-office-holders/add-judicial-office-holders.component';
 import { AddJudicialPanelMemberFormComponent } from './judicial-office-holders/add-judicial-panel-member-form/add-judicial-panel-member-form.component';
 import { AddJudicialPresidingJudgeFormComponent } from './judicial-office-holders/add-judicial-presiding-judge-form/add-judicial-presiding-judge-form.component';
+import { SearchForJudicialMemberComponent } from './judicial-office-holders/search-for-judicial-member/search-for-judicial-member.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -28,6 +29,7 @@ export const Components: Type<any>[] = [
     AddJudicialOfficeHoldersComponent,
     AddJudicialPresidingJudgeFormComponent,
     AddJudicialPanelMemberFormComponent,
+    SearchForJudicialMemberComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
     AddStaffMemberComponent,

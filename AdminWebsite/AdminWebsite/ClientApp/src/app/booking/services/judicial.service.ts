@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BHClient, PersonResponse } from 'src/app/services/clients/api-client';
+import { BHClient, JudiciaryPersonResponse } from 'src/app/services/clients/api-client';
 
 @Injectable({
     providedIn: 'root'
@@ -8,7 +8,7 @@ import { BHClient, PersonResponse } from 'src/app/services/clients/api-client';
 export class JudicialService {
     constructor(private bhClient: BHClient) {}
 
-    getJudicialUsers(searchText: string): Observable<PersonResponse[]> {
+    getJudicialUsers(searchText: string): Observable<JudiciaryPersonResponse[]> {
         return this.bhClient.searchForJudiciaryPerson(searchText);
     }
 }
