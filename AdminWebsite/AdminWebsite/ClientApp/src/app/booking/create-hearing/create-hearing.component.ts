@@ -12,6 +12,9 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { Logger } from 'src/app/services/logger';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-create-hearing',
@@ -30,6 +33,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     filteredHearingTypes: HearingTypeResponse[] = [];
     hasSaved: boolean;
     isExistingHearing: boolean;
+    destroyed$ = new Subject<void>();
+
+    private refDataEnabled: boolean;
 
     constructor(
         protected hearingService: VideoHearingsService,
@@ -37,7 +43,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         protected router: Router,
         protected bookingService: BookingService,
         protected logger: Logger,
-        private errorService: ErrorService
+        private errorService: ErrorService,
+        private launchDarklyService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
         this.attemptingCancellation = false;
@@ -45,6 +52,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     ngOnInit() {
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.referenceData)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => (this.refDataEnabled = flag));
         this.failedSubmission = false;
         this.checkForExistingRequestOrCreateNew();
         this.initForm();
@@ -93,7 +104,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
-            hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
+            hearingType: [this.hearing.hearing_type_id, this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]]
         });
 
         if (this.isExistingHearingOrParticipantsAdded()) {
@@ -305,5 +316,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 }
