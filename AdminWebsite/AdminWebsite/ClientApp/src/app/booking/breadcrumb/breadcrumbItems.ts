@@ -1,3 +1,4 @@
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 
 export const BreadcrumbItems: BreadcrumbItemModel[] = [
@@ -5,7 +6,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 1,
         Value: true,
         Name: 'Hearing details',
-        Url: '/book-hearing',
+        Url: PageUrls.CreateHearing,
         Active: true,
         LastMinuteAmendable: false
     },
@@ -13,7 +14,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 2,
         Value: false,
         Name: 'Hearing schedule',
-        Url: '/hearing-schedule',
+        Url: PageUrls.HearingSchedule,
         Active: false,
         LastMinuteAmendable: false
     },
@@ -21,7 +22,15 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 3,
         Value: false,
         Name: 'Judge',
-        Url: '/assign-judge',
+        Url: PageUrls.AssignJudge,
+        Active: false,
+        LastMinuteAmendable: true
+    },
+    {
+        Id: 4,
+        Value: false,
+        Name: 'Judicial Office Holder(s)',
+        Url: PageUrls.AddJudicialOfficeHolders,
         Active: false,
         LastMinuteAmendable: true
     },
@@ -29,7 +38,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 4,
         Value: false,
         Name: 'Participants',
-        Url: '/add-participants',
+        Url: PageUrls.AddParticipants,
         Active: false,
         LastMinuteAmendable: true
     },
@@ -37,7 +46,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 5,
         Value: false,
         Name: 'Video access points',
-        Url: '/video-access-points',
+        Url: PageUrls.Endpoints,
         Active: false,
         LastMinuteAmendable: true
     },
@@ -45,7 +54,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 6,
         Value: false,
         Name: 'Other information',
-        Url: '/other-information',
+        Url: PageUrls.OtherInformation,
         Active: false,
         LastMinuteAmendable: false
     },
@@ -53,7 +62,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         Id: 7,
         Value: false,
         Name: 'Summary',
-        Url: '/summary',
+        Url: PageUrls.Summary,
         Active: false,
         LastMinuteAmendable: true
     }

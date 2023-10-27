@@ -10,7 +10,8 @@ export const FeatureFlags = {
     eJudFeature: 'ejud-feature',
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
-    referenceData: 'reference-data'
+    referenceData: 'reference-data',
+    addJudicialMembers: 'add-judicial-members'
 };
 
 @Injectable({

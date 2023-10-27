@@ -94,7 +94,7 @@ export class SearchService {
     }
 
     searchJudiciaryEntries(term): Observable<Array<PersonResponse>> {
-        return this.bhClient.postJudiciaryPersonBySearchTerm(term);
+        return this.bhClient.searchForJudiciaryPerson(term);
     }
 
     searchStaffMemberAccounts(term): Observable<Array<PersonResponse>> {

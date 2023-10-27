@@ -17,11 +17,17 @@ import { EndpointsComponent } from './endpoints/endpoints.component';
 import { ParticipantItemComponent, ParticipantListComponent } from './participant';
 import { MultiDayHearingScheduleComponent } from './summary/multi-day-hearing-schedule';
 import { DateErrorMessagesComponent } from './hearing-schedule/date-error-messages/date-error-messages';
+import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add-judicial-office-holders/add-judicial-office-holders.component';
+import { AddJudicialPanelMemberFormComponent } from './judicial-office-holders/add-judicial-panel-member-form/add-judicial-panel-member-form.component';
+import { AddJudicialPresidingJudgeFormComponent } from './judicial-office-holders/add-judicial-presiding-judge-form/add-judicial-presiding-judge-form.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
     DateErrorMessagesComponent,
     HearingScheduleComponent,
+    AddJudicialOfficeHoldersComponent,
+    AddJudicialPresidingJudgeFormComponent,
+    AddJudicialPanelMemberFormComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
     AddStaffMemberComponent,

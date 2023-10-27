@@ -118,14 +118,14 @@ describe('SearchService', () => {
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
             'postPersonBySearchTerm',
-            'postJudiciaryPersonBySearchTerm',
+            'searchForJudiciaryPerson',
             'postJudgesBySearchTerm',
             'getStaffMembersBySearchTerm'
         ]);
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.getStaffMembersBySearchTerm.and.returnValue(of(staffMemberList));
-        clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
+        clientApiSpy.searchForJudiciaryPerson.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
 
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
@@ -148,7 +148,7 @@ describe('SearchService', () => {
         beforeEach(() => {
             clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
                 'postPersonBySearchTerm',
-                'postJudiciaryPersonBySearchTerm',
+                'searchForJudiciaryPerson',
                 'postJudgesBySearchTerm',
                 'getStaffMembersBySearchTerm'
             ]);

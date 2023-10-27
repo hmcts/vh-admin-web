@@ -77,7 +77,7 @@ namespace AdminWebsite.UnitTests.Controllers
                               .ReturnsAsync(_judiciaryResponse);
 
             var searchTerm = "ado";
-            var result = await _controller.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+            var result = await _controller.SearchForJudiciaryPersonAsync(searchTerm);
 
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().NotBeNull();
@@ -111,7 +111,7 @@ namespace AdminWebsite.UnitTests.Controllers
                               .ReturnsAsync(_userResponses);
 
             var searchTerm = "ado";
-            var result = await _controller.PostJudiciaryPersonBySearchTermAsync(searchTerm);
+            var result = await _controller.SearchForJudiciaryPersonAsync(searchTerm);
 
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().NotBeNull();
@@ -126,7 +126,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
-            var response = await _controller.PostJudiciaryPersonBySearchTermAsync("term");
+            var response = await _controller.SearchForJudiciaryPersonAsync("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
@@ -135,7 +135,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudiciaryPersonBySearchTermAsync("term"));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
         }
 
         [Test]

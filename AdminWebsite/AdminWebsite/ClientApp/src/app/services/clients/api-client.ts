@@ -1980,7 +1980,7 @@ export class BHClient extends ApiClientBase {
      * @param body (optional) The email address search term.
      * @return Success
      */
-    postJudiciaryPersonBySearchTerm(body: string | undefined): Observable<PersonResponse[]> {
+    searchForJudiciaryPerson(body: string | undefined): Observable<PersonResponse[]> {
         let url_ = this.baseUrl + '/api/judiciary';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2004,14 +2004,14 @@ export class BHClient extends ApiClientBase {
             )
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processPostJudiciaryPersonBySearchTerm(response_);
+                    return this.processSearchForJudiciaryPerson(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processPostJudiciaryPersonBySearchTerm(response_ as any);
+                            return this.processSearchForJudiciaryPerson(response_ as any);
                         } catch (e) {
                             return _observableThrow(e) as any as Observable<PersonResponse[]>;
                         }
@@ -2020,7 +2020,7 @@ export class BHClient extends ApiClientBase {
             );
     }
 
-    protected processPostJudiciaryPersonBySearchTerm(response: HttpResponseBase): Observable<PersonResponse[]> {
+    protected processSearchForJudiciaryPerson(response: HttpResponseBase): Observable<PersonResponse[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse

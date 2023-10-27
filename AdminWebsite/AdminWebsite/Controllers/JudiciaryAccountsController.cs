@@ -81,11 +81,11 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name = "term" > The email address search term.</param>
         /// <returns> The list of judiciary person</returns>
-        [HttpPost(Name = "PostJudiciaryPersonBySearchTerm")]
-        [SwaggerOperation(OperationId = "PostJudiciaryPersonBySearchTerm")]
+        [HttpPost(Name = "SearchForJudiciaryPerson")]
+        [SwaggerOperation(OperationId = "SearchForJudiciaryPerson")]
         [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> PostJudiciaryPersonBySearchTermAsync([FromBody] string term)
+        public async Task<ActionResult<IList<PersonResponse>>> SearchForJudiciaryPersonAsync([FromBody] string term)
         {
             try
             {

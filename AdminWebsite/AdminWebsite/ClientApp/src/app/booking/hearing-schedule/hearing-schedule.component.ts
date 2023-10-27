@@ -14,6 +14,8 @@ import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { pastDateValidator } from '../../common';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-hearing-schedule',
@@ -42,6 +44,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
 
+    private destroyed$ = new Subject<void>();
+    private addJudciaryMembersFeatureEnabled: boolean;
+
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
@@ -50,12 +55,19 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         private datePipe: DatePipe,
         protected bookingService: BookingService,
         private errorService: ErrorService,
-        protected logger: Logger
+        protected logger: Logger,
+        private ldService: LaunchDarklyService
     ) {
         super(bookingService, router, hearingService, logger);
     }
 
     ngOnInit() {
+        this.ldService
+            .getFlag<boolean>(FeatureFlags.addJudicialMembers)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(result => {
+                this.addJudciaryMembersFeatureEnabled = result;
+            });
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.retrieveCourts();
@@ -447,8 +459,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
             this.router.navigate([PageUrls.Summary]);
         } else {
-            this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
-            this.router.navigate([PageUrls.AssignJudge]);
+            if (this.addJudciaryMembersFeatureEnabled) {
+                this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
+                this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
+            } else {
+                this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
+                this.router.navigate([PageUrls.AssignJudge]);
+            }
         }
     }
 
@@ -588,5 +605,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 }
