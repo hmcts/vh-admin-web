@@ -27,6 +27,7 @@ export class ParticipantModel {
     addedDuringHearing?: boolean;
     is_staff_member?: boolean;
     contact_email?: string;
+    isJudiciaryMember: boolean;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
@@ -39,7 +40,8 @@ export class ParticipantModel {
                   email: person.contact_email ?? person.username,
                   phone: person.telephone_number,
                   representee: '',
-                  company: person.organisation
+                  company: person.organisation,
+                  isJudiciaryMember: false
               }
             : null;
     }
@@ -50,7 +52,8 @@ export class ParticipantModel {
                   ...judge,
                   email: judge.contact_email,
                   username: judge.email,
-                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
+                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
+                  isJudiciaryMember: false
               }
             : null;
     }

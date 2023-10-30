@@ -6,34 +6,43 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <div *ngIf="!judgeAssigned">
-      <h2 class="govuk-heading-m">Assign a judicial office holder</h2>
-      <app-search-for-judicial-member (judicialMemberSelected)="addPresidingJudge($event)"></app-search-for-judicial-member>
-    </div>
+    <div class="govuk-!-margin-bottom-5">
+      <!-- add a presiding judge -->
+      <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-m">Assign a presiding judge</h2>
+        <app-search-for-judicial-member (judicialMemberSelected)="addPresidingJudge($event)"></app-search-for-judicial-member>
+      </div>
 
-    <div *ngIf="judicialOfficeHolders.length > 0">
-      <h2 class="govuk-heading-m">Add another Judicial Office Holder</h2>
-      <app-search-for-judicial-member (judicialMemberSelected)="addPanelMember($event)"></app-search-for-judicial-member>
-
-      <div>
-        <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
-        <span class="vh-vert-top-m15">
-          <a
-            href="javascript:void(0)"
-            (click)="displayPanelMember = true"
-            type="submit"
-            id="addParticipantBtn"
-            class="govuk-link govuk-body"
-          >
-            Add another Judicial Office Holder
-          </a>
+      <!-- add a panel member -->
+      <div class="govuk-grid-column-full govuk-!-padding-top-6">
+        <span>
+          <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
+          <app-search-for-judicial-member (judicialMemberSelected)="addPanelMember($event)"></app-search-for-judicial-member>
         </span>
+        <!-- <div>
+          <img (click)="displayPanelMember = true" src="assets/images/AddIcon.png" alt="Add an additional judicial office holder button" />
+          <span class="vh-vert-top-m15">
+            <a
+              href="javascript:void(0)"
+              (click)="displayPanelMember = true"
+              type="submit"
+              id="addParticipantBtn"
+              class="govuk-link govuk-body"
+            >
+              Add another Judicial Office Holder
+            </a>
+          </span>
+        </div> -->
       </div>
     </div>
   </div>
-  <div class="govuk-grid-column-one-half" *ngIf="hearing?.judiciaryParticipants?.length">
-    <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="false"></app-participant-list>
+  <div class="govuk-grid-column-one-half keep-right">
+    <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="true"></app-participant-list>
   </div>
+</div>
+
+<div class="vh-top govuk-grid-column-full">
+  <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">Next</button>
 </div>
 
 <!-- display form when adding panel member. capture the emitted panel member and add to the dto/view model-->

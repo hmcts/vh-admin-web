@@ -35,7 +35,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         LastMinuteAmendable: true
     },
     {
-        Id: 4,
+        Id: 5,
         Value: false,
         Name: 'Participants',
         Url: PageUrls.AddParticipants,
@@ -43,7 +43,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         LastMinuteAmendable: true
     },
     {
-        Id: 5,
+        Id: 6,
         Value: false,
         Name: 'Video access points',
         Url: PageUrls.Endpoints,
@@ -51,7 +51,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         LastMinuteAmendable: true
     },
     {
-        Id: 6,
+        Id: 7,
         Value: false,
         Name: 'Other information',
         Url: PageUrls.OtherInformation,
@@ -59,7 +59,7 @@ export const BreadcrumbItems: BreadcrumbItemModel[] = [
         LastMinuteAmendable: false
     },
     {
-        Id: 7,
+        Id: 8,
         Value: false,
         Name: 'Summary',
         Url: PageUrls.Summary,

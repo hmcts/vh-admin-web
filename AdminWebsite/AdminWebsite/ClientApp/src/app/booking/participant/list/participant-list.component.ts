@@ -15,7 +15,7 @@ import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judi
 export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     @Input() hearing: HearingModel;
     sortedParticipants: ParticipantModel[] = [];
-    sortedJudiciaryMembers: JudicialMemberDto[] = [];
+    sortedJudiciaryMembers: ParticipantModel[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
@@ -28,28 +28,51 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const containsNewParticipants =
-            !this.hearing?.participants?.every(hearingParticipant => this.sortedParticipants.includes(hearingParticipant)) ?? false;
-        const containsRemovedParticipants =
-            !this.sortedParticipants?.every(sortedParticipant => this.hearing.participants.includes(sortedParticipant)) ?? false;
+        const judicialMembersEmails = this.hearing?.judiciaryParticipants?.map(j => j.email) ?? [];
+        const participantsEmails = this.hearing?.participants?.map(p => p) ?? [];
 
-        if (containsNewParticipants || containsRemovedParticipants) {
+        const sortedJudicialMembersEmails = this.sortedJudiciaryMembers?.map(j => j.email) ?? [];
+        const sortedParticipantsEmails = this.sortedParticipants?.map(p => p) ?? [];
+        // if all the emails for participants list do not exist in the sortedParticipants list, then sort the list
+        const hasParticipantListChanged = participantsEmails.length === sortedParticipantsEmails.length;
+        if (hasParticipantListChanged) {
             this.sortParticipants();
         }
 
-        this.sortJudiciaryMembers();
+        // if all the emails for judicial members list do not exist in the sortedJudicialMembers list, then sort the list
+        const judiciaryEmailListIdentical = judicialMembersEmails.length === sortedJudicialMembersEmails.length;
+        if (!judiciaryEmailListIdentical) {
+            this.sortJudiciaryMembers();
+        }
     }
 
     sortJudiciaryMembers() {
         if (!this.hearing.judiciaryParticipants) {
             return;
         }
-        const sortedJohList = [...this.hearing.judiciaryParticipants];
+
+        const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h => {
+            return new ParticipantModel({
+                is_judge: true,
+                first_name: h.firstName,
+                last_name: h.lastName,
+                hearing_role_name: 'Judge',
+                username: h.email,
+                email: h.email,
+                is_exist_person: true,
+                user_role_name: 'Judge',
+                isJudiciaryMember: true,
+                hearing_role_code: 'Judge'
+            });
+        });
+        const judicialPanelMembers = this.getJudicialPanelMembers();
+
+        const sortedJohList = [...judicialJudge, ...judicialPanelMembers];
 
         this.sortedJudiciaryMembers = sortedJohList.sort((a, b) => {
-            if (a.roleCode.includes('Judge') && !b.roleCode.includes('Judge')) {
+            if (a.hearing_role_code.includes('Judge') && !b.hearing_role_code.includes('Judge')) {
                 return -1;
-            } else if (!a.roleCode.includes('Judge') && b.roleCode.includes('Judge')) {
+            } else if (!a.hearing_role_code.includes('Judge') && b.hearing_role_code.includes('Judge')) {
                 return 1;
             } else {
                 return 0;
@@ -82,28 +105,16 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     sortParticipants() {
-        if (!this.hearing.participants) {
+        if (!this.hearing.participants && !this.hearing.judiciaryParticipants) {
             return;
         }
-        const judicialJudge = [this.hearing.judiciaryParticipants.find(j => j.roleCode === 'Judge')].map(h => {
-            return new ParticipantModel({ is_judge: true, first_name: h.firstName, last_name: h.lastName, hearing_role_name: 'Judge' });
-        });
-        const judicialPanelMembers = this.getJudicialPanelMembers();
         const judges = this.getJudges();
         const staffMembers = this.getStaffMembers();
         const panelMembers = this.getPanelMembers();
         const observers = this.getObservers();
         const others = this.getOthers(staffMembers, panelMembers, observers);
 
-        const sortedList = [
-            ...judicialJudge,
-            ...judges,
-            ...judicialPanelMembers,
-            ...panelMembers,
-            ...staffMembers,
-            ...others,
-            ...observers
-        ];
+        const sortedList = [...judges, ...panelMembers, ...staffMembers, ...others, ...observers];
 
         this.insertInterpreters(sortedList);
         this.sortedParticipants = sortedList;
@@ -148,11 +159,18 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         return this.hearing.judiciaryParticipants
             .filter(j => j.roleCode === 'PanelMember')
             .sort(this.compareByPartyThenByFirstName())
-            .map(participant => {
+            .map(h => {
                 return new ParticipantModel({
-                    first_name: participant.firstName,
-                    last_name: participant.lastName,
-                    hearing_role_name: 'PanelMember'
+                    is_judge: false,
+                    first_name: h.firstName,
+                    last_name: h.lastName,
+                    hearing_role_name: 'Panel Member',
+                    username: h.email,
+                    email: h.email,
+                    is_exist_person: true,
+                    user_role_name: 'PanelMember',
+                    isJudiciaryMember: true,
+                    hearing_role_code: 'PanelMember'
                 });
             });
     }

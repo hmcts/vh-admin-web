@@ -35,6 +35,7 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
+import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Injectable({
     providedIn: 'root'
@@ -523,5 +524,37 @@ export class VideoHearingsService {
 
     getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
         return this.bhClient.getAllocationForHearing(hearingId);
+    }
+
+    addJudiciaryJudge(judicialMember: JudicialMemberDto) {
+        const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
+
+        if (judgeIndex !== -1) {
+            // Judge exists, replace or add entry
+            this.modelHearing.judiciaryParticipants[judgeIndex] = judicialMember;
+        } else {
+            // Judge does not exist, add entry
+            this.modelHearing.judiciaryParticipants.push(judicialMember);
+        }
+    }
+
+    removeJudiciaryJudge() {
+        const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
+        if (judgeIndex !== -1) {
+            this.modelHearing.judiciaryParticipants.splice(judgeIndex, 1);
+        }
+    }
+
+    addJudiciaryPanelMember(judicialMember: JudicialMemberDto) {
+        if (!this.modelHearing.judiciaryParticipants.find(holder => holder.personalCode === judicialMember.personalCode)) {
+            this.modelHearing.judiciaryParticipants.push(judicialMember);
+        }
+    }
+
+    removeJudiciaryParticipant(participantEmail: string) {
+        const index = this.modelHearing.judiciaryParticipants.findIndex(judicialMember => judicialMember.email === participantEmail);
+        if (index !== -1) {
+            this.modelHearing.judiciaryParticipants.splice(index, 1);
+        }
     }
 }

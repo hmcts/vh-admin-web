@@ -13,6 +13,7 @@ export class HearingModel {
         this.linked_participants = [];
         this.hearing_dates = [];
         this.hearing_id = '';
+        this.judiciaryParticipants = [];
     }
     hearing_id?: string;
     scheduled_date_time?: Date;
