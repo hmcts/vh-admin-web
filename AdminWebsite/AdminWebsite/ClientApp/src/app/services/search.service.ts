@@ -75,9 +75,7 @@ export class SearchService {
                 return this.searchJudgeAccounts(term).pipe(map(judges => judges.map(judge => ParticipantModel.fromJudgeResponse(judge))));
             } else {
                 let persons$: Observable<Array<PersonResponse>>;
-                if (this.judiciaryRoles.includes(caseRole) || this.judiciaryRoles.includes(hearingRole)) {
-                    persons$ = this.searchJudiciaryEntries(term);
-                } else if (hearingRole === Constants.HearingRoles.StaffMember) {
+                if (hearingRole === Constants.HearingRoles.StaffMember) {
                     persons$ = this.searchStaffMemberAccounts(term);
                 } else {
                     persons$ = this.searchEntries(term);

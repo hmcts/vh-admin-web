@@ -55,15 +55,6 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         // this.hearing.judiciaryParticipants = this.judicialOfficeHolders;
     }
 
-    removeJudge() {
-        this.hearingService.removeJudiciaryJudge();
-        this.judgeAssigned = true;
-    }
-
-    removeJudiciaryParticipant(participantEmail: string) {
-        this.hearingService.removeJudiciaryParticipant(participantEmail);
-    }
-
     addPanelMember(judicialMember: JudicialMemberDto) {
         console.log('add panel member', judicialMember);
         judicialMember.roleCode = 'PanelMember';
@@ -71,6 +62,10 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         if (!this.hearing.judiciaryParticipants.find(holder => holder.personalCode === judicialMember.personalCode)) {
             this.hearing.judiciaryParticipants.push(judicialMember);
         }
+    }
+
+    removeJudiciaryParticipant(participantEmail: string) {
+        this.hearingService.removeJudiciaryParticipant(participantEmail);
     }
 
     continueToNextStep() {

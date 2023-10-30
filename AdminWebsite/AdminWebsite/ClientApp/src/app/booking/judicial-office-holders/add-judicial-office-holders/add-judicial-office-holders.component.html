@@ -5,6 +5,7 @@
 <!-- <app-add-judicial-presiding-judge-form (judgeAdded)="addPresidingJudge($event)"></app-add-judicial-presiding-judge-form> -->
 
 <div class="govuk-grid-row">
+  <!-- Add the JOHs -->
   <div class="govuk-grid-column-one-half">
     <div class="govuk-!-margin-bottom-5">
       <!-- add a presiding judge -->
@@ -34,15 +35,16 @@
           </span>
         </div> -->
       </div>
+
+      <div class="vh-top govuk-grid-column-full">
+        <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">Next</button>
+      </div>
     </div>
   </div>
+  <!-- current participant list-->
   <div class="govuk-grid-column-one-half keep-right">
     <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="true"></app-participant-list>
   </div>
-</div>
-
-<div class="vh-top govuk-grid-column-full">
-  <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">Next</button>
 </div>
 
 <!-- display form when adding panel member. capture the emitted panel member and add to the dto/view model-->

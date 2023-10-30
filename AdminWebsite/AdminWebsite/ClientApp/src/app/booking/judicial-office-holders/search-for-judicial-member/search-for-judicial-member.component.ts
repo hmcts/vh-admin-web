@@ -38,7 +38,6 @@ export class SearchForJudicialMemberComponent implements OnInit {
         );
         this.judicialMemberSelected.emit(judicialMemberDto);
         this.showResult = false;
-        // this.form.controls.judiciaryEmail.setValue('');
         this.form.reset({
             judiciaryEmail: ''
         });
