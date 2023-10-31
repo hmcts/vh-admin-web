@@ -70,7 +70,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     ngOnInit() {
-        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
         const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
 
         combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {

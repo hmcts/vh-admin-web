@@ -1,6 +1,7 @@
 import { CaseRoles } from './case-roles';
 import { HearingRoles } from './hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
+import { JudicaryRoleCode } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 export class ParticipantDetailsModel {
     constructor(
@@ -109,4 +110,17 @@ export class ParticipantDetailsModel {
     get isInterpretee(): boolean {
         return this.IsInterpretee;
     }
+}
+
+export class judiciaryParticipantDetailsModel {
+    constructor(
+        public firstName: string,
+        public lastName: string,
+        public fullName: string,
+        public email: string,
+        public telephone: string,
+        public personalCode: string,
+        public roleCode: JudicaryRoleCode,
+        public displayName: string
+    ) {}
 }

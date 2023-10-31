@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { ParticipantDetailsModel, judiciaryParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { Constants } from '../../common/constants';
+import {} from 'src/app/common/model/participant.model';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -10,12 +11,21 @@ import { Constants } from '../../common/constants';
 })
 export class BookingParticipantListComponent {
     private _participants: Array<ParticipantDetailsModel> = [];
+    private _judiciaryParticipants: Array<judiciaryParticipantDetailsModel> = [];
     sortedParticipants: ParticipantDetailsModel[] = [];
+    sortedJudiciaryMembers: judiciaryParticipantDetailsModel[] = [];
 
     @Input()
     set participants(participants: Array<ParticipantDetailsModel>) {
         this._participants = participants;
         this.sortParticipants();
+        this.sortJudiciaryMembers();
+    }
+    @Input()
+    set judiciaryParticipants(judiciaryParticipants: Array<judiciaryParticipantDetailsModel>) {
+        this._judiciaryParticipants = judiciaryParticipants;
+        this.sortParticipants();
+        this.sortJudiciaryMembers();
     }
     @Input()
     hearing: BookingsDetailsModel;
@@ -73,6 +83,27 @@ export class BookingParticipantListComponent {
         const sorted = [...judges, ...panelMembersAndWingers, ...staffMember, ...others, ...observers];
         this.insertInterpreters(interpreters, sorted);
         this.sortedParticipants = sorted;
+    }
+
+    sortJudiciaryMembers() {
+        if (!this._judiciaryParticipants) {
+            return;
+        }
+
+        const judicialJudge = [this._judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0];
+        const judicialPanelMembers = this._judiciaryParticipants.filter(j => j.roleCode === 'PanelMember');
+
+        const sortedJohList = [...judicialJudge, ...judicialPanelMembers];
+
+        this.sortedJudiciaryMembers = sortedJohList.sort((a, b) => {
+            if (a.roleCode.includes('Judge') && !b.roleCode.includes('Judge')) {
+                return -1;
+            } else if (!a.roleCode.includes('Judge') && b.roleCode.includes('Judge')) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     private insertInterpreters(interpreters: ParticipantDetailsModel[], sorted: ParticipantDetailsModel[]) {

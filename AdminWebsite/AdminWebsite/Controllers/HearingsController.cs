@@ -308,7 +308,7 @@ namespace AdminWebsite.Controllers
 
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
         {
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 return responseV2.Map();
@@ -490,7 +490,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 HearingDetailsResponse hearingResponse;
-                if (_featureToggles.ReferenceDataToggle())
+                if (_featureToggles.UseV2Api())
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                     hearingResponse = response.Map();
