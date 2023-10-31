@@ -1,9 +1,6 @@
 <app-breadcrumb [canNavigate]="true"></app-breadcrumb>
 <h1 class="govuk-heading-l">Book a video hearing</h1>
 
-<!-- display form when adding a judge, capture the emitted judge and add to the dto/view model -->
-<!-- <app-add-judicial-presiding-judge-form (judgeAdded)="addPresidingJudge($event)"></app-add-judicial-presiding-judge-form> -->
-
 <div class="govuk-grid-row">
   <!-- Add the JOHs column (left) -->
   <div class="govuk-grid-column-one-half">
@@ -20,17 +17,17 @@
 
       <!-- add a panel member -->
       <div *ngIf="showAddPanelMember" class="govuk-grid-column-full govuk-!-padding-top-6">
-        <span>
+
           <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
           <app-search-for-judicial-member
             [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
             (judicialMemberSelected)="addPanelMember($event)"
           ></app-search-for-judicial-member>
-        </span>
+
       </div>
 
       <div class="govuk-grid-column-full vh-horizontal-align" *ngIf="!showAddPanelMember">
-        <img src="assets/images/AddIcon.png" [alt]="addPanelMemberText" />
+        <img ngSrc="assets/images/AddIcon.png" [alt]="addPanelMemberText" height="40" width="40"/>
         <span class="govuk-!-margin-left-2">
           <a
             href="javascript:void(0)"
