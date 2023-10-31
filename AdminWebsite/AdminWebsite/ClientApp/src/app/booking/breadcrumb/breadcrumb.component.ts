@@ -40,7 +40,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
             } else {
                 tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AddJudicialOfficeHolders);
             }
-            this.breadcrumbItems = JSON.parse(JSON.stringify(tempBreadcrumbModel));
+            this.breadcrumbItems = tempBreadcrumbModel;
             this.initBreadcrumb();
         });
     }
