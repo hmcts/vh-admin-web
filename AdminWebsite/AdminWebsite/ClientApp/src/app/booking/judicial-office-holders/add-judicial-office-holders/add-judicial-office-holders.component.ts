@@ -96,6 +96,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         judicialMember.roleCode = 'Judge';
         this.logger.debug(`${this.loggerPrefix} Adding presiding judge.`, judicialMember);
         this.hearingService.addJudiciaryJudge(judicialMember);
+        this.hearingService.updateHearingRequest(this.hearing);
         this.judgeAssigned = true;
         this.editingJudge = false;
         this.participantToEdit = null;
@@ -106,7 +107,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         judicialMember.roleCode = 'PanelMember';
 
         this.hearingService.addJudiciaryPanelMember(judicialMember);
-
+        this.hearingService.updateHearingRequest(this.hearing);
         this.showAddPanelMember = false;
         this.participantToEdit = null;
         this.refreshPanelMemberText();
@@ -117,7 +118,6 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     }
 
     continueToNextStep() {
-        this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
         this.router.navigate([PageUrls.AddParticipants]);
     }
