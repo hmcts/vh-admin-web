@@ -14,9 +14,14 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
     styleUrls: ['./add-judicial-office-holders.component.scss']
 })
 export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
+    noPanelMemberText = 'Add a Judicial Office Holder';
+    existingPanelMemberText = 'Add another Judicial Office Holder';
+
     judgeAssigned = false;
     displayPanelMember = false;
     hearing: HearingModel;
+    showAddPanelMember = false;
+    addPanelMemberText = this.noPanelMemberText;
 
     destroyed$ = new Subject<void>();
 
@@ -46,26 +51,28 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     }
 
     addPresidingJudge(judicialMember: JudicialMemberDto) {
-        console.log('add presiding judge', judicialMember);
         judicialMember.roleCode = 'Judge';
-
+        this.logger.debug(`${this.loggerPrefix} Adding presiding judge.`, judicialMember);
         this.hearingService.addJudiciaryJudge(judicialMember);
-
         this.judgeAssigned = true;
-        // this.hearing.judiciaryParticipants = this.judicialOfficeHolders;
     }
 
     addPanelMember(judicialMember: JudicialMemberDto) {
-        console.log('add panel member', judicialMember);
+        this.logger.debug(`${this.loggerPrefix} Adding panel member.`, judicialMember);
         judicialMember.roleCode = 'PanelMember';
 
         if (!this.hearing.judiciaryParticipants.find(holder => holder.personalCode === judicialMember.personalCode)) {
             this.hearing.judiciaryParticipants.push(judicialMember);
         }
+        this.showAddPanelMember = false;
+        this.addPanelMemberText = this.existingPanelMemberText;
     }
 
     removeJudiciaryParticipant(participantEmail: string) {
         this.hearingService.removeJudiciaryParticipant(participantEmail);
+        if (!this.hearing.judiciaryParticipants.some(x => x.roleCode === 'PanelMember')) {
+            this.addPanelMemberText = this.noPanelMemberText;
+        }
     }
 
     continueToNextStep() {

@@ -20,8 +20,3 @@ public class ParticipantRequest
     public string Representee { get; set; }
     public string OrganisationName { get; set; }
 }
-
-public class JudiciaryParticipantRequest
-{
-    
-}

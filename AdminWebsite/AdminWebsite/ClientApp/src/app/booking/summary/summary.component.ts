@@ -115,7 +115,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
-        this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
+        this.judgeAssigned =
+            this.hearing.participants.filter(e => e.is_judge).length > 0 ||
+            this.hearing.judiciaryParticipants.some(e => e.roleCode === 'Judge');
     }
 
     private checkForExistingRequest() {

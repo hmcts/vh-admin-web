@@ -28,20 +28,18 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const judicialMembersEmails = this.hearing?.judiciaryParticipants?.map(j => j.email) ?? [];
-        const participantsEmails = this.hearing?.participants?.map(p => p) ?? [];
-
-        const sortedJudicialMembersEmails = this.sortedJudiciaryMembers?.map(j => j.email) ?? [];
-        const sortedParticipantsEmails = this.sortedParticipants?.map(p => p) ?? [];
-        // if all the emails for participants list do not exist in the sortedParticipants list, then sort the list
-        const hasParticipantListChanged = participantsEmails.length === sortedParticipantsEmails.length;
+        const participantsEmails = this.hearing?.participants?.map(p => p).sort() ?? [];
+        const sortedParticipantsEmails = this.sortedParticipants?.map(p => p).sort() ?? [];
+        const hasParticipantListChanged = JSON.stringify(participantsEmails) !== JSON.stringify(sortedParticipantsEmails);
         if (hasParticipantListChanged) {
             this.sortParticipants();
         }
 
-        // if all the emails for judicial members list do not exist in the sortedJudicialMembers list, then sort the list
-        const judiciaryEmailListIdentical = judicialMembersEmails.length === sortedJudicialMembersEmails.length;
-        if (!judiciaryEmailListIdentical) {
+        const judicialMembersEmails = this.hearing?.judiciaryParticipants?.map(j => j.email).sort() ?? [];
+        const sortedJudicialMembersEmails = this.sortedJudiciaryMembers?.map(j => j.email).sort() ?? [];
+
+        const judiciaryEmailListChanged = JSON.stringify(judicialMembersEmails) !== JSON.stringify(sortedJudicialMembersEmails);
+        if (judiciaryEmailListChanged) {
             this.sortJudiciaryMembers();
         }
     }
@@ -54,6 +52,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h => {
             return new ParticipantModel({
                 is_judge: true,
+                title: 'Judge',
                 first_name: h.firstName,
                 last_name: h.lastName,
                 hearing_role_name: 'Judge',
@@ -62,7 +61,9 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 is_exist_person: true,
                 user_role_name: 'Judge',
                 isJudiciaryMember: true,
-                hearing_role_code: 'Judge'
+                hearing_role_code: 'Judge',
+                phone: h.telephone,
+                display_name: h.displayName
             });
         });
         const judicialPanelMembers = this.getJudicialPanelMembers();
@@ -170,7 +171,8 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                     is_exist_person: true,
                     user_role_name: 'PanelMember',
                     isJudiciaryMember: true,
-                    hearing_role_code: 'PanelMember'
+                    hearing_role_code: 'PanelMember',
+                    phone: h.telephone
                 });
             });
     }

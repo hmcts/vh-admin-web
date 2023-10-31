@@ -6,13 +6,13 @@ namespace AdminWebsite.Mappers
 {
     public static class JudgeResponseMapper
     {
-        public static JudgeResponse MapTo(PersonResponse personResponse)
+        public static JudgeResponse MapTo(JudgeResponse personResponse)
         {
             return new JudgeResponse
             {
                 FirstName = personResponse.FirstName,
                 LastName = personResponse.LastName,
-                Email = personResponse.Username,
+                Email = personResponse.Email,
                 AccountType = JudgeAccountType.Judiciary,
                 ContactEmail = personResponse.ContactEmail
             };

@@ -26,7 +26,8 @@ import {
     LinkedParticipant,
     BookingStatus,
     AllocatedCsoResponse,
-    HearingRoleResponse
+    HearingRoleResponse,
+    JudiciaryParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -297,6 +298,8 @@ export class VideoHearingsService {
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
         newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
+        newHearingRequest.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(newRequest.judiciaryParticipants);
+
         return newHearingRequest;
     }
 
@@ -351,6 +354,17 @@ export class VideoHearingsService {
             });
         }
         return cases;
+    }
+
+    mapJudicialMemberDtoToJudiciaryParticipantRequest(judicialMemberDtos: JudicialMemberDto[]): JudiciaryParticipantRequest[] {
+        return judicialMemberDtos.map(judicialMemberDto => {
+            const judiciaryParticipantRequest: JudiciaryParticipantRequest = new JudiciaryParticipantRequest({
+                personal_code: judicialMemberDto.personalCode,
+                display_name: judicialMemberDto.fullName,
+                role: judicialMemberDto.roleCode
+            });
+            return judiciaryParticipantRequest;
+        });
     }
 
     mapParticipants(newRequest: ParticipantModel[]): ParticipantRequest[] {

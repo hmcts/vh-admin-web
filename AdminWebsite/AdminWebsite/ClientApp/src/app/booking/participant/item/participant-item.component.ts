@@ -39,11 +39,17 @@ export class ParticipantItemComponent {
     }
 
     getJudgeEmail(): string {
+        if (this.participant.isJudiciaryMember) {
+            return null; // username and email are the same, no need to show it twice
+        }
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
         return otherInformation.JudgeEmail;
     }
 
     getJudgePhone(participant: ParticipantModel): string {
+        if (this.participant.isJudiciaryMember) {
+            return this.participant.phone; // ejud data does not have phone number
+        }
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
         return otherInformation.JudgePhone ?? participant.phone;
     }

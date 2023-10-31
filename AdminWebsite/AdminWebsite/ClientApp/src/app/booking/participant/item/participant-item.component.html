@@ -21,7 +21,12 @@
     </div>
 
     <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
-      <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
+      <a
+        [routerLink]="participant.isJudiciaryMember ? '/add-judicial-office-holders' : '/assign-judge'"
+        class="vhlink"
+        (click)="editJudge()"
+        >Change</a
+      >
     </div>
   </div>
 
@@ -98,7 +103,7 @@
       </ng-template>
     </div>
     <div *ngIf="canEdit" class="participant-row__actions">
-      <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
+      <a *ngIf="!participant.isJudiciaryMember" class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>
   </div>
