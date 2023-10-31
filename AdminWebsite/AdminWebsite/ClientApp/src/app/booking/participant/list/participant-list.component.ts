@@ -50,21 +50,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         }
 
         const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h => {
-            return new ParticipantModel({
-                is_judge: true,
-                title: 'Judge',
-                first_name: h.firstName,
-                last_name: h.lastName,
-                hearing_role_name: 'Judge',
-                username: h.email,
-                email: h.email,
-                is_exist_person: true,
-                user_role_name: 'Judge',
-                isJudiciaryMember: true,
-                hearing_role_code: 'Judge',
-                phone: h.telephone,
-                display_name: h.displayName
-            });
+            return ParticipantModel.fromJudicialMember(h, true);
         });
         const judicialPanelMembers = this.getJudicialPanelMembers();
 
@@ -161,19 +147,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             .filter(j => j.roleCode === 'PanelMember')
             .sort(this.compareByPartyThenByFirstName())
             .map(h => {
-                return new ParticipantModel({
-                    is_judge: false,
-                    first_name: h.firstName,
-                    last_name: h.lastName,
-                    hearing_role_name: 'Panel Member',
-                    username: h.email,
-                    email: h.email,
-                    is_exist_person: true,
-                    user_role_name: 'PanelMember',
-                    isJudiciaryMember: true,
-                    hearing_role_code: 'PanelMember',
-                    phone: h.telephone
-                });
+                return ParticipantModel.fromJudicialMember(h, false);
             });
     }
 

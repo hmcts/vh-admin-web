@@ -1,5 +1,6 @@
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { LinkedParticipantModel } from './linked-participant.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 export class ParticipantModel {
     id?: string | undefined;
@@ -60,5 +61,22 @@ export class ParticipantModel {
 
     static IsEmailEjud(email: string): boolean {
         return email && email.toLowerCase().includes('judiciary');
+    }
+
+    static fromJudicialMember(judicialMember: JudicialMemberDto, isJudge = false) {
+        return new ParticipantModel({
+            first_name: judicialMember.firstName,
+            last_name: judicialMember.lastName,
+            hearing_role_name: 'Panel Member',
+            username: judicialMember.email,
+            email: judicialMember.email,
+            is_exist_person: true,
+            user_role_name: 'PanelMember',
+            isJudiciaryMember: true,
+            hearing_role_code: 'PanelMember',
+            phone: judicialMember.telephone,
+            display_name: judicialMember.displayName,
+            is_judge: isJudge
+        });
     }
 }

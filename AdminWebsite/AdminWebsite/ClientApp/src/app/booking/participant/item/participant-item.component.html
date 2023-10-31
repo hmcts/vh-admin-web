@@ -59,6 +59,7 @@
     </div>
     <div class="vhtable-header">
       <div class="participant-row__name">{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</div>
+      <div>{{ participant.display_name }}</div>
 
       <div *ngIf="isRepresentative || isInterpreter; else individual">
         <ng-container *ngIf="isRepresentative">

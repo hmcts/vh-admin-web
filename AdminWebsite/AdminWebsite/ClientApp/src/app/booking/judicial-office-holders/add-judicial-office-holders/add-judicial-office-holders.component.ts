@@ -35,6 +35,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         // init judicial office holders from cache if exists
         this.hearing = this.hearingService.getCurrentRequest();
+        this.refreshPanelMemberText();
         // this.judicialOfficeHolders = this.hearing.judiciaryParticipants ?? [];
         this.participantsListComponent.selectedParticipantToRemove.pipe(takeUntil(this.destroyed$)).subscribe(participantEmail => {
             this.removeJudiciaryParticipant(participantEmail);
@@ -65,19 +66,24 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
             this.hearing.judiciaryParticipants.push(judicialMember);
         }
         this.showAddPanelMember = false;
-        this.addPanelMemberText = this.existingPanelMemberText;
+        this.refreshPanelMemberText();
     }
 
     removeJudiciaryParticipant(participantEmail: string) {
         this.hearingService.removeJudiciaryParticipant(participantEmail);
-        if (!this.hearing.judiciaryParticipants.some(x => x.roleCode === 'PanelMember')) {
-            this.addPanelMemberText = this.noPanelMemberText;
-        }
     }
 
     continueToNextStep() {
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
         this.router.navigate([PageUrls.AddParticipants]);
+    }
+
+    refreshPanelMemberText() {
+        if (this.hearing.judiciaryParticipants.some(x => x.roleCode === 'PanelMember')) {
+            this.addPanelMemberText = this.existingPanelMemberText;
+        } else {
+            this.addPanelMemberText = this.noPanelMemberText;
+        }
     }
 }
