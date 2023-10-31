@@ -560,7 +560,12 @@ export class VideoHearingsService {
     }
 
     addJudiciaryPanelMember(judicialMember: JudicialMemberDto) {
-        if (!this.modelHearing.judiciaryParticipants.find(holder => holder.personalCode === judicialMember.personalCode)) {
+        const panelMemberIndex = this.modelHearing.judiciaryParticipants.findIndex(
+            holder => holder.personalCode === judicialMember.personalCode
+        );
+        if (panelMemberIndex !== -1) {
+            this.modelHearing.judiciaryParticipants[panelMemberIndex] = judicialMember;
+        } else {
             this.modelHearing.judiciaryParticipants.push(judicialMember);
         }
     }

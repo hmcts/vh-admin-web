@@ -16,15 +16,29 @@ export class SearchForJudicialMemberComponent implements OnInit {
     showResult = false;
 
     @Input() saveButtonText = 'Save';
+    @Input() set existingJudicialMember(judicialMember: JudicialMemberDto) {
+        if (judicialMember) {
+            this.form.setValue(
+                { judiciaryEmail: judicialMember.email, displayName: judicialMember.displayName },
+                { emitEvent: false, onlySelf: true }
+            );
+            this.judicialMember = judicialMember;
+            this.form.controls.judiciaryEmail.disable();
+            this.editMode = true;
+        } else {
+            this.editMode = false;
+            this.form.controls.judiciaryEmail.enable();
+        }
+    }
     @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
-    private _judicialMember: JudicialMemberDto;
-
-    constructor(private judiciaryService: JudicialService) {}
-
-    ngOnInit(): void {
+    private judicialMember: JudicialMemberDto;
+    private editMode = false;
+    constructor(private judiciaryService: JudicialService) {
         this.createForm();
     }
+
+    ngOnInit(): void {}
 
     searchForJudicialMember() {
         this.judiciaryService.getJudicialUsers(this.form.value.judiciaryEmail).subscribe(result => {
@@ -39,7 +53,7 @@ export class SearchForJudicialMemberComponent implements OnInit {
             { judiciaryEmail: judicialMember.email, displayName: judicialMember.full_name },
             { emitEvent: false, onlySelf: true }
         );
-        this._judicialMember = new JudicialMemberDto(
+        this.judicialMember = new JudicialMemberDto(
             judicialMember.first_name,
             judicialMember.last_name,
             judicialMember.full_name,
@@ -52,8 +66,8 @@ export class SearchForJudicialMemberComponent implements OnInit {
     }
 
     confirmJudiciaryMemberWithDisplayName() {
-        this._judicialMember.displayName = this.form.controls.displayName.value;
-        this.judicialMemberSelected.emit(this._judicialMember);
+        this.judicialMember.displayName = this.form.controls.displayName.value;
+        this.judicialMemberSelected.emit(this.judicialMember);
         this.form.reset({
             judiciaryEmail: '',
             displayName: ''
@@ -85,6 +99,7 @@ export class SearchForJudicialMemberComponent implements OnInit {
                 }
 
                 if (this.form.controls.judiciaryEmail.invalid) return;
+                if (this.editMode) return;
                 this.searchForJudicialMember();
             });
     }

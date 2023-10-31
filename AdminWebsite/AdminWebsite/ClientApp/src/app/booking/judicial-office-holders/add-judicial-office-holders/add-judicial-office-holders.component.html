@@ -12,6 +12,7 @@
       <div class="govuk-grid-column-full">
         <h2 class="govuk-heading-m">Assign a presiding judge</h2>
         <app-search-for-judicial-member
+          [existingJudicialMember]="editingJudge ? participantToEdit : null"
           (judicialMemberSelected)="addPresidingJudge($event)"
           [saveButtonText]="judgeAssigned ? 'Update' : 'Save'"
         ></app-search-for-judicial-member>
@@ -21,7 +22,10 @@
       <div *ngIf="showAddPanelMember" class="govuk-grid-column-full govuk-!-padding-top-6">
         <span>
           <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
-          <app-search-for-judicial-member (judicialMemberSelected)="addPanelMember($event)"></app-search-for-judicial-member>
+          <app-search-for-judicial-member
+            [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
+            (judicialMemberSelected)="addPanelMember($event)"
+          ></app-search-for-judicial-member>
         </span>
       </div>
 

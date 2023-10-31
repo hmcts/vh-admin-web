@@ -64,16 +64,19 @@ export class ParticipantModel {
     }
 
     static fromJudicialMember(judicialMember: JudicialMemberDto, isJudge = false) {
+        const hearingRoleName = isJudge ? 'Judge' : 'Panel Member';
+        const userRoleName = isJudge ? 'Judge' : 'PanelMember';
+        const hearingRoleCode = isJudge ? 'Judge' : 'PanelMember';
         return new ParticipantModel({
             first_name: judicialMember.firstName,
             last_name: judicialMember.lastName,
-            hearing_role_name: 'Panel Member',
+            hearing_role_name: hearingRoleName,
             username: judicialMember.email,
             email: judicialMember.email,
             is_exist_person: true,
-            user_role_name: 'PanelMember',
+            user_role_name: userRoleName,
             isJudiciaryMember: true,
-            hearing_role_code: 'PanelMember',
+            hearing_role_code: hearingRoleCode,
             phone: judicialMember.telephone,
             display_name: judicialMember.displayName,
             is_judge: isJudge

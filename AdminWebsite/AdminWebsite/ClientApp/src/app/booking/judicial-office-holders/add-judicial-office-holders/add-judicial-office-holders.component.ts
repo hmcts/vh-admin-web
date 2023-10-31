@@ -23,12 +23,16 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     showAddPanelMember = false;
     addPanelMemberText = this.noPanelMemberText;
 
+    editingJudge: boolean;
+    editingPanelMember: boolean;
+
     destroyed$ = new Subject<void>();
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
 
     private readonly loggerPrefix: string = '[Booking] Assign JOH -';
+    participantToEdit: JudicialMemberDto = null;
 
     constructor(private router: Router, private hearingService: VideoHearingsService, private logger: Logger) {}
 
@@ -40,6 +44,26 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         this.participantsListComponent.selectedParticipantToRemove.pipe(takeUntil(this.destroyed$)).subscribe(participantEmail => {
             this.removeJudiciaryParticipant(participantEmail);
         });
+        this.participantsListComponent.$selectedForEdit.pipe(takeUntil(this.destroyed$)).subscribe(participant => {
+            this.editParticipant(participant);
+        });
+    }
+    editParticipant(participantEmail: string) {
+        const participantIndex = this.hearing.judiciaryParticipants.findIndex(x => x.email === participantEmail);
+        if (participantIndex < 0) {
+            this.logger.warn(`${this.loggerPrefix} Unable to find participant to edit.`, participantEmail);
+            return;
+        }
+        const participant = this.hearing.judiciaryParticipants[participantIndex];
+        this.participantToEdit = participant;
+        if (participant.roleCode === 'Judge') {
+            // pre-populate form with judge
+            this.editingJudge = true;
+        } else {
+            // pre-populate form with panel member
+            this.editingPanelMember = true;
+            this.showAddPanelMember = true;
+        }
     }
 
     ngOnDestroy(): void {
@@ -56,16 +80,18 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         this.logger.debug(`${this.loggerPrefix} Adding presiding judge.`, judicialMember);
         this.hearingService.addJudiciaryJudge(judicialMember);
         this.judgeAssigned = true;
+        this.editingJudge = false;
+        this.participantToEdit = null;
     }
 
     addPanelMember(judicialMember: JudicialMemberDto) {
         this.logger.debug(`${this.loggerPrefix} Adding panel member.`, judicialMember);
         judicialMember.roleCode = 'PanelMember';
 
-        if (!this.hearing.judiciaryParticipants.find(holder => holder.personalCode === judicialMember.personalCode)) {
-            this.hearing.judiciaryParticipants.push(judicialMember);
-        }
+        this.hearingService.addJudiciaryPanelMember(judicialMember);
+
         this.showAddPanelMember = false;
+        this.participantToEdit = null;
         this.refreshPanelMemberText();
     }
 

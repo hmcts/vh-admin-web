@@ -104,7 +104,7 @@
       </ng-template>
     </div>
     <div *ngIf="canEdit" class="participant-row__actions">
-      <a *ngIf="!participant.isJudiciaryMember" class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
+      <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>
   </div>
