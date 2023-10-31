@@ -7,6 +7,7 @@ import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { BookingService } from 'src/app/services/booking.service';
 
 @Component({
     selector: 'app-add-judicial-office-holders',
@@ -34,13 +35,19 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix: string = '[Booking] Assign JOH -';
     participantToEdit: JudicialMemberDto = null;
 
-    constructor(private router: Router, private hearingService: VideoHearingsService, private logger: Logger) {}
+    constructor(
+        private router: Router,
+        private hearingService: VideoHearingsService,
+        private bookingService: BookingService,
+        private logger: Logger
+    ) {}
 
     ngOnInit(): void {
         // init judicial office holders from cache if exists
         this.hearing = this.hearingService.getCurrentRequest();
         this.refreshPanelMemberText();
-        // this.judicialOfficeHolders = this.hearing.judiciaryParticipants ?? [];
+        this.checkBookingServiceForEdit();
+
         this.participantsListComponent.selectedParticipantToRemove.pipe(takeUntil(this.destroyed$)).subscribe(participantEmail => {
             this.removeJudiciaryParticipant(participantEmail);
         });
@@ -48,6 +55,14 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
             this.editParticipant(participant);
         });
     }
+
+    checkBookingServiceForEdit() {
+        const emailToEdit = this.bookingService.getParticipantEmail();
+        if (!emailToEdit) return;
+        this.editParticipant(emailToEdit);
+        this.bookingService.removeParticipantEmail();
+    }
+
     editParticipant(participantEmail: string) {
         const participantIndex = this.hearing.judiciaryParticipants.findIndex(x => x.email === participantEmail);
         if (participantIndex < 0) {

@@ -103,7 +103,12 @@
         </ng-template>
       </ng-template>
     </div>
-    <div *ngIf="canEdit" class="participant-row__actions">
+    <div
+      *ngIf="
+        canEdit && ((showParticipantActions && !participant.isJudiciaryMember) || (showJudicaryActions && participant.isJudiciaryMember))
+      "
+      class="participant-row__actions"
+    >
       <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
@@ -14,7 +14,7 @@ import { Constants } from 'src/app/common/constants';
     templateUrl: './participant-item.component.html',
     styleUrls: ['./participant-item.component.scss']
 })
-export class ParticipantItemComponent {
+export class ParticipantItemComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
     @Input() participant: ParticipantModel;
@@ -26,6 +26,8 @@ export class ParticipantItemComponent {
     @Output() remove = new EventEmitter<ParticipantModel>();
 
     staffMemberRole = Constants.HearingRoles.StaffMember;
+    showParticipantActions: boolean;
+    showJudicaryActions: boolean;
 
     constructor(
         private bookingService: BookingService,
@@ -33,6 +35,11 @@ export class ParticipantItemComponent {
         private router: Router,
         private videoHearingsService: VideoHearingsService
     ) {}
+    ngOnInit(): void {
+        this.showParticipantActions = this.router.url.includes(PageUrls.AddParticipants) || this.router.url.includes(PageUrls.Summary);
+        this.showJudicaryActions =
+            this.router.url.includes(PageUrls.AddJudicialOfficeHolders) || this.router.url.includes(PageUrls.Summary);
+    }
 
     getJudgeUser(participant: ParticipantModel): string {
         return participant.username;
@@ -61,10 +68,16 @@ export class ParticipantItemComponent {
     editParticipant(participant: ParticipantModel) {
         this.editJudge();
 
-        if (this.isSummaryPage) {
+        if (this.isSummaryPage && !this.participant.isJudiciaryMember) {
             this.bookingService.setParticipantEmail(participant.email);
             this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participant.email });
             this.router.navigate([PageUrls.AddParticipants]);
+        } else if (this.isSummaryPage && this.participant.isJudiciaryMember) {
+            this.logger.debug(`${this.loggerPrefix} Navigating back to judicial office holders to edit`, {
+                participant: participant.email
+            });
+            this.bookingService.setParticipantEmail(participant.email);
+            this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
         } else {
             this.edit.emit(participant);
         }
