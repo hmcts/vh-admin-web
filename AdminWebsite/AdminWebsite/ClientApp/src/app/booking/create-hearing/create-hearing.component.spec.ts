@@ -17,6 +17,7 @@ import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -77,9 +78,10 @@ describe('CreateHearingComponent with multiple case types', () => {
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
             ],
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            declarations: [CreateHearingComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
 
         fixture = TestBed.createComponent(CreateHearingComponent);
