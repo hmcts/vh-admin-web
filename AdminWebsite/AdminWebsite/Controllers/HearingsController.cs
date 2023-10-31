@@ -118,8 +118,8 @@ namespace AdminWebsite.Controllers
             Guid hearingId;
                 
             _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-                
-            if (_featureToggles.ReferenceDataToggle())
+            
+            if (_featureToggles.UseV2Api())
             {
                 var newBookingRequestV2 = newBookingRequest.MapToV2();
                     

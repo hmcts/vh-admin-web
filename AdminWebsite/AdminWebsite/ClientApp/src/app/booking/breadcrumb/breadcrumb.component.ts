@@ -28,7 +28,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.currentRouter = this.router.url;
         const ejudFeatureFlag$ = this.featureService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
-        const addJudicalMembers$ = this.featureService.getFlag<boolean>(FeatureFlags.addJudicialMembers).pipe(takeUntil(this.destroyed$));
+        const addJudicalMembers$ = this.featureService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
 
         combineLatest([ejudFeatureFlag$, addJudicalMembers$]).subscribe(([ejudFeatureFlag, addJudiciaryMemberFlag]) => {
             this.ejudFeatureFlag = ejudFeatureFlag;

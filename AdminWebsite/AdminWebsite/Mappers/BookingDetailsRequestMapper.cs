@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using AdminWebsite.Contracts.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
 using V1 = BookingsApi.Contract.V1.Requests;
 using V2 = BookingsApi.Contract.V2.Requests;
 
@@ -60,6 +62,12 @@ public static class BookingDetailsRequestMapper
             Participants = bookingDetails.Participants?
                 .Select(p => p.MapToV2())
                 .ToList(),
+            JudiciaryParticipants = bookingDetails.JudiciaryParticipants.Select(jp => new V1.JudiciaryParticipantRequest
+            {
+                DisplayName = jp.DisplayName,
+                HearingRoleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role, ignoreCase:true),
+                PersonalCode = jp.PersonalCode
+            }).ToList(),
             HearingRoomName = bookingDetails.HearingRoomName,
             OtherInformation = bookingDetails.OtherInformation,
             CreatedBy = bookingDetails.CreatedBy,

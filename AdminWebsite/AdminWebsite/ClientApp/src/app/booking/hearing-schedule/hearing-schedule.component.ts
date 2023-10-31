@@ -63,7 +63,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     ngOnInit() {
         this.ldService
-            .getFlag<boolean>(FeatureFlags.addJudicialMembers)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.addJudciaryMembersFeatureEnabled = result;

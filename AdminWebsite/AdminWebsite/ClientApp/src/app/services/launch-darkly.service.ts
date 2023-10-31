@@ -11,7 +11,7 @@ export const FeatureFlags = {
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',
-    addJudicialMembers: 'add-judicial-members'
+    useV2Api: 'use-bookings-api-v2'
 };
 
 @Injectable({
