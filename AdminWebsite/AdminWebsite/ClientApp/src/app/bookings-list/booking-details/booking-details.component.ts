@@ -345,6 +345,6 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
     }
 
     get judgeExists(): boolean {
-        return this.judges.length > 0;
+        return this.judges.length > 0 || this.judicialMembers.some(j => j.isJudge);
     }
 }
