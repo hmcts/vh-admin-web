@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { ParticipantDetailsModel, judiciaryParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { Constants } from '../../common/constants';
 import {} from 'src/app/common/model/participant.model';
@@ -11,9 +12,9 @@ import {} from 'src/app/common/model/participant.model';
 })
 export class BookingParticipantListComponent {
     private _participants: Array<ParticipantDetailsModel> = [];
-    private _judiciaryParticipants: Array<judiciaryParticipantDetailsModel> = [];
+    private _judiciaryParticipants: Array<JudiciaryParticipantDetailsModel> = [];
     sortedParticipants: ParticipantDetailsModel[] = [];
-    sortedJudiciaryMembers: judiciaryParticipantDetailsModel[] = [];
+    sortedJudiciaryMembers: JudiciaryParticipantDetailsModel[] = [];
 
     @Input()
     set participants(participants: Array<ParticipantDetailsModel>) {
@@ -22,7 +23,7 @@ export class BookingParticipantListComponent {
         this.sortJudiciaryMembers();
     }
     @Input()
-    set judiciaryParticipants(judiciaryParticipants: Array<judiciaryParticipantDetailsModel>) {
+    set judiciaryParticipants(judiciaryParticipants: Array<JudiciaryParticipantDetailsModel>) {
         this._judiciaryParticipants = judiciaryParticipants;
         this.sortParticipants();
         this.sortJudiciaryMembers();
@@ -33,8 +34,6 @@ export class BookingParticipantListComponent {
     judges: Array<ParticipantDetailsModel> = [];
     @Input()
     vh_officer_admin: boolean;
-
-    constructor() {}
 
     get participants(): Array<ParticipantDetailsModel> {
         let indexItem = 0;
@@ -95,7 +94,7 @@ export class BookingParticipantListComponent {
 
         const sortedJohList = [...judicialJudge, ...judicialPanelMembers];
 
-        this.sortedJudiciaryMembers = sortedJohList.sort((a, b) => {
+        sortedJohList.sort((a, b) => {
             if (a.roleCode.includes('Judge') && !b.roleCode.includes('Judge')) {
                 return -1;
             } else if (!a.roleCode.includes('Judge') && b.roleCode.includes('Judge')) {
@@ -104,6 +103,7 @@ export class BookingParticipantListComponent {
                 return 0;
             }
         });
+        this.sortedJudiciaryMembers = sortedJohList;
     }
 
     private insertInterpreters(interpreters: ParticipantDetailsModel[], sorted: ParticipantDetailsModel[]) {

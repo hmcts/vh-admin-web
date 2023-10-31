@@ -1,0 +1,55 @@
+<div class="govuk-grid-row container">
+  <div class="judge-row" *ngIf="participant.roleCode === 'Judge'">
+    <div>
+      <img
+        src="/assets/images/govuk-crest.png"
+        height="40"
+        width="40"
+        class="govuk-header__logotype-crest"
+        alt="HM Courts &amp; Tribunals Service crest"
+      />
+    </div>
+    <div id="judge-name">
+      {{ participant?.displayName }}
+      <div id="judge-hearing-role-name">Judge</div>
+    </div>
+  </div>
+
+  <div>
+    <div id="participant-{{ participant?.personalCode }}-name" *ngIf="participant?.roleCode !== 'Judge'" class="participant-row">
+      <div class="participant-row__detail">
+        <div>
+          <div>
+            <strong>
+              {{ participant?.fullName }}
+            </strong>
+          </div>
+
+          <div id="participant-{{ participant?.personalCode }}-hearing-role-name">Panel Member</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="vh_officer_admin" class="contact">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third contact-label">Email</div>
+        <div id="participant-{{ participant?.personalCode }}-email" class="govuk-grid-column-two-thirds wrap">
+          <div>
+            {{ participant.email }}
+          </div>
+        </div>
+      </div>
+      <div class="govuk-grid-row vh-mtop">
+        <div class="govuk-grid-column-one-third contact-label">Telephone</div>
+        <div id="participant-{{ participant?.personalCode }}-phone" class="govuk-grid-column-two-thirds wrap">
+          <div *ngIf="participant.telephone; else judgeNoPhone">
+            {{ participant.telephone }}
+          </div>
+          <ng-template #judgeNoPhone>
+            <div>TBC</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

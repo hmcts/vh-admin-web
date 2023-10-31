@@ -14,7 +14,8 @@ namespace AdminWebsite.Mappers
                 FullName = judiciaryParticipantResponse.FullName,
                 PersonalCode = judiciaryParticipantResponse.PersonalCode,
                 RoleCode = judiciaryParticipantResponse.HearingRoleCode.ToString(),
-                WorkPhone = judiciaryParticipantResponse.WorkPhone
+                WorkPhone = judiciaryParticipantResponse.WorkPhone,
+                DisplayName = judiciaryParticipantResponse.DisplayName
             };
         }
     }

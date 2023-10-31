@@ -5,7 +5,6 @@ import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
-import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judicial-member.model';
 
 @Component({
     selector: 'app-participant-list',
@@ -28,20 +27,20 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const participantsEmails = this.hearing?.participants?.map(p => p).sort() ?? [];
-        const sortedParticipantsEmails = this.sortedParticipants?.map(p => p).sort() ?? [];
-        const hasParticipantListChanged = JSON.stringify(participantsEmails) !== JSON.stringify(sortedParticipantsEmails);
+        const participantsLocal = this.hearing?.participants?.map(p => p).sort() ?? [];
+        const sortedParticipantslocal = this.sortedParticipants?.map(p => p).sort() ?? [];
+        const hasParticipantListChanged = JSON.stringify(participantsLocal) !== JSON.stringify(sortedParticipantslocal);
         if (hasParticipantListChanged) {
             this.sortParticipants();
         }
 
-        const judicialMembersEmails =
+        const judicialMembersLocal =
             this.hearing?.judiciaryParticipants?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode })).sort() ?? [];
-        const sortedJudicialMembersEmails =
+        const sortedJudicialMembersLocal =
             this.sortedJudiciaryMembers?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code })).sort() ??
             [];
 
-        const judiciaryEmailListChanged = JSON.stringify(judicialMembersEmails) !== JSON.stringify(sortedJudicialMembersEmails);
+        const judiciaryEmailListChanged = JSON.stringify(judicialMembersLocal) !== JSON.stringify(sortedJudicialMembersLocal);
         if (judiciaryEmailListChanged) {
             this.sortJudiciaryMembers();
         }
@@ -52,14 +51,14 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
             return;
         }
 
-        const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h => {
-            return ParticipantModel.fromJudicialMember(h, true);
-        });
+        const judicialJudge = [this.hearing.judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0]?.map(h =>
+            ParticipantModel.fromJudicialMember(h, true)
+        );
         const judicialPanelMembers = this.getJudicialPanelMembers();
 
         const sortedJohList = [...judicialJudge, ...judicialPanelMembers];
 
-        this.sortedJudiciaryMembers = sortedJohList.sort((a, b) => {
+        sortedJohList.sort((a, b) => {
             if (a.hearing_role_code.includes('Judge') && !b.hearing_role_code.includes('Judge')) {
                 return -1;
             } else if (!a.hearing_role_code.includes('Judge') && b.hearing_role_code.includes('Judge')) {
@@ -68,6 +67,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 return 0;
             }
         });
+        this.sortedJudiciaryMembers = sortedJohList;
     }
 
     ngOnChanges() {
@@ -149,9 +149,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         return this.hearing.judiciaryParticipants
             .filter(j => j.roleCode === 'PanelMember')
             .sort(this.compareByPartyThenByFirstName())
-            .map(h => {
-                return ParticipantModel.fromJudicialMember(h, false);
-            });
+            .map(h => ParticipantModel.fromJudicialMember(h, false));
     }
 
     private getPanelMembers() {

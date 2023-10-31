@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
@@ -10,7 +10,7 @@ import { JudicialMemberDto } from '../models/add-judicial-member.model';
     templateUrl: './search-for-judicial-member.component.html',
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
-export class SearchForJudicialMemberComponent implements OnInit {
+export class SearchForJudicialMemberComponent {
     form: FormGroup<SearchForJudicialMemberForm>;
     searchResult: JudiciaryPerson[] = [];
     showResult = false;
@@ -37,8 +37,6 @@ export class SearchForJudicialMemberComponent implements OnInit {
     constructor(private judiciaryService: JudicialService) {
         this.createForm();
     }
-
-    ngOnInit(): void {}
 
     searchForJudicialMember() {
         this.judiciaryService.getJudicialUsers(this.form.value.judiciaryEmail).subscribe(result => {
@@ -98,8 +96,12 @@ export class SearchForJudicialMemberComponent implements OnInit {
                     });
                 }
 
-                if (this.form.controls.judiciaryEmail.invalid) return;
-                if (this.editMode) return;
+                if (this.form.controls.judiciaryEmail.invalid) {
+                    return;
+                }
+                if (this.editMode) {
+                    return;
+                }
                 this.searchForJudicialMember();
             });
     }

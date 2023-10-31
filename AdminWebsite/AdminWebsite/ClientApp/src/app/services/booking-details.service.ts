@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { HearingRoleCodes, HearingRoles } from '../common/model/hearing-roles.model';
-import { ParticipantDetailsModel, judiciaryParticipantDetailsModel } from '../common/model/participant-details.model';
+import { ParticipantDetailsModel } from '../common/model/participant-details.model';
+import { JudiciaryParticipantDetailsModel } from '../common/model/judiciary-participant-details.model';
 import { HearingDetailsResponse, ParticipantResponse } from './clients/api-client';
+import { JudicaryRoleCode } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingDetailsService {
@@ -43,7 +45,24 @@ export class BookingDetailsService {
     mapBookingParticipants(hearingResponse: HearingDetailsResponse) {
         const participants: Array<ParticipantDetailsModel> = [];
         const judges: Array<ParticipantDetailsModel> = [];
-        const judicialMembers: Array<judiciaryParticipantDetailsModel> = [];
+        const judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
+
+        const mappedJohs = hearingResponse.judiciary_participants.map(
+            j =>
+                new JudiciaryParticipantDetailsModel(
+                    j.title,
+                    j.first_name,
+                    j.last_name,
+                    j.full_name,
+                    j.email,
+                    j.work_phone,
+                    j.personal_code,
+                    j.role_code.toString() as JudicaryRoleCode,
+                    j.display_name
+                )
+        );
+        judicialMembers.push(...mappedJohs);
+
         if (hearingResponse.participants && hearingResponse.participants.length > 0) {
             hearingResponse.participants.forEach(p => {
                 const model = new ParticipantDetailsModel(
@@ -65,7 +84,6 @@ export class BookingDetailsService {
                     this.isInterpretee(p),
                     p.linked_participants
                 );
-                // model.Interpretee = this.getInterpretee(hearingResponse, p);
                 if (p.user_role_name === this.JUDGE) {
                     judges.push(model);
                 } else {
@@ -74,7 +92,7 @@ export class BookingDetailsService {
             });
         }
 
-        return { judges: judges, participants: participants };
+        return { judges: judges, participants: participants, judicialMembers: judicialMembers };
     }
 
     mapBookingEndpoints(hearingResponse: HearingDetailsResponse): EndpointModel[] {

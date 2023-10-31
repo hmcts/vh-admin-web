@@ -17,17 +17,15 @@
 
       <!-- add a panel member -->
       <div *ngIf="showAddPanelMember" class="govuk-grid-column-full govuk-!-padding-top-6">
-
-          <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
-          <app-search-for-judicial-member
-            [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
-            (judicialMemberSelected)="addPanelMember($event)"
-          ></app-search-for-judicial-member>
-
+        <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
+        <app-search-for-judicial-member
+          [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
+          (judicialMemberSelected)="addPanelMember($event)"
+        ></app-search-for-judicial-member>
       </div>
 
       <div class="govuk-grid-column-full vh-horizontal-align" *ngIf="!showAddPanelMember">
-        <img ngSrc="assets/images/AddIcon.png" [alt]="addPanelMemberText" height="40" width="40"/>
+        <img ngSrc="assets/images/AddIcon.png" [alt]="addPanelMemberText" height="40" width="40" />
         <span class="govuk-!-margin-left-2">
           <a
             href="javascript:void(0)"

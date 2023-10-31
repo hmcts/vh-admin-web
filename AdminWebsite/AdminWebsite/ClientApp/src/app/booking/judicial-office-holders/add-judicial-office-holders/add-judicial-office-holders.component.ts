@@ -58,7 +58,9 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
 
     checkBookingServiceForEdit() {
         const emailToEdit = this.bookingService.getParticipantEmail();
-        if (!emailToEdit) return;
+        if (!emailToEdit) {
+            return;
+        }
         this.editParticipant(emailToEdit);
         this.bookingService.removeParticipantEmail();
     }

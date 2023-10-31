@@ -1,7 +1,6 @@
 import { CaseRoles } from './case-roles';
 import { HearingRoles } from './hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
-import { JudicaryRoleCode } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 export class ParticipantDetailsModel {
     constructor(
@@ -24,9 +23,9 @@ export class ParticipantDetailsModel {
         linkedParticipants: LinkedParticipant[]
     ) {
         this.ParticipantId = participantId;
-        this.FirstName = firstName == null ? '' : firstName;
-        this.LastName = lastName == null ? '' : lastName;
-        this.Title = title == null ? '' : title;
+        this.FirstName = firstName ?? '';
+        this.LastName = lastName ?? '';
+        this.Title = title ?? '';
         this.UserRoleName = role;
         this.UserName = userName;
         this.Flag = false;
@@ -110,17 +109,4 @@ export class ParticipantDetailsModel {
     get isInterpretee(): boolean {
         return this.IsInterpretee;
     }
-}
-
-export class judiciaryParticipantDetailsModel {
-    constructor(
-        public firstName: string,
-        public lastName: string,
-        public fullName: string,
-        public email: string,
-        public telephone: string,
-        public personalCode: string,
-        public roleCode: JudicaryRoleCode,
-        public displayName: string
-    ) {}
 }

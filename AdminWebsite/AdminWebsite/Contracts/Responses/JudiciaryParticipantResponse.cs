@@ -41,4 +41,9 @@ public class JudiciaryParticipantResponse
     /// The Judiciary person's role code (Judge or Panel Member)
     /// </summary>
     public string RoleCode { get; set; }
+
+    /// <summary>
+    /// The judiciary person's display name
+    /// </summary>
+    public string DisplayName { get; set; }
 }
