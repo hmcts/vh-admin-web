@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { VenuesMenuComponent } from './venues-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { HearingVenueResponse } from '../../../services/clients/api-client';
 import { of, throwError } from 'rxjs';
 import { ReferenceDataService } from '../../../services/reference-data.service';
-import {NgSelectModule} from "@ng-select/ng-select";
+import { NgSelectModule } from '@ng-select/ng-select';
 
 describe('VenuesMenuComponent', () => {
     let component: VenuesMenuComponent;

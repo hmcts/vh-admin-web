@@ -6,7 +6,7 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 import { BookingParticipantListComponent } from './booking-participant-list.component';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
-import {ParticipantDetailsComponent} from "../participant-details/participant-details.component";
+import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
 
 describe('BookingParticipantListComponent', () => {
     let component: BookingParticipantListComponent;
