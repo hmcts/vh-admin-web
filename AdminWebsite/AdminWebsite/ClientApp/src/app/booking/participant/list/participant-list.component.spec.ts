@@ -9,6 +9,7 @@ import { Logger } from 'src/app/services/logger';
 import { ParticipantListComponent } from './participant-list.component';
 import { ParticipantItemComponent } from '../item/participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judicial-member.model';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -63,39 +64,91 @@ describe('ParticipantListComponent', () => {
             done();
         });
     });
-    it('should emit on remove', () => {
-        spyOn(component.$selectedForRemove, 'emit');
-        component.removeParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false });
-        expect(component.$selectedForRemove.emit).toHaveBeenCalled();
+
+    describe('Edit rules', () => {
+        it('should emit on remove', () => {
+            spyOn(component.$selectedForRemove, 'emit');
+            component.removeParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false });
+            expect(component.$selectedForRemove.emit).toHaveBeenCalled();
+        });
+        it('should not be able to edit participant if canEdit is false', () => {
+            component.canEdit = false;
+            expect(component.canEditParticipant(pat1)).toBe(false);
+        });
+        it('should not be able to edit participant if canEdit is true and hearing is closed', () => {
+            component.canEdit = true;
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
+            expect(component.canEditParticipant(pat1)).toBe(false);
+        });
+        it('should not be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is false', () => {
+            component.canEdit = true;
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+            pat1.addedDuringHearing = false;
+            expect(component.canEditParticipant(pat1)).toBe(false);
+        });
+        it('should be able to edit participant if canEdit is true, hearing is open and about to start & addedDuringHearing is true', () => {
+            component.canEdit = true;
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+            pat1.addedDuringHearing = true;
+            expect(component.canEditParticipant(pat1)).toBe(true);
+        });
+        it('should be able to edit participant if canEdit is true, hearing is open and hearing is not about to start', () => {
+            component.canEdit = true;
+            videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
+            videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
+            expect(component.canEditParticipant(pat1)).toBe(true);
+        });
     });
-    it('should not be able to edit participant if canEdit is false', () => {
-        component.canEdit = false;
-        expect(component.canEditParticipant(pat1)).toBe(false);
-    });
-    it('should not be able to edit participant if canEdit is true and hearing is closed', () => {
-        component.canEdit = true;
-        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(true);
-        expect(component.canEditParticipant(pat1)).toBe(false);
-    });
-    it('should not be able to edit participant if canEdit is true, hearing is open, hearing is about to start and addedDuringHearing is false', () => {
-        component.canEdit = true;
-        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
-        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
-        pat1.addedDuringHearing = false;
-        expect(component.canEditParticipant(pat1)).toBe(false);
-    });
-    it('should be able to edit participant if canEdit is true, hearing is open and about to start & addedDuringHearing is true', () => {
-        component.canEdit = true;
-        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
-        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
-        pat1.addedDuringHearing = true;
-        expect(component.canEditParticipant(pat1)).toBe(true);
-    });
-    it('should be able to edit participant if canEdit is true, hearing is open and hearing is not about to start', () => {
-        component.canEdit = true;
-        videoHearingsServiceSpy.isConferenceClosed.and.returnValue(false);
-        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(false);
-        expect(component.canEditParticipant(pat1)).toBe(true);
+
+    describe('sortJudiciaryMembers', () => {
+        let judge: JudicialMemberDto;
+        let panelMember: JudicialMemberDto;
+
+        beforeEach(() => {
+            judge = new JudicialMemberDto('Judge', 'Fudge', 'Judge Fudge', 'judge@test.com', '1234567890', '1234');
+            judge.roleCode = 'Judge';
+            judge.displayName = 'Judge Fudge';
+
+            panelMember = new JudicialMemberDto('John', 'Doe', 'John Doe', 'pm@test.com', '2345678901', '2345');
+            panelMember.roleCode = 'PanelMember';
+            judge.displayName = 'PM Doe';
+        });
+
+        it('should not sort if hearing.judiciaryParticipants is not defined', () => {
+            component.hearing.judiciaryParticipants = undefined;
+            component.sortJudiciaryMembers();
+            expect(component.sortedJudiciaryMembers).toEqual([]);
+        });
+
+        it('should sort judiciary members with Judge at the beginning', () => {
+            component.hearing.judiciaryParticipants = [panelMember, judge];
+            component.sortJudiciaryMembers();
+            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+        });
+
+        it('should sort judiciary members with Judge at the beginning even if Judge is last in the original list', () => {
+            component.hearing.judiciaryParticipants = [judge, panelMember];
+            component.sortJudiciaryMembers();
+            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+        });
+
+        it('should not change the order if all judiciary members are Judges', () => {
+            component.hearing.judiciaryParticipants = [judge, judge];
+            component.sortJudiciaryMembers();
+            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('Judge');
+        });
+
+        it('should not change the order if there are no Judges', () => {
+            component.hearing.judiciaryParticipants = [panelMember, panelMember];
+            component.sortJudiciaryMembers();
+            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('PanelMember');
+            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
+        });
     });
 });
 

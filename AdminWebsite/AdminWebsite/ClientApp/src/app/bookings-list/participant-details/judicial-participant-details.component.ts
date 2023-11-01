@@ -9,7 +9,7 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 })
 export class JudicialParticipantDetailsComponent {
     @Input()
-    participant: JudiciaryParticipantDetailsModel = null;
+    participant: JudiciaryParticipantDetailsModel;
     @Input()
     hearing: BookingsDetailsModel;
     @Input()

@@ -27,18 +27,21 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const participantsLocal = this.hearing?.participants?.map(p => p).sort() ?? [];
-        const sortedParticipantslocal = this.sortedParticipants?.map(p => p).sort() ?? [];
+        const participantsLocal = this.hearing?.participants?.sort(this.sortByDisplayName()) ?? [];
+        const sortedParticipantslocal = this.sortedParticipants?.sort(this.sortByDisplayName()) ?? [];
         const hasParticipantListChanged = JSON.stringify(participantsLocal) !== JSON.stringify(sortedParticipantslocal);
         if (hasParticipantListChanged) {
             this.sortParticipants();
         }
 
         const judicialMembersLocal =
-            this.hearing?.judiciaryParticipants?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode })).sort() ?? [];
+            this.hearing?.judiciaryParticipants
+                ?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode }))
+                .sort(this.sortByEmail()) ?? [];
         const sortedJudicialMembersLocal =
-            this.sortedJudiciaryMembers?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code })).sort() ??
-            [];
+            this.sortedJudiciaryMembers
+                ?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code }))
+                .sort(this.sortByEmail()) ?? [];
 
         const judiciaryEmailListChanged = JSON.stringify(judicialMembersLocal) !== JSON.stringify(sortedJudicialMembersLocal);
         if (judiciaryEmailListChanged) {
@@ -108,6 +111,30 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
 
         this.insertInterpreters(sortedList);
         this.sortedParticipants = sortedList;
+    }
+
+    private sortByDisplayName() {
+        return (a, b) => {
+            if (a.display_name < b.display_name) {
+                return -1;
+            }
+            if (a.display_name > b.display_name) {
+                return 1;
+            }
+            return 0;
+        };
+    }
+
+    private sortByEmail() {
+        return (a, b) => {
+            if (a.email < b.email) {
+                return -1;
+            }
+            if (a.email > b.email) {
+                return 1;
+            }
+            return 0;
+        };
     }
 
     private compareByPartyThenByFirstName() {

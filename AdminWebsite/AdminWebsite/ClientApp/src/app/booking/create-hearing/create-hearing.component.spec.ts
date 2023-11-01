@@ -56,7 +56,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -190,7 +190,7 @@ describe('CreateHearingComponent with single case type', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -212,7 +212,8 @@ describe('CreateHearingComponent with single case type', () => {
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
@@ -301,7 +302,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -324,7 +325,8 @@ describe('CreateHearingComponent with existing request in session', () => {
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
             ],
             declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();

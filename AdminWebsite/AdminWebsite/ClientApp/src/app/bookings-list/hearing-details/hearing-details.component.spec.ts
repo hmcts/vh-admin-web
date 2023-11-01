@@ -85,7 +85,6 @@ describe('HearingDetailsComponent', () => {
         const phoneDetails = '11111 (ID: 1234567)';
         fixture.whenStable().then(() => {
             fixture.detectChanges();
-            console.log(component.hearing);
             const divElementRole = debugElement.queryAll(By.css('#hearing-name'));
             expect(divElementRole.length).toBeGreaterThan(0);
             expect(divElementRole.length).toBe(1);

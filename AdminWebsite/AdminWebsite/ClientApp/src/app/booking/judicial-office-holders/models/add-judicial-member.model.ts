@@ -1,7 +1,7 @@
 export type JudicaryRoleCode = 'Judge' | 'PanelMember';
 
 export class JudicialMemberDto {
-    public roleCode: JudicaryRoleCode;
+    public roleCode?: JudicaryRoleCode;
     public displayName: string;
     constructor(
         public firstName: string,

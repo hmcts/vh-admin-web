@@ -15,6 +15,7 @@ import { of } from 'rxjs';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -60,6 +61,7 @@ describe('OtherInformationComponent', () => {
     let fixture: ComponentFixture<OtherInformationComponent>;
     launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
     launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
         'getCurrentRequest',
         'cancelRequest',
@@ -76,14 +78,15 @@ describe('OtherInformationComponent', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
             ],
             declarations: [
                 OtherInformationComponent,
-                BreadcrumbComponent,
                 CancelPopupStubComponent,
                 ConfirmationPopupStubComponent,
-                DiscardConfirmPopupComponent
+                DiscardConfirmPopupComponent,
+                BreadcrumbStubComponent
             ]
         }).compileComponents();
         const hearingRequest = initHearingRequest();

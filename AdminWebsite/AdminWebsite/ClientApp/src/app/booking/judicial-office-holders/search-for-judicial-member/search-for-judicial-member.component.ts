@@ -11,6 +11,8 @@ import { JudicialMemberDto } from '../models/add-judicial-member.model';
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
 export class SearchForJudicialMemberComponent {
+    readonly NotificationDelayTime = 1200;
+
     form: FormGroup<SearchForJudicialMemberForm>;
     searchResult: JudiciaryPerson[] = [];
     showResult = false;
@@ -73,10 +75,10 @@ export class SearchForJudicialMemberComponent {
         this.form.controls.displayName.removeValidators(Validators.required);
     }
 
-    private createForm() {
+    createForm() {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
             judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
-            displayName: new FormControl<string>('', [Validators.required])
+            displayName: new FormControl<string>('')
         });
 
         this.form.controls.judiciaryEmail.valueChanges
@@ -85,7 +87,7 @@ export class SearchForJudicialMemberComponent {
                     this.form.controls.displayName.removeValidators(Validators.required);
                     this.form.controls.judiciaryEmail.updateValueAndValidity({ emitEvent: false });
                 }),
-                debounceTime(1200)
+                debounceTime(this.NotificationDelayTime)
             )
             .subscribe(newJudiciaryEmail => {
                 if (newJudiciaryEmail === '') {

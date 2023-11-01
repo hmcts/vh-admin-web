@@ -3,7 +3,7 @@ import { fakeAsync, inject, TestBed, tick, waitForAsync } from '@angular/core/te
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
@@ -19,6 +19,7 @@ import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
+import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 
 describe('AppComponent', () => {
     const router = {
@@ -72,7 +73,8 @@ describe('AppComponent', () => {
                 FooterStubComponent,
                 SignOutPopupStubComponent,
                 CancelPopupStubComponent,
-                UnsupportedBrowserComponent
+                UnsupportedBrowserComponent,
+                WaitPopupComponent
             ],
             providers: [
                 { provide: OidcSecurityService, useValue: mockOidcSecurityService },
