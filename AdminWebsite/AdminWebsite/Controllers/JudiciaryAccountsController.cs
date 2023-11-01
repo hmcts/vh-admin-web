@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 
@@ -123,8 +124,8 @@ namespace AdminWebsite.Controllers
                 
                 var eJudiciaryJudges = (await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm)).ToList();
                 var allJudges = eJudiciaryJudges.OrderBy(x => x.Email).Take(20).ToList();
-
-                return Ok(allJudges);
+                var mapped = allJudges.Select(x => x.MapToAdminWebResponse()).ToList();
+                return Ok(mapped);
             }
             catch (BookingsApiException e)
             {

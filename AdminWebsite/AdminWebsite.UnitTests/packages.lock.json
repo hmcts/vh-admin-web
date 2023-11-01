@@ -107,8 +107,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "1.47.31-pr-0759-0009",
-        "contentHash": "gxFIkzYfv1MorNdeuzEkFL5Gvadyp/ucaFfcVnAs9UJNl0NQDaT25cPjlNuUuVVc3HfVTi4lQTSJD6gCSh2YPQ==",
+        "resolved": "1.47.31-pr-0759-0010",
+        "contentHash": "kD9xaHmjgSGvFtb+KO15QBZxikClf5J6g30TnPfeCvQY4YAhus4E8UEmNa1gbwj0CZSTuMjKXiHxWJIod8F8FQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1979,7 +1979,7 @@
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[6.0.3, )",
-          "BookingsApi.Client": "[1.47.31-pr-0759-0009, )",
+          "BookingsApi.Client": "[1.47.31-pr-0759-0010, )",
           "FluentValidation.AspNetCore": "[10.4.0, )",
           "LaunchDarkly.ServerSdk": "[7.0.3, )",
           "MicroElements.Swashbuckle.FluentValidation": "[5.7.0, )",

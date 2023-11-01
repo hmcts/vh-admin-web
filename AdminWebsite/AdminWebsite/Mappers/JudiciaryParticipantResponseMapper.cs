@@ -9,6 +9,7 @@ namespace AdminWebsite.Mappers
             return new JudiciaryParticipantResponse()
             {
                 Email = judiciaryParticipantResponse.Email,
+                Title = judiciaryParticipantResponse.Title,
                 FirstName = judiciaryParticipantResponse.FirstName,
                 LastName = judiciaryParticipantResponse.LastName,
                 FullName = judiciaryParticipantResponse.FullName,
