@@ -36,6 +36,7 @@ import { SummaryComponent } from './summary.component';
 import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -161,7 +162,8 @@ describe('SummaryComponent with valid request', () => {
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
                 LongDatetimePipe,
-                RemoveInterpreterPopupComponent
+                RemoveInterpreterPopupComponent,
+                TruncatableTextComponent
             ],
             imports: [RouterTestingModule]
         }).compileComponents();
@@ -618,7 +620,8 @@ describe('SummaryComponent  with invalid request', () => {
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
                 LongDatetimePipe,
-                RemoveInterpreterPopupComponent
+                RemoveInterpreterPopupComponent,
+                TruncatableTextComponent
             ]
         }).compileComponents();
     }));
@@ -676,7 +679,8 @@ describe('SummaryComponent  with existing request', () => {
                 RemovePopupComponent,
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
-                LongDatetimePipe
+                LongDatetimePipe,
+                TruncatableTextComponent
             ]
         }).compileComponents();
     }));

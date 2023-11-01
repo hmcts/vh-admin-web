@@ -179,7 +179,8 @@ describe('AppComponent - ConnectionService', () => {
                 FooterStubComponent,
                 SignOutPopupStubComponent,
                 CancelPopupStubComponent,
-                UnsupportedBrowserComponent
+                UnsupportedBrowserComponent,
+                WaitPopupComponent
             ],
             providers: [
                 { provide: OidcSecurityService, useValue: mockOidcSecurityService },

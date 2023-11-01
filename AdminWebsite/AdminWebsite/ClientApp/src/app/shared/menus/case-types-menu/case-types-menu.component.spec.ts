@@ -2,12 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseTypesMenuComponent } from './case-types-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { of, throwError } from 'rxjs';
 import { HearingTypeResponse } from '../../../services/clients/api-client';
+import {NgSelectModule} from "@ng-select/ng-select";
 
 describe('CaseTypesMenuComponent', () => {
     let component: CaseTypesMenuComponent;
@@ -19,6 +20,7 @@ describe('CaseTypesMenuComponent', () => {
         videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['getHearingTypes']);
         videoHearingServiceSpy.getHearingTypes.and.returnValue(of([new HearingTypeResponse({ group: caseType })]));
         await TestBed.configureTestingModule({
+            imports: [NgSelectModule, ReactiveFormsModule],
             declarations: [CaseTypesMenuComponent],
             providers: [
                 HttpClient,
