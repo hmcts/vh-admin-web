@@ -11,6 +11,7 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
+        public bool EJudEnabled();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -21,6 +22,7 @@ namespace AdminWebsite.Configuration
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
+        private const string EJudFeatureToggleKey = "ejud-feature";
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -32,32 +34,32 @@ namespace AdminWebsite.Configuration
 
         public bool BookAndConfirmToggle()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
-
-            return _ldClient.BoolVariation(BookAndConfirmToggleKey, _context);
+            return GetBoolValueWithKey(BookAndConfirmToggleKey);
         }
 
         public bool Dom1Enabled()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
-
-            return _ldClient.BoolVariation(Dom1EnabledToggleKey, _context);
+            return GetBoolValueWithKey(Dom1EnabledToggleKey);
         }
         
         public bool ReferenceDataToggle()
+        {
+            return GetBoolValueWithKey(ReferenceDataToggleKey);
+        }
+
+        public bool EJudEnabled()
+        {
+            return GetBoolValueWithKey(EJudFeatureToggleKey);
+        }
+
+        private bool GetBoolValueWithKey(string key)
         {
             if (!_ldClient.Initialized)
             {
                 throw new InvalidOperationException("LaunchDarkly client not initialized");
             }
 
-            return _ldClient.BoolVariation(ReferenceDataToggleKey, _context);
+            return _ldClient.BoolVariation(key, _context);
         }
     }
 }

@@ -18,7 +18,6 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
-using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using VideoApi.Contract.Responses;
@@ -61,7 +60,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     },
                     CaseTypeName = "Generic"
                 });
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(true);
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
@@ -9,7 +8,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
@@ -20,7 +18,6 @@ using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
-using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -36,7 +33,7 @@ namespace AdminWebsite.UnitTests.Services
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _mocker.Mock<IOptions<KinlyConfiguration>>().Setup(opt => opt.Value).Returns(new KinlyConfiguration()
+            _mocker.Mock<IOptions<KinlyConfiguration>>().Setup(opt => opt.Value).Returns(new KinlyConfiguration
             {
                 ConferencePhoneNumber = ExpectedTeleConferencePhoneNumber
             });
@@ -58,8 +55,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(c => c.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(true);
             _mocker.Mock<IFeatureToggles>()
                 .Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _service = _mocker.Create<HearingsService>();
@@ -110,7 +106,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_participants()
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<BookingsApi.Contract.V1.Requests.ParticipantRequest>();
+            var newParticipants = new List<ParticipantRequest>();
             var removedParticipantIds = new List<Guid>();
             var linkedParticipants = new List<LinkedParticipantRequest>();
 
@@ -134,7 +130,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_new_joh_participant_EJudFeature_Is_ON(string hearingRole)
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 HearingRoleName = hearingRole,
@@ -155,15 +151,14 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_new_joh_participant_EJudFeature_Is_OFF(string hearingRole)
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 HearingRoleName = hearingRole,
                 ContactEmail = "contact@email.com"
             };
             var removedParticipantIds = new List<Guid>();
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(false);
 
             // Act
             var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
@@ -177,15 +172,14 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_new_judge_participant_EJudFeature_Is_OFF()
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 CaseRoleName = "Judge",
                 ContactEmail = "contact@email.com"
             };
             var removedParticipantIds = new List<Guid>();
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(false);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(false);
 
             // Act
             var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
@@ -199,14 +193,14 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 HearingRoleName = "Panel Member",
                 ContactEmail = "contact@email.com"
             };
 
-            _hearing.Participants.Add(new ParticipantResponse()
+            _hearing.Participants.Add(new ParticipantResponse
             {
                 Id = participant.Id.Value,
                 Username = participant.ContactEmail,
@@ -226,14 +220,14 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_new_joh_participant_when_participant_is_in_list_and_is_removed()
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 CaseRoleName = "Judge",
                 ContactEmail = "contact@email.com"
             };
 
-            _hearing.Participants.Add(new ParticipantResponse()
+            _hearing.Participants.Add(new ParticipantResponse
             {
                 Id = participant.Id.Value,
                 Username = participant.ContactEmail,
@@ -257,7 +251,7 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_process_non_joh_participant()
         {
             // Arrange
-            var participant = new EditParticipantRequest()
+            var participant = new EditParticipantRequest
             {
                 Id = Guid.NewGuid(),
                 CaseRoleName = "NOT JUDGE",
