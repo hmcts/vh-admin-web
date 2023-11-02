@@ -53,7 +53,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     ngOnInit() {
         this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.referenceData)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(flag => (this.refDataEnabled = flag));
         this.failedSubmission = false;
