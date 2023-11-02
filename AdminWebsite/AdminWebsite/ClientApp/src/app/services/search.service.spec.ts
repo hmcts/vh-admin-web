@@ -2,7 +2,7 @@ import { SearchService } from './search.service';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
-import { BHClient, JudgeResponse, PersonResponse } from './clients/api-client';
+import { BHClient, JudgeAccountType, JudgeResponse, PersonResponse } from './clients/api-client';
 import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
 import { FeatureFlags, LaunchDarklyService } from './launch-darkly.service';
@@ -62,14 +62,26 @@ judge1.first_name = 'JudgeFirstName1';
 judge1.last_name = 'JudgeLastName1';
 judge1.display_name = 'JudgeDisplayName1';
 judge1.email = 'JudgeEmail1';
+judge1.contact_email = 'JudgeEmail1';
+judge1.account_type = JudgeAccountType.Courtroom;
 
 const judge2 = new JudgeResponse();
 judge2.first_name = 'JudgeFirstName2';
 judge2.last_name = 'JudgeLastName2';
 judge2.display_name = 'JudgeDisplayName2';
 judge2.email = 'JudgeEmail2';
+judge2.contact_email = 'JudgeEmail2';
+judge2.account_type = JudgeAccountType.Courtroom;
 
-const judgeList: JudgeResponse[] = [judge1, judge2];
+const ejudJudge = new JudgeResponse();
+ejudJudge.first_name = 'judgeEjud';
+ejudJudge.last_name = 'judgeEjud';
+ejudJudge.display_name = null;
+ejudJudge.email = 'judgeEjud';
+judge2.contact_email = null;
+ejudJudge.account_type = JudgeAccountType.Judiciary;
+
+const judgeList: JudgeResponse[] = [judge1, judge2, ejudJudge];
 
 const judgeParticipant1 = new ParticipantModel();
 judgeParticipant1.first_name = 'judgeParticipant1FirstName';
@@ -83,7 +95,13 @@ judgeParticipant2.last_name = 'judgeParticipant2LastName';
 judgeParticipant2.display_name = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
-const judgeParticipantList: ParticipantModel[] = [judgeParticipant1, judgeParticipant2];
+const judgeParticipant3 = new ParticipantModel();
+judgeParticipant2.first_name = 'judgeParticipant2FirstName';
+judgeParticipant2.last_name = 'judgeParticipant2LastName';
+judgeParticipant2.display_name = null;
+judgeParticipant2.email = 'judgeEjud';
+
+const judgeParticipantList: ParticipantModel[] = [judgeParticipant1, judgeParticipant2, judgeParticipant3];
 
 const participant1 = new ParticipantModel();
 participant1.first_name = 'participant1FirstName';

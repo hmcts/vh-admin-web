@@ -48,7 +48,7 @@ export class ParticipantModel {
         return judge
             ? {
                   ...judge,
-                  email: judge.contact_email,
+                  email: judge.contact_email ?? judge.email,
                   username: judge.email,
                   is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
               }
