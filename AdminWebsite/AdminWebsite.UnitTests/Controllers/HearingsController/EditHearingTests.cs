@@ -15,13 +15,11 @@ using NUnit.Framework;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
-using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
@@ -97,7 +95,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object, _featureToggle.Object);
 
-            _bookingsApiClient.Setup(x => x.GetFeatureFlagAsync(It.Is<string>(f => f == nameof(FeatureFlags.EJudFeature)))).ReturnsAsync(true);
+            _featureToggle.Setup(x => x.EJudEnabled()).Returns(true);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,

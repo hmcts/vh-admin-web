@@ -12,6 +12,7 @@ namespace AdminWebsite.Configuration
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
         public bool UseV2Api();
+        public bool EJudEnabled();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -23,6 +24,7 @@ namespace AdminWebsite.Configuration
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
         private const string UseV2ApiToggleKey = "use-bookings-api-v2";
+        private const string EJudFeatureToggleKey = "ejud-feature";
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -34,42 +36,38 @@ namespace AdminWebsite.Configuration
 
         public bool BookAndConfirmToggle()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
-
-            return _ldClient.BoolVariation(BookAndConfirmToggleKey, _context);
+            return GetBoolValueWithKey(BookAndConfirmToggleKey);
         }
 
         public bool Dom1Enabled()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
-
-            return _ldClient.BoolVariation(Dom1EnabledToggleKey, _context);
+            return GetBoolValueWithKey(Dom1EnabledToggleKey);
         }
         
         public bool ReferenceDataToggle()
         {
-            if (!_ldClient.Initialized)
-            {
-                throw new InvalidOperationException("LaunchDarkly client not initialized");
-            }
+            return GetBoolValueWithKey(ReferenceDataToggleKey);
+        }
 
-            return _ldClient.BoolVariation(ReferenceDataToggleKey, _context);
+        public bool EJudEnabled()
+        {
+            return GetBoolValueWithKey(EJudFeatureToggleKey);
         }
 
         public bool UseV2Api()
+        {
+            return GetBoolValueWithKey(UseV2ApiToggleKey);
+        }
+        
+        private bool GetBoolValueWithKey(string key)
         {
             if (!_ldClient.Initialized)
             {
                 throw new InvalidOperationException("LaunchDarkly client not initialized");
             }
 
-            return _ldClient.BoolVariation(UseV2ApiToggleKey, _context);
+            return _ldClient.BoolVariation(key, _context);
         }
+
     }
 }

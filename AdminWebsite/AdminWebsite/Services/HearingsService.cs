@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.Interfaces.Requests;
-using BookingsApi.Contract.V1.Configuration;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V2.Requests;
 
@@ -30,12 +29,14 @@ namespace AdminWebsite.Services
     public class HearingsService : IHearingsService
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsService> _logger;
 #pragma warning disable S107
-        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureFlag)
+        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _featureToggles = featureToggles;
         }
 
         public void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants)
@@ -107,7 +108,7 @@ namespace AdminWebsite.Services
             return (ParticipantRequest)await ProcessNewParticipant(hearingId, participant, newParticipant, removedParticipantIds, hearing);
         }
     
-        public async Task<IParticipantRequest> ProcessNewParticipant(
+        public Task<IParticipantRequest> ProcessNewParticipant(
             Guid hearingId,
             EditParticipantRequest participant,
             IParticipantRequest newParticipant,
@@ -116,7 +117,7 @@ namespace AdminWebsite.Services
         {
             // Add a new participant
             // Map the request except the username
-            var ejudFeatureFlag = await _bookingsApiClient.GetFeatureFlagAsync(nameof(FeatureFlags.EJudFeature));
+            var ejudFeatureFlag = _featureToggles.EJudEnabled();
 
             if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge 
                 || participant.HearingRoleName == RoleNames.PanelMember
@@ -127,7 +128,7 @@ namespace AdminWebsite.Services
                     hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.TrueForAll(removedParticipantId => removedParticipantId != p.Id)))
                 {
                     //If the judge already exists in the database, there is no need to add again.
-                    return null;
+                    return Task.FromResult<IParticipantRequest>(null);
                 }
 
                 if (newParticipant is ParticipantRequest v1Request)
@@ -138,7 +139,7 @@ namespace AdminWebsite.Services
 
             _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.DisplayName, hearingId);
-            return newParticipant;
+            return Task.FromResult(newParticipant);
         }
 
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
