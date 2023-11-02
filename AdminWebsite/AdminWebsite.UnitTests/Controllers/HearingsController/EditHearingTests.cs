@@ -570,7 +570,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2()
         {
-            _featureToggle.Setup(e => e.ReferenceDataToggle()).Returns(true);
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(updatedHearing)

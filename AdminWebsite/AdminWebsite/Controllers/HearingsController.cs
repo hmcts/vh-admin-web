@@ -320,7 +320,7 @@ namespace AdminWebsite.Controllers
 
         private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
         {
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 return updatedHearing2.Map();
@@ -333,7 +333,7 @@ namespace AdminWebsite.Controllers
         private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
         {
             //Save hearing details
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
