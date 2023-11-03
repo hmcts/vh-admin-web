@@ -2,27 +2,27 @@ import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/service
 import { LinkedParticipantModel } from './linked-participant.model';
 
 export class ParticipantModel {
-    id?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    middle_names?: string | undefined;
-    display_name?: string | undefined;
-    username?: string | undefined;
-    email?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    hearing_role_code?: string | undefined;
-    phone?: string | undefined;
-    representee?: string | undefined;
-    company?: string | undefined;
+    id?: string;
+    title?: string;
+    first_name?: string;
+    last_name?: string;
+    middle_names?: string;
+    display_name?: string;
+    username?: string;
+    email?: string;
+    case_role_name?: string;
+    hearing_role_name?: string;
+    hearing_role_code?: string;
+    phone?: string;
+    representee?: string;
+    company?: string;
     is_judge?: boolean;
     is_exist_person?: boolean;
     interpreterFor?: string;
     linked_participants?: LinkedParticipantModel[];
-    interpretee_name?: string | undefined;
-    is_interpretee?: boolean | undefined;
-    user_role_name?: string | undefined;
+    interpretee_name?: string;
+    is_interpretee?: boolean;
+    user_role_name?: string;
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
     is_staff_member?: boolean;
@@ -56,6 +56,6 @@ export class ParticipantModel {
     }
 
     static IsEmailEjud(email: string): boolean {
-        return email && email.toLowerCase().includes('judiciary');
+        return email?.toLowerCase().includes('judiciary') ?? false;
     }
 }
