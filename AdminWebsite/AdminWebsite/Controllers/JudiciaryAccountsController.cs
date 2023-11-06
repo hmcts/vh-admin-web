@@ -80,7 +80,7 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name = "term" > The email address search term.</param>
         /// <returns> The list of judiciary person</returns>
-        [HttpPost(Name = "SearchForJudiciaryPerson")]
+        [HttpPost("search",Name = "SearchForJudiciaryPerson")]
         [SwaggerOperation(OperationId = "SearchForJudiciaryPerson")]
         [ProducesResponseType(typeof(List<JudiciaryPerson>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

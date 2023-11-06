@@ -102,6 +102,6 @@ export class SearchService {
     }
 
     searchJudgeAccounts(term): Observable<Array<JudgeResponse>> {
-        return this.bhClient.postJudgesBySearchTerm(term);
+        return this.bhClient.postJudiciaryPersonBySearchTerm(term);
     }
 }

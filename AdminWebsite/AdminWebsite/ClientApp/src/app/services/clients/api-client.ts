@@ -1868,12 +1868,12 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Find judges and court rooms accounts list by email search term.
+     * Find judiciary person list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
      */
-    postJudgesBySearchTerm(body: string | undefined): Observable<JudgeResponse[]> {
-        let url_ = this.baseUrl + '/api/judiciary/judges';
+    postJudiciaryPersonBySearchTerm(body: string | undefined): Observable<PersonResponse[]> {
+        let url_ = this.baseUrl + '/api/judiciary';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -1896,23 +1896,23 @@ export class BHClient extends ApiClientBase {
             )
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processPostJudgesBySearchTerm(response_);
+                    return this.processPostJudiciaryPersonBySearchTerm(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processPostJudgesBySearchTerm(response_ as any);
+                            return this.processPostJudiciaryPersonBySearchTerm(response_ as any);
                         } catch (e) {
-                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
+                            return _observableThrow(e) as any as Observable<PersonResponse[]>;
                         }
-                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
+                    } else return _observableThrow(response_) as any as Observable<PersonResponse[]>;
                 })
             );
     }
 
-    protected processPostJudgesBySearchTerm(response: HttpResponseBase): Observable<JudgeResponse[]> {
+    protected processPostJudiciaryPersonBySearchTerm(response: HttpResponseBase): Observable<PersonResponse[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -1943,7 +1943,7 @@ export class BHClient extends ApiClientBase {
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
                         result200 = [] as any;
-                        for (let item of resultData200) result200!.push(JudgeResponse.fromJS(item));
+                        for (let item of resultData200) result200!.push(PersonResponse.fromJS(item));
                     } else {
                         result200 = <any>null;
                     }
@@ -1981,7 +1981,7 @@ export class BHClient extends ApiClientBase {
      * @return Success
      */
     searchForJudiciaryPerson(body: string | undefined): Observable<JudiciaryPerson[]> {
-        let url_ = this.baseUrl + '/api/judiciary';
+        let url_ = this.baseUrl + '/api/judiciary/search';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
