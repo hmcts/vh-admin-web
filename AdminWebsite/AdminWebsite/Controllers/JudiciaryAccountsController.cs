@@ -55,7 +55,8 @@ namespace AdminWebsite.Controllers
 
                 await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
 
-                var eJudiciaryJudges = (await eJudiciaryJudgesTask).Where(p => !p.Username.Contains(_testSettings.TestUsernameStem)).ToList();
+                var eJudiciaryJudges = (await eJudiciaryJudgesTask)
+                    .Where(p => !p.Username.Contains(_testSettings.TestUsernameStem)).ToList();
                 var courtRoomJudges = (await courtRoomJudgesTask)
                     .Where(x => !eJudiciaryJudges.Select(e => e.Username).Contains(x.ContactEmail))
                     .Select(x => UserResponseMapper.MapFrom(x));
