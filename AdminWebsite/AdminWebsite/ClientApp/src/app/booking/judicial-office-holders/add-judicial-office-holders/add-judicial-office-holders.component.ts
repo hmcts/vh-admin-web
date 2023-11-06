@@ -11,8 +11,7 @@ import { BookingService } from 'src/app/services/booking.service';
 
 @Component({
     selector: 'app-add-judicial-office-holders',
-    templateUrl: './add-judicial-office-holders.component.html',
-    styleUrls: ['./add-judicial-office-holders.component.scss']
+    templateUrl: './add-judicial-office-holders.component.html'
 })
 export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     noPanelMemberText = 'Add a Judicial Office Holder';
