@@ -20,8 +20,9 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { lastValueFrom, of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
+import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
-describe('Video hearing service', () => {
+fdescribe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
     const newRequestKey = 'bh-newRequest';
@@ -616,5 +617,96 @@ describe('Video hearing service', () => {
 
         await service.getHearingRoles();
         expect(clientApiSpy.getHearingRoles).toHaveBeenCalled();
+    });
+
+    describe('addJudiciaryJudge', () => {
+        it('should add a new judge when none exists', () => {
+            // Arrange
+            const service = new VideoHearingsService(clientApiSpy);
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(-1);
+
+            // Act
+            service.addJudiciaryJudge(judicialMember);
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(judicialMember);
+        });
+
+        it('should replace an existing judge', () => {
+            // Arrange
+            const service = new VideoHearingsService(clientApiSpy);
+            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678');
+            service['modelHearing'].judiciaryParticipants.push(existingJudge);
+            spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(0);
+
+            // Act
+            service.addJudiciaryJudge(newJudge);
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(newJudge);
+        });
+    });
+
+    describe('removeJudiciaryJudge', () => {
+        it('should remove judge from judiciary participants', () => {
+            // Arrange
+            const judge = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            judge.roleCode = 'Judge';
+            const nonJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            nonJudge.roleCode = 'PanelMember';
+            service['modelHearing'].judiciaryParticipants = [judge, nonJudge];
+
+            // Act
+            service.removeJudiciaryJudge();
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(nonJudge);
+        });
+
+        it('should not remove anything if judge is not present', () => {
+            // Arrange
+            const nonJudge1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            nonJudge1.roleCode = 'PanelMember';
+            const nonJudge2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            nonJudge2.roleCode = 'PanelMember';
+            service['modelHearing'].judiciaryParticipants = [nonJudge1, nonJudge2];
+
+            // Act
+            service.removeJudiciaryJudge();
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(2);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(nonJudge1);
+            expect(service['modelHearing'].judiciaryParticipants[1]).toBe(nonJudge2);
+        });
+    });
+
+    describe('addJudiciaryPanelMember', () => {
+        it('should add a new judiciary panel member', () => {
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+
+            service.addJudiciaryPanelMember(judicialMember);
+
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toEqual(judicialMember);
+        });
+
+        it('should update an existing judiciary panel member', () => {
+            const judicialMember1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            judicialMember1.displayName = 'Test User 1';
+            const judicialMember2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            judicialMember2.displayName = 'Test User 2';
+
+            service.addJudiciaryPanelMember(judicialMember1);
+            service.addJudiciaryPanelMember(judicialMember2);
+
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toEqual(judicialMember2);
+        });
     });
 });
