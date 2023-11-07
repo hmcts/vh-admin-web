@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
-using System.Linq;
 using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
