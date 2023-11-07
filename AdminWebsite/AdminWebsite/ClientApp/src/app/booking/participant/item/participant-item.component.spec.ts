@@ -72,42 +72,42 @@ describe('ParticipantItemComponent', () => {
     it('should edit participant details', () => {
         component.isSummaryPage = true;
         component.participant = { representee: 'rep', is_judge: false, is_exist_person: false, isJudiciaryMember: false };
-        const participant: ParticipantModel = {
+        const pat: ParticipantModel = {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: false,
             isJudiciaryMember: false
         };
-        component.editParticipant(participant);
+        component.editParticipant(pat);
         fixture.detectChanges();
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
-        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(participant.email);
+        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(pat.email);
         expect(router.navigate).toHaveBeenCalledWith([PageUrls.AddParticipants]);
     });
 
     it('should edit judicial office holder details', () => {
         component.isSummaryPage = true;
         component.participant = { representee: 'rep', is_judge: true, is_exist_person: false, isJudiciaryMember: true };
-        const participant: ParticipantModel = { email: 'email@hmcts.net', is_exist_person: false, is_judge: true, isJudiciaryMember: true };
-        component.editParticipant(participant);
+        const pat: ParticipantModel = { email: 'email@hmcts.net', is_exist_person: false, is_judge: true, isJudiciaryMember: true };
+        component.editParticipant(pat);
         fixture.detectChanges();
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
-        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(participant.email);
+        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(pat.email);
         expect(router.navigate).toHaveBeenCalledWith([PageUrls.AddJudicialOfficeHolders]);
     });
 
     it('should emit edit event for non-summary page', () => {
         component.isSummaryPage = false;
-        const participant: ParticipantModel = {
+        const pat: ParticipantModel = {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: false,
             isJudiciaryMember: false
         };
         spyOn(component.edit, 'emit');
-        component.editParticipant(participant);
+        component.editParticipant(pat);
         fixture.detectChanges();
-        expect(component.edit.emit).toHaveBeenCalledWith(participant);
+        expect(component.edit.emit).toHaveBeenCalledWith(pat);
     });
 
     it('should return true if participant has a representative', () => {

@@ -708,7 +708,7 @@ describe('Video hearing service', () => {
         });
     });
 
-    fdescribe('removeJudiciaryParticipant', () => {
+    describe('removeJudiciaryParticipant', () => {
         it('should remove judiciary participant from modelHearing', () => {
             // Arrange
             const participantEmail = 'test@example.com';
