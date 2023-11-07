@@ -34,10 +34,43 @@ export class SearchForJudicialMemberComponent {
     }
     @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
-    private judicialMember: JudicialMemberDto;
+    judicialMember: JudicialMemberDto;
     private editMode = false;
     constructor(private judiciaryService: JudicialService) {
         this.createForm();
+    }
+
+    createForm() {
+        this.form = new FormGroup<SearchForJudicialMemberForm>({
+            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
+            displayName: new FormControl<string>('')
+        });
+
+        this.form.controls.judiciaryEmail.valueChanges
+            .pipe(
+                tap(() => {
+                    this.form.controls.displayName.removeValidators(Validators.required);
+                    this.form.controls.displayName.updateValueAndValidity({ emitEvent: false });
+                }),
+                debounceTime(this.NotificationDelayTime)
+            )
+            .subscribe(newJudiciaryEmail => {
+                if (newJudiciaryEmail === '') {
+                    this.showResult = false;
+                    this.form.reset({
+                        judiciaryEmail: '',
+                        displayName: ''
+                    });
+                }
+
+                if (this.form.controls.judiciaryEmail.invalid) {
+                    return;
+                }
+                if (this.editMode) {
+                    return;
+                }
+                this.searchForJudicialMember();
+            });
     }
 
     searchForJudicialMember() {
@@ -45,6 +78,7 @@ export class SearchForJudicialMemberComponent {
             this.searchResult = result;
             this.showResult = true;
             this.form.controls.displayName.addValidators(Validators.required);
+            this.form.controls.displayName.updateValueAndValidity({ emitEvent: false });
         });
     }
 
@@ -73,39 +107,6 @@ export class SearchForJudicialMemberComponent {
             displayName: ''
         });
         this.form.controls.displayName.removeValidators(Validators.required);
-    }
-
-    createForm() {
-        this.form = new FormGroup<SearchForJudicialMemberForm>({
-            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
-            displayName: new FormControl<string>('')
-        });
-
-        this.form.controls.judiciaryEmail.valueChanges
-            .pipe(
-                tap(() => {
-                    this.form.controls.displayName.removeValidators(Validators.required);
-                    this.form.controls.judiciaryEmail.updateValueAndValidity({ emitEvent: false });
-                }),
-                debounceTime(this.NotificationDelayTime)
-            )
-            .subscribe(newJudiciaryEmail => {
-                if (newJudiciaryEmail === '') {
-                    this.showResult = false;
-                    this.form.reset({
-                        judiciaryEmail: '',
-                        displayName: ''
-                    });
-                }
-
-                if (this.form.controls.judiciaryEmail.invalid) {
-                    return;
-                }
-                if (this.editMode) {
-                    return;
-                }
-                this.searchForJudicialMember();
-            });
     }
 }
 

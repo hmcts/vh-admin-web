@@ -14,7 +14,7 @@
     <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
   </div>
   <button
-    *ngIf="searchResult && form.valid"
+    *ngIf="judicialMember && form.valid"
     class="govuk-button"
     data-module="govuk-button"
     (click)="confirmJudiciaryMemberWithDisplayName()"
