@@ -622,7 +622,6 @@ describe('Video hearing service', () => {
     describe('addJudiciaryJudge', () => {
         it('should add a new judge when none exists', () => {
             // Arrange
-            const service = new VideoHearingsService(clientApiSpy);
             const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
             spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(-1);
 
@@ -636,7 +635,6 @@ describe('Video hearing service', () => {
 
         it('should replace an existing judge', () => {
             // Arrange
-            const service = new VideoHearingsService(clientApiSpy);
             const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
             const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678');
             service['modelHearing'].judiciaryParticipants.push(existingJudge);

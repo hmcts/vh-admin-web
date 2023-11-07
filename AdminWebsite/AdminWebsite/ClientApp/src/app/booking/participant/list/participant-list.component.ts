@@ -27,8 +27,8 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
-        const participantsLocal = [...this.hearing?.participants || []].sort(this.sortByDisplayName());
-        const sortedParticipantslocal = [...this.sortedParticipants || []].sort(this.sortByDisplayName());
+        const participantsLocal = [...(this.hearing?.participants || [])].sort(this.sortByDisplayName());
+        const sortedParticipantslocal = [...(this.sortedParticipants || [])].sort(this.sortByDisplayName());
         const hasParticipantListChanged = JSON.stringify(participantsLocal) !== JSON.stringify(sortedParticipantslocal);
         if (hasParticipantListChanged) {
             this.sortParticipants();
