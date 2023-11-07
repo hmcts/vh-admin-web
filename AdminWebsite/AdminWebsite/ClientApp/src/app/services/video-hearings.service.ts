@@ -571,7 +571,8 @@ export class VideoHearingsService {
     }
 
     removeJudiciaryParticipant(participantEmail: string) {
-        const index = this.modelHearing.judiciaryParticipants.findIndex(judicialMember => judicialMember.email === participantEmail);
+        const index =
+            this.modelHearing?.judiciaryParticipants?.findIndex(judicialMember => judicialMember.email === participantEmail) ?? -1;
         if (index !== -1) {
             this.modelHearing.judiciaryParticipants.splice(index, 1);
         }

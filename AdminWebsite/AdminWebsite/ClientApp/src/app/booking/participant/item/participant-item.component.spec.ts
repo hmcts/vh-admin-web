@@ -7,6 +7,8 @@ import { Logger } from 'src/app/services/logger';
 import { ParticipantItemComponent } from './participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -70,11 +72,42 @@ describe('ParticipantItemComponent', () => {
     it('should edit participant details', () => {
         component.isSummaryPage = true;
         component.participant = { representee: 'rep', is_judge: false, is_exist_person: false, isJudiciaryMember: false };
-        component.editParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false, isJudiciaryMember: false });
+        const participant: ParticipantModel = {
+            email: 'email@hmcts.net',
+            is_exist_person: false,
+            is_judge: false,
+            isJudiciaryMember: false
+        };
+        component.editParticipant(participant);
         fixture.detectChanges();
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
-        expect(bookingServiceSpy.setEditMode).toHaveBeenCalledWith();
-        expect(router.navigate).toHaveBeenCalled();
+        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(participant.email);
+        expect(router.navigate).toHaveBeenCalledWith([PageUrls.AddParticipants]);
+    });
+
+    it('should edit judicial office holder details', () => {
+        component.isSummaryPage = true;
+        component.participant = { representee: 'rep', is_judge: true, is_exist_person: false, isJudiciaryMember: true };
+        const participant: ParticipantModel = { email: 'email@hmcts.net', is_exist_person: false, is_judge: true, isJudiciaryMember: true };
+        component.editParticipant(participant);
+        fixture.detectChanges();
+        expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
+        expect(bookingServiceSpy.setParticipantEmail).toHaveBeenCalledWith(participant.email);
+        expect(router.navigate).toHaveBeenCalledWith([PageUrls.AddJudicialOfficeHolders]);
+    });
+
+    it('should emit edit event for non-summary page', () => {
+        component.isSummaryPage = false;
+        const participant: ParticipantModel = {
+            email: 'email@hmcts.net',
+            is_exist_person: false,
+            is_judge: false,
+            isJudiciaryMember: false
+        };
+        spyOn(component.edit, 'emit');
+        component.editParticipant(participant);
+        fixture.detectChanges();
+        expect(component.edit.emit).toHaveBeenCalledWith(participant);
     });
 
     it('should return true if participant has a representative', () => {

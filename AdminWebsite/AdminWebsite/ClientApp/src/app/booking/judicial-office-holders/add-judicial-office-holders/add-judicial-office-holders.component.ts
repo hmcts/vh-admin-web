@@ -23,8 +23,8 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     showAddPanelMember = false;
     addPanelMemberText = this.noPanelMemberText;
 
-    editingJudge: boolean;
-    editingPanelMember: boolean;
+    editingJudge = false;
+    editingPanelMember = false;
 
     destroyed$ = new Subject<void>();
 
@@ -51,7 +51,7 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
             this.removeJudiciaryParticipant(participantEmail);
         });
         this.participantsListComponent.$selectedForEdit.pipe(takeUntil(this.destroyed$)).subscribe(participant => {
-            this.editParticipant(participant);
+            this.prepoplateFormForEdit(participant);
         });
     }
 
@@ -60,11 +60,11 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         if (!emailToEdit) {
             return;
         }
-        this.editParticipant(emailToEdit);
+        this.prepoplateFormForEdit(emailToEdit);
         this.bookingService.removeParticipantEmail();
     }
 
-    editParticipant(participantEmail: string) {
+    prepoplateFormForEdit(participantEmail: string) {
         const participantIndex = this.hearing.judiciaryParticipants.findIndex(x => x.email === participantEmail);
         if (participantIndex < 0) {
             this.logger.warn(`${this.loggerPrefix} Unable to find participant to edit.`, participantEmail);

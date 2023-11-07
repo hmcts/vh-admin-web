@@ -14,6 +14,7 @@ import { SearchForJudicialMemberComponent } from '../search-for-judicial-member/
 import { JudicialService } from '../../services/judicial.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { JudicialMemberDto } from '../models/add-judicial-member.model';
 
 describe('AddJudicialOfficeHoldersComponent', () => {
     let component: AddJudicialOfficeHoldersComponent;
@@ -109,6 +110,60 @@ describe('AddJudicialOfficeHoldersComponent', () => {
         it('should navigate to the add participants page', () => {
             component.continueToNextStep();
             expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.AddParticipants]);
+        });
+    });
+
+    describe('prepoplateFormForEdit', () => {
+        it('should set participantToEdit and editingJudge to true when participant role is Judge', () => {
+            // Arrange
+            const participantEmail = 'test@example.com';
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            judicialMember.roleCode = 'Judge';
+            judicialMember.displayName = 'Test User display name';
+            component.hearing.judiciaryParticipants = [judicialMember];
+
+            // Act
+            component.prepoplateFormForEdit(participantEmail);
+
+            // Assert
+            expect(component.participantToEdit).toEqual(judicialMember);
+            expect(component.editingJudge).toBeTrue();
+            expect(component.editingPanelMember).toBeFalse();
+            expect(component.showAddPanelMember).toBeFalse();
+        });
+
+        it('should set participantToEdit, editingPanelMember and showAddPanelMember to true when participant role is not Judge', () => {
+            // Arrange
+            const participantEmail = 'test@example.com';
+            const panelMemberParticipant = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            panelMemberParticipant.roleCode = 'PanelMember';
+            component.hearing.judiciaryParticipants = [panelMemberParticipant];
+
+            // Act
+            component.prepoplateFormForEdit(participantEmail);
+
+            // Assert
+            expect(component.participantToEdit).toEqual(panelMemberParticipant);
+            expect(component.editingJudge).toBeFalse();
+            expect(component.editingPanelMember).toBeTrue();
+            expect(component.showAddPanelMember).toBeTrue();
+        });
+
+        it('should log warning when participant is not found', () => {
+            // Arrange
+            const participantEmail = 'test@example.com';
+            component.hearing.judiciaryParticipants = [];
+
+            // Act
+            component.prepoplateFormForEdit(participantEmail);
+
+            // Assert
+            expect(loggerSpy.warn.calls.mostRecent().args[0].includes('Unable to find participant to edit.')).toBeTrue();
+            expect(loggerSpy.warn.calls.mostRecent().args[1]).toBe(participantEmail);
+            expect(component.participantToEdit).toBeNull();
+            expect(component.editingJudge).toBeFalse();
+            expect(component.editingPanelMember).toBeFalse();
+            expect(component.showAddPanelMember).toBeFalse();
         });
     });
 });

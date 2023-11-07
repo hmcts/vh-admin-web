@@ -707,4 +707,43 @@ describe('Video hearing service', () => {
             expect(service['modelHearing'].judiciaryParticipants[0]).toEqual(judicialMember2);
         });
     });
+
+    fdescribe('removeJudiciaryParticipant', () => {
+        it('should remove judiciary participant from modelHearing', () => {
+            // Arrange
+            const participantEmail = 'test@example.com';
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            service['modelHearing'].judiciaryParticipants = [judicialMember];
+
+            // Act
+            service.removeJudiciaryParticipant(participantEmail);
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants).not.toContain(judicialMember);
+        });
+
+        it('should not remove judiciary participant if email does not match', () => {
+            // Arrange
+            const participantEmail = 'test@example.com';
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            service['modelHearing'].judiciaryParticipants = [judicialMember];
+
+            // Act
+            service.removeJudiciaryParticipant('other@example.com');
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants).toContain(judicialMember);
+        });
+
+        it('should not remove judiciary participant if modelHearing is undefined', () => {
+            // Arrange
+            service['modelHearing'] = undefined;
+
+            // Act
+            service.removeJudiciaryParticipant('test@example.com');
+
+            // Assert
+            expect(service['modelHearing']).toBeUndefined();
+        });
+    });
 });

@@ -100,7 +100,7 @@ export class BookingParticipantListComponent {
             } else if (!a.roleCode.includes('Judge') && b.roleCode.includes('Judge')) {
                 return 1;
             } else {
-                return 0;
+                return a.firstName.localeCompare(b.firstName);
             }
         });
         this.sortedJudiciaryMembers = sortedJohList;
