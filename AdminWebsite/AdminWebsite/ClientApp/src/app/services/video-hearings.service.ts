@@ -27,7 +27,8 @@ import {
     BookingStatus,
     AllocatedCsoResponse,
     HearingRoleResponse,
-    JudiciaryParticipantRequest
+    JudiciaryParticipantRequest,
+    JudiciaryParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -216,6 +217,7 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
+        hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
         hearing.audio_recording_required = booking.audio_recording_required;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         return hearing;
@@ -324,6 +326,9 @@ export class VideoHearingsService {
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
+        hearing.judiciaryParticipants = response.judiciary_participants.map(judiciaryParticipant =>
+            JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
+        );
         hearing.isConfirmed = Boolean(response.confirmed_date);
         return hearing;
     }
@@ -360,7 +365,7 @@ export class VideoHearingsService {
         return judicialMemberDtos.map(judicialMemberDto => {
             const judiciaryParticipantRequest: JudiciaryParticipantRequest = new JudiciaryParticipantRequest({
                 personal_code: judicialMemberDto.personalCode,
-                display_name: judicialMemberDto.fullName,
+                display_name: judicialMemberDto.displayName,
                 role: judicialMemberDto.roleCode
             });
             return judiciaryParticipantRequest;

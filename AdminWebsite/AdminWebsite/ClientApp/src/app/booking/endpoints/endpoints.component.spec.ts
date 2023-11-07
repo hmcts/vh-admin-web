@@ -188,7 +188,7 @@ describe('EndpointsComponent', () => {
         expect(component.duplicateDa).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
+        expect(component.hearing.endpoints[0].defenceAdvocate).toBeNull();
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });

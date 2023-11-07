@@ -39,7 +39,8 @@ describe('AddJudicialOfficeHoldersComponent', () => {
         ]);
         judicialServiceSpy = jasmine.createSpyObj('JudicialService', ['searchJudicialMembers']);
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        bookingServiceSpy = jasmine.createSpyObj('BookingService', ['getParticipantEmail', 'removeParticipantEmail']);
+        bookingServiceSpy = jasmine.createSpyObj('BookingService', ['getParticipantEmail', 'removeParticipantEmail', 'isEditMode']);
+        bookingServiceSpy.isEditMode.and.returnValue(false);
         loggerSpy = jasmine.createSpyObj('Logger', ['debug', 'warn']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
@@ -107,9 +108,16 @@ describe('AddJudicialOfficeHoldersComponent', () => {
     });
 
     describe('continueToNextStep', () => {
-        it('should navigate to the add participants page', () => {
+        it('should navigate to the add participants page when not in edit mode', () => {
+            bookingServiceSpy.isEditMode.and.returnValue(false);
             component.continueToNextStep();
             expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.AddParticipants]);
+        });
+
+        it('should navigate to the summary page when in edit mode', () => {
+            bookingServiceSpy.isEditMode.and.returnValue(true);
+            component.continueToNextStep();
+            expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
         });
     });
 

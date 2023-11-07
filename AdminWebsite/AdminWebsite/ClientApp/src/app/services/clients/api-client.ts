@@ -7401,6 +7401,8 @@ export class EditHearingRequest implements IEditHearingRequest {
     case!: EditCaseRequest;
     /** List of participants in hearing */
     participants!: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
@@ -7431,6 +7433,11 @@ export class EditHearingRequest implements IEditHearingRequest {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
             }
             if (Array.isArray(_data['telephone_participants'])) {
                 this.telephone_participants = [] as any;
@@ -7465,6 +7472,10 @@ export class EditHearingRequest implements IEditHearingRequest {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
         if (Array.isArray(this.telephone_participants)) {
             data['telephone_participants'] = [];
             for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
@@ -7494,6 +7505,8 @@ export interface IEditHearingRequest {
     case: EditCaseRequest;
     /** List of participants in hearing */
     participants: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;

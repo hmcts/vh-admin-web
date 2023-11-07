@@ -12,7 +12,8 @@ import {
     LinkedParticipantResponse,
     BookingStatus,
     AllocatedCsoResponse,
-    JusticeUserResponse
+    JusticeUserResponse,
+    JudiciaryParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -201,6 +202,19 @@ describe('Video hearing service', () => {
         model.other_information = 'note';
         model.cases = [caseModel];
         model.participants = [];
+        model.judiciary_participants = [
+            new JudiciaryParticipantResponse({
+                title: 'Mr',
+                first_name: 'Dan',
+                last_name: 'Smith',
+                display_name: 'Judge Dan Smith',
+                email: 'joh@judge.com',
+                full_name: 'Dan Smith',
+                personal_code: '1234',
+                work_phone: '123123123',
+                role_code: 'Judge'
+            })
+        ];
         model.audio_recording_required = true;
 
         const request = service.mapHearingDetailsResponseToHearingModel(model);
@@ -215,6 +229,8 @@ describe('Video hearing service', () => {
         expect(request.scheduled_date_time).toEqual(new Date(date));
         expect(request.scheduled_duration).toBe(30);
         expect(request.audio_recording_required).toBeTruthy();
+        expect(request.judiciaryParticipants[0]).toBeTruthy();
+        expect(request.judiciaryParticipants[0].displayName).toBe('Judge Dan Smith');
     });
 
     it('should map ParticipantResponse to ParticipantModel', () => {

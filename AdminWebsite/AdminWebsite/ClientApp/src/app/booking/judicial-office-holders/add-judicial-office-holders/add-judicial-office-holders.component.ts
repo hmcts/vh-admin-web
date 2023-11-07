@@ -117,8 +117,13 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     }
 
     continueToNextStep() {
-        this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
-        this.router.navigate([PageUrls.AddParticipants]);
+        if (this.bookingService.isEditMode()) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
+        } else {
+            this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
+            this.router.navigate([PageUrls.AddParticipants]);
+        }
     }
 
     refreshPanelMemberText() {
