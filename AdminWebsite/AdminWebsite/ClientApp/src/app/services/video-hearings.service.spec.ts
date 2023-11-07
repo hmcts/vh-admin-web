@@ -22,7 +22,7 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
-fdescribe('Video hearing service', () => {
+describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
     const newRequestKey = 'bh-newRequest';
