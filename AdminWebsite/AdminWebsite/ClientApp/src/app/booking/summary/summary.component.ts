@@ -24,7 +24,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import { first } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
@@ -396,6 +396,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
+                    const noJudgePrior =
+                        this.hearing.status === BookingStatus.BookedWithoutJudge ||
+                        this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
@@ -408,7 +411,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         return;
                     }
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                    this.router.navigate([PageUrls.BookingConfirmation]);
+                    if (this.judgeAssigned && noJudgePrior) {
+                        this.showWaitSaving = true;
+                        this.bookingStatusService
+                            .pollForStatus(hearingDetailsResponse.id)
+                            .pipe(
+                                finalize(() => {
+                                    this.showWaitSaving = false;
+                                    this.router.navigate([PageUrls.BookingConfirmation]);
+                                })
+                            )
+                            .subscribe();
+                    } else {
+                        this.router.navigate([PageUrls.BookingConfirmation]);
+                    }
                 },
                 error: error => {
                     this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
