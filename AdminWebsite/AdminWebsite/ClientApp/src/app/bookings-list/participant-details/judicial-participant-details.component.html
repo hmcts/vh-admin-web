@@ -24,7 +24,7 @@
               {{ participant.fullName }}
             </strong>
           </div>
-
+          <div>{{ participant.displayName }}</div>
           <div id="participant-{{ participant.personalCode }}-hearing-role-name">Panel Member</div>
         </div>
       </div>
@@ -32,16 +32,16 @@
 
     <div *ngIf="vh_officer_admin" class="contact">
       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third contact-label">Email</div>
-        <div id="participant-{{ participant.personalCode }}-email" class="govuk-grid-column-two-thirds wrap">
+        <div class="govuk-grid-column-one-quarter contact-label">Email</div>
+        <div id="participant-{{ participant.personalCode }}-email" class="govuk-grid-column-three-quarters wrap">
           <div>
             {{ participant.email }}
           </div>
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
-        <div class="govuk-grid-column-one-third contact-label">Telephone</div>
-        <div id="participant-{{ participant.personalCode }}-phone" class="govuk-grid-column-two-thirds wrap">
+        <div class="govuk-grid-column-one-quarter contact-label">Telephone</div>
+        <div id="participant-{{ participant.personalCode }}-phone" class="govuk-grid-column-three-quarters wrap">
           <div *ngIf="participant.telephone; else judgeNoPhone">
             {{ participant.telephone }}
           </div>
