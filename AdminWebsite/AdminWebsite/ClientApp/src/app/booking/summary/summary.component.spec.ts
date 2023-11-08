@@ -126,7 +126,7 @@ launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValu
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
-fdescribe('SummaryComponent with valid request', () => {
+describe('SummaryComponent with valid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
@@ -567,7 +567,7 @@ fdescribe('SummaryComponent with valid request', () => {
     });
 });
 
-fdescribe('SummaryComponent  with invalid request', () => {
+describe('SummaryComponent  with invalid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
@@ -650,7 +650,7 @@ fdescribe('SummaryComponent  with invalid request', () => {
     });
 });
 
-fdescribe('SummaryComponent  with existing request', () => {
+describe('SummaryComponent  with existing request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
@@ -847,7 +847,7 @@ fdescribe('SummaryComponent  with existing request', () => {
     });
 });
 
-fdescribe('SummaryComponent  with multi days request', () => {
+describe('SummaryComponent  with multi days request', () => {
     const bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
         'switchOffRecording',
