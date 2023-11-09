@@ -92,7 +92,7 @@ namespace AdminWebsite.Controllers
                 var searchTerm = new SearchTermRequest(term);
                 
                 var eJudiciaryJudges = (await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm)).ToList();
-                var allJudges = eJudiciaryJudges.OrderBy(x => x.Email).Take(20).ToList();
+                var allJudges = eJudiciaryJudges.OrderBy(x => x.Email).ToList();
                 var mapped = allJudges.Select(x => x.MapToAdminWebResponse()).ToList();
                 return Ok(mapped);
             }

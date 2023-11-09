@@ -73,6 +73,39 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.showResult).toBeTrue();
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeTrue();
         });
+
+        it('should call judicialService.getJudicialUsers with the correct email and ignore existing judiciary memebrs and showResult', () => {
+            const email = 'test@test.com';
+            const judiciaryPerson = new JudiciaryPerson({
+                email: 'test@test.com',
+                full_name: 'Test User',
+                title: 'Mr',
+                first_name: 'Test',
+                last_name: 'User',
+                personal_code: '1234',
+                work_phone: '1234567890'
+            });
+            const searchResult: JudiciaryPerson[] = [judiciaryPerson];
+            judicialServiceSpy.getJudicialUsers.and.returnValue(of(searchResult));
+            component.existingJudicialMembers = [
+                new JudicialMemberDto(
+                    judiciaryPerson.first_name,
+                    judiciaryPerson.last_name,
+                    judiciaryPerson.full_name,
+                    judiciaryPerson.email,
+                    judiciaryPerson.work_phone,
+                    judiciaryPerson.personal_code
+                )
+            ];
+
+            component.form.controls.judiciaryEmail.setValue(email);
+            component.searchForJudicialMember();
+
+            expect(judicialServiceSpy.getJudicialUsers).toHaveBeenCalledWith(email);
+            expect(component.searchResult).toEqual([]);
+            expect(component.showResult).toBeTrue();
+            expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeTrue();
+        });
     });
 
     describe('selectJudicialMember', () => {

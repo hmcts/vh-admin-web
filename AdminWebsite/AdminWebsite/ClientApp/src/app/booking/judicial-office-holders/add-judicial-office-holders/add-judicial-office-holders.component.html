@@ -11,6 +11,7 @@
         <app-search-for-judicial-member
           id="searchForPresidingJudge"
           [existingJudicialMember]="editingJudge ? participantToEdit : null"
+          [existingJudicialMembers]="hearing.judiciaryParticipants"
           (judicialMemberSelected)="addPresidingJudge($event)"
           [saveButtonText]="judgeAssigned ? 'Update' : 'Save'"
         ></app-search-for-judicial-member>
@@ -22,6 +23,7 @@
         <app-search-for-judicial-member
           id="searchForPanelMember"
           [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
+          [existingJudicialMembers]="hearing.judiciaryParticipants"
           (judicialMemberSelected)="addPanelMember($event)"
         ></app-search-for-judicial-member>
       </div>

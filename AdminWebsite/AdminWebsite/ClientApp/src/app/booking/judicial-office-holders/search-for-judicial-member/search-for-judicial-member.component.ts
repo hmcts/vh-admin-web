@@ -18,6 +18,7 @@ export class SearchForJudicialMemberComponent {
     showResult = false;
 
     @Input() saveButtonText = 'Save';
+    @Input() existingJudicialMembers: JudicialMemberDto[] = [];
     @Input() set existingJudicialMember(judicialMember: JudicialMemberDto) {
         if (judicialMember) {
             this.form.setValue(
@@ -32,6 +33,7 @@ export class SearchForJudicialMemberComponent {
             this.form.controls.judiciaryEmail.enable();
         }
     }
+
     @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
     judicialMember: JudicialMemberDto;
@@ -75,6 +77,8 @@ export class SearchForJudicialMemberComponent {
 
     searchForJudicialMember() {
         this.judiciaryService.getJudicialUsers(this.form.value.judiciaryEmail).subscribe(result => {
+            // exclude existing judicial members from search results
+            result = result.filter(x => !this.existingJudicialMembers.find(y => y.personalCode === x.personal_code));
             this.searchResult = result;
             this.showResult = true;
             this.form.controls.displayName.addValidators(Validators.required);
