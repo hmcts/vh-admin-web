@@ -6,12 +6,3 @@ public class JudiciaryParticipantRequest
     public string Role { get; set; }
     public string DisplayName { get; set; }
 }
-
-
-/// <summary>
-/// Editing a judiciary participant request
-/// </summary>
-public class EditJudiciaryParticipantRequest
-{
-        
-}
