@@ -5,7 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
+using BookingsApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using CvpForAudioFileResponse = AdminWebsite.Models.CvpForAudioFileResponse;
@@ -19,12 +22,16 @@ namespace AdminWebsite.Controllers
     public class AudioPlatformController : ControllerBase
     {
         private readonly IVideoApiClient _videoAPiClient;
+        private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<AudioPlatformController> _logger;
+        private readonly IFeatureToggles _featureToggles;
 
-        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger)
+        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger, IBookingsApiClient bookingsApiClient, IFeatureToggles featureToggles)
         {
             _videoAPiClient = videoAPiClient;
             _logger = logger;
+            _bookingsApiClient = bookingsApiClient;
+            _featureToggles = featureToggles;
         }
 
         /// <summary>
@@ -42,7 +49,19 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
+                var requestKey = "";
+                if (_featureToggles.HrsEnabled())
+                {
+                    var hearing = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+
+                    requestKey = GetAudioHrsFileName(hearing.ServiceId, hearing.Cases[0].Number, hearingId.ToString());
+                }
+                else
+                {
+                    requestKey = hearingId.ToString();
+                }
+                
+                var response = await _videoAPiClient.GetAudioRecordingLinkAsync(requestKey);
                 return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.AudioFileLinks });
 
             }
@@ -122,6 +141,18 @@ namespace AdminWebsite.Controllers
                 .ToList();
             
             return response;
+        }
+        
+        private string GetAudioHrsFileName(string serviceId, string caseNumber, string hearingId)
+        {
+            const string regex = "[^a-zA-Z0-9]";
+            const RegexOptions regexOptions = RegexOptions.None;
+            var timeout = TimeSpan.FromMilliseconds(500);
+
+            var sanitisedServiceId = Regex.Replace(serviceId, regex, "", regexOptions, timeout);
+            var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "", regexOptions, timeout);
+            
+            return $"{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingId}";
         }
     }
 }

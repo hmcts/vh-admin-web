@@ -12,6 +12,7 @@ namespace AdminWebsite.Configuration
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
         public bool EJudEnabled();
+        public bool HrsEnabled();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -23,6 +24,7 @@ namespace AdminWebsite.Configuration
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
         private const string EJudFeatureToggleKey = "ejud-feature";
+        private const string HrsFeatureToggleKey = "hrs-integration";
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -50,6 +52,12 @@ namespace AdminWebsite.Configuration
         public bool EJudEnabled()
         {
             return GetBoolValueWithKey(EJudFeatureToggleKey);
+        }
+        
+        public bool HrsEnabled()
+        {
+            return true;
+            return GetBoolValueWithKey(HrsFeatureToggleKey);
         }
 
         private bool GetBoolValueWithKey(string key)
