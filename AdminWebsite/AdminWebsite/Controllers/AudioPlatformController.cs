@@ -76,8 +76,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsALlLinkAsync(string cloudroom, string date, string caseReference)
         {
-            _logger.LogInformation($"GetCvpAudioRecordingsALlLinkAsync cloudroom: {cloudroom}, date: {date}, case reference: {caseReference}");
-
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkAllCvpAsync(cloudroom, date, caseReference);
@@ -97,8 +95,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsByCloudRoomAsync(string cloudroom, string date)
         {
-            _logger.LogInformation($"GetCvpAudioRecordingsByCloudRoomAsync cloudroom: {cloudroom}, date: {date}");
-
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudroom, date);
@@ -118,8 +114,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> GetCvpAudioRecordingsByDateAsync(string date, string caseReference)
         {
-            _logger.LogInformation($"GetCvpAudioRecordingsByDateAsync Date: {date}, case reference: {caseReference}");
-
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByDateAsync(date, caseReference);
