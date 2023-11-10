@@ -143,7 +143,7 @@ namespace AdminWebsite.Controllers
             return response;
         }
         
-        private string GetAudioHrsFileName(string serviceId, string caseNumber, string hearingId)
+        private static string GetAudioHrsFileName(string serviceId, string caseNumber, string hearingId)
         {
             const string regex = "[^a-zA-Z0-9]";
             const RegexOptions regexOptions = RegexOptions.None;

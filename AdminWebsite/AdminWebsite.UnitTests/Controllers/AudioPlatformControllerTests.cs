@@ -46,7 +46,8 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>())).ReturnsAsync(audioResponse);
-
+            _featureTogglesMock.Setup(x => x.HrsEnabled()).Returns(false);
+            
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
 
             var actionResult = result as OkObjectResult;
