@@ -67,6 +67,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.addJudciaryMembersFeatureEnabled = result;
+                this.checkForExistingRequest();
+                this.initForm();
+                super.ngOnInit();
             });
         this.failedSubmission = false;
         this.checkForExistingRequest();
@@ -77,7 +80,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
-        this.isExistinHearing = this.hearing && (!!this.hearing.hearing_type_name || !!this.hearing.hearing_type_code);
+        this.isExistinHearing = !!this.hearing.hearing_id;
         this.isBookedHearing = this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`, {
             hearingExists: this.isExistinHearing,

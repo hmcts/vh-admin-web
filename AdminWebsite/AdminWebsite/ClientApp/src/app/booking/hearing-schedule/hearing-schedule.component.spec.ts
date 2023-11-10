@@ -517,27 +517,14 @@ describe('HearingScheduleComponent returning to page', () => {
 
         expect(component.selectedCourtName).toBe('aa@hmcts.net1');
     });
-    it('should set venue for existing hearing when hearing has a hearing type name but no hearing type code', () => {
+    it('should set venue for existing hearing when hearing has a hearing id', () => {
         const courts = MockValues.Courts.filter(x => x.id !== -1);
         const selectedCourt = courts[0];
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
         const existingHearingRequest = { ...existingRequest };
+        existingHearingRequest.hearing_id = '123455555900';
         existingHearingRequest.hearing_type_name = 'HearingTypeName';
         existingHearingRequest.hearing_type_code = null;
-        existingHearingRequest.court_name = selectedCourt.name;
-        existingHearingRequest.court_id = selectedCourt.id;
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);
-        component.ngOnInit();
-
-        expect(component.selectedCourtName).toBe(selectedCourt.name);
-    });
-    it('should set venue for existing hearing when hearing has a hearing type code but no hearing type name', () => {
-        const courts = MockValues.Courts.filter(x => x.id !== -1);
-        const selectedCourt = courts[0];
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
-        const existingHearingRequest = { ...existingRequest };
-        existingHearingRequest.hearing_type_name = null;
-        existingHearingRequest.hearing_type_code = 'HearingTypeCode';
         existingHearingRequest.court_name = selectedCourt.name;
         existingHearingRequest.court_id = selectedCourt.id;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);

@@ -35,7 +35,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
 
-    private refDataEnabled: boolean;
+    refDataEnabled: boolean;
 
     constructor(
         protected hearingService: VideoHearingsService,
@@ -55,7 +55,15 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.launchDarklyService
             .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => (this.refDataEnabled = flag));
+            .subscribe(flag => {
+                this.refDataEnabled = flag;
+                this.checkForExistingRequestOrCreateNew();
+                this.initForm();
+                this.retrieveHearingTypes();
+                if (this.form) {
+                    this.form.get('hearingType').setValidators(this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]);
+                }
+            });
         this.failedSubmission = false;
         this.checkForExistingRequestOrCreateNew();
         this.initForm();
@@ -75,7 +83,14 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
-        if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
+
+        if (this.hearing.case_type && this.refDataEnabled) {
+            this.selectedCaseType = this.hearing.case_type;
+            return;
+        } else {
+            this.selectedCaseType = Constants.PleaseSelect;
+        }
+        if (!!this.hearing.hearing_type_name && !!this.hearing.case_type && !this.refDataEnabled) {
             this.selectedCaseType = this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Updating selected case type to current hearing case type.`, {
                 hearing: this.hearing.hearing_id
