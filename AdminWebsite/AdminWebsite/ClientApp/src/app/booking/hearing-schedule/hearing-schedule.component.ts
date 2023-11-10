@@ -67,9 +67,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.addJudciaryMembersFeatureEnabled = result;
-                this.checkForExistingRequest();
-                this.initForm();
-                super.ngOnInit();
             });
         this.failedSubmission = false;
         this.checkForExistingRequest();
