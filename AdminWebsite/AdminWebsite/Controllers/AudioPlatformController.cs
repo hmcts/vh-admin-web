@@ -52,9 +52,7 @@ namespace AdminWebsite.Controllers
                 var requestKey = "";
                 if (_featureToggles.HrsEnabled())
                 {
-                    var hearing = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-
-                    requestKey = GetAudioHrsFileName(hearing.ServiceId, hearing.Cases[0].Number, hearingId.ToString());
+                    requestKey = await GetAudioHrsFileName(hearingId);
                 }
                 else
                 {
@@ -143,8 +141,14 @@ namespace AdminWebsite.Controllers
             return response;
         }
         
-        private static string GetAudioHrsFileName(string serviceId, string caseNumber, string hearingId)
+        private async Task<string> GetAudioHrsFileName(Guid hearingId)
         {
+            var hearing = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
+            
+            string serviceId = hearing.ServiceId;
+            string caseNumber = hearing.Cases[0].Number;
+            string hearingIdString = hearingId.ToString();
+            
             const string regex = "[^a-zA-Z0-9]";
             const RegexOptions regexOptions = RegexOptions.None;
             var timeout = TimeSpan.FromMilliseconds(500);
@@ -152,7 +156,7 @@ namespace AdminWebsite.Controllers
             var sanitisedServiceId = Regex.Replace(serviceId, regex, "", regexOptions, timeout);
             var sanitisedCaseNumber = Regex.Replace(caseNumber, regex, "", regexOptions, timeout);
             
-            return $"{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingId}";
+            return $"{sanitisedServiceId}-{sanitisedCaseNumber}-{hearingIdString}";
         }
     }
 }
