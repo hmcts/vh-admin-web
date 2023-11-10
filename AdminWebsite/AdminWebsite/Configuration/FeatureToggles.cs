@@ -56,7 +56,6 @@ namespace AdminWebsite.Configuration
         
         public bool HrsEnabled()
         {
-            return true;
             return GetBoolValueWithKey(HrsFeatureToggleKey);
         }
 
