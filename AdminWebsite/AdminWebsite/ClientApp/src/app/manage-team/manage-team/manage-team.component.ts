@@ -61,7 +61,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
         this.users$ = this.justiceUserService.filteredUsers$.pipe(
             takeUntil(this.destroyed$),
             tap(users => {
-                this.displayAddButton$.next(false);
+                this.displayAddButton$.next(true);
                 this.isAnErrorMessage$.next(false);
                 this.displayMessage$.next(false);
                 this.message$.next(null);
