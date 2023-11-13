@@ -5,6 +5,7 @@ import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
+import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 
 @Component({
     selector: 'app-participant-list',
@@ -37,11 +38,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const judicialMembersLocal =
             this.hearing?.judiciaryParticipants
                 ?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode }))
-                .sort(this.sortByEmail()) ?? [];
+                .sort((a, b) => a.displayName.localeCompare(b.displayName)) ?? [];
         const sortedJudicialMembersLocal =
             this.sortedJudiciaryMembers
                 ?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code }))
-                .sort(this.sortByEmail()) ?? [];
+                .sort((a, b) => a.displayName.localeCompare(b.displayName)) ?? [];
 
         const judiciaryEmailListChanged = JSON.stringify(judicialMembersLocal) !== JSON.stringify(sortedJudicialMembersLocal);
         if (judiciaryEmailListChanged) {
@@ -105,6 +106,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const staffMembers = this.getStaffMembers();
         const panelMembers = this.getPanelMembers();
         const observers = this.getObservers();
+
         const others = this.getOthers(staffMembers, panelMembers, observers);
 
         const sortedList = [...judges, ...panelMembers, ...staffMembers, ...others, ...observers];
@@ -114,7 +116,7 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     private sortByDisplayName() {
-        return (a, b) => {
+        return (a: ParticipantModel, b: ParticipantModel) => {
             if (a.display_name < b.display_name) {
                 return -1;
             }
@@ -125,23 +127,11 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         };
     }
 
-    private sortByEmail() {
-        return (a, b) => {
-            if (a.email < b.email) {
-                return -1;
-            }
-            if (a.email > b.email) {
-                return 1;
-            }
-            return 0;
-        };
-    }
-
     private compareByPartyThenByFirstName() {
-        return (a, b) => {
+        return (a: ParticipantModel, b: ParticipantModel) => {
             const swapIndices = a > b ? 1 : 0;
-            const partyA = a.case_role_name === Constants.None ? a.hearing_role_name : a.case_role_name;
-            const partyB = b.case_role_name === Constants.None ? b.hearing_role_name : b.case_role_name;
+            const partyA = a.case_role_name === Constants.None ? a.hearing_role_name ?? a.hearing_role_code : a.case_role_name;
+            const partyB = b.case_role_name === Constants.None ? b.hearing_role_name ?? b.hearing_role_code : b.case_role_name;
             if (partyA === partyB) {
                 return a.first_name < b.first_name ? -1 : swapIndices;
             }
@@ -157,7 +147,8 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                     !staffMembers.includes(participant) &&
                     !panelMembers.includes(participant) &&
                     !observers.includes(participant) &&
-                    participant.hearing_role_name !== Constants.HearingRoles.Interpreter
+                    (!participant.hearing_role_name || participant.hearing_role_name !== Constants.HearingRoles.Interpreter) &&
+                    (!participant.hearing_role_code || participant.hearing_role_code !== HearingRoleCodes.Interpreter)
             )
             .sort(this.compareByPartyThenByFirstName());
     }
@@ -173,9 +164,10 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     private getJudicialPanelMembers(): ParticipantModel[] {
+        console.log(this.hearing.judiciaryParticipants);
         return this.hearing.judiciaryParticipants
             .filter(j => j.roleCode === 'PanelMember')
-            .sort(this.compareByPartyThenByFirstName())
+            .sort((a, b) => a.displayName.localeCompare(b.displayName))
             .map(h => ParticipantModel.fromJudicialMember(h, false));
     }
 
@@ -202,7 +194,9 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     private insertInterpreters(sortedList: ParticipantModel[]) {
         this.clearInterpreteeList();
         const interpreters = this.hearing.participants.filter(
-            participant => participant.hearing_role_name === Constants.HearingRoles.Interpreter
+            participant =>
+                participant.hearing_role_name === Constants.HearingRoles.Interpreter ||
+                participant.hearing_role_code === HearingRoleCodes.Interpreter
         );
         interpreters.forEach(interpreterParticipant => {
             let interpretee: ParticipantModel;

@@ -8,6 +8,7 @@ import { OtherInformationModel } from '../../../common/model/other-information.m
 import { HearingModel } from '../../../common/model/hearing.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
+import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 
 @Component({
     selector: 'app-participant-item',
@@ -106,7 +107,10 @@ export class ParticipantItemComponent implements OnInit {
     }
 
     get isObserverOrPanelMember() {
-        return ['Observer', 'Panel Member'].includes(this.participant?.hearing_role_name);
+        return (
+            ['Observer', 'Panel Member'].includes(this.participant?.hearing_role_name) ||
+            [HearingRoleCodes.Observer, 'PanelMember'].includes(this.participant?.hearing_role_code)
+        );
     }
 
     get displayCaseRole() {
@@ -114,7 +118,7 @@ export class ParticipantItemComponent implements OnInit {
     }
 
     get isInterpreter() {
-        return this.participant.hearing_role_name === 'Interpreter';
+        return this.participant.hearing_role_name === 'Interpreter' || this.participant.hearing_role_code === HearingRoleCodes.Interpreter;
     }
 
     get isInterpretee() {

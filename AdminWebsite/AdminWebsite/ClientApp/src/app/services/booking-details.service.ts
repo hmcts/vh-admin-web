@@ -75,6 +75,7 @@ export class BookingDetailsService {
                     p.contact_email,
                     p.case_role_name,
                     p.hearing_role_name,
+                    p.hearing_role_code,
                     p.display_name,
                     p.middle_names,
                     p.organisation,

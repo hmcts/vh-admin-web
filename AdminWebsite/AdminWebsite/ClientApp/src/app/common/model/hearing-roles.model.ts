@@ -33,4 +33,5 @@ export class HearingRoleCodes {
     public static readonly Respondent: string = 'RESP';
     public static readonly StaffMember: string = 'STAF';
     public static readonly WelfareRepresentative: string = 'WERP';
+    public static readonly Observer: string = 'OBSV';
 }

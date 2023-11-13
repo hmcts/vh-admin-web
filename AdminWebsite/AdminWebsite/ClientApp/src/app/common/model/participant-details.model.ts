@@ -1,5 +1,5 @@
 import { CaseRoles } from './case-roles';
-import { HearingRoles } from './hearing-roles.model';
+import { HearingRoleCodes, HearingRoles } from './hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
 
 export class ParticipantDetailsModel {
@@ -13,6 +13,7 @@ export class ParticipantDetailsModel {
         email: string,
         caseRoleName: string,
         hearingRoleName: string,
+        hearingRoleCode: string,
         displayName: string,
         middleNames: string,
         organisation: string,
@@ -32,6 +33,7 @@ export class ParticipantDetailsModel {
         this.Email = email;
         this.CaseRoleName = caseRoleName;
         this.HearingRoleName = hearingRoleName;
+        this.HearingRoleCode = hearingRoleCode;
         this.DisplayName = displayName;
         this.MiddleNames = middleNames;
         this.Representee = representee;
@@ -51,6 +53,7 @@ export class ParticipantDetailsModel {
     Email: string;
     CaseRoleName: string;
     HearingRoleName: string;
+    HearingRoleCode: string;
     DisplayName: string;
     MiddleNames: string;
     Representee: string;
@@ -91,7 +94,10 @@ export class ParticipantDetailsModel {
     }
 
     get isInterpreter(): boolean {
-        return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
+        return (
+            (this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER) ||
+            (this.HearingRoleCode && this.HearingRoleCode === HearingRoleCodes.Interpreter)
+        );
     }
 
     get isJudge(): boolean {
@@ -100,9 +106,11 @@ export class ParticipantDetailsModel {
 
     get isRepOrInterpreter(): boolean {
         return (
-            this.HearingRoleName &&
-            (this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
-                this.HearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)
+            (this.HearingRoleName &&
+                (this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
+                    this.HearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)) ||
+            (this.HearingRoleCode &&
+                (this.HearingRoleCode === HearingRoleCodes.Interpreter || this.HearingRoleCode === HearingRoleCodes.Representative))
         );
     }
 

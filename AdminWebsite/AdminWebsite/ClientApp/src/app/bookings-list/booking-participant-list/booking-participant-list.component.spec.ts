@@ -1,10 +1,10 @@
-import { Component, DebugElement, Input } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
-import { HearingRoles } from '../../common/model/hearing-roles.model';
+import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
 import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
 import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
@@ -43,6 +43,7 @@ describe('BookingParticipantListComponent', () => {
             'email1@hmcts.net',
             'Respondent',
             'Litigant in person',
+            HearingRoleCodes.Respondent,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -79,6 +80,7 @@ describe('BookingParticipantListComponent', () => {
             'email1@hmcts.net',
             'Judge',
             'Judge',
+            null,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -111,6 +113,7 @@ describe('BookingParticipantListComponent', () => {
                 participantsArray.push({
                     FirstName: p.FirstName,
                     isJudge: p.isJudge ?? false,
+                    HearingRoleCode: p.HearingRoleCode,
                     HearingRoleName: p.HearingRoleName,
                     CaseRoleName: p.CaseRoleName,
                     LinkedParticipants: p.LinkedParticipants ?? null,
@@ -246,8 +249,7 @@ describe('BookingParticipantListComponent', () => {
             'Jane Doe'
         );
 
-        const judiciaryParticipants = [jp1, jp2, jp3];
-        component.judiciaryParticipants = judiciaryParticipants;
+        component.judiciaryParticipants = [jp1, jp2, jp3];
 
         expect(component.sortedJudiciaryMembers.length).toEqual(3);
         expect(component.sortedJudiciaryMembers[0]).toEqual(jp1);

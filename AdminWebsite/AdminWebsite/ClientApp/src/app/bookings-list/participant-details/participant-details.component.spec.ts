@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { ParticipantDetailsComponent } from './participant-details.component';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { HearingRoles } from '../../common/model/hearing-roles.model';
+import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
 
 describe('ParticipantDetailsComponent', () => {
     let component: ParticipantDetailsComponent;
@@ -60,6 +60,7 @@ describe('ParticipantDetailsComponent', () => {
             'email@hmcts.net',
             'Respondent',
             'Respondent LIP',
+            HearingRoleCodes.Respondent,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -105,6 +106,7 @@ describe('ParticipantDetailsComponent', () => {
             'email@hmcts.net',
             'Respondent',
             'Judge',
+            null,
             'Judge',
             '',
             'ABC Solicitors',
