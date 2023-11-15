@@ -82,7 +82,7 @@ describe('ManageTeamComponent', () => {
                     expect(users.length).toEqual(20);
                     expect(message).toContain('please refine your search to see more results.');
                     expect(displayMessage).toBeTruthy();
-                    expect(displayAddButton).toBeFalsy();
+                    expect(displayAddButton).toBeTruthy();
                     done();
                 }
             );
@@ -111,7 +111,7 @@ describe('ManageTeamComponent', () => {
                 ([users, displayAddButton, isAnErrorMessage, displayMessage]: [JusticeUserResponse[], boolean, boolean, boolean]) => {
                     expect(users.length).toEqual(10);
                     expect(displayMessage).toBeFalsy();
-                    expect(displayAddButton).toBeFalsy();
+                    expect(displayAddButton).toBeTruthy();
                     expect(isAnErrorMessage).toBeFalsy();
                     done();
                 }
