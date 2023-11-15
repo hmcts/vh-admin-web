@@ -36,7 +36,7 @@
     </ul>
   </div>
 
-  <div class="govuk-warning-text" *ngIf="showCreateNewUserWarning">
+  <div class="govuk-warning-text" *ngIf="showCreateNewUserWarning && isValidEmail">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>
