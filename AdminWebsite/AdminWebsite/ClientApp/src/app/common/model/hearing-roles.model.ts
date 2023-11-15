@@ -24,3 +24,14 @@ export enum HearingRoles {
     WINGER = 'winger',
     WITNESS = 'witness'
 }
+
+export class HearingRoleCodes {
+    public static readonly Applicant: string = 'APPL';
+    public static readonly Intermediary: string = 'INTE';
+    public static readonly Interpreter: string = 'INTP';
+    public static readonly Representative: string = 'RPTT';
+    public static readonly Respondent: string = 'RESP';
+    public static readonly StaffMember: string = 'STAF';
+    public static readonly WelfareRepresentative: string = 'WERP';
+    public static readonly Observer: string = 'OBSV';
+}

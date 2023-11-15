@@ -50,7 +50,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isValidEmail = true;
     showStaffMemberFeature: boolean;
     ejudFeatureFlag = false;
-    referenceDataFeatureFlag = false;
+    useV2Api = false;
     destroyed$ = new Subject<void>();
 
     constructor(
@@ -69,10 +69,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnInit() {
         this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.referenceData)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(enabled => {
-                this.referenceDataFeatureFlag = enabled;
+                this.useV2Api = enabled;
             });
         this.launchDarklyService
             .getFlag<boolean>(FeatureFlags.eJudFeature)
@@ -103,8 +103,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     private checkForExistingRequest() {
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`);
         this.hearing = this.hearingService.getCurrentRequest();
-        this.isBookedHearing =
-            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
+        this.isBookedHearing = this.hearing?.hearing_id?.length > 0;
         this.isStaffMemberExisting = !!this.hearing?.participants.find(x => x.hearing_role_name === Constants.HearingRoles.StaffMember);
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }
@@ -381,7 +380,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
                 judge.case_role_name = 'Judge';
-                if (this.referenceDataFeatureFlag) {
+                if (this.useV2Api) {
                     judge.case_role_name = null;
                     judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 }

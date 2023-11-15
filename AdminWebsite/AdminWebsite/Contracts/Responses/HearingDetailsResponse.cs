@@ -39,6 +39,9 @@ public class HearingDetailsResponse
     /// V1 only
     /// </summary>
     public List<TelephoneParticipantResponse> TelephoneParticipants { get; set; }
+    
+    public List<JudiciaryParticipantResponse> JudiciaryParticipants { get; set; }
+    
     public string HearingRoomName { get; set; }
     public string OtherInformation { get; set; }
     public DateTime CreatedDate { get; set; }

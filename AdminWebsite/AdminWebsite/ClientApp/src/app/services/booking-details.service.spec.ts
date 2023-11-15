@@ -65,6 +65,8 @@ export class ResponseTestData {
         endpoint1.id = '022f5e0c-696d-43cf-6fe0-08d846dbdb21';
         response.endpoints = [];
         response.endpoints.push(endpoint1);
+
+        response.judiciary_participants = [];
         return response;
     }
 }
@@ -211,6 +213,8 @@ describe('booking details service', () => {
         response.participants.push(par1);
         response.participants.push(par2);
         response.participants.push(par3);
+
+        response.judiciary_participants = [];
 
         const model = service.mapBookingParticipants(response);
         expect(model).toBeTruthy();

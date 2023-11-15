@@ -38,6 +38,7 @@ import { CaseTypesMenuComponent } from '../../shared/menus/case-types-menu/case-
 import { VenuesMenuComponent } from '../../shared/menus/venues-menu/venues-menu.component';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { JusticeUserMenuStubComponent } from 'src/app/testing/stubs/dropdown-menu/justice-user-menu-stub.component';
+import { BookingStatusComponent } from '../booking-status/booking-status.component';
 
 let component: BookingsListComponent;
 let bookingPersistService: BookingPersistService;
@@ -602,7 +603,8 @@ describe('BookingsListComponent', () => {
                 LongDatetimePipe,
                 JusticeUserMenuStubComponent,
                 CaseTypesMenuComponent,
-                VenuesMenuComponent
+                VenuesMenuComponent,
+                BookingStatusComponent
             ],
             imports: [HttpClientModule, MomentModule, ReactiveFormsModule, NgSelectModule],
             providers: [
@@ -616,6 +618,7 @@ describe('BookingsListComponent', () => {
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: ReferenceDataService, useValue: referenceDataServiceSpy },
                 { provide: JusticeUsersService, useValue: justiceUserServiceSpy },
+                { provide: JusticeUsersMenuComponent, useClass: JusticeUserMenuStubComponent },
                 DatePipe
             ]
         }).compileComponents();
@@ -624,6 +627,7 @@ describe('BookingsListComponent', () => {
         component = fixture.componentInstance;
         bookingPersistService = TestBed.inject(BookingPersistService);
         returnUrlService = TestBed.inject(ReturnUrlService);
+        component.csoMenu = TestBed.inject(JusticeUsersMenuComponent);
         fixture.detectChanges();
     }));
 

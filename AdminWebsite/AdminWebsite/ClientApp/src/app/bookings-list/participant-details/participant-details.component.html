@@ -25,6 +25,7 @@
             <strong>
               {{ participant?.fullName }}
             </strong>
+            <div>{{ participant?.DisplayName }}</div>
           </div>
 
           <ng-container *ngIf="!participant.isInterpreter; else interpreter">
@@ -68,8 +69,8 @@
 
     <div *ngIf="vh_officer_admin" class="contact">
       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third contact-label">Email</div>
-        <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
+        <div class="govuk-grid-column-one-quarter contact-label">Email</div>
+        <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-three-quarters wrap">
           <div *ngIf="participant.isJudge; else participantEmail">
             <div *ngIf="judgeEmail; else judgeNoEmail">
               {{ judgeEmail }}
@@ -87,14 +88,14 @@
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
-        <div class="govuk-grid-column-one-third contact-label">Username</div>
-        <div id="participant-{{ participant?.ParticipantId }}-username" class="govuk-grid-column-two-thirds wrap">
+        <div class="govuk-grid-column-one-quarter contact-label">Username</div>
+        <div id="participant-{{ participant?.ParticipantId }}-username" class="govuk-grid-column-three-quarters wrap">
           {{ participant?.UserName }}
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
-        <div class="govuk-grid-column-one-third contact-label">Telephone</div>
-        <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
+        <div class="govuk-grid-column-one-quarter contact-label">Telephone</div>
+        <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-three-quarters wrap">
           <div *ngIf="participant.isJudge; else participantPhone">
             <div *ngIf="judgePhone; else judgeNoPhone">
               {{ judgePhone }}

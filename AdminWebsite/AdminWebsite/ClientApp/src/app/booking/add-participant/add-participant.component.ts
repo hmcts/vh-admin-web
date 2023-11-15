@@ -70,7 +70,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     ngOnInit() {
-        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.referenceData).pipe(takeUntil(this.destroyed$));
+        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
         const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
 
         combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
@@ -684,7 +684,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private checkParticipants(): boolean {
-        return this.hearing.participants && this.hearing.participants?.length > 0;
+        return this.hearing.participants?.length > 0 || this.hearing.judiciaryParticipants.length > 0;
     }
 
     get canNavigate() {
@@ -767,7 +767,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             email: this.constants.PleaseSelect,
             is_exist_person: false,
             is_judge: false,
-            is_courtroom_account: false
+            is_courtroom_account: false,
+            isJudiciaryMember: false
         };
 
         this.interpreteeList.unshift(interpreteeModel);
