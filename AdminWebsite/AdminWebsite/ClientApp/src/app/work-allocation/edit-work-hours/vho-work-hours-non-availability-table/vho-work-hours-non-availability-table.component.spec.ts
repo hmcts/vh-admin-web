@@ -7,9 +7,10 @@ import { DatePipe } from '@angular/common';
 import { ValidationFailure, VhoWorkHoursNonAvailabilityTableComponent } from './vho-work-hours-non-availability-table.component';
 import { EditVhoNonAvailabilityWorkHoursModel } from '../edit-non-work-hours-model';
 import { By } from '@angular/platform-browser';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { MockWorkAllocationValues } from '../../../testing/data/work-allocation-test-data';
+import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
@@ -26,6 +27,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
         bHClientSpy.deleteNonAvailabilityWorkHours.and.returnValue(of(undefined));
         loggerSpy = jasmine.createSpyObj('Logger', ['info', 'error']);
         await TestBed.configureTestingModule({
+            imports: [FontAwesomeTestingModule, ReactiveFormsModule, FormsModule],
             providers: [
                 { provide: Logger, useValue: loggerSpy },
                 { provide: BHClient, useValue: bHClientSpy },

@@ -10,9 +10,10 @@ import { Component } from '@angular/core';
 import { newGuid } from '@microsoft/applicationinsights-core-js';
 import { MockLogger } from 'src/app/shared/testing/mock-logger';
 import { Constants } from 'src/app/common/constants';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
+import { JusticeUserFormComponent, JusticeUserFormMode } from '../justice-user-form/justice-user-form.component';
 import { RolesToDisplayPipe } from '../../shared/pipes/roles-to-display.pipe';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TooltipDirective } from 'src/app/shared/directives/tooltip.directive';
 
 @Component({ selector: 'app-justice-user-form', template: '' })
 export class JusticeUserFormStubComponent {}
@@ -33,13 +34,15 @@ describe('ManageTeamComponent', () => {
         justiceUsersServiceSpy.filteredUsers$ = filteredUsers$;
 
         await TestBed.configureTestingModule({
-            declarations: [ManageTeamComponent, JusticeUserFormStubComponent, RolesToDisplayPipe],
+            declarations: [ManageTeamComponent, JusticeUserFormStubComponent, RolesToDisplayPipe, TooltipDirective],
             providers: [
                 FormBuilder,
                 HttpClient,
                 HttpHandler,
+                TooltipDirective,
                 { provide: Logger, useValue: new MockLogger() },
-                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy }
+                { provide: JusticeUsersService, useValue: justiceUsersServiceSpy },
+                { provide: JusticeUserFormComponent, useClass: JusticeUserFormStubComponent }
             ],
             imports: [ReactiveFormsModule, FontAwesomeModule]
         }).compileComponents();

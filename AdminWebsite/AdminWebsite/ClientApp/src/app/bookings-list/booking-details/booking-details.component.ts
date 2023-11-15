@@ -6,6 +6,7 @@ import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -34,6 +35,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     booking: HearingModel;
     participants: Array<ParticipantDetailsModel> = [];
     judges: Array<ParticipantDetailsModel> = [];
+    judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
     isVhOfficerAdmin = false;
     showCancelBooking: boolean;
     showConfirming: boolean;
@@ -137,6 +139,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
         this.participants = participants_and_judges.participants;
         this.judges = participants_and_judges.judges;
+        this.judicialMembers = participants_and_judges.judicialMembers;
         this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
         this.videoHearingService
             .getAllocatedCsoForHearing(hearingResponse.id)
@@ -342,6 +345,6 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
     }
 
     get judgeExists(): boolean {
-        return this.judges.length > 0;
+        return this.judges.length > 0 || this.judicialMembers.some(j => j.isJudge);
     }
 }

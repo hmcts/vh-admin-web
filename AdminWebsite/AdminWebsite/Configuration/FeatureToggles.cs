@@ -11,6 +11,7 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
+        public bool UseV2Api();
         public bool EJudEnabled();
     }
 
@@ -22,6 +23,7 @@ namespace AdminWebsite.Configuration
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
+        private const string UseV2ApiToggleKey = "use-bookings-api-v2";
         private const string EJudFeatureToggleKey = "ejud-feature";
 
         public FeatureToggles(string sdkKey, string environmentName)
@@ -52,6 +54,11 @@ namespace AdminWebsite.Configuration
             return GetBoolValueWithKey(EJudFeatureToggleKey);
         }
 
+        public bool UseV2Api()
+        {
+            return GetBoolValueWithKey(UseV2ApiToggleKey);
+        }
+        
         private bool GetBoolValueWithKey(string key)
         {
             if (!_ldClient.Initialized)
@@ -61,5 +68,6 @@ namespace AdminWebsite.Configuration
 
             return _ldClient.BoolVariation(key, _context);
         }
+
     }
 }

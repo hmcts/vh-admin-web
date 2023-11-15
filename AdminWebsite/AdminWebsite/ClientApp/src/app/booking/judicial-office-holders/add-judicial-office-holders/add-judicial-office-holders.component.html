@@ -1,0 +1,55 @@
+<app-breadcrumb [canNavigate]="true"></app-breadcrumb>
+<h1 class="govuk-heading-l">Book a video hearing</h1>
+
+<div class="govuk-grid-row">
+  <!-- Add the JOHs column (left) -->
+  <div class="govuk-grid-column-one-half">
+    <div class="govuk-!-margin-bottom-5">
+      <!-- add a presiding judge -->
+      <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-m">Assign a presiding judge</h2>
+        <app-search-for-judicial-member
+          id="searchForPresidingJudge"
+          [existingJudicialMember]="editingJudge ? participantToEdit : null"
+          [existingJudicialMembers]="hearing.judiciaryParticipants"
+          (judicialMemberSelected)="addPresidingJudge($event)"
+          [saveButtonText]="judgeAssigned ? 'Update' : 'Save'"
+        ></app-search-for-judicial-member>
+      </div>
+
+      <!-- add a panel member -->
+      <div *ngIf="showAddPanelMember" class="govuk-grid-column-full govuk-!-padding-top-6">
+        <h2 class="govuk-heading-m">Add a Judicial Office Holder</h2>
+        <app-search-for-judicial-member
+          id="searchForPanelMember"
+          [existingJudicialMember]="editingPanelMember ? participantToEdit : null"
+          [existingJudicialMembers]="hearing.judiciaryParticipants"
+          (judicialMemberSelected)="addPanelMember($event)"
+        ></app-search-for-judicial-member>
+      </div>
+
+      <div class="govuk-grid-column-full vh-horizontal-align" *ngIf="!showAddPanelMember">
+        <img ngSrc="assets/images/AddIcon.png" [alt]="addPanelMemberText" height="40" width="40" />
+        <span class="govuk-!-margin-left-2">
+          <a
+            href="javascript:void(0)"
+            (click)="showAddPanelMember = true"
+            type="submit"
+            id="addAdditionalPanelMemberBtn"
+            class="govuk-link govuk-body"
+          >
+            {{ addPanelMemberText }}
+          </a>
+        </span>
+      </div>
+
+      <div class="vh-top govuk-grid-column-full">
+        <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">Next</button>
+      </div>
+    </div>
+  </div>
+  <!-- current participant list (right) -->
+  <div class="govuk-grid-column-one-half keep-right">
+    <app-participant-list [hearing]="hearing" [isSummaryPage]="false" [canEdit]="true"></app-participant-list>
+  </div>
+</div>

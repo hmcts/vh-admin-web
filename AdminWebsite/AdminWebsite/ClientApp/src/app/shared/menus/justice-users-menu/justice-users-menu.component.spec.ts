@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JusticeUsersMenuComponent } from './justice-users-menu.component';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MockLogger } from '../../testing/mock-logger';
 import { Logger } from '../../../services/logger';
 import { JusticeUsersService } from 'src/app/services/justice-users.service';
 import { BehaviorSubject } from 'rxjs';
 import { JusticeUserResponse } from '../../../services/clients/api-client';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 describe('JusticeUsersMenuComponent', () => {
     let component: JusticeUsersMenuComponent;
@@ -24,6 +25,7 @@ describe('JusticeUsersMenuComponent', () => {
         justiceUsersServiceSpy.allUsers$ = new BehaviorSubject<JusticeUserResponse[]>(users);
         await TestBed.configureTestingModule({
             declarations: [JusticeUsersMenuComponent],
+            imports: [NgSelectModule, ReactiveFormsModule],
             providers: [
                 HttpClient,
                 HttpHandler,

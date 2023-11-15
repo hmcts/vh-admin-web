@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AdminWebsite.Contracts.Requests;
 
 namespace AdminWebsite.Models
 {
@@ -12,6 +13,7 @@ namespace AdminWebsite.Models
         {
             Participants = new List<EditParticipantRequest>();
             Endpoints = new List<EditEndpointRequest>();
+            JudiciaryParticipants = new List<JudiciaryParticipantRequest>();
         }
         
         /// <summary>
@@ -48,6 +50,11 @@ namespace AdminWebsite.Models
         ///     List of participants in hearing
         /// </summary>
         public List<EditParticipantRequest> Participants { get; set; }
+        
+        /// <summary>
+        ///     List of judiciary participants in hearing
+        /// </summary>
+        public List<JudiciaryParticipantRequest> JudiciaryParticipants { get; set; }
 
         public List<EditTelephoneParticipantRequest> TelephoneParticipants { get; set; }
 

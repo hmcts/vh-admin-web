@@ -10,6 +10,7 @@ import { MockLogger } from 'src/app/shared/testing/mock-logger';
 
 import { JusticeUserFormComponent } from './justice-user-form.component';
 import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('JusticeUserFormComponent', () => {
     const justiceUsersServiceSpy = jasmine.createSpyObj<JusticeUsersService>('JusticeUsersService', [
@@ -34,6 +35,7 @@ describe('JusticeUserFormComponent', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
 
         await TestBed.configureTestingModule({
+            imports: [ReactiveFormsModule],
             declarations: [JusticeUserFormComponent],
             providers: [
                 { provide: Logger, useValue: new MockLogger() },

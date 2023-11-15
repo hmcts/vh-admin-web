@@ -291,7 +291,7 @@ describe('AddParticipantComponent', () => {
             'mapParticipantHearingRoles'
         ]);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
@@ -1078,7 +1078,7 @@ describe('AddParticipantComponent edit mode', () => {
         }).compileComponents();
 
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -1233,7 +1233,7 @@ describe('AddParticipantComponent edit mode', () => {
     }));
 
     it('shows single role list when reference data flag is on', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 
         component.ngOnInit();
         component.ngAfterViewInit();
@@ -1255,7 +1255,7 @@ describe('AddParticipantComponent edit mode', () => {
     }));
 
     it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         component.ngOnInit();
         component.ngAfterViewInit();
@@ -1499,7 +1499,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -1734,7 +1734,7 @@ describe('AddParticipantComponent set representer', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 

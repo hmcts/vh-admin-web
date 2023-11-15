@@ -1,21 +1,13 @@
-import { Component, DebugElement, Input } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingParticipantListComponent } from './booking-participant-list.component';
-import { HearingRoles } from '../../common/model/hearing-roles.model';
+import { HearingRoleCodes, HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
-
-@Component({
-    selector: 'app-booking-participant-details',
-    template: ''
-})
-class ParticipantDetailsMockComponent {
-    @Input() participant: ParticipantDetailsModel = null;
-
-    @Input() vh_officer_admin: boolean;
-}
+import { ParticipantDetailsComponent } from '../participant-details/participant-details.component';
+import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 
 describe('BookingParticipantListComponent', () => {
     let component: BookingParticipantListComponent;
@@ -24,7 +16,7 @@ describe('BookingParticipantListComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [BookingParticipantListComponent, ParticipantDetailsMockComponent],
+            declarations: [BookingParticipantListComponent, ParticipantDetailsComponent],
             imports: [RouterTestingModule]
         }).compileComponents();
     }));
@@ -51,6 +43,7 @@ describe('BookingParticipantListComponent', () => {
             'email1@hmcts.net',
             'Respondent',
             'Litigant in person',
+            HearingRoleCodes.Respondent,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -87,6 +80,7 @@ describe('BookingParticipantListComponent', () => {
             'email1@hmcts.net',
             'Judge',
             'Judge',
+            null,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -119,6 +113,7 @@ describe('BookingParticipantListComponent', () => {
                 participantsArray.push({
                     FirstName: p.FirstName,
                     isJudge: p.isJudge ?? false,
+                    HearingRoleCode: p.HearingRoleCode,
                     HearingRoleName: p.HearingRoleName,
                     CaseRoleName: p.CaseRoleName,
                     LinkedParticipants: p.LinkedParticipants ?? null,
@@ -217,5 +212,48 @@ describe('BookingParticipantListComponent', () => {
             expect(component.sortedParticipants[i].HearingRoleName).toEqual(expectedOutput[i].HearingRoleName);
         }
         done();
+    });
+
+    it('should sort judiciary participants and members', () => {
+        const jp1 = new JudiciaryParticipantDetailsModel(
+            'Mrs',
+            'Alan',
+            'Brake',
+            'Judge',
+            'email.p1@hmcts.net',
+            'email1@hmcts.net',
+            'Judge',
+            'Judge',
+            'Alan Brake'
+        );
+        const jp2 = new JudiciaryParticipantDetailsModel(
+            'Mr',
+            'John',
+            'Doe',
+            'Winger',
+            'email.p2@hmcts.net',
+            'email2@hmcts.net',
+            'Winger',
+            'PanelMember',
+            'John Doe'
+        );
+        const jp3 = new JudiciaryParticipantDetailsModel(
+            'Ms',
+            'Jane',
+            'Doe',
+            'Panel Member',
+            'email.p3@hmcts.net',
+            'email3@hmcts.net',
+            'Panel Member',
+            'PanelMember',
+            'Jane Doe'
+        );
+
+        component.judiciaryParticipants = [jp1, jp2, jp3];
+
+        expect(component.sortedJudiciaryMembers.length).toEqual(3);
+        expect(component.sortedJudiciaryMembers[0]).toEqual(jp1);
+        expect(component.sortedJudiciaryMembers[1]).toEqual(jp3);
+        expect(component.sortedJudiciaryMembers[2]).toEqual(jp2);
     });
 });
