@@ -45,6 +45,7 @@ public static class ParticipantResponseMapper
                 MiddleNames = p.MiddleNames,
                 LastName = p.LastName,
                 ContactEmail = p.ContactEmail,
+                Username = p.Username,
                 TelephoneNumber = p.TelephoneNumber,
                 Organisation = p.Organisation,
                 Representee = p.Representee,

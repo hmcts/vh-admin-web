@@ -10,7 +10,8 @@ export const FeatureFlags = {
     eJudFeature: 'ejud-feature',
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
-    referenceData: 'reference-data'
+    referenceData: 'reference-data',
+    useV2Api: 'use-bookings-api-v2'
 };
 
 @Injectable({

@@ -1,5 +1,6 @@
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { LinkedParticipantModel } from './linked-participant.model';
+import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
 
 export class ParticipantModel {
     id?: string;
@@ -27,6 +28,7 @@ export class ParticipantModel {
     addedDuringHearing?: boolean;
     is_staff_member?: boolean;
     contact_email?: string;
+    isJudiciaryMember?: boolean;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
@@ -39,7 +41,8 @@ export class ParticipantModel {
                   email: person.contact_email ?? person.username,
                   phone: person.telephone_number,
                   representee: '',
-                  company: person.organisation
+                  company: person.organisation,
+                  isJudiciaryMember: false
               }
             : null;
     }
@@ -50,12 +53,33 @@ export class ParticipantModel {
                   ...judge,
                   email: judge.contact_email ?? judge.email,
                   username: judge.email,
-                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
+                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
+                  isJudiciaryMember: false
               }
             : null;
     }
 
     static IsEmailEjud(email: string): boolean {
         return email?.toLowerCase().includes('judiciary') ?? false;
+    }
+
+    static fromJudicialMember(judicialMember: JudicialMemberDto, isJudge = false) {
+        const hearingRoleName = isJudge ? 'Judge' : 'Panel Member';
+        const userRoleName = isJudge ? 'Judge' : 'PanelMember';
+        const hearingRoleCode = isJudge ? 'Judge' : 'PanelMember';
+        return new ParticipantModel({
+            first_name: judicialMember.firstName,
+            last_name: judicialMember.lastName,
+            hearing_role_name: hearingRoleName,
+            username: judicialMember.email,
+            email: judicialMember.email,
+            is_exist_person: true,
+            user_role_name: userRoleName,
+            isJudiciaryMember: true,
+            hearing_role_code: hearingRoleCode,
+            phone: judicialMember.telephone,
+            display_name: judicialMember.displayName,
+            is_judge: isJudge
+        });
     }
 }

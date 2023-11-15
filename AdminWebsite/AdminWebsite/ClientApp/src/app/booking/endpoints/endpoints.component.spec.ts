@@ -16,6 +16,7 @@ import { MockValues } from 'src/app/testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { EndpointsComponent } from './endpoints.component';
 import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -63,9 +64,10 @@ describe('EndpointsComponent', () => {
                 { provide: ErrorService, useValue: errorService },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent }
             ],
-            declarations: [EndpointsComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            declarations: [EndpointsComponent, CancelPopupComponent, DiscardConfirmPopupComponent, BreadcrumbStubComponent]
         }).compileComponents();
     }));
 
@@ -186,7 +188,7 @@ describe('EndpointsComponent', () => {
         expect(component.duplicateDa).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
+        expect(component.hearing.endpoints[0].defenceAdvocate).toBeNull();
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });

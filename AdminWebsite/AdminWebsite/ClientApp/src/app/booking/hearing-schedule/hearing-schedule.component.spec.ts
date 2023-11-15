@@ -17,6 +17,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { HearingScheduleComponent } from './hearing-schedule.component';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 const newHearing = new HearingModel();
 
@@ -65,6 +67,7 @@ describe('HearingScheduleComponent first visit', () => {
     let fixture: ComponentFixture<HearingScheduleComponent>;
 
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
     let routerSpy: jasmine.SpyObj<Router>;
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
@@ -84,6 +87,9 @@ describe('HearingScheduleComponent first visit', () => {
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterTestingModule],
             providers: [
@@ -91,8 +97,10 @@ describe('HearingScheduleComponent first visit', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
                 DatePipe,
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
@@ -382,6 +390,7 @@ describe('HearingScheduleComponent first visit', () => {
 describe('HearingScheduleComponent returning to page', () => {
     let component: HearingScheduleComponent;
     let fixture: ComponentFixture<HearingScheduleComponent>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     const existingRequest: HearingModel = initExistingHearingRequest();
 
@@ -405,6 +414,9 @@ describe('HearingScheduleComponent returning to page', () => {
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
@@ -412,8 +424,10 @@ describe('HearingScheduleComponent returning to page', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
                 DatePipe,
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();
@@ -503,27 +517,14 @@ describe('HearingScheduleComponent returning to page', () => {
 
         expect(component.selectedCourtName).toBe('aa@hmcts.net1');
     });
-    it('should set venue for existing hearing when hearing has a hearing type name but no hearing type code', () => {
+    it('should set venue for existing hearing when hearing has a hearing id', () => {
         const courts = MockValues.Courts.filter(x => x.id !== -1);
         const selectedCourt = courts[0];
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
         const existingHearingRequest = { ...existingRequest };
+        existingHearingRequest.hearing_id = '123455555900';
         existingHearingRequest.hearing_type_name = 'HearingTypeName';
         existingHearingRequest.hearing_type_code = null;
-        existingHearingRequest.court_name = selectedCourt.name;
-        existingHearingRequest.court_id = selectedCourt.id;
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);
-        component.ngOnInit();
-
-        expect(component.selectedCourtName).toBe(selectedCourt.name);
-    });
-    it('should set venue for existing hearing when hearing has a hearing type code but no hearing type name', () => {
-        const courts = MockValues.Courts.filter(x => x.id !== -1);
-        const selectedCourt = courts[0];
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
-        const existingHearingRequest = { ...existingRequest };
-        existingHearingRequest.hearing_type_name = null;
-        existingHearingRequest.hearing_type_code = 'HearingTypeCode';
         existingHearingRequest.court_name = selectedCourt.name;
         existingHearingRequest.court_id = selectedCourt.id;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);
@@ -554,6 +555,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
     let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
     let routerSpy: jasmine.SpyObj<Router>;
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(waitForAsync(() => {
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -570,6 +572,9 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
             providers: [
@@ -577,8 +582,10 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: ErrorService, useValue: errorService },
+                { provide: BreadcrumbComponent, useValue: BreadcrumbStubComponent },
                 DatePipe,
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
             declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
         }).compileComponents();

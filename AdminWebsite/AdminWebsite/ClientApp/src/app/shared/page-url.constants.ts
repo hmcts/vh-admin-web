@@ -6,6 +6,7 @@ export const PageUrls = {
     CreateHearing: '/book-hearing',
     HearingSchedule: '/hearing-schedule',
     AssignJudge: '/assign-judge',
+    AddJudicialOfficeHolders: '/add-judicial-office-holders',
     AddParticipants: '/add-participants',
     Endpoints: '/video-access-points',
     OtherInformation: '/other-information',

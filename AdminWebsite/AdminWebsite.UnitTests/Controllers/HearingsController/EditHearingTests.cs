@@ -21,6 +21,7 @@ using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
@@ -32,6 +33,7 @@ using VideoApi.Contract.Responses;
 using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
 
@@ -358,6 +360,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Pin = "pin",
                         Sip = "sip"
                     }
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantResponse>()
+                {
+                    new (){FullName = "Judge Fudge", FirstName = "John", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge, PersonalCode = "1234"},
+                    new (){FullName = "Jane Doe", FirstName = "Jane", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember, PersonalCode = "4567"}
                 }
             };
         }
@@ -570,7 +577,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2()
         {
-            _featureToggle.Setup(e => e.ReferenceDataToggle()).Returns(true);
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(updatedHearing)
@@ -605,8 +612,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         LinkedParticipantContactEmail = "interpreter@domain.net",
                         Type = AdminWebsite.Contracts.Enums.LinkedParticipantType.Interpreter
                     }
-                }
+                },
             });
+            _addNewParticipantRequest.JudiciaryParticipants = new List<JudiciaryParticipantRequest>()
+            {
+                new()
+                {
+                    PersonalCode = "4567", DisplayName = "Jane Doe 2", Role = JudiciaryParticipantHearingRoleCode.PanelMember.ToString()
+                },
+                new()
+                {
+                    PersonalCode = "5678", DisplayName = "New Judge Fudge", Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
+                }
+            };
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
@@ -614,6 +632,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.Is<UpdateHearingRequestV2>(u =>
                         !u.Cases.IsNullOrEmpty())),
                 Times.Once);
+
+            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(hearing.Id, "1234"),
+                Times.Once);
+            
+            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(hearing.Id, "4567", It.IsAny<UpdateJudiciaryParticipantRequest>()),
+                Times.Once);
+
+            _bookingsApiClient.Verify(
+                x => x.AddJudiciaryParticipantsToHearingAsync(hearing.Id,
+                    It.IsAny<IEnumerable<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>()), Times.Once);
         }
 
         [Test]

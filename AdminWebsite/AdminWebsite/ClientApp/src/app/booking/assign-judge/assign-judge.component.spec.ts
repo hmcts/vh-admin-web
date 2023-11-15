@@ -105,7 +105,7 @@ describe('AssignJudgeComponent', () => {
         emailValidationServiceSpy.validateEmail.and.returnValue(true);
         emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.referenceData).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -613,7 +613,7 @@ describe('AssignJudgeComponent', () => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
                     videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
                     component.judge.display_name = updatedJudgeDisplayName;
-                    component.referenceDataFeatureFlag = false;
+                    component.useV2Api = false;
                 });
 
                 it('should add judge account when none present', () => {
@@ -625,7 +625,7 @@ describe('AssignJudgeComponent', () => {
                 });
 
                 it('should add update judge when reference data flag is on', () => {
-                    component.referenceDataFeatureFlag = true;
+                    component.useV2Api = true;
                 });
                 afterEach(() => {
                     component.updateJudge(judge);
@@ -636,7 +636,7 @@ describe('AssignJudgeComponent', () => {
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
                     expect(updatedJudges[0]).toBe(judge);
-                    if (component.referenceDataFeatureFlag) {
+                    if (component.useV2Api) {
                         expect(updatedJudges[0].case_role_name).toBeNull();
                         expect(updatedJudges[0].hearing_role_code).toBe(Constants.HearingRoleCodes.Judge);
                     }

@@ -4,6 +4,9 @@ import { HearingModel } from '../../common/model/hearing.model';
 
 @Component({ selector: 'app-participant-list', template: '<div></div>' })
 export class ParticipantsListStubComponent {
+    @Input() isSummaryPage = false;
+    @Input() canEdit = false;
+
     @Input()
     hearing: HearingModel;
     participants: ParticipantRequest[];

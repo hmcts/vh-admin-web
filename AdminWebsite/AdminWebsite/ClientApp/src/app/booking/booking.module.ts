@@ -17,11 +17,16 @@ import { EndpointsComponent } from './endpoints/endpoints.component';
 import { ParticipantItemComponent, ParticipantListComponent } from './participant';
 import { MultiDayHearingScheduleComponent } from './summary/multi-day-hearing-schedule';
 import { DateErrorMessagesComponent } from './hearing-schedule/date-error-messages/date-error-messages';
+import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add-judicial-office-holders/add-judicial-office-holders.component';
+import { SearchForJudicialMemberComponent } from './judicial-office-holders/search-for-judicial-member/search-for-judicial-member.component';
+import { NgOptimizedImage } from '@angular/common';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
     DateErrorMessagesComponent,
     HearingScheduleComponent,
+    AddJudicialOfficeHoldersComponent,
+    SearchForJudicialMemberComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
     AddStaffMemberComponent,
@@ -38,7 +43,7 @@ export const Components: Type<any>[] = [
 ];
 
 @NgModule({
-    imports: [SharedModule, BookingRoutingModule, PopupModule],
+    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage],
     declarations: Components,
     exports: Components
 })
