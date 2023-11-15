@@ -1,0 +1,16 @@
+@import 'govuk-frontend/govuk/base';
+
+.vh-active {
+  color: govuk-colour('blue') !important;
+  text-decoration: none;
+}
+.vh-notactive {
+  color: govuk-colour('black') !important;
+  text-decoration: none;
+}
+
+.vh-current {
+  color: govuk-colour('dark-blue') !important;
+  font-weight: bold !important;
+  text-decoration: none;
+}
