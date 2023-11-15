@@ -74,7 +74,7 @@ namespace AdminWebsite.Controllers
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
@@ -100,8 +100,11 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest) 
-                    return BadRequest(e.Response);
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
                 throw;
             }
             catch (Exception e)

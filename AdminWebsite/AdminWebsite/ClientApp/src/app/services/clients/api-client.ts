@@ -852,7 +852,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap((_responseText: string) => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
