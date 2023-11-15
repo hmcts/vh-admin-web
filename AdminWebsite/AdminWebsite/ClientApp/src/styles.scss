@@ -90,3 +90,12 @@ body {
     filter: opacity(50%);
   }
 }
+
+.keep-right {
+  float: right;
+}
+
+.vh-horizontal-align {
+  display: flex;
+  align-items: center;
+}

@@ -26,7 +26,9 @@ import {
     LinkedParticipant,
     BookingStatus,
     AllocatedCsoResponse,
-    HearingRoleResponse
+    HearingRoleResponse,
+    JudiciaryParticipantRequest,
+    JudiciaryParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -35,6 +37,7 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
+import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Injectable({
     providedIn: 'root'
@@ -214,6 +217,7 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
+        hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
         hearing.audio_recording_required = booking.audio_recording_required;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         return hearing;
@@ -296,6 +300,8 @@ export class VideoHearingsService {
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
         newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
+        newHearingRequest.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(newRequest.judiciaryParticipants);
+
         return newHearingRequest;
     }
 
@@ -320,6 +326,9 @@ export class VideoHearingsService {
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
+        hearing.judiciaryParticipants = response.judiciary_participants.map(judiciaryParticipant =>
+            JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
+        );
         hearing.isConfirmed = Boolean(response.confirmed_date);
         return hearing;
     }
@@ -350,6 +359,17 @@ export class VideoHearingsService {
             });
         }
         return cases;
+    }
+
+    mapJudicialMemberDtoToJudiciaryParticipantRequest(judicialMemberDtos: JudicialMemberDto[]): JudiciaryParticipantRequest[] {
+        return judicialMemberDtos.map(judicialMemberDto => {
+            const judiciaryParticipantRequest: JudiciaryParticipantRequest = new JudiciaryParticipantRequest({
+                personal_code: judicialMemberDto.personalCode,
+                display_name: judicialMemberDto.displayName,
+                role: judicialMemberDto.roleCode
+            });
+            return judiciaryParticipantRequest;
+        });
     }
 
     mapParticipants(newRequest: ParticipantModel[]): ParticipantRequest[] {
@@ -523,5 +543,43 @@ export class VideoHearingsService {
 
     getAllocatedCsoForHearing(hearingId: string): Observable<AllocatedCsoResponse> {
         return this.bhClient.getAllocationForHearing(hearingId);
+    }
+
+    addJudiciaryJudge(judicialMember: JudicialMemberDto) {
+        const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
+
+        if (judgeIndex !== -1) {
+            // Judge exists, replace or add entry
+            this.modelHearing.judiciaryParticipants[judgeIndex] = judicialMember;
+        } else {
+            // Judge does not exist, add entry
+            this.modelHearing.judiciaryParticipants.push(judicialMember);
+        }
+    }
+
+    removeJudiciaryJudge() {
+        const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
+        if (judgeIndex !== -1) {
+            this.modelHearing.judiciaryParticipants.splice(judgeIndex, 1);
+        }
+    }
+
+    addJudiciaryPanelMember(judicialMember: JudicialMemberDto) {
+        const panelMemberIndex = this.modelHearing.judiciaryParticipants.findIndex(
+            holder => holder.personalCode === judicialMember.personalCode
+        );
+        if (panelMemberIndex !== -1) {
+            this.modelHearing.judiciaryParticipants[panelMemberIndex] = judicialMember;
+        } else {
+            this.modelHearing.judiciaryParticipants.push(judicialMember);
+        }
+    }
+
+    removeJudiciaryParticipant(participantEmail: string) {
+        const index =
+            this.modelHearing?.judiciaryParticipants?.findIndex(judicialMember => judicialMember.email === participantEmail) ?? -1;
+        if (index !== -1) {
+            this.modelHearing.judiciaryParticipants.splice(index, 1);
+        }
     }
 }

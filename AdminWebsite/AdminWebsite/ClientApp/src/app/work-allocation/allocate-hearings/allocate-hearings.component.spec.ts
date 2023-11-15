@@ -18,6 +18,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SharedModule } from '../../shared/shared.module';
 import { Logger } from 'src/app/services/logger';
 import { SelectComponent, SelectOption } from 'src/app/shared/select';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 describe('AllocateHearingsComponent', () => {
     let component: AllocateHearingsComponent;
@@ -76,7 +77,7 @@ describe('AllocateHearingsComponent', () => {
                 { provide: VideoHearingsService, useValue: hearingServiceMock },
                 { provide: Logger, useValue: loggerMock }
             ],
-            imports: [SharedModule]
+            imports: [SharedModule, FontAwesomeModule]
         }).compileComponents();
     });
 

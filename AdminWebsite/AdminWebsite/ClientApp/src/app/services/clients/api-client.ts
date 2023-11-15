@@ -1868,114 +1868,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Find judges and court rooms accounts list by email search term.
-     * @param body (optional) The email address search term.
-     * @return Success
-     */
-    postJudgesBySearchTerm(body: string | undefined): Observable<JudgeResponse[]> {
-        let url_ = this.baseUrl + '/api/judiciary/judges';
-        url_ = url_.replace(/[?&]$/, '');
-
-        const content_ = JSON.stringify(body);
-
-        let options_: any = {
-            body: content_,
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('post', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processPostJudgesBySearchTerm(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processPostJudgesBySearchTerm(response_ as any);
-                        } catch (e) {
-                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
-                        }
-                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
-                })
-            );
-    }
-
-    protected processPostJudgesBySearchTerm(response: HttpResponseBase): Observable<JudgeResponse[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    if (Array.isArray(resultData200)) {
-                        result200 = [] as any;
-                        for (let item of resultData200) result200!.push(JudgeResponse.fromJS(item));
-                    } else {
-                        result200 = <any>null;
-                    }
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
      * Find judiciary person list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
@@ -2052,6 +1944,114 @@ export class BHClient extends ApiClientBase {
                     if (Array.isArray(resultData200)) {
                         result200 = [] as any;
                         for (let item of resultData200) result200!.push(PersonResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Find judiciary person list by email search term.
+     * @param body (optional) The email address search term.
+     * @return Success
+     */
+    searchForJudiciaryPerson(body: string | undefined): Observable<JudiciaryPerson[]> {
+        let url_ = this.baseUrl + '/api/judiciary/search';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processSearchForJudiciaryPerson(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processSearchForJudiciaryPerson(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<JudiciaryPerson[]>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<JudiciaryPerson[]>;
+                })
+            );
+    }
+
+    protected processSearchForJudiciaryPerson(response: HttpResponseBase): Observable<JudiciaryPerson[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(JudiciaryPerson.fromJS(item));
                     } else {
                         result200 = <any>null;
                     }
@@ -5244,6 +5244,7 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
     hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_by?: string | undefined;
@@ -5280,6 +5281,11 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(ParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
             }
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
@@ -5322,6 +5328,10 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
         data['created_by'] = this.created_by;
@@ -5350,6 +5360,7 @@ export interface IBookingDetailsRequest {
     hearing_type_code?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_by?: string | undefined;
@@ -5532,6 +5543,49 @@ export class EndpointRequest implements IEndpointRequest {
 export interface IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+}
+
+export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest {
+    personal_code?: string | undefined;
+    role?: string | undefined;
+    display_name?: string | undefined;
+
+    constructor(data?: IJudiciaryParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.personal_code = _data['personal_code'];
+            this.role = _data['role'];
+            this.display_name = _data['display_name'];
+        }
+    }
+
+    static fromJS(data: any): JudiciaryParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new JudiciaryParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['personal_code'] = this.personal_code;
+        data['role'] = this.role;
+        data['display_name'] = this.display_name;
+        return data;
+    }
+}
+
+export interface IJudiciaryParticipantRequest {
+    personal_code?: string | undefined;
+    role?: string | undefined;
+    display_name?: string | undefined;
 }
 
 export class LinkedParticipantRequest implements ILinkedParticipantRequest {
@@ -6275,6 +6329,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     participants?: ParticipantResponse[] | undefined;
     /** V1 only */
     telephone_participants?: TelephoneParticipantResponse[] | undefined;
+    judiciary_participants?: JudiciaryParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -6320,6 +6375,11 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 this.telephone_participants = [] as any;
                 for (let item of _data['telephone_participants'])
                     this.telephone_participants!.push(TelephoneParticipantResponse.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantResponse.fromJS(item));
             }
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
@@ -6370,6 +6430,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             data['telephone_participants'] = [];
             for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
         data['created_date'] = this.created_date ? this.created_date.toISOString() : <any>undefined;
@@ -6410,6 +6474,7 @@ export interface IHearingDetailsResponse {
     participants?: ParticipantResponse[] | undefined;
     /** V1 only */
     telephone_participants?: TelephoneParticipantResponse[] | undefined;
+    judiciary_participants?: JudiciaryParticipantResponse[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
     created_date?: Date;
@@ -6596,6 +6661,164 @@ export interface IJudgeResponse {
     /** Judge contact email */
     contact_email?: string | undefined;
     account_type?: JudgeAccountType;
+}
+
+export class JudiciaryParticipantResponse implements IJudiciaryParticipantResponse {
+    /** Judiciary person's Title. */
+    title?: string | undefined;
+    /** Judiciary person's first name. */
+    first_name?: string | undefined;
+    /** Judiciary person's last name. */
+    last_name?: string | undefined;
+    /** Judiciary person's full name. */
+    full_name?: string | undefined;
+    /** Judiciary person's contact email */
+    email?: string | undefined;
+    /** Judiciary person's work phone */
+    work_phone?: string | undefined;
+    /** The Judiciary person's unique personal code */
+    personal_code?: string | undefined;
+    /** The Judiciary person's role code (Judge or Panel Member) */
+    role_code?: string | undefined;
+    /** The judiciary person's display name */
+    display_name?: string | undefined;
+
+    constructor(data?: IJudiciaryParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.full_name = _data['full_name'];
+            this.email = _data['email'];
+            this.work_phone = _data['work_phone'];
+            this.personal_code = _data['personal_code'];
+            this.role_code = _data['role_code'];
+            this.display_name = _data['display_name'];
+        }
+    }
+
+    static fromJS(data: any): JudiciaryParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new JudiciaryParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['full_name'] = this.full_name;
+        data['email'] = this.email;
+        data['work_phone'] = this.work_phone;
+        data['personal_code'] = this.personal_code;
+        data['role_code'] = this.role_code;
+        data['display_name'] = this.display_name;
+        return data;
+    }
+}
+
+export interface IJudiciaryParticipantResponse {
+    /** Judiciary person's Title. */
+    title?: string | undefined;
+    /** Judiciary person's first name. */
+    first_name?: string | undefined;
+    /** Judiciary person's last name. */
+    last_name?: string | undefined;
+    /** Judiciary person's full name. */
+    full_name?: string | undefined;
+    /** Judiciary person's contact email */
+    email?: string | undefined;
+    /** Judiciary person's work phone */
+    work_phone?: string | undefined;
+    /** The Judiciary person's unique personal code */
+    personal_code?: string | undefined;
+    /** The Judiciary person's role code (Judge or Panel Member) */
+    role_code?: string | undefined;
+    /** The judiciary person's display name */
+    display_name?: string | undefined;
+}
+
+export class JudiciaryPerson implements IJudiciaryPerson {
+    /** Judiciary person's Title. */
+    title?: string | undefined;
+    /** Judiciary person's first name. */
+    first_name?: string | undefined;
+    /** Judiciary person's last name. */
+    last_name?: string | undefined;
+    /** Judiciary person's full name. */
+    full_name?: string | undefined;
+    /** Judiciary person's contact email */
+    email?: string | undefined;
+    /** Judiciary person's work phone */
+    work_phone?: string | undefined;
+    /** The Judiciary person's unique personal code */
+    personal_code?: string | undefined;
+
+    constructor(data?: IJudiciaryPerson) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.full_name = _data['full_name'];
+            this.email = _data['email'];
+            this.work_phone = _data['work_phone'];
+            this.personal_code = _data['personal_code'];
+        }
+    }
+
+    static fromJS(data: any): JudiciaryPerson {
+        data = typeof data === 'object' ? data : {};
+        let result = new JudiciaryPerson();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['full_name'] = this.full_name;
+        data['email'] = this.email;
+        data['work_phone'] = this.work_phone;
+        data['personal_code'] = this.personal_code;
+        return data;
+    }
+}
+
+export interface IJudiciaryPerson {
+    /** Judiciary person's Title. */
+    title?: string | undefined;
+    /** Judiciary person's first name. */
+    first_name?: string | undefined;
+    /** Judiciary person's last name. */
+    last_name?: string | undefined;
+    /** Judiciary person's full name. */
+    full_name?: string | undefined;
+    /** Judiciary person's contact email */
+    email?: string | undefined;
+    /** Judiciary person's work phone */
+    work_phone?: string | undefined;
+    /** The Judiciary person's unique personal code */
+    personal_code?: string | undefined;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {
@@ -7178,6 +7401,8 @@ export class EditHearingRequest implements IEditHearingRequest {
     case!: EditCaseRequest;
     /** List of participants in hearing */
     participants!: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
@@ -7208,6 +7433,11 @@ export class EditHearingRequest implements IEditHearingRequest {
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
             }
             if (Array.isArray(_data['telephone_participants'])) {
                 this.telephone_participants = [] as any;
@@ -7242,6 +7472,10 @@ export class EditHearingRequest implements IEditHearingRequest {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
         if (Array.isArray(this.telephone_participants)) {
             data['telephone_participants'] = [];
             for (let item of this.telephone_participants) data['telephone_participants'].push(item.toJSON());
@@ -7271,6 +7505,8 @@ export interface IEditHearingRequest {
     case: EditCaseRequest;
     /** List of participants in hearing */
     participants: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     telephone_participants?: EditTelephoneParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;

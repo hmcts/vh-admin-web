@@ -16,6 +16,7 @@ using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
+using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V2.Requests;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -121,8 +122,8 @@ namespace AdminWebsite.Controllers
             Guid hearingId;
                 
             _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
-                
-            if (_featureToggles.ReferenceDataToggle())
+            
+            if (_featureToggles.UseV2Api())
             {
                 var newBookingRequestV2 = newBookingRequest.MapToV2();
                     
@@ -311,7 +312,7 @@ namespace AdminWebsite.Controllers
 
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
         {
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 return responseV2.Map();
@@ -323,7 +324,7 @@ namespace AdminWebsite.Controllers
 
         private async Task<HearingDetailsResponse> MapHearingToUpdate(Guid hearingId)
         {
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var updatedHearing2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 return updatedHearing2.Map();
@@ -336,18 +337,20 @@ namespace AdminWebsite.Controllers
         private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
         {
             //Save hearing details
-            if (_featureToggles.ReferenceDataToggle())
+            if (_featureToggles.UseV2Api())
             {
                 var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
                 await UpdateParticipantsV2(hearingId, request, originalHearing);
-
-                return;
+                await UpdateJudiciaryParticipants(hearingId, request, originalHearing);
             }
-            
-            var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
-            await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
-            await UpdateParticipantsV1(hearingId, request, originalHearing);
+            else
+            {
+                var updateHearingRequestV1 =
+                    HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
+                await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
+                await UpdateParticipantsV1(hearingId, request, originalHearing);
+            }
         }
 
         private async Task UpdateParticipantsV1(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
@@ -398,6 +401,50 @@ namespace AdminWebsite.Controllers
         {
             return originalHearing.Participants.Where(p => request.Participants.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
+        }
+
+        private async Task UpdateJudiciaryParticipants(Guid hearingId, EditHearingRequest request,
+            HearingDetailsResponse originalHearing)
+        {
+            // keep the order of removal first. this will allow admin web to change judiciary judges post booking
+            var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
+                request.JudiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
+            foreach (var removedJoh in removedJohs)
+            {
+                await _bookingsApiClient.RemoveJudiciaryParticipantFromHearingAsync(hearingId, removedJoh.PersonalCode);
+            }
+            
+            var newJohs = request.JudiciaryParticipants.Where(jp =>
+                !originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
+
+            var newJohRequest = newJohs.Select(jp =>
+            {
+                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role);
+                return new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
+                {
+                    DisplayName = jp.DisplayName,
+                    PersonalCode = jp.PersonalCode,
+                    HearingRoleCode = roleCode
+                };
+            }).ToList();
+            if (newJohRequest.Any())
+            {
+                await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, newJohRequest);
+            }
+            
+            // get existing judiciary participants based on the personal code being present in the original hearing
+            var existingJohs = request.JudiciaryParticipants.Where(jp =>
+                originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
+
+            foreach (var joh in existingJohs)
+            {
+                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
+                await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
+                    new UpdateJudiciaryParticipantRequest()
+                    {
+                        DisplayName = joh.DisplayName, HearingRoleCode = roleCode
+                    });
+            }
         }
 
         private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
@@ -493,7 +540,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 HearingDetailsResponse hearingResponse;
-                if (_featureToggles.ReferenceDataToggle())
+                if (_featureToggles.UseV2Api())
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                     hearingResponse = response.Map();
