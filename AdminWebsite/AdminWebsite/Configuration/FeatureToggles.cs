@@ -13,6 +13,7 @@ namespace AdminWebsite.Configuration
         public bool ReferenceDataToggle();
         public bool EJudEnabled();
         public bool HrsEnabled();
+        public bool AudioSearchEnabled();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -25,6 +26,8 @@ namespace AdminWebsite.Configuration
         private const string ReferenceDataToggleKey = "reference-data";
         private const string EJudFeatureToggleKey = "ejud-feature";
         private const string HrsFeatureToggleKey = "hrs-integration";
+        private const string AudioSearchToggleKey = "hide-audio-search-tile";
+        
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -57,6 +60,11 @@ namespace AdminWebsite.Configuration
         public bool HrsEnabled()
         {
             return GetBoolValueWithKey(HrsFeatureToggleKey);
+        }
+
+        public bool AudioSearchEnabled()
+        {
+            return GetBoolValueWithKey(AudioSearchToggleKey);
         }
 
         private bool GetBoolValueWithKey(string key)

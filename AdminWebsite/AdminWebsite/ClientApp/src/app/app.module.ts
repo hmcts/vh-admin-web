@@ -42,6 +42,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 import { HomeComponent } from './home/home.component';
 import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
+import { AudioSearchGuard } from './security/audio-search.guard';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -99,7 +100,8 @@ export function loadConfig(configService: ConfigService) {
         AppInsightsLogger,
         WindowRef,
         WorkAllocationFeatureGuard,
-        ManageTeamFeatureGuard
+        ManageTeamFeatureGuard,
+        AudioSearchGuard
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]
