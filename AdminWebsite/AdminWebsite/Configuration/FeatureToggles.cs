@@ -11,6 +11,7 @@ namespace AdminWebsite.Configuration
         public bool BookAndConfirmToggle();
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
+        public bool UseV2Api();
         public bool EJudEnabled();
         public bool HrsEnabled();
         public bool AudioSearchEnabled();
@@ -24,6 +25,7 @@ namespace AdminWebsite.Configuration
         private const string BookAndConfirmToggleKey = "Book_and_Confirm";
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
+        private const string UseV2ApiToggleKey = "use-bookings-api-v2";
         private const string EJudFeatureToggleKey = "ejud-feature";
         private const string HrsFeatureToggleKey = "hrs-integration";
         private const string AudioSearchToggleKey = "hide-audio-search-tile";
@@ -67,6 +69,11 @@ namespace AdminWebsite.Configuration
             return GetBoolValueWithKey(AudioSearchToggleKey);
         }
 
+        public bool UseV2Api()
+        {
+            return GetBoolValueWithKey(UseV2ApiToggleKey);
+        }
+        
         private bool GetBoolValueWithKey(string key)
         {
             if (!_ldClient.Initialized)
@@ -76,5 +83,6 @@ namespace AdminWebsite.Configuration
 
             return _ldClient.BoolVariation(key, _context);
         }
+
     }
 }

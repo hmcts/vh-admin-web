@@ -11,7 +11,8 @@ export const FeatureFlags = {
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',
-    audioSearch: 'hide-audio-search-tile'
+    audioSearch: 'hide-audio-search-tile',
+    useV2Api: 'use-bookings-api-v2'
 };
 
 @Injectable({

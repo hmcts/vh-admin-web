@@ -21,7 +21,12 @@
     </div>
 
     <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
-      <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
+      <a
+        [routerLink]="participant.isJudiciaryMember ? '/add-judicial-office-holders' : '/assign-judge'"
+        class="vhlink"
+        (click)="editJudge()"
+        >Change</a
+      >
     </div>
   </div>
 
@@ -54,6 +59,7 @@
     </div>
     <div class="vhtable-header">
       <div class="participant-row__name">{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</div>
+      <div>{{ participant.display_name }}</div>
 
       <div *ngIf="isRepresentative || isInterpreter; else individual">
         <ng-container *ngIf="isRepresentative">
@@ -97,7 +103,12 @@
         </ng-template>
       </ng-template>
     </div>
-    <div *ngIf="canEdit" class="participant-row__actions">
+    <div
+      *ngIf="
+        canEdit && ((showParticipantActions && !participant.isJudiciaryMember) || (showJudicaryActions && participant.isJudiciaryMember))
+      "
+      class="participant-row__actions"
+    >
       <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>

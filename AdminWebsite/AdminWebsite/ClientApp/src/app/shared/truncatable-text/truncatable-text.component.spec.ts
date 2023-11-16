@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TruncatableTextComponent } from './truncatable-text.component';
+import { TooltipDirective } from '../directives/tooltip.directive';
 
 describe('TruncatableTextComponent', () => {
     let component: TruncatableTextComponent;
@@ -7,7 +8,8 @@ describe('TruncatableTextComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TruncatableTextComponent]
+            declarations: [TruncatableTextComponent, TooltipDirective],
+            providers: [TooltipDirective]
         }).compileComponents();
 
         fixture = TestBed.createComponent(TruncatableTextComponent);

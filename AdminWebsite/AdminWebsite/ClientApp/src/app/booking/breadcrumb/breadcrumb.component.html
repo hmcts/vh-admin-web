@@ -1,7 +1,8 @@
-<div class="vh-breadcrumbs-wrap">
-  <ol>
-    <li class="vh-breadcrumbs" *ngFor="let step of breadcrumbItems; index as i">
+<div class="govuk-breadcrumbs govuk-breadcrumbs--collapse-on-mobile">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item" *ngFor="let step of breadcrumbItems; index as i">
       <a
+        class="govuk-breadcrumbs__link"
         [ngClass]="{ 'vh-active': step.Active && !step.Value, 'vh-notactive': !step.Active, 'vh-current': step.Value }"
         href="javascript:void(0)"
         (click)="clickBreadcrumbs(step)"

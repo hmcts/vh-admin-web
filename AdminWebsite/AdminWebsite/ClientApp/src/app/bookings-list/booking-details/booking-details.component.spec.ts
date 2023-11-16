@@ -26,6 +26,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
+import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -75,6 +76,7 @@ export class BookingDetailsTestData {
             'email1@hmcts.net',
             'Applicant',
             'Representative',
+            HearingRoleCodes.Representative,
             'Alan Brake',
             '',
             'ABC Solicitors',
@@ -94,6 +96,7 @@ export class BookingDetailsTestData {
             'email2@hmcts.net',
             'Applicant',
             'Litigant in person',
+            HearingRoleCodes.Applicant,
             'Roy Bark',
             '',
             'ABC Solicitors',
@@ -113,6 +116,7 @@ export class BookingDetailsTestData {
             'email3@hmcts.net',
             'Respondent',
             'Litigant in person',
+            HearingRoleCodes.Respondent,
             'Fill',
             '',
             'ABC Solicitors',

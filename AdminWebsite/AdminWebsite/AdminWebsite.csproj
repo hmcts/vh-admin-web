@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="6.0.3" />
-    <PackageReference Include="BookingsApi.Client" Version="1.47.15" />
+    <PackageReference Include="BookingsApi.Client" Version="1.49.10" />
     <PackageReference Include="LaunchDarkly.ServerSdk" Version="7.0.3" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.51.0" />
@@ -74,10 +74,30 @@
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\e2e\features\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <Compile Remove="ClientApp\.angular\**" />
+    <EmbeddedResource Remove="ClientApp\.angular\**" />
+    <Content Remove="ClientApp\.angular\**" />
+    <None Remove="ClientApp\.angular\**" />
+    <Compile Remove="ClientApp\coverage\**" />
+    <EmbeddedResource Remove="ClientApp\coverage\**" />
+    <Content Remove="ClientApp\coverage\**" />
+    <None Remove="ClientApp\coverage\**" />
+    <Compile Remove="ClientApp\dist\**" />
+    <EmbeddedResource Remove="ClientApp\dist\**" />
+    <Content Remove="ClientApp\dist\**" />
+    <None Remove="ClientApp\dist\**" />
+    <Compile Remove="ClientApp\jasmine-tests\**" />
+    <EmbeddedResource Remove="ClientApp\jasmine-tests\**" />
+    <Content Remove="ClientApp\jasmine-tests\**" />
+    <None Remove="ClientApp\jasmine-tests\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="ClientApp\dist\assets\images\favicons\manifest.json" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

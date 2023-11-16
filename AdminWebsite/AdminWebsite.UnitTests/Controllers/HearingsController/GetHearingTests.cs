@@ -174,7 +174,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_ok_status_if_hearing_id_is_validV2()
         {
             // Arrange
-            _featureToggle.Setup(e => e.ReferenceDataToggle()).Returns(true);
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             _mocker.Mock<IBookingsApiClient>().Setup(x => 
                     x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>())).ReturnsAsync(_vhExistingHearingV2);
 
