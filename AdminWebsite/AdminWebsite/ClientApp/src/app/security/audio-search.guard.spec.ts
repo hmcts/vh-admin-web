@@ -19,7 +19,7 @@ describe('audiosearchguard', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                AuthGuard,
+                AudioSearchGuard,
                 { provide: LaunchDarklyService, useClass: MockLaunchDarklyService },
                 { provide: Router, useValue: router },
                 { provide: Logger, useValue: loggerSpy }
@@ -29,16 +29,16 @@ describe('audiosearchguard', () => {
         audioSearchGuard = TestBed.inject(AudioSearchGuard);
     });
 
-    describe('when logged in with successful authentication', () => {
+    describe('when toggle off with successful authentication', () => {
         it('canActivate should return true', () => {
-            launchDarklyService.setAudioSearchFlag(true);
+            launchDarklyService.setAudioSearchFlag(false);
             audioSearchGuard.canActivate().subscribe(result => expect(result).toBeTruthy());
         });
     });
 
-    describe('when login failed with unsuccessful authentication', () => {
+    describe('when toggle is on with successful authentication', () => {
         it('canActivate should return false', fakeAsync(() => {
-            launchDarklyService.setAudioSearchFlag(false);
+            launchDarklyService.setAudioSearchFlag(true);
             audioSearchGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
         }));
     });

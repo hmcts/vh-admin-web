@@ -1,5 +1,6 @@
 import { OpenIdConfiguration, LoginResponse, AuthenticatedResult, ConfigAuthenticatedResult } from 'angular-auth-oidc-client';
 import { LDFlagValue } from 'launchdarkly-js-client-sdk';
+import { Observable, of } from 'rxjs';
 
 class MockLoginResponse implements LoginResponse {
     constructor(isAuthenticated: boolean) {
@@ -19,7 +20,7 @@ export class MockLaunchDarklyService {
     setAudioSearchFlag(flag: boolean) {
         this.audioSearchFlag = flag;
     }
-    getFlag<T>(flagKey: string, defaultValue: LDFlagValue = false): T {
-        return this.audioSearchFlag as T;
+    getFlag<T>(flagKey: string, defaultValue: LDFlagValue = false): Observable<T> {
+        return of(this.audioSearchFlag as T);
     }
 }
