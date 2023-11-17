@@ -18,11 +18,11 @@ export class AudioSearchGuard implements CanActivate {
             .pipe(
                 map((result) => {
                     if (result) {
-                        this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: ` + result);
+                        this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
                         this.router.navigate([`/${PageUrls.Login}`]);
                         return false;
                     }
-                    this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: ` + result);
+                    this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
                     return true;
                 })
             );
