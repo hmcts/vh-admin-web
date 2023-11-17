@@ -4,6 +4,7 @@ import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
     selector: 'app-search-for-judicial-member',
@@ -11,6 +12,7 @@ import { JudicialMemberDto } from '../models/add-judicial-member.model';
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
 export class SearchForJudicialMemberComponent {
+    errorMessages = Constants.Error;
     readonly NotificationDelayTime = 1200;
 
     form: FormGroup<SearchForJudicialMemberForm>;
@@ -22,7 +24,12 @@ export class SearchForJudicialMemberComponent {
     @Input() set existingJudicialMember(judicialMember: JudicialMemberDto) {
         if (judicialMember) {
             this.form.setValue(
-                { judiciaryEmail: judicialMember.email, displayName: judicialMember.displayName },
+                {
+                    judiciaryEmail: judicialMember.email,
+                    displayName: judicialMember.displayName,
+                    optionalContactEmail: judicialMember.optionalContactEmail,
+                    optionalContactTelephone: judicialMember.optionalContactTelephone
+                },
                 { emitEvent: false, onlySelf: true }
             );
             this.judicialMember = judicialMember;
@@ -45,7 +52,9 @@ export class SearchForJudicialMemberComponent {
     createForm() {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
             judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
-            displayName: new FormControl<string>('')
+            displayName: new FormControl<string>(''),
+            optionalContactTelephone: new FormControl<string>('', [Validators.pattern(Constants.PhonePattern)]),
+            optionalContactEmail: new FormControl<string>('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)])
         });
 
         this.form.controls.judiciaryEmail.valueChanges
@@ -61,8 +70,11 @@ export class SearchForJudicialMemberComponent {
                     this.showResult = false;
                     this.form.reset({
                         judiciaryEmail: '',
-                        displayName: ''
+                        displayName: '',
+                        optionalContactTelephone: '',
+                        optionalContactEmail: ''
                     });
+                    this.judicialMember = null;
                 }
 
                 if (this.form.controls.judiciaryEmail.invalid) {
@@ -88,7 +100,12 @@ export class SearchForJudicialMemberComponent {
 
     selectJudicialMember(judicialMember: JudiciaryPerson) {
         this.form.setValue(
-            { judiciaryEmail: judicialMember.email, displayName: judicialMember.full_name },
+            {
+                judiciaryEmail: judicialMember.email,
+                displayName: judicialMember.full_name,
+                optionalContactTelephone: '',
+                optionalContactEmail: ''
+            },
             { emitEvent: false, onlySelf: true }
         );
         this.judicialMember = new JudicialMemberDto(
@@ -97,7 +114,8 @@ export class SearchForJudicialMemberComponent {
             judicialMember.full_name,
             judicialMember.email,
             judicialMember.work_phone,
-            judicialMember.personal_code
+            judicialMember.personal_code,
+            judicialMember.is_generic
         );
 
         this.showResult = false;
@@ -105,10 +123,14 @@ export class SearchForJudicialMemberComponent {
 
     confirmJudiciaryMemberWithDisplayName() {
         this.judicialMember.displayName = this.form.controls.displayName.value;
+        this.judicialMember.optionalContactTelephone = this.form.controls.optionalContactTelephone.value;
+        this.judicialMember.optionalContactEmail = this.form.controls.optionalContactEmail.value;
         this.judicialMemberSelected.emit(this.judicialMember);
         this.form.reset({
             judiciaryEmail: '',
-            displayName: ''
+            displayName: '',
+            optionalContactTelephone: '',
+            optionalContactEmail: ''
         });
         this.form.controls.displayName.removeValidators(Validators.required);
     }
@@ -117,4 +139,6 @@ export class SearchForJudicialMemberComponent {
 interface SearchForJudicialMemberForm {
     judiciaryEmail: FormControl<string>;
     displayName: FormControl<string>;
+    optionalContactTelephone: FormControl<string>;
+    optionalContactEmail: FormControl<string>;
 }

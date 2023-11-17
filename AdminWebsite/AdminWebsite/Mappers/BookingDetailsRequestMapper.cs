@@ -66,7 +66,9 @@ public static class BookingDetailsRequestMapper
             {
                 DisplayName = jp.DisplayName,
                 HearingRoleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role, ignoreCase:true),
-                PersonalCode = jp.PersonalCode
+                PersonalCode = jp.PersonalCode,
+                OptionalContactTelephone = jp.OptionalContactTelephone,
+                OptionalContactEmail = jp.OptionalContactEmail
             }).ToList(),
             HearingRoomName = bookingDetails.HearingRoomName,
             OtherInformation = bookingDetails.OtherInformation,

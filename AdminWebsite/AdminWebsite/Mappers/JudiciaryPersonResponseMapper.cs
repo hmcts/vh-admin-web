@@ -15,7 +15,8 @@ namespace AdminWebsite.Mappers
                 LastName = judiciaryPersonResponse.LastName,
                 FullName = judiciaryPersonResponse.FullName,
                 PersonalCode = judiciaryPersonResponse.PersonalCode,
-                WorkPhone = judiciaryPersonResponse.WorkPhone
+                WorkPhone = judiciaryPersonResponse.WorkPhone,
+                IsGeneric = judiciaryPersonResponse.IsGeneric
             };
         }
         

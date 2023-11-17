@@ -5549,6 +5549,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
     personal_code?: string | undefined;
     role?: string | undefined;
     display_name?: string | undefined;
+    optional_contact_telephone?: string | undefined;
+    optional_contact_email?: string | undefined;
 
     constructor(data?: IJudiciaryParticipantRequest) {
         if (data) {
@@ -5563,6 +5565,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
             this.personal_code = _data['personal_code'];
             this.role = _data['role'];
             this.display_name = _data['display_name'];
+            this.optional_contact_telephone = _data['optional_contact_telephone'];
+            this.optional_contact_email = _data['optional_contact_email'];
         }
     }
 
@@ -5578,6 +5582,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
         data['personal_code'] = this.personal_code;
         data['role'] = this.role;
         data['display_name'] = this.display_name;
+        data['optional_contact_telephone'] = this.optional_contact_telephone;
+        data['optional_contact_email'] = this.optional_contact_email;
         return data;
     }
 }
@@ -5586,6 +5592,8 @@ export interface IJudiciaryParticipantRequest {
     personal_code?: string | undefined;
     role?: string | undefined;
     display_name?: string | undefined;
+    optional_contact_telephone?: string | undefined;
+    optional_contact_email?: string | undefined;
 }
 
 export class LinkedParticipantRequest implements ILinkedParticipantRequest {
@@ -6763,6 +6771,8 @@ export class JudiciaryPerson implements IJudiciaryPerson {
     work_phone?: string | undefined;
     /** The Judiciary person's unique personal code */
     personal_code?: string | undefined;
+    /** Judiciary person's generic status */
+    is_generic?: boolean;
 
     constructor(data?: IJudiciaryPerson) {
         if (data) {
@@ -6781,6 +6791,7 @@ export class JudiciaryPerson implements IJudiciaryPerson {
             this.email = _data['email'];
             this.work_phone = _data['work_phone'];
             this.personal_code = _data['personal_code'];
+            this.is_generic = _data['is_generic'];
         }
     }
 
@@ -6800,6 +6811,7 @@ export class JudiciaryPerson implements IJudiciaryPerson {
         data['email'] = this.email;
         data['work_phone'] = this.work_phone;
         data['personal_code'] = this.personal_code;
+        data['is_generic'] = this.is_generic;
         return data;
     }
 }
@@ -6819,6 +6831,8 @@ export interface IJudiciaryPerson {
     work_phone?: string | undefined;
     /** The Judiciary person's unique personal code */
     personal_code?: string | undefined;
+    /** Judiciary person's generic status */
+    is_generic?: boolean;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {

@@ -13,6 +13,28 @@
     <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
     <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
   </div>
+  <div *ngIf="judicialMember && judicialMember.isGeneric">
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.optionalContactTelephone.invalid }">
+      <p *ngIf="form.controls.optionalContactTelephone.invalid" id="optional-contact-telephone-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ errorMessages.PhoneErrorMsg }}
+      </p>
+      <label class="govuk-label" for="judiciaryOptionalContactTelephoneInput">Optional Contact Telephone</label>
+      <input
+        id="judiciaryOptionalContactTelephone"
+        class="govuk-input"
+        type="text"
+        formControlName="optionalContactTelephone"
+        tabindex="3"
+      />
+    </div>
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.controls.optionalContactEmail.invalid }">
+      <p *ngIf="form.controls.optionalContactEmail.invalid" id="optional-contact-email-error" class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ errorMessages.EmailErrorMsg }}
+      </p>
+      <label class="govuk-label" for="judiciaryOptionalContactEmailInput">Optional Contact Email</label>
+      <input id="judiciaryOptionalContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="4" />
+    </div>
+  </div>
   <button
     *ngIf="judicialMember && form.valid"
     id="confirmJudiciaryMemberBtn"
