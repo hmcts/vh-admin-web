@@ -296,23 +296,29 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = bookingDetails
             };
 
-            const string expectedExceptionResponse = "exception";
-
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
+            const string key = "ScheduledDateTime";
+            const string errorMessage = "ScheduledDateTime cannot be in the past";
+            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                {key, new[] {errorMessage}},
+            });
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .Throws(new BookingsApiException("", (int) HttpStatusCode.BadRequest, expectedExceptionResponse, null, null));
+                .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));
             
-
             // Act
             var result = await _controller.Post(bookingRequest);
 
             // Assert
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestObjectResult = (BadRequestObjectResult) result.Result;
-            badRequestObjectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            badRequestObjectResult.Value.Should().Be(expectedExceptionResponse);
+            result.Result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result.Result;
             
+            var validationProblems = (ValidationProblemDetails)objectResult.Value;
+            validationProblems.Should().NotBeNull();
+            validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
+            validationProblems.Errors[key][0].Should().Be(errorMessage);
+
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<AdminWebsite.Contracts.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
