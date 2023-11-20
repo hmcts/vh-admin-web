@@ -37,12 +37,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const workAllocationFlag$ = this.launchDarklyService
             .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
             .pipe(takeUntil(this.destroyed$));
-        const audioSearchFlag$ = this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.audioSearch)
-            .pipe(takeUntil(this.destroyed$));
-        const dom1FeatureFlag$ = this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.dom1Integration)
-            .pipe(takeUntil(this.destroyed$));
+        const audioSearchFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.audioSearch).pipe(takeUntil(this.destroyed$));
+        const dom1FeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.dom1Integration).pipe(takeUntil(this.destroyed$));
 
         combineLatest([workAllocationFlag$, audioSearchFlag$, dom1FeatureFlag$]).subscribe(
             ([workAllocationFlag, audioSearchFlag, dom1FeatureFlag]) => {

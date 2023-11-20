@@ -13,18 +13,16 @@ export class AudioSearchGuard implements CanActivate {
     constructor(private launchDarklyService: LaunchDarklyService, private router: Router, private logger: Logger) {}
 
     canActivate(): Observable<boolean> {
-        return this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.audioSearch)
-            .pipe(
-                map((result) => {
-                    if (result) {
-                        this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
-                        this.router.navigate([`/${PageUrls.Login}`]);
-                        return false;
-                    }
-                    this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
-                    return true;
-                })
-            );
+        return this.launchDarklyService.getFlag<boolean>(FeatureFlags.audioSearch).pipe(
+            map(result => {
+                if (result) {
+                    this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
+                    this.router.navigate([`/${PageUrls.Login}`]);
+                    return false;
+                }
+                this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
+                return true;
+            })
+        );
     }
 }
