@@ -326,7 +326,7 @@ export class VideoHearingsService {
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
-        hearing.judiciaryParticipants = response.judiciary_participants.map(judiciaryParticipant =>
+        hearing.judiciaryParticipants = response.judiciary_participants?.map(judiciaryParticipant =>
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         );
         hearing.isConfirmed = Boolean(response.confirmed_date);

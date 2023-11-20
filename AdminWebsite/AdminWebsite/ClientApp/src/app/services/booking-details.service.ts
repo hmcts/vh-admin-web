@@ -47,7 +47,7 @@ export class BookingDetailsService {
         const judges: Array<ParticipantDetailsModel> = [];
         const judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
 
-        const mappedJohs = hearingResponse.judiciary_participants.map(
+        const mappedJohs = hearingResponse.judiciary_participants?.map(
             j =>
                 new JudiciaryParticipantDetailsModel(
                     j.title,
