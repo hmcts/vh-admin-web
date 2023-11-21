@@ -217,9 +217,11 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
-        hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
         hearing.audio_recording_required = booking.audio_recording_required;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
+        if (booking.judiciaryParticipants?.length > 0) {
+            hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
+        }
         return hearing;
     }
 
@@ -326,7 +328,7 @@ export class VideoHearingsService {
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
         hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints, response.participants);
-        hearing.judiciaryParticipants = response.judiciary_participants.map(judiciaryParticipant =>
+        hearing.judiciaryParticipants = response.judiciary_participants?.map(judiciaryParticipant =>
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         );
         hearing.isConfirmed = Boolean(response.confirmed_date);
