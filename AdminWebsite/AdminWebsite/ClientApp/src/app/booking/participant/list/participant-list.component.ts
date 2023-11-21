@@ -164,13 +164,13 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     private getJudicialPanelMembers(): ParticipantModel[] {
-        console.log(this.hearing.judiciaryParticipants);
-        if (!this.hearing.judiciaryParticipants) {
+       if (this.hearing.judiciaryParticipants) {
+            console.log(this.hearing.judiciaryParticipants);
             return this.hearing.judiciaryParticipants
                 .filter(j => j.roleCode === 'PanelMember')
                 .sort((a, b) => a.displayName.localeCompare(b.displayName))
                 .map(h => ParticipantModel.fromJudicialMember(h, false));
-        }
+       }
     }
 
     private getPanelMembers() {
