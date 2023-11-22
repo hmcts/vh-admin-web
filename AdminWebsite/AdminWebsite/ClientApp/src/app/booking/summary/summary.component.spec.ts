@@ -377,6 +377,7 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.linked_participants).toEqual([]);
         expect(component.hearing.participants).toEqual([]);
     });
+
     it('should remove interpreter and clear the linked participant list on remove interpreter', () => {
         component.ngOnInit();
         component.hearing.participants = [];
