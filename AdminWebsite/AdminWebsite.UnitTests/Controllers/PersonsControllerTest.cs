@@ -139,7 +139,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
 
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                .ReturnsAsync(new List<PersonResponse>());
+                .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
@@ -154,7 +154,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
 
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                .ReturnsAsync(new List<PersonResponse>());
+                .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));

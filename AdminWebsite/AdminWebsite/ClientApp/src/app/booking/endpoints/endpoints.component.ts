@@ -89,10 +89,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         for (const control of this.endpoints.controls) {
             const endpointModel = new EndpointModel();
             if (control.value.displayName.trim() !== '') {
-                const displayNameText = SanitizeInputText(control.value.displayName);
-                endpointModel.displayName = displayNameText;
+                let defenceAdvocate = null;
+                if (control.value.defenceAdvocate !== this.constants.None) {
+                    defenceAdvocate = control.value.defenceAdvocate;
+                }
+                endpointModel.displayName = SanitizeInputText(control.value.displayName);
                 endpointModel.id = control.value.id;
-                endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
+                endpointModel.defenceAdvocate = defenceAdvocate;
                 newEndpointsArray.push(endpointModel);
             }
         }

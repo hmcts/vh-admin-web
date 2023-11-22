@@ -36,6 +36,7 @@ import { SummaryComponent } from './summary.component';
 import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -122,6 +123,7 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
 ]);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
 describe('SummaryComponent with valid request', () => {
@@ -161,7 +163,8 @@ describe('SummaryComponent with valid request', () => {
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
                 LongDatetimePipe,
-                RemoveInterpreterPopupComponent
+                RemoveInterpreterPopupComponent,
+                TruncatableTextComponent
             ],
             imports: [RouterTestingModule]
         }).compileComponents();
@@ -374,6 +377,7 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.linked_participants).toEqual([]);
         expect(component.hearing.participants).toEqual([]);
     });
+
     it('should remove interpreter and clear the linked participant list on remove interpreter', () => {
         component.ngOnInit();
         component.hearing.participants = [];
@@ -618,7 +622,8 @@ describe('SummaryComponent  with invalid request', () => {
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
                 LongDatetimePipe,
-                RemoveInterpreterPopupComponent
+                RemoveInterpreterPopupComponent,
+                TruncatableTextComponent
             ]
         }).compileComponents();
     }));
@@ -676,7 +681,8 @@ describe('SummaryComponent  with existing request', () => {
                 RemovePopupComponent,
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
-                LongDatetimePipe
+                LongDatetimePipe,
+                TruncatableTextComponent
             ]
         }).compileComponents();
     }));

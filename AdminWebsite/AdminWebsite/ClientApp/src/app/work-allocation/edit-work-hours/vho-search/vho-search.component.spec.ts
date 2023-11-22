@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { VhoSearchComponent } from './vho-search.component';
 import { VhoNonAvailabilityWorkHoursResponse, VhoWorkHoursResponse } from '../../../services/clients/api-client';
 
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Logger } from '../../../services/logger';
 import { HoursType } from '../../../common/model/hours-type';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
@@ -27,6 +27,7 @@ describe('VhoSearchComponent', () => {
         ]);
         logger = jasmine.createSpyObj('Logger', ['debug']);
         await TestBed.configureTestingModule({
+            imports: [ReactiveFormsModule],
             declarations: [VhoSearchComponent],
             providers: [
                 FormBuilder,

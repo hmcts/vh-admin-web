@@ -2,6 +2,16 @@
 <div class="participant-list" id="participants-list">
   <app-participant-item
     class="participant-item"
+    *ngFor="let p of sortedJudiciaryMembers"
+    [hearing]="hearing"
+    [participant]="p"
+    [canEdit]="canEditParticipant(p)"
+    [isSummaryPage]="isSummaryPage"
+    (edit)="editParticipant($event)"
+    (remove)="removeParticipant($event)"
+  ></app-participant-item>
+  <app-participant-item
+    class="participant-item"
     *ngFor="let p of sortedParticipants"
     [hearing]="hearing"
     [participant]="p"

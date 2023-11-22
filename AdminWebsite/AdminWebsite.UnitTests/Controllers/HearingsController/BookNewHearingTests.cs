@@ -242,10 +242,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_book_hearing_with_reference_data_flag_on()
+        public async Task Should_book_hearing_with_use_v2_api_flag_on()
         {
             // Arrange
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.ReferenceDataToggle()).Returns(true);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.UseV2Api()).Returns(true);
             var bookingDetails = InitHearingForV2Test();
             
             var bookingRequest = new BookHearingRequest
@@ -259,7 +259,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname2.lname2@hmcts.net")
                 .WithParticipant("Individual", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Staff Member","staff.member@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()))
                 .ReturnsAsync(hearingDetailsResponse);
@@ -297,23 +296,29 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = bookingDetails
             };
 
-            const string expectedExceptionResponse = "exception";
-
             _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
 
+            const string key = "ScheduledDateTime";
+            const string errorMessage = "ScheduledDateTime cannot be in the past";
+            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                {key, new[] {errorMessage}},
+            });
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .Throws(new BookingsApiException("", (int) HttpStatusCode.BadRequest, expectedExceptionResponse, null, null));
+                .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));
             
-
             // Act
             var result = await _controller.Post(bookingRequest);
 
             // Assert
-            result.Result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestObjectResult = (BadRequestObjectResult) result.Result;
-            badRequestObjectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            badRequestObjectResult.Value.Should().Be(expectedExceptionResponse);
+            result.Result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result.Result;
             
+            var validationProblems = (ValidationProblemDetails)objectResult.Value;
+            validationProblems.Should().NotBeNull();
+            validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
+            validationProblems.Errors[key][0].Should().Be(errorMessage);
+
             _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<AdminWebsite.Contracts.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
@@ -415,65 +420,76 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Participants = new List<ParticipantRequest>
                 {
-                    new ()
+                    new()
                     {
                         ContactEmail = "contact1@hmcts.net",
                         HearingRoleCode = "APPL", DisplayName = "display name1",
                         FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
                         OrganisationName = "", Representee = "", TelephoneNumber = ""
                     },
-                    new ()
+                    new()
                     {
                         ContactEmail = "contact2@hmcts.net",
                         HearingRoleCode = "APPL", DisplayName = "display name2",
                         FirstName = "fname2", MiddleNames = "", LastName = "lname2", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username2@hmcts.net"
                     },
-                    new ()
+                    new()
                     {
                         ContactEmail = "contact3@hmcts.net",
                         HearingRoleCode = "APPL", DisplayName = "display name3",
                         FirstName = "fname3", MiddleNames = "", LastName = "lname3", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username3@hmcts.net"
                     },
-                    new ()
+                    new()
                     {
                         ContactEmail = "contact4@hmcts.net",
                         HearingRoleCode = "PANL", DisplayName = "display name4",
                         FirstName = "fname4", MiddleNames = "", LastName = "lname4", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username4@hmcts.net"
                     },
-                    new ()
+                    new()
                     {
                         ContactEmail = "contact5@hmcts.net",
                         HearingRoleCode = "INTP", DisplayName = "display name2",
                         FirstName = "fname5", MiddleNames = "", LastName = "lname5", OrganisationName = "",
                         Representee = "", TelephoneNumber = "", Username = "username5@hmcts.net"
-                    },
-                    new ()
+                    }
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>()
+                {
+                    new()
                     {
-                        ContactEmail = "judge@hmcts.net",
-                        HearingRoleCode = "JUDG", DisplayName = "Judge Fudge",
-                        FirstName = "Jack", MiddleNames = "", LastName = "Fudge",
-                        Username = "judge.fudge@hmcts.net", OrganisationName = "", Representee = "",
-                        TelephoneNumber = ""
+                        DisplayName = "display name4", PersonalCode = "12345678", Role = "PanelMember"
+                    },
+                    new()
+                    {
+                        DisplayName = "Judge Fudge", PersonalCode = "12345678", Role = "Judge"
                     }
                 },
                 Endpoints = new List<EndpointRequest>
                 {
-                    new ()
+                    new()
                         {DisplayName = "displayname1", DefenceAdvocateContactEmail = "username1@hmcts.net"},
-                    new ()
+                    new()
                         {DisplayName = "displayname2", DefenceAdvocateContactEmail = "fname2.lname2@hmcts.net"},
                 },
                 LinkedParticipants = new List<LinkedParticipantRequest>
                 {
-                    new () { ParticipantContactEmail = "contact1@hmcts.net", LinkedParticipantContactEmail = "contact5@hmcts.net", Type = LinkedParticipantType.Interpreter },
-                    new () { ParticipantContactEmail = "contact5@hmcts.net", LinkedParticipantContactEmail = "contact1@hmcts.net", Type = LinkedParticipantType.Interpreter }
+                    new()
+                    {
+                        ParticipantContactEmail = "contact1@hmcts.net",
+                        LinkedParticipantContactEmail = "contact5@hmcts.net", Type = LinkedParticipantType.Interpreter
+                    },
+                    new()
+                    {
+                        ParticipantContactEmail = "contact5@hmcts.net",
+                        LinkedParticipantContactEmail = "contact1@hmcts.net", Type = LinkedParticipantType.Interpreter
+                    }
                 },
                 Cases = new List<CaseRequest>
                 {
-                    new ()
+                    new()
                     {
                         Name = "Case1", Number = "001", IsLeadCase = true
                     }

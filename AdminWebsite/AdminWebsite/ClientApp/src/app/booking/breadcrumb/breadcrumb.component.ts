@@ -4,8 +4,9 @@ import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
@@ -18,22 +19,29 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     @Input()
     canNavigate: boolean;
     ejudFeatureFlag = false;
+    addJudiciaryMemberFlag = false;
     destroyed$ = new Subject<void>();
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {
-        this.breadcrumbItems = JSON.parse(JSON.stringify(BreadcrumbItems));
-    }
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {}
 
-    async ngOnInit() {
+    ngOnInit() {
         this.currentRouter = this.router.url;
-        this.featureService
-            .getFlag<boolean>(FeatureFlags.eJudFeature)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(result => {
-                this.ejudFeatureFlag = result;
-            });
+        const ejudFeatureFlag$ = this.featureService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
+        const addJudicalMembers$ = this.featureService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
 
-        this.initBreadcrumb();
+        combineLatest([ejudFeatureFlag$, addJudicalMembers$]).subscribe(([ejudFeatureFlag, addJudiciaryMemberFlag]) => {
+            this.ejudFeatureFlag = ejudFeatureFlag;
+            this.addJudiciaryMemberFlag = addJudiciaryMemberFlag;
+
+            let tempBreadcrumbModel: BreadcrumbItemModel[];
+            if (this.addJudiciaryMemberFlag) {
+                tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
+            } else {
+                tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AddJudicialOfficeHolders);
+            }
+            this.breadcrumbItems = tempBreadcrumbModel;
+            this.initBreadcrumb();
+        });
     }
 
     ngOnDestroy(): void {

@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary-participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { Constants } from '../../common/constants';
+import {} from 'src/app/common/model/participant.model';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -10,12 +12,21 @@ import { Constants } from '../../common/constants';
 })
 export class BookingParticipantListComponent {
     private _participants: Array<ParticipantDetailsModel> = [];
+    private _judiciaryParticipants: Array<JudiciaryParticipantDetailsModel> = [];
     sortedParticipants: ParticipantDetailsModel[] = [];
+    sortedJudiciaryMembers: JudiciaryParticipantDetailsModel[] = [];
 
     @Input()
     set participants(participants: Array<ParticipantDetailsModel>) {
         this._participants = participants;
         this.sortParticipants();
+        this.sortJudiciaryMembers();
+    }
+    @Input()
+    set judiciaryParticipants(judiciaryParticipants: Array<JudiciaryParticipantDetailsModel>) {
+        this._judiciaryParticipants = judiciaryParticipants;
+        this.sortParticipants();
+        this.sortJudiciaryMembers();
     }
     @Input()
     hearing: BookingsDetailsModel;
@@ -23,8 +34,6 @@ export class BookingParticipantListComponent {
     judges: Array<ParticipantDetailsModel> = [];
     @Input()
     vh_officer_admin: boolean;
-
-    constructor() {}
 
     get participants(): Array<ParticipantDetailsModel> {
         let indexItem = 0;
@@ -73,6 +82,28 @@ export class BookingParticipantListComponent {
         const sorted = [...judges, ...panelMembersAndWingers, ...staffMember, ...others, ...observers];
         this.insertInterpreters(interpreters, sorted);
         this.sortedParticipants = sorted;
+    }
+
+    sortJudiciaryMembers() {
+        if (!this._judiciaryParticipants) {
+            return;
+        }
+
+        const judicialJudge = [this._judiciaryParticipants.filter(j => j.roleCode === 'Judge')][0];
+        const judicialPanelMembers = this._judiciaryParticipants.filter(j => j.roleCode === 'PanelMember');
+
+        const sortedJohList = [...judicialJudge, ...judicialPanelMembers];
+
+        sortedJohList.sort((a, b) => {
+            if (a.roleCode.includes('Judge') && !b.roleCode.includes('Judge')) {
+                return -1;
+            } else if (!a.roleCode.includes('Judge') && b.roleCode.includes('Judge')) {
+                return 1;
+            } else {
+                return a.firstName.localeCompare(b.firstName);
+            }
+        });
+        this.sortedJudiciaryMembers = sortedJohList;
     }
 
     private insertInterpreters(interpreters: ParticipantDetailsModel[], sorted: ParticipantDetailsModel[]) {

@@ -82,14 +82,13 @@
       class="govuk-input govuk-!-width-one-half"
       type="text"
       formControlName="caseType"
-      [value]="this.hearing.case_type"
     />
     <div *ngIf="caseTypeInvalid" class="alert alert-danger">
       <span id="caseType-error" class="govuk-error-message"> Please select a case type </span>
     </div>
   </div>
 
-  <div [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div *ngIf="!refDataEnabled" [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
     <!--suppress XmlDuplicatedId -->
     <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">

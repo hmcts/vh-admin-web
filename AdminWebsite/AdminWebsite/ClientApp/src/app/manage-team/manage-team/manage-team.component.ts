@@ -30,6 +30,7 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
     userToDelete: JusticeUserResponse;
     displayRestoreUserPopup = false;
     userToRestore: JusticeUserResponse;
+    isAnErrorMessage = false;
 
     message$ = new BehaviorSubject<string>(null);
     users$: Observable<JusticeUserResponse[]>;
@@ -57,11 +58,12 @@ export class ManageTeamComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.form.controls.inputSearch.valueChanges.subscribe(() => this.displayAddButton$.next(false));
+        this.isAnErrorMessage$.pipe(takeUntil(this.destroyed$)).subscribe(isAnErrorMessage => (this.isAnErrorMessage = isAnErrorMessage));
 
         this.users$ = this.justiceUserService.filteredUsers$.pipe(
             takeUntil(this.destroyed$),
             tap(users => {
-                this.displayAddButton$.next(false);
+                this.displayAddButton$.next(true);
                 this.isAnErrorMessage$.next(false);
                 this.displayMessage$.next(false);
                 this.message$.next(null);

@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { EndpointModel } from '../common/model/endpoint.model';
-import { HearingRoles } from '../common/model/hearing-roles.model';
+import { HearingRoleCodes, HearingRoles } from '../common/model/hearing-roles.model';
 import { ParticipantDetailsModel } from '../common/model/participant-details.model';
+import { JudiciaryParticipantDetailsModel } from '../common/model/judiciary-participant-details.model';
 import { HearingDetailsResponse, ParticipantResponse } from './clients/api-client';
+import { JudicaryRoleCode } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingDetailsService {
@@ -43,6 +45,24 @@ export class BookingDetailsService {
     mapBookingParticipants(hearingResponse: HearingDetailsResponse) {
         const participants: Array<ParticipantDetailsModel> = [];
         const judges: Array<ParticipantDetailsModel> = [];
+        const judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
+
+        const mappedJohs = hearingResponse.judiciary_participants?.map(
+            j =>
+                new JudiciaryParticipantDetailsModel(
+                    j.title,
+                    j.first_name,
+                    j.last_name,
+                    j.full_name,
+                    j.email,
+                    j.work_phone,
+                    j.personal_code,
+                    j.role_code.toString() as JudicaryRoleCode,
+                    j.display_name
+                )
+        );
+        judicialMembers.push(...mappedJohs);
+
         if (hearingResponse.participants && hearingResponse.participants.length > 0) {
             hearingResponse.participants.forEach(p => {
                 const model = new ParticipantDetailsModel(
@@ -55,6 +75,7 @@ export class BookingDetailsService {
                     p.contact_email,
                     p.case_role_name,
                     p.hearing_role_name,
+                    p.hearing_role_code,
                     p.display_name,
                     p.middle_names,
                     p.organisation,
@@ -64,7 +85,6 @@ export class BookingDetailsService {
                     this.isInterpretee(p),
                     p.linked_participants
                 );
-                // model.Interpretee = this.getInterpretee(hearingResponse, p);
                 if (p.user_role_name === this.JUDGE) {
                     judges.push(model);
                 } else {
@@ -73,7 +93,7 @@ export class BookingDetailsService {
             });
         }
 
-        return { judges: judges, participants: participants };
+        return { judges: judges, participants: participants, judicialMembers: judicialMembers };
     }
 
     mapBookingEndpoints(hearingResponse: HearingDetailsResponse): EndpointModel[] {
@@ -95,11 +115,10 @@ export class BookingDetailsService {
 
     private getInterpretee(hearingResponse: HearingDetailsResponse, participant: ParticipantResponse): string {
         let interpreteeDisplayName = '';
-        if (
-            participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER &&
-            participant.linked_participants &&
-            participant.linked_participants.length > 0
-        ) {
+        const isInterpreter =
+            participant.hearing_role_name?.toLowerCase()?.trim() === HearingRoles.INTERPRETER ||
+            participant.hearing_role_code === HearingRoleCodes.Interpreter;
+        if (isInterpreter && participant.linked_participants && participant.linked_participants.length > 0) {
             const interpreteeId = participant.linked_participants[0].linked_id;
             const interpretee = hearingResponse.participants.find(p => p.id === interpreteeId);
             interpreteeDisplayName = interpretee?.display_name;
@@ -108,10 +127,9 @@ export class BookingDetailsService {
     }
 
     private isInterpretee(participant: ParticipantResponse): boolean {
-        return (
-            participant.hearing_role_name.toLowerCase().trim() !== HearingRoles.INTERPRETER &&
-            participant.linked_participants &&
-            participant.linked_participants.length > 0
-        );
+        const isInterpreter =
+            participant.hearing_role_name?.toLowerCase()?.trim() === HearingRoles.INTERPRETER ||
+            participant.hearing_role_code === HearingRoleCodes.Interpreter;
+        return !isInterpreter && participant.linked_participants && participant.linked_participants.length > 0;
     }
 }

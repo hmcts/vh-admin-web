@@ -10,6 +10,7 @@ import {
 import { of, throwError } from 'rxjs';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('UnallocatedHearingsComponent', () => {
     let component: UnallocatedHearingsComponent;
@@ -49,6 +50,7 @@ describe('UnallocatedHearingsComponent', () => {
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_team_leader: true })));
 
         await TestBed.configureTestingModule({
+            imports: [RouterTestingModule],
             declarations: [UnallocatedHearingsComponent],
             providers: [
                 { provide: BHClient, useValue: bHClientSpy },

@@ -24,7 +24,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import { first } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
@@ -73,6 +73,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     judgeAssigned: boolean;
     ejudFeatureFlag = false;
+    useApiV2 = false;
     saveFailedMessages: string[];
 
     constructor(
@@ -95,6 +96,24 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     this.ejudFeatureFlag = result;
                 })
         );
+
+        this.$subscriptions.push(
+            this.featureService
+                .getFlag<boolean>(FeatureFlags.eJudFeature)
+                .pipe(first())
+                .subscribe(result => {
+                    this.ejudFeatureFlag = result;
+                })
+        );
+
+        this.$subscriptions.push(
+            this.featureService
+                .getFlag<boolean>(FeatureFlags.useV2Api)
+                .pipe(first())
+                .subscribe(result => {
+                    this.useApiV2 = result;
+                })
+        );
     }
 
     ngOnInit() {
@@ -115,7 +134,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
-        this.judgeAssigned = this.hearing.participants.filter(e => e.is_judge).length > 0;
+        this.judgeAssigned =
+            this.hearing.participants.filter(e => e.is_judge).length > 0 ||
+            this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
     }
 
     private checkForExistingRequest() {
@@ -141,17 +162,26 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     private confirmRemoveParticipant() {
         const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const title = participant?.title ? `${participant.title}` : '';
-        this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
 
-        const isInterpretee =
-            (participant.linked_participants &&
-                participant.linked_participants.length > 0 &&
-                participant.hearing_role_name.toLowerCase() !== HearingRoles.INTERPRETER) ||
-            this.hearing.participants.some(p => p.interpreterFor === participant.email);
-        if (isInterpretee) {
-            this.showConfirmRemoveInterpretee = true;
-        } else {
+        if (participant) {
+            const title = participant?.title ? `${participant.title}` : '';
+            this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
+
+            const isInterpretee =
+                (participant.linked_participants &&
+                    participant.linked_participants.length > 0 &&
+                    participant.hearing_role_name.toLowerCase() !== HearingRoles.INTERPRETER) ||
+                this.hearing.participants.some(p => p.interpreterFor === participant.email);
+            if (isInterpretee) {
+                this.showConfirmRemoveInterpretee = true;
+            } else {
+                this.showConfirmationRemoveParticipant = true;
+            }
+        }
+
+        const judicalParticipant = this.hearing.judiciaryParticipants?.findIndex(x => x.email === this.selectedParticipantEmail);
+        if (judicalParticipant > -1) {
+            this.removerFullName = this.hearing.judiciaryParticipants[judicalParticipant].fullName;
             this.showConfirmationRemoveParticipant = true;
         }
     }
@@ -182,10 +212,17 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.participants.splice(indexOfParticipant, 1);
             this.removeLinkedParticipant(this.selectedParticipantEmail);
             this.hearing = { ...this.hearing };
-            this.hearingService.updateHearingRequest(this.hearing);
-            this.hearingService.setBookingHasChanged(true);
-            this.bookingService.removeParticipantEmail();
         }
+
+        const judicalParticipant = this.hearing.judiciaryParticipants?.findIndex(x => x.email === this.selectedParticipantEmail);
+        if (judicalParticipant > -1) {
+            this.hearing.judiciaryParticipants.splice(judicalParticipant, 1);
+            this.hearing = { ...this.hearing };
+        }
+
+        this.hearingService.updateHearingRequest(this.hearing);
+        this.hearingService.setBookingHasChanged(true);
+        this.bookingService.removeParticipantEmail();
     }
 
     private retrieveHearingSummary() {
@@ -359,6 +396,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
+                    const noJudgePrior =
+                        this.hearing.status === BookingStatus.BookedWithoutJudge ||
+                        this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
                     this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
@@ -371,7 +411,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         return;
                     }
                     sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                    this.router.navigate([PageUrls.BookingConfirmation]);
+                    if (this.judgeAssigned && noJudgePrior) {
+                        this.showWaitSaving = true;
+                        this.bookingStatusService
+                            .pollForStatus(hearingDetailsResponse.id)
+                            .pipe(
+                                finalize(() => {
+                                    this.showWaitSaving = false;
+                                    this.router.navigate([PageUrls.BookingConfirmation]);
+                                })
+                            )
+                            .subscribe();
+                    } else {
+                        this.router.navigate([PageUrls.BookingConfirmation]);
+                    }
                 },
                 error: error => {
                     this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
@@ -470,6 +523,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     navToAddJudge() {
-        this.router.navigate([PageUrls.AssignJudge]);
+        if (this.useApiV2) {
+            this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
+        } else {
+            this.router.navigate([PageUrls.AssignJudge]);
+        }
     }
 }

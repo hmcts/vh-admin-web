@@ -1,0 +1,37 @@
+<form [formGroup]="form">
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="judiciaryEmailInput">Email</label>
+    <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" tabindex="1" />
+    <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">
+      <li *ngFor="let result of searchResult | slice : 0 : 9" class="vk-showlist-m30" tabindex="2">
+        <span class="vh-a-email" (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
+    <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
+  </div>
+  <button
+    *ngIf="judicialMember && form.valid"
+    id="confirmJudiciaryMemberBtn"
+    class="govuk-button"
+    data-module="govuk-button"
+    (click)="confirmJudiciaryMemberWithDisplayName()"
+  >
+    {{ saveButtonText }}
+  </button>
+</form>
+
+<p *ngIf="showResult && !searchResult?.length">
+  <span class="govuk-body">No results found</span>
+</p>
+
+<div class="govuk-warning-text" *ngIf="showResult && !searchResult?.length">
+  <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    No existing user account found
+  </strong>
+</div>
