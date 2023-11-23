@@ -17,6 +17,7 @@ import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.g
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './security/auth.guard';
 import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
+import { AudioSearchGuard } from './security/audio-search.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -28,7 +29,7 @@ export const routes: Routes = [
     { path: 'error', component: ErrorComponent },
     { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
     { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AuthGuard, AdminGuard, AudioSearchGuard] },
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AuthGuard, AdminGuard] },

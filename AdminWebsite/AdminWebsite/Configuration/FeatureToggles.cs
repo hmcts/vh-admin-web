@@ -13,6 +13,8 @@ namespace AdminWebsite.Configuration
         public bool ReferenceDataToggle();
         public bool UseV2Api();
         public bool EJudEnabled();
+        public bool HrsEnabled();
+        public bool AudioSearchEnabled();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -25,6 +27,9 @@ namespace AdminWebsite.Configuration
         private const string ReferenceDataToggleKey = "reference-data";
         private const string UseV2ApiToggleKey = "use-bookings-api-v2";
         private const string EJudFeatureToggleKey = "ejud-feature";
+        private const string HrsFeatureToggleKey = "hrs-integration";
+        private const string AudioSearchToggleKey = "hide-audio-search-tile";
+        
 
         public FeatureToggles(string sdkKey, string environmentName)
         {
@@ -52,6 +57,16 @@ namespace AdminWebsite.Configuration
         public bool EJudEnabled()
         {
             return GetBoolValueWithKey(EJudFeatureToggleKey);
+        }
+        
+        public bool HrsEnabled()
+        {
+            return GetBoolValueWithKey(HrsFeatureToggleKey);
+        }
+
+        public bool AudioSearchEnabled()
+        {
+            return GetBoolValueWithKey(AudioSearchToggleKey);
         }
 
         public bool UseV2Api()

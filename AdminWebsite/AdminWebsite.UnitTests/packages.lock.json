@@ -89,9 +89,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.3, )",
-        "resolved": "1.44.3",
-        "contentHash": "DeifqS/Lbgy2GhMbZNPZwYB47zwp/rIlHK65J7gE7zLX/l+anfbz8FhyufM9AfjDTcDCEzMlu6XYmp+eDyTYJA==",
+        "requested": "[1.49.4, )",
+        "resolved": "1.49.4",
+        "contentHash": "THMXshzCq8bHCsoU+p79Vmoyh0XoIfFkd13VFve8dzZC/wgE9Z6XmNSRt7SahDgkIlAhOucQVv2TE8avp869MQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -2003,7 +2003,7 @@
           "TimeZoneConverter": "[6.0.1, )",
           "UserApi.Client": "[1.44.2, )",
           "VH.Core.Configuration": "[0.1.13, )",
-          "VideoApi.Client": "[1.44.3, )"
+          "VideoApi.Client": "[1.49.4, )"
         }
       },
       "adminwebsite.testing.common": {
