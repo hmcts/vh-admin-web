@@ -198,10 +198,13 @@ describe('JusticeUsersService', () => {
             const request = new EditJusticeUserRequest({
                 id,
                 username,
+                first_name: firstName,
+                last_name: lastName,
+                contact_number: telephone,
                 roles: roles
             });
 
-            combineLatest([service.allUsers$, service.editJusticeUser(id, username, roles)]).subscribe(
+            combineLatest([service.allUsers$, service.editJusticeUser(id, username, firstName, lastName, telephone, roles)]).subscribe(
                 ([_, result]: [JusticeUserResponse[], JusticeUserResponse]) => {
                     expect(clientApiSpy.getUserList).toHaveBeenCalledTimes(2);
                     expect(result).toEqual(existingUser);

@@ -102,9 +102,9 @@ describe('JusticeUserFormComponent', () => {
 
             // assert
             expect(component.form.controls.contactTelephone.disabled).toBeTruthy();
-            expect(component.form.controls.firstName.disabled).toBeTruthy();
-            expect(component.form.controls.lastName.disabled).toBeTruthy();
-            expect(component.form.controls.username.disabled).toBeTruthy();
+            expect(component.form.controls.firstName.disabled).toBeFalsy();
+            expect(component.form.controls.lastName.disabled).toBeFalsy();
+            expect(component.form.controls.username.disabled).toBeFalsy();
         });
     });
 

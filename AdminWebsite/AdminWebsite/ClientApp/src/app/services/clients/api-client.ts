@@ -8286,6 +8286,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
     roles?: JusticeUserRole[] | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_number?: string | undefined;
 
     constructor(data?: IEditJusticeUserRequest) {
         if (data) {
@@ -8303,6 +8306,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
                 this.roles = [] as any;
                 for (let item of _data['roles']) this.roles!.push(item);
             }
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_number = _data['contact_number'];
         }
     }
 
@@ -8321,6 +8327,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
             data['roles'] = [];
             for (let item of this.roles) data['roles'].push(item);
         }
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_number'] = this.contact_number;
         return data;
     }
 }
@@ -8329,6 +8338,9 @@ export interface IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
     roles?: JusticeUserRole[] | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_number?: string | undefined;
 }
 
 export enum JusticeUserRole {
