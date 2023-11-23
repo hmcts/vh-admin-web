@@ -42,7 +42,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 import { HomeComponent } from './home/home.component';
 import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
-
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
 }

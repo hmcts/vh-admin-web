@@ -8,7 +8,8 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import {SecurityConfigService} from "./security/services/security-config.service";
+import {ISecurityService} from "./security/services/security-service.interface";
 
 @Component({
     selector: 'app-root',
@@ -34,8 +35,10 @@ export class AppComponent implements OnInit {
     title = 'Book hearing';
     loggedIn: boolean;
     menuItemIndex: number;
+    private currentIdp: string;
+    private securityService: ISecurityService;
     constructor(
-        private oidcSecurityService: OidcSecurityService,
+        private secrurityConfigService: SecurityConfigService,
         private configService: ConfigService,
         private router: Router,
         private window: WindowRef,
@@ -48,6 +51,11 @@ export class AppComponent implements OnInit {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
 
+        this.secrurityConfigService.currentIdpConfigId$.subscribe(idp => {
+            this.currentIdp = idp;
+        });
+        this.securityService = this.secrurityConfigService.getSecurityService();
+
         connection.hasConnection$.subscribe(connectionStatus => {
             if (!connectionStatus) {
                 this.router.navigate(['/error']);
@@ -58,10 +66,13 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.checkBrowser();
         const currentUrl = this.window.getLocation().href;
-        this.configService.getClientSettings().subscribe(clientSettings => {
-            this.oidcSecurityService.checkAuth().subscribe(response => {
-                this.loggedIn = response.isAuthenticated;
-                if (!this.loggedIn) {
+        this.configService.getClientSettings().subscribe(() => {
+            this.securityService.checkAuth(undefined, this.currentIdp).subscribe(response => {
+                if(currentUrl.includes('reform') && !response.isAuthenticated){
+                    this.router.navigate(['/reform'], { queryParams: { returnUrl: currentUrl } });
+                    return;
+                }
+                else if (!response.isAuthenticated) {
                     this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
                     return;
                 }

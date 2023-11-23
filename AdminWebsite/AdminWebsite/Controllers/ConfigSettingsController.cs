@@ -70,6 +70,15 @@ namespace AdminWebsite.Controllers
             clientSettings.RedirectUri = idpConfiguration.RedirectUri;
             clientSettings.PostLogoutRedirectUri = idpConfiguration.PostLogoutRedirectUri;
 
+            //settings for reform tenant login page
+            clientSettings.ReformTenantConfig = new AzureConfiguration
+            {
+                ClientId = _azureAdConfiguration.ClientId,
+                TenantId = _azureAdConfiguration.TenantId,
+                ResourceId = _azureAdConfiguration.ResourceId,
+                RedirectUri = _azureAdConfiguration.RedirectUri,
+                PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri
+            };
             return Ok(clientSettings);
         }
     }

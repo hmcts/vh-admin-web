@@ -1,6 +1,7 @@
 import { OnInit, Component, Injectable } from '@angular/core';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { UserIdentityService } from '../services/user-identity.service';
+import {SecurityConfigService} from "./services/security-config.service";
+import {ISecurityService} from "./services/security-service.interface";
 
 @Component({
     selector: 'app-logout',
@@ -8,13 +9,20 @@ import { UserIdentityService } from '../services/user-identity.service';
 })
 @Injectable()
 export class LogoutComponent implements OnInit {
-    constructor(private oidcSecurityService: OidcSecurityService, private userIdentityService: UserIdentityService) {}
+    private securityService: ISecurityService;
+    private currentIdp: string;
+    constructor(private configService: SecurityConfigService, private userIdentityService: UserIdentityService) {
+        this.configService.currentIdpConfigId$.subscribe(idp => {
+            this.currentIdp = idp;
+        });
+        this.securityService = this.configService.getSecurityService();
+    }
 
     ngOnInit() {
-        this.oidcSecurityService.isAuthenticated$.subscribe(auth => {
-            if (auth.isAuthenticated) {
+        this.securityService.isAuthenticated(this.currentIdp).subscribe(auth => {
+            if (auth) {
                 this.userIdentityService.clearUserProfile();
-                this.oidcSecurityService.logoffAndRevokeTokens().subscribe();
+                this.securityService.logoffAndRevokeTokens(this.currentIdp).subscribe();
             }
         });
     }

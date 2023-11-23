@@ -22,6 +22,8 @@ export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'home', component: HomeComponent }, // does nothing but setting up auth
+    { path: 'login-reform', component: LoginComponent  },
+    { path: 'reform', component: LoginComponent  },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },

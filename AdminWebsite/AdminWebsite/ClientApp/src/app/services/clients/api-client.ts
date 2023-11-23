@@ -5950,6 +5950,67 @@ export interface IAllocationHearingsResponse {
     concurrent_hearings_count?: number | undefined;
 }
 
+export class AzureConfiguration implements IAzureConfiguration {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
+
+    constructor(data?: IAzureConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenant_id = _data['tenant_id'];
+            this.client_id = _data['client_id'];
+            this.resource_id = _data['resource_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
+        }
+    }
+
+    static fromJS(data: any): AzureConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new AzureConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['tenant_id'] = this.tenant_id;
+        data['client_id'] = this.client_id;
+        data['resource_id'] = this.resource_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
+        return data;
+    }
+}
+
+export interface IAzureConfiguration {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
+}
+
 export class BookingsByDateResponse implements IBookingsByDateResponse {
     scheduled_date?: Date;
     hearings?: BookingsHearingResponse[] | undefined;
@@ -6220,16 +6281,6 @@ export interface ICaseResponse {
 
 /** Configuration to initialise the UI application */
 export class ClientSettingsResponse implements IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
-    resource_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
     /** The Application Insights Connection String */
     connection_string?: string | undefined;
     /** The reform email */
@@ -6244,6 +6295,17 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     readonly launch_darkly_client_id?: string | undefined;
+    reform_tenant_config?: AzureConfiguration;
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -6255,11 +6317,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
 
     init(_data?: any) {
         if (_data) {
-            this.tenant_id = _data['tenant_id'];
-            this.client_id = _data['client_id'];
-            this.resource_id = _data['resource_id'];
-            this.redirect_uri = _data['redirect_uri'];
-            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
             this.connection_string = _data['connection_string'];
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
@@ -6267,6 +6324,14 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
             (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
+            this.reform_tenant_config = _data['reform_tenant_config']
+                ? AzureConfiguration.fromJS(_data['reform_tenant_config'])
+                : <any>undefined;
+            this.tenant_id = _data['tenant_id'];
+            this.client_id = _data['client_id'];
+            this.resource_id = _data['resource_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
         }
     }
 
@@ -6279,11 +6344,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['tenant_id'] = this.tenant_id;
-        data['client_id'] = this.client_id;
-        data['resource_id'] = this.resource_id;
-        data['redirect_uri'] = this.redirect_uri;
-        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
         data['connection_string'] = this.connection_string;
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
@@ -6291,22 +6351,18 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
         data['launch_darkly_client_id'] = this.launch_darkly_client_id;
+        data['reform_tenant_config'] = this.reform_tenant_config ? this.reform_tenant_config.toJSON() : <any>undefined;
+        data['tenant_id'] = this.tenant_id;
+        data['client_id'] = this.client_id;
+        data['resource_id'] = this.resource_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
         return data;
     }
 }
 
 /** Configuration to initialise the UI application */
 export interface IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
-    resource_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
     /** The Application Insights Connection String */
     connection_string?: string | undefined;
     /** The reform email */
@@ -6321,6 +6377,17 @@ export interface IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     launch_darkly_client_id?: string | undefined;
+    reform_tenant_config?: AzureConfiguration;
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
 }
 
 export class DateForUnallocatedHearings implements IDateForUnallocatedHearings {
