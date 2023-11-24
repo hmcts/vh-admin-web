@@ -189,7 +189,7 @@ describe('JusticeUserFormComponent', () => {
             expect(component.failedSaveMessage).toBe(Constants.Error.JusticeUserForm.SaveErrorDuplicateUser);
         }));
 
-        it('should set control errors for properties returned by a validationproblem object from the api', fakeAsync(() => {
+        it('should set control errors for properties returned by a validationproblem object from the api, from add mode', fakeAsync(() => {
             // arrange
             const validationProblem = new ValidationProblemDetails({
                 errors: {
@@ -203,6 +203,35 @@ describe('JusticeUserFormComponent', () => {
             });
 
             justiceUsersServiceSpy.addNewJusticeUser.and.returnValue(
+                throwError(
+                    () => new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem)
+                )
+            );
+
+            // act
+            component.onSave();
+            tick();
+
+            // assert
+            expect(component.failedSaveMessage).toBe(validationProblem.title);
+            expect(component.form.controls.firstName.errors.errorMessage).toContain(validationProblem.errors.FirstName);
+            expect(component.form.controls.lastName.errors.errorMessage).toContain(validationProblem.errors.LastName);
+        }));
+
+        it('should set control errors for properties returned by a validationproblem object from the api, from edit endpoint', fakeAsync(() => {
+            // arrange
+            const validationProblem = new ValidationProblemDetails({
+                errors: {
+                    FirstName: ['First name is required'],
+                    LastName: ['Last Name is required'],
+                    ContactEmail: ['Contact Email is required']
+                },
+                type: 'https://tools.ietf.org/html/rfc7231#section-6.5.1',
+                title: 'One or more validation errors occurred.',
+                status: 400
+            });
+
+            justiceUsersServiceSpy.editJusticeUser.and.returnValue(
                 throwError(
                     () => new BookHearingException('Bad Request', 400, 'One or more validation errors occurred.', null, validationProblem)
                 )
