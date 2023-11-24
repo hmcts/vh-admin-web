@@ -210,6 +210,7 @@ describe('JusticeUserFormComponent', () => {
 
             // act
             component.onSave();
+            component.mode = 'add';
             tick();
 
             // assert
@@ -238,6 +239,7 @@ describe('JusticeUserFormComponent', () => {
             );
 
             // act
+            component.mode = 'edit';
             component.onSave();
             tick();
 
