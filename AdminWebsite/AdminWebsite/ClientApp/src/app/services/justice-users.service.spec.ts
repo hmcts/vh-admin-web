@@ -200,7 +200,7 @@ describe('JusticeUsersService', () => {
                 username,
                 first_name: firstName,
                 last_name: lastName,
-                contact_number: telephone,
+                contact_telephone: telephone,
                 roles: roles
             });
 
