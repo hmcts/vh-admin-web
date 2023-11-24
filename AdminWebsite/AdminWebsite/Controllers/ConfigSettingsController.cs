@@ -57,12 +57,15 @@ namespace AdminWebsite.Controllers
                 ConferencePhoneNumberWelsh = _kinlyConfiguration.ConferencePhoneNumberWelsh,
                 JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate,
                 VideoWebUrl = _vhServiceConfiguration.VideoWebUrl,
-                LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId
+                LaunchDarklyClientId = _vhServiceConfiguration.LaunchDarklyClientId,
+                Dom1IdpConfiguration = _dom1AdConfiguration,
+                VhAadConfiguration = _azureAdConfiguration
             };
 
             IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
+            idpConfiguration = _azureAdConfiguration;
             clientSettings.ClientId = idpConfiguration.ClientId;
             clientSettings.TenantId = idpConfiguration.TenantId;
             clientSettings.ResourceId = idpConfiguration.ResourceId;

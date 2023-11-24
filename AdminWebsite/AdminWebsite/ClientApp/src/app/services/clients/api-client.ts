@@ -5205,6 +5205,73 @@ export class BHClient extends ApiClientBase {
     }
 }
 
+export class IdpConfiguration implements IIdpConfiguration {
+    /** Id for app registration of this application */
+    client_id?: string | undefined;
+    /** The authority to generate and validate Adal tokens against */
+    authority?: string | undefined;
+    /** The Azure tenant the app registration defined by AdminWebsite.Configuration.IdpConfiguration.ClientId is registered in */
+    tenant_id?: string | undefined;
+    /** The redirect uri on successful login */
+    redirect_uri?: string | undefined;
+    /** The redirect uri on successful logout */
+    post_logout_redirect_uri?: string | undefined;
+    /** Alternative id for the app registration of the application */
+    resource_id?: string | undefined;
+
+    constructor(data?: IIdpConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.client_id = _data['client_id'];
+            this.authority = _data['authority'];
+            this.tenant_id = _data['tenant_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
+            this.resource_id = _data['resource_id'];
+        }
+    }
+
+    static fromJS(data: any): IdpConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new IdpConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['client_id'] = this.client_id;
+        data['authority'] = this.authority;
+        data['tenant_id'] = this.tenant_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
+        data['resource_id'] = this.resource_id;
+        return data;
+    }
+}
+
+export interface IIdpConfiguration {
+    /** Id for app registration of this application */
+    client_id?: string | undefined;
+    /** The authority to generate and validate Adal tokens against */
+    authority?: string | undefined;
+    /** The Azure tenant the app registration defined by AdminWebsite.Configuration.IdpConfiguration.ClientId is registered in */
+    tenant_id?: string | undefined;
+    /** The redirect uri on successful login */
+    redirect_uri?: string | undefined;
+    /** The redirect uri on successful logout */
+    post_logout_redirect_uri?: string | undefined;
+    /** Alternative id for the app registration of the application */
+    resource_id?: string | undefined;
+}
+
 export enum BookingStatus {
     Booked = 'Booked',
     Created = 'Created',
@@ -6244,6 +6311,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     readonly launch_darkly_client_id?: string | undefined;
+    dom1_idp_configuration?: IdpConfiguration;
+    vh_aad_configuration?: IdpConfiguration;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -6267,6 +6336,12 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
             (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
+            this.dom1_idp_configuration = _data['dom1_idp_configuration']
+                ? IdpConfiguration.fromJS(_data['dom1_idp_configuration'])
+                : <any>undefined;
+            this.vh_aad_configuration = _data['vh_aad_configuration']
+                ? IdpConfiguration.fromJS(_data['vh_aad_configuration'])
+                : <any>undefined;
         }
     }
 
@@ -6291,6 +6366,8 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
         data['launch_darkly_client_id'] = this.launch_darkly_client_id;
+        data['dom1_idp_configuration'] = this.dom1_idp_configuration ? this.dom1_idp_configuration.toJSON() : <any>undefined;
+        data['vh_aad_configuration'] = this.vh_aad_configuration ? this.vh_aad_configuration.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -6321,6 +6398,8 @@ export interface IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     launch_darkly_client_id?: string | undefined;
+    dom1_idp_configuration?: IdpConfiguration;
+    vh_aad_configuration?: IdpConfiguration;
 }
 
 export class DateForUnallocatedHearings implements IDateForUnallocatedHearings {

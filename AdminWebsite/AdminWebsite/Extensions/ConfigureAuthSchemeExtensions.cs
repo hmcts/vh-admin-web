@@ -70,7 +70,8 @@ namespace AdminWebsite.Extensions
         {
             var defaultScheme = AuthProvider.VHAAD;
             var jwtToken = new JwtSecurityToken(token);
-            return providerSchemes.SingleOrDefault(s => s.BelongsToScheme(jwtToken))?.Provider ?? defaultScheme;
+            var scheme =providerSchemes.SingleOrDefault(s => s.BelongsToScheme(jwtToken))?.Provider ?? defaultScheme;
+            return scheme;
         }
 
         private static void AddAuthPolicies(this IServiceCollection serviceCollection,

@@ -1,4 +1,6 @@
-﻿namespace AdminWebsite.Contracts.Responses
+﻿using AdminWebsite.Configuration;
+
+namespace AdminWebsite.Contracts.Responses
 {
     /// <summary>
     /// Configuration to initialise the UI application
@@ -64,5 +66,8 @@
         /// The LaunchDarkly Client ID
         /// </summary>
         public string LaunchDarklyClientId { get; internal set; }
+
+        public IdpConfiguration Dom1IdpConfiguration { get; set; }
+        public IdpConfiguration VhAadConfiguration { get; set; }
     }
 }

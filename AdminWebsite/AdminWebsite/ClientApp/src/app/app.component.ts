@@ -1,6 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfigService } from './services/config.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef } from './security/window-ref';
 import { HeaderComponent } from './shared/header/header.component';
@@ -8,7 +7,10 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { IdpProviders, VhOidcSecurityService } from './security/vh-oidc-security.service';
+import { AuthStateResult, EventTypes, OidcClientNotification, PublicEventsService } from 'angular-auth-oidc-client';
+import { filter } from 'rxjs';
+import { Logger } from './services/logger';
 
 @Component({
     selector: 'app-root',
@@ -35,15 +37,16 @@ export class AppComponent implements OnInit {
     loggedIn: boolean;
     menuItemIndex: number;
     constructor(
-        private oidcSecurityService: OidcSecurityService,
-        private configService: ConfigService,
+        private oidcSecurityService: VhOidcSecurityService,
+        private eventService: PublicEventsService,
         private router: Router,
         private window: WindowRef,
         pageTracker: PageTrackerService,
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        connection: ConnectionService
+        connection: ConnectionService,
+        private logger: Logger
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
@@ -57,21 +60,35 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.checkBrowser();
+        if (this.window.getLocation().href.includes('login-reform')) {
+            this.oidcSecurityService.setIdp(IdpProviders.dom1);
+        }
         const currentUrl = this.window.getLocation().href;
-        this.configService.getClientSettings().subscribe(clientSettings => {
-            this.oidcSecurityService.checkAuth().subscribe(response => {
-                this.loggedIn = response.isAuthenticated;
-                if (!this.loggedIn) {
-                    this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-                    return;
-                }
+        this.oidcSecurityService.checkAuthMultiple().subscribe(response => {
+            if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.vhaad) {
+                this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+                return;
+            }
 
-                this.headerComponent.confirmLogout.subscribe(() => {
-                    this.showConfirmation();
+            if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.dom1) {
+                this.router.navigate(['/login-reform'], { queryParams: { returnUrl: currentUrl } });
+                return;
+            }
+
+            this.eventService
+                .registerForEvents()
+                .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
+                .subscribe(async (value: OidcClientNotification<AuthStateResult>) => {
+                    this.logger.debug('[AppComponent] - OidcClientNotification event received with value ', value);
+                    const auth = response.find(x => x.configId === this.oidcSecurityService.getIdp());
+                    this.loggedIn = auth.isAuthenticated;
                 });
-                this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-                    this.showConfirmationSave(menuItemIndex);
-                });
+
+            this.headerComponent.confirmLogout.subscribe(() => {
+                this.showConfirmation();
+            });
+            this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
+                this.showConfirmationSave(menuItemIndex);
             });
         });
     }

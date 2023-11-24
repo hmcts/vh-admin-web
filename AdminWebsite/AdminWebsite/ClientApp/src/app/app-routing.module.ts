@@ -18,12 +18,14 @@ import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './security/auth.guard';
 import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
 import { AudioSearchGuard } from './security/audio-search.guard';
+import { ReformLoginComponent } from './security/reform-login/reform-login.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'home', component: HomeComponent }, // does nothing but setting up auth
     { path: 'login', component: LoginComponent },
+    { path: 'login-reform', component: ReformLoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'unauthorised', component: UnauthorisedComponent },
     { path: 'error', component: ErrorComponent },
