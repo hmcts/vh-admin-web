@@ -179,10 +179,14 @@ export class JusticeUserFormComponent implements OnChanges {
                 this.form.getRawValue().contactTelephone,
                 roles
             )
-            .subscribe({
-                next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-                error: (error: string | BookHearingException) => this.onSaveFailed(error)
-            });
+            .pipe(
+                catchError((error: string | BookHearingException) => {
+                    this.onSaveFailed(error);
+                    this.cdRef.markForCheck();
+                    return NEVER;
+                })
+            )
+            .subscribe((newJusticeUser: JusticeUserResponse) => this.onSaveSucceeded(newJusticeUser));
     }
 
     private getRoles(): JusticeUserRole[] {

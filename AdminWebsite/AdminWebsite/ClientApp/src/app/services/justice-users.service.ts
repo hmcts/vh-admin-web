@@ -73,7 +73,7 @@ export class JusticeUsersService {
             username,
             first_name: firstName,
             last_name: lastName,
-            contact_number: telephone,
+            contact_telephone: telephone,
             roles
         });
         return this.apiClient.editJusticeUser(request).pipe(tap(() => this.refresh$.next()));
