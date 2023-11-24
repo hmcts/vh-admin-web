@@ -8,8 +8,16 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import {SecurityConfigService} from "./security/services/security-config.service";
+import {IdpProviders, SecurityConfigService} from "./security/services/security-config.service";
 import {ISecurityService} from "./security/services/security-service.interface";
+import {    AuthStateResult,
+    EventTypes,
+    LoginResponse,
+    OidcClientNotification,
+    PublicEventsService
+} from "angular-auth-oidc-client";
+import {filter} from "rxjs/operators";
+import {Logger} from "sass";
 
 @Component({
     selector: 'app-root',
@@ -35,27 +43,19 @@ export class AppComponent implements OnInit {
     title = 'Book hearing';
     loggedIn: boolean;
     menuItemIndex: number;
-    private currentIdp: string;
-    private securityService: ISecurityService;
     constructor(
         private secrurityConfigService: SecurityConfigService,
-        private configService: ConfigService,
         private router: Router,
         private window: WindowRef,
         pageTracker: PageTrackerService,
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        connection: ConnectionService
+        connection: ConnectionService,
+        private eventService: PublicEventsService,
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
-
-        this.secrurityConfigService.currentIdpConfigId$.subscribe(idp => {
-            this.currentIdp = idp;
-        });
-        this.securityService = this.secrurityConfigService.getSecurityService();
-
         connection.hasConnection$.subscribe(connectionStatus => {
             if (!connectionStatus) {
                 this.router.navigate(['/error']);
@@ -65,24 +65,34 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.checkBrowser();
+        if (this.window.getLocation().href.includes('login-reform')) {
+            this.secrurityConfigService.currentIdpConfigId = IdpProviders.vhaad;
+        }
         const currentUrl = this.window.getLocation().href;
-        this.configService.getClientSettings().subscribe(() => {
-            this.securityService.checkAuth(undefined, this.currentIdp).subscribe(response => {
-                if(currentUrl.includes('reform') && !response.isAuthenticated){
-                    this.router.navigate(['/reform'], { queryParams: { returnUrl: currentUrl } });
-                    return;
-                }
-                else if (!response.isAuthenticated) {
-                    this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-                    return;
-                }
+        this.secrurityConfigService.checkAuthMultiple().subscribe(response => {
+            if (!this.loggedIn && this.secrurityConfigService.currentIdpConfigId === IdpProviders.dom1) {
+                this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+                return;
+            }
 
-                this.headerComponent.confirmLogout.subscribe(() => {
-                    this.showConfirmation();
+            if (!this.loggedIn && this.secrurityConfigService.currentIdpConfigId === IdpProviders.vhaad) {
+                this.router.navigate(['/login-reform'], { queryParams: { returnUrl: currentUrl } });
+                return;
+            }
+
+            this.eventService
+                .registerForEvents()
+                .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
+                .subscribe(async () => {
+                    const auth = response.find(x => x.configId === this.secrurityConfigService.currentIdpConfigId);
+                    this.loggedIn = auth.isAuthenticated;
                 });
-                this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-                    this.showConfirmationSave(menuItemIndex);
-                });
+
+            this.headerComponent.confirmLogout.subscribe(() => {
+                this.showConfirmation();
+            });
+            this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
+                this.showConfirmationSave(menuItemIndex);
             });
         });
     }

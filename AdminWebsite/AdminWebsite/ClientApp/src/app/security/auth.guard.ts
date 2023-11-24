@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import { PageUrls } from '../shared/page-url.constants';
 import { Logger } from '../services/logger';
 import {SecurityConfigService} from "./services/security-config.service";
@@ -11,17 +11,12 @@ import {ISecurityService} from "./services/security-service.interface";
 export class AuthGuard implements CanActivate {
     private readonly loggerPrefix = '[AuthorizationGuard] -';
     private securityService: ISecurityService;
-    private currentIdp: string;
     constructor(private securityConfigService: SecurityConfigService, private router: Router, private logger: Logger) {
-        this.securityConfigService.currentIdpConfigId$.subscribe(idp => {
-            this.currentIdp = idp;
-        });
         this.securityService = this.securityConfigService.getSecurityService();
-
     }
 
     canActivate(): Observable<boolean> {
-        return this.securityService.isAuthenticated(this.currentIdp).pipe(
+        return this.securityService.isAuthenticated(this.securityConfigService.currentIdpConfigId).pipe(
             map((result: boolean) => {
                 if (!result) {
                     this.logger.warn(`${this.loggerPrefix}- canActivate isAuthorized: ` + result);

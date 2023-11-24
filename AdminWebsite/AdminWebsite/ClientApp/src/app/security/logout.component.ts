@@ -10,19 +10,15 @@ import {ISecurityService} from "./services/security-service.interface";
 @Injectable()
 export class LogoutComponent implements OnInit {
     private securityService: ISecurityService;
-    private currentIdp: string;
     constructor(private configService: SecurityConfigService, private userIdentityService: UserIdentityService) {
-        this.configService.currentIdpConfigId$.subscribe(idp => {
-            this.currentIdp = idp;
-        });
         this.securityService = this.configService.getSecurityService();
     }
 
     ngOnInit() {
-        this.securityService.isAuthenticated(this.currentIdp).subscribe(auth => {
+        this.securityService.isAuthenticated(this.configService.currentIdpConfigId).subscribe(auth => {
             if (auth) {
                 this.userIdentityService.clearUserProfile();
-                this.securityService.logoffAndRevokeTokens(this.currentIdp).subscribe();
+                this.securityService.logoffAndRevokeTokens(this.configService.currentIdpConfigId).subscribe();
             }
         });
     }

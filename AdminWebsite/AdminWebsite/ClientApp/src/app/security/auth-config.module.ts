@@ -14,6 +14,7 @@ import {ClientSettingsResponse} from '../services/clients/api-client';
 import { ConfigService } from '../services/config.service';
 import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
 import {Observable} from "rxjs";
+import {MultipleIdpInterceptorService} from "./multiple-idp-interceptor";
 
 export const configLoaderFactory = (configService: ConfigService) => {
     const configs$: Observable<OpenIdConfiguration[]> = configService.getClientSettings().pipe(
@@ -23,8 +24,8 @@ export const configLoaderFactory = (configService: ConfigService) => {
             const resourceReform = clientSettings.reform_tenant_config.resource_id ? clientSettings.reform_tenant_config.resource_id : `api://${clientSettings.reform_tenant_config.client_id}`;
 
             const config = {
-                configId: 'main',
-                authority: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
+                configId: 'dom1',
+                authority: `https://login.microsoftonline.com/1${clientSettings.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.redirect_uri,
                 postLogoutRedirectUri: clientSettings.post_logout_redirect_uri,
                 clientId: clientSettings.client_id,
@@ -41,7 +42,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
             } as OpenIdConfiguration;
 
             const configReform = {
-                configId: 'reform',
+                configId: 'vhaad',
                 authority: `https://login.microsoftonline.com/${clientSettings.reform_tenant_config.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.reform_tenant_config.redirect_uri,
                 postLogoutRedirectUri: clientSettings.reform_tenant_config.post_logout_redirect_uri,
@@ -58,7 +59,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
                 useRefreshToken: true
             } as OpenIdConfiguration;
 
-            return [config, configReform]
+            return [config, configReform];
         })
     );
     return new StsConfigHttpLoader(configs$);
@@ -75,7 +76,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
         })
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: MultipleIdpInterceptorService, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenParameterInterceptor, multi: true }
     ],
     exports: [AuthModule]
