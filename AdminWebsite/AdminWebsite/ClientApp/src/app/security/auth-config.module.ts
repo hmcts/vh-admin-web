@@ -7,6 +7,7 @@ import { ClientSettingsResponse } from '../services/clients/api-client';
 import { ConfigService } from '../services/config.service';
 import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
 import { ReformLoginComponent } from './reform-login/reform-login.component';
+import { MultipleIdpInterceptorService } from './multiple-idp-interceptor.service';
 
 export const configLoaderFactory = (configService: ConfigService) => {
     const config$ = configService.getClientSettings().pipe(
@@ -71,7 +72,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
         })
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: MultipleIdpInterceptorService, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenParameterInterceptor, multi: true }
     ],
     exports: [AuthModule],
