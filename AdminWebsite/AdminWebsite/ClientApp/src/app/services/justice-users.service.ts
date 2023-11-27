@@ -67,10 +67,13 @@ export class JusticeUsersService {
         return this.apiClient.addNewJusticeUser(request).pipe(tap(() => this.refresh$.next()));
     }
 
-    editJusticeUser(id: string, username: string, roles: JusticeUserRole[]) {
+    editJusticeUser(id: string, username: string, firstName: string, lastName: string, telephone: string, roles: JusticeUserRole[]) {
         const request = new EditJusticeUserRequest({
             id,
             username,
+            first_name: firstName,
+            last_name: lastName,
+            contact_telephone: telephone,
             roles
         });
         return this.apiClient.editJusticeUser(request).pipe(tap(() => this.refresh$.next()));
