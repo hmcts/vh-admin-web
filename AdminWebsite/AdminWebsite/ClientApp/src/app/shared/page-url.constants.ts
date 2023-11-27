@@ -17,5 +17,6 @@ export const PageUrls = {
     DeleteParticipant: '/delete-participant',
     EditParticipantSearch: '/edit-participant-search',
     EditParticipant: '/edit-participant',
-    Login: '/login'
+    Login: '/login',
+    LoginReform: '/login-reform'
 };

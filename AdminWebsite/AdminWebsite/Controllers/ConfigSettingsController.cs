@@ -63,6 +63,7 @@ namespace AdminWebsite.Controllers
             IdpConfiguration idpConfiguration = _featureToggles.Dom1Enabled()
                 ? _dom1AdConfiguration
                 : _azureAdConfiguration;
+            
             clientSettings.ClientId = idpConfiguration.ClientId;
             clientSettings.TenantId = idpConfiguration.TenantId;
             clientSettings.ResourceId = idpConfiguration.ResourceId;

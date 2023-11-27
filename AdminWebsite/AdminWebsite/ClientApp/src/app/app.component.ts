@@ -8,16 +8,12 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import {IdpProviders, SecurityConfigService} from "./security/services/security-config.service";
-import {ISecurityService} from "./security/services/security-service.interface";
-import {    AuthStateResult,
+import { SecurityConfigService} from "./security/services/security-config.service";
+import {
     EventTypes,
-    LoginResponse,
-    OidcClientNotification,
     PublicEventsService
 } from "angular-auth-oidc-client";
 import {filter} from "rxjs/operators";
-import {Logger} from "sass";
 
 @Component({
     selector: 'app-root',
@@ -65,21 +61,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.checkBrowser();
-        if (this.window.getLocation().href.includes('login-reform')) {
-            this.secrurityConfigService.currentIdpConfigId = IdpProviders.vhaad;
-        }
-        const currentUrl = this.window.getLocation().href;
         this.secrurityConfigService.checkAuthMultiple().subscribe(response => {
-            if (!this.loggedIn && this.secrurityConfigService.currentIdpConfigId === IdpProviders.dom1) {
-                this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-                return;
-            }
-
-            if (!this.loggedIn && this.secrurityConfigService.currentIdpConfigId === IdpProviders.vhaad) {
-                this.router.navigate(['/login-reform'], { queryParams: { returnUrl: currentUrl } });
-                return;
-            }
-
             this.eventService
                 .registerForEvents()
                 .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
