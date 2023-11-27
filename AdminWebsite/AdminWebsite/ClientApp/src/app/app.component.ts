@@ -63,7 +63,6 @@ export class AppComponent implements OnInit {
 
         this.oidcSecurityService.checkAuthMultiple().subscribe(response => {
             if (response.find(x => x.configId === this.oidcSecurityService.getIdp() && x.isAuthenticated)) {
-                this.logger.debug('[AppComponent] - OidcClientNotification event received with value ', response);
                 this.loggedIn = true;
             }
             // remove this because the auth guard will take care of the access
