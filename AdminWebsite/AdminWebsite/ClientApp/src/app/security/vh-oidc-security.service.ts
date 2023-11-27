@@ -12,7 +12,7 @@ export enum IdpProviders {
 })
 export class VhOidcSecurityService {
     private idpProvidersSessionStorageKey = 'IdpProviders';
-    private defaultProvider = IdpProviders.vhaad;
+    private defaultProvider = IdpProviders.dom1;
 
     private currentIdpProvider: IdpProviders;
 

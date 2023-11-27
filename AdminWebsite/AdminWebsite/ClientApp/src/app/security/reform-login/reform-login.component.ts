@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class ReformLoginComponent {
     constructor(private router: Router, private oidcSecurityService: VhOidcSecurityService) {
-        this.oidcSecurityService.setIdp(IdpProviders.dom1);
+        this.oidcSecurityService.setIdp(IdpProviders.vhaad);
         this.router.navigate([`/${PageUrls.Login}`]);
     }
 }

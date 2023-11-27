@@ -16,7 +16,12 @@ export class AuthGuard implements CanActivate {
             map(isAuthenticated => {
                 if (!isAuthenticated) {
                     this.logger.warn(`${this.loggerPrefix}- canActivate isAuthorized: ` + isAuthenticated);
-                    this.router.navigate([`/${PageUrls.Login}`]);
+                    if (this.oidcSecurityService.getIdp() === 'vhaad') {
+                        this.router.navigate([`/${PageUrls.LoginReform}`]);
+                    } else {
+                        this.router.navigate([`/${PageUrls.Login}`]);
+                    }
+
                     return false;
                 }
                 this.logger.debug(`${this.loggerPrefix}- canActivate isAuthorized: ` + isAuthenticated);

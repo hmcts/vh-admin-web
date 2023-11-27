@@ -60,21 +60,25 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.checkBrowser();
-        if (this.window.getLocation().href.includes('login-reform')) {
-            this.oidcSecurityService.setIdp(IdpProviders.dom1);
-        }
-        const currentUrl = this.window.getLocation().href;
+
         this.oidcSecurityService.checkAuthMultiple().subscribe(response => {
-            if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.vhaad) {
-                this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-                return;
+            if (response.find(x => x.configId === this.oidcSecurityService.getIdp() && x.isAuthenticated)) {
+                this.logger.debug('[AppComponent] - OidcClientNotification event received with value ', response);
+                this.loggedIn = true;
             }
+            // remove this because the auth guard will take care of the access
 
-            if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.dom1) {
-                this.router.navigate(['/login-reform'], { queryParams: { returnUrl: currentUrl } });
-                return;
-            }
+            // if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.dom1) {
+            //     this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+            //     return;
+            // }
 
+            // if (!this.loggedIn && this.oidcSecurityService.getIdp() === IdpProviders.vhaad) {
+            //     this.router.navigate(['/login-reform'], { queryParams: { returnUrl: currentUrl } });
+            //     return;
+            // }
+
+            // wait for the callback to complete and then check if the user is authenticated
             this.eventService
                 .registerForEvents()
                 .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
