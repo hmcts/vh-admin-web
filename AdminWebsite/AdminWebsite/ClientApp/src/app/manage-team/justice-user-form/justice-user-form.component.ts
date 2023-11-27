@@ -90,7 +90,7 @@ export class JusticeUserFormComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         const mode = changes['mode'];
         if (mode.currentValue === 'edit') {
-            ['firstName', 'lastName', 'username', 'contactTelephone'].forEach(field => this.form.controls[field].disable());
+            ['username'].forEach(field => this.form.controls[field].disable());
         }
     }
 
@@ -170,10 +170,23 @@ export class JusticeUserFormComponent implements OnChanges {
 
     private updateExistingUser() {
         const roles = this.getRoles();
-        this.justiceUserService.editJusticeUser(this._justiceUser.id, this.form.getRawValue().username, roles).subscribe({
-            next: newJusticeUser => this.onSaveSucceeded(newJusticeUser),
-            error: (error: string | BookHearingException) => this.onSaveFailed(error)
-        });
+        this.justiceUserService
+            .editJusticeUser(
+                this._justiceUser.id,
+                this.form.getRawValue().username,
+                this.form.getRawValue().firstName,
+                this.form.getRawValue().lastName,
+                this.form.getRawValue().contactTelephone,
+                roles
+            )
+            .pipe(
+                catchError((error: string | BookHearingException) => {
+                    this.onSaveFailed(error);
+                    this.cdRef.markForCheck();
+                    return NEVER;
+                })
+            )
+            .subscribe((newJusticeUser: JusticeUserResponse) => this.onSaveSucceeded(newJusticeUser));
     }
 
     private getRoles(): JusticeUserRole[] {
