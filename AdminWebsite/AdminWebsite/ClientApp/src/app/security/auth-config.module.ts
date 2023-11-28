@@ -1,31 +1,27 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import {
-    AuthInterceptor,
-    AuthModule,
-    LogLevel,
-    OpenIdConfiguration,
-    StsConfigHttpLoader,
-    StsConfigLoader
-} from 'angular-auth-oidc-client';
-import {first, map} from 'rxjs/operators';
+import { AuthModule, LogLevel, OpenIdConfiguration, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
+import { first, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import {ClientSettingsResponse} from '../services/clients/api-client';
+import { ClientSettingsResponse } from '../services/clients/api-client';
 import { ConfigService } from '../services/config.service';
-import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
-import {Observable} from "rxjs";
-import {MultipleIdpInterceptorService} from "./multiple-idp-interceptor";
+import { RefreshTokenParameterInterceptor } from './interceptors/refresh-token-parameter.interceptor';
+import { Observable } from 'rxjs';
+import { MultipleIdpInterceptorService } from './interceptors/multiple-idp-interceptor';
+import { IdpProviders } from './services/security.service';
 
 export const configLoaderFactory = (configService: ConfigService) => {
     const configs$: Observable<OpenIdConfiguration[]> = configService.getClientSettings().pipe(
         first(),
         map((clientSettings: ClientSettingsResponse) => {
             const resource = clientSettings.resource_id ? clientSettings.resource_id : `api://${clientSettings.client_id}`;
-            const resourceReform = clientSettings.reform_tenant_config.resource_id ? clientSettings.reform_tenant_config.resource_id : `api://${clientSettings.reform_tenant_config.client_id}`;
+            const resourceReform = clientSettings.reform_tenant_config.resource_id
+                ? clientSettings.reform_tenant_config.resource_id
+                : `api://${clientSettings.reform_tenant_config.client_id}`;
 
             const config = {
-                configId: 'dom1',
-                authority: `https://login.microsoftonline.com/1${clientSettings.tenant_id}/v2.0`,
+                configId: IdpProviders.main,
+                authority: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.redirect_uri,
                 postLogoutRedirectUri: clientSettings.post_logout_redirect_uri,
                 clientId: clientSettings.client_id,
@@ -42,7 +38,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
             } as OpenIdConfiguration;
 
             const configReform = {
-                configId: 'vhaad',
+                configId: IdpProviders.reform,
                 authority: `https://login.microsoftonline.com/${clientSettings.reform_tenant_config.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.reform_tenant_config.redirect_uri,
                 postLogoutRedirectUri: clientSettings.reform_tenant_config.post_logout_redirect_uri,

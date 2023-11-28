@@ -1,7 +1,7 @@
-import { SecurityConfigService } from './security-config.service';
+import { SecurityService } from './security.service';
 
 describe('SecurityService', () => {
-  it('should create an instance', () => {
-    expect(new SecurityConfigService(null)).toBeTruthy();
-  });
+    it('should create an instance', () => {
+        expect(new SecurityService(null)).toBeTruthy();
+    });
 });

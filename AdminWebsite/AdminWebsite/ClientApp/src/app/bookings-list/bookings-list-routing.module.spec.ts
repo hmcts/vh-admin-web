@@ -10,12 +10,9 @@ import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
 import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
-import { AdminGuard } from '../security/admin.guard';
-import { AuthGuard } from '../security/auth.guard';
 import { ConfigService } from '../services/config.service';
 import { Logger } from '../services/logger';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { BookingDetailsComponent } from './booking-details/booking-details.component';
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
 import { routes } from './bookings-list-routing.module';
@@ -25,6 +22,10 @@ import { ParticipantDetailsComponent } from './participant-details/participant-d
 import { DatePipe } from '@angular/common';
 import { ClientSettingsResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
+import { AuthGuard } from '../security/guards/auth.guard';
+import { AdminGuard } from '../security/guards/admin.guard';
+import { MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { IdpProviders } from '../security/services/security.service';
 
 describe('BookingsListRouting', () => {
     let location: Location;
@@ -55,7 +56,7 @@ describe('BookingsListRouting', () => {
             providers: [
                 AuthGuard,
                 { provide: AdminGuard, useClass: MockAdminGuard },
-                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: OidcSecurityService, useClass: MockSecurityService },
                 HttpClient,
                 HttpHandler,
                 { provide: Logger, useValue: loggerSpy },
@@ -74,7 +75,7 @@ describe('BookingsListRouting', () => {
 
     describe('admin can navigate to booking list', () => {
         it('it should be able to navigate to bookings list', fakeAsync(() => {
-            oidcSecurityService.setAuthenticated(true);
+            oidcSecurityService.setAuthenticatedResult(IdpProviders.main, true);
             bookingGuard.setflag(true);
             bookingsList.ngOnInit();
 

@@ -2,23 +2,15 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { ISecurityService } from './services/security-service.interface';
-import { SecurityConfigService } from './services/security-config.service';
+import { SecurityService } from '../services/security.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class MultipleIdpInterceptorService implements HttpInterceptor {
-    currentIdp: string;
-    securityService: ISecurityService;
-
-    constructor(private securityServiceProviderService: SecurityConfigService) {
-        this.securityService = securityServiceProviderService.getSecurityService();
-        this.currentIdp = this.securityServiceProviderService.currentIdpConfigId;
-    }
-
+    constructor(private securityService: SecurityService) {}
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return this.securityService.getAccessToken(this.currentIdp).pipe(
+        return this.securityService.getAccessToken().pipe(
             mergeMap(token => {
                 if (token) {
                     const authReq = req.clone({

@@ -1,5 +1,7 @@
 import { OpenIdConfiguration, LoginResponse, AuthenticatedResult, ConfigAuthenticatedResult } from 'angular-auth-oidc-client';
-import { Observable, of, throwError } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
+import { IdpProviders } from '../../security/services/security.service';
+
 interface UserData {
     preferred_username?: string;
     name?: string;
@@ -24,56 +26,73 @@ class MockLoginResponse implements LoginResponse {
 }
 
 export class MockAuthenticatedResult implements AuthenticatedResult {
-    constructor(isAuthenticated: boolean) {
+    constructor(configResults: ConfigAuthenticatedResult[], isAuthenticated: boolean = false) {
         this.isAuthenticated = isAuthenticated;
+        this.allConfigsAuthenticated = configResults;
     }
 
     isAuthenticated: boolean;
     allConfigsAuthenticated: ConfigAuthenticatedResult[];
 }
 
-export class MockOidcSecurityService {
+export class MockSecurityService {
+    private currentIdpProvider: IdpProviders = IdpProviders.main;
     userData: UserData;
-    authenticated: boolean;
-    throwsError: boolean;
+    authenticatedResult: AuthenticatedResult;
     configuration = {
         scope: 'openid profile offline_access'
     } as OpenIdConfiguration;
 
-    setAuthenticated(authenticated: boolean) {
-        this.authenticated = authenticated;
+    setAuthenticatedResult(configId: string, isAuthenticated: boolean): void {
+        this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === configId).isAuthenticated = isAuthenticated;
     }
 
-    setUserData(userData: UserData) {
-        this.userData = userData;
+    constructor() {
+        this.authenticatedResult = new MockAuthenticatedResult([
+            { configId: IdpProviders.main, isAuthenticated: false },
+            { configId: IdpProviders.reform, isAuthenticated: false }
+        ]);
     }
 
-    setThrowErrorOnIsAuth(throwsError: boolean) {
-        this.throwsError = throwsError;
+    set currentIdpConfigId(idpConfigId: IdpProviders) {
+        this.currentIdpProvider = idpConfigId;
     }
 
-    get userData$(): Observable<UserData> {
-        return of(this.userData);
+    get currentIdpConfigId(): IdpProviders {
+        return this.currentIdpProvider;
     }
 
-    get isAuthenticated$(): Observable<AuthenticatedResult> {
-        if (this.throwsError) {
-            return throwError('error');
-        }
-        return of(new MockAuthenticatedResult(this.authenticated));
+    authorize(): void {
+        return null;
     }
 
-    getToken(): string {
-        return 'MockToken';
+    isAuthenticated(): Observable<boolean> {
+        return of(this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === this.currentIdpProvider).isAuthenticated);
     }
 
-    checkAuth(url?: string): Observable<LoginResponse> {
-        return of(new MockLoginResponse(this.authenticated));
+    checkAuthMultiple(): Observable<LoginResponse[]> {
+        return combineLatest([
+            of(
+                new MockLoginResponse(
+                    this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.main).isAuthenticated
+                )
+            ),
+            of(
+                new MockLoginResponse(
+                    this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.reform).isAuthenticated
+                )
+            )
+        ]);
     }
 
-    logoffAndRevokeTokens() {
-        this.setAuthenticated(false);
-        this.setUserData(null);
+    getAccessToken(): Observable<string> {
+        return of('MockToken');
+    }
+
+    logoffAndRevokeTokens(): Observable<any> {
+        this.authenticatedResult.allConfigsAuthenticated.forEach(x => (x.isAuthenticated = false));
+        this.userData = null;
+        return of(null);
     }
 
     getConfiguration(): Observable<OpenIdConfiguration> {

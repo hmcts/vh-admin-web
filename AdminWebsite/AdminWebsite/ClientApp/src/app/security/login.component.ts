@@ -5,7 +5,7 @@ import { LoggerService } from '../services/logger.service';
 import { catchError } from 'rxjs/operators';
 import { NEVER } from 'rxjs';
 import { ConfigService } from '../services/config.service';
-import {SecurityConfigService} from "./services/security-config.service";
+import { SecurityService } from './services/security.service';
 
 @Component({
     selector: 'app-login',
@@ -15,17 +15,16 @@ import {SecurityConfigService} from "./services/security-config.service";
 export class LoginComponent implements OnInit {
     private readonly loggerPrefix = '[Login] -';
     constructor(
-        private securityConfigService: SecurityConfigService,
+        private securityService: SecurityService,
         private router: Router,
         private logger: LoggerService,
         private returnUrlService: ReturnUrlService,
         private configService: ConfigService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.configService.getClientSettings().subscribe(() => {
-            this.securityConfigService
+            this.securityService
                 .isAuthenticated()
                 .pipe(
                     catchError(err => {
@@ -55,7 +54,7 @@ export class LoginComponent implements OnInit {
                         this.logger.debug(`${this.loggerPrefix} User not authenticated. Logging in`);
                         try {
                             this.returnUrlService.setUrl(returnUrl);
-                            this.securityConfigService.authorize();
+                            this.securityService.authorize();
                         } catch (err) {
                             this.logger.error(`${this.loggerPrefix} Authorize Failed`, err);
                         }

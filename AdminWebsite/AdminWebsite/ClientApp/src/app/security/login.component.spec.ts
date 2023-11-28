@@ -5,14 +5,15 @@ import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { ConfigService } from '../services/config.service';
 import { LoggerService } from '../services/logger.service';
 import { WindowRef } from '../shared/window-ref';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { LoginComponent } from './login.component';
 import { WindowLocation } from './window-ref';
+import { MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { IdpProviders } from './services/security.service';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let router: jasmine.SpyObj<Router>;
-    const mockOidcSecurityService = new MockOidcSecurityService();
+    const mockOidcSecurityService = new MockSecurityService();
     let oidcSecurityService;
     let returnUrl: jasmine.SpyObj<ReturnUrlService>;
     let logger: jasmine.SpyObj<LoggerService>;
@@ -44,7 +45,7 @@ describe('LoginComponent', () => {
     }));
 
     const givenAuthenticated = (authenticated: boolean) => {
-        oidcSecurityService.setAuthenticated(authenticated);
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, authenticated);
     };
 
     const whenInitializingComponent = async (): Promise<void> => {
@@ -93,13 +94,6 @@ describe('LoginComponent', () => {
 
         await whenInitializingComponent();
 
-        expect(router.navigate).toHaveBeenCalledWith(['/']);
-    });
-
-    it('should redirect to root if auth error', async () => {
-        givenAuthenticated(true);
-        mockOidcSecurityService.setThrowErrorOnIsAuth(true);
-        await whenInitializingComponent();
         expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
 });

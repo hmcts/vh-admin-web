@@ -1,19 +1,15 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConfigService } from './services/config.service';
 import { PageTrackerService } from './services/page-tracker.service';
-import { WindowRef } from './security/window-ref';
 import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import { SecurityConfigService} from "./security/services/security-config.service";
-import {
-    EventTypes,
-    PublicEventsService
-} from "angular-auth-oidc-client";
-import {filter} from "rxjs/operators";
+import { AuthStateResult, EventTypes, OidcClientNotification, PublicEventsService } from 'angular-auth-oidc-client';
+import { filter } from 'rxjs/operators';
+import { Logger } from './services/logger';
+import { SecurityService } from './security/services/security.service';
 
 @Component({
     selector: 'app-root',
@@ -24,13 +20,6 @@ export class AppComponent implements OnInit {
     @ViewChild('maincontent', { static: true })
     main: ElementRef;
 
-    private config = {
-        tenant: '',
-        clientId: '',
-        redirectUri: '',
-        postLogoutRedirectUri: ''
-    };
-
     @ViewChild(HeaderComponent, { static: true })
     headerComponent: HeaderComponent;
 
@@ -40,15 +29,15 @@ export class AppComponent implements OnInit {
     loggedIn: boolean;
     menuItemIndex: number;
     constructor(
-        private secrurityConfigService: SecurityConfigService,
+        private securityService: SecurityService,
         private router: Router,
-        private window: WindowRef,
         pageTracker: PageTrackerService,
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
         connection: ConnectionService,
         private eventService: PublicEventsService,
+        private logger: Logger
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
@@ -61,18 +50,23 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.checkBrowser();
-        this.secrurityConfigService.checkAuthMultiple().subscribe(response => {
+
+        this.securityService.checkAuthMultiple().subscribe(response => {
+            if (response.find(x => x.configId === this.securityService.currentIdpConfigId && x.isAuthenticated)) {
+                this.loggedIn = true;
+            }
             this.eventService
                 .registerForEvents()
                 .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
-                .subscribe(async () => {
-                    const auth = response.find(x => x.configId === this.secrurityConfigService.currentIdpConfigId);
-                    this.loggedIn = auth.isAuthenticated;
+                .subscribe(async (value: OidcClientNotification<AuthStateResult>) => {
+                    this.logger.debug('[AppComponent] - OidcClientNotification event received with value ', value);
+                    this.loggedIn = response.find(x => x.configId === this.securityService.currentIdpConfigId).isAuthenticated;
                 });
 
             this.headerComponent.confirmLogout.subscribe(() => {
                 this.showConfirmation();
             });
+
             this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
                 this.showConfirmationSave(menuItemIndex);
             });
