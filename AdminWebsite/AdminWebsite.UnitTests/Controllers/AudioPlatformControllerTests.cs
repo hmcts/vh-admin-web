@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
+using BookingsApi.Client;
+using BookingsApi.Contract.V2.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +22,19 @@ namespace AdminWebsite.UnitTests.Controllers
         private readonly Mock<IVideoApiClient> _videoApiClientMock;
 
         private readonly AudioPlatformController _controller;
+        
+        private readonly Mock<IBookingsApiClient> _bookingsApiClientMock;
+        private readonly Mock<ILogger<AudioPlatformController>> _loggerMock;
+        private readonly Mock<IFeatureToggles> _featureTogglesMock;
 
         public AudioPlatformControllerTests()
         {
             _videoApiClientMock = new Mock<IVideoApiClient>();
+            _bookingsApiClientMock = new Mock<IBookingsApiClient>();
+            _loggerMock = new Mock<ILogger<AudioPlatformController>>();
+            _featureTogglesMock = new Mock<IFeatureToggles>();
 
-            _controller = new AudioPlatformController(_videoApiClientMock.Object, new Mock<ILogger<AudioPlatformController>>().Object);
+            _controller = new AudioPlatformController(_videoApiClientMock.Object, _loggerMock.Object, _bookingsApiClientMock.Object, _featureTogglesMock.Object);
         }
 
         [Test]
@@ -35,7 +45,40 @@ namespace AdminWebsite.UnitTests.Controllers
                 AudioFileLinks = new List<string> { "someLinkToFile" }
             };
 
-            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>())).ReturnsAsync(audioResponse);
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>())).ReturnsAsync(audioResponse);
+            _featureTogglesMock.Setup(x => x.HrsEnabled()).Returns(false);
+            
+            var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
+
+            var actionResult = result as OkObjectResult;
+            actionResult.Should().NotBeNull();
+            actionResult.StatusCode.Should().Be(200);
+            var item = actionResult.Value.As<HearingAudioRecordingResponse>();
+            item.Should().NotBeNull()
+                .And.Subject.As<HearingAudioRecordingResponse>().AudioFileLinks.Count.Should().Be(1);
+            item.AudioFileLinks[0].Should().Be(audioResponse.AudioFileLinks[0]);
+        }
+        
+        [Test]
+        public async Task Should_return_hrs_file_format_with_hrs_toggle_on()
+        {
+            var audioResponse = new AudioRecordingResponse
+            {
+                AudioFileLinks = new List<string> { "someLinkToFile" }
+            };
+
+            var hearing = new HearingDetailsResponseV2()
+            {
+                ServiceId = "AAA",
+                Cases = new List<CaseResponseV2>
+                {
+                    new CaseResponseV2() {Number = "Case Number"}
+                }
+            };
+
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>())).ReturnsAsync(audioResponse);
+            _featureTogglesMock.Setup(x => x.HrsEnabled()).Returns(true);
+            _bookingsApiClientMock.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>())).ReturnsAsync(hearing);
 
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
 
@@ -52,7 +95,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public async Task Should_return_not_found()
         {
             _videoApiClientMock
-                .Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>()))
+                .Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<string>()))
                 .ThrowsAsync(new VideoApiException("not found", StatusCodes.Status404NotFound, "", null, null));
 
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());

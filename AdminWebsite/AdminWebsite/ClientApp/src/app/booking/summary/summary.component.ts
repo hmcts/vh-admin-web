@@ -136,7 +136,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
         this.judgeAssigned =
             this.hearing.participants.filter(e => e.is_judge).length > 0 ||
-            this.hearing.judiciaryParticipants.some(e => e.roleCode === 'Judge');
+            this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
     }
 
     private checkForExistingRequest() {
@@ -179,7 +179,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             }
         }
 
-        const judicalParticipant = this.hearing.judiciaryParticipants.findIndex(x => x.email === this.selectedParticipantEmail);
+        const judicalParticipant = this.hearing.judiciaryParticipants?.findIndex(x => x.email === this.selectedParticipantEmail);
         if (judicalParticipant > -1) {
             this.removerFullName = this.hearing.judiciaryParticipants[judicalParticipant].fullName;
             this.showConfirmationRemoveParticipant = true;
@@ -214,7 +214,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing = { ...this.hearing };
         }
 
-        const judicalParticipant = this.hearing.judiciaryParticipants.findIndex(x => x.email === this.selectedParticipantEmail);
+        const judicalParticipant = this.hearing.judiciaryParticipants?.findIndex(x => x.email === this.selectedParticipantEmail);
         if (judicalParticipant > -1) {
             this.hearing.judiciaryParticipants.splice(judicalParticipant, 1);
             this.hearing = { ...this.hearing };

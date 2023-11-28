@@ -17,7 +17,7 @@ describe('DashboardComponent', () => {
 
     beforeEach(waitForAsync(() => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
@@ -191,7 +191,7 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(true));
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeFalsy();
     });
@@ -205,7 +205,7 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.hrsIntegration).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(false));
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeTruthy();
     });

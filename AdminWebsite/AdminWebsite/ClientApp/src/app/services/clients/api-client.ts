@@ -852,7 +852,7 @@ export class BHClient extends ApiClientBase {
                 _observableMergeMap((_responseText: string) => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
@@ -1840,6 +1840,114 @@ export class BHClient extends ApiClientBase {
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
                     return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Find judges and court rooms accounts list by email search term.
+     * @param body (optional) The email address search term.
+     * @return Success
+     */
+    postJudgesBySearchTerm(body: string | undefined): Observable<JudgeResponse[]> {
+        let url_ = this.baseUrl + '/api/judiciary/judges';
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('post', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processPostJudgesBySearchTerm(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processPostJudgesBySearchTerm(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<JudgeResponse[]>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<JudgeResponse[]>;
+                })
+            );
+    }
+
+    protected processPostJudgesBySearchTerm(response: HttpResponseBase): Observable<JudgeResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(JudgeResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
                 })
             );
         } else if (status === 400) {
@@ -8178,6 +8286,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
     roles?: JusticeUserRole[] | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_telephone?: string | undefined;
 
     constructor(data?: IEditJusticeUserRequest) {
         if (data) {
@@ -8195,6 +8306,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
                 this.roles = [] as any;
                 for (let item of _data['roles']) this.roles!.push(item);
             }
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.contact_telephone = _data['contact_telephone'];
         }
     }
 
@@ -8213,6 +8327,9 @@ export class EditJusticeUserRequest implements IEditJusticeUserRequest {
             data['roles'] = [];
             for (let item of this.roles) data['roles'].push(item);
         }
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['contact_telephone'] = this.contact_telephone;
         return data;
     }
 }
@@ -8221,6 +8338,9 @@ export interface IEditJusticeUserRequest {
     id?: string;
     username?: string | undefined;
     roles?: JusticeUserRole[] | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    contact_telephone?: string | undefined;
 }
 
 export enum JusticeUserRole {
