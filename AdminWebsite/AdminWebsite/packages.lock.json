@@ -14,9 +14,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.49.10, )",
-        "resolved": "1.49.10",
-        "contentHash": "oXH1qyRZhkrbVbdZB7QsO8O0a/6SRCrB71Hb0leiRNUGr/xb0IYdqpaTr6imTeo6zimGxieMiu9uKMsnFpVA/w==",
+        "requested": "[1.49.13, )",
+        "resolved": "1.49.13",
+        "contentHash": "3+T2Q9IbsFFTVFRY7vTpNbfChHjilgQQIrAm4ptwPoH6HP9UWtrrM/JOj8/esfOMlajZvBziSXd7qfQPPnepuA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -253,9 +253,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.3, )",
-        "resolved": "1.44.3",
-        "contentHash": "DeifqS/Lbgy2GhMbZNPZwYB47zwp/rIlHK65J7gE7zLX/l+anfbz8FhyufM9AfjDTcDCEzMlu6XYmp+eDyTYJA==",
+        "requested": "[1.49.4, )",
+        "resolved": "1.49.4",
+        "contentHash": "THMXshzCq8bHCsoU+p79Vmoyh0XoIfFkd13VFve8dzZC/wgE9Z6XmNSRt7SahDgkIlAhOucQVv2TE8avp869MQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }

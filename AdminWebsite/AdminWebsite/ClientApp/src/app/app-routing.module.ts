@@ -11,13 +11,14 @@ import { DeleteParticipantSearchComponent } from './delete-participant/delete-pa
 import { EditParticipantSearchComponent } from './edit-participant/edit-participant-search/edit-participant-search.component';
 import { EditParticipantComponent } from './edit-participant/edit-participant/edit-participant.component';
 import { HomeComponent } from './home/home.component';
-import { AuthGuard } from './security/guards/auth.guard';
 import { AdminGuard } from './security/guards/admin.guard';
 import { WorkAllocationFeatureGuard } from './security/guards/work-allocation-feature.guard';
 import { VhOfficerAdminGuard } from './security/guards/vh-officer-admin.guard';
-import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
 import { LoginComponent } from './security/login.component';
 import { ReformLoginComponent } from './security/reform-login.component';
+import { AuthGuard } from './security/auth.guard';
+import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
+import { AudioSearchGuard } from './security/audio-search.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -31,7 +32,7 @@ export const routes: Routes = [
     { path: 'error', component: ErrorComponent },
     { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
     { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AuthGuard, AdminGuard, AudioSearchGuard] },
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
