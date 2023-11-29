@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { filter } from 'rxjs/operators';
+import { SecurityService } from '../security/services/security.service';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
-    constructor(private oidcSecurityService: OidcSecurityService, private router: Router) {}
+    constructor(private securityService: SecurityService, private router: Router) {}
 
     ngOnInit(): void {
-        this.oidcSecurityService.isAuthenticated$.pipe(filter(auth => auth.isAuthenticated)).subscribe(() => {
-            this.router.navigate(['/dashboard']);
-        });
+        this.securityService
+            .isAuthenticated()
+            .pipe(filter(authenticated => authenticated))
+            .subscribe(() => {
+                this.router.navigate(['/dashboard']);
+            });
     }
 }

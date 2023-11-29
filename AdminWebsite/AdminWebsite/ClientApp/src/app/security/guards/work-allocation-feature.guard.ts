@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { map, take } from 'rxjs/operators';
 
 @Injectable()

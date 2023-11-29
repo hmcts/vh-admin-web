@@ -1,14 +1,13 @@
 import { HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { lastValueFrom, of } from 'rxjs';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
+import { MockSecurityService } from '../../testing/mocks/MockOidcSecurityService';
 
 describe('RefreshTokenParameterInterceptor', () => {
     let sut: RefreshTokenParameterInterceptor;
-    const mockOidcSecurityService = new MockOidcSecurityService();
-
+    const mockService = new MockSecurityService();
     beforeEach(() => {
-        sut = new RefreshTokenParameterInterceptor(mockOidcSecurityService as any);
+        sut = new RefreshTokenParameterInterceptor(mockService as any);
     });
 
     it('should call next with updated body if token request post', async () => {
@@ -74,7 +73,7 @@ describe('RefreshTokenParameterInterceptor', () => {
             return of({} as HttpEvent<any>);
         });
         const request = new HttpRequest<any>('POST', '/oauth2/v2.0/token', 'params1');
-        mockOidcSecurityService.configuration.scope = null;
+        mockService.configuration.scope = null;
 
         // Act
         await lastValueFrom(sut.intercept(request, next));

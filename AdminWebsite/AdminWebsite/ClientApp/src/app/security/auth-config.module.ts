@@ -1,18 +1,26 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { AuthInterceptor, AuthModule, LogLevel, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
-import { map } from 'rxjs/operators';
+import { AuthModule, LogLevel, OpenIdConfiguration, StsConfigHttpLoader, StsConfigLoader } from 'angular-auth-oidc-client';
+import { first, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { ClientSettingsResponse } from '../services/clients/api-client';
 import { ConfigService } from '../services/config.service';
-import { RefreshTokenParameterInterceptor } from './refresh-token-parameter.interceptor';
+import { RefreshTokenParameterInterceptor } from './interceptors/refresh-token-parameter.interceptor';
+import { Observable } from 'rxjs';
+import { MultipleIdpInterceptorService } from './interceptors/multiple-idp-interceptor';
+import { IdpProviders } from './services/security.service';
 
 export const configLoaderFactory = (configService: ConfigService) => {
-    const config$ = configService.getClientSettings().pipe(
+    const configs$: Observable<OpenIdConfiguration[]> = configService.getClientSettings().pipe(
+        first(),
         map((clientSettings: ClientSettingsResponse) => {
             const resource = clientSettings.resource_id ? clientSettings.resource_id : `api://${clientSettings.client_id}`;
+            const resourceReform = clientSettings.reform_tenant_config.resource_id
+                ? clientSettings.reform_tenant_config.resource_id
+                : `api://${clientSettings.reform_tenant_config.client_id}`;
 
-            const values = {
+            const config = {
+                configId: IdpProviders.main,
                 authority: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
                 redirectUrl: clientSettings.redirect_uri,
                 postLogoutRedirectUri: clientSettings.post_logout_redirect_uri,
@@ -27,13 +35,30 @@ export const configLoaderFactory = (configService: ConfigService) => {
                 tokenRefreshInSeconds: 5,
                 silentRenew: true,
                 useRefreshToken: true
-            };
+            } as OpenIdConfiguration;
 
-            return values;
+            const configReform = {
+                configId: IdpProviders.reform,
+                authority: `https://login.microsoftonline.com/${clientSettings.reform_tenant_config.tenant_id}/v2.0`,
+                redirectUrl: clientSettings.reform_tenant_config.redirect_uri,
+                postLogoutRedirectUri: clientSettings.reform_tenant_config.post_logout_redirect_uri,
+                clientId: clientSettings.reform_tenant_config.client_id,
+                scope: `openid profile offline_access ${resourceReform}/feapi`,
+                responseType: 'code',
+                maxIdTokenIatOffsetAllowedInSeconds: 600,
+                autoUserInfo: false,
+                logLevel: environment.production ? LogLevel.Warn : LogLevel.Debug,
+                secureRoutes: ['.'],
+                ignoreNonceAfterRefresh: true,
+                tokenRefreshInSeconds: 5,
+                silentRenew: true,
+                useRefreshToken: true
+            } as OpenIdConfiguration;
+
+            return [config, configReform];
         })
     );
-
-    return new StsConfigHttpLoader(config$);
+    return new StsConfigHttpLoader(configs$);
 };
 
 @NgModule({
@@ -47,7 +72,7 @@ export const configLoaderFactory = (configService: ConfigService) => {
         })
     ],
     providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: MultipleIdpInterceptorService, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenParameterInterceptor, multi: true }
     ],
     exports: [AuthModule]

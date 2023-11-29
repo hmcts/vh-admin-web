@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Data, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { LastMinuteAmendmentsGuard } from './last-minute-amendments.guard';
-import { VideoHearingsService } from '../services/video-hearings.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
 import { of } from 'rxjs';
-import { Logger } from '../services/logger';
-import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
+import { Logger } from '../../services/logger';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
 describe('LastMinuteAmendmentsGuard', () => {
     let guard: LastMinuteAmendmentsGuard;
