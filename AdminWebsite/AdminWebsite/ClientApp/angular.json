@@ -95,7 +95,7 @@
             "karmaConfig": "src/karma.conf.js",
             "codeCoverageExclude": [
               "src/app/services/clients/api-client.ts",
-              "src/app/testing/**", "/**/*mock*.ts", "src/app/security/auth-config.module.ts"
+              "src/app/testing/**", "**/*mock*.ts", "src/app/security/auth-config.module.ts"
             ],
             "styles": [
               "src/styles.css",
