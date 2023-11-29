@@ -1,4 +1,4 @@
-import { BookingsListModel, BookingsDetailsModel } from 'src/app/common/model/bookings-list.model';
+
 import {
     HearingDetailsResponse,
     CaseResponse,
@@ -10,6 +10,7 @@ import {
     JusticeUserResponse
 } from '../../services/clients/api-client';
 import { v4 as uuid } from 'uuid';
+import {BookingsDetailsModel, BookingsListModel} from "../../common/model/bookings-list.model";
 
 export class ResponseTestData {
     static getHearingResponseTestData(): HearingDetailsResponse {
