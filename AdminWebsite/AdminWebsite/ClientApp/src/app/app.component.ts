@@ -35,9 +35,7 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        connection: ConnectionService,
-        private eventService: PublicEventsService,
-        private logger: Logger
+        connection: ConnectionService
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
@@ -55,21 +53,14 @@ export class AppComponent implements OnInit {
             if (response.find(x => x.configId === this.securityService.currentIdpConfigId && x.isAuthenticated)) {
                 this.loggedIn = true;
             }
-            this.eventService
-                .registerForEvents()
-                .pipe(filter(notification => notification.type === EventTypes.NewAuthenticationResult))
-                .subscribe(async (value: OidcClientNotification<AuthStateResult>) => {
-                    this.logger.debug('[AppComponent] - OidcClientNotification event received with value ', value);
-                    this.loggedIn = response.find(x => x.configId === this.securityService.currentIdpConfigId).isAuthenticated;
-                });
+        });
 
-            this.headerComponent.confirmLogout.subscribe(() => {
-                this.showConfirmation();
-            });
+        this.headerComponent.confirmLogout.subscribe(() => {
+            this.showConfirmation();
+        });
 
-            this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-                this.showConfirmationSave(menuItemIndex);
-            });
+        this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
+            this.showConfirmationSave(menuItemIndex);
         });
     }
 

@@ -2,7 +2,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { fakeAsync, inject, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of } from "rxjs";
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
@@ -20,7 +20,7 @@ import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
 import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 import { IdpProviders, SecurityService } from './security/services/security.service';
 import { MockSecurityService } from './testing/mocks/MockOidcSecurityService';
-import { PublicEventsService } from 'angular-auth-oidc-client';
+import { PublicEventsService } from "angular-auth-oidc-client";
 import { Logger } from './services/logger';
 
 describe('AppComponent', () => {
@@ -85,9 +85,7 @@ describe('AppComponent', () => {
                 { provide: WindowRef, useValue: window },
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                { provide: ConnectionService, useFactory: () => mockConnectionService },
-                PublicEventsService,
-                { provide: Logger, useValue: loggerSpy }
+                { provide: ConnectionService, useFactory: () => mockConnectionService }
             ]
         }).compileComponents();
     }));
@@ -124,6 +122,7 @@ describe('AppComponent - ConnectionService', () => {
         navigate: jasmine.createSpy('navigate'),
         navigateByUrl: jasmine.createSpy('navigateByUrl')
     };
+    const eventServiceSpy = jasmine.createSpyObj('PublicEventsService', ['registerForEvents']);
 
     const videoHearingServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
         'hasUnsavedChanges',
@@ -164,12 +163,9 @@ describe('AppComponent - ConnectionService', () => {
                 { provide: Router, useValue: router },
                 { provide: PageTrackerService, useValue: pageTracker },
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                 { provide: DeviceType, useValue: deviceTypeServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
-                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } },
-                PublicEventsService,
-                Logger
+                { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
             ]
         }).compileComponents();
         videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest.calls.reset();
@@ -218,5 +214,20 @@ describe('AppComponent - ConnectionService', () => {
         const component = fixture.componentInstance;
         component.handleSignOut();
         expect(videoHearingServiceSpy.cancelVhoNonAvailabiltiesRequest).toHaveBeenCalledTimes(1);
+    });
+
+    describe('On ngOnInit ', () => {
+        beforeEach(() => {
+            mockSecurityService.currentIdpConfigId = IdpProviders.main;
+            mockSecurityService.setAuthenticatedResult(IdpProviders.main, true);
+            eventServiceSpy.registerForEvents.and.returnValue(of(null));
+        });
+        it('should checkAuthMultiple and set loggedIn to true if currentIdpConfig is authenticated', () => {
+            const fixture = TestBed.createComponent(AppComponent);
+            const component = fixture.componentInstance;
+            component.ngOnInit();
+            expect(component.loggedIn).toBeTrue();
+        });
+
     });
 });

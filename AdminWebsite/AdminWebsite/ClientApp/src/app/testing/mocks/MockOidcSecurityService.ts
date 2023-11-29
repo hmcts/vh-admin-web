@@ -13,7 +13,8 @@ interface UserData {
 }
 
 class MockLoginResponse implements LoginResponse {
-    constructor(isAuthenticated: boolean) {
+    constructor(configId: string, isAuthenticated: boolean) {
+        this.configId = configId;
         this.isAuthenticated = isAuthenticated;
     }
 
@@ -73,12 +74,12 @@ export class MockSecurityService {
     checkAuthMultiple(): Observable<LoginResponse[]> {
         return combineLatest([
             of(
-                new MockLoginResponse(
+                new MockLoginResponse(IdpProviders.main,
                     this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.main).isAuthenticated
                 )
             ),
             of(
-                new MockLoginResponse(
+                new MockLoginResponse(IdpProviders.reform,
                     this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.reform).isAuthenticated
                 )
             )
