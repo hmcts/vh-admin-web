@@ -16,7 +16,6 @@ import { WorkAllocationFeatureGuard } from './security/guards/work-allocation-fe
 import { VhOfficerAdminGuard } from './security/guards/vh-officer-admin.guard';
 import { LoginComponent } from './security/login.component';
 import { ReformLoginComponent } from './security/reform-login.component';
-import { AudioSearchGuard } from './security/audio-search.guard';
 import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
 import { AuthGuard } from './security/guards/auth.guard';
 
