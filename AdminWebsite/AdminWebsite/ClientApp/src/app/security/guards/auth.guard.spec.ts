@@ -34,8 +34,13 @@ describe('authguard', () => {
     });
 
     describe('when login failed with unsuccessful authentication', () => {
-        it('canActivate should return false', fakeAsync(() => {
+        it('canActivate, should return false, main config', fakeAsync(() => {
             oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
+            authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
+        }));
+
+        it('canActivate should return false, reform config', fakeAsync(() => {
+            oidcSecurityService.setAuthenticatedResult(IdpProviders.reform, false);
             authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
         }));
     });
