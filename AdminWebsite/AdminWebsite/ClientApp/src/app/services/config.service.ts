@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClientSettingsResponse } from '../services/clients/api-client';
+import { ClientSettingsResponse, IAzureConfiguration } from '../services/clients/api-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../common/model/config';

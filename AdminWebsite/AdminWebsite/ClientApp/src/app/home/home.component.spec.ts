@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home.component';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
 
 describe('HomeComponent', () => {
     let component: HomeComponent;
     let fixture: ComponentFixture<HomeComponent>;
-    const mockOidcSecurityService: MockOidcSecurityService = new MockOidcSecurityService();
+    const mockOidcSecurityService = new MockSecurityService();
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({

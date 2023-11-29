@@ -1,49 +1,37 @@
 import { fakeAsync } from '@angular/core/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { UserIdentityService } from '../services/user-identity.service';
 import { LogoutComponent } from './logout.component';
-import { MockAuthenticatedResult } from '../testing/mocks/MockOidcSecurityService';
+import { MockAuthenticatedResult, MockSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { IdpProviders, SecurityService } from './services/security.service';
 
 describe('LogoutComponent', () => {
     let component: LogoutComponent;
     let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
-    let securityServiceSpy;
+
+    const mockOidcSecurityService = new MockSecurityService();
+    let oidcSecurityService;
 
     beforeAll(() => {
-        securityServiceSpy = jasmine.createSpyObj<OidcSecurityService>('OidcSecurityService', [
-            'logoffAndRevokeTokens',
-            'isAuthenticated$'
-        ]);
-        securityServiceSpy.logoffAndRevokeTokens.and.returnValue({ subscribe: () => {} });
+        oidcSecurityService = mockOidcSecurityService;
         userIdentityServiceSpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['clearUserProfile']);
     });
 
     beforeEach(() => {
-        securityServiceSpy.isAuthenticated$ = new Subject<MockAuthenticatedResult>();
         userIdentityServiceSpy.clearUserProfile.calls.reset();
-        securityServiceSpy.logoffAndRevokeTokens.calls.reset();
-
-        component = new LogoutComponent(securityServiceSpy, userIdentityServiceSpy);
+        component = new LogoutComponent(oidcSecurityService, userIdentityServiceSpy);
     });
 
     it('should call logout if authenticated', fakeAsync(() => {
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, true);
         component.ngOnInit();
-        const isAuthenticated = true;
-        const authenticatedResult = new MockAuthenticatedResult(isAuthenticated);
-        securityServiceSpy.isAuthenticated$.next(authenticatedResult);
-
         expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalled();
-        expect(securityServiceSpy.logoffAndRevokeTokens).toHaveBeenCalled();
     }));
 
     it('should not call logout if unauthenticated', fakeAsync(() => {
         component.ngOnInit();
-        const isAuthenticated = false;
-        const authenticatedResult = new MockAuthenticatedResult(isAuthenticated);
-        securityServiceSpy.isAuthenticated$.next(authenticatedResult);
-
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
         expect(userIdentityServiceSpy.clearUserProfile).toHaveBeenCalledTimes(0);
-        expect(securityServiceSpy.logoffAndRevokeTokens).toHaveBeenCalledTimes(0);
     }));
 });

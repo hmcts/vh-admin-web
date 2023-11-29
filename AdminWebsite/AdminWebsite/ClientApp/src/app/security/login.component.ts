@@ -2,10 +2,10 @@ import { Router } from '@angular/router';
 import { OnInit, Component, Injectable } from '@angular/core';
 import { ReturnUrlService } from '../services/return-url.service';
 import { LoggerService } from '../services/logger.service';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { catchError } from 'rxjs/operators';
 import { NEVER } from 'rxjs';
 import { ConfigService } from '../services/config.service';
+import { SecurityService } from './services/security.service';
 
 @Component({
     selector: 'app-login',
@@ -14,9 +14,8 @@ import { ConfigService } from '../services/config.service';
 @Injectable()
 export class LoginComponent implements OnInit {
     private readonly loggerPrefix = '[Login] -';
-
     constructor(
-        private oidcSecurityService: OidcSecurityService,
+        private securityService: SecurityService,
         private router: Router,
         private logger: LoggerService,
         private returnUrlService: ReturnUrlService,
@@ -25,7 +24,8 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         this.configService.getClientSettings().subscribe(() => {
-            this.oidcSecurityService.isAuthenticated$
+            this.securityService
+                .isAuthenticated()
                 .pipe(
                     catchError(err => {
                         this.logger.error(`${this.loggerPrefix} Check Auth Error`, err);
@@ -33,10 +33,10 @@ export class LoginComponent implements OnInit {
                         return NEVER;
                     })
                 )
-                .subscribe(response => {
-                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + response.isAuthenticated);
+                .subscribe(isAuthenticated => {
+                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + isAuthenticated);
                     const returnUrl = this.returnUrlService.popUrl() || '/';
-                    if (response.isAuthenticated) {
+                    if (isAuthenticated) {
                         try {
                             this.logger.debug(`${this.loggerPrefix} Return url: ${returnUrl}`);
                             this.router.navigateByUrl(returnUrl);
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
                         this.logger.debug(`${this.loggerPrefix} User not authenticated. Logging in`);
                         try {
                             this.returnUrlService.setUrl(returnUrl);
-                            this.oidcSecurityService.authorize();
+                            this.securityService.authorize();
                         } catch (err) {
                             this.logger.error(`${this.loggerPrefix} Authorize Failed`, err);
                         }

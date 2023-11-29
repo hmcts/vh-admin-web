@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { AdminGuard } from './admin.guard';
 import { Router } from '@angular/router';
-import { UserIdentityService } from '../services/user-identity.service';
+import { UserIdentityService } from '../../services/user-identity.service';
 import { of } from 'rxjs';
-import { Logger } from '../services/logger';
-import { UserProfileResponse } from '../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { UserProfileResponse } from '../../services/clients/api-client';
 
 describe('admin-guard', () => {
     let adminGuard: AdminGuard;

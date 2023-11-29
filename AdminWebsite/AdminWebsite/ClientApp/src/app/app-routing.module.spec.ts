@@ -9,8 +9,6 @@ import { routes } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './security/auth.guard';
-import { AdminGuard } from './security/admin.guard';
 
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
@@ -34,20 +32,22 @@ import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component
 import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-button/get-audio-link-button.component';
 import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
 import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
-import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService';
 import { ConfigService } from './services/config.service';
 import { ClientSettingsResponse, UserProfileResponse } from './services/clients/api-client';
 import { of } from 'rxjs';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HearingSearchResultsComponent } from './get-audio-file/get-audio-file-vh/hearing-search-results/hearing-search-results.component';
 import { LaunchDarklyService } from './services/launch-darkly.service';
 import { UserIdentityService } from './services/user-identity.service';
+import { AuthGuard } from './security/guards/auth.guard';
+import { AdminGuard } from './security/guards/admin.guard';
+import { MockSecurityService } from './testing/mocks/MockOidcSecurityService';
+import { IdpProviders, SecurityService } from './security/services/security.service';
 
 describe('app routing', () => {
     let location: Location;
     let router: Router;
     let fixture: ComponentFixture<DashboardComponent>;
-    const oidcSecurityService = new MockOidcSecurityService();
+    const oidcSecurityService = new MockSecurityService();
     const UserIdentityServiceSpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const clientSettings = new ClientSettingsResponse({
@@ -91,7 +91,7 @@ describe('app routing', () => {
                 AuthGuard,
                 AdminGuard,
                 { provide: ChangesGuard, useClass: MockChangesGuard },
-                { provide: OidcSecurityService, useValue: oidcSecurityService },
+                { provide: SecurityService, useValue: oidcSecurityService },
                 { provide: UserIdentityService, useValue: UserIdentityServiceSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 HttpClient,
@@ -109,14 +109,14 @@ describe('app routing', () => {
     });
 
     it('it should navigate to login, if not authenticated', fakeAsync(() => {
-        oidcSecurityService.setAuthenticated(false);
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
         router.navigate(['/dashboard']);
         tick();
         expect(location.path()).toBe('/login');
     }));
 
     it('it should navigate to unauthorised, if not correct role', fakeAsync(() => {
-        oidcSecurityService.setAuthenticated(true);
+        oidcSecurityService.setAuthenticatedResult(IdpProviders.main, true);
         UserIdentityServiceSpy.getUserInformation.and.returnValue(
             of(new UserProfileResponse({ is_vh_officer_administrator_role: false, is_case_administrator: false }))
         );

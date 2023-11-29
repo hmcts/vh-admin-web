@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { VhOfficerAdminGuard } from './vh-officer-admin.guard';
 import { Router } from '@angular/router';
-import { UserProfileResponse } from '../services/clients/api-client';
-import { UserIdentityService } from '../services/user-identity.service';
+import { UserProfileResponse } from '../../services/clients/api-client';
+import { UserIdentityService } from '../../services/user-identity.service';
 import { of } from 'rxjs';
-import { Logger } from '../services/logger';
+import { Logger } from '../../services/logger';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 

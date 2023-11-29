@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Logger } from '../services/logger';
-import { UserIdentityService } from '../services/user-identity.service';
+import { Logger } from '../../services/logger';
+import { UserIdentityService } from '../../services/user-identity.service';
 
 @Injectable()
 export class VhOfficerAdminGuard implements CanActivate {
