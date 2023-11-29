@@ -1,5 +1,4 @@
-import {HearingTypeResponse, HearingVenueResponse, JudgeResponse} from "../../services/clients/api-client";
-
+import { HearingTypeResponse, HearingVenueResponse, JudgeResponse } from 'src/app/services/clients/api-client';
 
 export class MockValues {
     static HearingTypesList: HearingTypeResponse[] = JSON.parse(
