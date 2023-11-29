@@ -74,12 +74,14 @@ export class MockSecurityService {
     checkAuthMultiple(): Observable<LoginResponse[]> {
         return combineLatest([
             of(
-                new MockLoginResponse(IdpProviders.main,
+                new MockLoginResponse(
+                    IdpProviders.main,
                     this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.main).isAuthenticated
                 )
             ),
             of(
-                new MockLoginResponse(IdpProviders.reform,
+                new MockLoginResponse(
+                    IdpProviders.reform,
                     this.authenticatedResult.allConfigsAuthenticated.find(x => x.configId === IdpProviders.reform).isAuthenticated
                 )
             )

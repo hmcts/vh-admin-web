@@ -2,7 +2,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { fakeAsync, inject, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from "rxjs";
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
@@ -20,7 +20,7 @@ import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
 import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 import { IdpProviders, SecurityService } from './security/services/security.service';
 import { MockSecurityService } from './testing/mocks/MockOidcSecurityService';
-import { PublicEventsService } from "angular-auth-oidc-client";
+import { PublicEventsService } from 'angular-auth-oidc-client';
 import { Logger } from './services/logger';
 
 describe('AppComponent', () => {
@@ -228,6 +228,5 @@ describe('AppComponent - ConnectionService', () => {
             component.ngOnInit();
             expect(component.loggedIn).toBeTrue();
         });
-
     });
 });
