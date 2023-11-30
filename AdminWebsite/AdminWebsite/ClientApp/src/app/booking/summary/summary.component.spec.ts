@@ -175,6 +175,7 @@ describe('SummaryComponent with valid request', () => {
         fixture = TestBed.createComponent(SummaryComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        videoHearingsServiceSpy.cloneMultiHearings.calls.reset();
     });
 
     it('Call ProcessBooking when hearingStatusResponse has failed', async () => {
@@ -434,11 +435,12 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.participants.length).toBe(1);
         expect(component.hearing.participants[0].first_name).toBe('firstname');
     });
-    it('should save new booking with multi hearings', fakeAsync(async () => {
+    it('should save new booking with multi hearings - zero scheduled duration', fakeAsync(async () => {
         component.ngOnInit();
         component.hearing.multiDays = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+        component.hearing.scheduled_duration = 0;
         fixture.detectChanges();
 
         await component.bookHearing().then(() => {
@@ -446,7 +448,35 @@ describe('SummaryComponent with valid request', () => {
             expect(component.showWaitSaving).toBeFalsy();
             expect(routerSpy.navigate).toHaveBeenCalled();
             expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
-            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalledWith(
+                jasmine.any(String),
+                jasmine.objectContaining({
+                    scheduled_duration: 480
+                })
+            );
+        });
+    }));
+
+    it('should save new booking with multi hearings - nonzero scheduled duration', fakeAsync(async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
+        const scheduledDuration = 120;
+        component.hearing.scheduled_duration = scheduledDuration;
+        fixture.detectChanges();
+
+        await component.bookHearing().then(() => {
+            expect(component.bookingsSaving).toBeTruthy();
+            expect(component.showWaitSaving).toBeFalsy();
+            expect(routerSpy.navigate).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalledWith(
+                jasmine.any(String),
+                jasmine.objectContaining({
+                    scheduled_duration: scheduledDuration
+                })
+            );
         });
     }));
 
