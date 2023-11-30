@@ -397,8 +397,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = new MultiHearingRequest
             {
-                StartDate = new DateTime(2020, 10, 1),
-                EndDate = new DateTime(2020, 10, 6),
+                StartDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc),
+                EndDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc),
                 ScheduledDuration = 120
             };
             var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
@@ -434,8 +434,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var request = new MultiHearingRequest
             {
-                StartDate = new DateTime(2020, 10, 1),
-                EndDate = new DateTime(2020, 10, 6)
+                StartDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc),
+                EndDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc)
             };
             var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
             {
@@ -468,8 +468,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_bad_request_status_if_no_items_in_the_date_list()
         {
-            var startDate = new DateTime(2020, 10, 1);
-            var endDate = new DateTime(2020, 10, 1);
+            var startDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
 
 
@@ -531,8 +531,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_clone_hearings_on_weekends_when_start_or_end_date_are_on_weekdays()
         {
-            var startDate = new DateTime(2022, 12, 15);
-            var endDate = new DateTime(2022, 12, 20);
+            var startDate = new DateTime(2022, 12, 15, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2022, 12, 20, 0, 0, 0, DateTimeKind.Utc);
             var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
             var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
             {
@@ -550,11 +550,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var expectedDates = new List<DateTime>
             {
-                new(2022, 12, 16),
-                new(2022, 12, 17),
-                new(2022, 12, 18),
-                new(2022, 12, 19),
-                new(2022, 12, 20)
+                new(2022, 12, 16, 0, 0, 0, DateTimeKind.Utc),
+                new(2022, 12, 17, 0, 0, 0, DateTimeKind.Utc),
+                new(2022, 12, 18, 0, 0, 0, DateTimeKind.Utc),
+                new(2022, 12, 19, 0, 0, 0, DateTimeKind.Utc),
+                new(2022, 12, 20, 0, 0, 0, DateTimeKind.Utc)
             };
             
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -572,9 +572,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearingDates = new List<DateTime>
             {
-                new (2023, 1, 6),
-                new (2023, 1, 7),
-                new (2023, 1, 8)
+                new (2023, 1, 6, 0, 0, 0, DateTimeKind.Utc),
+                new (2023, 1, 7, 0, 0, 0, DateTimeKind.Utc),
+                new (2023, 1, 8, 0, 0, 0, DateTimeKind.Utc)
             };
             var request = new MultiHearingRequest { HearingDates = hearingDates };
             var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
@@ -593,9 +593,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var expectedDates = new List<DateTime>
             {
-                new (2023, 1, 6),
-                new (2023, 1, 7),
-                new (2023, 1, 8)
+                new (2023, 1, 6, 0, 0, 0, DateTimeKind.Utc),
+                new (2023, 1, 7, 0, 0, 0, DateTimeKind.Utc),
+                new (2023, 1, 8, 0, 0, 0, DateTimeKind.Utc)
             };
             
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -610,8 +610,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private static MultiHearingRequest GetMultiHearingRequest()
         {
-            var startDate = new DateTime(2020, 10, 1);
-            var endDate = new DateTime(2020, 10, 6);
+            var startDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc);
             return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
         }
 
