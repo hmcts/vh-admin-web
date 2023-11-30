@@ -327,6 +327,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_clone_hearing()
         {
             var request = GetMultiHearingRequest();
+            request.ScheduledDuration = 120;
             var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
             {
                 new()
@@ -350,7 +351,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             response.Should().BeOfType<NoContentResult>();
 
             _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.Is<CloneHearingRequest>(
+                    y => y.ScheduledDuration == request.ScheduledDuration)),
                 Times.Exactly(1));
         }
 
@@ -389,79 +391,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _mocker.Mock<IBookingsApiClient>().Verify(
                 x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
-                Times.Exactly(1));
-        }
-
-        [Test]
-        public async Task Should_clone_hearing_with_scheduled_duration_specified()
-        {
-            var request = new MultiHearingRequest
-            {
-                StartDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc),
-                EndDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc),
-                ScheduledDuration = 120
-            };
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
-            {
-                new()
-                {
-                    Status = V1.Enums.BookingStatus.Booked,
-                    GroupId = Guid.NewGuid(),
-                    Id = Guid.NewGuid(),
-                }
-            };
-
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(groupedHearings);
-
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
-                .Verifiable();
-
-            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
-
-            response.Should().BeOfType<NoContentResult>();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.Is<CloneHearingRequest>(
-                    y => y.ScheduledDuration == request.ScheduledDuration)),
-                Times.Exactly(1));
-        }
-        
-        [Test]
-        public async Task Should_clone_hearing_with_scheduled_duration_unspecified()
-        {
-            var request = new MultiHearingRequest
-            {
-                StartDate = new DateTime(2020, 10, 1, 0, 0, 0, DateTimeKind.Utc),
-                EndDate = new DateTime(2020, 10, 6, 0, 0, 0, DateTimeKind.Utc)
-            };
-            var groupedHearings = new List<V1.Responses.HearingDetailsResponse>
-            {
-                new()
-                {
-                    Status = V1.Enums.BookingStatus.Booked,
-                    GroupId = Guid.NewGuid(),
-                    Id = Guid.NewGuid(),
-                }
-            };
-
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(groupedHearings);
-
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
-                .Verifiable();
-
-            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
-
-            response.Should().BeOfType<NoContentResult>();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.Is<CloneHearingRequest>(
-                    y => y.ScheduledDuration == V1.Constants.CloneHearings.DefaultScheduledDuration)),
                 Times.Exactly(1));
         }
 
