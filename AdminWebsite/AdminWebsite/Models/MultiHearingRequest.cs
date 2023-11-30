@@ -11,5 +11,6 @@ namespace AdminWebsite.Models
         public IList<DateTime> HearingDates { get; set; }
 
         public bool IsIndividualDates { get; set; }
+        public int ScheduledDuration { get; set; } = BookingsApi.Contract.V1.Constants.CloneHearings.DefaultScheduledDuration;
     }
 }
