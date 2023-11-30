@@ -8132,6 +8132,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
     end_date?: Date;
     hearing_dates?: Date[] | undefined;
     is_individual_dates?: boolean;
+    scheduled_duration?: number;
 
     constructor(data?: IMultiHearingRequest) {
         if (data) {
@@ -8150,6 +8151,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
                 for (let item of _data['hearing_dates']) this.hearing_dates!.push(new Date(item));
             }
             this.is_individual_dates = _data['is_individual_dates'];
+            this.scheduled_duration = _data['scheduled_duration'];
         }
     }
 
@@ -8169,6 +8171,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
             for (let item of this.hearing_dates) data['hearing_dates'].push(item.toISOString());
         }
         data['is_individual_dates'] = this.is_individual_dates;
+        data['scheduled_duration'] = this.scheduled_duration;
         return data;
     }
 }
@@ -8178,6 +8181,7 @@ export interface IMultiHearingRequest {
     end_date?: Date;
     hearing_dates?: Date[] | undefined;
     is_individual_dates?: boolean;
+    scheduled_duration?: number;
 }
 
 export class PhoneConferenceResponse implements IPhoneConferenceResponse {

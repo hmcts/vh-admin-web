@@ -338,7 +338,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
-                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date)),
+                        scheduled_duration: this.hearing.scheduled_duration
                     })
                 );
             } else if (isHearingDateRange) {
@@ -351,7 +352,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
                         start_date: new Date(this.hearing.scheduled_date_time),
-                        end_date: new Date(this.hearing.end_hearing_date_time)
+                        end_date: new Date(this.hearing.end_hearing_date_time),
+                        scheduled_duration: this.hearing.scheduled_duration
                     })
                 );
             } else {
@@ -386,7 +388,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private setDurationOfMultiHearing() {
-        if (this.hearing.multiDays) {
+        if (this.hearing.multiDays && this.hearing.scheduled_duration === 0) {
             this.hearing.scheduled_duration = 480;
         }
     }

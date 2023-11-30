@@ -21,6 +21,7 @@ import {
     BookHearingException,
     BookingStatus,
     HearingDetailsResponse,
+    MultiHearingRequest,
     UpdateBookingStatusResponse,
     ValidationProblemDetails
 } from '../../services/clients/api-client';
@@ -193,11 +194,20 @@ describe('SummaryComponent with valid request', () => {
             new Date(component.hearing.scheduled_date_time),
             new Date(component.hearing.end_hearing_date_time)
         ];
+        const hearingDetailsResponse = new HearingDetailsResponse({
+            id: component.hearing.hearing_id
+        });
         fixture.detectChanges();
 
-        await component.processBooking(jasmine.any(HearingDetailsResponse), hearingStatusResponse);
+        await component.processBooking(hearingDetailsResponse, hearingStatusResponse);
 
-        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalledWith(
+            hearingDetailsResponse.id,
+            new MultiHearingRequest({
+                hearing_dates: component.hearing.hearing_dates.map(date => new Date(date)),
+                scheduled_duration: component.hearing.scheduled_duration
+            })
+        );
     });
 
     it(
@@ -208,11 +218,21 @@ describe('SummaryComponent with valid request', () => {
             const hearingStatusResponse = { success: true };
             component.hearing.multiDays = true;
             component.hearing.hearing_dates = [];
+            const hearingDetailsResponse = new HearingDetailsResponse({
+                id: component.hearing.hearing_id
+            });
             fixture.detectChanges();
 
-            await component.processBooking(jasmine.any(HearingDetailsResponse), hearingStatusResponse);
+            await component.processBooking(hearingDetailsResponse, hearingStatusResponse);
 
-            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+            expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalledWith(
+                hearingDetailsResponse.id,
+                new MultiHearingRequest({
+                    start_date: new Date(component.hearing.scheduled_date_time),
+                    end_date: new Date(component.hearing.end_hearing_date_time),
+                    scheduled_duration: component.hearing.scheduled_duration
+                })
+            );
         }
     );
 
