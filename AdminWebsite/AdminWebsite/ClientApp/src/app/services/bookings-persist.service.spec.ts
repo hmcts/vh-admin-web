@@ -116,7 +116,7 @@ describe('BookingsPersistService', () => {
             expect(updatedHearing.JudgeName).toBe(judge.display_name);
         });
 
-        it('should update judiciary participant judge name for selected hearing', () => {
+        it('should update judge name for selected hearing with judiciary participant judge', () => {
             service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
 
             service.selectedGroupIndex = 0;
@@ -142,6 +142,34 @@ describe('BookingsPersistService', () => {
 
             const updatedHearing = service.bookingList[0].BookingsDetails[0];
             expect(updatedHearing.JudgeName).toBe(judge.displayName);
+        });
+
+        it('should update judge name for selected hearing with judiciary participants but no judge', () => {
+            service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            const judiciaryParticipants: JudicialMemberDto[] = [];
+            const participant = new JudicialMemberDto('Panel', 'Member', 'Panel Member', 'email', 'telephone', 'personalCode');
+            participant.displayName = 'Panel Member';
+            participant.roleCode = 'PanelMember';
+            judiciaryParticipants.push(participant);
+            hearing.judiciaryParticipants = judiciaryParticipants;
+
+            const updatedCase = new CaseModel();
+            updatedCase.name = 'updated case';
+            hearing.cases = [updatedCase];
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearing = service.bookingList[0].BookingsDetails[0];
+            expect(updatedHearing.JudgeName).toBe('');
         });
     });
 
