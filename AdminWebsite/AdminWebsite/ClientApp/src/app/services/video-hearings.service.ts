@@ -433,11 +433,8 @@ export class VideoHearingsService {
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.company = p.organisation;
-                participant.is_judge =
-                    p.case_role_name === Constants.HearingRoles.Judge || p.hearing_role_code === Constants.HearingRoleCodes.Judge;
-                participant.is_staff_member =
-                    p.case_role_name === Constants.HearingRoles.StaffMember ||
-                    p.hearing_role_code === Constants.HearingRoleCodes.StaffMember;
+                participant.is_judge = p.user_role_name === Constants.UserRoles.Judge;
+                participant.is_staff_member = p.user_role_name === Constants.UserRoles.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);
