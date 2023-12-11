@@ -246,7 +246,22 @@ describe('Video hearing service', () => {
         participant.telephone_number = '123123123';
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        participant.user_role_name = 'Individual';
         participants.push(participant);
+
+        const judgeParticipant = new ParticipantResponse();
+        judgeParticipant.title = 'Mr';
+        judgeParticipant.first_name = 'Judge';
+        judgeParticipant.middle_names = 'MiddleNames';
+        judgeParticipant.last_name = 'Test';
+        judgeParticipant.username = 'judge@hmcts.net';
+        judgeParticipant.display_name = 'Judge Test';
+        judgeParticipant.contact_email = 'judge@hmcts.net';
+        judgeParticipant.telephone_number = '123123123';
+        judgeParticipant.case_role_name = null;
+        judgeParticipant.hearing_role_name = null;
+        judgeParticipant.user_role_name = 'Judge';
+        participants.push(judgeParticipant);
 
         const model = service.mapParticipantResponseToParticipantModel(participants);
 
@@ -260,6 +275,19 @@ describe('Video hearing service', () => {
         expect(model[0].phone).toEqual(participant.telephone_number);
         expect(model[0].case_role_name).toEqual(participant.case_role_name);
         expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
+        expect(model[0].is_judge).toBeFalse();
+
+        expect(model[1].title).toEqual(judgeParticipant.title);
+        expect(model[1].first_name).toEqual(judgeParticipant.first_name);
+        expect(model[1].middle_names).toEqual(judgeParticipant.middle_names);
+        expect(model[1].last_name).toEqual(judgeParticipant.last_name);
+        expect(model[1].username).toEqual(judgeParticipant.username);
+        expect(model[1].display_name).toEqual(judgeParticipant.display_name);
+        expect(model[1].email).toEqual(judgeParticipant.contact_email);
+        expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
+        expect(model[1].case_role_name).toEqual(judgeParticipant.case_role_name);
+        expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
+        expect(model[1].is_judge).toBeTrue();
     });
 
     it('should map ParticipantModel toParticipantResponse', () => {

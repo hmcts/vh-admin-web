@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { HearingModel } from '../common/model/hearing.model';
-import { ParticipantModel } from '../common/model/participant.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingPersistService {
@@ -59,7 +58,7 @@ export class BookingPersistService {
                 if (this.isValidDate(hearing.updated_date)) {
                     hearingUpdate.LastEditDate = new Date(hearing.updated_date);
                 }
-                hearingUpdate.JudgeName = this.getJudgeName(hearing.participants);
+                hearingUpdate.JudgeName = this.getJudgeName(hearing);
                 return hearingUpdate;
             }
         }
@@ -73,8 +72,13 @@ export class BookingPersistService {
         return false;
     }
 
-    getJudgeName(participants: ParticipantModel[]) {
-        const judge = participants.find(x => x.case_role_name === 'Judge');
+    getJudgeName(hearing: HearingModel) {
+        if (hearing.judiciaryParticipants && hearing.judiciaryParticipants.length > 0) {
+            const judiciaryJudge = hearing.judiciaryParticipants.find(x => x.roleCode === 'Judge');
+            return judiciaryJudge ? judiciaryJudge.displayName : '';
+        }
+
+        const judge = hearing.participants.find(x => x.is_judge);
         return judge ? judge.display_name : '';
     }
 

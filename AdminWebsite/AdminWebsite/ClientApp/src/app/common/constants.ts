@@ -77,6 +77,10 @@ export const Constants = {
         Observer: 'Observer',
         Interpreter: 'Interpreter'
     },
+    UserRoles: {
+        Judge: 'Judge',
+        StaffMember: 'Staff Member'
+    },
     ManageJusticeUsers: {
         EmptySearchResults:
             'No users matching this search criteria were found. Please check the search and try again. Or, add the team member.',
