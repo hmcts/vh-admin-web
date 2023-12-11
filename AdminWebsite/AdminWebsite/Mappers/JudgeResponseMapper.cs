@@ -30,5 +30,18 @@ namespace AdminWebsite.Mappers
                 ContactEmail = personResponse.ContactEmail
             };
         }
+
+        public static JudgeResponse MapTo(JudiciaryPersonResponse personResponse)
+        {
+            return new JudgeResponse
+            {
+                FirstName = personResponse.FirstName,
+                LastName = personResponse.LastName,
+                DisplayName = personResponse.FullName,
+                Email = personResponse.Email,
+                ContactEmail = personResponse.Email,
+                AccountType = JudgeAccountType.Judiciary
+            };
+        }
     }
 }
