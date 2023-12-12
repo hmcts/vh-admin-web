@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
@@ -385,8 +386,24 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
-            var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
-            var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
+            var expectedResponse = new List<JudgeResponse>();
+            var expectedJudiciaryResponses = new List<JudgeResponse>();
+            var expectedCourtRoomResponses = new List<JudgeResponse>();
+
+            if (withJudiciary)
+            {
+                expectedJudiciaryResponses = _judiciaryResponse.Select(JudgeResponseMapper.MapTo).ToList();
+                expectedResponse.AddRange(expectedJudiciaryResponses);
+            }
+
+            if (withCourtroom)
+            {
+                expectedCourtRoomResponses = _courtRoomResponse.ToList();
+                expectedResponse.AddRange(_courtRoomResponse);
+            }
+
+            var expectedJudiciaryCount = withJudiciary ? expectedJudiciaryResponses.Count : 0;
+            var expectedCourtRoomCount = withCourtroom ? expectedCourtRoomResponses.Count : 0;
 
             var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
 
@@ -397,6 +414,8 @@ namespace AdminWebsite.UnitTests.Controllers
                 Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
                 Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
             }
+
+            personRespList.Should().BeEquivalentTo(expectedResponse);
         }
 
         [Test]
