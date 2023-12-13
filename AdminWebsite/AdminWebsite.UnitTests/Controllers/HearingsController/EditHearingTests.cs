@@ -623,6 +623,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             }).ToList();
             var panelMemberToRemove = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "PanelMember");
             _addNewParticipantRequest.JudiciaryParticipants.Remove(panelMemberToRemove);
+            var panelMemberToAdd = new JudiciaryParticipantRequest
+            {
+                DisplayName = "NewPanelMemberDisplayName",
+                PersonalCode = "NewPanelMemberPersonalCode",
+                Role = "PanelMember"
+            };
+            _addNewParticipantRequest.JudiciaryParticipants.Add(panelMemberToAdd);
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
@@ -634,10 +641,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var existingJudge = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "Judge");
             
-            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(hearing.Id, panelMemberToRemove.PersonalCode),
+            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(
+                    hearing.Id, 
+                    panelMemberToRemove.PersonalCode),
                 Times.Once);
             
-            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(hearing.Id, existingJudge.PersonalCode, It.IsAny<UpdateJudiciaryParticipantRequest>()),
+            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(
+                    hearing.Id, 
+                    existingJudge.PersonalCode, 
+                    It.IsAny<UpdateJudiciaryParticipantRequest>()),
+                Times.Once);
+            
+            _bookingsApiClient.Verify(x => x.AddJudiciaryParticipantsToHearingAsync(
+                    hearing.Id, 
+                    It.Is<List<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>(r => 
+                            r.Any(y => y.PersonalCode == panelMemberToAdd.PersonalCode))),
                 Times.Once);
         }
         
