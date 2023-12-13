@@ -396,8 +396,10 @@ namespace AdminWebsite.Controllers
             
             var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
             var linkedParticipantsV2 = linkedParticipants.Select(lp => lp.MapToV2()).ToList();
+
+            if (request.Participants != null && request.Participants.Any())
+                await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV2);
             
-            await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV2);
             await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, new List<IParticipantRequest>(newParticipants));
         }
         
@@ -410,11 +412,29 @@ namespace AdminWebsite.Controllers
         private async Task UpdateJudiciaryParticipants(Guid hearingId, EditHearingRequest request,
             HearingDetailsResponse originalHearing)
         {
+            // Due to booking api's domain restrictions for removing participants, we have to update judges differently
+            var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == "Judge");
+            var newJudge = request.JudiciaryParticipants.Find(njp => njp.Role == "Judge");
+            if (oldJudge?.PersonalCode != newJudge?.PersonalCode && newJudge != null)
+            {
+                await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
+                {
+                    DisplayName = newJudge.DisplayName,
+                    PersonalCode = newJudge.PersonalCode
+                });
+            }
+            
             // keep the order of removal first. this will allow admin web to change judiciary judges post booking
             var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
                 request.JudiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
             foreach (var removedJoh in removedJohs)
             {
+                if (removedJoh.RoleCode == "Judge")
+                {
+                    // Judges are re-assigned instead of removed or added
+                    continue;
+                }
+                
                 await _bookingsApiClient.RemoveJudiciaryParticipantFromHearingAsync(hearingId, removedJoh.PersonalCode);
             }
             
@@ -433,7 +453,15 @@ namespace AdminWebsite.Controllers
             }).ToList();
             if (newJohRequest.Any())
             {
-                await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, newJohRequest);
+                // Judges are re-assigned instead of removed or added
+                var johsToAdd = newJohRequest
+                    .Where(x => x.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
+                    .ToList();
+
+                if (johsToAdd.Any())
+                {
+                    await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, johsToAdd);
+                }
             }
             
             // get existing judiciary participants based on the personal code being present in the original hearing

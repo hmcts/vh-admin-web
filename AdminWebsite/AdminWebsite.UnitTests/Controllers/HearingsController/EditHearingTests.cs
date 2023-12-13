@@ -614,17 +614,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 },
             });
-            _addNewParticipantRequest.JudiciaryParticipants = new List<JudiciaryParticipantRequest>()
+            var existingJudiciaryParticipants = updatedHearing.JudiciaryParticipants.ToList();
+            _addNewParticipantRequest.JudiciaryParticipants = existingJudiciaryParticipants.Select(x => new JudiciaryParticipantRequest
             {
-                new()
-                {
-                    PersonalCode = "4567", DisplayName = "Jane Doe 2", Role = JudiciaryParticipantHearingRoleCode.PanelMember.ToString()
-                },
-                new()
-                {
-                    PersonalCode = "5678", DisplayName = "New Judge Fudge", Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
-                }
-            };
+                PersonalCode = x.PersonalCode,
+                DisplayName = x.DisplayName,
+                Role = x.HearingRoleCode.ToString()
+            }).ToList();
+            var panelMemberToRemove = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "PanelMember");
+            _addNewParticipantRequest.JudiciaryParticipants.Remove(panelMemberToRemove);
+
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
@@ -633,17 +632,239 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         !u.Cases.IsNullOrEmpty())),
                 Times.Once);
 
-            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(hearing.Id, "1234"),
+            var existingJudge = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "Judge");
+            
+            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(hearing.Id, panelMemberToRemove.PersonalCode),
                 Times.Once);
             
-            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(hearing.Id, "4567", It.IsAny<UpdateJudiciaryParticipantRequest>()),
+            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(hearing.Id, existingJudge.PersonalCode, It.IsAny<UpdateJudiciaryParticipantRequest>()),
                 Times.Once);
-
-            _bookingsApiClient.Verify(
-                x => x.AddJudiciaryParticipantsToHearingAsync(hearing.Id,
-                    It.IsAny<IEnumerable<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_no_participants_provided()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var existingJudge = updatedHearing.JudiciaryParticipants
+                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>
+                {
+                    new()
+                    {
+                        DisplayName = existingJudge.DisplayName,
+                        PersonalCode = existingJudge.PersonalCode,
+                        Role = existingJudge.HearingRoleCode.ToString()
+                    }
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
+                    It.IsAny<Guid>(), 
+                    It.IsAny<UpdateHearingParticipantsRequestV2>()),
+                Times.Never);
+        }
+        
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_no_judiciary_participants_provided()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            updatedHearing.JudiciaryParticipants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
+                    It.IsAny<Guid>(), 
+                    It.IsAny<UpdateHearingParticipantsRequestV2>()),
+                Times.Never);
+            _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<ReassignJudiciaryJudgeRequest>()),
+                Times.Never);
         }
 
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_new_judge_different_to_old_judge()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var newJudge = new JudiciaryParticipantRequest
+            {
+                DisplayName = "NewJudgeDisplayName",
+                PersonalCode = "NewJudgePersonalCode",
+                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
+            };
+
+            var existingPanelMember = updatedHearing.JudiciaryParticipants
+                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
+            
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>
+                {
+                    newJudge,
+                    new()
+                    {
+                        DisplayName = existingPanelMember.DisplayName, 
+                        PersonalCode = existingPanelMember.PersonalCode, 
+                        Role = existingPanelMember.HearingRoleCode.ToString()
+                    }
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            AssertJudiciaryJudgeReassigned(updatedHearing, newJudge);
+        }
+
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_new_judge_and_no_old_judge()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            updatedHearing.JudiciaryParticipants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var newJudge = new JudiciaryParticipantRequest
+            {
+                DisplayName = "NewJudgeDisplayName",
+                PersonalCode = "NewJudgePersonalCode",
+                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
+            };
+
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>
+                {
+                    newJudge
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            AssertJudiciaryJudgeReassigned(updatedHearing, newJudge);
+        }
+        
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_old_judge_and_no_new_judge()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var newJudge = new JudiciaryParticipantRequest
+            {
+                DisplayName = "NewJudgeDisplayName",
+                PersonalCode = "NewJudgePersonalCode",
+                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
+            };
+            
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<ReassignJudiciaryJudgeRequest>()),
+                Times.Never);
+        }
+
+        private void AssertJudiciaryJudgeReassigned(
+            HearingDetailsResponseV2 hearing,
+            JudiciaryParticipantRequest newJudge)
+        {
+            // Removing judges is not supported - they should be reassigned instead
+            
+            _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
+                    hearing.Id,
+                    It.Is<ReassignJudiciaryJudgeRequest>(x => 
+                        x.DisplayName == newJudge.DisplayName && 
+                        x.PersonalCode == newJudge.PersonalCode)),
+                Times.Once);
+            
+            _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<string>()),
+                Times.Never);
+            
+            _bookingsApiClient.Verify(x => x.AddJudiciaryParticipantsToHearingAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<List<BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest>>()),
+                Times.Never);
+        }
+      
         [Test]
         public async Task Should_pass_on_bad_request_from_bookings_api()
         {
