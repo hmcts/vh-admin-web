@@ -173,5 +173,11 @@ describe('AddJudicialOfficeHoldersComponent', () => {
             expect(component.editingPanelMember).toBeFalse();
             expect(component.showAddPanelMember).toBeFalse();
         });
+
+        it('judiciaryMembersAdded should be true when there are judiciary members', () => {
+            // Arrange
+            component.hearing.judiciaryParticipants = [{} as any];
+            expect(component.judiciaryMembersAdded).toBeTrue();
+        });
     });
 });

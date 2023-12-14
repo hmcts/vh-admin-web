@@ -215,5 +215,31 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.showResult).toBeTrue();
             expect(judicialServiceSpy.getJudicialUsers).toHaveBeenCalledWith('test@test.com');
         }));
+
+        it('judiciaryEmailFieldHasError should return true when judiciaryEmail is invalid, then show false for a valid one', () => {
+            const invalidEmails = ['te ##d##1#4#14 232 ', 'test', 'test@', 'test@test', 'test@test.'];
+            invalidEmails.forEach(email => {
+                component.form.controls.judiciaryEmail.markAsDirty();
+                component.form.controls.judiciaryEmail.setValue(email);
+                component.form.controls.judiciaryEmail.updateValueAndValidity();
+                expect(component.judiciaryEmailFieldHasError).toBeTrue();
+            });
+            component.form.controls.judiciaryEmail.setValue('test@test.net');
+            fixture.detectChanges();
+            expect(component.judiciaryEmailFieldHasError).toBeFalse();
+        });
+
+        it('displayNameFieldHasError should return true when displayName is invalid, then show false for a valid one', () => {
+            const invalidDisplayNames = ['!', 'Test//User ', 'Test#####'];
+            invalidDisplayNames.forEach(displayName => {
+                component.form.controls.displayName.markAsDirty();
+                component.form.controls.displayName.setValue(displayName);
+                component.form.controls.displayName.updateValueAndValidity();
+                expect(component.displayNameFieldHasError).toBeTrue();
+            });
+            component.form.controls.displayName.setValue('Test User');
+            fixture.detectChanges();
+            expect(component.displayNameFieldHasError).toBeFalse();
+        });
     });
 });

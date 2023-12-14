@@ -4,6 +4,7 @@ import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
+import { Constants } from '../../../common/constants';
 
 @Component({
     selector: 'app-search-for-judicial-member',
@@ -44,8 +45,12 @@ export class SearchForJudicialMemberComponent {
 
     createForm() {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
-            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
-            displayName: new FormControl<string>('')
+            judiciaryEmail: new FormControl<string>('', [
+                Validators.required,
+                Validators.pattern(Constants.EmailPattern),
+                Validators.maxLength(255)
+            ]),
+            displayName: new FormControl<string>('', [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)])
         });
 
         this.form.controls.judiciaryEmail.valueChanges
@@ -111,6 +116,14 @@ export class SearchForJudicialMemberComponent {
             displayName: ''
         });
         this.form.controls.displayName.removeValidators(Validators.required);
+    }
+
+    get judiciaryEmailFieldHasError(): boolean {
+        return this.form.controls.judiciaryEmail.invalid && this.form.controls.judiciaryEmail.dirty;
+    }
+
+    get displayNameFieldHasError(): boolean {
+        return this.form.controls.displayName.invalid && this.form.controls.displayName.dirty;
     }
 }
 
