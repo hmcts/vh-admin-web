@@ -89,6 +89,7 @@ describe('HearingScheduleComponent first visit', () => {
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterTestingModule],
@@ -244,6 +245,7 @@ describe('HearingScheduleComponent first visit', () => {
 
     it('should update hearing request when form is valid', () => {
         expect(component.form.valid).toBeFalsy();
+        component.multiDaysHearing = true;
         multiDaysControl.setValue(false);
         dateControl.setValue('9999-12-30');
         endDateControl.setValue('0001-01-01');
@@ -273,6 +275,7 @@ describe('HearingScheduleComponent first visit', () => {
         component.isStartHoursInPast = true;
         component.isStartMinutesInPast = true;
         component.hasSaved = false;
+        component.multiDaysHearing = true;
         multiDaysControl.setValue(false);
 
         expect(component.form.valid).toBeTruthy();
@@ -416,6 +419,7 @@ describe('HearingScheduleComponent returning to page', () => {
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
@@ -574,6 +578,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
@@ -683,5 +688,34 @@ describe('HearingScheduleComponent multi days hearing', () => {
         component.hearing.hearing_id = null;
         component.ngOnInit();
         expect(component.isBookedHearing).toBe(false);
+    });
+
+    describe('multi day booking enhancements enabled', () => {
+        beforeEach(() => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+            component.ngOnInit();
+            fixture.detectChanges();
+        });
+
+        it('should retain duration values after ticking multi-days', () => {
+            const durationHours = 2;
+            const durationMinutes = 45;
+            component.durationHourControl.setValue(durationHours);
+            component.durationMinuteControl.setValue(durationMinutes);
+            component.multiDaysControl.setValue(true);
+            expect(component.durationHourControl.value).toBe(durationHours);
+            expect(component.durationMinuteControl.value).toBe(durationMinutes);
+        });
+
+        it('should retain duration values after unticking multi-days', () => {
+            const durationHours = 1;
+            const durationMinutes = 30;
+            component.durationHourControl.setValue(durationHours);
+            component.durationMinuteControl.setValue(durationMinutes);
+            component.multiDaysHearing = true;
+            component.multiDaysControl.setValue(false);
+            expect(component.durationHourControl.value).toBe(durationHours);
+            expect(component.durationMinuteControl.value).toBe(durationMinutes);
+        });
     });
 });

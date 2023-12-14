@@ -200,7 +200,11 @@ namespace AdminWebsite.Controllers
                 return BadRequest();
             }
 
-            var cloneHearingRequest = new CloneHearingRequest { Dates = hearingDates };
+            var cloneHearingRequest = new CloneHearingRequest
+            {
+                Dates = hearingDates, 
+                ScheduledDuration = hearingRequest.ScheduledDuration
+            };
 
             try
             {
