@@ -1,8 +1,5 @@
 <form [formGroup]="form">
   <div class="govuk-form-group">
-    <div *ngIf="judiciaryEmailFieldHasError" class="alert alert-danger">
-      <span id="judiciaryEmailInputError" class="govuk-error-message">Email Invalid</span>
-    </div>
     <label class="govuk-label" for="judiciaryEmailInput">Email</label>
     <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" tabindex="1" />
     <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">

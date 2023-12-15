@@ -47,7 +47,7 @@ export class SearchForJudicialMemberComponent {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
             judiciaryEmail: new FormControl<string>('', [
                 Validators.required,
-                Validators.pattern(Constants.EmailPattern),
+                Validators.minLength(3),
                 Validators.maxLength(255)
             ]),
             displayName: new FormControl<string>('', [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)])
@@ -116,10 +116,6 @@ export class SearchForJudicialMemberComponent {
             displayName: ''
         });
         this.form.controls.displayName.removeValidators(Validators.required);
-    }
-
-    get judiciaryEmailFieldHasError(): boolean {
-        return this.form.controls.judiciaryEmail.invalid && this.form.controls.judiciaryEmail.dirty;
     }
 
     get displayNameFieldHasError(): boolean {
