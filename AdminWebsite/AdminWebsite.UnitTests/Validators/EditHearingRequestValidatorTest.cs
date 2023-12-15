@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Contracts.Requests;
 
 namespace AdminWebsite.UnitTests.Validators
 {
@@ -42,6 +43,17 @@ namespace AdminWebsite.UnitTests.Validators
         {
             var testRequest = new EditHearingRequest {
                 Participants = new List<EditParticipantRequest> { new EditParticipantRequest() },
+                Case = new EditCaseRequest(),
+            };
+            var result = _validator.Validate(testRequest);
+            Assert.That(!result.Errors.Any(o => o.PropertyName == "Participants"));
+        }
+        
+        [Test]
+        public void Should_validate_participants_as_valid_when_judiciary_participants_are_provided()
+        {
+            var testRequest = new EditHearingRequest {
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest> { new() },
                 Case = new EditCaseRequest(),
             };
             var result = _validator.Validate(testRequest);

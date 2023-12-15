@@ -293,13 +293,9 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Staff Member")
                 .Build();
-            var telephoneParticipant = Builder<TelephoneParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .Build();
 
             return Builder<HearingDetailsResponse>.CreateNew()
                 .With(h => h.Participants = new List<ParticipantResponse> { rep, ind, joh, judge, staffMember })
-                .With(h => h.TelephoneParticipants = new List<TelephoneParticipantResponse> { telephoneParticipant })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();
