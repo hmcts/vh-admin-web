@@ -45,11 +45,7 @@ export class SearchForJudicialMemberComponent {
 
     createForm() {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
-            judiciaryEmail: new FormControl<string>('', [
-                Validators.required,
-                Validators.minLength(3),
-                Validators.maxLength(255)
-            ]),
+            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),
             displayName: new FormControl<string>('', [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)])
         });
 
