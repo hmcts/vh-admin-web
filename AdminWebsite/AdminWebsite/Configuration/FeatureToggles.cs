@@ -56,7 +56,8 @@ namespace AdminWebsite.Configuration
 
         public bool EJudEnabled()
         {
-            return GetBoolValueWithKey(EJudFeatureToggleKey);
+            return false;
+            //return GetBoolValueWithKey(EJudFeatureToggleKey);
         }
         
         public bool HrsEnabled()
@@ -71,7 +72,9 @@ namespace AdminWebsite.Configuration
 
         public bool UseV2Api()
         {
-            return GetBoolValueWithKey(UseV2ApiToggleKey);
+            return false;
+            
+            //return GetBoolValueWithKey(UseV2ApiToggleKey);
         }
         
         private bool GetBoolValueWithKey(string key)

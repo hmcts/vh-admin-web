@@ -34,7 +34,8 @@ export class BookingsDetailsModel {
         caseType: string,
         courtRoomAccount: string,
         telephoneConferenceId: string,
-        allocatedTo?: string
+        allocatedTo?: string,
+        groupId?: string
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;
@@ -60,6 +61,7 @@ export class BookingsDetailsModel {
         this.CourtRoomAccount = courtRoomAccount;
         this.TelephoneConferenceId = telephoneConferenceId;
         this.AllocatedTo = allocatedTo;
+        this.GroupId = groupId;
     }
 
     HearingId: string;
@@ -89,6 +91,7 @@ export class BookingsDetailsModel {
     CourtRoomAccount: string;
     TelephoneConferenceId: string;
     AllocatedTo?: string;
+    GroupId?: string;
 
     get DurationInHoursAndMinutes(): string {
         return FormatShortDuration(this.Duration);
@@ -108,5 +111,9 @@ export class BookingsDetailsModel {
 
     public get hasConfirmationWithNoJudge(): boolean {
         return this.Status === 'ConfirmedWithoutJudge';
+    }
+
+    public get isMultiDay(): boolean {
+        return this.GroupId !== null;
     }
 }
