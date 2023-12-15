@@ -364,7 +364,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 JudiciaryParticipants = new List<JudiciaryParticipantResponse>()
                 {
                     new (){FullName = "Judge Fudge", FirstName = "John", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge, PersonalCode = "1234"},
-                    new (){FullName = "Jane Doe", FirstName = "Jane", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember, PersonalCode = "4567"}
+                    new (){FullName = "Jane Doe", FirstName = "Jane", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember, PersonalCode = "4567"},
+                    new (){FullName = "John Doe", FirstName = "John", LastName = "Doe", HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember, PersonalCode = "5678"}
                 }
             };
         }
@@ -621,7 +622,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 DisplayName = x.DisplayName,
                 Role = x.HearingRoleCode.ToString()
             }).ToList();
-            var panelMemberToRemove = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "PanelMember");
+            
+            var panelMemberToRemove = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.PersonalCode == "4567");
             _addNewParticipantRequest.JudiciaryParticipants.Remove(panelMemberToRemove);
             var panelMemberToAdd = new JudiciaryParticipantRequest
             {
@@ -631,6 +633,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             _addNewParticipantRequest.JudiciaryParticipants.Add(panelMemberToAdd);
 
+            var panelMemberToUpdate = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.PersonalCode == "5678");
+            panelMemberToUpdate.DisplayName = "NewPanelMemberDisplayName";
+
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (AdminWebsite.Contracts.Responses.HearingDetailsResponse)((OkObjectResult)result.Result).Value;
             hearing.Id.Should().Be(updatedHearing.Id);
@@ -639,8 +644,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         !u.Cases.IsNullOrEmpty())),
                 Times.Once);
 
-            var existingJudge = _addNewParticipantRequest.JudiciaryParticipants.Find(x => x.Role == "Judge");
-            
             _bookingsApiClient.Verify(x => x.RemoveJudiciaryParticipantFromHearingAsync(
                     hearing.Id, 
                     panelMemberToRemove.PersonalCode),
@@ -648,7 +651,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(
                     hearing.Id, 
-                    existingJudge.PersonalCode, 
+                    panelMemberToUpdate.PersonalCode, 
                     It.IsAny<UpdateJudiciaryParticipantRequest>()),
                 Times.Once);
             
@@ -754,8 +757,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
             };
 
-            var existingPanelMember = updatedHearing.JudiciaryParticipants
-                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
+            var existingPanelMembers = updatedHearing.JudiciaryParticipants
+                .Where(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
             
             var request = new EditHearingRequest
             {
@@ -766,15 +769,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 JudiciaryParticipants = new List<JudiciaryParticipantRequest>
                 {
-                    newJudge,
-                    new()
-                    {
-                        DisplayName = existingPanelMember.DisplayName, 
-                        PersonalCode = existingPanelMember.PersonalCode, 
-                        Role = existingPanelMember.HearingRoleCode.ToString()
-                    }
+                    newJudge
                 }
             };
+            request.JudiciaryParticipants.AddRange(existingPanelMembers.Select(x => new JudiciaryParticipantRequest
+            {
+                DisplayName = x.DisplayName,
+                PersonalCode = x.PersonalCode,
+                Role = x.HearingRoleCode.ToString()
+            }));
             
             var result = await _controller.EditHearing(_validId, request);
             
@@ -862,18 +865,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
-            
-            var newJudge = new JudiciaryParticipantRequest
-            {
-                DisplayName = "NewJudgeDisplayName",
-                PersonalCode = "NewJudgePersonalCode",
-                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
-            };
 
             var existingJudge = updatedHearing.JudiciaryParticipants
                 .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
-            var existingPanelMember = updatedHearing.JudiciaryParticipants
-                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
+            var existingPanelMembers = updatedHearing.JudiciaryParticipants
+                .Where(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
             
             var request = new EditHearingRequest
             {
@@ -889,16 +885,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         DisplayName = existingJudge.DisplayName,
                         PersonalCode = existingJudge.PersonalCode,
                         Role = existingJudge.HearingRoleCode.ToString()
-                    },
-                    new()
-                    {
-                        DisplayName = existingPanelMember.DisplayName, 
-                        PersonalCode = existingPanelMember.PersonalCode, 
-                        Role = existingPanelMember.HearingRoleCode.ToString()
                     }
                 },
                 ScheduledDateTime = DateTime.UtcNow.AddMinutes(15)
             };
+            request.JudiciaryParticipants.AddRange(existingPanelMembers.Select(x => new JudiciaryParticipantRequest
+            {
+                DisplayName = x.DisplayName,
+                PersonalCode = x.PersonalCode,
+                Role = x.HearingRoleCode.ToString()
+            }));
             
             var result = await _controller.EditHearing(_validId, request);
             
