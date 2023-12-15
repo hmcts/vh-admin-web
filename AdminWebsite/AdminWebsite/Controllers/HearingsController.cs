@@ -470,6 +470,14 @@ namespace AdminWebsite.Controllers
 
             foreach (var joh in existingJohs)
             {
+                // Only update the joh if their details have changed
+                var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
+                if (joh.DisplayName == originalJoh.DisplayName &&
+                    joh.Role == originalJoh.RoleCode)
+                {
+                    continue;
+                }
+                
                 var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
                 await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
                     new UpdateJudiciaryParticipantRequest()

@@ -832,14 +832,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
-            
-            var newJudge = new JudiciaryParticipantRequest
-            {
-                DisplayName = "NewJudgeDisplayName",
-                PersonalCode = "NewJudgePersonalCode",
-                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
-            };
-            
+
             var request = new EditHearingRequest
             {
                 Case = new EditCaseRequest
@@ -856,6 +849,67 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
                     It.IsAny<Guid>(),
                     It.IsAny<ReassignJudiciaryJudgeRequest>()),
+                Times.Never);
+        }
+
+        [Test]
+        public async Task Should_return_updated_hearingV2_with_participants_unchanged_and_hearing_close_to_start_time()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Clear();
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+            
+            var newJudge = new JudiciaryParticipantRequest
+            {
+                DisplayName = "NewJudgeDisplayName",
+                PersonalCode = "NewJudgePersonalCode",
+                Role = JudiciaryParticipantHearingRoleCode.Judge.ToString()
+            };
+
+            var existingJudge = updatedHearing.JudiciaryParticipants
+                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            var existingPanelMember = updatedHearing.JudiciaryParticipants
+                .Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.PanelMember);
+            
+            var request = new EditHearingRequest
+            {
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                },
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>
+                {
+                    new()
+                    {
+                        DisplayName = existingJudge.DisplayName,
+                        PersonalCode = existingJudge.PersonalCode,
+                        Role = existingJudge.HearingRoleCode.ToString()
+                    },
+                    new()
+                    {
+                        DisplayName = existingPanelMember.DisplayName, 
+                        PersonalCode = existingPanelMember.PersonalCode, 
+                        Role = existingPanelMember.HearingRoleCode.ToString()
+                    }
+                },
+                ScheduledDateTime = DateTime.UtcNow.AddMinutes(15)
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            // Updating judiciary participants (other than reassigning the hearing's judge) when the hearing is close to start time is rejected by bookings api
+            // so we shouldn't send the request if it's not needed
+            _bookingsApiClient.Verify(x => x.UpdateJudiciaryParticipantAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<string>(),
+                    It.IsAny<UpdateJudiciaryParticipantRequest>()),
                 Times.Never);
         }
 
