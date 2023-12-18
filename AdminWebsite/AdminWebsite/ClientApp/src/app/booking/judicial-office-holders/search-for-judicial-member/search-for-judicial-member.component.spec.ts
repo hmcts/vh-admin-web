@@ -215,5 +215,18 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.showResult).toBeTrue();
             expect(judicialServiceSpy.getJudicialUsers).toHaveBeenCalledWith('test@test.com');
         }));
+
+        it('displayNameFieldHasError should return true when displayName is invalid, then show false for a valid one', () => {
+            const invalidDisplayNames = ['!', 'Test//User ', 'Test#####'];
+            invalidDisplayNames.forEach(displayName => {
+                component.form.controls.displayName.markAsDirty();
+                component.form.controls.displayName.setValue(displayName);
+                component.form.controls.displayName.updateValueAndValidity();
+                expect(component.displayNameFieldHasError).toBeTrue();
+            });
+            component.form.controls.displayName.setValue('Test User');
+            fixture.detectChanges();
+            expect(component.displayNameFieldHasError).toBeFalse();
+        });
     });
 });

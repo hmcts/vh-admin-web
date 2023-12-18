@@ -10,6 +10,9 @@
   </div>
 
   <div class="govuk-form-group">
+    <div *ngIf="displayNameFieldHasError" class="alert alert-danger">
+      <span id="judiciaryDisplayNameInputError" class="govuk-error-message">Display Name Invalid</span>
+    </div>
     <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
     <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
   </div>
