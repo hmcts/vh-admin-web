@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
 using V1 = BookingsApi.Contract.V1.Responses;
@@ -23,9 +24,7 @@ public static class HearingDetailsResponseMapper
                 Number = e.Number
             }).ToList(),
             Participants = hearingDetails.Participants?.Map(),
-            TelephoneParticipants = hearingDetails.TelephoneParticipants?
-                .Select(t => t.Map())
-                .ToList(),
+            TelephoneParticipants = new List<TelephoneParticipantResponse>(),
             HearingRoomName = hearingDetails.HearingRoomName,
             OtherInformation = hearingDetails.OtherInformation,
             CreatedDate = hearingDetails.CreatedDate,

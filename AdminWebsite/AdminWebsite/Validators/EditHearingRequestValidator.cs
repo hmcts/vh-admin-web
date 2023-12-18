@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using FluentValidation;
 
 namespace AdminWebsite.Validators
@@ -19,6 +18,7 @@ namespace AdminWebsite.Validators
 
             RuleFor(x => x.Participants)
                 .Must(x => x != null && x.Count > 0)
+                .When(x => x.JudiciaryParticipants == null || x.JudiciaryParticipants.Count == 0)
                 .WithMessage(PARTICIPANT_MSG);
 
             RuleForEach(x => x.Participants).NotNull().SetValidator(new EditParticipantRequestValidation());
