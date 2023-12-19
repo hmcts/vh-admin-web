@@ -1426,6 +1426,127 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Edit a multi-day hearing
+     * @param hearingId The id of the hearing
+     * @param body (optional) Hearing Request object for edit operation
+     * @return Success
+     */
+    editMultiDayHearing(hearingId: string, body: EditMultiDayHearingRequest | undefined): Observable<HearingDetailsResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/multi-day';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processEditMultiDayHearing(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processEditMultiDayHearing(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
+                })
+            );
+    }
+
+    protected processEditMultiDayHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = HearingDetailsResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('No Content', status, _responseText, _headers);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Get hearings by case number.
      * @param caseNumber (optional) The case number.
      * @param date (optional) The date to filter by
@@ -5612,6 +5733,80 @@ export interface ICaseRequest {
     number?: string | undefined;
     name?: string | undefined;
     is_lead_case?: boolean;
+}
+
+export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
+    /** List of endpoints for the hearing */
+    endpoints?: EditEndpointRequest[] | undefined;
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
+
+    constructor(data?: IEditMultiDayHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['participants'])) {
+                this.participants = [] as any;
+                for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['endpoints'])) {
+                this.endpoints = [] as any;
+                for (let item of _data['endpoints']) this.endpoints!.push(EditEndpointRequest.fromJS(item));
+            }
+            this.update_future_days = _data['update_future_days'];
+        }
+    }
+
+    static fromJS(data: any): EditMultiDayHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditMultiDayHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.participants)) {
+            data['participants'] = [];
+            for (let item of this.participants) data['participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.endpoints)) {
+            data['endpoints'] = [];
+            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
+        }
+        data['update_future_days'] = this.update_future_days;
+        return data;
+    }
+}
+
+export interface IEditMultiDayHearingRequest {
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
+    /** List of endpoints for the hearing */
+    endpoints?: EditEndpointRequest[] | undefined;
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
 }
 
 export class EndpointRequest implements IEndpointRequest {

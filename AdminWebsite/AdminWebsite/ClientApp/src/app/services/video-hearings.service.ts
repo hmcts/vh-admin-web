@@ -27,7 +27,8 @@ import {
     BookingStatus,
     AllocatedCsoResponse,
     HearingRoleResponse,
-    JudiciaryParticipantRequest
+    JudiciaryParticipantRequest,
+    EditMultiDayHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -202,6 +203,11 @@ export class VideoHearingsService {
         return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
     }
 
+    updateMultiDayHearing(booking: HearingModel) : Observable<HearingDetailsResponse> {
+        const request = this.mapExistingHearingToEditMultiDayHearingRequest(booking);
+        return this.bhClient.editMultiDayHearing(booking.hearing_id, request);
+    }
+
     mapExistingHearing(booking: HearingModel): EditHearingRequest {
         const hearing = new EditHearingRequest();
 
@@ -222,6 +228,19 @@ export class VideoHearingsService {
             hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
         }
         return hearing;
+    }
+
+    mapExistingHearingToEditMultiDayHearingRequest(booking: HearingModel): EditMultiDayHearingRequest {
+        const editMultiDayRequest = new EditMultiDayHearingRequest();
+
+        var editHearingRequest = this.mapExistingHearing(booking);
+
+        editMultiDayRequest.participants = editHearingRequest.participants;
+        editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
+        editMultiDayRequest.endpoints = editHearingRequest.endpoints;
+        editMultiDayRequest.update_future_days = booking.multiDays;
+
+        return editMultiDayRequest;
     }
 
     mapParticipantModelToEditParticipantRequest(participants: ParticipantModel[]): EditParticipantRequest[] {

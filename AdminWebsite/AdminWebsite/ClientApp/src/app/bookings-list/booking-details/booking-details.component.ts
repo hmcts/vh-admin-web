@@ -185,11 +185,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     editHearing() {
         this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(false);
         this.router.navigate([PageUrls.Summary]);
     }
 
     editMultiDaysOfHearing() {
         this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(true);
         this.router.navigate([PageUrls.Summary]);
     }
 
@@ -215,6 +217,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             }
             await this.updateHearingStatusDisplay(response, updateBookingStatus);
         });
+    }
+
+    setEditMultiDayHearingOptions(updateFutureDays: boolean) {
+        this.booking.multiDays = updateFutureDays; // Prevents the end date from showing in the UI when not updating future days
+
+        // TODO When multi days is true, restrict editing to the participants
+
+        this.videoHearingService.updateHearingRequest(this.booking);
     }
 
     keepBooking() {
