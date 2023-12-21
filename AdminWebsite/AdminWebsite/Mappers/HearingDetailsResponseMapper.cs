@@ -70,7 +70,7 @@ public static class HearingDetailsResponseMapper
             Status = (Contracts.Enums.BookingStatus)hearingDetails.Status,
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
-            Endpoints = hearingDetails.Endpoints.Select(e => e.Map()).ToList(),
+            Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),
             JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId
         };
