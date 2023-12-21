@@ -7,6 +7,7 @@ using AdminWebsite.Attributes;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -321,7 +322,7 @@ namespace AdminWebsite.Controllers
                 var responseV2 = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
                 return responseV2.Map();
             }
-            
+
             var responseV1 = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             return responseV1.Map();
         }
@@ -641,11 +642,13 @@ namespace AdminWebsite.Controllers
             try
             {
                 _logger.LogDebug($"Hearing {hearingId} is booked. Polling for the status in BookingsApi");
-
+                var response = await GetHearing(hearingId);
+                var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
+                var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
+                
                 VideoApi.Contract.Responses.ConferenceDetailsResponse conferenceDetailsResponse;
-                var response = await _bookingsApiClient.GetBookingStatusByIdAsync(hearingId);
-
-                if ((BookingStatus)response == BookingStatus.Created)
+                
+                if (response.Status == BookingStatus.Created && !accountsStillNeedCreating)
                 {
                     try
                     {
@@ -782,6 +785,21 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
+        }
+
+        private IEnumerable<ParticipantResponse> ParticipantsNeedVHAccounts(List<ParticipantResponse> allParticipants)
+        {
+            IEnumerable<ParticipantResponse> participantsNeedVHAccounts;
+            if (_featureToggles.UseV2Api())
+            {
+                participantsNeedVHAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
+            }
+            else
+            {
+                participantsNeedVHAccounts = allParticipants.Where(x => x.UserRoleName != RoleNames.Judge);
+            }
+
+            return participantsNeedVHAccounts;
         }
     }
 }
