@@ -24,14 +24,16 @@ namespace AdminWebsite.Controllers
         private readonly IUserAccountService _userAccountService;
         private readonly JavaScriptEncoder _encoder;
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IFeatureToggles _featureToggles;
         private readonly TestUserSecrets _testSettings;
 
         public JudiciaryAccountsController(IUserAccountService userAccountService, JavaScriptEncoder encoder,
-            IBookingsApiClient bookingsApiClient, IOptions<TestUserSecrets> testSettings)
+            IBookingsApiClient bookingsApiClient, IOptions<TestUserSecrets> testSettings, IFeatureToggles featureToggles)
         {
             _userAccountService = userAccountService;
             _encoder = encoder;
             _bookingsApiClient = bookingsApiClient;
+            _featureToggles = featureToggles;
             _testSettings = testSettings.Value;
         }
         
@@ -47,24 +49,37 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<JudgeResponse>>> PostJudgesBySearchTermAsync([FromBody] string term)
         {
             // This is the v1 ejud search for judges
-            
             try
             {
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
 
+                List<JudgeResponse> allJudges;
                 var courtRoomJudgesTask = _userAccountService.SearchJudgesByEmail(searchTerm.Term);
-                var eJudiciaryJudgesTask = GetEjudiciaryJudgesBySearchTermAsync(searchTerm);
+                
+                if (_featureToggles.EJudEnabled())
+                {
+                    var eJudiciaryJudgesTask = GetEjudiciaryJudgesBySearchTermAsync(searchTerm);
 
-                await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
-
-                var courtRoomJudges = await courtRoomJudgesTask;
-                var eJudiciaryJudges = (await eJudiciaryJudgesTask).Select(x => JudgeResponseMapper.MapTo(x));
-
-                var allJudges = courtRoomJudges.Concat(eJudiciaryJudges)
-                    .OrderBy(x => x.Email).Take(20).ToList();
-
+                    await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
+                    var courtRoomJudges = await courtRoomJudgesTask;
+                    var eJudiciaryJudges = (await eJudiciaryJudgesTask).Select(x => JudgeResponseMapper.MapTo(x));
+                    allJudges = courtRoomJudges
+                        .Concat(eJudiciaryJudges)
+                        .OrderBy(x => x.Email)
+                        .Take(20)
+                        .ToList();
+                }
+                else
+                {
+                    var courtRoomJudges = await courtRoomJudgesTask;
+                    allJudges = courtRoomJudges
+                        .OrderBy(x => x.Email)
+                        .Take(20)
+                        .ToList();
+                }
                 return Ok(allJudges);
+           
             }
             catch (BookingsApiException e)
             {
