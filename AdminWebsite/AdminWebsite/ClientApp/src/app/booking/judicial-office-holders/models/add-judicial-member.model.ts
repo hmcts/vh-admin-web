@@ -11,7 +11,10 @@ export class JudicialMemberDto {
         public fullName: string,
         public email: string,
         public telephone: string,
-        public personalCode: string
+        public personalCode: string,
+        public isGeneric: boolean,
+        public optionalContactNumber?: string,
+        public optionalPersonalCode?: string
     ) {}
 
     static fromJudiciaryParticipantResponse(response: JudiciaryParticipantResponse): JudicialMemberDto {
@@ -21,7 +24,10 @@ export class JudicialMemberDto {
             response.full_name,
             response.email,
             response.work_phone,
-            response.personal_code
+            response.personal_code,
+            response.is_generic,
+            response.optional_contact_telephone,
+            response.optional_contact_email
         );
         dto.roleCode = response.role_code as JudicaryRoleCode;
         dto.displayName = response.display_name;

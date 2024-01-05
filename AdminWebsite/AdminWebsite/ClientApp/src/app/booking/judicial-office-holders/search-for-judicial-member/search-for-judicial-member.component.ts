@@ -5,6 +5,7 @@ import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
 import { Constants } from '../../../common/constants';
+import { HoursType } from "../../../common/model/hours-type";
 
 @Component({
     selector: 'app-search-for-judicial-member',
@@ -88,6 +89,8 @@ export class SearchForJudicialMemberComponent {
     }
 
     selectJudicialMember(judicialMember: JudiciaryPerson) {
+        const optional_contact_telephone = '';
+        const optional_contact_email = ''
         this.form.setValue(
             { judiciaryEmail: judicialMember.email, displayName: judicialMember.full_name },
             { emitEvent: false, onlySelf: true }
@@ -98,7 +101,10 @@ export class SearchForJudicialMemberComponent {
             judicialMember.full_name,
             judicialMember.email,
             judicialMember.work_phone,
-            judicialMember.personal_code
+            judicialMember.personal_code,
+            judicialMember.is_generic,
+            optional_contact_telephone,
+            optional_contact_email
         );
 
         this.showResult = false;

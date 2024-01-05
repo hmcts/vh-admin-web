@@ -5,7 +5,7 @@ namespace AdminWebsite.Mappers
 {
     public static class JudiciaryPersonResponseMapper
     {
-        public static JudiciaryPerson MapToAdminWebResponse(this BookingsApi.Contract.V1.Responses.JudiciaryPersonResponse judiciaryPersonResponse)
+        public static JudiciaryPerson MapToAdminWebResponse(this JudiciaryPersonResponse judiciaryPersonResponse)
         {
             return new JudiciaryPerson()
             {
@@ -15,11 +15,12 @@ namespace AdminWebsite.Mappers
                 LastName = judiciaryPersonResponse.LastName,
                 FullName = judiciaryPersonResponse.FullName,
                 PersonalCode = judiciaryPersonResponse.PersonalCode,
-                WorkPhone = judiciaryPersonResponse.WorkPhone
+                WorkPhone = judiciaryPersonResponse.WorkPhone,
+                IsGeneric = judiciaryPersonResponse.IsGeneric
             };
         }
         
-        public static PersonResponse MapToPersonResponse(this BookingsApi.Contract.V1.Responses.JudiciaryPersonResponse judiciaryPersonResponse)
+        public static PersonResponse MapToPersonResponse(this JudiciaryPersonResponse judiciaryPersonResponse)
         {
             return new PersonResponse()
             {

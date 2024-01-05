@@ -4,11 +4,10 @@
     <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" tabindex="1" />
     <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">
       <li *ngFor="let result of searchResult | slice : 0 : 9" class="vk-showlist-m30" tabindex="2">
-        <span class="vh-a-email" (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
+        <span class="vh-a-email"  (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
       </li>
     </ul>
   </div>
-
   <div class="govuk-form-group">
     <div *ngIf="displayNameFieldHasError" class="alert alert-danger">
       <span id="judiciaryDisplayNameInputError" class="govuk-error-message">Display Name Invalid</span>
