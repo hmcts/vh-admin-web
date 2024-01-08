@@ -145,7 +145,7 @@ describe('SearchForJudicialMemberComponent', () => {
 
             component['judicialMember'] = judicialMember;
             component.form.controls.displayName.setValue(displayName);
-            component.confirmJudiciaryMemberWithDisplayName();
+            component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
             expect(component['judicialMember'].displayName).toBe(displayName);
             expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(judicialMember);

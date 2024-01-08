@@ -7,6 +7,4 @@ public class JudiciaryParticipantRequest
     public string DisplayName { get; set; }
     public string OptionalContactTelephone { get; set; }
     public string OptionalContactEmail { get; set; }
-    
-    
 }

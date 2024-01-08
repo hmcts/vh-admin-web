@@ -15,16 +15,6 @@
           (judicialMemberSelected)="addPresidingJudge($event)"
           [saveButtonText]="judgeAssigned ? 'Update' : 'Save'"
         ></app-search-for-judicial-member>
-        <form [formGroup]="optionalContactDetailsForm" *ngIf="isGenericJudge">
-              <div class="govuk-form-group">
-                  <label class="govuk-label" for="judiciaryOptionContactEmail">Contact Email</label>
-                  <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
-              </div>
-              <div class="govuk-form-group">
-                  <label class="govuk-label" for="judiciaryOptionContactTelephone">Contact Telephone</label>
-                  <input id="judiciaryOptionContactTelephone" class="govuk-input" type="text" formControlName="optionalContactTelephone" tabindex="2" />
-              </div>
-        </form>
       </div>
 
       <!-- add a panel member -->

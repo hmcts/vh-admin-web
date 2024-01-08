@@ -34,8 +34,6 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
 
     private readonly loggerPrefix: string = '[Booking] Assign JOH -';
     participantToEdit: JudicialMemberDto = null;
-    isGenericJudge: boolean = true
-    optionalContactDetailsForm: FormGroup<OptionalContactDetailsForm>;
 
     constructor(
         private router: Router,
@@ -100,7 +98,6 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
         this.hearingService.addJudiciaryJudge(judicialMember);
         this.hearingService.updateHearingRequest(this.hearing);
         this.judgeAssigned = true;
-        this.isGenericJudge = judicialMember.isGeneric;
         this.editingJudge = false;
         this.participantToEdit = null;
     }
@@ -141,9 +138,4 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
     get judiciaryMembersAdded(): boolean {
         return this.hearing.judiciaryParticipants.length > 0;
     }
-}
-
-interface OptionalContactDetailsForm {
-    optionalContactEmail: FormControl<string>;
-    optionalContactTelephone: FormControl<string>;
 }

@@ -15,12 +15,28 @@
     <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
     <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
   </div>
+  <div *ngIf="isSelectedAccountGeneric">
+    <div class="govuk-form-group">
+        <div *ngIf="displayContactEmailError" class="alert alert-danger">
+            <span id="judiciaryOptionContactEmailError" class="govuk-error-message">Contact Email Invalid</span>
+        </div>
+      <label class="govuk-label" for="judiciaryOptionContactEmail">Contact Email</label>
+      <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
+    </div>
+    <div class="govuk-form-group">
+        <div *ngIf="displayContactTelephoneError" class="alert alert-danger">
+            <span id="judiciaryOptionContactTelephoneError" class="govuk-error-message">Contact Telephone Invalid</span>
+        </div>
+      <label class="govuk-label" for="judiciaryOptionContactTelephone">Contact Telephone</label>
+      <input id="judiciaryOptionContactTelephone" class="govuk-input" type="text" formControlName="optionalContactTelephone" tabindex="2" />
+    </div>
+  </div>
   <button
     *ngIf="judicialMember && form.valid"
     id="confirmJudiciaryMemberBtn"
     class="govuk-button"
     data-module="govuk-button"
-    (click)="confirmJudiciaryMemberWithDisplayName()"
+    (click)="confirmJudiciaryMemberWithAdditionalContactDetails()"
   >
     {{ saveButtonText }}
   </button>

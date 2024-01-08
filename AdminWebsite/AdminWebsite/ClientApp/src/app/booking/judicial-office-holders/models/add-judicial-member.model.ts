@@ -5,6 +5,8 @@ export type JudicaryRoleCode = 'Judge' | 'PanelMember';
 export class JudicialMemberDto {
     public roleCode?: JudicaryRoleCode;
     public displayName: string;
+    public optionalContactNumber: string;
+    public optionalContactEmail: string;
     constructor(
         public firstName: string,
         public lastName: string,
@@ -12,9 +14,7 @@ export class JudicialMemberDto {
         public email: string,
         public telephone: string,
         public personalCode: string,
-        public isGeneric: boolean,
-        public optionalContactNumber?: string,
-        public optionalPersonalCode?: string
+        public isGeneric: boolean
     ) {}
 
     static fromJudiciaryParticipantResponse(response: JudiciaryParticipantResponse): JudicialMemberDto {
@@ -25,10 +25,10 @@ export class JudicialMemberDto {
             response.email,
             response.work_phone,
             response.personal_code,
-            response.is_generic,
-            response.optional_contact_telephone,
-            response.optional_contact_email
+            response.is_generic
         );
+        dto.optionalContactNumber = response.optional_contact_telephone;
+        dto.optionalContactEmail = response.optional_contact_email;
         dto.roleCode = response.role_code as JudicaryRoleCode;
         dto.displayName = response.display_name;
         return dto;
