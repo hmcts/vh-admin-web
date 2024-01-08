@@ -666,7 +666,7 @@ describe('Video hearing service', () => {
     describe('addJudiciaryJudge', () => {
         it('should add a new judge when none exists', () => {
             // Arrange
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(-1);
 
             // Act
@@ -679,8 +679,8 @@ describe('Video hearing service', () => {
 
         it('should replace an existing judge', () => {
             // Arrange
-            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
-            const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678');
+            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+            const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678', false);
             service['modelHearing'].judiciaryParticipants.push(existingJudge);
             spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(0);
 
@@ -696,9 +696,9 @@ describe('Video hearing service', () => {
     describe('removeJudiciaryJudge', () => {
         it('should remove judge from judiciary participants', () => {
             // Arrange
-            const judge = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            const judge = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234', false);
             judge.roleCode = 'Judge';
-            const nonJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            const nonJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678', false);
             nonJudge.roleCode = 'PanelMember';
             service['modelHearing'].judiciaryParticipants = [judge, nonJudge];
 
@@ -712,9 +712,9 @@ describe('Video hearing service', () => {
 
         it('should not remove anything if judge is not present', () => {
             // Arrange
-            const nonJudge1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            const nonJudge1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234', false);
             nonJudge1.roleCode = 'PanelMember';
-            const nonJudge2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            const nonJudge2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678', false);
             nonJudge2.roleCode = 'PanelMember';
             service['modelHearing'].judiciaryParticipants = [nonJudge1, nonJudge2];
 
@@ -730,7 +730,7 @@ describe('Video hearing service', () => {
 
     describe('addJudiciaryPanelMember', () => {
         it('should add a new judiciary panel member', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
 
             service.addJudiciaryPanelMember(judicialMember);
 
@@ -739,9 +739,9 @@ describe('Video hearing service', () => {
         });
 
         it('should update an existing judiciary panel member', () => {
-            const judicialMember1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember1.displayName = 'Test User 1';
-            const judicialMember2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember2.displayName = 'Test User 2';
 
             service.addJudiciaryPanelMember(judicialMember1);
@@ -756,7 +756,7 @@ describe('Video hearing service', () => {
         it('should remove judiciary participant from modelHearing', () => {
             // Arrange
             const participantEmail = 'test@example.com';
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234', false);
             service['modelHearing'].judiciaryParticipants = [judicialMember];
 
             // Act
@@ -769,7 +769,7 @@ describe('Video hearing service', () => {
         it('should not remove judiciary participant if email does not match', () => {
             // Arrange
             const participantEmail = 'test@example.com';
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234', false);
             service['modelHearing'].judiciaryParticipants = [judicialMember];
 
             // Act

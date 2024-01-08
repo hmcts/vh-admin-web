@@ -4,7 +4,7 @@
     <input id="judiciaryEmailInput" class="govuk-input" type="email" autocomplete="off" formControlName="judiciaryEmail" tabindex="1" />
     <ul id="search-results-list" *ngIf="showResult && searchResult?.length > 0" class="vh-li-email govuk-body">
       <li *ngFor="let result of searchResult | slice : 0 : 9" class="vk-showlist-m30" tabindex="2">
-        <span class="vh-a-email"  (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
+        <span class="vh-a-email" (keypress)="selectJudicialMember(result)" (click)="selectJudicialMember(result)">{{ result.email }}</span>
       </li>
     </ul>
   </div>
@@ -17,16 +17,16 @@
   </div>
   <div *ngIf="isSelectedAccountGeneric">
     <div class="govuk-form-group">
-        <div *ngIf="displayContactEmailError" class="alert alert-danger">
-            <span id="judiciaryOptionContactEmailError" class="govuk-error-message">Contact Email Invalid</span>
-        </div>
+      <div *ngIf="displayContactEmailError" class="alert alert-danger">
+        <span id="judiciaryOptionContactEmailError" class="govuk-error-message">Contact Email Invalid</span>
+      </div>
       <label class="govuk-label" for="judiciaryOptionContactEmail">Contact Email</label>
       <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
     </div>
     <div class="govuk-form-group">
-        <div *ngIf="displayContactTelephoneError" class="alert alert-danger">
-            <span id="judiciaryOptionContactTelephoneError" class="govuk-error-message">Contact Telephone Invalid</span>
-        </div>
+      <div *ngIf="displayContactTelephoneError" class="alert alert-danger">
+        <span id="judiciaryOptionContactTelephoneError" class="govuk-error-message">Contact Telephone Invalid</span>
+      </div>
       <label class="govuk-label" for="judiciaryOptionContactTelephone">Contact Telephone</label>
       <input id="judiciaryOptionContactTelephone" class="govuk-input" type="text" formControlName="optionalContactTelephone" tabindex="2" />
     </div>

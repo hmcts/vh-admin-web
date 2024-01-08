@@ -8,7 +8,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingService } from 'src/app/services/booking.service';
-import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
     selector: 'app-add-judicial-office-holders',

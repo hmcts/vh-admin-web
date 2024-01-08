@@ -29,8 +29,8 @@ export class SearchForJudicialMemberComponent {
                 {
                     judiciaryEmail: judicialMember.email,
                     displayName: judicialMember.displayName,
-                    optionalContactEmail: judicialMember.optionalContactEmail,
-                    optionalContactTelephone: judicialMember.optionalContactNumber
+                    optionalContactEmail: judicialMember.optionalContactEmail ?? '',
+                    optionalContactTelephone: judicialMember.optionalContactNumber ?? ''
                 },
                 { emitEvent: false, onlySelf: true }
             );
@@ -76,7 +76,9 @@ export class SearchForJudicialMemberComponent {
                     this.showResult = false;
                     this.form.reset({
                         judiciaryEmail: '',
-                        displayName: ''
+                        displayName: '',
+                        optionalContactEmail: '',
+                        optionalContactTelephone: ''
                     });
                 }
 
@@ -125,8 +127,10 @@ export class SearchForJudicialMemberComponent {
 
     confirmJudiciaryMemberWithAdditionalContactDetails() {
         this.judicialMember.displayName = this.form.controls.displayName.value;
-        this.judicialMember.optionalContactNumber = this.form.value.optionalContactTelephone;
-        this.judicialMember.optionalContactEmail = this.form.value.optionalContactEmail;
+        if (this.judicialMember.isGeneric) {
+            this.judicialMember.optionalContactNumber = this.form.value.optionalContactTelephone;
+            this.judicialMember.optionalContactEmail = this.form.value.optionalContactEmail;
+        }
 
         this.judicialMemberSelected.emit(this.judicialMember);
         this.form.reset({
