@@ -5,7 +5,6 @@ import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
 import { Constants } from '../../../common/constants';
-import { HoursType } from '../../../common/model/hours-type';
 
 @Component({
     selector: 'app-search-for-judicial-member',
