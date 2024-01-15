@@ -6,7 +6,7 @@
 </div>
 
 <div
-  *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount"
+  *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount || displayErrorNoParticipants"
   class="govuk-error-summary govuk-!-width-full"
   aria-labelledby="error-summary-title"
   role="alert"
@@ -25,12 +25,15 @@
       <li *ngIf="errorJudiciaryAccount">
         <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohEmailErrorMsg }}</a>
       </li>
+      <li *ngIf="displayErrorNoParticipants">
+        <a (click)="goToDiv('add-participant-component')">{{ constants.Error.NoParticipantsErrorMsg }}</a>
+      </li>
     </ul>
   </div>
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-half">
+  <div class="govuk-grid-column-one-half" id="add-participant-component">
     <h2 class="govuk-heading-m">Add a participant</h2>
     <form [formGroup]="form" (ngSubmit)="saveParticipant()" autocomplete="off">
       <div
