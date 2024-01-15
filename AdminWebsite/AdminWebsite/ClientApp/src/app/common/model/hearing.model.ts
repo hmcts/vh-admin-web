@@ -48,4 +48,5 @@ export class HearingModel {
     linked_participants?: LinkedParticipantModel[];
     hearing_dates?: Date[];
     isConfirmed?: boolean;
+    isMultiDay?: boolean;
 }

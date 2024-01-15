@@ -27,6 +27,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -209,6 +210,8 @@ describe('BookingDetailsComponent', () => {
     const defaultUpdateBookingStatusResponse = new UpdateBookingStatusResponse({ success: true, telephone_conference_id: '1234' });
     const bookingStatusService = new BookingStatusService(videoHearingServiceSpy);
 
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
+
     beforeEach(() => {
         allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
@@ -220,6 +223,9 @@ describe('BookingDetailsComponent', () => {
         bookingPersistServiceSpy.selectedHearingId = '44';
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_officer_administrator_role: true })));
 
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+
         const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
         component = new BookingDetailsComponent(
             videoHearingServiceSpy,
@@ -230,7 +236,8 @@ describe('BookingDetailsComponent', () => {
             bookingPersistServiceSpy,
             loggerSpy,
             returnUrlServiceSpy,
-            bookingStatusService
+            bookingStatusService,
+            launchDarklyServiceSpy
         );
         component.hearingId = '1';
     });
@@ -305,6 +312,7 @@ describe('BookingDetailsComponent', () => {
         discardPeriodicTasks();
     }));
     it('should set edit mode if the edit button pressed', fakeAsync(() => {
+        component.booking = new HearingModel();
         component.editHearing();
         expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();

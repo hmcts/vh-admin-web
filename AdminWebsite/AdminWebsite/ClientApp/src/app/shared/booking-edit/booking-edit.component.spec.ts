@@ -5,15 +5,25 @@ import { BookingsHearingResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingEditComponent } from './booking-edit.component';
+import { of } from 'rxjs';
+import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 describe('BookingEditComponent', () => {
     let component: BookingEditComponent;
     let fixture: ComponentFixture<BookingEditComponent>;
     let debugElement: DebugElement;
 
-    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', ['isConferenceClosed', 'isHearingAboutToStart']);
+    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
+        'isConferenceClosed',
+        'isHearingAboutToStart',
+        'getCurrentRequest'
+    ]);
+    videoHearingServiceSpy.getCurrentRequest.and.returnValue(new BookingsHearingResponse());
 
     const bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
+
+    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -21,7 +31,8 @@ describe('BookingEditComponent', () => {
             declarations: [BookingEditComponent],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: BookingService, useValue: bookingServiceSpy }
+                { provide: BookingService, useValue: bookingServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
     }));

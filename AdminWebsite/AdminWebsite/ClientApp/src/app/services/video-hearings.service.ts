@@ -203,7 +203,7 @@ export class VideoHearingsService {
         return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
     }
 
-    updateMultiDayHearing(booking: HearingModel) : Observable<HearingDetailsResponse> {
+    updateMultiDayHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
         const request = this.mapExistingHearingToEditMultiDayHearingRequest(booking);
         return this.bhClient.editMultiDayHearing(booking.hearing_id, request);
     }
@@ -233,7 +233,7 @@ export class VideoHearingsService {
     mapExistingHearingToEditMultiDayHearingRequest(booking: HearingModel): EditMultiDayHearingRequest {
         const editMultiDayRequest = new EditMultiDayHearingRequest();
 
-        var editHearingRequest = this.mapExistingHearing(booking);
+        const editHearingRequest = this.mapExistingHearing(booking);
 
         editMultiDayRequest.participants = editHearingRequest.participants;
         editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
@@ -350,6 +350,7 @@ export class VideoHearingsService {
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         );
         hearing.isConfirmed = Boolean(response.confirmed_date);
+        hearing.isMultiDay = response.group_id !== null;
         return hearing;
     }
 
