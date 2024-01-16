@@ -245,7 +245,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;
-        this.multiDays = this.hearing.multiDays;
+        this.multiDays = this.hearing.isMultiDayEdit;
         this.endHearingDate = this.hearing.end_hearing_date_time;
     }
 
@@ -296,7 +296,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseName: this.hearing.cases[0].name,
                 caseNumber: this.hearing.cases[0].number
             });
-            if (this.hearing.multiDays && this.multiDayBookingEnhancementsEnabled) {
+            if (this.hearing.isMultiDayEdit && this.multiDayBookingEnhancementsEnabled) {
                 this.updateMultiDayHearing();
             } else {
                 this.updateHearing();
@@ -333,7 +333,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     async processMultiHearing(hearingDetailsResponse) {
-        if (this.hearing.multiDays) {
+        if (this.hearing.isMultiDayEdit) {
             this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                 hearingId: hearingDetailsResponse.id,
                 caseName: this.hearing.cases[0].name,
@@ -402,7 +402,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private setDurationOfMultiHearing() {
-        if (this.hearing.multiDays && this.hearing.scheduled_duration === 0) {
+        if (this.hearing.isMultiDayEdit && this.hearing.scheduled_duration === 0) {
             this.hearing.scheduled_duration = 480;
         }
     }

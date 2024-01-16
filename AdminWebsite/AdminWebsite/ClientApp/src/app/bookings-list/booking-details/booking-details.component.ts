@@ -220,7 +220,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     setEditMultiDayHearingOptions(updateFutureDays: boolean) {
-        this.booking.multiDays = updateFutureDays; // Prevents the end date from showing in the UI when not updating future days
+        this.booking.isMultiDayEdit = updateFutureDays; // Prevents the end date from showing in the UI when not updating future days
         this.videoHearingService.updateHearingRequest(this.booking);
     }
 

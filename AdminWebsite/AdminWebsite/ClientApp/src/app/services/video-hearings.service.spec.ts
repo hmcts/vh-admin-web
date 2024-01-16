@@ -851,7 +851,7 @@ describe('Video hearing service', () => {
 
         it('should call api to update hearing', () => {
             // Arrange
-            hearing.multiDays = false;
+            hearing.isMultiDayEdit = false;
 
             // Act
             service.updateMultiDayHearing(hearing);
@@ -863,7 +863,7 @@ describe('Video hearing service', () => {
 
         it('should call api to update hearing and future hearings', () => {
             // Arrange
-            hearing.multiDays = true;
+            hearing.isMultiDayEdit = true;
 
             // Act
             service.updateMultiDayHearing(hearing);
@@ -879,7 +879,7 @@ describe('Video hearing service', () => {
             expectedRequest.participants = mappedHearing.participants;
             expectedRequest.judiciary_participants = mappedHearing.judiciary_participants;
             expectedRequest.endpoints = mappedHearing.endpoints;
-            expectedRequest.update_future_days = hearing.multiDays;
+            expectedRequest.update_future_days = hearing.isMultiDayEdit;
 
             return expectedRequest;
         }

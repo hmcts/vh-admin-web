@@ -173,7 +173,7 @@ export class VideoHearingsService {
         bookingRequest.booking_details.other_information = hearingRequest.other_information;
         bookingRequest.other_information_details = hearingRequest.other_information;
 
-        if (newRequest.multiDays) {
+        if (newRequest.isMultiDayEdit) {
             bookingRequest.is_multi_day = true;
             if (newRequest.hearing_dates.length) {
                 bookingRequest.multi_hearing_details = new MultiHearingRequest({
@@ -238,7 +238,7 @@ export class VideoHearingsService {
         editMultiDayRequest.participants = editHearingRequest.participants;
         editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
         editMultiDayRequest.endpoints = editHearingRequest.endpoints;
-        editMultiDayRequest.update_future_days = booking.multiDays;
+        editMultiDayRequest.update_future_days = booking.isMultiDayEdit;
 
         return editMultiDayRequest;
     }

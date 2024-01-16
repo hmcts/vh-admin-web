@@ -42,7 +42,7 @@ export class HearingModel {
     status?: string;
     audio_recording_required?: boolean;
     endpoints?: EndpointModel[];
-    multiDays?: boolean;
+    isMultiDayEdit?: boolean;
     end_hearing_date_time?: Date;
     telephone_conference_id?: string;
     linked_participants?: LinkedParticipantModel[];

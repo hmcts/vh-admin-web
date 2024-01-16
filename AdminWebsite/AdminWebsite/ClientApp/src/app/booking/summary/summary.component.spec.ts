@@ -67,7 +67,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.hearing_type_name = hearingTypeName;
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
     existingRequest.court_name = courtString;
-    existingRequest.multiDays = false;
+    existingRequest.isMultiDayEdit = false;
     existingRequest.end_hearing_date_time = new Date(addDays(Date.now(), 7));
 
     existingRequest.participants = [];
@@ -190,7 +190,7 @@ describe('SummaryComponent with valid request', () => {
     it('Call ProcessBooking when hearingStatusResponse has succeeded and it is Multiple Individual HearingDates', async () => {
         // arrange
         const hearingStatusResponse = { success: true };
-        component.hearing.multiDays = true;
+        component.hearing.isMultiDayEdit = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         component.hearing.hearing_dates = [
@@ -219,7 +219,7 @@ describe('SummaryComponent with valid request', () => {
         async () => {
             // arrange
             const hearingStatusResponse = { success: true };
-            component.hearing.multiDays = true;
+            component.hearing.isMultiDayEdit = true;
             component.hearing.hearing_dates = [];
             const hearingDetailsResponse = new HearingDetailsResponse({
                 id: component.hearing.hearing_id
@@ -246,7 +246,7 @@ describe('SummaryComponent with valid request', () => {
             // arrange
             const hearingStatusResponse = { success: true };
             const hearingDetailsResponse = { id: 'mock hearing Id' };
-            component.hearing.multiDays = true;
+            component.hearing.isMultiDayEdit = true;
             component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
 
             fixture.detectChanges();
@@ -439,7 +439,7 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should save new booking with multi hearings - zero scheduled duration', fakeAsync(async () => {
         component.ngOnInit();
-        component.hearing.multiDays = true;
+        component.hearing.isMultiDayEdit = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         component.hearing.scheduled_duration = 0;
@@ -461,7 +461,7 @@ describe('SummaryComponent with valid request', () => {
 
     it('should save new booking with multi hearings - nonzero scheduled duration', fakeAsync(async () => {
         component.ngOnInit();
-        component.hearing.multiDays = true;
+        component.hearing.isMultiDayEdit = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         const scheduledDuration = 120;
@@ -484,7 +484,7 @@ describe('SummaryComponent with valid request', () => {
 
     it('should save new booking with multi hearings - single date', fakeAsync(async () => {
         component.ngOnInit();
-        component.hearing.multiDays = true;
+        component.hearing.isMultiDayEdit = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
         component.hearing.hearing_dates = [new Date(component.hearing.scheduled_date_time)];
@@ -500,7 +500,7 @@ describe('SummaryComponent with valid request', () => {
 
     it('should save new booking with multi hearings - multi date', fakeAsync(async () => {
         component.ngOnInit();
-        component.hearing.multiDays = true;
+        component.hearing.isMultiDayEdit = true;
         component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
         component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 7);
 
@@ -777,7 +777,7 @@ describe('SummaryComponent  with existing request', () => {
     });
     describe('bookHearing', () => {
         it('should update booking when editing a single day hearing with multi day booking enhancements disabled', () => {
-            component.hearing.multiDays = false;
+            component.hearing.isMultiDayEdit = false;
             component.multiDayBookingEnhancementsEnabled = false;
             component.ngOnInit();
             fixture.detectChanges();
@@ -787,7 +787,7 @@ describe('SummaryComponent  with existing request', () => {
             assertBookingUpdated();
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements enabled', () => {
-            component.hearing.multiDays = true;
+            component.hearing.isMultiDayEdit = true;
             component.multiDayBookingEnhancementsEnabled = true;
             component.ngOnInit();
             fixture.detectChanges();
@@ -797,7 +797,7 @@ describe('SummaryComponent  with existing request', () => {
             assertBookingUpdated();
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements disabled', () => {
-            component.hearing.multiDays = false;
+            component.hearing.isMultiDayEdit = false;
             component.multiDayBookingEnhancementsEnabled = true;
             component.ngOnInit();
             fixture.detectChanges();
@@ -925,7 +925,7 @@ describe('SummaryComponent  with multi days request', () => {
         'mandatoryRecordingForHearingRole'
     ]);
     const existingRequest = initExistingHearingRequest();
-    existingRequest.multiDays = true;
+    existingRequest.isMultiDayEdit = true;
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));

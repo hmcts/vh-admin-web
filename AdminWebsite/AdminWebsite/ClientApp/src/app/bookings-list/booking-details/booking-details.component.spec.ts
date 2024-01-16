@@ -315,13 +315,13 @@ describe('BookingDetailsComponent', () => {
         it('should set edit mode if the single day edit button pressed', fakeAsync(() => {
             component.booking = new HearingModel();
             component.editHearing();
-            expect(component.booking.multiDays).toBeFalsy();
+            expect(component.booking.isMultiDayEdit).toBeFalsy();
             assertUpdatesAfterEditButtonsPressed();
         }));
         it('should set edit mode if the multi day edit button pressed', fakeAsync(() => {
             component.booking = new HearingModel();
             component.editMultiDaysOfHearing();
-            expect(component.booking.multiDays).toBeTruthy();
+            expect(component.booking.isMultiDayEdit).toBeTruthy();
             assertUpdatesAfterEditButtonsPressed();
         }));
         function assertUpdatesAfterEditButtonsPressed() {

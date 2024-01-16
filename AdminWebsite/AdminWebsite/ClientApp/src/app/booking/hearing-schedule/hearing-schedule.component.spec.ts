@@ -31,7 +31,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.hearing_venue_id = 1;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
-    existingRequest.multiDays = false;
+    existingRequest.isMultiDayEdit = false;
     return existingRequest;
 }
 
@@ -462,7 +462,7 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.hearingDurationHourControl.value).toBe(expectedDurationHour);
         expect(component.hearingDurationMinuteControl.value).toBe(expectedDurationMinute);
         expect(component.courtAddressControl.value).toBe(existingRequest.hearing_venue_id);
-        expect(component.multiDaysHearing).toBe(existingRequest.multiDays);
+        expect(component.multiDaysHearing).toBe(existingRequest.isMultiDayEdit);
     });
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;
