@@ -7,6 +7,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 @Injectable()
 export class EditMultiDayBookingGuard implements CanActivate {
     multiDayBookingEnhancementsEnabled: boolean;
+
     constructor(private videoHearingService: VideoHearingsService, private featureService: LaunchDarklyService) {
         this.featureService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)

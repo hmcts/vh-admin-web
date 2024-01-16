@@ -412,42 +412,10 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
-                    const noJudgePrior =
-                        this.hearing.status === BookingStatus.BookedWithoutJudge ||
-                        this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
-                    this.showWaitSaving = false;
-                    this.hearingService.setBookingHasChanged(false);
-                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
-                        hearingId: hearingDetailsResponse.id
-                    });
-
-                    if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
-                        this.hearing.hearing_id = hearingDetailsResponse.id;
-                        this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
-                        return;
-                    }
-                    sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                    if (this.judgeAssigned && noJudgePrior) {
-                        this.showWaitSaving = true;
-                        this.bookingStatusService
-                            .pollForStatus(hearingDetailsResponse.id)
-                            .pipe(
-                                finalize(() => {
-                                    this.showWaitSaving = false;
-                                    this.router.navigate([PageUrls.BookingConfirmation]);
-                                })
-                            )
-                            .subscribe();
-                    } else {
-                        this.router.navigate([PageUrls.BookingConfirmation]);
-                    }
+                    this.handleUpdateHearingSuccess(hearingDetailsResponse);
                 },
                 error: error => {
-                    this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
-                        hearing: this.hearing.hearing_id,
-                        payload: this.hearing
-                    });
-                    this.setError(error);
+                    this.handleUpdateHearingError(error);
                 }
             })
         );
@@ -458,45 +426,52 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateMultiDayHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
-                    const noJudgePrior =
-                        this.hearing.status === BookingStatus.BookedWithoutJudge ||
-                        this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
-                    this.showWaitSaving = false;
-                    this.hearingService.setBookingHasChanged(false);
-                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
-                        hearingId: hearingDetailsResponse.id
-                    });
-
-                    if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
-                        this.hearing.hearing_id = hearingDetailsResponse.id;
-                        this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
-                        return;
-                    }
-                    sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                    if (this.judgeAssigned && noJudgePrior) {
-                        this.showWaitSaving = true;
-                        this.bookingStatusService
-                            .pollForStatus(hearingDetailsResponse.id)
-                            .pipe(
-                                finalize(() => {
-                                    this.showWaitSaving = false;
-                                    this.router.navigate([PageUrls.BookingConfirmation]);
-                                })
-                            )
-                            .subscribe();
-                    } else {
-                        this.router.navigate([PageUrls.BookingConfirmation]);
-                    }
+                    this.handleUpdateHearingSuccess(hearingDetailsResponse);
                 },
                 error: error => {
-                    this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
-                        hearing: this.hearing.hearing_id,
-                        payload: this.hearing
-                    });
-                    this.setError(error);
+                    this.handleUpdateHearingError(error);
                 }
             })
         );
+    }
+
+    private handleUpdateHearingSuccess(hearingDetailsResponse: HearingDetailsResponse) {
+        const noJudgePrior =
+            this.hearing.status === BookingStatus.BookedWithoutJudge || this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
+        this.showWaitSaving = false;
+        this.hearingService.setBookingHasChanged(false);
+        this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
+            hearingId: hearingDetailsResponse.id
+        });
+
+        if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
+            this.hearing.hearing_id = hearingDetailsResponse.id;
+            this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
+            return;
+        }
+        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+        if (this.judgeAssigned && noJudgePrior) {
+            this.showWaitSaving = true;
+            this.bookingStatusService
+                .pollForStatus(hearingDetailsResponse.id)
+                .pipe(
+                    finalize(() => {
+                        this.showWaitSaving = false;
+                        this.router.navigate([PageUrls.BookingConfirmation]);
+                    })
+                )
+                .subscribe();
+        } else {
+            this.router.navigate([PageUrls.BookingConfirmation]);
+        }
+    }
+
+    private handleUpdateHearingError(error: any) {
+        this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
+            hearing: this.hearing.hearing_id,
+            payload: this.hearing
+        });
+        this.setError(error);
     }
 
     private setError(error: BookHearingException | Error) {

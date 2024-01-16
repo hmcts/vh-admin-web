@@ -7,6 +7,7 @@ import { BookingService } from '../../services/booking.service';
 import { BookingEditComponent } from './booking-edit.component';
 import { of } from 'rxjs';
 import { LaunchDarklyService, FeatureFlags } from 'src/app/services/launch-darkly.service';
+import { HearingModel } from 'src/app/common/model/hearing.model';
 
 describe('BookingEditComponent', () => {
     let component: BookingEditComponent;
@@ -18,7 +19,7 @@ describe('BookingEditComponent', () => {
         'isHearingAboutToStart',
         'getCurrentRequest'
     ]);
-    videoHearingServiceSpy.getCurrentRequest.and.returnValue(new BookingsHearingResponse());
+    videoHearingServiceSpy.getCurrentRequest.and.returnValue(new HearingModel());
 
     const bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode']);
 
@@ -26,6 +27,9 @@ describe('BookingEditComponent', () => {
     launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
     beforeEach(waitForAsync(() => {
+        videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(false);
+        videoHearingServiceSpy.isConferenceClosed.and.returnValue(false);
+
         TestBed.configureTestingModule({
             imports: [RouterTestingModule],
             declarations: [BookingEditComponent],
@@ -73,6 +77,13 @@ describe('BookingEditComponent', () => {
     it('should not able to edit when conference is about to start and is closed', () => {
         videoHearingServiceSpy.isHearingAboutToStart.and.returnValue(true);
         videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
+        expect(component.canEdit).toBe(false);
+    });
+    it('should not be able to edit when booking is multi day and multi day booking enhancements are enabled', () => {
+        const currentRequest = new HearingModel();
+        currentRequest.isMultiDay = true;
+        videoHearingServiceSpy.getCurrentRequest.and.returnValue(currentRequest);
+        component.multiDayBookingEnhancementsEnabled = true;
         expect(component.canEdit).toBe(false);
     });
 });

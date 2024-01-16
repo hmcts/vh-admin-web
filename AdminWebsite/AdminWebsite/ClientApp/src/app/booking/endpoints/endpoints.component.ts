@@ -43,19 +43,18 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         private featureService: LaunchDarklyService
     ) {
         super(bookingService, router, videoHearingService, logger);
-
-        this.featureService
-            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
-            .pipe(first())
-            .subscribe(result => {
-                this.multiDayBookingEnhancementsEnabled = result;
-            });
     }
 
     ngOnInit(): void {
         this.failedValidation = false;
         this.checkForExistingRequest();
         this.initialiseForm();
+        this.featureService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(first())
+            .subscribe(result => {
+                this.multiDayBookingEnhancementsEnabled = result;
+            });
         super.ngOnInit();
     }
 

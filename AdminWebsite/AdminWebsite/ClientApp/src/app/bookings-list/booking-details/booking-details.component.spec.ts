@@ -311,13 +311,25 @@ describe('BookingDetailsComponent', () => {
         expect(component.participants[0].ParticipantId).toBe('2');
         discardPeriodicTasks();
     }));
-    it('should set edit mode if the edit button pressed', fakeAsync(() => {
-        component.booking = new HearingModel();
-        component.editHearing();
-        expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
-        expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
-    }));
+    describe('edit buttons pressed', () => {
+        it('should set edit mode if the single day edit button pressed', fakeAsync(() => {
+            component.booking = new HearingModel();
+            component.editHearing();
+            expect(component.booking.multiDays).toBeFalsy();
+            assertUpdatesAfterEditButtonsPressed();
+        }));
+        it('should set edit mode if the multi day edit button pressed', fakeAsync(() => {
+            component.booking = new HearingModel();
+            component.editMultiDaysOfHearing();
+            expect(component.booking.multiDays).toBeTruthy();
+            assertUpdatesAfterEditButtonsPressed();
+        }));
+        function assertUpdatesAfterEditButtonsPressed() {
+            expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
+            expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
+        }
+    });
     it('should update hearing status when cancel booking called', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);

@@ -22,8 +22,8 @@ export class BookingEditComponent {
             });
     }
 
+    multiDayBookingEnhancementsEnabled: boolean;
     private _editLink = '/';
-    private multiDayBookingEnhancementsEnabled: boolean;
 
     @Input()
     title: string;

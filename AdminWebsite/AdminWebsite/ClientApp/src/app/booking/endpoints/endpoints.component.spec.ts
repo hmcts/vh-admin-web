@@ -98,10 +98,44 @@ describe('EndpointsComponent', () => {
         component.addEndpoint();
         expect(component.hasEndpoints).toBe(true);
     });
-    it('should naviagate to the other information page when next clicked', () => {
-        component.ngOnInit();
-        component.saveEndpoints();
-        expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+    describe('when booking is multi day', () => {
+        beforeEach(() => {
+            const booking = new HearingModel();
+            booking.isMultiDay = true;
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
+        });
+        it('should navigate to the summary page when next clicked and multi day booking enhancements are enabled', () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
+        });
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
+    });
+    describe('when booking is not multi day', () => {
+        beforeEach(() => {
+            const booking = new HearingModel();
+            booking.isMultiDay = false;
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
+        });
+
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
     });
     it('should show a confirmation popup if cancel clicked in new mode', () => {
         bookingServiceSpy.isEditMode.and.returnValue(false);
