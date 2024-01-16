@@ -625,16 +625,6 @@ describe('SummaryComponent  with invalid request', () => {
     let fixture: ComponentFixture<SummaryComponent>;
 
     beforeEach(waitForAsync(() => {
-        // videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-        //     'getHearingTypes',
-        //     'getCurrentRequest',
-        //     'updateHearingRequest',
-        //     'saveHearing',
-        //     'cancelRequest',
-        //     'updateHearing',
-        //     'setBookingHasChanged',
-        //     'cloneMultiHearings'
-        // ]);
         videoHearingsServiceSpy.saveHearing.calls.reset();
         initExistingHearingRequest();
         const existingRequest = initBadHearingRequest();
