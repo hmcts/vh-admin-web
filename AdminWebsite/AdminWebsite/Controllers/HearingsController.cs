@@ -327,9 +327,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
-        // public async Task<IActionResult> EditMultiDayHearing(Guid hearingId, EditMultiDayHearingRequest request)
         public async Task<ActionResult<HearingDetailsResponse>> EditMultiDayHearing(Guid hearingId, EditMultiDayHearingRequest request)
         {
             try
@@ -354,6 +352,12 @@ namespace AdminWebsite.Controllers
                 {
                     var typedException = e as BookingsApiException<string>;
                     return NotFound(typedException!.Result);
+                }
+                
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
                 }
 
                 _logger.LogError(e, "Unexpected error trying to edit multi day hearing");

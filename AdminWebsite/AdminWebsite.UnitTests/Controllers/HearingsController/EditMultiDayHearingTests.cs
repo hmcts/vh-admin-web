@@ -363,6 +363,35 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
+        public async Task Should_forward_bad_request_from_bookings_api()
+        {
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var request = new EditMultiDayHearingRequest();
+            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
+                {"id", new[] {"Please provide a valid id"}}
+            });
+            var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
+                (int)HttpStatusCode.BadRequest,
+                "Please provide a valid id",
+                null,
+                validationProblemDetails,
+                null);
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
+                .ThrowsAsync(apiException);
+            
+            // Act
+            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            
+            var objectResult = (ObjectResult)result.Result;
+            var validationProblems = (ValidationProblemDetails)objectResult.Value;
+            
+            var errors = validationProblems.Errors;
+            errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
+        }
+        
+        [Test]
         public async Task Should_forward_unhandled_error_from_bookings_api()
         {
             // Arrange
