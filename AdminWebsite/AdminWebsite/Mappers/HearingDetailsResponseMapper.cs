@@ -37,6 +37,7 @@ public static class HearingDetailsResponseMapper
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),
+            JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId
         };
     }

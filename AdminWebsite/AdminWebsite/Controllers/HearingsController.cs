@@ -329,17 +329,36 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
+        // public async Task<IActionResult> EditMultiDayHearing(Guid hearingId, EditMultiDayHearingRequest request)
         public async Task<ActionResult<HearingDetailsResponse>> EditMultiDayHearing(Guid hearingId, EditMultiDayHearingRequest request)
         {
-            var hearing = await GetHearing(hearingId);
+            try
+            {
+                var hearing = await GetHearing(hearingId);
 
-            // TODO validate whether this is a multi day hearing
-            
-            await UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
+                if (hearing.GroupId == null)
+                {
+                    ModelState.AddModelError(nameof(hearingId), $"Hearing is not multi-day");
+                    return ValidationProblem(ModelState);
+                }
 
-            var updatedHearing = await MapHearingToUpdate(hearingId);
+                await UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
+
+                var updatedHearing = await MapHearingToUpdate(hearingId);
             
-            return Ok(updatedHearing);
+                return Ok(updatedHearing);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+
+                _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
+                throw;
+            }
         }
 
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
