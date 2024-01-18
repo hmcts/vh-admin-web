@@ -778,7 +778,7 @@ describe('SummaryComponent  with existing request', () => {
     describe('bookHearing', () => {
         it('should update booking when editing a single day hearing with multi day booking enhancements disabled', () => {
             component.hearing.isMultiDayEdit = false;
-            component.multiDayBookingEnhancementsEnabled = false;
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
             component.ngOnInit();
             fixture.detectChanges();
 
@@ -788,7 +788,7 @@ describe('SummaryComponent  with existing request', () => {
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements enabled', () => {
             component.hearing.isMultiDayEdit = true;
-            component.multiDayBookingEnhancementsEnabled = true;
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
             fixture.detectChanges();
 
@@ -798,7 +798,7 @@ describe('SummaryComponent  with existing request', () => {
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements disabled', () => {
             component.hearing.isMultiDayEdit = false;
-            component.multiDayBookingEnhancementsEnabled = true;
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
             component.ngOnInit();
             fixture.detectChanges();
 

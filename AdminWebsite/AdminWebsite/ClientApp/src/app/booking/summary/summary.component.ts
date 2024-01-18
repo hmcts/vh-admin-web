@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, combineLatest } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -24,7 +24,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, takeUntil } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
@@ -77,6 +77,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     saveFailedMessages: string[];
     multiDayBookingEnhancementsEnabled: boolean;
 
+    destroyed$ = new Subject<void>();
+
     constructor(
         private hearingService: VideoHearingsService,
         private router: Router,
@@ -115,15 +117,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     this.useApiV2 = result;
                 })
         );
-
-        this.$subscriptions.push(
-            this.featureService
-                .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
-                .pipe(first())
-                .subscribe(result => {
-                    this.multiDayBookingEnhancementsEnabled = result;
-                })
-        );
     }
 
     ngOnInit() {
@@ -147,6 +140,15 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.judgeAssigned =
             this.hearing.participants.filter(e => e.is_judge).length > 0 ||
             this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
+
+        const multiDayBookingEnhancementsFlag$ = this.featureService.getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements).pipe(takeUntil(this.destroyed$));
+
+        combineLatest([multiDayBookingEnhancementsFlag$]).subscribe(
+            ([multiDayBookingEnhancementsFlag]) => {
+                this.multiDayBookingEnhancementsEnabled = multiDayBookingEnhancementsFlag;
+                this.retrieveHearingSummary();
+            }
+        );
     }
 
     private checkForExistingRequest() {
@@ -247,6 +249,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.endpoints = this.hearing.endpoints;
         this.multiDays = this.hearing.isMultiDayEdit;
         this.endHearingDate = this.hearing.end_hearing_date_time;
+
+        // // TODO the multi day booking feature flag may not have been fetched by this point
+        if (this.hearing.isMultiDayEdit && this.multiDayBookingEnhancementsEnabled) {
+            this.endHearingDate = this.hearing.multiDayHearingLastDayScheduledDateTime;
+        }
     }
 
     get hasEndpoints(): boolean {
@@ -507,6 +514,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     getDefenceAdvocateByContactEmail(defenceAdvocateConactEmail: string): string {

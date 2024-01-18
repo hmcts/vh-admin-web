@@ -1524,12 +1524,6 @@ export class BHClient extends ApiClientBase {
                     return throwException('Bad Request', status, _responseText, _headers, result400);
                 })
             );
-        } else if (status === 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('No Content', status, _responseText, _headers);
-                })
-            );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap((_responseText: string) => {
@@ -6713,6 +6707,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    /** Scheduled datetime of the last day of the multi day hearing, if applicable */
+    multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -6767,6 +6763,9 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
+            this.multi_day_hearing_last_day_scheduled_date_time = _data['multi_day_hearing_last_day_scheduled_date_time']
+                ? new Date(_data['multi_day_hearing_last_day_scheduled_date_time'].toString())
+                : <any>undefined;
         }
     }
 
@@ -6820,6 +6819,9 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
+        data['multi_day_hearing_last_day_scheduled_date_time'] = this.multi_day_hearing_last_day_scheduled_date_time
+            ? this.multi_day_hearing_last_day_scheduled_date_time.toISOString()
+            : <any>undefined;
         return data;
     }
 }
@@ -6858,6 +6860,8 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    /** Scheduled datetime of the last day of the multi day hearing, if applicable */
+    multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
 }
 
 export class HearingRoleResponse implements IHearingRoleResponse {

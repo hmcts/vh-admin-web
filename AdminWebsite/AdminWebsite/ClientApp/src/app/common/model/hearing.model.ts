@@ -49,4 +49,5 @@ export class HearingModel {
     hearing_dates?: Date[];
     isConfirmed?: boolean;
     isMultiDay?: boolean;
+    multiDayHearingLastDayScheduledDateTime?: Date;
 }

@@ -351,6 +351,7 @@ export class VideoHearingsService {
         );
         hearing.isConfirmed = Boolean(response.confirmed_date);
         hearing.isMultiDay = response.group_id !== null;
+        hearing.multiDayHearingLastDayScheduledDateTime = response.multi_day_hearing_last_day_scheduled_date_time;
         return hearing;
     }
 

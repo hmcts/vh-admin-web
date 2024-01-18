@@ -207,6 +207,7 @@ describe('Video hearing service', () => {
             expect(request.judiciaryParticipants[0]).toBeTruthy();
             expect(request.judiciaryParticipants[0].displayName).toBe('Judge Dan Smith');
             expect(request.isMultiDay).toBeFalsy();
+            expect(request.multiDayHearingLastDayScheduledDateTime).toBeTruthy();
         });
 
         it('should map HearingDetailsResponse to HearingModel with non-null group id', () => {
@@ -248,6 +249,7 @@ describe('Video hearing service', () => {
             ];
             model.audio_recording_required = true;
             model.group_id = null;
+            model.multi_day_hearing_last_day_scheduled_date_time = new Date(date);
 
             return model;
         }

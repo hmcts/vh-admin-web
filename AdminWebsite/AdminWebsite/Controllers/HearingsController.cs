@@ -19,6 +19,7 @@ using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -704,12 +705,22 @@ namespace AdminWebsite.Controllers
                 if (_featureToggles.UseV2Api())
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                    hearingResponse = response.Map();
+                    ICollection<HearingDetailsResponseV2> groupedHearings = null;
+                    if (response.GroupId != null)
+                    {
+                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
+                    }
+                    hearingResponse = response.Map(groupedHearings);
                 }
                 else
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                    hearingResponse = response.Map();
+                    ICollection<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> groupedHearings = null;
+                    if (response.GroupId != null)
+                    {
+                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(response.GroupId.Value);
+                    }
+                    hearingResponse = response.Map(groupedHearings);
                 }
                 return Ok(hearingResponse);
             }

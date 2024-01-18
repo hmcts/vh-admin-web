@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
@@ -76,4 +77,32 @@ public static class HearingDetailsResponseMapper
             GroupId = hearingDetails.GroupId
         };
     }
+
+    public static HearingDetailsResponse Map(this V1.HearingDetailsResponse hearingDetails, ICollection<V1.HearingDetailsResponse> hearingsInGroup)
+    {
+        var response = hearingDetails.Map();
+        if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
+        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        return response;
+    }
+    
+    public static HearingDetailsResponse Map(this V2.HearingDetailsResponseV2 hearingDetails, ICollection<V2.HearingDetailsResponseV2> hearingsInGroup)
+    {
+        var response = hearingDetails.Map();
+        if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
+        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        return response;
+    }
+
+    private static DateTime? ScheduledDateTimeOfLastHearing(this IEnumerable<V2.HearingDetailsResponseV2> hearingsInGroup) =>
+        hearingsInGroup
+            .OrderBy(x => x.ScheduledDateTime)
+            .Last()
+            .ScheduledDateTime;
+    
+    private static DateTime? ScheduledDateTimeOfLastHearing(this IEnumerable<V1.HearingDetailsResponse> hearingsInGroup) =>
+        hearingsInGroup
+            .OrderBy(x => x.ScheduledDateTime)
+            .Last()
+            .ScheduledDateTime;
 }
