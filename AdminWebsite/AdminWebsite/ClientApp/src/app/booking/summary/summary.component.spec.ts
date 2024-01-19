@@ -788,7 +788,7 @@ describe('SummaryComponent  with existing request', () => {
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements enabled', () => {
             component.hearing.isMultiDayEdit = true;
-            var lastDayScheduledTime = new Date();
+            const lastDayScheduledTime = new Date();
             lastDayScheduledTime.setDate(lastDayScheduledTime.getDate() + 2);
             component.hearing.multiDayHearingLastDayScheduledDateTime = lastDayScheduledTime;
             launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
@@ -801,7 +801,7 @@ describe('SummaryComponent  with existing request', () => {
         });
         it('should update booking when editing a multi day hearing with multi day booking enhancements disabled', () => {
             component.hearing.isMultiDayEdit = false;
-            var lastDayScheduledTime = new Date();
+            const lastDayScheduledTime = new Date();
             lastDayScheduledTime.setDate(lastDayScheduledTime.getDate() + 2);
             component.hearing.multiDayHearingLastDayScheduledDateTime = lastDayScheduledTime;
             launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
