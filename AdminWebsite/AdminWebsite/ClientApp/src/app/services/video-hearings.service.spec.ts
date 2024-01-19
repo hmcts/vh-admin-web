@@ -827,7 +827,15 @@ describe('Video hearing service', () => {
         hearing.audio_recording_required = true;
         const judiciaryParticipants: JudicialMemberDto[] = [];
         judiciaryParticipants.push(
-            new JudicialMemberDto('Court', 'Judge', 'Training.Judge1', 'Training.Judge1@hearings.reform.hmcts.net', '', 'Training.Judge1')
+            new JudicialMemberDto(
+                'Court',
+                'Judge',
+                'Training.Judge1',
+                'Training.Judge1@hearings.reform.hmcts.net',
+                '',
+                'Training.Judge1',
+                true
+            )
         );
         hearing.judiciaryParticipants = judiciaryParticipants;
         const participants: ParticipantModel[] = [];

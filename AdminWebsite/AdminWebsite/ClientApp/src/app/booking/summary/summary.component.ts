@@ -141,14 +141,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.participants.filter(e => e.is_judge).length > 0 ||
             this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
 
-        const multiDayBookingEnhancementsFlag$ = this.featureService.getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements).pipe(takeUntil(this.destroyed$));
+        const multiDayBookingEnhancementsFlag$ = this.featureService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$));
 
-        combineLatest([multiDayBookingEnhancementsFlag$]).subscribe(
-            ([multiDayBookingEnhancementsFlag]) => {
-                this.multiDayBookingEnhancementsEnabled = multiDayBookingEnhancementsFlag;
-                this.retrieveHearingSummary();
-            }
-        );
+        combineLatest([multiDayBookingEnhancementsFlag$]).subscribe(([multiDayBookingEnhancementsFlag]) => {
+            this.multiDayBookingEnhancementsEnabled = multiDayBookingEnhancementsFlag;
+            this.retrieveHearingSummary();
+        });
     }
 
     private checkForExistingRequest() {
@@ -250,8 +250,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.multiDays = this.hearing.isMultiDayEdit;
         this.endHearingDate = this.hearing.end_hearing_date_time;
 
-        // // TODO the multi day booking feature flag may not have been fetched by this point
-        if (this.hearing.isMultiDayEdit && this.multiDayBookingEnhancementsEnabled) {
+        if (
+            this.hearing.isMultiDayEdit &&
+            this.multiDayBookingEnhancementsEnabled &&
+            this.hearing.multiDayHearingLastDayScheduledDateTime
+        ) {
             this.endHearingDate = this.hearing.multiDayHearingLastDayScheduledDateTime;
         }
     }
