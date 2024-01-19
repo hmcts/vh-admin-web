@@ -519,7 +519,7 @@ namespace AdminWebsite.Controllers
             var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
             var linkedParticipantsV2 = linkedParticipants.Select(lp => lp.MapToV2()).ToList();
 
-            if (participants != null && participants.Any())
+            if (participants.Any())
                 await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV2);
             
             await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(newParticipants));
