@@ -46,4 +46,19 @@ public class JudiciaryParticipantResponse
     /// The judiciary person's display name
     /// </summary>
     public string DisplayName { get; set; }
+    
+    /// <summary>
+    /// Is a generic account, with custom contact details
+    /// </summary>
+    public bool IsGeneric { get; set; }
+    
+    /// <summary>
+    /// Is an optional contact number for generic accounts
+    /// </summary>
+    public string OptionalContactEmail { get; set; }
+    
+    /// <summary>
+    /// Is an optional contact number for generic accounts
+    /// </summary>
+    public string OptionalContactTelephone { get; set; }
 }

@@ -388,7 +388,9 @@ export class VideoHearingsService {
             const judiciaryParticipantRequest: JudiciaryParticipantRequest = new JudiciaryParticipantRequest({
                 personal_code: judicialMemberDto.personalCode,
                 display_name: judicialMemberDto.displayName,
-                role: judicialMemberDto.roleCode
+                role: judicialMemberDto.roleCode,
+                optional_contact_email: judicialMemberDto.optionalContactEmail,
+                optional_contact_telephone: judicialMemberDto.optionalContactNumber
             });
             return judiciaryParticipantRequest;
         });

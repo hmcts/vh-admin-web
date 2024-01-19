@@ -127,7 +127,7 @@ describe('BookingsPersistService', () => {
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             const judiciaryParticipants: JudicialMemberDto[] = [];
-            const judge = new JudicialMemberDto('Judge', 'One', 'Judge One', 'email', 'telephone', 'personalCode');
+            const judge = new JudicialMemberDto('Judge', 'One', 'Judge One', 'email', 'telephone', 'personalCode', false);
             judge.displayName = 'Judge Test';
             judge.roleCode = 'Judge';
             judiciaryParticipants.push(judge);
@@ -155,7 +155,7 @@ describe('BookingsPersistService', () => {
             hearing.court_room = 'court room';
             hearing.court_name = 'court';
             const judiciaryParticipants: JudicialMemberDto[] = [];
-            const participant = new JudicialMemberDto('Panel', 'Member', 'Panel Member', 'email', 'telephone', 'personalCode');
+            const participant = new JudicialMemberDto('Panel', 'Member', 'Panel Member', 'email', 'telephone', 'personalCode', false);
             participant.displayName = 'Panel Member';
             participant.roleCode = 'PanelMember';
             judiciaryParticipants.push(participant);

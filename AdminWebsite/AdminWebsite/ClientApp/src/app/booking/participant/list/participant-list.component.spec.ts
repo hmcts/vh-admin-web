@@ -76,14 +76,22 @@ describe('ParticipantListComponent', () => {
         });
 
         it('should call sortJudiciaryMembers when judiciary participant list changes', () => {
-            const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234');
+            const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234', false);
             johJudge.roleCode = 'Judge';
             johJudge.displayName = 'Judge Test User';
 
-            const johPm1 = new JudicialMemberDto('Test PM 1', 'User PM 1', 'Test User PM 1', 'testpm1@test.com', '1234567890', '2345');
+            const johPm1 = new JudicialMemberDto(
+                'Test PM 1',
+                'User PM 1',
+                'Test User PM 1',
+                'testpm1@test.com',
+                '1234567890',
+                '2345',
+                false
+            );
             johPm1.displayName = 'Test User 1';
             johPm1.roleCode = 'PanelMember';
-            const johPm2 = new JudicialMemberDto('Test PM 2', 'User PM 2', 'Test User PM 2', 'testpm2test.com', '123456098', '3456');
+            const johPm2 = new JudicialMemberDto('Test PM 2', 'User PM 2', 'Test User PM 2', 'testpm2test.com', '123456098', '3456', false);
             johPm2.displayName = 'Test User 2';
             johPm2.roleCode = 'PanelMember';
             component.hearing.judiciaryParticipants = [johPm2, johJudge, johPm1];
@@ -157,11 +165,11 @@ describe('ParticipantListComponent', () => {
         let panelMember: JudicialMemberDto;
 
         beforeEach(() => {
-            judge = new JudicialMemberDto('Judge', 'Fudge', 'Judge Fudge', 'judge@test.com', '1234567890', '1234');
+            judge = new JudicialMemberDto('Judge', 'Fudge', 'Judge Fudge', 'judge@test.com', '1234567890', '1234', false);
             judge.roleCode = 'Judge';
             judge.displayName = 'Judge Fudge';
 
-            panelMember = new JudicialMemberDto('John', 'Doe', 'John Doe', 'pm@test.com', '2345678901', '2345');
+            panelMember = new JudicialMemberDto('John', 'Doe', 'John Doe', 'pm@test.com', '2345678901', '2345', false);
             panelMember.roleCode = 'PanelMember';
             panelMember.displayName = 'PM Doe';
         });
