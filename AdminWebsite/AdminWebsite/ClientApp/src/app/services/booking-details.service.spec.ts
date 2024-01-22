@@ -35,6 +35,7 @@ export class ResponseTestData {
         response.confirmed_date = new Date('2019-10-22 13:58:40.3730067');
         response.audio_recording_required = true;
         response.group_id = '123';
+        response.multi_day_hearing_last_day_scheduled_date_time = new Date('2019-10-23 13:58:40.3730067');
 
         const par1 = new ParticipantResponse();
         par1.id = '1';
@@ -108,6 +109,7 @@ describe('booking details service', () => {
         expect(model.ConfirmedBy).toBe('stub.response@hmcts.net');
         expect(model.AudioRecordingRequired).toBe(true);
         expect(model.GroupId).toBe('123');
+        expect(model.MultiDayHearingLastDayScheduledDateTime).toEqual(new Date('2019-10-23 13:58:40.3730067'));
     });
 
     it('should map response to model and set to empty string case,court, createdBy and lasteditBy if not provided', () => {

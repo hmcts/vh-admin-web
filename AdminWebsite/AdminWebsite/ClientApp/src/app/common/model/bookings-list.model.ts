@@ -35,7 +35,8 @@ export class BookingsDetailsModel {
         courtRoomAccount: string,
         telephoneConferenceId: string,
         allocatedTo?: string,
-        groupId?: string
+        groupId?: string,
+        multiDayHearingLastDayScheduledDateTime?: Date
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;
@@ -62,6 +63,7 @@ export class BookingsDetailsModel {
         this.TelephoneConferenceId = telephoneConferenceId;
         this.AllocatedTo = allocatedTo;
         this.GroupId = groupId;
+        this.MultiDayHearingLastDayScheduledDateTime = multiDayHearingLastDayScheduledDateTime;
     }
 
     HearingId: string;
@@ -92,6 +94,7 @@ export class BookingsDetailsModel {
     TelephoneConferenceId: string;
     AllocatedTo?: string;
     GroupId?: string;
+    MultiDayHearingLastDayScheduledDateTime?: Date;
 
     get DurationInHoursAndMinutes(): string {
         return FormatShortDuration(this.Duration);
@@ -115,5 +118,9 @@ export class BookingsDetailsModel {
 
     public get isMultiDay(): boolean {
         return this.GroupId !== null;
+    }
+
+    public get isLastDayOfMultiDayHearing(): boolean {
+        return this.StartTime.getTime() === this.MultiDayHearingLastDayScheduledDateTime?.getTime();
     }
 }

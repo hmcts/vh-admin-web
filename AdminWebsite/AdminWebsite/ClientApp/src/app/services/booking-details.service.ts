@@ -37,7 +37,8 @@ export class BookingDetailsService {
             '',
             '',
             '',
-            hearingResponse.group_id
+            hearingResponse.group_id,
+            hearingResponse.multi_day_hearing_last_day_scheduled_date_time
         );
 
         model.OtherInformation = hearingResponse.other_information;
