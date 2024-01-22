@@ -146,7 +146,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                 room = this.hearing.court_room;
             }
 
-            this.multiDaysHearing = this.hearing.multiDays;
+            this.multiDaysHearing = this.hearing.isMultiDayEdit;
         }
 
         if (!this.showDurationControls) {
@@ -491,7 +491,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
         this.hearing.scheduled_date_time = hearingDate;
         this.hearing.scheduled_duration = this.setHearingDuration();
-        this.hearing.multiDays = this.multiDaysHearing;
+        this.hearing.isMultiDayEdit = this.multiDaysHearing;
         this.hearing.hearing_dates = [];
         const endDate = new Date(this.form.value.endHearingDate);
         this.hearing.end_hearing_date_time = endDate;
@@ -509,7 +509,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         hearingDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
         this.hearing.scheduled_date_time = hearingDate;
         this.hearing.scheduled_duration = this.setHearingDuration();
-        this.hearing.multiDays = true;
+        this.hearing.isMultiDayEdit = true;
         this.hearing.hearing_dates = [];
 
         this.hearingDates.forEach(date => {

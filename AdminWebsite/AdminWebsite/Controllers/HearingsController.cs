@@ -19,6 +19,7 @@ using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
+using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
 using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
@@ -315,6 +317,55 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        /// <summary>
+        ///     Edit a multi-day hearing
+        /// </summary>
+        /// <param name="hearingId">The id of the hearing</param>
+        /// <param name="request">Hearing Request object for edit operation</param>
+        /// <returns></returns>
+        [HttpPut("{hearingId}/multi-day")]
+        [SwaggerOperation(OperationId = "EditMultiDayHearing")]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ValidationProblemDetails),(int)HttpStatusCode.BadRequest)]
+        [HearingInputSanitizer]
+        public async Task<ActionResult<HearingDetailsResponse>> EditMultiDayHearing(Guid hearingId, EditMultiDayHearingRequest request)
+        {
+            try
+            {
+                var hearing = await GetHearing(hearingId);
+
+                if (hearing.GroupId == null)
+                {
+                    ModelState.AddModelError(nameof(hearingId), $"Hearing is not multi-day");
+                    return ValidationProblem(ModelState);
+                }
+
+                await UpdateMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
+
+                var updatedHearing = await MapHearingToUpdate(hearingId);
+            
+                return Ok(updatedHearing);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+                
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+
+                _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
+                throw;
+            }
+        }
+
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
         {
             if (_featureToggles.UseV2Api())
@@ -346,25 +397,95 @@ namespace AdminWebsite.Controllers
             {
                 var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
-                await UpdateParticipantsV2(hearingId, request, originalHearing);
-                await UpdateJudiciaryParticipants(hearingId, request, originalHearing);
+                await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
+                await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
             }
             else
             {
                 var updateHearingRequestV1 =
                     HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
-                await UpdateParticipantsV1(hearingId, request, originalHearing);
+                await UpdateParticipantsV1(hearingId, request.Participants, request.Endpoints, originalHearing);
             }
         }
 
-        private async Task UpdateParticipantsV1(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
+        private async Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId)
+        {
+            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
+            var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
+            
+            var hearingsToUpdate = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
+            {
+                thisHearing
+            };
+            
+            if (request.UpdateFutureDays)
+            {
+                var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
+                hearingsToUpdate.AddRange(futureHearings);
+            }
+
+            foreach (var hearing in hearingsToUpdate)
+            {
+                var hearingToUpdate = hearing.Map();
+
+                var participants = request.Participants.ToList();
+                var judiciaryParticipants = request.JudiciaryParticipants.ToList();
+                var endpoints = request.Endpoints.ToList();
+                var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
+
+                if (isFutureDay)
+                {
+                    AssignParticipantIdsForEditMultiDayHearingFutureDay(hearingToUpdate, participants, endpoints);
+                }
+                
+                if (_featureToggles.UseV2Api())
+                {
+                    await UpdateParticipantsV2(hearingToUpdate.Id, participants, endpoints, hearingToUpdate);
+                    await UpdateJudiciaryParticipants(hearingToUpdate.Id, judiciaryParticipants, hearingToUpdate);
+                }
+                else
+                {
+                    await UpdateParticipantsV1(hearingToUpdate.Id, participants, endpoints, hearingToUpdate);
+                }
+            }
+        }
+
+        private static void AssignParticipantIdsForEditMultiDayHearingFutureDay(HearingDetailsResponse multiDayHearingFutureDay, 
+            List<EditParticipantRequest> participants, 
+            List<EditEndpointRequest> endpoints)
+        {
+            // For the future day hearings, the participant ids will be different
+            // So we need to set their ids to null if they are new participants, or use their existing ids if they already exist
+                    
+            foreach (var participant in participants)
+            {
+                var existingParticipant = multiDayHearingFutureDay.Participants.Find(x => x.ContactEmail == participant.ContactEmail);
+                if (existingParticipant == null)
+                {
+                    participant.Id = null;
+                            
+                }
+                else
+                {
+                    participant.Id = existingParticipant.Id;
+                }
+            }
+
+            foreach (var endpoint in endpoints)
+            {
+                // Unlike participants we don't have a common identifier, so need to remove the existing endpoints and replace them
+                endpoint.Id = null;
+            }
+        }
+
+        private async Task UpdateParticipantsV1(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
             var existingParticipants = new List<UpdateParticipantRequest>();
             var newParticipants = new List<ParticipantRequest>();
-            var removedParticipantIds = GetRemovedParticipantIds(request, originalHearing);
+            var removedParticipantIds = GetRemovedParticipantIds(participants, originalHearing);
 
-            foreach (var participant in request.Participants)
+            foreach (var participant in participants)
             {
                 var newParticipantToAdd = NewParticipantRequestMapper.MapTo(participant);
                 if (participant.Id.HasValue)
@@ -373,20 +494,20 @@ namespace AdminWebsite.Controllers
                     newParticipants.Add((ParticipantRequest)newParticipant);
             }
             
-            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
+            var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
             var linkedParticipantsV1 = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
             
             await _hearingsService.ProcessParticipants(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV1);
-            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, new List<IParticipantRequest>(newParticipants));
+            await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(newParticipants));
         }
         
-        private async Task UpdateParticipantsV2(Guid hearingId, EditHearingRequest request, HearingDetailsResponse originalHearing)
+        private async Task UpdateParticipantsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
             var existingParticipants = new List<UpdateParticipantRequestV2>();
             var newParticipants = new List<ParticipantRequestV2>();
-            var removedParticipantIds = GetRemovedParticipantIds(request, originalHearing);
+            var removedParticipantIds = GetRemovedParticipantIds(participants, originalHearing);
 
-            foreach (var participant in request.Participants)
+            foreach (var participant in participants)
             {
                 var newParticipantToAdd = NewParticipantRequestMapper.MapToV2(participant);
                 if (participant.Id.HasValue)
@@ -395,27 +516,27 @@ namespace AdminWebsite.Controllers
                     newParticipants.Add((ParticipantRequestV2)newParticipant);
             }
             
-            var linkedParticipants = ExtractLinkedParticipants(request, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
+            var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
             var linkedParticipantsV2 = linkedParticipants.Select(lp => lp.MapToV2()).ToList();
 
-            if (request.Participants != null && request.Participants.Any())
+            if (participants.Any())
                 await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV2);
             
-            await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, new List<IParticipantRequest>(newParticipants));
+            await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(newParticipants));
         }
         
-        private static List<Guid> GetRemovedParticipantIds(EditHearingRequest request, HearingDetailsResponse originalHearing)
+        private static List<Guid> GetRemovedParticipantIds(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
         {
-            return originalHearing.Participants.Where(p => request.Participants.TrueForAll(rp => rp.Id != p.Id))
+            return originalHearing.Participants.Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x.Id).ToList();
         }
 
-        private async Task UpdateJudiciaryParticipants(Guid hearingId, EditHearingRequest request,
+        private async Task UpdateJudiciaryParticipants(Guid hearingId, List<JudiciaryParticipantRequest> judiciaryParticipants,
             HearingDetailsResponse originalHearing)
         {
             // Due to booking api's domain restrictions for removing participants, we have to update judges differently
             var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == "Judge");
-            var newJudge = request.JudiciaryParticipants.Find(njp => njp.Role == "Judge");
+            var newJudge = judiciaryParticipants.Find(njp => njp.Role == "Judge");
             if (oldJudge?.PersonalCode != newJudge?.PersonalCode && newJudge != null)
             {
                 await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
@@ -427,7 +548,7 @@ namespace AdminWebsite.Controllers
             
             // keep the order of removal first. this will allow admin web to change judiciary judges post booking
             var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
-                request.JudiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
+                judiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
             foreach (var removedJoh in removedJohs)
             {
                 if (removedJoh.RoleCode == "Judge")
@@ -439,7 +560,7 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.RemoveJudiciaryParticipantFromHearingAsync(hearingId, removedJoh.PersonalCode);
             }
             
-            var newJohs = request.JudiciaryParticipants.Where(jp =>
+            var newJohs = judiciaryParticipants.Where(jp =>
                 !originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
 
             var newJohRequest = newJohs.Select(jp =>
@@ -466,7 +587,7 @@ namespace AdminWebsite.Controllers
             }
             
             // get existing judiciary participants based on the personal code being present in the original hearing
-            var existingJohs = request.JudiciaryParticipants.Where(jp =>
+            var existingJohs = judiciaryParticipants.Where(jp =>
                 originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
 
             foreach (var joh in existingJohs)
@@ -489,14 +610,14 @@ namespace AdminWebsite.Controllers
         }
 
         private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
-            EditHearingRequest request, 
+            List<EditParticipantRequest> participants, 
             HearingDetailsResponse originalHearing,
             List<Guid> removedParticipantIds, 
             List<IUpdateParticipantRequest> existingParticipants, 
             List<IParticipantRequest> newParticipants)
         {
             var linkedParticipants = new List<LinkedParticipantRequest>();
-            var participantsWithLinks = request.Participants
+            var participantsWithLinks = participants
                 .Where(x => x.LinkedParticipants.Any() &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].LinkedId) &&
                             !removedParticipantIds.Contains(x.LinkedParticipants[0].ParticipantId))
@@ -584,12 +705,22 @@ namespace AdminWebsite.Controllers
                 if (_featureToggles.UseV2Api())
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdV2Async(hearingId);
-                    hearingResponse = response.Map();
+                    ICollection<HearingDetailsResponseV2> groupedHearings = null;
+                    if (response.GroupId != null)
+                    {
+                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
+                    }
+                    hearingResponse = response.Map(groupedHearings);
                 }
                 else
                 {
                     var response = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                    hearingResponse = response.Map();
+                    ICollection<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> groupedHearings = null;
+                    if (response.GroupId != null)
+                    {
+                        groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(response.GroupId.Value);
+                    }
+                    hearingResponse = response.Map(groupedHearings);
                 }
                 return Ok(hearingResponse);
             }
