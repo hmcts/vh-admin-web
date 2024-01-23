@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { interval, lastValueFrom, Subscription } from 'rxjs';
+import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -23,6 +23,7 @@ import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-booking-details',
@@ -54,6 +55,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     previousUrl: string = null;
     phoneDetails = '';
     showCancelBookingFailed = false;
+    multiDayBookingEnhancementsEnabled: boolean;
+
+    private destroyed$ = new Subject<void>();
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -64,7 +68,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private bookingPersistService: BookingPersistService,
         private logger: Logger,
         private returnUrlService: ReturnUrlService,
-        private bookingStatusService: BookingStatusService
+        private bookingStatusService: BookingStatusService,
+        private ldService: LaunchDarklyService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -89,6 +94,12 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 next: userProfile => this.getUserRole(userProfile)
             })
         );
+        this.ldService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(enabled => {
+                this.multiDayBookingEnhancementsEnabled = enabled;
+            });
     }
 
     closeCancelFailed() {
@@ -174,6 +185,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     editHearing() {
         this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(false);
+        this.router.navigate([PageUrls.Summary]);
+    }
+
+    editMultiDaysOfHearing() {
+        this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(true);
         this.router.navigate([PageUrls.Summary]);
     }
 
@@ -199,6 +217,11 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             }
             await this.updateHearingStatusDisplay(response, updateBookingStatus);
         });
+    }
+
+    setEditMultiDayHearingOptions(updateFutureDays: boolean) {
+        this.booking.isMultiDayEdit = updateFutureDays; // Prevents the end date from showing in the UI when not updating future days
+        this.videoHearingService.updateHearingRequest(this.booking);
     }
 
     keepBooking() {
@@ -309,6 +332,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     async getConferencePhoneDetails() {

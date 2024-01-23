@@ -46,7 +46,22 @@
             id="edit-button"
             (click)="editHearing()"
           >
-            Edit
+            {{ hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled ? 'Edit this hearing only' : 'Edit' }}
+          </button>
+          <button
+            *ngIf="
+              !hearing.hasBookingConfirmationFailed &&
+              canEditHearing &&
+              hearing.isMultiDay &&
+              this.multiDayBookingEnhancementsEnabled &&
+              !hearing.isLastDayOfMultiDayHearing
+            "
+            class="govuk-button vh-mt20 vh-mr-25"
+            data-module="govuk-button"
+            id="edit-button"
+            (click)="editMultiDaysOfHearing()"
+          >
+            Edit this and upcoming hearings
           </button>
           <button
             *ngIf="!hearing.hasBookingConfirmationFailed && canCancelHearing"
