@@ -717,8 +717,8 @@ describe('Video hearing service', () => {
         it('should replace an existing judge, from participant list', () => {
             // Arrange
             const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
-            const existingJudge = new ParticipantModel()
-            existingJudge.username = 'judge'
+            const existingJudge = new ParticipantModel();
+            existingJudge.username = 'judge';
             service['modelHearing'].participants.push(existingJudge);
             spyOn(service['modelHearing'].participants, 'findIndex').and.returnValue(0);
 

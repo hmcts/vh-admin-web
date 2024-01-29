@@ -570,9 +570,10 @@ export class VideoHearingsService {
         const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
         //Hearings booked with V1 of the API will not have a judiciaryParticipants array
         const participantJudgeIndex = this.modelHearing.participants.findIndex(holder => holder.user_role_name === 'Judge');
-        if (participantJudgeIndex !== -1)
+        if (participantJudgeIndex !== -1) {
             //remove judge from participants
             this.modelHearing.participants.splice(participantJudgeIndex, 1);
+        }
         if (judgeIndex !== -1) {
             // Judge exists, replace or add entry
             this.modelHearing.judiciaryParticipants[judgeIndex] = judicialMember;
