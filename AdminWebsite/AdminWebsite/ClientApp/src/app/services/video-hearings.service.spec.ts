@@ -713,6 +713,23 @@ describe('Video hearing service', () => {
             expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
             expect(service['modelHearing'].judiciaryParticipants[0]).toBe(newJudge);
         });
+
+        it('should replace an existing judge, from participant list', () => {
+            // Arrange
+            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+            const existingJudge = new ParticipantModel()
+            existingJudge.username = 'judge'
+            service['modelHearing'].participants.push(existingJudge);
+            spyOn(service['modelHearing'].participants, 'findIndex').and.returnValue(0);
+
+            // Act
+            service.addJudiciaryJudge(newJudge);
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].participants.length).toBe(0);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(newJudge);
+        });
     });
 
     describe('removeJudiciaryJudge', () => {
