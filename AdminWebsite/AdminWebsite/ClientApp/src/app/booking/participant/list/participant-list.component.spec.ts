@@ -32,7 +32,6 @@ describe('ParticipantListComponent', () => {
     pat1.display_name = 'Sam';
     pat1.addedDuringHearing = false;
     pat1.hearing_role_code = HearingRoleCodes.Applicant;
-
     const pat2 = new ParticipantModel();
     pat2.title = 'Mr';
     pat2.first_name = 'John';
