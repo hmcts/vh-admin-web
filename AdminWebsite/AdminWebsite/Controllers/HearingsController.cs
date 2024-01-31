@@ -402,8 +402,7 @@ namespace AdminWebsite.Controllers
             }
             else
             {
-                var updateHearingRequestV1 =
-                    HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
+                var updateHearingRequestV1 = HearingUpdateRequestMapper.MapToV1(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequestV1);
                 await UpdateParticipantsV1(hearingId, request.Participants, request.Endpoints, originalHearing);
             }
@@ -519,8 +518,8 @@ namespace AdminWebsite.Controllers
             var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
             var linkedParticipantsV2 = linkedParticipants.Select(lp => lp.MapToV2()).ToList();
 
-            if (participants.Any())
-                await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds.ToList(), linkedParticipantsV2);
+            if (participants.Any() || removedParticipantIds.Any())
+                await _hearingsService.ProcessParticipantsV2(hearingId, existingParticipants, newParticipants, removedParticipantIds, linkedParticipantsV2);
             
             await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(newParticipants));
         }

@@ -9,6 +9,7 @@ import { HearingModel } from '../../../common/model/hearing.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
+import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
 
 @Component({
     selector: 'app-participant-item',
@@ -29,13 +30,19 @@ export class ParticipantItemComponent implements OnInit {
     staffMemberRole = Constants.HearingRoles.StaffMember;
     showParticipantActions: boolean;
     showJudicaryActions: boolean;
+    isV2 = false;
 
     constructor(
         private bookingService: BookingService,
         private logger: Logger,
         private router: Router,
-        private videoHearingsService: VideoHearingsService
-    ) {}
+        private videoHearingsService: VideoHearingsService,
+        private ldService: LaunchDarklyService
+    ) {
+        this.ldService.getFlag(FeatureFlags.useV2Api).subscribe((result: boolean) => {
+            this.isV2 = result;
+        });
+    }
 
     ngOnInit(): void {
         this.showParticipantActions = this.router.url.includes(PageUrls.AddParticipants) || this.router.url.includes(PageUrls.Summary);
