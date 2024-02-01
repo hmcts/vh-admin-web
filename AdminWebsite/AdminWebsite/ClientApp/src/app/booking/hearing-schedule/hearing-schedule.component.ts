@@ -157,6 +157,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
 
+        this.selectedCourtName = this.hearing.court_name;
+        this.selectedCourtCode = this.hearing.court_code;
+
         this.form = this.formBuilder.group({
             hearingDate: [hearingDateParsed, [Validators.required, pastDateValidator()]],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
