@@ -855,6 +855,53 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Times.Never);
         }
 
+                
+        [Test]
+        public async Task Should_reassign_a_generic_judge_booked_with_v1_to_ejud_judge_on_v2()
+        {
+            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            var updatedHearing = _v2HearingDetailsResponse;
+            updatedHearing.Participants.Add(new ()
+            {
+                Id = Guid.NewGuid(),
+                UserRoleName = "Judge",
+                ContactEmail = "judge@contact.email",
+                Username = "judge@username.net",
+                HearingRoleCode = "Judge"
+                
+            });
+            updatedHearing.JudiciaryParticipants.Clear();
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                              .ReturnsAsync(updatedHearing);
+
+            var request = new EditHearingRequest
+            {
+                JudiciaryParticipants = new List<JudiciaryParticipantRequest>
+                {
+                    new()
+                    {
+                        DisplayName = "Judge Fudge",
+                        PersonalCode = "1234",
+                        Role = JudiciaryParticipantHearingRoleCode.Judge.ToString(),
+                    }
+                },
+                Case = new EditCaseRequest
+                {
+                    Name = updatedHearing.Cases[0].Name, 
+                    Number = updatedHearing.Cases[0].Number
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, request);
+            
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            
+            _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<ReassignJudiciaryJudgeRequest>()),
+                Times.Once);
+        }
+
         [Test]
         public async Task Should_return_updated_hearingV2_with_participants_unchanged_and_hearing_close_to_start_time()
         {

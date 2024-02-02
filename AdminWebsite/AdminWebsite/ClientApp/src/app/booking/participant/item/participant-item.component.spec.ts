@@ -9,6 +9,8 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { LaunchDarklyService } from '../../../services/launch-darkly.service';
+import { of } from 'rxjs';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -18,6 +20,7 @@ const router = {
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 describe('ParticipantItemComponent', () => {
     let component: ParticipantItemComponent;
@@ -25,7 +28,7 @@ describe('ParticipantItemComponent', () => {
     let debugElement: DebugElement;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['setEditMode', 'setParticipantEmail']);
-
+    ldServiceSpy.getFlag.and.returnValue(of(true));
     const participant: any = {
         title: 'Mrs',
         first_name: 'Sam',
@@ -34,6 +37,7 @@ describe('ParticipantItemComponent', () => {
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+
         TestBed.configureTestingModule({
             declarations: [ParticipantItemComponent],
             providers: [
@@ -41,7 +45,8 @@ describe('ParticipantItemComponent', () => {
                 { provide: Logger, useValue: loggerSpy },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Router, useValue: router },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: LaunchDarklyService, useValue: ldServiceSpy }
             ],
             imports: [RouterTestingModule]
         }).compileComponents();

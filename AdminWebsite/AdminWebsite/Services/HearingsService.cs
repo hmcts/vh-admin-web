@@ -22,7 +22,7 @@ namespace AdminWebsite.Services
         Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
-        Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
+        Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
         Task UpdateFailedBookingStatus(Guid hearingId);
     }
 
@@ -142,15 +142,15 @@ namespace AdminWebsite.Services
             return Task.FromResult(newParticipant);
         }
 
-        public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
+        public async Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
             List<IParticipantRequest> newParticipantList)
         {
             if (hearing.Endpoints == null) return;
 
-            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.TrueForAll(re => re.Id != e.Id));
+            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => endpoints.TrueForAll(re => re.Id != e.Id));
             await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
             
-            foreach (var endpoint in request.Endpoints)
+            foreach (var endpoint in endpoints)
             {
                 UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
 
