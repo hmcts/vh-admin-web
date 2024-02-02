@@ -89,9 +89,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.49.4, )",
-        "resolved": "1.49.4",
-        "contentHash": "THMXshzCq8bHCsoU+p79Vmoyh0XoIfFkd13VFve8dzZC/wgE9Z6XmNSRt7SahDgkIlAhOucQVv2TE8avp869MQ==",
+        "requested": "[1.51.1, )",
+        "resolved": "1.51.1",
+        "contentHash": "4BwlDD8/Z1P4+TfVXHg0BE6VqlOItt5fq25EZOiZwLOC5TdxFYDFACmdAFYc6zjoHEVS7YAPyeGBAw7wxQG7Mw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -107,8 +107,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "1.50.16",
-        "contentHash": "wtMHaYtTO5QcURzKjE2ynd3cIBoboMWPSFDkZ4X3iBO67JPtSs5B8784g5HnHB7Cb50GOiVAbOB3qJDQeq2eZw==",
+        "resolved": "1.51.2",
+        "contentHash": "HCj0sQqscJ/d6weMYxq/v2p8qY7IIzmvxdH4IA3b/92Asq+5m+o07vHBKkqVOucs/teKM+/rq3tQv5A1Lzjfgg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1957,8 +1957,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.44.2",
-        "contentHash": "sL9YCnF9D1MuXULRgMkz8pbUfuevzX78BLMtIbJcRLgOsv0X+FCIEImQa6ytPmqjQhl5PpuP/s72uC9bSzdxIA==",
+        "resolved": "1.48.1",
+        "contentHash": "pa/4ZfxRtVRvQ49ENA12MtmDFz/5K4BcmmwGAs4Rc8VkCXOxaaXMrDxiAonAITeB6MdjFwRNY9TdMiIi4pwAqg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1979,7 +1979,7 @@
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[6.0.3, )",
-          "BookingsApi.Client": "[1.50.16, )",
+          "BookingsApi.Client": "[1.51.2, )",
           "FluentValidation.AspNetCore": "[10.4.0, )",
           "LaunchDarkly.ServerSdk": "[7.0.3, )",
           "MicroElements.Swashbuckle.FluentValidation": "[5.7.0, )",
@@ -2001,9 +2001,9 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.5.0, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.5.0, )",
           "TimeZoneConverter": "[6.0.1, )",
-          "UserApi.Client": "[1.44.2, )",
+          "UserApi.Client": "[1.48.1, )",
           "VH.Core.Configuration": "[0.1.13, )",
-          "VideoApi.Client": "[1.49.4, )"
+          "VideoApi.Client": "[1.51.1, )"
         }
       },
       "adminwebsite.testing.common": {
