@@ -11,6 +11,8 @@ import { ParticipantItemComponent } from '../item/participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judicial-member.model';
 import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
+import { LaunchDarklyService } from '../../../services/launch-darkly.service';
+import { of } from 'rxjs';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -23,6 +25,7 @@ describe('ParticipantListComponent', () => {
     let component: ParticipantListComponent;
     let fixture: ComponentFixture<ParticipantListComponent>;
     let debugElement: DebugElement;
+
     const pat1 = new ParticipantModel();
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
@@ -35,16 +38,20 @@ describe('ParticipantListComponent', () => {
     pat2.display_name = 'Doe';
     pat2.addedDuringHearing = false;
     pat2.hearing_role_code = HearingRoleCodes.Applicant;
+
     const participants: any[] = [pat1, pat2];
+    const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        ldServiceSpy.getFlag.and.returnValue(of(true));
         TestBed.configureTestingModule({
             declarations: [ParticipantListComponent, ParticipantItemComponent],
             providers: [
                 { provide: Logger, useValue: loggerSpy },
                 { provide: Router, useValue: router },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: LaunchDarklyService, useValue: ldServiceSpy }
             ],
             imports: [RouterTestingModule]
         }).compileComponents();
