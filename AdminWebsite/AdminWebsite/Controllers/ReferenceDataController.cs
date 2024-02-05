@@ -50,14 +50,23 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes([FromQuery] bool includeDeleted = false)
         {
             var caseTypes = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted);
-            var result = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
+            var result = caseTypes.SelectMany(caseType => caseType.HearingTypes
+                .Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
                 Id = hearingType.Id,
                 Name = hearingType.Name,
                 ServiceId = caseType.ServiceId,
                 Code = hearingType.Code
-            })).ToList();
+            } )).ToList();
+            
+            if (_featureToggles.UseV2Api())
+                result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
+                    .Select(caseType => new HearingTypeResponse
+                    {
+                        Group = caseType.Name,
+                        ServiceId = caseType.ServiceId
+                    }));
 
             return Ok(result);
         }
