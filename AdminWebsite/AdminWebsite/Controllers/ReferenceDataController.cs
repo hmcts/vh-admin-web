@@ -95,18 +95,18 @@ namespace AdminWebsite.Controllers
         
             if (iCaseRoles != null && iCaseRoles.Any())
             {
-                foreach (var item in iCaseRoles)
+                foreach (var caseRolName in iCaseRoles.Select(cr => cr.Name))
                 {
-                    var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
+                    var caseRole = new CaseAndHearingRolesResponse { Name = caseRolName };
                     List<IHearingRoleResponse> iHearingRoles;
                     if (_featureToggles.ReferenceDataToggle())
                     {
-                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, item.Name);
+                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRolName);
                         iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
                     }
                     else
                     {
-                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, item.Name);  
+                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, caseRolName);  
                         iHearingRoles = hearingRoles2.Select(e => (IHearingRoleResponse)e).ToList();
                     }
                     

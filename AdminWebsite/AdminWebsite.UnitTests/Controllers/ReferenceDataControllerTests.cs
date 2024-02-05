@@ -142,7 +142,7 @@ namespace AdminWebsite.UnitTests.Controllers
             }
         }
 
-        private List<CaseTypeResponse> GetCaseTypesList()
+        private static List<CaseTypeResponse> GetCaseTypesList()
         {
             return new List<CaseTypeResponse>
             {
@@ -179,7 +179,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
         }
 
-        private List<AdminWebsite.Contracts.Responses.HearingTypeResponse> GetHearingTypes()
+        private static List<AdminWebsite.Contracts.Responses.HearingTypeResponse> GetHearingTypes()
         {
             var result = new List<AdminWebsite.Contracts.Responses.HearingTypeResponse>()
             {
