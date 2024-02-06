@@ -471,9 +471,9 @@ describe('HearingScheduleComponent returning to page', () => {
     it('should set controls for venue', () => {
         component.ngOnInit();
         expect(component.selectedCourtName).toBeTruthy();
-        expect(component.selectedCourtName).toBe("Bedford");
+        expect(component.selectedCourtName).toBe('Bedford');
         expect(component.selectedCourtCode).toBeTruthy();
-        expect(component.selectedCourtCode).toBe("333");
+        expect(component.selectedCourtCode).toBe('333');
     });
 
     it('should hide cancel and discard pop up confirmation', () => {
