@@ -472,14 +472,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         if (this.editMode) {
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
             this.router.navigate([PageUrls.Summary]);
+        } else if (this.addJudciaryMembersFeatureEnabled) {
+            this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
+            this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
         } else {
-            if (this.addJudciaryMembersFeatureEnabled) {
-                this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
-                this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
-            } else {
-                this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
-                this.router.navigate([PageUrls.AssignJudge]);
-            }
+            this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
+            this.router.navigate([PageUrls.AssignJudge]);
         }
     }
 
