@@ -32,6 +32,8 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
     existingRequest.isMultiDayEdit = false;
+    existingRequest.court_name = 'Bedford';
+    existingRequest.court_code = '333';
     return existingRequest;
 }
 
@@ -125,6 +127,7 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.courtAddressControl.value).toBe(-1);
         expect(component.multiDaysHearing).toBeFalsy();
     });
+
     it('should set controls for duration', () => {
         component.ngOnInit();
         expect(component.durationHourControl).toBeTruthy();
@@ -464,6 +467,15 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.courtAddressControl.value).toBe(existingRequest.hearing_venue_id);
         expect(component.multiDaysHearing).toBe(existingRequest.isMultiDayEdit);
     });
+
+    it('should set controls for venue', () => {
+        component.ngOnInit();
+        expect(component.selectedCourtName).toBeTruthy();
+        expect(component.selectedCourtName).toBe('Bedford');
+        expect(component.selectedCourtCode).toBeTruthy();
+        expect(component.selectedCourtCode).toBe('333');
+    });
+
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;
         component.attemptingDiscardChanges = true;
