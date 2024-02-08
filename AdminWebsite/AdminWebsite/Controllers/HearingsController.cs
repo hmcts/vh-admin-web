@@ -471,7 +471,7 @@ namespace AdminWebsite.Controllers
                         RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
                     };
                     hearingRequest.Endpoints = endpointsV2;
-                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(hearingId, judiciaryParticipants, hearingToUpdate);
+                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate);
                 
                     bookingsApiRequest.Hearings.Add(hearingRequest);
                 }
@@ -627,6 +627,8 @@ namespace AdminWebsite.Controllers
         private async Task UpdateJudiciaryParticipants(Guid hearingId, List<JudiciaryParticipantRequest> judiciaryParticipants,
             HearingDetailsResponse originalHearing)
         {
+            var request = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, originalHearing);
+            
             // Due to booking api's domain restrictions for removing participants, we have to update judges differently
             var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == "Judge");
             var newJudge = judiciaryParticipants.Find(njp => njp.Role == "Judge");
@@ -638,12 +640,10 @@ namespace AdminWebsite.Controllers
                     PersonalCode = newJudge.PersonalCode
                 });
             }
-            
-            // keep the order of removal first. this will allow admin web to change judiciary judges post booking
-            var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
-                judiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
-            foreach (var removedJoh in removedJohs)
+
+            foreach (var removedJohPersonalCode in request.RemovedJudiciaryParticipantPersonalCodes)
             {
+                var removedJoh = originalHearing.JudiciaryParticipants.Find(p => p.PersonalCode == removedJohPersonalCode);
                 if (removedJoh.RoleCode == "Judge")
                 {
                     // Judges are re-assigned instead of removed or added
@@ -652,48 +652,29 @@ namespace AdminWebsite.Controllers
                 
                 await _bookingsApiClient.RemoveJudiciaryParticipantFromHearingAsync(hearingId, removedJoh.PersonalCode);
             }
-            
-            var newJohs = judiciaryParticipants.Where(jp =>
-                !originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
 
-            var newJohRequest = newJohs.Select(jp =>
-            {
-                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role);
-                return new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
+            var johsToAdd = request.NewJudiciaryParticipants
+                .Select(jp => new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
-                    HearingRoleCode = roleCode
-                };
-            }).ToList();
-            if (newJohRequest.Any())
-            {
+                    HearingRoleCode = jp.HearingRoleCode == JudiciaryParticipantHearingRoleCodeV2.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                        : JudiciaryParticipantHearingRoleCode.PanelMember
+                })
                 // Judges are re-assigned instead of removed or added
-                var johsToAdd = newJohRequest
-                    .Where(x => x.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
-                    .ToList();
-
-                if (johsToAdd.Any())
-                {
-                    await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, johsToAdd);
-                }
-            }
-            
-            // get existing judiciary participants based on the personal code being present in the original hearing
-            var existingJohs = judiciaryParticipants.Where(jp =>
-                originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
-
-            foreach (var joh in existingJohs)
+                .Where(jp => jp.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
+                .ToList();
+         
+            if (johsToAdd.Any())
             {
-                // Only update the joh if their details have changed
-                var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
-                if (joh.DisplayName == originalJoh.DisplayName &&
-                    joh.Role == originalJoh.RoleCode)
-                {
-                    continue;
-                }
+                await _bookingsApiClient.AddJudiciaryParticipantsToHearingAsync(hearingId, johsToAdd);
+            }
+
+            foreach (var joh in request.ExistingJudiciaryParticipants)
+            {
+                var roleCode = joh.HearingRoleCode == JudiciaryParticipantHearingRoleCodeV2.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                    : JudiciaryParticipantHearingRoleCode.PanelMember;
                 
-                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
                 await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
                     new UpdateJudiciaryParticipantRequest()
                     {
@@ -702,7 +683,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(Guid hearingId, List<JudiciaryParticipantRequest> judiciaryParticipants,
+        private static UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(List<JudiciaryParticipantRequest> judiciaryParticipants,
             HearingDetailsResponse originalHearing)
         {
             var request = new UpdateJudiciaryParticipantsRequestV2();

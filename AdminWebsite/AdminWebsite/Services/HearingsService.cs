@@ -257,22 +257,6 @@ namespace AdminWebsite.Services
                 endpoint.Id, endpoint.DisplayName, hearingId);
             
             await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, request);
-
-            // var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
-            // var endpointRequestDefenceAdvocate = hearing.Participants.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
-            // if (existingEndpointToEdit == null ||
-            //     existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-            //     existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id)
-            //     return;
-            //
-            // _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
-            //     existingEndpointToEdit.Id, existingEndpointToEdit.DisplayName, hearingId);
-            // var updateEndpointRequest = new UpdateEndpointRequest
-            // {
-            //     DisplayName = endpoint.DisplayName,
-            //     DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
-            // };
-            // await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);
         }
 
         public EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint)
