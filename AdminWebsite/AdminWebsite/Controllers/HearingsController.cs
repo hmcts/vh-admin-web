@@ -19,6 +19,7 @@ using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V2.Requests;
+using BookingsApi.Contract.V2.Requests.Enums;
 using BookingsApi.Contract.V2.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -470,6 +471,7 @@ namespace AdminWebsite.Controllers
                         RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
                     };
                     hearingRequest.Endpoints = endpointsV2;
+                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(hearingId, judiciaryParticipants, hearingToUpdate);
                 
                     bookingsApiRequest.Hearings.Add(hearingRequest);
                 }
@@ -698,6 +700,82 @@ namespace AdminWebsite.Controllers
                         DisplayName = joh.DisplayName, HearingRoleCode = roleCode
                     });
             }
+        }
+
+        private UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(Guid hearingId, List<JudiciaryParticipantRequest> judiciaryParticipants,
+            HearingDetailsResponse originalHearing)
+        {
+            var request = new UpdateJudiciaryParticipantsRequestV2();
+            
+            // keep the order of removal first. this will allow admin web to change judiciary judges post booking
+            var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
+                judiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
+            foreach (var removedJoh in removedJohs)
+            {
+                request.RemovedJudiciaryParticipantPersonalCodes.Add(removedJoh.PersonalCode);
+            }
+            
+            var newJohs = judiciaryParticipants.Where(jp =>
+                !originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
+
+            var newJohRequest = newJohs.Select(jp =>
+            {
+                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role);
+                return new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest()
+                {
+                    DisplayName = jp.DisplayName,
+                    PersonalCode = jp.PersonalCode,
+                    HearingRoleCode = roleCode
+                };
+            }).ToList();
+            if (newJohRequest.Any())
+            {
+                var johsToAdd = newJohRequest
+                    .ToList();
+
+                if (johsToAdd.Any())
+                {
+                    var newParticipants = johsToAdd
+                        .Select(x => new JudiciaryParticipantRequestV2
+                        {
+                            ContactEmail = x.ContactEmail,
+                            DisplayName = x.DisplayName,
+                            PersonalCode = x.PersonalCode,
+                            HearingRoleCode = x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCodeV2.Judge
+                                : JudiciaryParticipantHearingRoleCodeV2.PanelMember,
+                            ContactTelephone = x.ContactTelephone
+                        })
+                        .ToList();
+                    
+                    request.NewJudiciaryParticipants.AddRange(newParticipants);
+                }
+            }
+            
+            // get existing judiciary participants based on the personal code being present in the original hearing
+            var existingJohs = judiciaryParticipants.Where(jp =>
+                originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
+
+            foreach (var joh in existingJohs)
+            {
+                // Only update the joh if their details have changed
+                var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
+                if (joh.DisplayName == originalJoh.DisplayName &&
+                    joh.Role == originalJoh.RoleCode)
+                {
+                    continue;
+                }
+                
+                var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
+                request.ExistingJudiciaryParticipants.Add(new EditableUpdateJudiciaryParticipantRequestV2
+                {
+                    PersonalCode = joh.PersonalCode,
+                    DisplayName = joh.DisplayName,
+                    HearingRoleCode = roleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCodeV2.Judge
+                        : JudiciaryParticipantHearingRoleCodeV2.PanelMember
+                });
+            }
+
+            return request;
         }
 
         private static List<LinkedParticipantRequest> ExtractLinkedParticipants(

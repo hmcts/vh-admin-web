@@ -184,7 +184,10 @@ namespace AdminWebsite.Services
                 if (endpoint.Id.HasValue)
                 {
                     var updateEndpointRequest = MapEditableEndpointRequest(hearingId, hearing, endpoint);
-                    request.ExistingEndpoints.Add(updateEndpointRequest);
+                    if (updateEndpointRequest != null)
+                    {
+                        request.ExistingEndpoints.Add(updateEndpointRequest);
+                    }
                 }
                 else
                 {
