@@ -1650,7 +1650,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Cancel the booking
      * @param hearingId The hearing id
-     * @param reason (optional)
+     * @param reason (optional) The reason the hearing has been cancelled
      * @return Success
      */
     cancelBooking(hearingId: string, reason: string | undefined): Observable<UpdateBookingStatusResponse> {

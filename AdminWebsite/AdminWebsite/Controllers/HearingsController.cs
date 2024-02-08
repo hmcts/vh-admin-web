@@ -822,7 +822,7 @@ namespace AdminWebsite.Controllers
         ///  Cancel the booking
         /// </summary>
         /// <param name="hearingId">The hearing id</param>
-        /// <param name="updateBookingStatusRequest"></param>
+        /// <param name="reason">The reason the hearing has been cancelled</param>
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}/cancel")]
         [SwaggerOperation(OperationId = "CancelBooking")]
