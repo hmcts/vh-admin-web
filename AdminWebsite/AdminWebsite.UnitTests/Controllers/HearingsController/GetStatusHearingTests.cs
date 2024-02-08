@@ -241,7 +241,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ThrowsAsync(new VideoApiException("Error", 404, null, null, null));
 
             // Act
-            var result = await _controller.FailBooking(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
             _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);
@@ -258,7 +258,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ThrowsAsync(new VideoApiException("Error", 400, null, null, null));
 
             // Act
-            var result = await _controller.FailBooking(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
             _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);

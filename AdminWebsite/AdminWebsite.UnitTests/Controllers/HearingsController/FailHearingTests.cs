@@ -65,7 +65,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.FailBookingAsync(hearingId));
 
-            var response = await _controller.FailBooking(hearingId);
+            var response = await _controller.UpdateFailedBookingStatus(hearingId);
 
             var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);

@@ -867,7 +867,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> FailBooking(Guid hearingId)
+        public async Task<IActionResult> UpdateFailedBookingStatus(Guid hearingId)
         {
             var errorMessage = $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
