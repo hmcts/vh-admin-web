@@ -427,6 +427,46 @@ namespace AdminWebsite.Controllers
 
             if (_featureToggles.UseV2Api())
             {
+                await UpdateMultiDayHearingV2();
+            }
+            else
+            {
+                await UpdateMultiDayHearingV1();
+            }
+
+            async Task UpdateMultiDayHearingV1()
+            {
+                var bookingsApiRequest = new UpdateHearingsInGroupRequest();
+            
+                foreach (var hearing in hearingsToUpdate)
+                {
+                    var hearingRequest = new HearingRequest
+                    {
+                        HearingId = hearing.Id
+                    };
+                
+                    var hearingToUpdate = hearing.Map();
+
+                    var participants = request.Participants.ToList();
+                    var endpoints = request.Endpoints.ToList();
+                    var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
+
+                    if (isFutureDay)
+                    {
+                        AssignParticipantIdsForEditMultiDayHearingFutureDay(hearingToUpdate, participants, endpoints);
+                    }
+                
+                    hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
+                
+                    bookingsApiRequest.Hearings.Add(hearingRequest);
+                }
+
+                await _bookingsApiClient.UpdateHearingsInGroupAsync(groupId, bookingsApiRequest);
+            }
+
+            async Task UpdateMultiDayHearingV2()
+            {
                 var bookingsApiRequest = new UpdateHearingsInGroupRequestV2();
             
                 foreach (var hearing in hearingsToUpdate)
@@ -477,36 +517,6 @@ namespace AdminWebsite.Controllers
                 }
 
                 await _bookingsApiClient.UpdateHearingsInGroupV2Async(groupId, bookingsApiRequest);
-            }
-            else
-            {
-                var bookingsApiRequest = new UpdateHearingsInGroupRequest();
-            
-                foreach (var hearing in hearingsToUpdate)
-                {
-                    var hearingRequest = new HearingRequest
-                    {
-                        HearingId = hearing.Id
-                    };
-                
-                    var hearingToUpdate = hearing.Map();
-
-                    var participants = request.Participants.ToList();
-                    var endpoints = request.Endpoints.ToList();
-                    var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
-
-                    if (isFutureDay)
-                    {
-                        AssignParticipantIdsForEditMultiDayHearingFutureDay(hearingToUpdate, participants, endpoints);
-                    }
-                
-                    hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
-                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
-                
-                    bookingsApiRequest.Hearings.Add(hearingRequest);
-                }
-
-                await _bookingsApiClient.UpdateHearingsInGroupAsync(groupId, bookingsApiRequest);
             }
         }
 
