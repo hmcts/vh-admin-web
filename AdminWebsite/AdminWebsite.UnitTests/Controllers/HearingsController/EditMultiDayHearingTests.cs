@@ -491,7 +491,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     ContactEmail = x.ContactEmail,
-                    DisplayName = x.DisplayName
+                    DisplayName = x.DisplayName,
+                    HearingRoleCode = x.HearingRoleName
                 }).ToList(),
                 Endpoints = hearing.Endpoints.Select(x => new EditEndpointRequest
                 {
