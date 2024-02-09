@@ -221,17 +221,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 expectedUpdatedHearings.Add(hearing);
             }
 
-            foreach (var participant in expectedResponse.Participants)
-            {
-                var hearingParticipant = hearing.Participants.Where(x => x.Id == participant.Id);
-                if (hearingParticipant.ToList().Count > 0)
-                {
-                    var hearingParticipantSingle = hearingParticipant.ToList()[0];
-
-                    participant.HearingRoleName.Should().BeEquivalentTo(hearingParticipantSingle.HearingRoleName);
-                }
-            }
-            
             foreach (var hearingToUpdate in expectedUpdatedHearings)
             {
                 _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
@@ -459,9 +448,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     ContactEmail = x.ContactEmail,
-                    DisplayName = x.DisplayName,
-                    HearingRoleName = x.HearingRoleName,
-                    HearingRoleCode = x.HearingRoleCode
+                    DisplayName = x.DisplayName
                 }).ToList(),
                 JudiciaryParticipants = request.JudiciaryParticipants.Select(x => new JudiciaryParticipantResponse
                 {
@@ -504,9 +491,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     ContactEmail = x.ContactEmail,
-                    DisplayName = x.DisplayName,
-                    HearingRoleCode = x.HearingRoleName,
-                    HearingRoleName = x.HearingRoleName
+                    DisplayName = x.DisplayName
                 }).ToList(),
                 Endpoints = hearing.Endpoints.Select(x => new EditEndpointRequest
                 {
