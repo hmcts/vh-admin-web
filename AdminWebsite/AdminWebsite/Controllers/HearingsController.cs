@@ -980,31 +980,28 @@ namespace AdminWebsite.Controllers
             }
         }
         /// <summary>
-        ///     Update the hearing status.
+        ///  Cancel the booking
         /// </summary>
         /// <param name="hearingId">The hearing id</param>
-        /// <param name="updateBookingStatusRequest"></param>
+        /// <param name="reason">The reason the hearing has been cancelled</param>
         /// <returns>Success status</returns>
-        [HttpPatch("{hearingId}")]
-        [SwaggerOperation(OperationId = "UpdateBookingStatus")]
+        [HttpPatch("{hearingId}/cancel")]
+        [SwaggerOperation(OperationId = "CancelBooking")]
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<IActionResult> CancelBooking(Guid hearingId, string reason)
         {
             try
             {
-                var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                var judgeExists = hearing?.Participants?.Exists(p => p.HearingRoleName == RoleNames.Judge) ?? false;
-                if (!judgeExists && updateBookingStatusRequest.Status == BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Created)
-                    return BadRequest("This hearing has no judge");
+                var cancelRequest = new CancelBookingRequest
+                {
+                    CancelReason = reason,
+                    UpdatedBy = _userIdentity.GetUserIdentityName()
+                };
+                await _bookingsApiClient.CancelBookingAsync(hearingId, cancelRequest);
 
-                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
-
-                updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
-                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
-
-                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId, updateBookingStatusRequest.Status);
+                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId, BookingStatus.Cancelled);
                 return Ok(new UpdateBookingStatusResponse { Success = true });
             }
             catch (Exception ex)
@@ -1031,12 +1028,12 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateHearingStatus(Guid hearingId)
+        public async Task<IActionResult> UpdateFailedBookingStatus(Guid hearingId)
         {
             var errorMessage = $"Failed to update the failed status for a hearing - hearingId: {hearingId}";
             try
             {
-                await _hearingsService.UpdateFailedBookingStatus(hearingId);
+                await _bookingsApiClient.FailBookingAsync(hearingId);
             }
             catch (VideoApiException e)
             {

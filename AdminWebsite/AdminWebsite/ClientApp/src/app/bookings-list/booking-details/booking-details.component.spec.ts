@@ -1,4 +1,4 @@
-import { discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
+import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -15,8 +15,6 @@ import {
     HearingDetailsResponse,
     JusticeUserResponse,
     PhoneConferenceResponse,
-    UpdateBookingStatus,
-    UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     UserProfileResponse
 } from '../../services/clients/api-client';
@@ -161,10 +159,7 @@ now = new Date(now);
 hearingModel.scheduled_date_time = now;
 hearingModel.audio_recording_required = true;
 
-const updateBookingStatusRequest = new UpdateBookingStatusRequest();
-updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
-updateBookingStatusRequest.updated_by = '';
-updateBookingStatusRequest.cancel_reason = 'Online abandonment (incomplete registration)';
+const cancel_reason = 'Online abandonment (incomplete registration)';
 class BookingDetailsServiceMock {
     mapBooking(response) {
         return new BookingDetailsTestData().getBookingsDetailsModel();
@@ -185,7 +180,7 @@ describe('BookingDetailsComponent', () => {
         'saveHearing',
         'mapHearingDetailsResponseToHearingModel',
         'updateHearingRequest',
-        'updateBookingStatus',
+        'cancelBooking',
         'getCurrentRequest',
         'getTelephoneConferenceId',
         'getConferencePhoneNumber',
@@ -215,7 +210,7 @@ describe('BookingDetailsComponent', () => {
     beforeEach(() => {
         allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(defaultUpdateBookingStatusResponse));
+        videoHearingServiceSpy.cancelBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
         videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
@@ -335,10 +330,7 @@ describe('BookingDetailsComponent', () => {
         tick(1000);
         component.cancelBooking('Online abandonment (incomplete registration)');
         expect(component.showCancelBooking).toBeFalsy();
-        expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalledWith(
-            bookingPersistServiceSpy.selectedHearingId,
-            updateBookingStatusRequest
-        );
+        expect(videoHearingServiceSpy.cancelBooking).toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, cancel_reason);
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
         discardPeriodicTasks();
     }));
@@ -379,26 +371,26 @@ describe('BookingDetailsComponent', () => {
     });
     it('should persist status in the model', () => {
         component.booking = null;
-        component.persistStatus(UpdateBookingStatus.Created);
-        expect(component.booking.status).toBe(UpdateBookingStatus.Created);
+        component.persistStatus(BookingStatus.Created);
+        expect(component.booking.status).toBe(BookingStatus.Created);
         expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
     });
     it('should hide cancel button for canceled hearing', () => {
-        component.updateStatusHandler(UpdateBookingStatus.Cancelled);
+        component.updateStatusHandler(BookingStatus.Cancelled);
         expect(component.showCancelBooking).toBeFalsy();
     });
     it('should not hide cancel button for not canceled hearing', () => {
         component.showCancelBooking = true;
-        component.updateStatusHandler(UpdateBookingStatus.Created);
+        component.updateStatusHandler(BookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
     it('should hide cancel button for canceled error', () => {
-        component.errorHandler('error', UpdateBookingStatus.Cancelled);
+        component.errorHandler('error', BookingStatus.Cancelled);
         expect(component.showCancelBooking).toBeFalsy();
     });
     it('should not hide cancel button for not canceled error', () => {
         component.showCancelBooking = true;
-        component.errorHandler('error', UpdateBookingStatus.Created);
+        component.errorHandler('error', BookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
     it('should navigate back to return url if exists', () => {
@@ -418,7 +410,7 @@ describe('BookingDetailsComponent', () => {
     });
     it('should hide show confirming pop up on error', () => {
         component.showConfirming = true;
-        component.errorHandler('error', UpdateBookingStatus.Created);
+        component.errorHandler('error', BookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
     });
     it('should get update conference phone details', fakeAsync(() => {
@@ -586,7 +578,7 @@ CY: 54321 (ID: 7777)`);
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
             expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
             expect(component.showConfirmingFailed).toBeTruthy();
-            expect(component.hearing.Status).toBe(UpdateBookingStatus.Failed);
+            expect(component.hearing.Status).toBe(BookingStatus.Failed);
             expect(component.showConfirming).toBeFalsy();
 
             discardPeriodicTasks();

@@ -23,7 +23,6 @@ namespace AdminWebsite.Services
         Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
-        Task UpdateFailedBookingStatus(Guid hearingId);
         void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint);
         EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint);
         UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
@@ -213,17 +212,6 @@ namespace AdminWebsite.Services
                 endpoint.DefenceAdvocateContactEmail = epToUpdate.ContactEmail;
         }
 
-        public async Task UpdateFailedBookingStatus(Guid hearingId)
-        {
-            await _bookingsApiClient.UpdateBookingStatusAsync(hearingId,
-                new UpdateBookingStatusRequest
-                {
-                    Status = BookingsApi.Contract.V1.Requests.Enums.UpdateBookingStatus.Failed,
-                    UpdatedBy = "System",
-                    CancelReason = string.Empty
-                });
-        }
-        
         private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing,
             IEnumerable<EndpointResponse> listOfEndpointsToDelete)
         {

@@ -394,7 +394,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (hearingStatusResponse?.success) {
             await this.processMultiHearing(hearingDetailsResponse);
         } else {
-            // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
             this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
         }
