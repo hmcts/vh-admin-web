@@ -1311,121 +1311,6 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Update the hearing status.
-     * @param hearingId The hearing id
-     * @param body (optional)
-     * @return Success
-     */
-    updateBookingStatus(hearingId: string, body: UpdateBookingStatusRequest | undefined): Observable<UpdateBookingStatusResponse> {
-        let url_ = this.baseUrl + '/api/hearings/{hearingId}';
-        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
-        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
-        url_ = url_.replace(/[?&]$/, '');
-
-        const content_ = JSON.stringify(body);
-
-        let options_: any = {
-            body: content_,
-            observe: 'response',
-            responseType: 'blob',
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
-                Accept: 'application/json'
-            })
-        };
-
-        return _observableFrom(this.transformOptions(options_))
-            .pipe(
-                _observableMergeMap(transformedOptions_ => {
-                    return this.http.request('patch', url_, transformedOptions_);
-                })
-            )
-            .pipe(
-                _observableMergeMap((response_: any) => {
-                    return this.processUpdateBookingStatus(response_);
-                })
-            )
-            .pipe(
-                _observableCatch((response_: any) => {
-                    if (response_ instanceof HttpResponseBase) {
-                        try {
-                            return this.processUpdateBookingStatus(response_ as any);
-                        } catch (e) {
-                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
-                        }
-                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
-                })
-            );
-    }
-
-    protected processUpdateBookingStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse
-                ? response.body
-                : (response as any).error instanceof Blob
-                ? (response as any).error
-                : undefined;
-
-        let _headers: any = {};
-        if (response.headers) {
-            for (let key of response.headers.keys()) {
-                _headers[key] = response.headers.get(key);
-            }
-        }
-        if (status === 500) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result500: any = null;
-                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
-                })
-            );
-        } else if (status === 200) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
-                    return _observableOf(result200);
-                })
-            );
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result404: any = null;
-                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result404 = ProblemDetails.fromJS(resultData404);
-                    return throwException('Not Found', status, _responseText, _headers, result404);
-                })
-            );
-        } else if (status === 400) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    let result400: any = null;
-                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result400 = ProblemDetails.fromJS(resultData400);
-                    return throwException('Bad Request', status, _responseText, _headers, result400);
-                })
-            );
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('Unauthorized', status, _responseText, _headers);
-                })
-            );
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText: string) => {
-                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
-                })
-            );
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
      * Edit a multi-day hearing
      * @param hearingId The id of the hearing
      * @param body (optional) Hearing Request object for edit operation
@@ -1696,6 +1581,119 @@ export class BHClient extends ApiClientBase {
     }
 
     protected processGetHearingConferenceStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Cancel the booking
+     * @param hearingId The hearing id
+     * @param reason (optional) The reason the hearing has been cancelled
+     * @return Success
+     */
+    cancelBooking(hearingId: string, reason: string | undefined): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/cancel?';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        if (reason === null) throw new Error("The parameter 'reason' cannot be null.");
+        else if (reason !== undefined) url_ += 'reason=' + encodeURIComponent('' + reason) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processCancelBooking(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processCancelBooking(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
+                })
+            );
+    }
+
+    protected processCancelBooking(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -8657,13 +8655,6 @@ export enum JusticeUserRole {
     VhTeamLead = 'VhTeamLead'
 }
 
-export enum UpdateBookingStatus {
-    Booked = 'Booked',
-    Created = 'Created',
-    Cancelled = 'Cancelled',
-    Failed = 'Failed'
-}
-
 export class NonWorkingHours implements INonWorkingHours {
     id?: number;
     start_time?: Date;
@@ -8744,49 +8735,6 @@ export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {
 export interface IRestoreJusticeUserRequest {
     id?: string;
     username?: string | undefined;
-}
-
-export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
-
-    constructor(data?: IUpdateBookingStatusRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.updated_by = _data['updated_by'];
-            this.status = _data['status'];
-            this.cancel_reason = _data['cancel_reason'];
-        }
-    }
-
-    static fromJS(data: any): UpdateBookingStatusRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateBookingStatusRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['updated_by'] = this.updated_by;
-        data['status'] = this.status;
-        data['cancel_reason'] = this.cancel_reason;
-        return data;
-    }
-}
-
-export interface IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
 }
 
 export class UpdateHearingAllocationToCsoRequest implements IUpdateHearingAllocationToCsoRequest {

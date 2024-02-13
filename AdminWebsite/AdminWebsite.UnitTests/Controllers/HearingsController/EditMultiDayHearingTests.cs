@@ -121,6 +121,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Remove an endpoint
             var endpointToRemove = request.Endpoints.First(x => x.DisplayName == "Endpoint B");
             request.Endpoints.Remove(endpointToRemove);
+            // Update an endpoint
+            var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
+            endpointToUpdate.DisplayName = "Endpoint A EDITED";
 
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
@@ -143,29 +146,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 expectedUpdatedHearings.Add(hearing);
             }
+
+            var oldJudges = expectedUpdatedHearings
+                .Where(h => h.Participants.Exists(p => p.HearingRoleName == "Judge"))
+                .SelectMany(h => h.Participants)
+                .Where(p => p.HearingRoleName == "Judge")
+                .ToList();
             
-            foreach (var hearingToUpdate in expectedUpdatedHearings)
-            {
-                var oldJudge = hearingToUpdate.Participants.First(x => x.HearingRoleName == "Judge");
-                
-                _bookingsApiClient.Verify(x => x.UpdateHearingParticipantsAsync(
-                    hearingToUpdate.Id,
-                    It.Is<UpdateHearingParticipantsRequest>(r =>
-                        r.ExistingParticipants.Count == 1 &&
-                        r.NewParticipants.Count == 2 && 
-                            r.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
-                            r.NewParticipants.Exists(p => p.ContactEmail == judge.ContactEmail) &&
-                        r.RemovedParticipantIds.Count == 1 &&
-                            r.RemovedParticipantIds.Contains(oldJudge.Id) &&
-                        r.LinkedParticipants.Count == 0)
-                ));
-                
-                var removedEndpoint = hearingToUpdate.Endpoints.First(x => x.DisplayName == endpointToRemove.DisplayName);
-                
-                _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(
-                    hearingToUpdate.Id,
-                    removedEndpoint.Id));
-            }
+            var removedEndpoints = expectedUpdatedHearings
+                .SelectMany(h => h.Endpoints)
+                .Where(e => e.DisplayName == endpointToRemove.DisplayName)
+                .ToList();
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.TrueForAll(h =>
+                        h.Participants.ExistingParticipants.Count == 1 &&
+                        h.Participants.NewParticipants.Count == 2 &&
+                        h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
+                        h.Participants.NewParticipants.Exists(p => p.ContactEmail == judge.ContactEmail) &&
+                        h.Participants.RemovedParticipantIds.Count == 1 &&
+                        h.Participants.RemovedParticipantIds.Any(id => oldJudges.Any(j => j.Id == id)) &&
+                        h.Participants.LinkedParticipants.Count == 0 &&
+                        h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id)
+                    )))));
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h =>
+                        h.Endpoints.ExistingEndpoints.Count == 1))));
         }
         
         [TestCase(false)]
@@ -185,7 +196,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             // Change the judge
             var judge = request.JudiciaryParticipants.First(x => x.Role == "Judge");
-            judge.PersonalCode = "NewJudgePersonalCode";
+            var oldJudgePersonalCode = judge.PersonalCode;
+            var newJudgePersonalCode = "NewJudgePersonalCode";
+            judge.PersonalCode = newJudgePersonalCode;
             // Add a participant
             var newParticipant = new EditParticipantRequest
             {
@@ -198,6 +211,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Remove an endpoint
             var endpointToRemove = request.Endpoints.First(x => x.DisplayName == "Endpoint B");
             request.Endpoints.Remove(endpointToRemove);
+            // Update an endpoint
+            var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
+            endpointToUpdate.DisplayName = "Endpoint A EDITED";
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
@@ -220,32 +236,32 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 expectedUpdatedHearings.Add(hearing);
             }
-
-            foreach (var hearingToUpdate in expectedUpdatedHearings)
-            {
-                _bookingsApiClient.Verify(x => x.UpdateHearingParticipants2Async(
-                    hearingToUpdate.Id,
-                    It.Is<UpdateHearingParticipantsRequestV2>(r =>
-                        r.ExistingParticipants.Count == 1 &&
-                        r.NewParticipants.Count == 1 && 
-                            r.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
-                        r.RemovedParticipantIds.Count == 0 &&
-                        r.LinkedParticipants.Count == 0)
-                ));
-                
-                _bookingsApiClient.Verify(x => x.ReassignJudiciaryJudgeAsync(
-                    hearingToUpdate.Id,
-                    It.Is<ReassignJudiciaryJudgeRequest>(r =>
-                        r.PersonalCode == judge.PersonalCode &&
-                        r.DisplayName == judge.DisplayName)
-                ));
-                
-                var removedEndpoint = hearingToUpdate.Endpoints.First(x => x.DisplayName == endpointToRemove.DisplayName);
-                
-                _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(
-                    hearingToUpdate.Id,
-                    removedEndpoint.Id));
-            }
+            
+            var removedEndpoints = expectedUpdatedHearings
+                .SelectMany(h => h.Endpoints)
+                .Where(e => e.DisplayName == endpointToRemove.DisplayName)
+                .ToList();
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequestV2>(r =>
+                    r.Hearings.TrueForAll(h =>
+                        h.Participants.ExistingParticipants.Count == 1 &&
+                        h.Participants.NewParticipants.Count == 1 &&
+                        h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
+                        h.Participants.RemovedParticipantIds.Count == 0 &&
+                        h.Participants.LinkedParticipants.Count == 0 &&
+                        h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 1 &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(p => p.PersonalCode == newJudgePersonalCode) &&
+                        h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Exists(p => p == oldJudgePersonalCode)
+                        )))));
+            
+            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequestV2>(r =>
+                    r.Hearings.Exists(h =>
+                        h.Endpoints.ExistingEndpoints.Count == 1))));
         }
 
         [Test]

@@ -233,61 +233,41 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_not_found_if_hearing_failed_to_update()
+        public async Task Should_return_not_found_if_hearing_failed_to_be_found()
         {
             // Arrange
-            _hearingServiceMock
-                .Setup(x => x.UpdateFailedBookingStatus(_guid))
+            _bookingsApiClientMock
+                .Setup(x => x.FailBookingAsync(_guid))
                 .ThrowsAsync(new VideoApiException("Error", 404, null, null, null));
 
             // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
-            _hearingServiceMock.Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
+            _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);
             var notFoundResult = (NotFoundResult)result;
             notFoundResult.StatusCode.Should().Be(404);
         }
 
         [Test]
-        public async Task Should_return_badRequest_if_hearing_failed_to_update()
+        public async Task Should_return_badRequest_if_hearing_failed_to_fail()
         {
             // Arrange
-            _hearingServiceMock
-                .Setup(x => x.UpdateFailedBookingStatus(_guid))
+            _bookingsApiClientMock
+                .Setup(x => x.FailBookingAsync(_guid))
                 .ThrowsAsync(new VideoApiException("Error", 400, null, null, null));
 
             // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
-            _hearingServiceMock.Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
+            _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);
             var notFoundResult = (BadRequestObjectResult)result;
             notFoundResult.StatusCode.Should().Be(400);
         }
 
         [Test]
-        public async Task Should_return_ok_status_after_update_hearing()
-        {
-            // Arrange
-            // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
-
-            // Assert
-
-            _hearingServiceMock.Verify(
-                x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()),
-                Times.Exactly(1));
-
-            var okRequestResult = (OkObjectResult)result;
-            okRequestResult.StatusCode.Should().Be(200);
-
-            var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
-            hearing.Success.Should().Be(true);
-        }
-
-        [Test]
-        public async Task Should_return_ok_status_with_sucess_when_V2flag_on()
+        public async Task Should_return_ok_status_with_success_when_V2flag_on()
         {
             // Arrange
             ConferenceDetailsResponse conferenceResponse = new()

@@ -265,65 +265,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_update_booking_status()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
-            _mocker.Mock<IHearingsService>()
-                .Setup(x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()))
-                .Verifiable();
-
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest { Status = UpdateBookingStatus.Created });
-
-            response.Should().BeOfType<OkObjectResult>();
-
-            _mocker.Mock<IBookingsApiClient>().Verify(
-                x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()),
-                Times.Exactly(1));
-        }
-
-        [Test]
-        public async Task Should_not_confirm_booking_status_if_no_judge_present()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
-                .Verifiable();
-            //no judge in hearingDetails mock
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(It.IsAny<V1.Responses.HearingDetailsResponse>());
-
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(),
-                new UpdateBookingStatusRequest { Status = UpdateBookingStatus.Created });
-
-            response.Should().BeOfType<BadRequestObjectResult>();
-        }
-
-        [Test]
-        public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_bad_result()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x =>
-                    x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
-                .Throws(new BookingsApiException("Error", 400, "response", null, null));
-
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
-
-            response.Should().BeOfType<BadRequestObjectResult>();
-        }
-
-        [Test]
-        public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_not_found_result()
-        {
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x =>
-                    x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
-                .Throws(new BookingsApiException("Error", 404, "response", null, null));
-
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
-
-            response.Should().BeOfType<NotFoundObjectResult>();
-        }
-
-        [Test]
         public async Task Should_clone_hearing()
         {
             var request = GetMultiHearingRequest();
@@ -379,10 +320,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
-                .Verifiable();
-            
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Verifiable();
             
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
