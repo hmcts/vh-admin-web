@@ -300,21 +300,5 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();
         }
-        [Test]
-        public async Task Should_Invoke_BookingAPI_UpdateBookingStatusAsync_when_UpdateFailedBookingStatus_called()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            // Act
-            await _service.UpdateFailedBookingStatus(hearingId);
-
-            // Assert
-            _mocker.Mock<IBookingsApiClient>().Verify(x 
-                => x.UpdateBookingStatusAsync(
-                    hearingId, 
-                    It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), 
-                Times.Once);
-        }
-        
     }
 }

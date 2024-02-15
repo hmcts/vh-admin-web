@@ -16,7 +16,6 @@ import {
     HearingTypeResponse,
     ParticipantRequest,
     ParticipantResponse,
-    UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     MultiHearingRequest,
     PhoneConferenceResponse,
@@ -512,8 +511,8 @@ export class VideoHearingsService {
         return this.bhClient.getHearingById(hearingId);
     }
 
-    updateBookingStatus(hearingId: string, updateBookingStatus: UpdateBookingStatusRequest): Observable<UpdateBookingStatusResponse> {
-        return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
+    cancelBooking(hearingId: string, reason: string): Observable<UpdateBookingStatusResponse> {
+        return this.bhClient.cancelBooking(hearingId, reason);
     }
 
     async getConferencePhoneNumber(isWelsh = false) {

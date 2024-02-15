@@ -50,14 +50,23 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes([FromQuery] bool includeDeleted = false)
         {
             var caseTypes = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted);
-            var result = caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
+            var result = caseTypes.SelectMany(caseType => caseType.HearingTypes
+                .Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
                 Id = hearingType.Id,
                 Name = hearingType.Name,
                 ServiceId = caseType.ServiceId,
                 Code = hearingType.Code
-            })).ToList();
+            } )).ToList();
+            
+            if (_featureToggles.UseV2Api())
+                result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
+                    .Select(caseType => new HearingTypeResponse
+                    {
+                        Group = caseType.Name,
+                        ServiceId = caseType.ServiceId
+                    }));
 
             return Ok(result);
         }
@@ -86,18 +95,18 @@ namespace AdminWebsite.Controllers
         
             if (iCaseRoles != null && iCaseRoles.Any())
             {
-                foreach (var item in iCaseRoles)
+                foreach (var caseRoleName in iCaseRoles.Select(cr => cr.Name))
                 {
-                    var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
+                    var caseRole = new CaseAndHearingRolesResponse { Name = caseRoleName };
                     List<IHearingRoleResponse> iHearingRoles;
                     if (_featureToggles.ReferenceDataToggle())
                     {
-                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, item.Name);
+                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRoleName);
                         iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
                     }
                     else
                     {
-                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, item.Name);  
+                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, caseRoleName);  
                         iHearingRoles = hearingRoles2.Select(e => (IHearingRoleResponse)e).ToList();
                     }
                     

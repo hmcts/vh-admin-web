@@ -49,14 +49,17 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_all_hearing_types()
+        public async Task Should_return_all_hearing_types_and_case_types_where_hearing_type_is_empty()
         {
+            
+            _featureTogglesMock.Setup(x => x.UseV2Api()).Returns(true);
             // Arrange
             var includeDeleted = true;
-            _userIdentityMock.Setup(x => x.IsATeamLead()).Returns(true);
+            _userIdentityMock.Setup(x => x.IsATeamLead())
+                .Returns(true);
             _bookingsApiClientMock.Setup(x =>
                     x.GetCaseTypesAsync(includeDeleted))
-                    .ReturnsAsync(GetCaseTypesList());
+                .ReturnsAsync(GetCaseTypesList());
 
             // Act
             var result = await _controller.GetHearingTypes(includeDeleted);
@@ -139,46 +142,52 @@ namespace AdminWebsite.UnitTests.Controllers
             }
         }
 
-        private List<CaseTypeResponse> GetCaseTypesList()
+        private static List<CaseTypeResponse> GetCaseTypesList()
         {
             return new List<CaseTypeResponse>
             {
-                new CaseTypeResponse
+                new ()
                 {
-                    Id = 1, Name = "type1",
+                    Id = 1, Name = "type1", ServiceId = "AA1",
                     HearingTypes = new List<HearingTypeResponse>()
                     {
-                        new HearingTypeResponse() {Id = 10, Name = "HType10"},
+                        new () {Id = 10, Name = "HType10", Code = "Code10"},
                     }
                 },
-                new CaseTypeResponse
+                new()
                 {
-                    Id = 2, Name = "type2",
+                    Id = 2, Name = "type2", ServiceId = "AA2",
                     HearingTypes = new List<HearingTypeResponse>()
                     {
-                        new HearingTypeResponse() {Id = 20, Name = "HType20"},
+                        new () {Id = 20, Name = "HType20", Code = "Code20"},
                     }
                 },
-                new CaseTypeResponse
+                new()
                 {
-                    Id = 3, Name = "type3",
-                     HearingTypes = new List<HearingTypeResponse>()
+                    Id = 3, Name = "type3", ServiceId = "AA3",
+                    HearingTypes = new List<HearingTypeResponse>()
                     {
-                        new HearingTypeResponse() {Id = 25, Name = "HType25"},
-                        new HearingTypeResponse() {Id = 29, Name = "HType29"},
+                        new () {Id = 25, Name = "HType25", Code = "Code25"},
+                        new () {Id = 29, Name = "HType29", Code = "Code29"},
                     }
+                },
+                new()
+                {
+                    Id = 4, Name = "type4", ServiceId = "AA4",
+                    HearingTypes = new List<HearingTypeResponse>()
                 }
             };
         }
 
-        private List<HearingTypeResponse> GetHearingTypes()
+        private static List<AdminWebsite.Contracts.Responses.HearingTypeResponse> GetHearingTypes()
         {
-            var result = new List<HearingTypeResponse>()
+            var result = new List<AdminWebsite.Contracts.Responses.HearingTypeResponse>()
             {
-                new HearingTypeResponse() {Id = 10, Name = "HType10"},
-                new HearingTypeResponse() {Id = 20, Name = "HType20"},
-                new HearingTypeResponse() {Id = 25, Name = "HType25"},
-                new HearingTypeResponse() {Id = 29, Name = "HType29"}
+                new () {Id = 10, Name = "HType10", Group = "type1", ServiceId = "AA1", Code = "Code10"},
+                new () {Id = 20, Name = "HType20", Group = "type2", ServiceId = "AA2", Code = "Code20"},
+                new () {Id = 25, Name = "HType25", Group = "type3", ServiceId = "AA3", Code = "Code25"},
+                new () {Id = 29, Name = "HType29", Group = "type3", ServiceId = "AA3", Code = "Code29"},
+                new () {Group = "type4", ServiceId = "AA4"},
             };
             return result;
         }
