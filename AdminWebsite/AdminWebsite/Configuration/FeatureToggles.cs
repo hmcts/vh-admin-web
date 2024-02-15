@@ -15,6 +15,7 @@ namespace AdminWebsite.Configuration
         public bool EJudEnabled();
         public bool HrsEnabled();
         public bool AudioSearchEnabled();
+        public bool UsePostMay2023Template();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -29,6 +30,7 @@ namespace AdminWebsite.Configuration
         private const string EJudFeatureToggleKey = "ejud-feature";
         private const string HrsFeatureToggleKey = "hrs-integration";
         private const string AudioSearchToggleKey = "hide-audio-search-tile";
+        private const string UsePostMay2023TemplateKey = "notify-post-may-2023-templates";
         
 
         public FeatureToggles(string sdkKey, string environmentName)
@@ -72,6 +74,11 @@ namespace AdminWebsite.Configuration
         public bool UseV2Api()
         {
             return GetBoolValueWithKey(UseV2ApiToggleKey);
+        }
+        
+        public bool UsePostMay2023Template()
+        {
+            return GetBoolValueWithKey(UsePostMay2023TemplateKey);
         }
         
         private bool GetBoolValueWithKey(string key)
