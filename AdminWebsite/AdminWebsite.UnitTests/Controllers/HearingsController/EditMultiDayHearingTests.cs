@@ -416,7 +416,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_forward_unhandled_error_from_bookings_api()
+        public void Should_forward_unhandled_error_from_bookings_api()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
