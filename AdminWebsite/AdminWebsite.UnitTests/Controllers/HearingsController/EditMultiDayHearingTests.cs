@@ -127,6 +127,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+
+            const string updatedBy = "updatedBy@email.com";
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
             
             // Act
             var result = await _controller.EditMultiDayHearing(hearingId, request);
@@ -176,7 +179,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 groupId,
                 It.Is<UpdateHearingsInGroupRequest>(r =>
                     r.Hearings.Exists(h =>
-                        h.Endpoints.ExistingEndpoints.Count == 1))));
+                        h.Endpoints.ExistingEndpoints.Count == 1) &&
+                    r.UpdatedBy == updatedBy)));
         }
         
         [TestCase(false)]
@@ -217,6 +221,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
             
             // Act
             var result = await _controller.EditMultiDayHearing(hearingId, request);
@@ -261,7 +268,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 groupId,
                 It.Is<UpdateHearingsInGroupRequestV2>(r =>
                     r.Hearings.Exists(h =>
-                        h.Endpoints.ExistingEndpoints.Count == 1))));
+                        h.Endpoints.ExistingEndpoints.Count == 1) &&
+                    r.UpdatedBy == updatedBy)));
         }
 
         [Test]
