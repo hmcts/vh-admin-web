@@ -1115,76 +1115,48 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         }
         
-        [Test]
-        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked_v1()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked(bool useV2)
         {
             // ie there is an endpoint currently not linked to a defence advocate
             // as part of the request we add a new participant and link them to this endpoint as a defence advocate
             
             // Arrange
-            _featureToggle.Setup(x => x.UseV2Api()).Returns(false);
-            
-            var hearing = _existingHearingWithEndpointsOriginal;
-            var existingEndpointToUpdate = hearing.Endpoints[0];
-            existingEndpointToUpdate.DefenceAdvocateId = null;
-            hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
+            _featureToggle.Setup(x => x.UseV2Api()).Returns(useV2);
 
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(hearing);
-            
-            var newParticipantDefenceAdvocate = new EditParticipantRequest
-            {
-                ContactEmail = "legalrep@email.com",
-                DisplayName = "Legal Rep",
-                FirstName = "Legal",
-                HearingRoleCode = "LGRP",
-                HearingRoleName = "Legal Representative",
-                Id = null,
-                LastName = "Rep"
-            };
-            var request = _editEndpointOnHearingRequestWithJudge;
-            request.Participants.Add(newParticipantDefenceAdvocate);
-            var endpointInRequestToUpdate = request.Endpoints.First(e => e.Id == existingEndpointToUpdate.Id);
-            request.Endpoints.RemoveAll(e => e.Id != endpointInRequestToUpdate.Id);
-            endpointInRequestToUpdate.DefenceAdvocateContactEmail = newParticipantDefenceAdvocate.ContactEmail;
-            
-            // Act
-            var result = await _controller.EditHearing(_validId, _editEndpointOnHearingRequestWithJudge);
-            
-            // Assert
-            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            var expectedUpdatedEndpointCount = request.Endpoints.Count;
-            _bookingsApiClient.Verify(
-                x => x.UpdateDisplayNameForEndpointAsync(hearing.Id, It.IsAny<Guid>(),
-                    It.Is<UpdateEndpointRequest>(r =>
-                        r.DefenceAdvocateContactEmail == newParticipantDefenceAdvocate.ContactEmail)), 
-                Times.Exactly(expectedUpdatedEndpointCount));
-        }
-        
-        [Test]
-        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked_v2()
-        {
-            // ie there is an endpoint currently not linked to a defence advocate
-            // as part of the request we add a new participant and link them to this endpoint as a defence advocate
-            
-            // Arrange
-            _featureToggle.Setup(x => x.UseV2Api()).Returns(true);
-            
-            var hearing = _v2HearingDetailsResponse;
+            Guid hearingId;
             var request = _editEndpointOnHearingRequestWithJudge;
             var endpointInRequestToUpdate = request.Endpoints[0];
-            var existingEndpointToUpdate = new EndpointResponseV2
-            {
-                Id = endpointInRequestToUpdate.Id.Value,
-                DisplayName = "Endpoint A",
-                DefenceAdvocateId = null
-            };
-            hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
-            hearing.Endpoints.Add(existingEndpointToUpdate);
-
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
-                .ReturnsAsync(hearing);
             
+            if (useV2)
+            {
+                var hearing = _v2HearingDetailsResponse;
+                hearingId = hearing.Id;
+                var existingEndpointToUpdate = new EndpointResponseV2
+                {
+                    Id = endpointInRequestToUpdate.Id.Value,
+                    DisplayName = "Endpoint A",
+                    DefenceAdvocateId = null
+                };
+                hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
+                hearing.Endpoints.Add(existingEndpointToUpdate);
+
+                _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                    .ReturnsAsync(hearing);
+            }
+            else
+            {
+                var hearing = _existingHearingWithEndpointsOriginal;
+                hearingId = hearing.Id;
+                var existingEndpointToUpdate = hearing.Endpoints[0];
+                existingEndpointToUpdate.DefenceAdvocateId = null;
+                hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
+
+                _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(hearing);
+            }
+      
             var newParticipantDefenceAdvocate = new EditParticipantRequest
             {
                 ContactEmail = "legalrep@email.com",
@@ -1208,7 +1180,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             var expectedUpdatedEndpointCount = request.Endpoints.Count;
             _bookingsApiClient.Verify(
-                x => x.UpdateDisplayNameForEndpointAsync(hearing.Id, It.IsAny<Guid>(),
+                x => x.UpdateDisplayNameForEndpointAsync(hearingId, It.IsAny<Guid>(),
                     It.Is<UpdateEndpointRequest>(r =>
                         r.DefenceAdvocateContactEmail == newParticipantDefenceAdvocate.ContactEmail)), 
                 Times.Exactly(expectedUpdatedEndpointCount));
