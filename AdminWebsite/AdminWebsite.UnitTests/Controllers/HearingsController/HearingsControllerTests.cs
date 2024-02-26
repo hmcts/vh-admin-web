@@ -82,10 +82,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 DateTime.UtcNow.AddDays(2).AddHours(10),
                 DateTime.UtcNow.AddDays(3).AddHours(10)
             };
-            
+
+            return CreateListOfV1HearingsInMultiDayGroup(groupId, initialHearingId, hearingDates);
+        }
+        
+        protected static List<HearingDetailsResponse> CreateListOfV1HearingsInMultiDayGroup(
+            Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
+        {
             var hearingsInMultiDay = new List<HearingDetailsResponse>();
             var i = 0;
-            foreach (var date in hearingDates)
+            foreach (var date in scheduledDates)
             {
                 var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
 
@@ -150,10 +156,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 DateTime.UtcNow.AddDays(2).AddHours(10),
                 DateTime.UtcNow.AddDays(3).AddHours(10)
             };
-            
+
+            return CreateListOfV2HearingsInMultiDayGroup(groupId, initialHearingId, hearingDates);
+        }
+        
+        protected static List<HearingDetailsResponse> CreateListOfV2HearingsInMultiDayGroup(
+            Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
+        {
             var hearingsInMultiDay = new List<HearingDetailsResponse>();
             var i = 0;
-            foreach (var date in hearingDates)
+            foreach (var date in scheduledDates)
             {
                 var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
 

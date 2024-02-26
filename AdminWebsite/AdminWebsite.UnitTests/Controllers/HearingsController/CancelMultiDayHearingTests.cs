@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Client;
+using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Responses;
@@ -25,7 +26,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Arrange
             var hearingId = Guid.NewGuid();
             var groupId = Guid.NewGuid();
-            var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId);
+            var hearingDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.UtcNow.AddDays(2).AddHours(10),
+                DateTime.UtcNow.AddDays(3).AddHours(10),
+                DateTime.UtcNow.AddDays(4).AddHours(10),
+                DateTime.UtcNow.AddDays(5).AddHours(10),
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId, scheduledDates: hearingDates);
+            existingHearingsInMultiDayGroup[3].Status = BookingStatus.Cancelled;
+            existingHearingsInMultiDayGroup[4].Status = BookingStatus.Failed;
             BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(hearing);
@@ -43,22 +54,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = (OkResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             
-            var expectedUpdatedHearingIds = new List<Guid>();
+            var expectedUpdatedHearings = new List<HearingDetailsResponse>();
             if (updateFutureDays)
             {
-                expectedUpdatedHearingIds.AddRange(existingHearingsInMultiDayGroup.Select(h => h.Id));
+                expectedUpdatedHearings.AddRange(existingHearingsInMultiDayGroup);
             }
             else
             {
-                expectedUpdatedHearingIds.Add(hearing.Id);
+                expectedUpdatedHearings.Add(hearing);
             }
+
+            expectedUpdatedHearings = expectedUpdatedHearings
+                .Where(h => 
+                    h.Status != BookingStatus.Cancelled && 
+                    h.Status != BookingStatus.Failed)
+                .ToList();
             
             BookingsApiClient.Verify(x => x.CancelHearingsInGroupAsync(
                 groupId, 
                 It.Is<CancelHearingsInGroupRequest>(r =>
                     r.UpdatedBy == request.UpdatedBy &&
                     r.CancelReason == request.CancelReason &&
-                    r.HearingIds.SequenceEqual(expectedUpdatedHearingIds))),
+                    r.HearingIds.SequenceEqual(expectedUpdatedHearings.Select(h => h.Id)))),
                 Times.Once);
         }
         
@@ -69,7 +86,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Arrange
             var hearingId = Guid.NewGuid();
             var groupId = Guid.NewGuid();
-            var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroup(groupId, hearingId);
+            var hearingDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.UtcNow.AddDays(2).AddHours(10),
+                DateTime.UtcNow.AddDays(3).AddHours(10),
+                DateTime.UtcNow.AddDays(4).AddHours(10),
+                DateTime.UtcNow.AddDays(5).AddHours(10),
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroup(groupId, hearingId, scheduledDates: hearingDates);
+            existingHearingsInMultiDayGroup[3].Status = BookingStatus.Cancelled;
+            existingHearingsInMultiDayGroup[4].Status = BookingStatus.Failed;
             BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
             var mappedHearing = MapHearingDetailsForV2(hearing);
@@ -88,22 +115,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = (OkResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             
-            var expectedUpdatedHearingIds = new List<Guid>();
+            var expectedUpdatedHearings = new List<HearingDetailsResponse>();
             if (updateFutureDays)
             {
-                expectedUpdatedHearingIds.AddRange(existingHearingsInMultiDayGroup.Select(h => h.Id));
+                expectedUpdatedHearings.AddRange(existingHearingsInMultiDayGroup);
             }
             else
             {
-                expectedUpdatedHearingIds.Add(hearing.Id);
+                expectedUpdatedHearings.Add(hearing);
             }
+            
+            expectedUpdatedHearings = expectedUpdatedHearings
+                .Where(h => 
+                    h.Status != BookingStatus.Cancelled && 
+                    h.Status != BookingStatus.Failed)
+                .ToList();
             
             BookingsApiClient.Verify(x => x.CancelHearingsInGroupAsync(
                     groupId, 
                     It.Is<CancelHearingsInGroupRequest>(r =>
                         r.UpdatedBy == request.UpdatedBy &&
                         r.CancelReason == request.CancelReason &&
-                        r.HearingIds.SequenceEqual(expectedUpdatedHearingIds))),
+                        r.HearingIds.SequenceEqual(expectedUpdatedHearings.Select(h => h.Id)))),
                 Times.Once);
         }
         

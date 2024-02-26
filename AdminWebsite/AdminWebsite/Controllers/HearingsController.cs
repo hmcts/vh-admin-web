@@ -565,20 +565,27 @@ namespace AdminWebsite.Controllers
             var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
             var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
             
-            var hearingIdsToUpdate = new List<Guid>
+            var hearingsToCancel = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
             {
-                thisHearing.Id
+                thisHearing
             };
             
             if (request.UpdateFutureDays)
             {
                 var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                hearingIdsToUpdate.AddRange(futureHearings.Select(h => h.Id).ToList());
+                hearingsToCancel.AddRange(futureHearings.ToList());
             }
+
+            // Hearings with these statuses will be rejected by bookings api, so filter them out
+            hearingsToCancel = hearingsToCancel
+                .Where(h => 
+                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
+                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
+                .ToList();
 
             var cancelRequest = new CancelHearingsInGroupRequest
             {
-                HearingIds = hearingIdsToUpdate,
+                HearingIds = hearingsToCancel.Select(h => h.Id).ToList(),
                 CancelReason = request.CancelReason,
                 UpdatedBy = _userIdentity.GetUserIdentityName()
             };
