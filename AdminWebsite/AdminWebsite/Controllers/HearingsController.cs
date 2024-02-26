@@ -367,6 +367,68 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        [HttpPatch("{hearingId}/multi-day/cancel")]
+        [SwaggerOperation(OperationId = "CancelMultiDayHearing")]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CancelMultiDayHearing(Guid hearingId, CancelMultiDayHearingRequest request)
+        {
+            try
+            {
+                var hearing = await GetHearing(hearingId);
+
+                if (hearing.GroupId == null)
+                {
+                    ModelState.AddModelError(nameof(hearingId), $"Hearing is not multi-day");
+                    return ValidationProblem(ModelState);
+                }
+                
+                var groupId = hearing.GroupId.Value;
+                var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
+                var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
+            
+                var hearingIdsToUpdate = new List<Guid>
+                {
+                    thisHearing.Id
+                };
+            
+                if (request.UpdateFutureDays)
+                {
+                    var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
+                    hearingIdsToUpdate.AddRange(futureHearings.Select(h => h.Id).ToList());
+                }
+
+                var cancelRequest = new CancelHearingsInGroupRequest
+                {
+                    HearingIds = hearingIdsToUpdate,
+                    CancelReason = request.CancelReason,
+                    UpdatedBy = _userIdentity.GetUserIdentityName()
+                };
+
+                await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
+                
+                return Ok();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode is (int)HttpStatusCode.NotFound)
+                {
+                    var typedException = e as BookingsApiException<string>;
+                    return NotFound(typedException!.Result);
+                }
+                
+                if (e.StatusCode is (int)HttpStatusCode.BadRequest)
+                {
+                    var typedException = e as BookingsApiException<ValidationProblemDetails>;
+                    return ValidationProblem(typedException!.Result);
+                }
+                
+                _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
+                throw;
+            }
+        }
+
         private async Task<HearingDetailsResponse> GetHearing(Guid hearingId)
         {
             if (_featureToggles.UseV2Api())
