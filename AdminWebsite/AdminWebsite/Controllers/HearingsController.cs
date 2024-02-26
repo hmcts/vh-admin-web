@@ -383,30 +383,8 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(hearingId), $"Hearing is not multi-day");
                     return ValidationProblem(ModelState);
                 }
-                
-                var groupId = hearing.GroupId.Value;
-                var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
-                var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
-            
-                var hearingIdsToUpdate = new List<Guid>
-                {
-                    thisHearing.Id
-                };
-            
-                if (request.UpdateFutureDays)
-                {
-                    var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                    hearingIdsToUpdate.AddRange(futureHearings.Select(h => h.Id).ToList());
-                }
 
-                var cancelRequest = new CancelHearingsInGroupRequest
-                {
-                    HearingIds = hearingIdsToUpdate,
-                    CancelReason = request.CancelReason,
-                    UpdatedBy = _userIdentity.GetUserIdentityName()
-                };
-
-                await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
+                await CancelMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
                 
                 return Ok();
             }
@@ -580,6 +558,32 @@ namespace AdminWebsite.Controllers
 
                 await _bookingsApiClient.UpdateHearingsInGroupV2Async(groupId, bookingsApiRequest);
             }
+        }
+
+        private async Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId)
+        {
+            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
+            var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
+            
+            var hearingIdsToUpdate = new List<Guid>
+            {
+                thisHearing.Id
+            };
+            
+            if (request.UpdateFutureDays)
+            {
+                var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
+                hearingIdsToUpdate.AddRange(futureHearings.Select(h => h.Id).ToList());
+            }
+
+            var cancelRequest = new CancelHearingsInGroupRequest
+            {
+                HearingIds = hearingIdsToUpdate,
+                CancelReason = request.CancelReason,
+                UpdatedBy = _userIdentity.GetUserIdentityName()
+            };
+
+            await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
         }
 
         private static void AssignParticipantIdsForEditMultiDayHearingFutureDay(HearingDetailsResponse multiDayHearingFutureDay, 

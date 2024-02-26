@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
-using AdminWebsite.Security;
-using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
@@ -19,77 +15,21 @@ using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using VideoApi.Contract.Responses;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 using HearingDetailsResponse = BookingsApi.Contract.V1.Responses.HearingDetailsResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
-using UpdateHearingParticipantsRequest = BookingsApi.Contract.V1.Requests.UpdateHearingParticipantsRequest;
 using HearingDetailsResponseV2 = BookingsApi.Contract.V2.Responses.HearingDetailsResponseV2;
 using ParticipantResponseV2 = BookingsApi.Contract.V2.Responses.ParticipantResponseV2;
 using EndpointResponseV2 = BookingsApi.Contract.V2.Responses.EndpointResponseV2;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
-    public class EditMultiDayHearingTests
+    public class EditMultiDayHearingTests : HearingsControllerTests
     {
-        private Mock<IBookingsApiClient> _bookingsApiClient;
-        private Mock<IUserIdentity> _userIdentity;
-        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
-        private Mock<IConferenceDetailsService> _conferencesServiceMock;
-        private Mock<IFeatureToggles> _featureToggle;
-        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
-        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
-        private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private IHearingsService _hearingsService;
-        private AdminWebsite.Controllers.HearingsController _controller;
-        
-        [SetUp]
-        public void Setup()
-        {
-            _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _userIdentity = new Mock<IUserIdentity>();
-            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            _conferencesServiceMock = new Mock<IConferenceDetailsService>();
-            _featureToggle = new Mock<IFeatureToggles>();
-            _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
-                .ReturnsAsync(new ConferenceDetailsResponse
-                {
-                    MeetingRoom = new MeetingRoomResponse
-                    {
-                        AdminUri = "AdminUri",
-                        JudgeUri = "JudgeUri",
-                        ParticipantUri = "ParticipantUri",
-                        PexipNode = "PexipNode",
-                        PexipSelfTestNode = "PexipSelfTestNode",
-                        TelephoneConferenceId = "expected_conference_phone_id"
-                    }
-                });
-
-            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
-            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
-            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
-
-            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
-            _hearingsService = new HearingsService(_bookingsApiClient.Object, _participantGroupLogger.Object, _featureToggle.Object);
-
-            _featureToggle.Setup(x => x.EJudEnabled()).Returns(true);
-
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
-                _userIdentity.Object,
-                _editHearingRequestValidator.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingsService,
-                _conferencesServiceMock.Object,
-                 _featureToggle.Object);
-        }
-        
         [TestCase(false)]
         [TestCase(true)]
         public async Task Should_update_multi_day_hearing_for_v1(bool updateFutureDays)
@@ -98,12 +38,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearingId = Guid.NewGuid();
             var groupId = Guid.NewGuid();
             var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId);
-            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
 
             var request = CreateV1EditMultiDayHearingRequest(hearing);
             request.UpdateFutureDays = updateFutureDays;
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
             
             // Change the judge
             var judge = request.Participants.First(x => x.HearingRoleName == "Judge");
@@ -126,10 +66,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
 
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var expectedResponse = updatedHearing.Map();
@@ -158,7 +98,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Where(e => e.DisplayName == endpointToRemove.DisplayName)
                 .ToList();
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
                 groupId,
                 It.Is<UpdateHearingsInGroupRequest>(r =>
                     r.Hearings.TrueForAll(h =>
@@ -172,7 +112,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id)
                     )))));
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
                 groupId,
                 It.Is<UpdateHearingsInGroupRequest>(r =>
                     r.Hearings.Exists(h =>
@@ -187,12 +127,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearingId = Guid.NewGuid();
             var groupId = Guid.NewGuid();
             var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroup(groupId, hearingId);
-            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
 
             var request = CreateV2EditMultiDayHearingRequest(hearing);
             request.UpdateFutureDays = updateFutureDays;
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             // Change the judge
             var judge = request.JudiciaryParticipants.First(x => x.Role == "Judge");
@@ -216,10 +156,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var expectedResponse = updatedHearing.Map();
@@ -242,7 +182,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Where(e => e.DisplayName == endpointToRemove.DisplayName)
                 .ToList();
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
                 groupId,
                 It.Is<UpdateHearingsInGroupRequestV2>(r =>
                     r.Hearings.TrueForAll(h =>
@@ -257,7 +197,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Exists(p => p == oldJudgePersonalCode)
                         )))));
             
-            _bookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
                 groupId,
                 It.Is<UpdateHearingsInGroupRequestV2>(r =>
                     r.Hearings.Exists(h =>
@@ -277,12 +217,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 null,
                 errorMessage,
                 null);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
                 .ThrowsAsync(apiException);
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var notFoundResult = (NotFoundObjectResult)result.Result;
@@ -302,12 +242,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 null,
                 errorMessage,
                 null);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId))
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId))
                 .ThrowsAsync(apiException);
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var notFoundResult = (NotFoundObjectResult)result.Result;
@@ -325,10 +265,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var request = CreateV1EditMultiDayHearingRequest(hearing);
             hearing.GroupId = null;
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
 
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
             
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
@@ -336,7 +276,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var objectResult = (ObjectResult)result.Result;
@@ -357,10 +297,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var request = CreateV2EditMultiDayHearingRequest(hearing);
             hearing.GroupId = null;
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
@@ -368,7 +308,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             // Assert
             var objectResult = (ObjectResult)result.Result;
@@ -394,11 +334,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 null,
                 validationProblemDetails,
                 null);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
                 .ThrowsAsync(apiException);
             
             // Act
-            var result = await _controller.EditMultiDayHearing(hearingId, request);
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
             
             var objectResult = (ObjectResult)result.Result;
             var validationProblems = (ValidationProblemDetails)objectResult.Value;
@@ -417,11 +357,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var apiException = new BookingsApiException<string>("Server Error",
                 (int) HttpStatusCode.InternalServerError,
                 "Server Error", null, errorMessage, null);
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
                 .ThrowsAsync(apiException);
             
             // Act & Assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _controller.EditMultiDayHearing(hearingId, request)).Result
+            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await Controller.EditMultiDayHearing(hearingId, request)).Result
                 .Should().Be(errorMessage);
         }
         
