@@ -49,13 +49,7 @@
             {{ hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled ? 'Edit this hearing only' : 'Edit' }}
           </button>
           <button
-            *ngIf="
-              !hearing.hasBookingConfirmationFailed &&
-              canEditHearing &&
-              hearing.isMultiDay &&
-              this.multiDayBookingEnhancementsEnabled &&
-              !hearing.isLastDayOfMultiDayHearing
-            "
+            *ngIf="!hearing.hasBookingConfirmationFailed && canEditHearing && this.isMultiDayUpdateAvailable()"
             class="govuk-button vh-mt20 vh-mr-25"
             data-module="govuk-button"
             id="edit-button"
@@ -96,7 +90,13 @@
 </div>
 
 <div *ngIf="showCancelBooking">
-  <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)"> </app-cancel-booking-popup>
+  <app-cancel-booking-popup
+    (cancelSingleDayBooking)="cancelSingleDayBooking($event)"
+    (keepBooking)="keepBooking($event)"
+    (cancelMultiDayBooking)="cancelMultiDayBooking($event)"
+    [isMultiDayCancellationAvailable]="this.isMultiDayUpdateAvailable()"
+  >
+  </app-cancel-booking-popup>
 </div>
 
 <div *ngIf="showCancelBookingFailed">

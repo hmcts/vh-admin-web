@@ -5800,8 +5800,6 @@ export interface IBookingSearchRequest {
 export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingRequest {
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;
-    /** The user requesting to update */
-    updated_by?: string | undefined;
     /** The reason for cancelling the video hearing */
     cancel_reason?: string | undefined;
 
@@ -5816,7 +5814,6 @@ export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingReque
     init(_data?: any) {
         if (_data) {
             this.update_future_days = _data['update_future_days'];
-            this.updated_by = _data['updated_by'];
             this.cancel_reason = _data['cancel_reason'];
         }
     }
@@ -5831,7 +5828,6 @@ export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingReque
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['update_future_days'] = this.update_future_days;
-        data['updated_by'] = this.updated_by;
         data['cancel_reason'] = this.cancel_reason;
         return data;
     }
@@ -5840,8 +5836,6 @@ export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingReque
 export interface ICancelMultiDayHearingRequest {
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;
-    /** The user requesting to update */
-    updated_by?: string | undefined;
     /** The reason for cancelling the video hearing */
     cancel_reason?: string | undefined;
 }

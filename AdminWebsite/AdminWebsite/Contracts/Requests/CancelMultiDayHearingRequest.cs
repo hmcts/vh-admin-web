@@ -8,11 +8,6 @@ namespace AdminWebsite.Contracts.Requests
         public bool UpdateFutureDays { get; set; }
 
         /// <summary>
-        ///  The user requesting to update
-        /// </summary>
-        public string UpdatedBy { get; set; }
-
-        /// <summary>
         /// The reason for cancelling the video hearing
         /// </summary>
         public string CancelReason { get; set; }

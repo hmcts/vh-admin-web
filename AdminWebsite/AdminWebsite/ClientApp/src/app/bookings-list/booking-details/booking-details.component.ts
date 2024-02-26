@@ -218,10 +218,25 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showCancelBooking = false;
     }
 
-    async cancelBooking(cancelReason: string) {
+    async cancelSingleDayBooking(cancelReason: string) {
+        await this.cancelBooking(cancelReason, false);
+    }
+
+    async cancelMultiDayBooking(cancelReason: string) {
+        await this.cancelBooking(cancelReason, true);
+    }
+
+    async cancelBooking(cancelReason: string, isMultiDay: boolean) {
         this.showConfirming = true;
         try {
-            const updateBookingStatusResponse = await lastValueFrom(this.videoHearingService.cancelBooking(this.hearingId, cancelReason));
+            let updateBookingStatusResponse: UpdateBookingStatusResponse;
+            if (isMultiDay) {
+                updateBookingStatusResponse = await lastValueFrom(
+                    this.videoHearingService.cancelMultiDayBooking(this.hearingId, cancelReason, true)
+                );
+            } else {
+                updateBookingStatusResponse = await lastValueFrom(this.videoHearingService.cancelBooking(this.hearingId, cancelReason));
+            }
             await this.updateHearingStatusDisplay(updateBookingStatusResponse, BookingStatus.Cancelled);
         } catch (error) {
             this.showCancelBooking = false;
@@ -346,5 +361,9 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
 
     get judgeExists(): boolean {
         return this.judges.length > 0 || this.judicialMembers.some(j => j.isJudge);
+    }
+
+    isMultiDayUpdateAvailable(): boolean {
+        return this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing;
     }
 }

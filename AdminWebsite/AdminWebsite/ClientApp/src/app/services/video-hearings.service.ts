@@ -27,7 +27,8 @@ import {
     AllocatedCsoResponse,
     HearingRoleResponse,
     JudiciaryParticipantRequest,
-    EditMultiDayHearingRequest
+    EditMultiDayHearingRequest,
+    CancelMultiDayHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -513,6 +514,11 @@ export class VideoHearingsService {
 
     cancelBooking(hearingId: string, reason: string): Observable<UpdateBookingStatusResponse> {
         return this.bhClient.cancelBooking(hearingId, reason);
+    }
+
+    cancelMultiDayBooking(hearingId: string, reason: string, updateFutureDays: boolean): Observable<UpdateBookingStatusResponse> {
+        const request = new CancelMultiDayHearingRequest({ cancel_reason: reason, update_future_days: updateFutureDays });
+        return this.bhClient.cancelMultiDayHearing(hearingId, request);
     }
 
     async getConferencePhoneNumber(isWelsh = false) {

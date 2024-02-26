@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
+using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests;
@@ -19,6 +20,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class CancelMultiDayHearingTests : HearingsControllerTests
     {
+        private const string UpdatedBy = "updatedBy@email.com";
+
+        [SetUp]
+        protected override void Setup()
+        {
+            base.Setup();
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(UpdatedBy);
+        }
+        
         [TestCase(false)]
         [TestCase(true)]
         public async Task should_cancel_multi_day_hearing_for_v1(bool updateFutureDays)
@@ -43,16 +53,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             var request = CreateRequest();
             request.UpdateFutureDays = updateFutureDays;
-
-            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(request.UpdatedBy);
+            
             FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
 
             // Act
             var response = await Controller.CancelMultiDayHearing(hearing.Id, request);
 
             // Assert
-            var result = (OkResult)response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
             
             var expectedUpdatedHearings = new List<HearingDetailsResponse>();
             if (updateFutureDays)
@@ -73,7 +83,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             BookingsApiClient.Verify(x => x.CancelHearingsInGroupAsync(
                 groupId, 
                 It.Is<CancelHearingsInGroupRequest>(r =>
-                    r.UpdatedBy == request.UpdatedBy &&
+                    r.UpdatedBy == UpdatedBy &&
                     r.CancelReason == request.CancelReason &&
                     r.HearingIds.SequenceEqual(expectedUpdatedHearings.Select(h => h.Id)))),
                 Times.Once);
@@ -105,15 +115,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var request = CreateRequest();
             request.UpdateFutureDays = updateFutureDays;
 
-            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(request.UpdatedBy);
             FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
 
             // Act
             var response = await Controller.CancelMultiDayHearing(hearing.Id, request);
 
             // Assert
-            var result = (OkResult)response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
             
             var expectedUpdatedHearings = new List<HearingDetailsResponse>();
             if (updateFutureDays)
@@ -134,7 +144,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             BookingsApiClient.Verify(x => x.CancelHearingsInGroupAsync(
                     groupId, 
                     It.Is<CancelHearingsInGroupRequest>(r =>
-                        r.UpdatedBy == request.UpdatedBy &&
+                        r.UpdatedBy == UpdatedBy &&
                         r.CancelReason == request.CancelReason &&
                         r.HearingIds.SequenceEqual(expectedUpdatedHearings.Select(h => h.Id)))),
                 Times.Once);
@@ -263,7 +273,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private static CancelMultiDayHearingRequest CreateRequest() =>
             new()
             {
-                UpdatedBy = "updatedBy@email.com",
                 CancelReason = "cancellation reason"
             };
     

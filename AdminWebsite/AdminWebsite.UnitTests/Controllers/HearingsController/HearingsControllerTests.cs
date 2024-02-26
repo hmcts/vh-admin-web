@@ -34,7 +34,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private IHearingsService _hearingsService;
         
         [SetUp]
-        protected void Setup()
+        protected virtual void Setup()
         {
             BookingsApiClient = new Mock<IBookingsApiClient>();
             UserIdentity = new Mock<IUserIdentity>();

@@ -386,7 +386,7 @@ namespace AdminWebsite.Controllers
 
                 await CancelMultiDayHearing(request, hearing.Id, hearing.GroupId.Value);
                 
-                return Ok();
+                return Ok(new UpdateBookingStatusResponse { Success = true });
             }
             catch (BookingsApiException e)
             {
