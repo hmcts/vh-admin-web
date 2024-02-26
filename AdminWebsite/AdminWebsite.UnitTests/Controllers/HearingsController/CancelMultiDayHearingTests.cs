@@ -139,9 +139,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         r.HearingIds.SequenceEqual(expectedUpdatedHearings.Select(h => h.Id)))),
                 Times.Once);
         }
-        
-        [Test]
-        public async Task Should_forward_not_found_from_bookings_api_for_v1()
+  
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Should_forward_not_found_from_bookings_api(bool useV2)
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -153,34 +154,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 null,
                 errorMessage,
                 null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ThrowsAsync(apiException);
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
-            
-            // Act
-            var result = await Controller.CancelMultiDayHearing(hearingId, request);
-            
-            // Assert
-            var notFoundResult = (NotFoundObjectResult)result;
-            notFoundResult.Value.Should().Be(errorMessage);
-        }
-        
-        [Test]
-        public async Task Should_forward_not_found_from_bookings_api_for_v2()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var request = new CancelMultiDayHearingRequest();
-            var errorMessage = $"No hearing with id found [{hearingId}]";
-            var apiException = new BookingsApiException<string>("NotFound", 
-                (int)HttpStatusCode.NotFound,
-                "NotFound",
-                null,
-                errorMessage,
-                null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId))
-                .ThrowsAsync(apiException);
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            if (useV2)
+            {
+                BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId))
+                    .ThrowsAsync(apiException);
+            }
+            else
+            {
+                BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
+                    .ThrowsAsync(apiException);
+            }
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(useV2);
             
             // Act
             var result = await Controller.CancelMultiDayHearing(hearingId, request);
@@ -190,8 +174,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             notFoundResult.Value.Should().Be(errorMessage);
         }
 
-        [Test]
-        public async Task Should_return_bad_request_when_hearing_is_not_multi_day_for_v1()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Should_return_bad_request_when_hearing_is_not_multi_day(bool useV2)
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -199,44 +184,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId);
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
             hearing.GroupId = null;
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(hearing);
-
-            var request = CreateRequest();
-            
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
-            
-            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
+            if (useV2)
             {
-                {"hearingId", new[] {"Hearing is not multi-day"}}
-            });
+                var mappedHearing = MapHearingDetailsForV2(hearing);
+                BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(mappedHearing);
+            }
+            else
+            {
+                BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(hearing);
+            }
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(useV2);
             
-            // Act
-            var result = await Controller.CancelMultiDayHearing(hearingId, request);
-            
-            // Assert
-            var objectResult = (ObjectResult)result;
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            
-            var errors = validationProblems.Errors;
-            errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
-        }
-        
-        [Test]
-        public async Task Should_return_bad_request_when_hearing_is_not_multi_day_for_v2()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var groupId = Guid.NewGuid();
-            var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroup(groupId, hearingId);
-            var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
-            hearing.GroupId = null;
-            var mappedHearing = MapHearingDetailsForV2(hearing);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(mappedHearing);
-
             var request = CreateRequest();
 
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-            
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
                 {"hearingId", new[] {"Hearing is not multi-day"}}
