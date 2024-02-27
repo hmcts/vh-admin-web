@@ -35,33 +35,54 @@ export class BookingPersistService {
         ) {
             const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
             if (hearingUpdate.HearingId === hearing.hearing_id) {
-                const newStartDate = new Date(hearing.scheduled_date_time);
+                this.updateBookingRecord(hearingUpdate, hearing);
 
-                hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
-                hearingUpdate.Selected = true;
+                if (hearingUpdate.GroupId) {
+                    const bookingDetails = this._bookingList[this._selectedGroupIndex].BookingsDetails;
+                    const hearingsInGroupUpdate = bookingDetails.filter(
+                        x => x.GroupId === hearingUpdate.GroupId && x.HearingId !== hearing.hearing_id
+                    );
+                    if (hearingsInGroupUpdate) {
+                        hearingsInGroupUpdate.forEach(hearingInGroupToUpdate => {
+                            const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearing_id === hearingInGroupToUpdate.HearingId);
+                            this.updateBookingRecord(hearingInGroupToUpdate, hearingInGroup);
+                        });
+                    }
 
-                hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
-                hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
-                hearingUpdate.StartTime = newStartDate;
-                hearingUpdate.Duration = hearing.scheduled_duration;
-                hearingUpdate.CourtRoomAccount = hearing.participants.find(x => x.is_judge)?.username;
-                hearingUpdate.CourtAddress = hearing.court_name;
-                hearingUpdate.CourtRoom = hearing.court_room;
-                hearingUpdate.CreatedBy = hearing.created_by;
-                hearingUpdate.Status = hearing.status;
-                hearingUpdate.TelephoneConferenceId = hearing.telephone_conference_id;
-                if (this.isValidDate(hearing.created_date)) {
-                    hearingUpdate.CreatedDate = new Date(hearing.created_date);
+                    hearingUpdate.HearingsInGroup = hearingsInGroupUpdate;
                 }
-                hearingUpdate.LastEditBy = hearing.updated_by;
-
-                if (this.isValidDate(hearing.updated_date)) {
-                    hearingUpdate.LastEditDate = new Date(hearing.updated_date);
-                }
-                hearingUpdate.JudgeName = this.getJudgeName(hearing);
                 return hearingUpdate;
             }
         }
+    }
+
+    private updateBookingRecord(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
+        const newStartDate = new Date(hearing.scheduled_date_time);
+
+        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
+        hearingUpdate.Selected = true;
+
+        hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
+        hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
+        hearingUpdate.StartTime = newStartDate;
+        hearingUpdate.Duration = hearing.scheduled_duration;
+        hearingUpdate.CourtRoomAccount = hearing.participants.find(x => x.is_judge)?.username;
+        hearingUpdate.CourtAddress = hearing.court_name;
+        hearingUpdate.CourtRoom = hearing.court_room;
+        hearingUpdate.CreatedBy = hearing.created_by;
+        hearingUpdate.Status = hearing.status;
+        hearingUpdate.TelephoneConferenceId = hearing.telephone_conference_id;
+        if (this.isValidDate(hearing.created_date)) {
+            hearingUpdate.CreatedDate = new Date(hearing.created_date);
+        }
+        hearingUpdate.LastEditBy = hearing.updated_by;
+
+        if (this.isValidDate(hearing.updated_date)) {
+            hearingUpdate.LastEditDate = new Date(hearing.updated_date);
+        }
+        hearingUpdate.JudgeName = this.getJudgeName(hearing);
+
+        return hearingUpdate;
     }
 
     isValidDate(value: any): boolean {

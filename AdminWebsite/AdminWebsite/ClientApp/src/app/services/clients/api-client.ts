@@ -6871,6 +6871,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     group_id?: string | undefined;
     /** Scheduled datetime of the last day of the multi day hearing, if applicable */
     multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
+    hearings_in_group?: HearingDetailsResponse[] | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -6928,6 +6929,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.multi_day_hearing_last_day_scheduled_date_time = _data['multi_day_hearing_last_day_scheduled_date_time']
                 ? new Date(_data['multi_day_hearing_last_day_scheduled_date_time'].toString())
                 : <any>undefined;
+            if (Array.isArray(_data['hearings_in_group'])) {
+                this.hearings_in_group = [] as any;
+                for (let item of _data['hearings_in_group']) this.hearings_in_group!.push(HearingDetailsResponse.fromJS(item));
+            }
         }
     }
 
@@ -6984,6 +6989,10 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data['multi_day_hearing_last_day_scheduled_date_time'] = this.multi_day_hearing_last_day_scheduled_date_time
             ? this.multi_day_hearing_last_day_scheduled_date_time.toISOString()
             : <any>undefined;
+        if (Array.isArray(this.hearings_in_group)) {
+            data['hearings_in_group'] = [];
+            for (let item of this.hearings_in_group) data['hearings_in_group'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -7024,6 +7033,7 @@ export interface IHearingDetailsResponse {
     group_id?: string | undefined;
     /** Scheduled datetime of the last day of the multi day hearing, if applicable */
     multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
+    hearings_in_group?: HearingDetailsResponse[] | undefined;
 }
 
 export class HearingRoleResponse implements IHearingRoleResponse {

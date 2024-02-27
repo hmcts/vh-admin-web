@@ -220,6 +220,20 @@ describe('Video hearing service', () => {
             expect(request.isMultiDay).toBeTruthy();
         });
 
+        it('should map HearingDetailsResponse to HearingModel with non-null hearings in group', () => {
+            const hearingInGroup = createHearingDetailsResponse();
+            hearingInGroup.group_id = '1234';
+            hearingInGroup.created_date = new Date();
+            hearingInGroup.updated_date = new Date();
+            const model = createHearingDetailsResponse();
+            model.group_id = '1234';
+            model.hearings_in_group = [hearingInGroup];
+            const expectedMappedHearingInGroup = service.mapHearingDetailsResponseToHearingModel(hearingInGroup);
+
+            const request = service.mapHearingDetailsResponseToHearingModel(model);
+            expect(request.hearingsInGroup).toEqual([expectedMappedHearingInGroup]);
+        });
+
         function createHearingDetailsResponse() {
             const date = Date.now();
             const caseModel = new CaseResponse();

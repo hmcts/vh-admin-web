@@ -50,4 +50,5 @@ export class HearingModel {
     isConfirmed?: boolean;
     isMultiDay?: boolean;
     multiDayHearingLastDayScheduledDateTime?: Date;
+    hearingsInGroup?: HearingModel[];
 }

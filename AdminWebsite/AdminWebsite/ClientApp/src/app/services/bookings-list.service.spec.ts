@@ -333,6 +333,7 @@ describe('bookings list service', () => {
 
     it('should map response to model', () => {
         bookingsResponse = new ResponseTestData().getBookingResponse();
+        bookingsResponse.hearings[0].hearings[0].group_id = '123';
         const model = service.mapBookingsResponse(bookingsResponse);
         expect(model).toBeTruthy();
         expect(model.Hearings.length).toBe(1);
@@ -347,6 +348,7 @@ describe('bookings list service', () => {
         expect(model.Hearings[0].BookingsDetails[0].HearingCaseNumber).toBe('123A');
         expect(model.Hearings[0].BookingsDetails[0].HearingType).toBe('Tax');
         expect(model.Hearings[0].BookingsDetails[0].AudioRecordingRequired).toBe(true);
+        expect(model.Hearings[0].BookingsDetails[0].GroupId).toBe('123');
     });
 
     it('should add bookings to collection', () => {
