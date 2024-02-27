@@ -38,18 +38,7 @@ export class BookingPersistService {
                 this.updateBookingRecord(hearingUpdate, hearing);
 
                 if (hearingUpdate.GroupId) {
-                    const bookingDetails = this._bookingList[this._selectedGroupIndex].BookingsDetails;
-                    const hearingsInGroupUpdate = bookingDetails.filter(
-                        x => x.GroupId === hearingUpdate.GroupId && x.HearingId !== hearing.hearing_id
-                    );
-                    if (hearingsInGroupUpdate) {
-                        hearingsInGroupUpdate.forEach(hearingInGroupToUpdate => {
-                            const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearing_id === hearingInGroupToUpdate.HearingId);
-                            this.updateBookingRecord(hearingInGroupToUpdate, hearingInGroup);
-                        });
-                    }
-
-                    hearingUpdate.HearingsInGroup = hearingsInGroupUpdate;
+                    this.updateHearingsInGroup(hearingUpdate, hearing);
                 }
                 return hearingUpdate;
             }
@@ -83,6 +72,23 @@ export class BookingPersistService {
         hearingUpdate.JudgeName = this.getJudgeName(hearing);
 
         return hearingUpdate;
+    }
+
+    private updateHearingsInGroup(hearingUpdate: BookingsDetailsModel, hearing: HearingModel) {
+        const hearingsInGroupUpdate: BookingsDetailsModel[] = this._bookingList.flatMap(booking =>
+            booking.BookingsDetails.filter(
+                bookingDetail => bookingDetail.GroupId === hearingUpdate.GroupId && bookingDetail.HearingId !== hearing.hearing_id
+            )
+        );
+
+        if (hearingsInGroupUpdate) {
+            hearingsInGroupUpdate.forEach(hearingInGroupToUpdate => {
+                const hearingInGroup = hearing.hearingsInGroup.find(x => x.hearing_id === hearingInGroupToUpdate.HearingId);
+                this.updateBookingRecord(hearingInGroupToUpdate, hearingInGroup);
+            });
+        }
+
+        hearingUpdate.HearingsInGroup = hearingsInGroupUpdate;
     }
 
     isValidDate(value: any): boolean {
