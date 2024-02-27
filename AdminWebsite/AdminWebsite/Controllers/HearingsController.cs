@@ -402,7 +402,7 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(typedException!.Result);
                 }
                 
-                _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
+                _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
                 throw;
             }
         }
