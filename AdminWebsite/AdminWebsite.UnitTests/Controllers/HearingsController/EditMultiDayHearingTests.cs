@@ -68,6 +68,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
             
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
             // Act
             var result = await Controller.EditMultiDayHearing(hearingId, request);
             
@@ -157,6 +160,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
             
             // Act
             var result = await Controller.EditMultiDayHearing(hearingId, request);
@@ -348,7 +354,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_forward_unhandled_error_from_bookings_api()
+        public void Should_forward_unhandled_error_from_bookings_api()
         {
             // Arrange
             var hearingId = Guid.NewGuid();

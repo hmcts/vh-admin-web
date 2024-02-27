@@ -476,7 +476,10 @@ namespace AdminWebsite.Controllers
 
             async Task UpdateMultiDayHearingV1()
             {
-                var bookingsApiRequest = new UpdateHearingsInGroupRequest();
+                var bookingsApiRequest = new UpdateHearingsInGroupRequest
+                {
+                    UpdatedBy = _userIdentity.GetUserIdentityName()
+                };
             
                 foreach (var hearing in hearingsToUpdate)
                 {
@@ -507,7 +510,10 @@ namespace AdminWebsite.Controllers
 
             async Task UpdateMultiDayHearingV2()
             {
-                var bookingsApiRequest = new UpdateHearingsInGroupRequestV2();
+                var bookingsApiRequest = new UpdateHearingsInGroupRequestV2
+                {
+                    UpdatedBy = _userIdentity.GetUserIdentityName()
+                };
             
                 foreach (var hearing in hearingsToUpdate)
                 {
