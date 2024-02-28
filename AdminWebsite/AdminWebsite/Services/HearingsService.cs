@@ -20,11 +20,8 @@ namespace AdminWebsite.Services
         void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants);
         Task ProcessParticipants(Guid hearingId, List<UpdateParticipantRequest> existingParticipants, List<ParticipantRequest> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequest> linkedParticipants);
         Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
-        Task<ParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
-        void UpdateEndpointWithNewlyAddedParticipant(List<IParticipantRequest> newParticipantList, EditEndpointRequest endpoint);
-        EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint);
         UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
     }
 
@@ -157,7 +154,7 @@ namespace AdminWebsite.Services
                 UpdateEndpointWithNewlyAddedParticipant(newParticipantList, endpoint);
             
                 if (endpoint.Id.HasValue)
-                    await UpdateEndpointInHearing(hearingId, hearing, endpoint);
+                    await UpdateEndpointInHearing(hearingId, hearing, endpoint, newParticipantList);
                 else
                     await AddEndpointToHearing(hearingId, hearing, endpoint);
             }
@@ -182,7 +179,7 @@ namespace AdminWebsite.Services
 
                 if (endpoint.Id.HasValue)
                 {
-                    var updateEndpointRequest = MapEditableEndpointRequest(hearingId, hearing, endpoint);
+                    var updateEndpointRequest = MapEditableEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
                     if (updateEndpointRequest != null)
                     {
                         request.ExistingEndpoints.Add(updateEndpointRequest);
@@ -236,9 +233,10 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
         }
 
-        private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint)
+        private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
+            IEnumerable<IParticipantRequest> newParticipantList)
         {
-            var request = MapEditableEndpointRequest(hearingId, hearing, endpoint);
+            var request = MapEditableEndpointRequest(hearingId, hearing, endpoint, newParticipantList);
             if (request == null) return;
             
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
@@ -247,13 +245,18 @@ namespace AdminWebsite.Services
             await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, request);
         }
 
-        public EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint)
+        private EditableEndpointRequest MapEditableEndpointRequest(Guid hearingId, HearingDetailsResponse hearing, EditEndpointRequest endpoint,
+            IEnumerable<IParticipantRequest> newParticipantList)
         {
             var existingEndpointToEdit = hearing.Endpoints.Find(e => e.Id.Equals(endpoint.Id));
-            var endpointRequestDefenceAdvocate = hearing.Participants.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
+            var defenceAdvocates = DefenceAdvocateMapper.Map(hearing.Participants, newParticipantList);
+            var endpointRequestDefenceAdvocate = defenceAdvocates.Find(e => e.ContactEmail == endpoint.DefenceAdvocateContactEmail);
+            var isNewDefenceAdvocate = endpointRequestDefenceAdvocate?.Id == null;
+            
             if (existingEndpointToEdit == null ||
                 existingEndpointToEdit.DisplayName == endpoint.DisplayName &&
-                existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id)
+                existingEndpointToEdit.DefenceAdvocateId == endpointRequestDefenceAdvocate?.Id &&
+                !isNewDefenceAdvocate)
                 return null;
 
             _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
