@@ -95,6 +95,7 @@ export class BookingsDetailsModel {
     AllocatedTo?: string;
     GroupId?: string;
     MultiDayHearingLastDayScheduledDateTime?: Date;
+    HearingsInGroup?: BookingsDetailsModel[];
 
     get DurationInHoursAndMinutes(): string {
         return FormatShortDuration(this.Duration);

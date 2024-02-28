@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Enums;
@@ -233,6 +234,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
             var expectedHearingLastDay = multiDayHearings[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
         
         [Test]
@@ -275,6 +277,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
             var expectedHearingLastDay = multiDayHearings[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
 
         [Test]
