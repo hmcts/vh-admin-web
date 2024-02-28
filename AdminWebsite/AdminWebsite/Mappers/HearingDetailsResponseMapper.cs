@@ -83,6 +83,10 @@ public static class HearingDetailsResponseMapper
         var response = hearingDetails.Map();
         if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
         response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        response.HearingsInGroup = hearingsInGroup
+            .OrderBy(h => h.ScheduledDateTime)
+            .Select(h => h.Map())
+            .ToList();
         return response;
     }
     
@@ -91,6 +95,10 @@ public static class HearingDetailsResponseMapper
         var response = hearingDetails.Map();
         if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
         response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        response.HearingsInGroup = hearingsInGroup
+            .OrderBy(h => h.ScheduledDateTime)
+            .Select(h => h.Map())
+            .ToList();
         return response;
     }
 

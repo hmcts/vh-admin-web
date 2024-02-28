@@ -14,7 +14,8 @@ import {
     AllocatedCsoResponse,
     JusticeUserResponse,
     JudiciaryParticipantResponse,
-    EditMultiDayHearingRequest
+    EditMultiDayHearingRequest,
+    CancelMultiDayHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -42,7 +43,8 @@ describe('Video hearing service', () => {
             'getAllocationForHearing',
             'rebookHearing',
             'getHearingRoles',
-            'editMultiDayHearing'
+            'editMultiDayHearing',
+            'cancelMultiDayHearing'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -216,6 +218,20 @@ describe('Video hearing service', () => {
 
             const request = service.mapHearingDetailsResponseToHearingModel(model);
             expect(request.isMultiDay).toBeTruthy();
+        });
+
+        it('should map HearingDetailsResponse to HearingModel with non-null hearings in group', () => {
+            const hearingInGroup = createHearingDetailsResponse();
+            hearingInGroup.group_id = '1234';
+            hearingInGroup.created_date = new Date();
+            hearingInGroup.updated_date = new Date();
+            const model = createHearingDetailsResponse();
+            model.group_id = '1234';
+            model.hearings_in_group = [hearingInGroup];
+            const expectedMappedHearingInGroup = service.mapHearingDetailsResponseToHearingModel(hearingInGroup);
+
+            const request = service.mapHearingDetailsResponseToHearingModel(model);
+            expect(request.hearingsInGroup).toEqual([expectedMappedHearingInGroup]);
         });
 
         function createHearingDetailsResponse() {
@@ -910,5 +926,24 @@ describe('Video hearing service', () => {
 
             return expectedRequest;
         }
+    });
+
+    describe('cancelMultiDayBooking', () => {
+        it('should call api to cancel hearing', () => {
+            // Arrange
+            const hearingId = '96fc8dbc-012d-4f03-9a72-76dd06918f45';
+            const cancelReason = 'cancellation reason';
+            const updateFutureDays = true;
+
+            // Act
+            service.cancelMultiDayBooking(hearingId, cancelReason, updateFutureDays);
+
+            // Assert
+            const expectedRequest = new CancelMultiDayHearingRequest({
+                cancel_reason: cancelReason,
+                update_future_days: updateFutureDays
+            });
+            expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
+        });
     });
 });

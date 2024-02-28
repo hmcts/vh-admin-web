@@ -79,6 +79,11 @@
     z-index: 999;
 }
 
+.vh-popup-medium {
+    max-width: 800px !important;
+    text-align: center;
+}
+
 .vh-popup-small {
     max-width: 600px !important;
     text-align: center;

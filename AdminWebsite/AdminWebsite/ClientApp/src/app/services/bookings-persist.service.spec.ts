@@ -38,6 +38,38 @@ function MockBookedHearing(): BookingsDetailsModel {
     );
 }
 
+function MockBookedMultiDayHearingDay1(): BookingsDetailsModel {
+    const hearing = MockBookedHearing();
+    hearing.GroupId = '123';
+    hearing.HearingCaseName = 'Day 1 of 2';
+    return hearing;
+}
+
+function MockBookedMultiDayHearingDay2(): BookingsDetailsModel {
+    const hearing = MockBookedHearing();
+    hearing.GroupId = '123';
+    hearing.HearingCaseName = 'Day 2 of 2';
+    return hearing;
+}
+
+function MockBookedMultiDayHearing(): BookingsDetailsModel[] {
+    const groupId = '123';
+
+    const day1Hearing = MockBookedHearing();
+    day1Hearing.GroupId = groupId;
+    day1Hearing.HearingCaseName = 'Day 1 of 2';
+
+    const day2Hearing = MockBookedHearing();
+    day2Hearing.GroupId = groupId;
+    day2Hearing.HearingCaseName = 'Day 2 of 2';
+
+    const hearingsInGroup = [day1Hearing, day2Hearing];
+    day1Hearing.HearingsInGroup = hearingsInGroup;
+    day2Hearing.HearingsInGroup = hearingsInGroup;
+
+    return [day1Hearing, day2Hearing];
+}
+
 describe('BookingsPersistService', () => {
     let service: BookingPersistService;
 
@@ -88,6 +120,37 @@ describe('BookingsPersistService', () => {
 
             const updatedHearing = service.bookingList[0].BookingsDetails[0];
             expect(updatedHearing.HearingCaseName).toBe(updatedCase.name);
+        });
+
+        it('should update all hearing model values for selected multi-day hearing', () => {
+            const multiDays = MockBookedMultiDayHearing();
+            service.bookingList = [MockGroupedBookings(multiDays)];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            // Simulate an update to the scheduled duration for all days in the multi day hearing
+            const newScheduledDurationValue = 180;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            hearing.scheduled_duration = newScheduledDurationValue;
+            hearing.hearingsInGroup = multiDays.map(x => {
+                const hearingInGroup = new HearingModel();
+                hearingInGroup.hearing_id = x.HearingId;
+                hearingInGroup.scheduled_duration = newScheduledDurationValue;
+                return hearingInGroup;
+            });
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearings = service.bookingList[0].BookingsDetails;
+            updatedHearings.forEach(h => {
+                expect(h.Duration).toBe(newScheduledDurationValue);
+            });
         });
 
         it('should update judge name for selected hearing', () => {

@@ -157,7 +157,7 @@ export class BookingsListService {
     }
 
     private mapBookingsDetails(hearing: BookingsHearingResponse) {
-        return new BookingsDetailsModel(
+        const details = new BookingsDetailsModel(
             hearing.hearing_id.toString(),
             hearing.scheduled_date_time,
             hearing.scheduled_duration,
@@ -181,5 +181,7 @@ export class BookingsListService {
             '',
             hearing.allocated_to
         );
+        details.GroupId = hearing.group_id;
+        return details;
     }
 }

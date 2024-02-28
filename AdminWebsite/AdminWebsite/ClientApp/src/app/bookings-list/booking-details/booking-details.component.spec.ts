@@ -188,7 +188,8 @@ describe('BookingDetailsComponent', () => {
         'isConferenceClosed',
         'getAllocatedCsoForHearing',
         'rebookHearing',
-        'getStatus'
+        'getStatus',
+        'cancelMultiDayBooking'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -211,6 +212,7 @@ describe('BookingDetailsComponent', () => {
         allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
         videoHearingServiceSpy.cancelBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
+        videoHearingServiceSpy.cancelMultiDayBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
         videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
@@ -328,7 +330,7 @@ describe('BookingDetailsComponent', () => {
     it('should update hearing status when cancel booking called', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        component.cancelBooking('Online abandonment (incomplete registration)');
+        component.cancelSingleDayBooking('Online abandonment (incomplete registration)');
         expect(component.showCancelBooking).toBeFalsy();
         expect(videoHearingServiceSpy.cancelBooking).toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, cancel_reason);
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
@@ -591,6 +593,61 @@ CY: 54321 (ID: 7777)`);
 
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledTimes(0);
 
+            discardPeriodicTasks();
+        }));
+    });
+
+    describe('cancel multi day hearing', () => {
+        it('should update hearing statuses', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.cancelMultiDayBooking('Online abandonment (incomplete registration)');
+            expect(component.showCancelBooking).toBeFalsy();
+            expect(videoHearingServiceSpy.cancelMultiDayBooking).toHaveBeenCalledWith(
+                bookingPersistServiceSpy.selectedHearingId,
+                cancel_reason,
+                true
+            );
+            expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+            discardPeriodicTasks();
+        }));
+    });
+
+    describe('isMultiDayUpdateAvailable', () => {
+        it('should return true when all conditions are met', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeTruthy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when hearing is not multi day', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = null;
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when multi day booking enhancements are not enabled', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.multiDayBookingEnhancementsEnabled = false;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when last day of multi day hearing', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.hearing.MultiDayHearingLastDayScheduledDateTime = component.hearing.StartTime;
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
     });
