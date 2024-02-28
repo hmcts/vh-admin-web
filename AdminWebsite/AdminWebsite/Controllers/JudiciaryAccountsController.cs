@@ -53,31 +53,14 @@ namespace AdminWebsite.Controllers
             {
                 term = _encoder.Encode(term);
                 var searchTerm = new SearchTermRequest(term);
-
                 List<JudgeResponse> allJudges;
                 var courtRoomJudgesTask = _userAccountService.SearchJudgesByEmail(searchTerm.Term);
+                var courtRoomJudges = await courtRoomJudgesTask;
+                allJudges = courtRoomJudges
+                    .OrderBy(x => x.Email)
+                    .Take(20)
+                    .ToList();
                 
-                if (_featureToggles.EJudEnabled())
-                {
-                    var eJudiciaryJudgesTask = GetEjudiciaryJudgesBySearchTermAsync(searchTerm);
-
-                    await Task.WhenAll(courtRoomJudgesTask, eJudiciaryJudgesTask);
-                    var courtRoomJudges = await courtRoomJudgesTask;
-                    var eJudiciaryJudges = (await eJudiciaryJudgesTask).Select(x => JudgeResponseMapper.MapTo(x));
-                    allJudges = courtRoomJudges
-                        .Concat(eJudiciaryJudges)
-                        .OrderBy(x => x.Email)
-                        .Take(20)
-                        .ToList();
-                }
-                else
-                {
-                    var courtRoomJudges = await courtRoomJudgesTask;
-                    allJudges = courtRoomJudges
-                        .OrderBy(x => x.Email)
-                        .Take(20)
-                        .ToList();
-                }
                 return Ok(allJudges);
            
             }
