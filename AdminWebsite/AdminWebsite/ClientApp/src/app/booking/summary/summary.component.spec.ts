@@ -863,7 +863,7 @@ describe('SummaryComponent  with existing request', () => {
     it('it should display the participant and representee', () => {
         component.hearing = initExistingHearingRequest();
         const result = component.getDefenceAdvocateByContactEmail(
-            component.hearing.participants.find(x => x.id === '123123-123').contact_email
+            component.hearing.participants.find(x => x.id === '123123-123').email
         );
         expect(result).toBe('solicitor 01, representing citizen 01');
     });
