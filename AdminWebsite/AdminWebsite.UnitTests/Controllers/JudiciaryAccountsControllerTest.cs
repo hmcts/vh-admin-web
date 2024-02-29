@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -13,7 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
@@ -46,8 +44,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 _userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object, 
-                Options.Create(testSettings),
-                _IFeatureFlagMock.Object);
+                Options.Create(testSettings));
 
             _judiciaryResponse = new List<JudiciaryPersonResponse>
             {
@@ -245,7 +242,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(expectedJudiciaryPersonResponse);
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets()), _IFeatureFlagMock.Object);
+                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets()));
 
             // Act
             var result = await _controller.SearchForJudiciaryPersonAsync(term);
@@ -289,8 +286,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object,
-                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}),
-                _IFeatureFlagMock.Object);
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var result = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -314,8 +310,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object, 
-                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}),
-                _IFeatureFlagMock.Object);
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var response = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -333,7 +328,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}), _IFeatureFlagMock.Object);
+                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act & Assert
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudiciaryPersonBySearchTermAsync(term));

@@ -24,16 +24,13 @@ namespace AdminWebsite.Controllers
         private readonly IUserAccountService _userAccountService;
         private readonly JavaScriptEncoder _encoder;
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IFeatureToggles _featureToggles;
         private readonly TestUserSecrets _testSettings;
 
-        public JudiciaryAccountsController(IUserAccountService userAccountService, JavaScriptEncoder encoder,
-            IBookingsApiClient bookingsApiClient, IOptions<TestUserSecrets> testSettings, IFeatureToggles featureToggles)
+        public JudiciaryAccountsController(IUserAccountService userAccountService, JavaScriptEncoder encoder, IBookingsApiClient bookingsApiClient, IOptions<TestUserSecrets> testSettings)
         {
             _userAccountService = userAccountService;
             _encoder = encoder;
             _bookingsApiClient = bookingsApiClient;
-            _featureToggles = featureToggles;
             _testSettings = testSettings.Value;
         }
         
