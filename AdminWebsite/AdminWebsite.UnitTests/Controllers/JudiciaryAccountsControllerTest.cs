@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -13,7 +12,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
@@ -46,8 +44,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 _userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object, 
-                Options.Create(testSettings),
-                _IFeatureFlagMock.Object);
+                Options.Create(testSettings));
 
             _judiciaryResponse = new List<JudiciaryPersonResponse>
             {
@@ -245,7 +242,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(expectedJudiciaryPersonResponse);
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets()), _IFeatureFlagMock.Object);
+                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets()));
 
             // Act
             var result = await _controller.SearchForJudiciaryPersonAsync(term);
@@ -289,8 +286,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object,
-                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}),
-                _IFeatureFlagMock.Object);
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var result = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -314,8 +310,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default,
                 _bookingsApiClient.Object, 
-                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}),
-                _IFeatureFlagMock.Object);
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var response = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -333,7 +328,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}), _IFeatureFlagMock.Object);
+                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act & Assert
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudiciaryPersonBySearchTermAsync(term));
@@ -341,27 +336,12 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        [TestCase(false, false)]
-        [TestCase(false, true)]
-        [TestCase(true, false)]
-        [TestCase(true, true)]
-        public async Task PostJudgesBySearchTerm_should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withJudiciary, bool withCourtroom)
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task PostJudgesBySearchTerm_should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withCourtroom)
         {
-            _judiciaryResponse = new List<JudiciaryPersonResponse>
-            {
-                new()
-                {
-                    Email = "jackman@judiciary.net",
-                    FirstName = "Jack",
-                    LastName = "Mann",
-                    WorkPhone = "",
-                    Title = "Mr",
-                    FullName = "Mr Jack Mann",
-                    PersonalCode = "12345678"
-                }
-            };
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : new List<JudiciaryPersonResponse>());
+                              .ReturnsAsync(new List<JudiciaryPersonResponse>());
 
             var _courtRoomResponse = new List<JudgeResponse>
             {
@@ -400,14 +380,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
             var expectedResponse = new List<JudgeResponse>();
-            var expectedJudiciaryResponses = new List<JudgeResponse>();
             var expectedCourtRoomResponses = new List<JudgeResponse>();
-
-            if (withJudiciary)
-            {
-                expectedJudiciaryResponses = _judiciaryResponse.Select(JudgeResponseMapper.MapTo).ToList();
-                expectedResponse.AddRange(expectedJudiciaryResponses);
-            }
 
             if (withCourtroom)
             {
@@ -415,13 +388,10 @@ namespace AdminWebsite.UnitTests.Controllers
                 expectedResponse.AddRange(_courtRoomResponse);
             }
 
-            var expectedJudiciaryCount = withJudiciary ? expectedJudiciaryResponses.Count : 0;
-            var expectedCourtRoomCount = withCourtroom ? expectedCourtRoomResponses.Count : 0;
-
-            var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
+            var expectedTotal =  withCourtroom ? expectedCourtRoomResponses.Count : 0;
 
             personRespList.Count.Should().Be(expectedTotal);
-            if(!withJudiciary && withCourtroom) // Only courtroom is set up to test order
+            if(withCourtroom) // Only courtroom is set up to test order
             {
                 Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
                 Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
@@ -495,21 +465,21 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        public async Task PostJudgesBySearchTerm_should_pass_on_bad_request_from_bookings_api_for_judge_accounts()
+        public async Task PostJudgesBySearchTerm_should_pass_on_bad_request_from_bookings_api_for_Judicary_accounts()
         {
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
            
-            var response = await _controller.PostJudgesBySearchTermAsync("term");
+            var response = await _controller.PostJudiciaryPersonBySearchTermAsync("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Test]
-        public void PostJudgesBySearchTerm_should_pass_on_exception_request_from_bookings_api_for_judges_accounts()
+        public void PostJudicaryBySearchTerm_should_pass_on_exception_request_from_bookings_api_for_Judicary_accounts()
         {
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudgesBySearchTermAsync("term"));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudiciaryPersonBySearchTermAsync("term"));
         }
     }
 }
