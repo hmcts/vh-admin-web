@@ -27,7 +27,7 @@ export class ParticipantModel {
     is_courtroom_account?: boolean;
     addedDuringHearing?: boolean;
     is_staff_member?: boolean;
-    judiciary_contact_email?: string;
+    contact_email?: string;
     isJudiciaryMember?: boolean;
 
     constructor(init?: Partial<ParticipantModel>) {

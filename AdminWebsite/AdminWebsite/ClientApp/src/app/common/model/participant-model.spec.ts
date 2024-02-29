@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { ParticipantModel } from './participant.model';
 
@@ -57,7 +58,7 @@ describe('ParticipantModel', () => {
         expect(participant.last_name).toEqual(judge.last_name);
         expect(participant.email).toEqual(judge.contact_email);
         expect(participant.username).toEqual(judge.email);
-        expect(participant.judiciary_contact_email).toEqual(judge.contact_email);
+        expect(participant.contact_email).toEqual(judge.contact_email);
     });
 
     it('should map isCourtroom as true if account_type is Courtroom', () => {

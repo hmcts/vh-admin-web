@@ -129,7 +129,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             validators: [Validators.required, Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail ?? this.judge?.judiciary_contact_email, {
+        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail ?? this.judge?.contact_email, {
             validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
