@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -10,8 +10,10 @@ import { Logger } from 'src/app/services/logger';
 })
 export class CancelBookingPopupComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[CancelBookingPopup] -';
-    @Output() cancelBooking: EventEmitter<any> = new EventEmitter<string>();
+    @Output() cancelSingleDayBooking: EventEmitter<any> = new EventEmitter<string>();
     @Output() keepBooking: EventEmitter<any> = new EventEmitter<any>();
+    @Output() cancelMultiDayBooking: EventEmitter<any> = new EventEmitter<string>();
+    @Input() isMultiDayCancellationAvailable: boolean;
 
     cancelHearingForm: FormGroup;
     failedSubmission: boolean;
@@ -99,16 +101,28 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
         );
     }
 
-    cancelHearing(): void {
+    cancelHearing(isMultiDay: boolean): void {
         if (this.cancelHearingForm.valid && this.cancelReason.value !== Constants.PleaseSelect) {
             this.failedSubmission = false;
             const cancelHearingReason =
                 this.cancelReasonDetails.value !== '' ? 'Other: ' + this.cancelReasonDetails.value : this.cancelReason.value;
             this.logger.debug(`${this.loggerPrefix} cancelling booking because ${cancelHearingReason}`);
-            this.cancelBooking.emit(cancelHearingReason);
+            if (isMultiDay) {
+                this.cancelMultiDayBooking.emit(cancelHearingReason);
+            } else {
+                this.cancelSingleDayBooking.emit(cancelHearingReason);
+            }
         } else {
             this.failedSubmission = true;
         }
+    }
+
+    cancelSingleDayHearing(): void {
+        this.cancelHearing(false);
+    }
+
+    cancelMultiDayHearing(): void {
+        this.cancelHearing(true);
     }
 
     keepHearing(): void {

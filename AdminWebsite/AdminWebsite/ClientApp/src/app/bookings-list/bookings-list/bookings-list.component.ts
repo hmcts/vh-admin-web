@@ -84,12 +84,13 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.getEditedBookingFromStorage().then(editHearing => {
                 // update item in the list by item from database
                 const updatedBooking = this.bookingPersistService.updateBooking(editHearing);
+                this.replaceBookingRecord(updatedBooking);
 
-                if (updatedBooking.IsStartTimeChanged) {
-                    this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
-                        hearing: updatedBooking.HearingId
+                // try to repeat for each of the hearings in group
+                if (updatedBooking.HearingsInGroup && updatedBooking.HearingsInGroup.length > 0) {
+                    updatedBooking.HearingsInGroup.forEach(updatedHearingInGroup => {
+                        this.replaceBookingRecord(updatedHearingInGroup);
                     });
-                    this.bookingsListService.replaceBookingRecord(updatedBooking, this.bookingPersistService.bookingList);
                 }
 
                 this.logger.debug(`${this.loggerPrefix} Clearing request from session storage`);
@@ -305,6 +306,15 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.bookingResponse = bookingsModel;
         this.recordsLoaded = true;
         this.loaded = true;
+    }
+
+    private replaceBookingRecord(booking: BookingsDetailsModel) {
+        if (booking.IsStartTimeChanged) {
+            this.logger.debug(`${this.loggerPrefix} Start time has changed. Replacing booking record.`, {
+                hearing: booking.HearingId
+            });
+            this.bookingsListService.replaceBookingRecord(booking, this.bookingPersistService.bookingList);
+        }
     }
 
     scrollHandler() {

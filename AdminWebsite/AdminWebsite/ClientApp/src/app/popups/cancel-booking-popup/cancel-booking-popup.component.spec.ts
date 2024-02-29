@@ -12,6 +12,7 @@ describe('CancelBookingPopupComponent', () => {
     let fixture: ComponentFixture<CancelBookingPopupComponent>;
     let de: DebugElement;
     let buttonCancel: ElementRef;
+    let buttonCancelMultiDay: ElementRef;
     let buttonKeep: ElementRef;
     let cancelReasonControl: AbstractControl;
     let cancelReasonDetailsControl: AbstractControl;
@@ -29,7 +30,7 @@ describe('CancelBookingPopupComponent', () => {
         fixture = TestBed.createComponent(CancelBookingPopupComponent);
         component = fixture.componentInstance;
         de = fixture.debugElement;
-        buttonCancel = de.query(By.css('#btnCancelBooking'));
+        buttonCancel = de.query(By.css('#cancelSingleDayBooking'));
         buttonKeep = de.query(By.css('#btnKeepBooking'));
         fixture.detectChanges();
 
@@ -84,16 +85,16 @@ describe('CancelBookingPopupComponent', () => {
         expect(component.cancelReasonDetails.value).toBe(cancelReasonDetailsValue);
     });
     it('should emit event with selected reason when the cancel button is clicked', () => {
-        spyOn(component.cancelBooking, 'emit');
+        spyOn(component.cancelSingleDayBooking, 'emit');
         const select: HTMLSelectElement = fixture.debugElement.query(By.css('#cancel-reason')).nativeElement;
         select.value = select.options[4].value;
         select.dispatchEvent(new Event('change'));
         buttonCancel.nativeElement.click();
         fixture.detectChanges();
-        expect(component.cancelBooking.emit).toHaveBeenCalledWith(select.value);
+        expect(component.cancelSingleDayBooking.emit).toHaveBeenCalledWith(select.value);
     });
     it('should emit event with selected reason from detail when "Other" is selected as cancel reason the cancel button is clicked', () => {
-        spyOn(component.cancelBooking, 'emit');
+        spyOn(component.cancelSingleDayBooking, 'emit');
         const select: HTMLSelectElement = fixture.debugElement.query(By.css('#cancel-reason')).nativeElement;
         select.value = select.options[9].value;
         select.dispatchEvent(new Event('change'));
@@ -101,7 +102,7 @@ describe('CancelBookingPopupComponent', () => {
         cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
         buttonCancel.nativeElement.click();
         fixture.detectChanges();
-        expect(component.cancelBooking.emit).toHaveBeenCalledWith('Other: ' + cancelReasonDetailsValue);
+        expect(component.cancelSingleDayBooking.emit).toHaveBeenCalledWith('Other: ' + cancelReasonDetailsValue);
     });
     it('should emit event when the keep button is clicked', () => {
         spyOn(component.keepBooking, 'emit');
@@ -127,5 +128,41 @@ describe('CancelBookingPopupComponent', () => {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
         cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
         expect(component.cancelReasonDetailsInvalidMaxLength).toBe(false);
+    });
+    describe('multi day cancellation', () => {
+        beforeEach(() => {
+            component.isMultiDayCancellationAvailable = true;
+            fixture.detectChanges();
+            buttonCancelMultiDay = de.query(By.css('#btnCancelMultiDayBooking'));
+        });
+
+        it('should emit event when cancellation reason selected', () => {
+            spyOn(component.cancelMultiDayBooking, 'emit');
+            const select: HTMLSelectElement = fixture.debugElement.query(By.css('#cancel-reason')).nativeElement;
+            select.value = select.options[4].value;
+            select.dispatchEvent(new Event('change'));
+            buttonCancelMultiDay.nativeElement.click();
+            fixture.detectChanges();
+            expect(component.cancelMultiDayBooking.emit).toHaveBeenCalledWith(select.value);
+        });
+
+        it('should emit event when other cancellation reason selected', () => {
+            spyOn(component.cancelMultiDayBooking, 'emit');
+            const select: HTMLSelectElement = fixture.debugElement.query(By.css('#cancel-reason')).nativeElement;
+            select.value = select.options[9].value;
+            select.dispatchEvent(new Event('change'));
+            const cancelReasonDetailsValue = 'some other reason!';
+            cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
+            buttonCancelMultiDay.nativeElement.click();
+            fixture.detectChanges();
+            expect(component.cancelMultiDayBooking.emit).toHaveBeenCalledWith('Other: ' + cancelReasonDetailsValue);
+        });
+
+        it('should not emit event when cancellation reason not selected', () => {
+            spyOn(component.cancelMultiDayBooking, 'emit');
+            buttonCancelMultiDay.nativeElement.click();
+            fixture.detectChanges();
+            expect(component.cancelMultiDayBooking.emit).not.toHaveBeenCalled();
+        });
     });
 });
