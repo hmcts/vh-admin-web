@@ -18,6 +18,7 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { By } from '@angular/platform-browser';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -57,6 +58,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -191,6 +193,7 @@ describe('CreateHearingComponent with single case type', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -252,6 +255,7 @@ describe('CreateHearingComponent with ref data toggle on', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -296,6 +300,7 @@ describe('CreateHearingComponent with ref data toggle on', () => {
 describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
+    let caseNameElement: HTMLInputElement;
     const existingRequest = initExistingHearingRequest();
     existingRequest.hearing_type_name = 'Automated Test';
 
@@ -303,6 +308,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -344,6 +350,8 @@ describe('CreateHearingComponent with existing request in session', () => {
         component = fixture.componentInstance;
         component.ngOnInit();
         fixture.detectChanges();
+
+        caseNameElement = fixture.debugElement.query(By.css('#caseName')).nativeElement;
     });
 
     afterEach(() => {
@@ -426,7 +434,87 @@ describe('CreateHearingComponent with existing request in session', () => {
         component.hearing = null;
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
+    describe('editing a single day in a multi-day hearing', () => {
+        const multiDayHearing = createMultiDayHearing();
+
+        describe('hearing is first day in multi-day', () => {
+            beforeEach(() => {
+                const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[0]);
+                hearing.isMultiDayEdit = false;
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            });
+            it('should enable editing of case name when multi-day hearing enhancements are enabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+                component.ngOnInit();
+                tick();
+                fixture.detectChanges();
+                expect(caseNameElement.disabled).toBeFalse();
+            }));
+            it('should enable editing of case name when multi-day hearing enhancements are disabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+                component.ngOnInit();
+                tick();
+                fixture.detectChanges();
+                expect(caseNameElement.disabled).toBeFalse();
+            }));
+        });
+
+        describe('hearing is not first day in multi-day', () => {
+            beforeEach(() => {
+                const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            });
+            it('should disable editing of case name when multi-day hearing enhancements are enabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+                component.ngOnInit();
+                tick();
+                fixture.detectChanges();
+                expect(caseNameElement.disabled).toBeTrue();
+            }));
+            it('should enable editing of case name when multi-day hearing enhancements are disabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+                component.ngOnInit();
+                tick();
+                fixture.detectChanges();
+                expect(caseNameElement.disabled).toBeFalse();
+            }));
+        });
+    });
+    describe('editing multiple days in a multi-day hearing', () => {
+        const multiDayHearing = createMultiDayHearing();
+
+        beforeEach(() => {
+            const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[0]);
+            hearing.isMultiDayEdit = true;
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+        });
+
+        it('should disable editing of case name', () => {
+            component.ngOnInit();
+            fixture.detectChanges();
+            expect(caseNameElement.disabled).toBeTrue();
+        });
+    });
     afterAll(() => {
         component.ngOnDestroy();
     });
+    function createMultiDayHearing() {
+        const multiDayHearing: HearingModel = Object.assign({}, existingRequest);
+        multiDayHearing.isMultiDay = true;
+        multiDayHearing.scheduled_date_time = new Date();
+        multiDayHearing.hearing_id = '1';
+        multiDayHearing.hearingsInGroup = [];
+        const daysInHearing = 3;
+        for (let i = 1; i <= daysInHearing; i++) {
+            const hearing: HearingModel = Object.assign({}, multiDayHearing);
+            if (i > 1) {
+                const scheduledDateTime = new Date(multiDayHearing.scheduled_date_time);
+                scheduledDateTime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
+                hearing.scheduled_date_time = scheduledDateTime;
+                hearing.hearing_id = i.toString();
+            }
+            multiDayHearing.hearingsInGroup.push(hearing);
+        }
+        return multiDayHearing;
+    }
 });

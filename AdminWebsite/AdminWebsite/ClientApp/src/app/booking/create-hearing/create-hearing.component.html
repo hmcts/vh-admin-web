@@ -58,6 +58,7 @@
       formControlName="caseName"
       required
       (blur)="caseNameOnBlur()"
+      [attr.disabled]="canEditCaseName ? null : true"
     />
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
       <span id="caseName-error" class="govuk-error-message">
