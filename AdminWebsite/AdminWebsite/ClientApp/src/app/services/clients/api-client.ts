@@ -5884,6 +5884,18 @@ export interface ICaseRequest {
 }
 
 export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
+    /** Duration of the hearing */
+    scheduled_duration?: number;
+    /** The code of the hearing venue */
+    hearing_venue_code?: string | undefined;
+    /** The hearing room name at the hearing venue */
+    hearing_room_name?: string | undefined;
+    /** Any other information about the hearing */
+    other_information?: string | undefined;
+    /** The case number */
+    case_number?: string | undefined;
+    /** Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false */
+    audio_recording_required?: boolean;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
     /** List of judiciary participants in hearing */
@@ -5903,6 +5915,12 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.scheduled_duration = _data['scheduled_duration'];
+            this.hearing_venue_code = _data['hearing_venue_code'];
+            this.hearing_room_name = _data['hearing_room_name'];
+            this.other_information = _data['other_information'];
+            this.case_number = _data['case_number'];
+            this.audio_recording_required = _data['audio_recording_required'];
             if (Array.isArray(_data['participants'])) {
                 this.participants = [] as any;
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
@@ -5929,6 +5947,12 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data['scheduled_duration'] = this.scheduled_duration;
+        data['hearing_venue_code'] = this.hearing_venue_code;
+        data['hearing_room_name'] = this.hearing_room_name;
+        data['other_information'] = this.other_information;
+        data['case_number'] = this.case_number;
+        data['audio_recording_required'] = this.audio_recording_required;
         if (Array.isArray(this.participants)) {
             data['participants'] = [];
             for (let item of this.participants) data['participants'].push(item.toJSON());
@@ -5947,6 +5971,18 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
 }
 
 export interface IEditMultiDayHearingRequest {
+    /** Duration of the hearing */
+    scheduled_duration?: number;
+    /** The code of the hearing venue */
+    hearing_venue_code?: string | undefined;
+    /** The hearing room name at the hearing venue */
+    hearing_room_name?: string | undefined;
+    /** Any other information about the hearing */
+    other_information?: string | undefined;
+    /** The case number */
+    case_number?: string | undefined;
+    /** Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false */
+    audio_recording_required?: boolean;
     /** List of participants in hearing */
     participants?: EditParticipantRequest[] | undefined;
     /** List of judiciary participants in hearing */

@@ -192,6 +192,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 groupId,
                 It.Is<UpdateHearingsInGroupRequestV2>(r =>
                     r.Hearings.TrueForAll(h =>
+                        h.ScheduledDuration == request.ScheduledDuration &&
+                        h.HearingVenueCode == request.HearingVenueCode &&
+                        h.HearingRoomName == request.HearingRoomName &&
+                        h.OtherInformation == request.OtherInformation &&
+                        h.CaseNumber == request.CaseNumber &&
+                        h.AudioRecordingRequired == request.AudioRecordingRequired &&
                         h.Participants.ExistingParticipants.Count == 1 &&
                         h.Participants.NewParticipants.Count == 1 &&
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
@@ -447,6 +453,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private static EditMultiDayHearingRequest CreateV2EditMultiDayHearingRequest(HearingDetailsResponse hearing) =>
             new()
             {
+                ScheduledDuration = 90,
+                HearingVenueCode = "701411",
+                HearingRoomName = "HearingRoomName",
+                OtherInformation = "OtherInformation",
+                CaseNumber = "CaseNumber",
+                AudioRecordingRequired = true,
                 Participants = hearing.Participants.Select(x => new EditParticipantRequest
                 {
                     Id = x.Id,

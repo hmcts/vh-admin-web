@@ -235,6 +235,12 @@ export class VideoHearingsService {
 
         const editHearingRequest = this.mapExistingHearing(booking);
 
+        editMultiDayRequest.scheduled_duration = editHearingRequest.scheduled_duration;
+        editMultiDayRequest.hearing_venue_code = editHearingRequest.hearing_venue_code;
+        editMultiDayRequest.hearing_room_name = editHearingRequest.hearing_room_name;
+        editMultiDayRequest.other_information = editHearingRequest.other_information;
+        editMultiDayRequest.case_number = editHearingRequest.case.number;
+        editMultiDayRequest.audio_recording_required = editHearingRequest.audio_recording_required;
         editMultiDayRequest.participants = editHearingRequest.participants;
         editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
         editMultiDayRequest.endpoints = editHearingRequest.endpoints;

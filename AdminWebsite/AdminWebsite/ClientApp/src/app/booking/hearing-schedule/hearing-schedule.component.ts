@@ -46,7 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     private destroyed$ = new Subject<void>();
     private addJudciaryMembersFeatureEnabled: boolean;
-    private multiDayBookingEnhancementsEnabled: boolean;
+    multiDayBookingEnhancementsEnabled: boolean;
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -147,6 +147,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             }
 
             this.multiDaysHearing = this.hearing.isMultiDayEdit;
+
+            if (this.hearing.isMultiDayEdit && this.hearing.multiDayHearingLastDayScheduledDateTime) {
+                const date = new Date(this.hearing.multiDayHearingLastDayScheduledDateTime);
+                endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+            }
         }
 
         if (!this.showDurationControls) {
@@ -436,6 +441,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     get showDurationControls() {
         return !this.multiDaysHearing || this.multiDayBookingEnhancementsEnabled;
+    }
+
+    get canEditDate() {
+        if (this.multiDayBookingEnhancementsEnabled && this.hearing.isMultiDayEdit) {
+            return false;
+        }
+        return true;
     }
 
     saveMultiIndividualDayHearing() {

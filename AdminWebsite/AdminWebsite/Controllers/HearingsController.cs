@@ -519,7 +519,13 @@ namespace AdminWebsite.Controllers
                 {
                     var hearingRequest = new HearingRequestV2
                     {
-                        HearingId = hearing.Id
+                        HearingId = hearing.Id,
+                        ScheduledDuration = request.ScheduledDuration,
+                        HearingVenueCode = request.HearingVenueCode,
+                        HearingRoomName = request.HearingRoomName,
+                        OtherInformation = request.OtherInformation,
+                        CaseNumber = request.CaseNumber,
+                        AudioRecordingRequired = request.AudioRecordingRequired
                     };
                 
                     var hearingToUpdate = hearing.Map();

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -19,6 +19,7 @@ import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { By } from '@angular/platform-browser';
 
 const newHearing = new HearingModel();
 
@@ -556,6 +557,13 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.courtRoomControl.value).toBe('text');
     });
 
+    describe('canEditDate', () => {
+        it('should return true', () => {
+            component.hearing.isMultiDayEdit = false;
+            expect(component.canEditDate).toBe(true);
+        });
+    });
+
     afterAll(() => {
         component.ngOnDestroy();
     });
@@ -728,6 +736,29 @@ describe('HearingScheduleComponent multi days hearing', () => {
             component.multiDaysControl.setValue(false);
             expect(component.durationHourControl.value).toBe(durationHours);
             expect(component.durationMinuteControl.value).toBe(durationMinutes);
+        });
+    });
+
+    describe('canEditDate', () => {
+        beforeEach(() => {
+            component.multiDayBookingEnhancementsEnabled = false;
+            component.hearing.isMultiDayEdit = false;
+        });
+
+        it('should return false when multi day booking enhancements are enabled and editing multiple days of a multi-day booking', () => {
+            component.multiDayBookingEnhancementsEnabled = true;
+            component.hearing.isMultiDayEdit = true;
+            expect(component.canEditDate).toBe(false);
+        });
+
+        it('should return true when multi day booking enhancements are not enabled', () => {
+            component.multiDayBookingEnhancementsEnabled = false;
+            expect(component.canEditDate).toBe(true);
+        });
+
+        it('should return true when not editing multiple days of a multi-day booking', () => {
+            component.hearing.isMultiDayEdit = false;
+            expect(component.canEditDate).toBe(true);
         });
     });
 });

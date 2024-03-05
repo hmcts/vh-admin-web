@@ -858,6 +858,9 @@ describe('Video hearing service', () => {
         hearing.scheduled_duration = 30;
         hearing.cases = [caseModel];
         hearing.audio_recording_required = true;
+        hearing.court_code = '701411';
+        hearing.court_room = 'Court Room1';
+        hearing.other_information = 'Other information';
         const judiciaryParticipants: JudicialMemberDto[] = [];
         judiciaryParticipants.push(
             new JudicialMemberDto(
@@ -919,6 +922,12 @@ describe('Video hearing service', () => {
         function mapExpectedRequest() {
             const mappedHearing = service.mapExistingHearing(hearing);
             const expectedRequest = new EditMultiDayHearingRequest();
+            expectedRequest.scheduled_duration = mappedHearing.scheduled_duration;
+            expectedRequest.hearing_venue_code = mappedHearing.hearing_venue_code;
+            expectedRequest.hearing_room_name = mappedHearing.hearing_room_name;
+            expectedRequest.other_information = mappedHearing.other_information;
+            expectedRequest.case_number = mappedHearing.case.number;
+            expectedRequest.audio_recording_required = mappedHearing.audio_recording_required;
             expectedRequest.participants = mappedHearing.participants;
             expectedRequest.judiciary_participants = mappedHearing.judiciary_participants;
             expectedRequest.endpoints = mappedHearing.endpoints;

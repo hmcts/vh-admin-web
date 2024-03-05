@@ -43,7 +43,14 @@
 
   <div *ngIf="multiDaysHearing" class="vh-bottom-m">
     <div class="govuk-radios__item">
-      <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-no" type="radio" [value]="true" />
+      <input
+        formControlName="multiDaysRange"
+        class="govuk-radios__input"
+        id="multiDaysRange-choice-no"
+        type="radio"
+        [value]="true"
+        [attr.disabled]="canEditDate ? null : true"
+      />
       <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Select start and end dates </label>
     </div>
 
@@ -59,6 +66,7 @@
           placeholder="e.g. 30/02/2018"
           min="{{ today | date : 'yyyy-MM-dd' }}"
           (blur)="resetPastTimeOnBlur()"
+          [attr.disabled]="canEditDate ? null : true"
         />
         <div *ngIf="hearingDateInvalid">
           <app-date-error-messages
@@ -78,6 +86,7 @@
           required
           placeholder="e.g. 30/02/2018"
           min="{{ today | date : 'yyyy-MM-dd' }}"
+          [attr.disabled]="canEditDate ? null : true"
         />
         <div *ngIf="endHearingDateInvalid">
           <app-date-error-messages
@@ -92,7 +101,14 @@
     </div>
 
     <div class="govuk-radios__item individual-date-radio">
-      <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-yes" type="radio" [value]="false" />
+      <input
+        formControlName="multiDaysRange"
+        class="govuk-radios__input"
+        id="multiDaysRange-choice-yes"
+        type="radio"
+        [value]="false"
+        [attr.disabled]="canEditDate ? null : true"
+      />
       <label class="govuk-label govuk-radios__label" for="audio-choice-no"> Select individual dates </label>
     </div>
 
@@ -162,6 +178,7 @@
               aria-label="hearingStartTimeHour"
               aria-labelledby="hearingStartTimeHour"
               (blur)="startHoursInPast()"
+              [attr.disabled]="canEditDate ? null : true"
             />
           </div>
         </div>
@@ -180,6 +197,7 @@
               aria-label="hearingStartTimeMinute"
               aria-labelledby="hearingStartTimeMinute"
               (blur)="startMinutesInPast()"
+              [attr.disabled]="canEditDate ? null : true"
             />
           </div>
         </div>
