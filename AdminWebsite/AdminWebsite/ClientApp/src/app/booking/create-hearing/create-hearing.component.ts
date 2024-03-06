@@ -175,8 +175,14 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         return true;
     }
 
+    get canEditCaseNumber() {
+        if (this.hearing.isMultiDayEdit && !this.isFirstDayOfMultiDay()) {
+            return false;
+        }
+        return true;
+    }
+
     isFirstDayOfMultiDay(): boolean {
-        // TODO move to hearing model, or a helper
         const firstDay = this.hearing.hearingsInGroup[0];
         const isFirstDay = this.hearing.hearing_id === firstDay.hearing_id;
         if (isFirstDay) {

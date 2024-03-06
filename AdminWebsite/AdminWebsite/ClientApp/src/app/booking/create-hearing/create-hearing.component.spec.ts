@@ -301,6 +301,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     let caseNameElement: HTMLInputElement;
+    let caseNumberElement: HTMLInputElement;
     const existingRequest = initExistingHearingRequest();
     existingRequest.hearing_type_name = 'Automated Test';
 
@@ -352,6 +353,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         fixture.detectChanges();
 
         caseNameElement = fixture.debugElement.query(By.css('#caseName')).nativeElement;
+        caseNumberElement = fixture.debugElement.query(By.css('#caseNumber')).nativeElement;
     });
 
     afterEach(() => {
@@ -457,11 +459,17 @@ describe('CreateHearingComponent with existing request in session', () => {
                 fixture.detectChanges();
                 expect(caseNameElement.disabled).toBeFalse();
             }));
+            it('should enable editing of case number', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                expect(caseNumberElement.disabled).toBeFalse();
+            });
         });
 
         describe('hearing is not first day in multi-day', () => {
             beforeEach(() => {
                 const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+                hearing.isMultiDayEdit = false;
                 videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
             });
             it('should disable editing of case name when multi-day hearing enhancements are enabled', fakeAsync(() => {
@@ -478,6 +486,11 @@ describe('CreateHearingComponent with existing request in session', () => {
                 fixture.detectChanges();
                 expect(caseNameElement.disabled).toBeFalse();
             }));
+            it('should enable editing of case number', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                expect(caseNumberElement.disabled).toBeFalse();
+            });
         });
     });
     describe('editing multiple days in a multi-day hearing', () => {
@@ -493,6 +506,32 @@ describe('CreateHearingComponent with existing request in session', () => {
             component.ngOnInit();
             fixture.detectChanges();
             expect(caseNameElement.disabled).toBeTrue();
+        });
+
+        describe('hearing is first day in multi-day', () => {
+            beforeEach(() => {
+                const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[0]);
+                hearing.isMultiDayEdit = true;
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            });
+            it('should enable editing of case number', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                expect(caseNumberElement.disabled).toBeFalse();
+            });
+        });
+
+        describe('hearing is not first day in multi-day', () => {
+            beforeEach(() => {
+                const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+                hearing.isMultiDayEdit = true;
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            });
+            it('should disable editing of case number', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                expect(caseNumberElement.disabled).toBeTrue();
+            });
         });
     });
     afterAll(() => {
