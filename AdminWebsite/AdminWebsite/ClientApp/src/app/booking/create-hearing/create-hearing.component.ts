@@ -185,10 +185,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     isFirstDayOfMultiDay(): boolean {
         const firstDay = this.hearing.hearingsInGroup[0];
         const isFirstDay = this.hearing.hearing_id === firstDay.hearing_id;
-        if (isFirstDay) {
-            return true;
-        }
-        return false;
+        return isFirstDay;
     }
 
     saveHearingDetails() {
