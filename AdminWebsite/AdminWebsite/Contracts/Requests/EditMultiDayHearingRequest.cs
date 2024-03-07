@@ -10,6 +10,7 @@ namespace AdminWebsite.Contracts.Requests
             Participants = new List<EditParticipantRequest>();
             Endpoints = new List<EditEndpointRequest>();
             JudiciaryParticipants = new List<JudiciaryParticipantRequest>();
+            HearingsInGroup = new List<UpdateHearingInGroupRequest>();
         }
         
         /// <summary>
@@ -56,6 +57,11 @@ namespace AdminWebsite.Contracts.Requests
         ///     List of endpoints for the hearing
         /// </summary>
         public List<EditEndpointRequest> Endpoints { get; set; }
+        
+        /// <summary>
+        ///     Details specific to each hearing in the multi day group
+        /// </summary>
+        public List<UpdateHearingInGroupRequest> HearingsInGroup { get; set; }
         
         /// <summary>
         ///     When true, applies updates to future days of the multi day hearing as well

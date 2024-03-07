@@ -5902,6 +5902,8 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     /** List of endpoints for the hearing */
     endpoints?: EditEndpointRequest[] | undefined;
+    /** Details to update specific to each hearing the multi day group */
+    hearings_in_group?: UpdateHearingInGroupRequest[] | undefined;
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;
 
@@ -5934,6 +5936,10 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
                 this.endpoints = [] as any;
                 for (let item of _data['endpoints']) this.endpoints!.push(EditEndpointRequest.fromJS(item));
             }
+            if (Array.isArray(_data['hearings_in_group'])) {
+                this.hearings_in_group = [] as any;
+                for (let item of _data['hearings_in_group']) this.hearings_in_group!.push(UpdateHearingInGroupRequest.fromJS(item));
+            }
             this.update_future_days = _data['update_future_days'];
         }
     }
@@ -5965,6 +5971,10 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
             data['endpoints'] = [];
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
+        if (Array.isArray(this.hearings_in_group)) {
+            data['hearings_in_group'] = [];
+            for (let item of this.hearings_in_group) data['hearings_in_group'].push(item.toJSON());
+        }
         data['update_future_days'] = this.update_future_days;
         return data;
     }
@@ -5989,6 +5999,8 @@ export interface IEditMultiDayHearingRequest {
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     /** List of endpoints for the hearing */
     endpoints?: EditEndpointRequest[] | undefined;
+    /** Details to update specific to each hearing the multi day group */
+    hearings_in_group?: UpdateHearingInGroupRequest[] | undefined;
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;
 }
@@ -6250,6 +6262,45 @@ export interface IUpdateAccountDetailsRequest {
     first_name?: string | undefined;
     last_name?: string | undefined;
     current_username?: string | undefined;
+}
+
+export class UpdateHearingInGroupRequest implements IUpdateHearingInGroupRequest {
+    hearing_id?: string;
+    scheduled_date_time?: Date;
+
+    constructor(data?: IUpdateHearingInGroupRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hearing_id = _data['hearing_id'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateHearingInGroupRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateHearingInGroupRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['hearing_id'] = this.hearing_id;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IUpdateHearingInGroupRequest {
+    hearing_id?: string;
+    scheduled_date_time?: Date;
 }
 
 export class AllocationHearingsResponse implements IAllocationHearingsResponse {

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
 import { ErrorService } from 'src/app/services/error.service';
@@ -43,6 +43,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     isBookedHearing = false;
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
+    hearingIds: string[] = [];
+    datesFormArray: FormArray;
 
     private destroyed$ = new Subject<void>();
     private addJudciaryMembersFeatureEnabled: boolean;
@@ -165,6 +167,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.selectedCourtName = this.hearing.court_name;
         this.selectedCourtCode = this.hearing.court_code;
 
+        this.datesFormArray = this.formBuilder.array([]);
+
         this.form = this.formBuilder.group({
             hearingDate: [hearingDateParsed, [Validators.required, pastDateValidator()]],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -175,8 +179,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             courtRoom: [room, [Validators.pattern(Constants.TextInputPatternDisplayName), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],
             endHearingDate: [endHearingDateParsed],
-            multiDaysRange: [multiDaysRange]
+            multiDaysRange: [multiDaysRange],
+            dates: this.datesFormArray
         });
+
+        if (this.hearing) {
+            this.populateDatesFormArray();
+        }
 
         ['multiDays', 'multiDaysRange'].forEach(k => {
             this.form.get(k).valueChanges.subscribe(() => {
@@ -192,6 +201,21 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                 this.selectedCourtCode = venue.code;
             }
         });
+    }
+
+    populateDatesFormArray() {
+        this.datesFormArray.clear(); // Clear existing form controls
+
+        this.hearingsInGroupToEdit.forEach(hearing => {
+            const date = hearing.scheduled_date_time.toISOString().substr(0, 10);
+            const dateControl = new FormControl(date, Validators.required); // Use FormControl for the date
+            this.datesFormArray.push(dateControl); // Push the FormControl into the FormArray
+            this.hearingIds.push(hearing.hearing_id);
+        });
+    }
+
+    getHearingIdForDate(index: number): string {
+        return this.hearingIds[index];
     }
 
     addHearingDate() {
@@ -306,6 +330,15 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         );
     }
 
+    get hearingsInGroupToEdit(): HearingModel[] {
+        if (!this.hearing || !this.hearing.hearingsInGroup) {
+            return [];
+        }
+
+        const hearings = this.hearing.hearingsInGroup.filter(x => x.scheduled_date_time >= this.hearing.scheduled_date_time);
+        return hearings;
+    }
+
     startHoursInPast() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         const realDate = new Date(new Date(this.hearingDateControl.value).setHours(0, 0, 0, 0));
@@ -418,6 +451,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         if (this.form.get('multiDays').value && !this.form.get('multiDaysRange').value && this.hearingDates.length) {
             this.form.get('hearingDate').setValue(this.hearingDates[0]);
             this.saveMultiIndividualDayHearing();
+        } else if (this.hearing.isMultiDayEdit) {
+            this.saveMultipleHearingEdit();
         } else {
             this.saveSingleDayOrMultiDayRangeHearing();
         }
@@ -441,13 +476,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     get showDurationControls() {
         return !this.multiDaysHearing || this.multiDayBookingEnhancementsEnabled;
-    }
-
-    get canEditDate() {
-        if (this.multiDayBookingEnhancementsEnabled && this.hearing.isMultiDayEdit) {
-            return false;
-        }
-        return true;
     }
 
     saveMultiIndividualDayHearing() {
@@ -478,6 +506,14 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.logger.debug(`${this.loggerPrefix} Failed to update booking schedule and location. Form is not valid.`);
             this.failedSubmission = true;
         }
+    }
+
+    saveMultipleHearingEdit() {
+        this.updateHearingRequestForMultipleHearingEdit();
+        this.form.markAsPristine();
+        this.hasSaved = true;
+
+        this.continue();
     }
 
     private continue() {
@@ -528,6 +564,25 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.hearingDates.forEach(date => {
             date.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
             this.hearing.hearing_dates.push(date);
+        });
+
+        this.hearingService.updateHearingRequest(this.hearing);
+        this.logger.info(`${this.loggerPrefix} Updated hearing request schedule and location`, { hearing: this.hearing });
+    }
+
+    private updateHearingRequestForMultipleHearingEdit() {
+        this.hearing.hearing_venue_id = this.form.value.courtAddress;
+        this.hearing.court_room = this.form.value.courtRoom;
+        this.hearing.court_name = this.selectedCourtName;
+        this.hearing.court_code = this.selectedCourtCode;
+
+        const dates = this.form.value.dates;
+        dates.forEach((date: string, index: number) => {
+            const hearingId = this.getHearingIdForDate(index);
+            const hearingInGroup = this.hearing.hearingsInGroup.find(x => x.hearing_id === hearingId);
+            const newDate = new Date(date);
+            newDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
+            hearingInGroup.scheduled_date_time = newDate;
         });
 
         this.hearingService.updateHearingRequest(this.hearing);
@@ -638,5 +693,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.bookingService.removeEditMode();
         this.destroyed$.next();
         this.destroyed$.complete();
+    }
+
+    formatDate(date: Date): string {
+        return this.datePipe.transform(date, 'EEEE dd MMMM yyyy') || '';
     }
 }

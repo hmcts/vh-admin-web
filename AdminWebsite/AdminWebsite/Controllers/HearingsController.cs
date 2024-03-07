@@ -527,6 +527,9 @@ namespace AdminWebsite.Controllers
                         CaseNumber = request.CaseNumber,
                         AudioRecordingRequired = request.AudioRecordingRequired
                     };
+                    
+                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
 

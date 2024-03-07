@@ -35,6 +35,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.isMultiDayEdit = false;
     existingRequest.court_name = 'Bedford';
     existingRequest.court_code = '333';
+    existingRequest.originalScheduledDateTime = existingRequest.scheduled_date_time;
     return existingRequest;
 }
 
@@ -557,13 +558,6 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.courtRoomControl.value).toBe('text');
     });
 
-    describe('canEditDate', () => {
-        it('should return true', () => {
-            component.hearing.isMultiDayEdit = false;
-            expect(component.canEditDate).toBe(true);
-        });
-    });
-
     afterAll(() => {
         component.ngOnDestroy();
     });
@@ -737,28 +731,93 @@ describe('HearingScheduleComponent multi days hearing', () => {
             expect(component.durationHourControl.value).toBe(durationHours);
             expect(component.durationMinuteControl.value).toBe(durationMinutes);
         });
+
+        describe('editing multiple hearings, day 2', () => {
+            let hearingsInGroupDatesTable: HTMLTableElement;
+            const multiDayHearing = createMultiDayHearing();
+            const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+            hearing.isMultiDayEdit = true;
+            const dateTransfomer = new DatePipe('en-GB');
+
+            beforeEach(() => {
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            });
+
+            it('should display hearing in group dates table', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
+                const expectedHearingsInGroupToDisplay = hearing.hearingsInGroup.filter(
+                    h => h.scheduled_date_time >= hearing.scheduled_date_time
+                );
+                expect(hearingsInGroupDatesTable).toBeTruthy();
+                expect(hearingsInGroupDatesTable.rows.length).toBe(expectedHearingsInGroupToDisplay.length + 1); // +1 for header row
+                const rows: HTMLTableRowElement[] = Array.from(hearingsInGroupDatesTable.rows);
+                rows.forEach((row, index) => {
+                    if (index === 0) {
+                        // Skip the header row
+                        return;
+                    }
+                    const hearingInGroup = expectedHearingsInGroupToDisplay[index - 1];
+                    const expectedCurrentDate = component.formatDate(hearingInGroup.originalScheduledDateTime);
+                    const expectedNewDate = dateTransfomer.transform(hearingInGroup.scheduled_date_time, 'yyyy-MM-dd');
+                    expect(row.cells[0].innerHTML).toBe(expectedCurrentDate);
+                    const hearingInGroupDateControl = row.cells[1].children[0] as HTMLInputElement;
+                    expect(hearingInGroupDateControl.value).toBe(expectedNewDate);
+                });
+            });
+
+            it('should update hearing request with new dates upon save', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
+                const hearingInGroupDateControls = component.form.get('dates') as FormArray;
+                const newDates: Date[] = [];
+                hearingInGroupDateControls.controls.forEach((hearingInGroupDateControl, index) => {
+                    const hearingInGroup = component.hearingsInGroupToEdit[index];
+                    const newDate = new Date(hearingInGroup.scheduled_date_time);
+                    newDate.setDate(newDate.getDate() + 1);
+                    newDates.push(newDate);
+                    const newDateValue = dateTransfomer.transform(newDate, 'yyyy-MM-dd');
+                    hearingInGroupDateControl.setValue(newDateValue);
+                });
+                component.save();
+                const expectedUpdatedHearing = Object.assign({}, component.hearing);
+                expectedUpdatedHearing.hearing_venue_id = component.form.value.courtAddress;
+                expectedUpdatedHearing.court_room = component.form.value.courtRoom;
+                expectedUpdatedHearing.court_name = component.selectedCourtName;
+                expectedUpdatedHearing.court_code = component.selectedCourtCode;
+                expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time = setDateWithStartTimeOnForm(newDates[0]);
+                expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time = setDateWithStartTimeOnForm(newDates[1]);
+                expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalledWith(expectedUpdatedHearing);
+            });
+
+            function setDateWithStartTimeOnForm(date: Date) {
+                const newDate = new Date(date);
+                newDate.setHours(component.form.value.hearingStartTimeHour, component.form.value.hearingStartTimeMinute);
+                return newDate;
+            }
+        });
     });
 
-    describe('canEditDate', () => {
-        beforeEach(() => {
-            component.multiDayBookingEnhancementsEnabled = false;
-            component.hearing.isMultiDayEdit = false;
-        });
-
-        it('should return false when multi day booking enhancements are enabled and editing multiple days of a multi-day booking', () => {
-            component.multiDayBookingEnhancementsEnabled = true;
-            component.hearing.isMultiDayEdit = true;
-            expect(component.canEditDate).toBe(false);
-        });
-
-        it('should return true when multi day booking enhancements are not enabled', () => {
-            component.multiDayBookingEnhancementsEnabled = false;
-            expect(component.canEditDate).toBe(true);
-        });
-
-        it('should return true when not editing multiple days of a multi-day booking', () => {
-            component.hearing.isMultiDayEdit = false;
-            expect(component.canEditDate).toBe(true);
-        });
-    });
+    function createMultiDayHearing() {
+        const multiDayHearing: HearingModel = Object.assign({}, existingRequest);
+        multiDayHearing.isMultiDay = true;
+        multiDayHearing.scheduled_date_time = new Date();
+        multiDayHearing.hearing_id = '1';
+        multiDayHearing.hearingsInGroup = [];
+        const daysInHearing = 3;
+        for (let i = 1; i <= daysInHearing; i++) {
+            const hearing: HearingModel = Object.assign({}, multiDayHearing);
+            if (i > 1) {
+                const scheduledDateTime = new Date(multiDayHearing.scheduled_date_time);
+                scheduledDateTime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
+                hearing.scheduled_date_time = scheduledDateTime;
+                hearing.hearing_id = i.toString();
+                hearing.originalScheduledDateTime = hearing.scheduled_date_time;
+            }
+            multiDayHearing.hearingsInGroup.push(hearing);
+        }
+        return multiDayHearing;
+    }
 });

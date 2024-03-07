@@ -15,12 +15,13 @@ import {
     JusticeUserResponse,
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
-    CancelMultiDayHearingRequest
+    CancelMultiDayHearingRequest,
+    UpdateHearingInGroupRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -890,6 +891,7 @@ describe('Video hearing service', () => {
         endpoint.displayName = 'Endpoint A';
         endpoints.push(endpoint);
         hearing.endpoints = endpoints;
+        hearing.hearingsInGroup = [Object.assign({}, hearing)];
 
         beforeEach(() => {
             clientApiSpy.editMultiDayHearing.calls.reset();
@@ -932,6 +934,13 @@ describe('Video hearing service', () => {
             expectedRequest.judiciary_participants = mappedHearing.judiciary_participants;
             expectedRequest.endpoints = mappedHearing.endpoints;
             expectedRequest.update_future_days = hearing.isMultiDayEdit;
+            expectedRequest.hearings_in_group = hearing.hearingsInGroup.map(
+                h =>
+                    new UpdateHearingInGroupRequest({
+                        hearing_id: h.hearing_id,
+                        scheduled_date_time: h.scheduled_date_time
+                    })
+            );
 
             return expectedRequest;
         }
