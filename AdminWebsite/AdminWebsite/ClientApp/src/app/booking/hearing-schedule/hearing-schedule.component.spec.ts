@@ -789,7 +789,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 expect(videoHearingsServiceSpy.updateHearingRequest).not.toHaveBeenCalled();
             });
 
-            it('should update hearing request with new dates upon save', () => {
+            it('should update hearing request and summary information with new dates upon save', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
                 hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
@@ -813,6 +813,12 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time = setDateWithStartTimeOnForm(newDates[0]);
                 expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time = setDateWithStartTimeOnForm(newDates[1]);
                 expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalledWith(expectedUpdatedHearing);
+                const expectedStartDateTime = expectedUpdatedHearing.hearingsInGroup[0].scheduled_date_time;
+                const expectedEndDateTime = expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time;
+                const actualStartDateTime = component.hearing.scheduled_date_time;
+                const actualEndDateTime = component.hearing.multiDayHearingLastDayScheduledDateTime;
+                assertDateTimesMatch(expectedStartDateTime, actualStartDateTime);
+                assertDateTimesMatch(expectedEndDateTime, actualEndDateTime);
             });
 
             function setDateWithStartTimeOnForm(date: Date) {
@@ -820,13 +826,27 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 newDate.setHours(component.form.value.hearingStartTimeHour, component.form.value.hearingStartTimeMinute);
                 return newDate;
             }
+
+            function assertDateTimesMatch(date1: Date, date2: Date) {
+                const date1Date = dateTransfomer.transform(date1, 'dd/MM/yyyy');
+                const date1Hours = date1.getHours();
+                const date1Minutes = date1.getMinutes();
+                const date2Date = dateTransfomer.transform(date2, 'dd/MM/yyyy');
+                const date2Hours = date2.getHours();
+                const date2Minutes = date2.getMinutes();
+                expect(date1Date).toBe(date2Date);
+                expect(date1Hours).toBe(date2Hours);
+                expect(date1Minutes).toBe(date2Minutes);
+            }
         });
     });
 
     function createMultiDayHearing() {
         const multiDayHearing: HearingModel = Object.assign({}, existingRequest);
         multiDayHearing.isMultiDay = true;
-        multiDayHearing.scheduled_date_time = new Date();
+        const scheduledDateTime = new Date();
+        scheduledDateTime.setSeconds(0);
+        multiDayHearing.scheduled_date_time = scheduledDateTime;
         multiDayHearing.hearing_id = '1';
         multiDayHearing.hearingsInGroup = [];
         const daysInHearing = 3;

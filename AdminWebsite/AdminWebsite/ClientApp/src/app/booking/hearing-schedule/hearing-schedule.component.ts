@@ -605,6 +605,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             hearingInGroup.scheduled_date_time = newDate;
         });
 
+        // Update the start and end dates in the hearing model, so that they are displayed correctly on the summary page
+        const hearingsInGroup = this.hearing.hearingsInGroup;
+        const hearingCount = hearingsInGroup.length;
+        this.hearing.scheduled_date_time = hearingsInGroup[0].scheduled_date_time;
+        this.hearing.multiDayHearingLastDayScheduledDateTime = hearingsInGroup[hearingCount - 1].scheduled_date_time;
+
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.info(`${this.loggerPrefix} Updated hearing request schedule and location`, { hearing: this.hearing });
     }
