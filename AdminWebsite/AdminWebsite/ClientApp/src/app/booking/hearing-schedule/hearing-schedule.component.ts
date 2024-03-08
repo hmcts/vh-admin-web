@@ -46,6 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     hearingDates: Date[] = [];
     hearingIds: string[] = [];
     datesFormArray: FormArray;
+    hearingsInGroupToEdit: HearingModel[];
 
     private destroyed$ = new Subject<void>();
     private addJudciaryMembersFeatureEnabled: boolean;
@@ -184,7 +185,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             dates: this.datesFormArray
         });
 
-        if (this.hearing) {
+        if (this.hearing && this.hearing.hearingsInGroup && this.hearing.hearingsInGroup.length > 1) {
             this.setUpDateControls();
         }
 
@@ -206,14 +207,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     setUpDateControls() {
         this.datesFormArray.clear(); // Clear existing form controls
-
+        this.hearingsInGroupToEdit = this.hearing.hearingsInGroup.filter(x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime);
         this.hearingsInGroupToEdit.forEach(hearing => {
             const date = this.datePipe.transform(hearing.scheduled_date_time, 'yyyy-MM-dd');
             const dateControl = new FormControl(date, Validators.required); // Use FormControl for the date
             this.datesFormArray.push(dateControl); // Push the FormControl into the FormArray
             this.hearingIds.push(hearing.hearing_id);
         });
-
         this.datesFormArray.setValidators(uniqueDateValidator);
     }
 
@@ -331,15 +331,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hearingStartTimeHourControl.invalid &&
             (this.hearingStartTimeHourControl.dirty || this.hearingStartTimeHourControl.touched || this.failedSubmission)
         );
-    }
-
-    get hearingsInGroupToEdit(): HearingModel[] {
-        if (!this.hearing || !this.hearing.hearingsInGroup) {
-            return [];
-        }
-
-        const hearings = this.hearing.hearingsInGroup.filter(x => x.scheduled_date_time >= this.hearing.scheduled_date_time);
-        return hearings;
     }
 
     startHoursInPast() {
@@ -606,7 +597,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         });
 
         // Update the start and end dates in the hearing model, so that they are displayed correctly on the summary page
-        const hearingsInGroup = this.hearing.hearingsInGroup;
+        const hearingsInGroup = this.hearingsInGroupToEdit;
         const hearingCount = hearingsInGroup.length;
         this.hearing.scheduled_date_time = hearingsInGroup[0].scheduled_date_time;
         this.hearing.multiDayHearingLastDayScheduledDateTime = hearingsInGroup[hearingCount - 1].scheduled_date_time;

@@ -813,7 +813,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time = setDateWithStartTimeOnForm(newDates[0]);
                 expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time = setDateWithStartTimeOnForm(newDates[1]);
                 expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalledWith(expectedUpdatedHearing);
-                const expectedStartDateTime = expectedUpdatedHearing.hearingsInGroup[0].scheduled_date_time;
+                const expectedStartDateTime = expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time;
                 const expectedEndDateTime = expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time;
                 const actualStartDateTime = component.hearing.scheduled_date_time;
                 const actualEndDateTime = component.hearing.multiDayHearingLastDayScheduledDateTime;
