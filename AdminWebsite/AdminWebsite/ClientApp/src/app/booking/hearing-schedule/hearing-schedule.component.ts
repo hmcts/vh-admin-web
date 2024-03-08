@@ -696,6 +696,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     formatDate(date: Date): string {
-        return this.datePipe.transform(date, 'EEEE dd MMMM yyyy') || '';
+        return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
     }
 }

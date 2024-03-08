@@ -759,7 +759,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
                         return;
                     }
                     const hearingInGroup = expectedHearingsInGroupToDisplay[index - 1];
-                    const expectedCurrentDate = component.formatDate(hearingInGroup.originalScheduledDateTime);
+                    const expectedCurrentDate = dateTransfomer.transform(hearingInGroup.originalScheduledDateTime, 'dd/MM/yyyy');
                     const expectedNewDate = dateTransfomer.transform(hearingInGroup.scheduled_date_time, 'yyyy-MM-dd');
                     expect(row.cells[0].innerHTML).toBe(expectedCurrentDate);
                     const hearingInGroupDateControl = row.cells[1].children[0] as HTMLInputElement;
