@@ -732,7 +732,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
             expect(component.durationMinuteControl.value).toBe(durationMinutes);
         });
 
-        describe('editing multiple hearings, day 2', () => {
+        describe('editing multiple hearings, day 2 of 3', () => {
             let hearingsInGroupDatesTable: HTMLTableElement;
             const multiDayHearing = createMultiDayHearing();
             const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
@@ -741,6 +741,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
             beforeEach(() => {
                 videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                videoHearingsServiceSpy.updateHearingRequest.calls.reset();
             });
 
             it('should display hearing in group dates table', () => {
@@ -767,6 +768,27 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 });
             });
 
+            it('should fail validation when new dates are not unique', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('dates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                newDateControls.controls[0].markAsTouched();
+                expect(newDateControls.valid).toBeFalsy();
+                expect(component.areNewDatesUnique).toBeFalsy();
+                expect(component.newDatesInvalid).toBeTruthy();
+            });
+
+            it('clicking Save should not update hearing when new dates are invalid', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('dates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                newDateControls.controls[0].markAsTouched();
+                component.save();
+                expect(videoHearingsServiceSpy.updateHearingRequest).not.toHaveBeenCalled();
+            });
+
             it('should update hearing request with new dates upon save', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
@@ -780,6 +802,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
                     newDates.push(newDate);
                     const newDateValue = dateTransfomer.transform(newDate, 'yyyy-MM-dd');
                     hearingInGroupDateControl.setValue(newDateValue);
+                    hearingInGroupDateControl.markAsTouched();
                 });
                 component.save();
                 const expectedUpdatedHearing = Object.assign({}, component.hearing);

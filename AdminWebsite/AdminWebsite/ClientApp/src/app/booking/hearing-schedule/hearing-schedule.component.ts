@@ -16,6 +16,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { pastDateValidator } from '../../common';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Subject, takeUntil } from 'rxjs';
+import { uniqueDateValidator } from 'src/app/common/custom-validations/unique-date-validator';
 
 @Component({
     selector: 'app-hearing-schedule',
@@ -184,7 +185,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         });
 
         if (this.hearing) {
-            this.populateDatesFormArray();
+            this.setUpDateControls();
         }
 
         ['multiDays', 'multiDaysRange'].forEach(k => {
@@ -203,15 +204,17 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         });
     }
 
-    populateDatesFormArray() {
+    setUpDateControls() {
         this.datesFormArray.clear(); // Clear existing form controls
 
         this.hearingsInGroupToEdit.forEach(hearing => {
-            const date = hearing.scheduled_date_time.toISOString().substr(0, 10);
+            const date = this.datePipe.transform(hearing.scheduled_date_time, 'yyyy-MM-dd');
             const dateControl = new FormControl(date, Validators.required); // Use FormControl for the date
             this.datesFormArray.push(dateControl); // Push the FormControl into the FormArray
             this.hearingIds.push(hearing.hearing_id);
         });
+
+        this.datesFormArray.setValidators(uniqueDateValidator);
     }
 
     getHearingIdForDate(index: number): string {
@@ -394,6 +397,14 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.courtRoomControl.invalid && (this.courtRoomControl.dirty || this.courtRoomControl.touched || this.failedSubmission);
     }
 
+    get newDatesInvalid() {
+        return this.datesFormArray.invalid && (this.datesFormArray.dirty || this.datesFormArray.touched || this.failedSubmission);
+    }
+
+    get areNewDatesUnique() {
+        return !this.datesFormArray.errors?.nonUniqueDates;
+    }
+
     private retrieveCourts() {
         this.logger.debug(`${this.loggerPrefix} Retrieving courts.`);
 
@@ -474,6 +485,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         );
     }
 
+    get isMultipleHearingEditValid() {
+        return !this.newDatesInvalid;
+    }
+
     get showDurationControls() {
         return !this.multiDaysHearing || this.multiDayBookingEnhancementsEnabled;
     }
@@ -509,11 +524,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     saveMultipleHearingEdit() {
-        this.updateHearingRequestForMultipleHearingEdit();
-        this.form.markAsPristine();
-        this.hasSaved = true;
+        if (this.isMultipleHearingEditValid) {
+            this.updateHearingRequestForMultipleHearingEdit();
+            this.form.markAsPristine();
+            this.hasSaved = true;
 
-        this.continue();
+            this.continue();
+        } else {
+            this.logger.debug(`${this.loggerPrefix} Failed to update booking schedule and location. Form is not valid.`);
+            this.failedSubmission = true;
+        }
     }
 
     private continue() {

@@ -159,10 +159,13 @@
         <tbody class="govuk-table__body">
           <tr class="govuk-table__row" *ngFor="let dateControl of form.get('dates').controls; let i = index">
             <td class="govuk-table__cell">{{ formatDate(hearingsInGroupToEdit[i]?.originalScheduledDateTime) }}</td>
-            <td class="govuk-table__cell"><input class="govuk-input" type="date" [formControl]="dateControl" /></td>
+            <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': newDatesInvalid }"><input class="govuk-input" type="date" [formControl]="dateControl" min="{{ today | date : 'yyyy-MM-dd' }}" /></td>
           </tr>
         </tbody>
       </table>
+      <div *ngIf="!areNewDatesUnique" class="alert alert-danger">
+        <span id="hearingsInGroupDatesUniqueness-error" class="govuk-error-message"> New Dates must be unique</span>
+      </div>
     </div>
   </div>
 
