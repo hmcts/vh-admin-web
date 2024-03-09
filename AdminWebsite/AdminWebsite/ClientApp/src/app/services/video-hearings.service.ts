@@ -238,6 +238,7 @@ export class VideoHearingsService {
 
         editMultiDayRequest.scheduled_duration = editHearingRequest.scheduled_duration;
         editMultiDayRequest.hearing_venue_code = editHearingRequest.hearing_venue_code;
+        editMultiDayRequest.hearing_venue_name = editHearingRequest.hearing_venue_name;
         editMultiDayRequest.hearing_room_name = editHearingRequest.hearing_room_name;
         editMultiDayRequest.other_information = editHearingRequest.other_information;
         editMultiDayRequest.case_number = editHearingRequest.case.number;

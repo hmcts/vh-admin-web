@@ -5886,6 +5886,8 @@ export interface ICaseRequest {
 export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
     /** Duration of the hearing */
     scheduled_duration?: number;
+    /** The name of the hearing venue */
+    hearing_venue_name?: string | undefined;
     /** The code of the hearing venue */
     hearing_venue_code?: string | undefined;
     /** The hearing room name at the hearing venue */
@@ -5902,7 +5904,7 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     /** List of endpoints for the hearing */
     endpoints?: EditEndpointRequest[] | undefined;
-    /** Details to update specific to each hearing the multi day group */
+    /** Details specific to each hearing in the multi day group */
     hearings_in_group?: UpdateHearingInGroupRequest[] | undefined;
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;
@@ -5918,6 +5920,7 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
     init(_data?: any) {
         if (_data) {
             this.scheduled_duration = _data['scheduled_duration'];
+            this.hearing_venue_name = _data['hearing_venue_name'];
             this.hearing_venue_code = _data['hearing_venue_code'];
             this.hearing_room_name = _data['hearing_room_name'];
             this.other_information = _data['other_information'];
@@ -5954,6 +5957,7 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data['scheduled_duration'] = this.scheduled_duration;
+        data['hearing_venue_name'] = this.hearing_venue_name;
         data['hearing_venue_code'] = this.hearing_venue_code;
         data['hearing_room_name'] = this.hearing_room_name;
         data['other_information'] = this.other_information;
@@ -5983,6 +5987,8 @@ export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
 export interface IEditMultiDayHearingRequest {
     /** Duration of the hearing */
     scheduled_duration?: number;
+    /** The name of the hearing venue */
+    hearing_venue_name?: string | undefined;
     /** The code of the hearing venue */
     hearing_venue_code?: string | undefined;
     /** The hearing room name at the hearing venue */
@@ -5999,7 +6005,7 @@ export interface IEditMultiDayHearingRequest {
     judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
     /** List of endpoints for the hearing */
     endpoints?: EditEndpointRequest[] | undefined;
-    /** Details to update specific to each hearing the multi day group */
+    /** Details specific to each hearing in the multi day group */
     hearings_in_group?: UpdateHearingInGroupRequest[] | undefined;
     /** When true, applies updates to future days of the multi day hearing as well */
     update_future_days?: boolean;

@@ -853,9 +853,9 @@ describe('HearingScheduleComponent multi days hearing', () => {
         for (let i = 1; i <= daysInHearing; i++) {
             const hearing: HearingModel = Object.assign({}, multiDayHearing);
             if (i > 1) {
-                const scheduledDateTime = new Date(multiDayHearing.scheduled_date_time);
-                scheduledDateTime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
-                hearing.scheduled_date_time = scheduledDateTime;
+                const datetime = new Date(multiDayHearing.scheduled_date_time);
+                datetime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
+                hearing.scheduled_date_time = datetime;
                 hearing.hearing_id = i.toString();
                 hearing.originalScheduledDateTime = hearing.scheduled_date_time;
             }

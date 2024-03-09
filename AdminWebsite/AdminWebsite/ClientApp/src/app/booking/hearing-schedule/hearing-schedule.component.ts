@@ -207,7 +207,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     setUpDateControls() {
         this.datesFormArray.clear(); // Clear existing form controls
-        this.hearingsInGroupToEdit = this.hearing.hearingsInGroup.filter(x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime);
+        this.hearingsInGroupToEdit = this.hearing.hearingsInGroup.filter(
+            x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime
+        );
         this.hearingsInGroupToEdit.forEach(hearing => {
             const date = this.datePipe.transform(hearing.scheduled_date_time, 'yyyy-MM-dd');
             const dateControl = new FormControl(date, Validators.required); // Use FormControl for the date

@@ -19,6 +19,11 @@ namespace AdminWebsite.Contracts.Requests
         public int ScheduledDuration { get; set; }
         
         /// <summary>
+        ///     The name of the hearing venue
+        /// </summary>
+        public string HearingVenueName { get; set; }
+        
+        /// <summary>
         ///     The code of the hearing venue
         /// </summary>
         public string HearingVenueCode { get; set; }

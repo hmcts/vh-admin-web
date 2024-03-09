@@ -44,13 +44,7 @@
   <div *ngIf="multiDaysHearing" class="vh-bottom-m">
     <div *ngIf="!hearing.isMultiDayEdit">
       <div class="govuk-radios__item">
-        <input
-          formControlName="multiDaysRange"
-          class="govuk-radios__input"
-          id="multiDaysRange-choice-no"
-          type="radio"
-          [value]="true"
-        />
+        <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-no" type="radio" [value]="true" />
         <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Select start and end dates </label>
       </div>
 
@@ -99,13 +93,7 @@
       </div>
 
       <div class="govuk-radios__item individual-date-radio">
-        <input
-          formControlName="multiDaysRange"
-          class="govuk-radios__input"
-          id="multiDaysRange-choice-yes"
-          type="radio"
-          [value]="false"
-        />
+        <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-yes" type="radio" [value]="false" />
         <label class="govuk-label govuk-radios__label" for="audio-choice-no"> Select individual dates </label>
       </div>
 
@@ -159,7 +147,9 @@
         <tbody class="govuk-table__body">
           <tr class="govuk-table__row" *ngFor="let dateControl of form.get('dates').controls; let i = index">
             <td class="govuk-table__cell">{{ formatDate(hearingsInGroupToEdit[i]?.originalScheduledDateTime) }}</td>
-            <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': newDatesInvalid }"><input class="govuk-input" type="date" [formControl]="dateControl" min="{{ today | date : 'yyyy-MM-dd' }}" /></td>
+            <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': newDatesInvalid }">
+              <input class="govuk-input" type="date" [formControl]="dateControl" min="{{ today | date : 'yyyy-MM-dd' }}" />
+            </td>
           </tr>
         </tbody>
       </table>

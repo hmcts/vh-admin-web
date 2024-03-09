@@ -485,8 +485,17 @@ namespace AdminWebsite.Controllers
                 {
                     var hearingRequest = new HearingRequest
                     {
-                        HearingId = hearing.Id
+                        HearingId = hearing.Id,
+                        ScheduledDuration = request.ScheduledDuration,
+                        HearingVenueName = request.HearingVenueName,
+                        HearingRoomName = request.HearingRoomName,
+                        OtherInformation = request.OtherInformation,
+                        CaseNumber = request.CaseNumber,
+                        AudioRecordingRequired = request.AudioRecordingRequired
                     };
+                    
+                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
 

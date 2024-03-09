@@ -21,7 +21,7 @@ import {
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { lastValueFrom, of, scheduled } from 'rxjs';
+import { lastValueFrom, map, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -860,6 +860,7 @@ describe('Video hearing service', () => {
         hearing.cases = [caseModel];
         hearing.audio_recording_required = true;
         hearing.court_code = '701411';
+        hearing.court_name = 'Manchester Civil and Family Justice Centre';
         hearing.court_room = 'Court Room1';
         hearing.other_information = 'Other information';
         const judiciaryParticipants: JudicialMemberDto[] = [];
@@ -926,6 +927,7 @@ describe('Video hearing service', () => {
             const expectedRequest = new EditMultiDayHearingRequest();
             expectedRequest.scheduled_duration = mappedHearing.scheduled_duration;
             expectedRequest.hearing_venue_code = mappedHearing.hearing_venue_code;
+            expectedRequest.hearing_venue_name = mappedHearing.hearing_venue_name;
             expectedRequest.hearing_room_name = mappedHearing.hearing_room_name;
             expectedRequest.other_information = mappedHearing.other_information;
             expectedRequest.case_number = mappedHearing.case.number;
