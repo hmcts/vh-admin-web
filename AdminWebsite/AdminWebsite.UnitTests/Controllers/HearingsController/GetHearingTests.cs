@@ -208,7 +208,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var dates = new List<DateTime>
             {
                 _vhExistingHearingV1.ScheduledDateTime.AddDays(1), 
-                _vhExistingHearingV1.ScheduledDateTime.AddDays(2) 
+                _vhExistingHearingV1.ScheduledDateTime.AddDays(2),
+                _vhExistingHearingV1.ScheduledDateTime.AddDays(3),
+                _vhExistingHearingV1.ScheduledDateTime.AddDays(4)
             };
             var multiDayHearings = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
             {
@@ -219,8 +221,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 ScheduledDateTime = date,
                 ScheduledDuration = _vhExistingHearingV1.ScheduledDuration,
-                GroupId = groupId
+                GroupId = groupId,
+                Status = BookingStatus.Created
             }));
+            // Set some to cancelled and failed so we can test they are filtered out
+            multiDayHearings[2].Status = BookingStatus.Cancelled;
+            multiDayHearings[3].Status = BookingStatus.Failed;
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(groupId))
                 .ReturnsAsync(multiDayHearings);
             
@@ -232,9 +238,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             okRequestResult.StatusCode.Should().Be(200);
             
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
-            var expectedHearingLastDay = multiDayHearings[^1];
+            var expectedHearingsInGroup = multiDayHearings
+                .Where(h => 
+                    h.Status != BookingStatus.Cancelled && 
+                    h.Status != BookingStatus.Failed)
+                .ToList();
+            var expectedHearingLastDay = expectedHearingsInGroup[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
-            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
+            response.HearingsInGroup.Should().BeEquivalentTo(expectedHearingsInGroup.Select(x => x.Map()));
         }
         
         [Test]
@@ -251,7 +262,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var dates = new List<DateTime>
             {
                 _vhExistingHearingV2.ScheduledDateTime.AddDays(1), 
-                _vhExistingHearingV2.ScheduledDateTime.AddDays(2) 
+                _vhExistingHearingV2.ScheduledDateTime.AddDays(2),
+                _vhExistingHearingV2.ScheduledDateTime.AddDays(3),
+                _vhExistingHearingV2.ScheduledDateTime.AddDays(4),
             };
             var multiDayHearings = new List<HearingDetailsResponseV2>
             {
@@ -262,8 +275,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Id = Guid.NewGuid(),
                 ScheduledDateTime = date,
                 ScheduledDuration = _vhExistingHearingV2.ScheduledDuration,
-                GroupId = groupId
+                GroupId = groupId,
+                Status = BookingStatusV2.Created
             }));
+            // Set some to cancelled and failed so we can test they are filtered out
+            multiDayHearings[2].Status = BookingStatusV2.Cancelled;
+            multiDayHearings[3].Status = BookingStatusV2.Failed;
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdV2Async(groupId))
                 .ReturnsAsync(multiDayHearings);
             
@@ -275,9 +292,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             okRequestResult.StatusCode.Should().Be(200);
             
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
-            var expectedHearingLastDay = multiDayHearings[^1];
+            var expectedHearingsInGroup = multiDayHearings
+                .Where(h => 
+                    h.Status != BookingStatusV2.Cancelled && 
+                    h.Status != BookingStatusV2.Failed)
+                .ToList();
+            var expectedHearingLastDay = expectedHearingsInGroup[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
-            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
+            response.HearingsInGroup.Should().BeEquivalentTo(expectedHearingsInGroup.Select(x => x.Map()));
         }
 
         [Test]
