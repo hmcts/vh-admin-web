@@ -861,6 +861,8 @@ describe('HearingScheduleComponent multi days hearing', () => {
             }
             multiDayHearing.hearingsInGroup.push(hearing);
         }
+        const lastHearing = multiDayHearing.hearingsInGroup[multiDayHearing.hearingsInGroup.length - 1];
+        multiDayHearing.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduled_date_time;
         return multiDayHearing;
     }
 });

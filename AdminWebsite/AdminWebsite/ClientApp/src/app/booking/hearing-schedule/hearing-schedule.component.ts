@@ -185,7 +185,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             dates: this.datesFormArray
         });
 
-        if (this.hearing && this.hearing.hearingsInGroup && this.hearing.hearingsInGroup.length > 1) {
+        if (this.hearing?.isMultiDayEdit) {
             this.setUpDateControls();
         }
 
