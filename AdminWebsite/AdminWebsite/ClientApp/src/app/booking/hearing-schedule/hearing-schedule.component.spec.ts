@@ -20,6 +20,7 @@ import { HearingScheduleComponent } from './hearing-schedule.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { By } from '@angular/platform-browser';
+import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 
 const newHearing = new HearingModel();
 
@@ -734,7 +735,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
         describe('editing multiple hearings, day 2 of 3', () => {
             let hearingsInGroupDatesTable: HTMLTableElement;
-            const multiDayHearing = createMultiDayHearing();
+            const multiDayHearing = createMultiDayHearing(existingRequest);
             const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
             hearing.isMultiDayEdit = true;
             const dateTransfomer = new DatePipe('en-GB');
@@ -771,7 +772,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
             it('should fail validation when new dates are not unique', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
-                const newDateControls = component.form.get('dates') as FormArray;
+                const newDateControls = component.form.get('newDates') as FormArray;
                 newDateControls.controls[0].setValue(newDateControls.controls[1].value);
                 newDateControls.controls[0].markAsTouched();
                 expect(newDateControls.valid).toBeFalsy();
@@ -782,7 +783,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
             it('clicking Save should not update hearing when new dates are invalid', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
-                const newDateControls = component.form.get('dates') as FormArray;
+                const newDateControls = component.form.get('newDates') as FormArray;
                 newDateControls.controls[0].setValue(newDateControls.controls[1].value);
                 newDateControls.controls[0].markAsTouched();
                 component.save();
@@ -793,7 +794,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
                 hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
-                const hearingInGroupDateControls = component.form.get('dates') as FormArray;
+                const hearingInGroupDateControls = component.form.get('newDates') as FormArray;
                 const newDates: Date[] = [];
                 hearingInGroupDateControls.controls.forEach((hearingInGroupDateControl, index) => {
                     const hearingInGroup = component.hearingsInGroupToEdit[index];
@@ -840,29 +841,4 @@ describe('HearingScheduleComponent multi days hearing', () => {
             }
         });
     });
-
-    function createMultiDayHearing() {
-        const multiDayHearing: HearingModel = Object.assign({}, existingRequest);
-        multiDayHearing.isMultiDay = true;
-        const scheduledDateTime = new Date();
-        scheduledDateTime.setSeconds(0);
-        multiDayHearing.scheduled_date_time = scheduledDateTime;
-        multiDayHearing.hearing_id = '1';
-        multiDayHearing.hearingsInGroup = [];
-        const daysInHearing = 3;
-        for (let i = 1; i <= daysInHearing; i++) {
-            const hearing: HearingModel = Object.assign({}, multiDayHearing);
-            if (i > 1) {
-                const datetime = new Date(multiDayHearing.scheduled_date_time);
-                datetime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
-                hearing.scheduled_date_time = datetime;
-                hearing.hearing_id = i.toString();
-                hearing.originalScheduledDateTime = hearing.scheduled_date_time;
-            }
-            multiDayHearing.hearingsInGroup.push(hearing);
-        }
-        const lastHearing = multiDayHearing.hearingsInGroup[multiDayHearing.hearingsInGroup.length - 1];
-        multiDayHearing.multiDayHearingLastDayScheduledDateTime = lastHearing.scheduled_date_time;
-        return multiDayHearing;
-    }
 });

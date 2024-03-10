@@ -45,7 +45,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
     hearingIds: string[] = [];
-    datesFormArray: FormArray;
+    newDatesFormArray: FormArray;
     hearingsInGroupToEdit: HearingModel[];
 
     private destroyed$ = new Subject<void>();
@@ -169,7 +169,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.selectedCourtName = this.hearing.court_name;
         this.selectedCourtCode = this.hearing.court_code;
 
-        this.datesFormArray = this.formBuilder.array([]);
+        this.newDatesFormArray = this.formBuilder.array([]);
 
         this.form = this.formBuilder.group({
             hearingDate: [hearingDateParsed, [Validators.required, pastDateValidator()]],
@@ -182,11 +182,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             multiDays: [this.multiDaysHearing],
             endHearingDate: [endHearingDateParsed],
             multiDaysRange: [multiDaysRange],
-            dates: this.datesFormArray
+            newDates: this.newDatesFormArray
         });
 
         if (this.hearing?.isMultiDayEdit) {
-            this.setUpDateControls();
+            this.setUpNewDateControls();
         }
 
         ['multiDays', 'multiDaysRange'].forEach(k => {
@@ -205,18 +205,18 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         });
     }
 
-    setUpDateControls() {
-        this.datesFormArray.clear(); // Clear existing form controls
+    setUpNewDateControls() {
+        this.newDatesFormArray.clear();
         this.hearingsInGroupToEdit = this.hearing.hearingsInGroup.filter(
             x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime
         );
         this.hearingsInGroupToEdit.forEach(hearing => {
             const date = this.datePipe.transform(hearing.scheduled_date_time, 'yyyy-MM-dd');
-            const dateControl = new FormControl(date, Validators.required); // Use FormControl for the date
-            this.datesFormArray.push(dateControl); // Push the FormControl into the FormArray
+            const dateControl = new FormControl(date, Validators.required);
+            this.newDatesFormArray.push(dateControl);
             this.hearingIds.push(hearing.hearing_id);
         });
-        this.datesFormArray.setValidators(uniqueDateValidator);
+        this.newDatesFormArray.setValidators(uniqueDateValidator);
     }
 
     getHearingIdForDate(index: number): string {
@@ -391,11 +391,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get newDatesInvalid() {
-        return this.datesFormArray.invalid && (this.datesFormArray.dirty || this.datesFormArray.touched || this.failedSubmission);
+        return this.newDatesFormArray.invalid && (this.newDatesFormArray.dirty || this.newDatesFormArray.touched || this.failedSubmission);
     }
 
     get areNewDatesUnique() {
-        return !this.datesFormArray.errors?.nonUniqueDates;
+        return !this.newDatesFormArray.errors?.nonUniqueDates;
     }
 
     private retrieveCourts() {
@@ -589,7 +589,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.hearing.court_name = this.selectedCourtName;
         this.hearing.court_code = this.selectedCourtCode;
 
-        const dates = this.form.value.dates;
+        const dates = this.form.value.newDates;
         dates.forEach((date: string, index: number) => {
             const hearingId = this.getHearingIdForDate(index);
             const hearingInGroup = this.hearing.hearingsInGroup.find(x => x.hearing_id === hearingId);

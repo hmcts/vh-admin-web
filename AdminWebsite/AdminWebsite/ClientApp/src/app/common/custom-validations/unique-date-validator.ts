@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn, FormGroup } from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 // Custom validator function to check for uniqueness
 export const uniqueDateValidator: ValidatorFn = (control: AbstractControl): { [key: string]: any } | null => {

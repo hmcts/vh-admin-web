@@ -19,6 +19,7 @@ import { CreateHearingComponent } from './create-hearing.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { By } from '@angular/platform-browser';
+import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -437,7 +438,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
     describe('editing a single day in a multi-day hearing', () => {
-        const multiDayHearing = createMultiDayHearing();
+        const multiDayHearing = createMultiDayHearing(existingRequest);
 
         describe('hearing is first day in multi-day', () => {
             beforeEach(() => {
@@ -494,7 +495,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         });
     });
     describe('editing multiple days in a multi-day hearing', () => {
-        const multiDayHearing = createMultiDayHearing();
+        const multiDayHearing = createMultiDayHearing(existingRequest);
 
         beforeEach(() => {
             const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[0]);
@@ -537,23 +538,4 @@ describe('CreateHearingComponent with existing request in session', () => {
     afterAll(() => {
         component.ngOnDestroy();
     });
-    function createMultiDayHearing() {
-        const multiDayHearing: HearingModel = Object.assign({}, existingRequest);
-        multiDayHearing.isMultiDay = true;
-        multiDayHearing.scheduled_date_time = new Date();
-        multiDayHearing.hearing_id = '1';
-        multiDayHearing.hearingsInGroup = [];
-        const daysInHearing = 3;
-        for (let i = 1; i <= daysInHearing; i++) {
-            const hearing: HearingModel = Object.assign({}, multiDayHearing);
-            if (i > 1) {
-                const scheduledDateTime = new Date(multiDayHearing.scheduled_date_time);
-                scheduledDateTime.setDate(multiDayHearing.scheduled_date_time.getDate() + i - 1);
-                hearing.scheduled_date_time = scheduledDateTime;
-                hearing.hearing_id = i.toString();
-            }
-            multiDayHearing.hearingsInGroup.push(hearing);
-        }
-        return multiDayHearing;
-    }
 });
