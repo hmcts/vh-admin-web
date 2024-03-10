@@ -790,6 +790,15 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 expect(videoHearingsServiceSpy.updateHearingRequest).not.toHaveBeenCalled();
             });
 
+            it('should fail new dates validation when submission has failed', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('newDates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                component.failedSubmission = true;
+                expect(component.newDatesInvalid).toBeTruthy();
+            });
+
             it('should update hearing request and summary information with new dates upon save', () => {
                 component.ngOnInit();
                 fixture.detectChanges();
