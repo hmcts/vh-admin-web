@@ -148,7 +148,12 @@
           <tr class="govuk-table__row" *ngFor="let hearing of hearingsInGroupToEdit; let i = index">
             <td class="govuk-table__cell">{{ formatDate(hearing?.originalScheduledDateTime) }}</td>
             <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': newDatesInvalid }">
-              <input class="govuk-input" type="date" [formControl]="newDatesFormArray.controls[i]" min="{{ today | date : 'yyyy-MM-dd' }}" />
+              <input
+                class="govuk-input"
+                type="date"
+                [formControl]="newDatesFormArray.controls[i]"
+                min="{{ today | date : 'yyyy-MM-dd' }}"
+              />
             </td>
           </tr>
         </tbody>
