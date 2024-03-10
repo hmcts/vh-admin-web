@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
@@ -17,6 +17,7 @@ import { pastDateValidator } from '../../common';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { Subject, takeUntil } from 'rxjs';
 import { uniqueDateValidator } from 'src/app/common/custom-validations/unique-date-validator';
+import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
 
 @Component({
     selector: 'app-hearing-schedule',
@@ -45,12 +46,14 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
     hearingIds: string[] = [];
-    newDatesFormArray: FormArray;
     hearingsInGroupToEdit: HearingModel[];
+    newDatesFormArray: FormArray;
 
     private destroyed$ = new Subject<void>();
     private addJudciaryMembersFeatureEnabled: boolean;
     multiDayBookingEnhancementsEnabled: boolean;
+
+    @ViewChild('editHearingDates') editHearingDates: EditHearingDatesComponent;
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -391,11 +394,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get newDatesInvalid() {
-        return this.newDatesFormArray.invalid && (this.newDatesFormArray.dirty || this.newDatesFormArray.touched || this.failedSubmission);
+        return this.editHearingDates.newDatesInvalid || this.failedSubmission;
     }
 
     get areNewDatesUnique() {
-        return !this.newDatesFormArray.errors?.nonUniqueDates;
+        return this.editHearingDates.areNewDatesUnique;
     }
 
     private retrieveCourts() {
@@ -712,9 +715,5 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.bookingService.removeEditMode();
         this.destroyed$.next();
         this.destroyed$.complete();
-    }
-
-    formatDate(date: Date): string {
-        return this.datePipe.transform(date, 'dd/MM/yyyy');
     }
 }

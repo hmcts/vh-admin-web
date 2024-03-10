@@ -21,6 +21,7 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { By } from '@angular/platform-browser';
 import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
+import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
 
 const newHearing = new HearingModel();
 
@@ -607,7 +608,13 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            declarations: [
+                HearingScheduleComponent,
+                BreadcrumbStubComponent,
+                CancelPopupComponent,
+                DiscardConfirmPopupComponent,
+                EditHearingDatesComponent
+            ]
         }).compileComponents();
     }));
 

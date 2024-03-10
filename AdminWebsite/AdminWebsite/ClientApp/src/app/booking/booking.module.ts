@@ -20,10 +20,12 @@ import { DateErrorMessagesComponent } from './hearing-schedule/date-error-messag
 import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add-judicial-office-holders/add-judicial-office-holders.component';
 import { SearchForJudicialMemberComponent } from './judicial-office-holders/search-for-judicial-member/search-for-judicial-member.component';
 import { NgOptimizedImage } from '@angular/common';
+import { EditHearingDatesComponent } from './hearing-schedule/edit-hearing-dates/edit-hearing-dates.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
     DateErrorMessagesComponent,
+    EditHearingDatesComponent,
     HearingScheduleComponent,
     AddJudicialOfficeHoldersComponent,
     SearchForJudicialMemberComponent,

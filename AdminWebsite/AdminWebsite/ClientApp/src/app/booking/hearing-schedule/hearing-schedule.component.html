@@ -137,30 +137,11 @@
       </div>
     </div>
     <div *ngIf="hearing.isMultiDayEdit">
-      <table class="govuk-table govuk-!-width-one-half" id="hearings-in-group-dates-table" aria-describedby="multi day hearing dates">
-        <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th class="govuk-table__header">Current Date</th>
-            <th class="govuk-table__header">New Date</th>
-          </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-          <tr class="govuk-table__row" *ngFor="let hearing of hearingsInGroupToEdit; let i = index">
-            <td class="govuk-table__cell">{{ formatDate(hearing?.originalScheduledDateTime) }}</td>
-            <td class="govuk-table__cell" [ngClass]="{ 'govuk-form-group--error': newDatesInvalid }">
-              <input
-                class="govuk-input"
-                type="date"
-                [formControl]="newDatesFormArray.controls[i]"
-                min="{{ today | date : 'yyyy-MM-dd' }}"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div *ngIf="!areNewDatesUnique" class="alert alert-danger">
-        <span id="hearingsInGroupDatesUniqueness-error" class="govuk-error-message"> New Dates must be unique</span>
-      </div>
+      <app-edit-hearing-dates
+        [hearingsInGroupToEdit]="hearingsInGroupToEdit"
+        [newDatesFormArray]="newDatesFormArray"
+        #editHearingDates
+      ></app-edit-hearing-dates>
     </div>
   </div>
 
