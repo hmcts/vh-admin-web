@@ -557,7 +557,7 @@ namespace AdminWebsite.Controllers
                         RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
                     };
                     hearingRequest.Endpoints = endpointsV2;
-                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate);
+                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
                 
                     bookingsApiRequest.Hearings.Add(hearingRequest);
                 }
@@ -773,7 +773,7 @@ namespace AdminWebsite.Controllers
         }
 
         private static UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(List<JudiciaryParticipantRequest> judiciaryParticipants,
-            HearingDetailsResponse originalHearing)
+            HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true)
         {
             var request = new UpdateJudiciaryParticipantsRequestV2();
             
@@ -827,12 +827,15 @@ namespace AdminWebsite.Controllers
 
             foreach (var joh in existingJohs)
             {
-                // Only update the joh if their details have changed
-                var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
-                if (joh.DisplayName == originalJoh.DisplayName &&
-                    joh.Role == originalJoh.RoleCode)
+                if (skipUnchangedParticipants)
                 {
-                    continue;
+                    // Only update the joh if their details have changed
+                    var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
+                    if (joh.DisplayName == originalJoh.DisplayName &&
+                        joh.Role == originalJoh.RoleCode)
+                    {
+                        continue;
+                    }
                 }
                 
                 var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
