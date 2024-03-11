@@ -238,14 +238,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             okRequestResult.StatusCode.Should().Be(200);
             
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
-            var expectedHearingsInGroup = multiDayHearings
+            var expectedActiveHearingsInGroup = multiDayHearings
                 .Where(h => 
                     h.Status != BookingStatus.Cancelled && 
                     h.Status != BookingStatus.Failed)
                 .ToList();
-            var expectedHearingLastDay = expectedHearingsInGroup[^1];
+            var expectedHearingLastDay = expectedActiveHearingsInGroup[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
-            response.HearingsInGroup.Should().BeEquivalentTo(expectedHearingsInGroup.Select(x => x.Map()));
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
         
         [Test]
@@ -292,14 +292,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             okRequestResult.StatusCode.Should().Be(200);
             
             var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
-            var expectedHearingsInGroup = multiDayHearings
+            var expectedActiveHearingsInGroup = multiDayHearings
                 .Where(h => 
                     h.Status != BookingStatusV2.Cancelled && 
                     h.Status != BookingStatusV2.Failed)
                 .ToList();
-            var expectedHearingLastDay = expectedHearingsInGroup[^1];
+            var expectedHearingLastDay = expectedActiveHearingsInGroup[^1];
             response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
-            response.HearingsInGroup.Should().BeEquivalentTo(expectedHearingsInGroup.Select(x => x.Map()));
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
 
         [Test]

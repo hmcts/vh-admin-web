@@ -9,7 +9,7 @@ export function createMultiDayHearing(currentHearing: HearingModel) {
     multiDayHearing.scheduled_date_time = scheduledDateTime;
     multiDayHearing.hearing_id = '1';
     multiDayHearing.hearingsInGroup = [];
-    const daysInHearing = 3;
+    const daysInHearing = 4;
     for (let i = 1; i <= daysInHearing; i++) {
         const hearing: HearingModel = Object.assign({}, multiDayHearing);
         if (i > 1) {

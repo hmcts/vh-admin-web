@@ -211,7 +211,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     setUpNewDateControls() {
         this.newDatesFormArray.clear();
         this.hearingsInGroupToEdit = this.hearing.hearingsInGroup.filter(
-            x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime
+            x => x.scheduled_date_time >= this.hearing.originalScheduledDateTime && x.status !== 'Cancelled' && x.status !== 'Failed'
         );
         this.hearingsInGroupToEdit.forEach(hearing => {
             const date = this.datePipe.transform(hearing.scheduled_date_time, 'yyyy-MM-dd');
@@ -455,11 +455,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     save() {
-        if (this.form.get('multiDays').value && !this.form.get('multiDaysRange').value && this.hearingDates.length) {
+        if (this.hearing.isMultiDayEdit) {
+            this.saveMultipleHearingEdit();
+        } else if (this.form.get('multiDays').value && !this.form.get('multiDaysRange').value && this.hearingDates.length) {
             this.form.get('hearingDate').setValue(this.hearingDates[0]);
             this.saveMultiIndividualDayHearing();
-        } else if (this.hearing.isMultiDayEdit) {
-            this.saveMultipleHearingEdit();
         } else {
             this.saveSingleDayOrMultiDayRangeHearing();
         }

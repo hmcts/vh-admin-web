@@ -38,6 +38,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.court_name = 'Bedford';
     existingRequest.court_code = '333';
     existingRequest.originalScheduledDateTime = existingRequest.scheduled_date_time;
+    existingRequest.status = 'Created';
     return existingRequest;
 }
 
@@ -740,14 +741,16 @@ describe('HearingScheduleComponent multi days hearing', () => {
             expect(component.durationMinuteControl.value).toBe(durationMinutes);
         });
 
-        describe('editing multiple hearings, day 2 of 3', () => {
+        describe('editing multiple hearings, day 2 of 4', () => {
             let hearingsInGroupDatesTable: HTMLTableElement;
-            const multiDayHearing = createMultiDayHearing(existingRequest);
-            const hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
-            hearing.isMultiDayEdit = true;
+            let multiDayHearing: HearingModel;
+            let hearing: HearingModel;
             const dateTransfomer = new DatePipe('en-GB');
 
             beforeEach(() => {
+                multiDayHearing = createMultiDayHearing(existingRequest);
+                hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+                hearing.isMultiDayEdit = true;
                 videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
                 videoHearingsServiceSpy.updateHearingRequest.calls.reset();
             });
@@ -774,6 +777,28 @@ describe('HearingScheduleComponent multi days hearing', () => {
                     const hearingInGroupDateControl = row.cells[1].children[0] as HTMLInputElement;
                     expect(hearingInGroupDateControl.value).toBe(expectedNewDate);
                 });
+            });
+
+            it('should exclude cancelled hearings from hearings in group to edit', () => {
+                const cancelledHearing = multiDayHearing.hearingsInGroup[2];
+                cancelledHearing.status = 'Cancelled';
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                component.ngOnInit();
+                fixture.detectChanges();
+                const hearingsInGroupToEdit = component.hearingsInGroupToEdit;
+                const foundHearing = hearingsInGroupToEdit.find(h => h.hearing_id === cancelledHearing.hearing_id);
+                expect(foundHearing).toBeFalsy();
+            });
+
+            it('should exclude failed hearings from hearings in group to edit', () => {
+                const failedHearing = multiDayHearing.hearingsInGroup[2];
+                failedHearing.status = 'Failed';
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                component.ngOnInit();
+                fixture.detectChanges();
+                const hearingsInGroupToEdit = component.hearingsInGroupToEdit;
+                const foundHearing = hearingsInGroupToEdit.find(h => h.hearing_id === failedHearing.hearing_id);
+                expect(foundHearing).toBeFalsy();
             });
 
             it('should fail validation when new dates are not unique', () => {
@@ -829,9 +854,10 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 expectedUpdatedHearing.court_code = component.selectedCourtCode;
                 expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time = setDateWithStartTimeOnForm(newDates[0]);
                 expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time = setDateWithStartTimeOnForm(newDates[1]);
+                expectedUpdatedHearing.hearingsInGroup[3].scheduled_date_time = setDateWithStartTimeOnForm(newDates[2]);
                 expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalledWith(expectedUpdatedHearing);
                 const expectedStartDateTime = expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time;
-                const expectedEndDateTime = expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time;
+                const expectedEndDateTime = expectedUpdatedHearing.hearingsInGroup[3].scheduled_date_time;
                 const actualStartDateTime = component.hearing.scheduled_date_time;
                 const actualEndDateTime = component.hearing.multiDayHearingLastDayScheduledDateTime;
                 assertDateTimesMatch(expectedStartDateTime, actualStartDateTime);

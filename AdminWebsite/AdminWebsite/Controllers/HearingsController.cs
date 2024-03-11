@@ -973,11 +973,6 @@ namespace AdminWebsite.Controllers
                     if (response.GroupId != null)
                     {
                         groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdV2Async(response.GroupId.Value);
-                        groupedHearings = groupedHearings?
-                            .Where(h => 
-                                h.Status != BookingStatusV2.Cancelled && 
-                                h.Status != BookingStatusV2.Failed)
-                            .ToList();
                     }
                     hearingResponse = response.Map(groupedHearings);
                 }
@@ -988,11 +983,6 @@ namespace AdminWebsite.Controllers
                     if (response.GroupId != null)
                     {
                         groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(response.GroupId.Value);
-                        groupedHearings = groupedHearings?
-                            .Where(h => 
-                                h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
-                                h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
-                            .ToList();
                     }
                     hearingResponse = response.Map(groupedHearings);
                 }
