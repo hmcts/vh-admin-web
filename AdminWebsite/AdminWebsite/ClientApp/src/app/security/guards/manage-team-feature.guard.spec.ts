@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
+import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { ManageTeamFeatureGuard } from './manage-team-feature.guard';
 
 describe('ManageTeamFeatureGuard', () => {

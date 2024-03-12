@@ -4,6 +4,7 @@ import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
+import { Constants } from '../../../common/constants';
 
 @Component({
     selector: 'app-search-for-judicial-member',
@@ -12,7 +13,9 @@ import { JudicialMemberDto } from '../models/add-judicial-member.model';
 })
 export class SearchForJudicialMemberComponent {
     readonly NotificationDelayTime = 1200;
-
+    get isSelectedAccountGeneric(): boolean {
+        return this.judicialMember?.isGeneric;
+    }
     form: FormGroup<SearchForJudicialMemberForm>;
     searchResult: JudiciaryPerson[] = [];
     showResult = false;
@@ -22,7 +25,12 @@ export class SearchForJudicialMemberComponent {
     @Input() set existingJudicialMember(judicialMember: JudicialMemberDto) {
         if (judicialMember) {
             this.form.setValue(
-                { judiciaryEmail: judicialMember.email, displayName: judicialMember.displayName },
+                {
+                    judiciaryEmail: judicialMember.email,
+                    displayName: judicialMember.displayName,
+                    optionalContactEmail: judicialMember.optionalContactEmail ?? '',
+                    optionalContactTelephone: judicialMember.optionalContactNumber ?? ''
+                },
                 { emitEvent: false, onlySelf: true }
             );
             this.judicialMember = judicialMember;
@@ -38,14 +46,20 @@ export class SearchForJudicialMemberComponent {
 
     judicialMember: JudicialMemberDto;
     private editMode = false;
+
     constructor(private judiciaryService: JudicialService) {
         this.createForm();
     }
 
     createForm() {
         this.form = new FormGroup<SearchForJudicialMemberForm>({
-            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
-            displayName: new FormControl<string>('')
+            judiciaryEmail: new FormControl<string>('', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),
+            displayName: new FormControl<string>('', [
+                Validators.pattern(Constants.TextInputPatternDisplayName),
+                Validators.maxLength(255)
+            ]),
+            optionalContactEmail: new FormControl<string>('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
+            optionalContactTelephone: new FormControl<string>('', [Validators.pattern(Constants.PhonePattern), Validators.maxLength(255)])
         });
 
         this.form.controls.judiciaryEmail.valueChanges
@@ -61,7 +75,9 @@ export class SearchForJudicialMemberComponent {
                     this.showResult = false;
                     this.form.reset({
                         judiciaryEmail: '',
-                        displayName: ''
+                        displayName: '',
+                        optionalContactEmail: '',
+                        optionalContactTelephone: ''
                     });
                 }
 
@@ -88,7 +104,12 @@ export class SearchForJudicialMemberComponent {
 
     selectJudicialMember(judicialMember: JudiciaryPerson) {
         this.form.setValue(
-            { judiciaryEmail: judicialMember.email, displayName: judicialMember.full_name },
+            {
+                judiciaryEmail: judicialMember.email,
+                displayName: judicialMember.full_name,
+                optionalContactEmail: '',
+                optionalContactTelephone: ''
+            },
             { emitEvent: false, onlySelf: true }
         );
         this.judicialMember = new JudicialMemberDto(
@@ -97,24 +118,46 @@ export class SearchForJudicialMemberComponent {
             judicialMember.full_name,
             judicialMember.email,
             judicialMember.work_phone,
-            judicialMember.personal_code
+            judicialMember.personal_code,
+            judicialMember.is_generic
         );
-
         this.showResult = false;
     }
 
-    confirmJudiciaryMemberWithDisplayName() {
+    confirmJudiciaryMemberWithAdditionalContactDetails() {
         this.judicialMember.displayName = this.form.controls.displayName.value;
+        if (this.judicialMember.isGeneric) {
+            this.judicialMember.optionalContactNumber = this.form.value.optionalContactTelephone;
+            this.judicialMember.optionalContactEmail = this.form.value.optionalContactEmail;
+        }
+
         this.judicialMemberSelected.emit(this.judicialMember);
         this.form.reset({
             judiciaryEmail: '',
-            displayName: ''
+            displayName: '',
+            optionalContactEmail: '',
+            optionalContactTelephone: ''
         });
+
         this.form.controls.displayName.removeValidators(Validators.required);
+    }
+
+    get displayNameFieldHasError(): boolean {
+        return this.form.controls.displayName.invalid && this.form.controls.displayName.dirty;
+    }
+
+    get displayContactEmailError(): boolean {
+        return this.form.controls.optionalContactEmail.invalid && this.form.controls.optionalContactEmail.dirty;
+    }
+
+    get displayContactTelephoneError(): boolean {
+        return this.form.controls.optionalContactTelephone.invalid && this.form.controls.optionalContactTelephone.dirty;
     }
 }
 
 interface SearchForJudicialMemberForm {
     judiciaryEmail: FormControl<string>;
     displayName: FormControl<string>;
+    optionalContactEmail: FormControl<string>;
+    optionalContactTelephone: FormControl<string>;
 }

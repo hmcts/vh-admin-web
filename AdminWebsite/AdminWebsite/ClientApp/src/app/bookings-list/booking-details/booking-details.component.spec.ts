@@ -1,4 +1,4 @@
-import { discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
+import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -15,8 +15,6 @@ import {
     HearingDetailsResponse,
     JusticeUserResponse,
     PhoneConferenceResponse,
-    UpdateBookingStatus,
-    UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     UserProfileResponse
 } from '../../services/clients/api-client';
@@ -27,6 +25,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { HearingRoleCodes } from '../../common/model/hearing-roles.model';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 let component: BookingDetailsComponent;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -160,10 +159,7 @@ now = new Date(now);
 hearingModel.scheduled_date_time = now;
 hearingModel.audio_recording_required = true;
 
-const updateBookingStatusRequest = new UpdateBookingStatusRequest();
-updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
-updateBookingStatusRequest.updated_by = '';
-updateBookingStatusRequest.cancel_reason = 'Online abandonment (incomplete registration)';
+const cancel_reason = 'Online abandonment (incomplete registration)';
 class BookingDetailsServiceMock {
     mapBooking(response) {
         return new BookingDetailsTestData().getBookingsDetailsModel();
@@ -184,7 +180,7 @@ describe('BookingDetailsComponent', () => {
         'saveHearing',
         'mapHearingDetailsResponseToHearingModel',
         'updateHearingRequest',
-        'updateBookingStatus',
+        'cancelBooking',
         'getCurrentRequest',
         'getTelephoneConferenceId',
         'getConferencePhoneNumber',
@@ -192,7 +188,8 @@ describe('BookingDetailsComponent', () => {
         'isConferenceClosed',
         'getAllocatedCsoForHearing',
         'rebookHearing',
-        'getStatus'
+        'getStatus',
+        'cancelMultiDayBooking'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -209,16 +206,22 @@ describe('BookingDetailsComponent', () => {
     const defaultUpdateBookingStatusResponse = new UpdateBookingStatusResponse({ success: true, telephone_conference_id: '1234' });
     const bookingStatusService = new BookingStatusService(videoHearingServiceSpy);
 
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
+
     beforeEach(() => {
         allocatedCsoResponse = new AllocatedCsoResponse({ cso: null, supports_work_allocation: true, hearing_id: hearingResponse.id });
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(defaultUpdateBookingStatusResponse));
+        videoHearingServiceSpy.cancelBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
+        videoHearingServiceSpy.cancelMultiDayBooking.and.returnValue(of(defaultUpdateBookingStatusResponse));
         videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
         videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
         videoHearingServiceSpy.getAllocatedCsoForHearing.and.returnValue(of(allocatedCsoResponse));
 
         bookingPersistServiceSpy.selectedHearingId = '44';
         userIdentityServiceSpy.getUserInformation.and.returnValue(of(new UserProfileResponse({ is_vh_officer_administrator_role: true })));
+
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         const bookingPersistServiceMock = new BookingDetailsServiceMock() as any;
         component = new BookingDetailsComponent(
@@ -230,7 +233,8 @@ describe('BookingDetailsComponent', () => {
             bookingPersistServiceSpy,
             loggerSpy,
             returnUrlServiceSpy,
-            bookingStatusService
+            bookingStatusService,
+            launchDarklyServiceSpy
         );
         component.hearingId = '1';
     });
@@ -304,21 +308,31 @@ describe('BookingDetailsComponent', () => {
         expect(component.participants[0].ParticipantId).toBe('2');
         discardPeriodicTasks();
     }));
-    it('should set edit mode if the edit button pressed', fakeAsync(() => {
-        component.editHearing();
-        expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
-        expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
-        expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
-    }));
+    describe('edit buttons pressed', () => {
+        it('should set edit mode if the single day edit button pressed', fakeAsync(() => {
+            component.booking = new HearingModel();
+            component.editHearing();
+            expect(component.booking.isMultiDayEdit).toBeFalsy();
+            assertUpdatesAfterEditButtonsPressed();
+        }));
+        it('should set edit mode if the multi day edit button pressed', fakeAsync(() => {
+            component.booking = new HearingModel();
+            component.editMultiDaysOfHearing();
+            expect(component.booking.isMultiDayEdit).toBeTruthy();
+            assertUpdatesAfterEditButtonsPressed();
+        }));
+        function assertUpdatesAfterEditButtonsPressed() {
+            expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
+            expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+            expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
+        }
+    });
     it('should update hearing status when cancel booking called', fakeAsync(() => {
         component.ngOnInit();
         tick(1000);
-        component.cancelBooking('Online abandonment (incomplete registration)');
+        component.cancelSingleDayBooking('Online abandonment (incomplete registration)');
         expect(component.showCancelBooking).toBeFalsy();
-        expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalledWith(
-            bookingPersistServiceSpy.selectedHearingId,
-            updateBookingStatusRequest
-        );
+        expect(videoHearingServiceSpy.cancelBooking).toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, cancel_reason);
         expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
         discardPeriodicTasks();
     }));
@@ -359,26 +373,26 @@ describe('BookingDetailsComponent', () => {
     });
     it('should persist status in the model', () => {
         component.booking = null;
-        component.persistStatus(UpdateBookingStatus.Created);
-        expect(component.booking.status).toBe(UpdateBookingStatus.Created);
+        component.persistStatus(BookingStatus.Created);
+        expect(component.booking.status).toBe(BookingStatus.Created);
         expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
     });
     it('should hide cancel button for canceled hearing', () => {
-        component.updateStatusHandler(UpdateBookingStatus.Cancelled);
+        component.updateStatusHandler(BookingStatus.Cancelled);
         expect(component.showCancelBooking).toBeFalsy();
     });
     it('should not hide cancel button for not canceled hearing', () => {
         component.showCancelBooking = true;
-        component.updateStatusHandler(UpdateBookingStatus.Created);
+        component.updateStatusHandler(BookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
     it('should hide cancel button for canceled error', () => {
-        component.errorHandler('error', UpdateBookingStatus.Cancelled);
+        component.errorHandler('error', BookingStatus.Cancelled);
         expect(component.showCancelBooking).toBeFalsy();
     });
     it('should not hide cancel button for not canceled error', () => {
         component.showCancelBooking = true;
-        component.errorHandler('error', UpdateBookingStatus.Created);
+        component.errorHandler('error', BookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
     it('should navigate back to return url if exists', () => {
@@ -398,7 +412,7 @@ describe('BookingDetailsComponent', () => {
     });
     it('should hide show confirming pop up on error', () => {
         component.showConfirming = true;
-        component.errorHandler('error', UpdateBookingStatus.Created);
+        component.errorHandler('error', BookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
     });
     it('should get update conference phone details', fakeAsync(() => {
@@ -566,7 +580,7 @@ CY: 54321 (ID: 7777)`);
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledWith(component.hearingId);
             expect(videoHearingServiceSpy.getStatus).toHaveBeenCalledTimes(11);
             expect(component.showConfirmingFailed).toBeTruthy();
-            expect(component.hearing.Status).toBe(UpdateBookingStatus.Failed);
+            expect(component.hearing.Status).toBe(BookingStatus.Failed);
             expect(component.showConfirming).toBeFalsy();
 
             discardPeriodicTasks();
@@ -579,6 +593,61 @@ CY: 54321 (ID: 7777)`);
 
             expect(videoHearingServiceSpy.rebookHearing).toHaveBeenCalledTimes(0);
 
+            discardPeriodicTasks();
+        }));
+    });
+
+    describe('cancel multi day hearing', () => {
+        it('should update hearing statuses', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.cancelMultiDayBooking('Online abandonment (incomplete registration)');
+            expect(component.showCancelBooking).toBeFalsy();
+            expect(videoHearingServiceSpy.cancelMultiDayBooking).toHaveBeenCalledWith(
+                bookingPersistServiceSpy.selectedHearingId,
+                cancel_reason,
+                true
+            );
+            expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+            discardPeriodicTasks();
+        }));
+    });
+
+    describe('isMultiDayUpdateAvailable', () => {
+        it('should return true when all conditions are met', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeTruthy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when hearing is not multi day', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = null;
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when multi day booking enhancements are not enabled', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.multiDayBookingEnhancementsEnabled = false;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
+            discardPeriodicTasks();
+        }));
+
+        it('should return false when last day of multi day hearing', fakeAsync(() => {
+            component.ngOnInit();
+            tick(1000);
+            component.hearing.GroupId = '123';
+            component.hearing.MultiDayHearingLastDayScheduledDateTime = component.hearing.StartTime;
+            component.multiDayBookingEnhancementsEnabled = true;
+            expect(component.isMultiDayUpdateAvailable()).toBeFalsy();
             discardPeriodicTasks();
         }));
     });

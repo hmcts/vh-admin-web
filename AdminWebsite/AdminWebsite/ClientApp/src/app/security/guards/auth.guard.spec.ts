@@ -1,9 +1,9 @@
 import { fakeAsync, TestBed } from '@angular/core/testing';
 import { AuthGuard } from './auth.guard';
 import { Router } from '@angular/router';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Logger } from '../services/logger';
+import { IdpProviders, SecurityService } from '../services/security.service';
+import { Logger } from '../../services/logger';
+import { MockSecurityService } from '../../testing/mocks/MockOidcSecurityService';
 
 describe('authguard', () => {
     let authGuard: AuthGuard;
@@ -17,25 +17,30 @@ describe('authguard', () => {
         TestBed.configureTestingModule({
             providers: [
                 AuthGuard,
-                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: SecurityService, useClass: MockSecurityService },
                 { provide: Router, useValue: router },
                 { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
-        oidcSecurityService = TestBed.inject(OidcSecurityService);
+        oidcSecurityService = TestBed.inject(SecurityService);
         authGuard = TestBed.inject(AuthGuard);
     });
 
     describe('when logged in with successful authentication', () => {
         it('canActivate should return true', () => {
-            oidcSecurityService.setAuthenticated(true);
+            oidcSecurityService.setAuthenticatedResult(IdpProviders.main, true);
             authGuard.canActivate().subscribe(result => expect(result).toBeTruthy());
         });
     });
 
     describe('when login failed with unsuccessful authentication', () => {
-        it('canActivate should return false', fakeAsync(() => {
-            oidcSecurityService.setAuthenticated(false);
+        it('canActivate, should return false, main config', fakeAsync(() => {
+            oidcSecurityService.setAuthenticatedResult(IdpProviders.main, false);
+            authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
+        }));
+
+        it('canActivate should return false, reform config', fakeAsync(() => {
+            oidcSecurityService.setAuthenticatedResult(IdpProviders.reform, false);
             authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
         }));
     });

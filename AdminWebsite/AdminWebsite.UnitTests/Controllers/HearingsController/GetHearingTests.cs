@@ -6,10 +6,12 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
 using BookingsApi.Client;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Enums;
@@ -25,7 +27,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         
         private BookingsApi.Contract.V1.Responses.HearingDetailsResponse _vhExistingHearingV1;
-        private Guid _guid;
+        private Guid _v1HearingId;
+        private Guid _v2HearingId;
         private HearingDetailsResponseV2 _vhExistingHearingV2;
         private Mock<IFeatureToggles> _featureToggle;
 
@@ -55,7 +58,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         
         public void Initialise()
         {
-            _guid = Guid.NewGuid();
+            _v1HearingId = Guid.NewGuid();
             _vhExistingHearingV1 = new BookingsApi.Contract.V1.Responses.HearingDetailsResponse
             {
                 Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
@@ -69,7 +72,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingRoomName = "Room 6.41D",
                 HearingTypeName = "Automated Test",
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
-                Id = _guid,
+                Id = _v1HearingId,
                 OtherInformation = "Any other information about the hearing",
                 Participants = new List<BookingsApi.Contract.V1.Responses.ParticipantResponse>()
                 {
@@ -101,9 +104,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 UpdatedDate = DateTime.UtcNow
             };
 
+            _v2HearingId = Guid.NewGuid();
             _vhExistingHearingV2 = new HearingDetailsResponseV2
             {
-                Id = _guid,
+                Id = _v2HearingId,
                 ScheduledDateTime = DateTime.UtcNow,
                 ServiceId = "ServiceId",
                 Participants = new List<ParticipantResponseV2>
@@ -160,7 +164,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(_vhExistingHearingV1);
 
             // Act
-            var result = await _controller.GetHearingById(_guid);
+            var result = await _controller.GetHearingById(_v1HearingId);
             
             // Assert
             var okRequestResult = (OkObjectResult) result;
@@ -174,12 +178,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_return_ok_status_if_hearing_id_is_validV2()
         {
             // Arrange
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.UseV2Api())
+                .Returns(true);
             _mocker.Mock<IBookingsApiClient>().Setup(x => 
                     x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>())).ReturnsAsync(_vhExistingHearingV2);
 
             // Act
-            var result = await _controller.GetHearingById(_guid);
+            var result = await _controller.GetHearingById(_v2HearingId);
             
             // Assert
             var okRequestResult = (OkObjectResult) result;
@@ -187,6 +192,92 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (HearingDetailsResponse) ((OkObjectResult) result).Value;
             hearing.Id.Should().Be(_vhExistingHearingV2.Id);
+        }
+
+        [Test]
+        public async Task Should_return_ok_status_for_multi_day_hearing_V1()
+        {
+            // Arrange
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.UseV2Api())
+                .Returns(false);
+            var groupId = _vhExistingHearingV1.Id;
+            _vhExistingHearingV1.GroupId = groupId;
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_vhExistingHearingV1);
+
+            var dates = new List<DateTime>
+            {
+                _vhExistingHearingV1.ScheduledDateTime.AddDays(1), 
+                _vhExistingHearingV1.ScheduledDateTime.AddDays(2) 
+            };
+            var multiDayHearings = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
+            {
+                _vhExistingHearingV1
+            };
+            multiDayHearings.AddRange(dates.Select(date => new BookingsApi.Contract.V1.Responses.HearingDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                ScheduledDateTime = date,
+                ScheduledDuration = _vhExistingHearingV1.ScheduledDuration,
+                GroupId = groupId
+            }));
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(groupId))
+                .ReturnsAsync(multiDayHearings);
+            
+            // Act
+            var result = await _controller.GetHearingById(_v1HearingId);
+            
+            // Assert
+            var okRequestResult = (OkObjectResult) result;
+            okRequestResult.StatusCode.Should().Be(200);
+            
+            var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
+            var expectedHearingLastDay = multiDayHearings[^1];
+            response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
+        }
+        
+        [Test]
+        public async Task Should_return_ok_status_for_multi_day_hearing_V2()
+        {
+            // Arrange
+            _mocker.Mock<IFeatureToggles>().Setup(x => x.UseV2Api())
+                .Returns(true);
+            var groupId = _vhExistingHearingV2.Id;
+            _vhExistingHearingV2.GroupId = groupId;
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(_vhExistingHearingV2);
+
+            var dates = new List<DateTime>
+            {
+                _vhExistingHearingV2.ScheduledDateTime.AddDays(1), 
+                _vhExistingHearingV2.ScheduledDateTime.AddDays(2) 
+            };
+            var multiDayHearings = new List<HearingDetailsResponseV2>
+            {
+                _vhExistingHearingV2
+            };
+            multiDayHearings.AddRange(dates.Select(date => new HearingDetailsResponseV2
+            {
+                Id = Guid.NewGuid(),
+                ScheduledDateTime = date,
+                ScheduledDuration = _vhExistingHearingV2.ScheduledDuration,
+                GroupId = groupId
+            }));
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdV2Async(groupId))
+                .ReturnsAsync(multiDayHearings);
+            
+            // Act
+            var result = await _controller.GetHearingById(_v2HearingId);
+            
+            // Assert
+            var okRequestResult = (OkObjectResult) result;
+            okRequestResult.StatusCode.Should().Be(200);
+            
+            var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
+            var expectedHearingLastDay = multiDayHearings[^1];
+            response.MultiDayHearingLastDayScheduledDateTime.Should().Be(expectedHearingLastDay.ScheduledDateTime);
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
 
         [Test]

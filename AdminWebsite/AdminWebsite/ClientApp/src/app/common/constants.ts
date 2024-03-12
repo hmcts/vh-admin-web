@@ -27,7 +27,7 @@ export const Constants = {
         FirstNameErrorMsg: 'Please enter a first name',
         LastNameErrorMsg: 'Please enter a last name',
         PhoneErrorMsg: 'Please enter a valid telephone number',
-        NoParticipantsErrorMsg: 'Please enter at least one participant',
+        NoParticipantsErrorMsg: 'Please add at least one participant',
         CompanyErrorMsg: 'Please enter an organisation name',
         ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
@@ -76,6 +76,10 @@ export const Constants = {
         PanelMember: 'Panel Member',
         Observer: 'Observer',
         Interpreter: 'Interpreter'
+    },
+    UserRoles: {
+        Judge: 'Judge',
+        StaffMember: 'Staff Member'
     },
     ManageJusticeUsers: {
         EmptySearchResults:

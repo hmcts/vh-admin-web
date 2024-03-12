@@ -35,7 +35,10 @@ export class BookingDetailsService {
             hearingResponse.cancel_reason,
             hearingResponse.case_type_name,
             '',
-            ''
+            '',
+            '',
+            hearingResponse.group_id,
+            hearingResponse.multi_day_hearing_last_day_scheduled_date_time
         );
 
         model.OtherInformation = hearingResponse.other_information;

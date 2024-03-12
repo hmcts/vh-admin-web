@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../security/auth.guard';
-import { AdminGuard } from '../security/admin.guard';
-import { LastMinuteAmendmentsGuard } from '../security/last-minute-amendments.guard';
 
 import { AddParticipantComponent } from './add-participant/add-participant.component';
 import { AssignJudgeComponent } from './assign-judge/assign-judge.component';
@@ -13,10 +10,22 @@ import { OtherInformationComponent } from './other-information/other-information
 import { SummaryComponent } from './summary/summary.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
 import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add-judicial-office-holders/add-judicial-office-holders.component';
+import { LastMinuteAmendmentsGuard } from '../security/guards/last-minute-amendments.guard';
+import { AdminGuard } from '../security/guards/admin.guard';
+import { AuthGuard } from '../security/guards/auth.guard';
+import { EditMultiDayBookingGuard } from '../security/guards/edit-multi-day-booking.guard';
 
 export const routes: Routes = [
-    { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
-    { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
+    {
+        path: 'book-hearing',
+        component: CreateHearingComponent,
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+    },
+    {
+        path: 'hearing-schedule',
+        component: HearingScheduleComponent,
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+    },
     {
         path: 'assign-judge',
         component: AssignJudgeComponent,
@@ -31,7 +40,11 @@ export const routes: Routes = [
     },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard] },
+    {
+        path: 'other-information',
+        component: OtherInformationComponent,
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+    },
     { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] }
 ];

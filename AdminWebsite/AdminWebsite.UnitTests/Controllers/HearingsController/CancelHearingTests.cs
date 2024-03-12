@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Responses;
@@ -55,14 +54,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             // Arrange
             var bookingGuid = Guid.NewGuid();
-            var updateBookingStatusRequest = new UpdateBookingStatusRequest
-            {
-                Status = UpdateBookingStatus.Cancelled,
-                UpdatedBy = "admin user"
-            };
-
             // Act
-            var response = await _controller.UpdateBookingStatus(bookingGuid, updateBookingStatusRequest);
+            var response = await _controller.CancelBooking(bookingGuid, "Reason");
 
             // Assert
             var result = response as OkObjectResult;

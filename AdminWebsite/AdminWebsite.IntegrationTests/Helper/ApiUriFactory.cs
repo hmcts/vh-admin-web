@@ -1,5 +1,4 @@
 ﻿using System;
-using BookingsApi.Contract.V1.Requests;
 
 namespace Testing.Common
 {
@@ -31,8 +30,7 @@ namespace Testing.Common
     {
         private string ApiRoot => "/hearings";
         public string BookNewHearing => ApiRoot;
-        public string UpdateHearingStatus(Guid hearingId, 
-            UpdateBookingStatusRequest updateBookingStatusRequest) => $"{ApiRoot}/{hearingId}";
+        public string FailBooking(Guid hearingId) => $"{ApiRoot}/{hearingId}/fail";
         public string RemoveHearing(string hearingId) => $"{ApiRoot}/{hearingId}";
     }
 

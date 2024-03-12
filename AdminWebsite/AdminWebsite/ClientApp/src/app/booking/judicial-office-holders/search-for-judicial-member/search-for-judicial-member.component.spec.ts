@@ -32,12 +32,26 @@ describe('SearchForJudicialMemberComponent', () => {
 
     describe('existingJudicialMember', () => {
         it('should set form values and disable judiciaryEmail control when existingJudicialMember is set', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember.displayName = 'Test User display name';
             judicialMember.roleCode = 'Judge';
             component.existingJudicialMember = judicialMember;
             expect(component.form.controls.judiciaryEmail.value).toBe(judicialMember.email);
             expect(component.form.controls.displayName.value).toBe(judicialMember.displayName);
+            expect(component.form.controls.judiciaryEmail.disabled).toBeTrue();
+        });
+
+        it('should set form values and disable judiciaryEmail control when existingJudicialMember is set, and is generic', () => {
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', true);
+            judicialMember.displayName = 'Test User display name';
+            judicialMember.roleCode = 'Judge';
+            judicialMember.optionalContactEmail = 'contact@email.com';
+            judicialMember.optionalContactNumber = '1234567890';
+            component.existingJudicialMember = judicialMember;
+            expect(component.form.controls.judiciaryEmail.value).toBe(judicialMember.email);
+            expect(component.form.controls.displayName.value).toBe(judicialMember.displayName);
+            expect(component.form.controls.optionalContactEmail.value).toBe(judicialMember.optionalContactEmail);
+            expect(component.form.controls.optionalContactTelephone.value).toBe(judicialMember.optionalContactNumber);
             expect(component.form.controls.judiciaryEmail.disabled).toBeTrue();
         });
 
@@ -94,7 +108,8 @@ describe('SearchForJudicialMemberComponent', () => {
                     judiciaryPerson.full_name,
                     judiciaryPerson.email,
                     judiciaryPerson.work_phone,
-                    judiciaryPerson.personal_code
+                    judiciaryPerson.personal_code,
+                    judiciaryPerson.is_generic
                 )
             ];
 
@@ -125,7 +140,8 @@ describe('SearchForJudicialMemberComponent', () => {
                 judicialMember.full_name,
                 judicialMember.email,
                 judicialMember.work_phone,
-                judicialMember.personal_code
+                judicialMember.personal_code,
+                judicialMember.is_generic
             );
             spyOn(component.judicialMemberSelected, 'emit');
 
@@ -137,20 +153,51 @@ describe('SearchForJudicialMemberComponent', () => {
         });
     });
 
-    describe('confirmJudiciaryMemberWithDisplayName', () => {
+    describe('confirmJudiciaryMemberWithAdditionalContactDetail', () => {
         it('should set judicialMember displayName and emit judicialMemberSelected event with the correct values', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             const displayName = 'Test User';
             spyOn(component.judicialMemberSelected, 'emit');
 
             component['judicialMember'] = judicialMember;
             component.form.controls.displayName.setValue(displayName);
-            component.confirmJudiciaryMemberWithDisplayName();
+            //(these form fields wont be accessible ordinarily in a non generic judicary account)
+            component.form.controls.optionalContactEmail.setValue(displayName);
+            component.form.controls.optionalContactTelephone.setValue(displayName);
+            component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
             expect(component['judicialMember'].displayName).toBe(displayName);
+            expect(component['judicialMember'].optionalContactEmail).not.toBe(displayName);
+            expect(component['judicialMember'].optionalContactNumber).not.toBe(displayName);
             expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(judicialMember);
             expect(component.form.value.judiciaryEmail).toBe('');
             expect(component.form.value.displayName).toBe('');
+            expect(component.form.value.optionalContactTelephone).toBe('');
+            expect(component.form.value.optionalContactEmail).toBe('');
+            expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
+        });
+
+        it('should set judicialMember displayName, and optional values and emit judicialMemberSelected event with the correct values, when generic', () => {
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', true);
+            judicialMember.optionalContactEmail = 'test@email.com';
+            judicialMember.optionalContactNumber = '1234';
+            const displayName = 'Test User';
+            spyOn(component.judicialMemberSelected, 'emit');
+
+            component['judicialMember'] = judicialMember;
+            component.form.controls.optionalContactEmail.setValue('test@email.com');
+            component.form.controls.optionalContactTelephone.setValue('1234');
+            component.form.controls.displayName.setValue(displayName);
+            component.confirmJudiciaryMemberWithAdditionalContactDetails();
+
+            expect(component['judicialMember'].displayName).toBe(displayName);
+            expect(component['judicialMember'].optionalContactEmail).toBe('test@email.com');
+            expect(component['judicialMember'].optionalContactNumber).toBe('1234');
+            expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(judicialMember);
+            expect(component.form.value.judiciaryEmail).toBe('');
+            expect(component.form.value.displayName).toBe('');
+            expect(component.form.value.optionalContactTelephone).toBe('');
+            expect(component.form.value.optionalContactEmail).toBe('');
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
         });
     });
@@ -181,7 +228,9 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.form.controls.displayName.removeValidators).toHaveBeenCalledWith(Validators.required);
             expect(component.form.reset).toHaveBeenCalledWith({
                 judiciaryEmail: '',
-                displayName: ''
+                displayName: '',
+                optionalContactEmail: '',
+                optionalContactTelephone: ''
             });
         }));
 
@@ -194,7 +243,7 @@ describe('SearchForJudicialMemberComponent', () => {
         });
 
         it('should not search for judicial member when in edit mode', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember.displayName = 'Test User display name';
             judicialMember.roleCode = 'Judge';
             component.existingJudicialMember = judicialMember;
@@ -215,5 +264,44 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.showResult).toBeTrue();
             expect(judicialServiceSpy.getJudicialUsers).toHaveBeenCalledWith('test@test.com');
         }));
+
+        it('displayNameFieldHasError should return true when displayName is invalid, then show false for a valid one', () => {
+            const invalidDisplayNames = ['!', 'Test//User ', 'Test#####'];
+            invalidDisplayNames.forEach(displayName => {
+                component.form.controls.displayName.markAsDirty();
+                component.form.controls.displayName.setValue(displayName);
+                component.form.controls.displayName.updateValueAndValidity();
+                expect(component.displayNameFieldHasError).toBeTrue();
+            });
+            component.form.controls.displayName.setValue('Test User');
+            fixture.detectChanges();
+            expect(component.displayNameFieldHasError).toBeFalse();
+        });
+
+        it('displayContactEmailError should return true when OptionEmail is invalid, then show false for a valid one', () => {
+            const invalidEmails = ['!', 'Test//User ', 'test@email'];
+            invalidEmails.forEach(displayName => {
+                component.form.controls.optionalContactEmail.markAsDirty();
+                component.form.controls.optionalContactEmail.setValue(displayName);
+                component.form.controls.optionalContactEmail.updateValueAndValidity();
+                expect(component.displayContactEmailError).toBeTrue();
+            });
+            component.form.controls.optionalContactEmail.setValue('Test@User.org');
+            fixture.detectChanges();
+            expect(component.displayContactEmailError).toBeFalse();
+        });
+
+        it('displayContactTelephoneError should return true when OptionalPhone is invalid, then show false for a valid one', () => {
+            const invalidPhone = ['01xswd', 'Test#####'];
+            invalidPhone.forEach(displayName => {
+                component.form.controls.optionalContactTelephone.markAsDirty();
+                component.form.controls.optionalContactTelephone.setValue(displayName);
+                component.form.controls.optionalContactTelephone.updateValueAndValidity();
+                expect(component.displayContactTelephoneError).toBeTrue();
+            });
+            component.form.controls.optionalContactTelephone.setValue('012345');
+            fixture.detectChanges();
+            expect(component.displayContactTelephoneError).toBeFalse();
+        });
     });
 });

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, combineLatest } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
@@ -24,7 +24,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, takeUntil } from 'rxjs/operators';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
@@ -75,6 +75,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ejudFeatureFlag = false;
     useApiV2 = false;
     saveFailedMessages: string[];
+    multiDayBookingEnhancementsEnabled: boolean;
+
+    destroyed$ = new Subject<void>();
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -137,6 +140,15 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.judgeAssigned =
             this.hearing.participants.filter(e => e.is_judge).length > 0 ||
             this.hearing.judiciaryParticipants?.some(e => e.roleCode === 'Judge');
+
+        const multiDayBookingEnhancementsFlag$ = this.featureService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$));
+
+        combineLatest([multiDayBookingEnhancementsFlag$]).subscribe(([multiDayBookingEnhancementsFlag]) => {
+            this.multiDayBookingEnhancementsEnabled = multiDayBookingEnhancementsFlag;
+            this.retrieveHearingSummary();
+        });
     }
 
     private checkForExistingRequest() {
@@ -235,8 +247,16 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;
-        this.multiDays = this.hearing.multiDays;
+        this.multiDays = this.hearing.isMultiDayEdit;
         this.endHearingDate = this.hearing.end_hearing_date_time;
+
+        if (
+            this.hearing.isMultiDayEdit &&
+            this.multiDayBookingEnhancementsEnabled &&
+            this.hearing.multiDayHearingLastDayScheduledDateTime
+        ) {
+            this.endHearingDate = this.hearing.multiDayHearingLastDayScheduledDateTime;
+        }
     }
 
     get hasEndpoints(): boolean {
@@ -286,7 +306,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 caseName: this.hearing.cases[0].name,
                 caseNumber: this.hearing.cases[0].number
             });
-            this.updateHearing();
+            if (this.hearing.isMultiDayEdit && this.multiDayBookingEnhancementsEnabled) {
+                this.updateMultiDayHearing();
+            } else {
+                this.updateHearing();
+            }
         } else {
             this.setDurationOfMultiHearing();
             try {
@@ -319,7 +343,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     async processMultiHearing(hearingDetailsResponse) {
-        if (this.hearing.multiDays) {
+        if (this.hearing.isMultiDayEdit) {
             this.logger.info(`${this.loggerPrefix} Hearing is multi-day`, {
                 hearingId: hearingDetailsResponse.id,
                 caseName: this.hearing.cases[0].name,
@@ -338,7 +362,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 await this.hearingService.cloneMultiHearings(
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
-                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                        hearing_dates: this.hearing.hearing_dates.map(date => new Date(date)),
+                        scheduled_duration: this.hearing.scheduled_duration
                     })
                 );
             } else if (isHearingDateRange) {
@@ -351,7 +376,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     hearingDetailsResponse.id,
                     new MultiHearingRequest({
                         start_date: new Date(this.hearing.scheduled_date_time),
-                        end_date: new Date(this.hearing.end_hearing_date_time)
+                        end_date: new Date(this.hearing.end_hearing_date_time),
+                        scheduled_duration: this.hearing.scheduled_duration
                     })
                 );
             } else {
@@ -368,7 +394,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (hearingStatusResponse?.success) {
             await this.processMultiHearing(hearingDetailsResponse);
         } else {
-            // call UpdateFailedBookingStatus
             await this.hearingService.updateFailedStatus(hearingDetailsResponse.id);
             this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
         }
@@ -386,7 +411,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private setDurationOfMultiHearing() {
-        if (this.hearing.multiDays) {
+        if (this.hearing.isMultiDayEdit && this.hearing.scheduled_duration === 0) {
             this.hearing.scheduled_duration = 480;
         }
     }
@@ -396,45 +421,66 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.hearingService.updateHearing(this.hearing).subscribe({
                 next: (hearingDetailsResponse: HearingDetailsResponse) => {
-                    const noJudgePrior =
-                        this.hearing.status === BookingStatus.BookedWithoutJudge ||
-                        this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
-                    this.showWaitSaving = false;
-                    this.hearingService.setBookingHasChanged(false);
-                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
-                        hearingId: hearingDetailsResponse.id
-                    });
-
-                    if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
-                        this.hearing.hearing_id = hearingDetailsResponse.id;
-                        this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
-                        return;
-                    }
-                    sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                    if (this.judgeAssigned && noJudgePrior) {
-                        this.showWaitSaving = true;
-                        this.bookingStatusService
-                            .pollForStatus(hearingDetailsResponse.id)
-                            .pipe(
-                                finalize(() => {
-                                    this.showWaitSaving = false;
-                                    this.router.navigate([PageUrls.BookingConfirmation]);
-                                })
-                            )
-                            .subscribe();
-                    } else {
-                        this.router.navigate([PageUrls.BookingConfirmation]);
-                    }
+                    this.handleUpdateHearingSuccess(hearingDetailsResponse);
                 },
                 error: error => {
-                    this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
-                        hearing: this.hearing.hearing_id,
-                        payload: this.hearing
-                    });
-                    this.setError(error);
+                    this.handleUpdateHearingError(error);
                 }
             })
         );
+    }
+
+    updateMultiDayHearing() {
+        this.saveFailedMessages = null;
+        this.$subscriptions.push(
+            this.hearingService.updateMultiDayHearing(this.hearing).subscribe({
+                next: (hearingDetailsResponse: HearingDetailsResponse) => {
+                    this.handleUpdateHearingSuccess(hearingDetailsResponse);
+                },
+                error: error => {
+                    this.handleUpdateHearingError(error);
+                }
+            })
+        );
+    }
+
+    private handleUpdateHearingSuccess(hearingDetailsResponse: HearingDetailsResponse) {
+        const noJudgePrior =
+            this.hearing.status === BookingStatus.BookedWithoutJudge || this.hearing.status === BookingStatus.ConfirmedWithoutJudge;
+        this.showWaitSaving = false;
+        this.hearingService.setBookingHasChanged(false);
+        this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
+            hearingId: hearingDetailsResponse.id
+        });
+
+        if (hearingDetailsResponse.status === BookingStatus.Failed.toString()) {
+            this.hearing.hearing_id = hearingDetailsResponse.id;
+            this.setError(new Error(`Failed to book new hearing for ${hearingDetailsResponse.created_by} `));
+            return;
+        }
+        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+        if (this.judgeAssigned && noJudgePrior) {
+            this.showWaitSaving = true;
+            this.bookingStatusService
+                .pollForStatus(hearingDetailsResponse.id)
+                .pipe(
+                    finalize(() => {
+                        this.showWaitSaving = false;
+                        this.router.navigate([PageUrls.BookingConfirmation]);
+                    })
+                )
+                .subscribe();
+        } else {
+            this.router.navigate([PageUrls.BookingConfirmation]);
+        }
+    }
+
+    private handleUpdateHearingError(error: any) {
+        this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
+            hearing: this.hearing.hearing_id,
+            payload: this.hearing
+        });
+        this.setError(error);
     }
 
     private setError(error: BookHearingException | Error) {
@@ -470,11 +516,14 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     getDefenceAdvocateByContactEmail(defenceAdvocateConactEmail: string): string {
         let represents = '';
-        const participant = this.hearing.participants.find(p => p.contact_email === defenceAdvocateConactEmail);
+        const participant = this.hearing.participants.find(p => p.email === defenceAdvocateConactEmail);
         if (participant) {
             represents = participant.display_name + ', representing ' + participant.representee;
         }

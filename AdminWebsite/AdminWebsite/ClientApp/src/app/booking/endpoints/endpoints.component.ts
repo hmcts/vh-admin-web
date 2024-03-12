@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, first } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
 import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
@@ -13,6 +13,7 @@ import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-endpoints',
@@ -31,13 +32,15 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     participants: ParticipantModel[] = [];
     select: any[] = [];
     duplicateDa = false;
+    multiDayBookingEnhancementsEnabled: boolean;
 
     constructor(
         private fb: FormBuilder,
         protected bookingService: BookingService,
         protected router: Router,
         protected videoHearingService: VideoHearingsService,
-        protected logger: Logger
+        protected logger: Logger,
+        private featureService: LaunchDarklyService
     ) {
         super(bookingService, router, videoHearingService, logger);
     }
@@ -46,6 +49,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.failedValidation = false;
         this.checkForExistingRequest();
         this.initialiseForm();
+        this.featureService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(first())
+            .subscribe(result => {
+                this.multiDayBookingEnhancementsEnabled = result;
+            });
         super.ngOnInit();
     }
 
@@ -106,7 +115,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.videoHearingService.updateHearingRequest(this.hearing);
             this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
 
-            if (this.editMode) {
+            let canEditOtherInformation = true;
+            const booking = this.videoHearingService.getCurrentRequest();
+            if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
+                canEditOtherInformation = false;
+            }
+
+            if (this.editMode || !canEditOtherInformation) {
                 this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
                 this.router.navigate([PageUrls.Summary]);
             } else {

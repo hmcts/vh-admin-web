@@ -1,6 +1,6 @@
 <form [formGroup]="cancelHearingForm" class="govuk-form-group">
   <div id="saveFailedPopup" class="vh-popup-overlay">
-    <div class="vh-popup vh-popup-xsmall">
+    <div class="vh-popup vh-popup-medium">
       <div class="content">
         <div class="govuk-grid-row">
           <h1 class="govuk-heading-m vh-ml70 vh-mr70" id="cancel-reason-title">Cancel this booking?</h1>
@@ -60,13 +60,23 @@
 
           <div class="vh-top">
             <button
-              id="btnCancelBooking"
+              id="cancelSingleDayBooking"
               class="govuk-button vh-mr25"
               data-module="govuk-button"
-              (click)="cancelHearing()"
+              (click)="cancelSingleDayHearing()"
               alt="Cancel the booking"
             >
-              Confirm cancellation
+              {{ isMultiDayCancellationAvailable ? 'Cancel this day/date only' : 'Confirm cancellation' }}
+            </button>
+            <button
+              *ngIf="isMultiDayCancellationAvailable"
+              id="btnCancelMultiDayBooking"
+              class="govuk-button vh-mr25"
+              data-module="govuk-button"
+              (click)="cancelMultiDayHearing()"
+              alt="Cancel the multi day booking"
+            >
+              Cancel this and upcoming days/dates
             </button>
             <button
               id="btnKeepBooking"

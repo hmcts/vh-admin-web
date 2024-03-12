@@ -16,7 +16,6 @@ import {
     HearingTypeResponse,
     ParticipantRequest,
     ParticipantResponse,
-    UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     MultiHearingRequest,
     PhoneConferenceResponse,
@@ -28,7 +27,8 @@ import {
     AllocatedCsoResponse,
     HearingRoleResponse,
     JudiciaryParticipantRequest,
-    JudiciaryParticipantResponse
+    EditMultiDayHearingRequest,
+    CancelMultiDayHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -173,7 +173,7 @@ export class VideoHearingsService {
         bookingRequest.booking_details.other_information = hearingRequest.other_information;
         bookingRequest.other_information_details = hearingRequest.other_information;
 
-        if (newRequest.multiDays) {
+        if (newRequest.isMultiDayEdit) {
             bookingRequest.is_multi_day = true;
             if (newRequest.hearing_dates.length) {
                 bookingRequest.multi_hearing_details = new MultiHearingRequest({
@@ -203,6 +203,11 @@ export class VideoHearingsService {
         return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
     }
 
+    updateMultiDayHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
+        const request = this.mapExistingHearingToEditMultiDayHearingRequest(booking);
+        return this.bhClient.editMultiDayHearing(booking.hearing_id, request);
+    }
+
     mapExistingHearing(booking: HearingModel): EditHearingRequest {
         const hearing = new EditHearingRequest();
 
@@ -223,6 +228,19 @@ export class VideoHearingsService {
             hearing.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(booking.judiciaryParticipants);
         }
         return hearing;
+    }
+
+    mapExistingHearingToEditMultiDayHearingRequest(booking: HearingModel): EditMultiDayHearingRequest {
+        const editMultiDayRequest = new EditMultiDayHearingRequest();
+
+        const editHearingRequest = this.mapExistingHearing(booking);
+
+        editMultiDayRequest.participants = editHearingRequest.participants;
+        editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
+        editMultiDayRequest.endpoints = editHearingRequest.endpoints;
+        editMultiDayRequest.update_future_days = booking.isMultiDayEdit;
+
+        return editMultiDayRequest;
     }
 
     mapParticipantModelToEditParticipantRequest(participants: ParticipantModel[]): EditParticipantRequest[] {
@@ -332,6 +350,11 @@ export class VideoHearingsService {
             JudicialMemberDto.fromJudiciaryParticipantResponse(judiciaryParticipant)
         );
         hearing.isConfirmed = Boolean(response.confirmed_date);
+        hearing.isMultiDay = response.group_id !== null;
+        hearing.multiDayHearingLastDayScheduledDateTime = response.multi_day_hearing_last_day_scheduled_date_time;
+        hearing.hearingsInGroup = response.hearings_in_group?.map(hearingInGroup =>
+            this.mapHearingDetailsResponseToHearingModel(hearingInGroup)
+        );
         return hearing;
     }
 
@@ -368,7 +391,9 @@ export class VideoHearingsService {
             const judiciaryParticipantRequest: JudiciaryParticipantRequest = new JudiciaryParticipantRequest({
                 personal_code: judicialMemberDto.personalCode,
                 display_name: judicialMemberDto.displayName,
-                role: judicialMemberDto.roleCode
+                role: judicialMemberDto.roleCode,
+                optional_contact_email: judicialMemberDto.optionalContactEmail,
+                optional_contact_telephone: judicialMemberDto.optionalContactNumber
             });
             return judiciaryParticipantRequest;
         });
@@ -433,11 +458,8 @@ export class VideoHearingsService {
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.company = p.organisation;
-                participant.is_judge =
-                    p.case_role_name === Constants.HearingRoles.Judge || p.hearing_role_code === Constants.HearingRoleCodes.Judge;
-                participant.is_staff_member =
-                    p.case_role_name === Constants.HearingRoles.StaffMember ||
-                    p.hearing_role_code === Constants.HearingRoleCodes.StaffMember;
+                participant.is_judge = p.user_role_name === Constants.UserRoles.Judge;
+                participant.is_staff_member = p.user_role_name === Constants.UserRoles.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
                 participants.push(participant);
@@ -493,8 +515,13 @@ export class VideoHearingsService {
         return this.bhClient.getHearingById(hearingId);
     }
 
-    updateBookingStatus(hearingId: string, updateBookingStatus: UpdateBookingStatusRequest): Observable<UpdateBookingStatusResponse> {
-        return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
+    cancelBooking(hearingId: string, reason: string): Observable<UpdateBookingStatusResponse> {
+        return this.bhClient.cancelBooking(hearingId, reason);
+    }
+
+    cancelMultiDayBooking(hearingId: string, reason: string, updateFutureDays: boolean): Observable<UpdateBookingStatusResponse> {
+        const request = new CancelMultiDayHearingRequest({ cancel_reason: reason, update_future_days: updateFutureDays });
+        return this.bhClient.cancelMultiDayHearing(hearingId, request);
     }
 
     async getConferencePhoneNumber(isWelsh = false) {
@@ -549,7 +576,12 @@ export class VideoHearingsService {
 
     addJudiciaryJudge(judicialMember: JudicialMemberDto) {
         const judgeIndex = this.modelHearing.judiciaryParticipants.findIndex(holder => holder.roleCode === 'Judge');
-
+        //Hearings booked with V1 of the API will not have a judiciaryParticipants array
+        const participantJudgeIndex = this.modelHearing.participants.findIndex(holder => holder.user_role_name === 'Judge');
+        if (participantJudgeIndex !== -1) {
+            //remove judge from participants
+            this.modelHearing.participants.splice(participantJudgeIndex, 1);
+        }
         if (judgeIndex !== -1) {
             // Judge exists, replace or add entry
             this.modelHearing.judiciaryParticipants[judgeIndex] = judicialMember;

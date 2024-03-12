@@ -39,6 +39,8 @@ namespace AdminWebsite.UnitTests.Helper
                     .With(x => x.HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge)
                     .With(x => x.Email = contactEmail)
                     .With(x => x.WorkPhone = "0123456789")
+                    .With(x => x.OptionalContactEmail = null)
+                    .With(x => x.OptionalContactTelephone = null)
                     .Build();
                 
                 hearingDetailsResponse.JudiciaryParticipants.Add(joh);
@@ -50,6 +52,8 @@ namespace AdminWebsite.UnitTests.Helper
                     .With(x => x.HearingRoleCode = JudiciaryParticipantHearingRoleCode.PanelMember)
                     .With(x => x.Email = contactEmail)
                     .With(x => x.WorkPhone = "0123456789")
+                    .With(x => x.OptionalContactEmail = null)
+                    .With(x => x.OptionalContactTelephone = null)
                     .Build();
                 hearingDetailsResponse.JudiciaryParticipants.Add(joh);
             }

@@ -293,32 +293,12 @@ namespace AdminWebsite.UnitTests.Services
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.UserRoleName = "Staff Member")
                 .Build();
-            var telephoneParticipant = Builder<TelephoneParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .Build();
 
             return Builder<HearingDetailsResponse>.CreateNew()
                 .With(h => h.Participants = new List<ParticipantResponse> { rep, ind, joh, judge, staffMember })
-                .With(h => h.TelephoneParticipants = new List<TelephoneParticipantResponse> { telephoneParticipant })
                 .With(x => x.Cases = cases)
                 .With(x => x.Id = Guid.NewGuid())
                 .Build();
         }
-        [Test]
-        public async Task Should_Invoke_BookingAPI_UpdateBookingStatusAsync_when_UpdateFailedBookingStatus_called()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            // Act
-            await _service.UpdateFailedBookingStatus(hearingId);
-
-            // Assert
-            _mocker.Mock<IBookingsApiClient>().Verify(x 
-                => x.UpdateBookingStatusAsync(
-                    hearingId, 
-                    It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), 
-                Times.Once);
-        }
-        
     }
 }

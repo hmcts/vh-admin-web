@@ -133,4 +133,8 @@ export class AddJudicialOfficeHoldersComponent implements OnInit, OnDestroy {
             this.addPanelMemberText = this.noPanelMemberText;
         }
     }
+
+    get judiciaryMembersAdded(): boolean {
+        return this.hearing.judiciaryParticipants.length > 0;
+    }
 }

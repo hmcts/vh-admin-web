@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as moment from 'moment';
-import { interval, lastValueFrom, Subscription } from 'rxjs';
+import { interval, lastValueFrom, Subject, Subscription, takeUntil } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -10,19 +10,13 @@ import { JudiciaryParticipantDetailsModel } from 'src/app/common/model/judiciary
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import {
-    BookingStatus,
-    HearingDetailsResponse,
-    UpdateBookingStatus,
-    UpdateBookingStatusRequest,
-    UpdateBookingStatusResponse,
-    UserProfileResponse
-} from '../../services/clients/api-client';
+import { BookingStatus, HearingDetailsResponse, UpdateBookingStatusResponse, UserProfileResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-booking-details',
@@ -42,18 +36,18 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     showConfirmingFailed: boolean;
     isConfirmationTimeValid = true;
     hearingId: string;
-    updateBookingStatusRequest: UpdateBookingStatusRequest;
 
     $timeObserver = interval(60000);
     timeSubscription: Subscription;
     $subscriptions: Subscription[] = [];
-    cancelReason: string;
     conferencePhoneNumber: string;
     conferencePhoneNumberWelsh: string;
     telephoneConferenceId: string;
-    previousUrl: string = null;
     phoneDetails = '';
     showCancelBookingFailed = false;
+    multiDayBookingEnhancementsEnabled: boolean;
+
+    private destroyed$ = new Subject<void>();
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -64,7 +58,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private bookingPersistService: BookingPersistService,
         private logger: Logger,
         private returnUrlService: ReturnUrlService,
-        private bookingStatusService: BookingStatusService
+        private bookingStatusService: BookingStatusService,
+        private ldService: LaunchDarklyService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -89,6 +84,12 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 next: userProfile => this.getUserRole(userProfile)
             })
         );
+        this.ldService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(enabled => {
+                this.multiDayBookingEnhancementsEnabled = enabled;
+            });
     }
 
     closeCancelFailed() {
@@ -174,6 +175,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     editHearing() {
         this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(false);
+        this.router.navigate([PageUrls.Summary]);
+    }
+
+    editMultiDaysOfHearing() {
+        this.bookingService.setEditMode();
+        this.setEditMultiDayHearingOptions(true);
         this.router.navigate([PageUrls.Summary]);
     }
 
@@ -193,49 +201,53 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         await this.videoHearingService.rebookHearing(hearingId);
 
         this.bookingStatusService.pollForStatus(hearingId).subscribe(async response => {
-            let updateBookingStatus: UpdateBookingStatus = UpdateBookingStatus.Failed;
+            let updateBookingStatus: BookingStatus = BookingStatus.Failed;
             if (response?.success) {
-                updateBookingStatus = UpdateBookingStatus.Created;
+                updateBookingStatus = BookingStatus.Created;
             }
             await this.updateHearingStatusDisplay(response, updateBookingStatus);
         });
+    }
+
+    setEditMultiDayHearingOptions(updateFutureDays: boolean) {
+        this.booking.isMultiDayEdit = updateFutureDays; // Prevents the end date from showing in the UI when not updating future days
+        this.videoHearingService.updateHearingRequest(this.booking);
     }
 
     keepBooking() {
         this.showCancelBooking = false;
     }
 
-    cancelBooking(cancelReason: string) {
-        this.updateHearingStatus(UpdateBookingStatus.Cancelled, cancelReason);
+    async cancelSingleDayBooking(cancelReason: string) {
+        await this.cancelBooking(cancelReason, false);
     }
 
-    async updateHearingStatus(status: UpdateBookingStatus, reason: string) {
-        const updateBookingStatus = new UpdateBookingStatusRequest();
-        updateBookingStatus.status = status;
-        updateBookingStatus.updated_by = '';
-        updateBookingStatus.cancel_reason = reason;
+    async cancelMultiDayBooking(cancelReason: string) {
+        await this.cancelBooking(cancelReason, true);
+    }
+
+    async cancelBooking(cancelReason: string, isMultiDay: boolean) {
         this.showConfirming = true;
-
         try {
-            const updateBookingStatusResponse = await lastValueFrom(
-                this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
-            );
-
-            await this.updateHearingStatusDisplay(updateBookingStatusResponse, status);
-        } catch (error) {
-            if (status === UpdateBookingStatus.Cancelled) {
-                this.showCancelBooking = false;
-                this.showConfirming = false;
-                this.showCancelBookingFailed = true;
-                this.logger.error(`${this.loggerPrefix} Error to update to Cancelled hearing status`, error);
-                return;
+            let updateBookingStatusResponse: UpdateBookingStatusResponse;
+            if (isMultiDay) {
+                updateBookingStatusResponse = await lastValueFrom(
+                    this.videoHearingService.cancelMultiDayBooking(this.hearingId, cancelReason, true)
+                );
+            } else {
+                updateBookingStatusResponse = await lastValueFrom(this.videoHearingService.cancelBooking(this.hearingId, cancelReason));
             }
-            this.errorHandler(error, status);
-            this.updateStatusHandler(UpdateBookingStatus.Failed);
+            await this.updateHearingStatusDisplay(updateBookingStatusResponse, BookingStatus.Cancelled);
+        } catch (error) {
+            this.showCancelBooking = false;
+            this.showConfirming = false;
+            this.showCancelBookingFailed = true;
+            this.logger.error(`${this.loggerPrefix} Error to update to Cancelled hearing status`, error);
+            return;
         }
     }
 
-    async updateHearingStatusDisplay(statusResponse: UpdateBookingStatusResponse, status: UpdateBookingStatus) {
+    async updateHearingStatusDisplay(statusResponse: UpdateBookingStatusResponse, status: BookingStatus) {
         if (statusResponse.success) {
             this.telephoneConferenceId = statusResponse.telephone_conference_id;
             this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
@@ -244,7 +256,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.booking.isConfirmed = true;
         } else {
             this.showConfirmingFailed = true;
-            this.updateStatusHandler(UpdateBookingStatus.Failed);
+            this.updateStatusHandler(BookingStatus.Failed);
         }
 
         this.showConfirming = false;
@@ -252,12 +264,12 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: statusResponse });
     }
 
-    updateStatusHandler(status: UpdateBookingStatus) {
-        if (status === UpdateBookingStatus.Cancelled) {
+    updateStatusHandler(status: BookingStatus) {
+        if (status === BookingStatus.Cancelled) {
             this.showCancelBooking = false;
         }
         this.persistStatus(status);
-        if (status === UpdateBookingStatus.Failed) {
+        if (status === BookingStatus.Failed) {
             this.hearing.Status = status;
             return;
         }
@@ -277,8 +289,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    errorHandler(error, status: UpdateBookingStatus) {
-        if (status === UpdateBookingStatus.Cancelled) {
+    errorHandler(error, status: BookingStatus) {
+        if (status === BookingStatus.Cancelled) {
             this.showCancelBooking = false;
         }
         this.showConfirmingFailed = true;
@@ -286,7 +298,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.logger.error(`${this.loggerPrefix} Error update hearing status`, error);
     }
 
-    persistStatus(status: UpdateBookingStatus) {
+    persistStatus(status: BookingStatus) {
         if (!this.booking) {
             this.booking = this.videoHearingService.getCurrentRequest();
         }
@@ -309,6 +321,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+
+        this.destroyed$.next();
+        this.destroyed$.complete();
     }
 
     async getConferencePhoneDetails() {
@@ -346,5 +361,9 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
 
     get judgeExists(): boolean {
         return this.judges.length > 0 || this.judicialMembers.some(j => j.isJudge);
+    }
+
+    isMultiDayUpdateAvailable(): boolean {
+        return this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing;
     }
 }

@@ -3,6 +3,8 @@ import { HearingModel } from 'src/app/common/model/hearing.model';
 import { BookingPersistService } from './bookings-persist.service';
 import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
+import { ParticipantModel } from '../common/model/participant.model';
+import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 
 function MockGroupedBookings(hearings: BookingsDetailsModel[]): BookingsListModel {
     const model = new BookingsListModel(new Date());
@@ -34,6 +36,38 @@ function MockBookedHearing(): BookingsDetailsModel {
         '',
         ''
     );
+}
+
+function MockBookedMultiDayHearingDay1(): BookingsDetailsModel {
+    const hearing = MockBookedHearing();
+    hearing.GroupId = '123';
+    hearing.HearingCaseName = 'Day 1 of 2';
+    return hearing;
+}
+
+function MockBookedMultiDayHearingDay2(): BookingsDetailsModel {
+    const hearing = MockBookedHearing();
+    hearing.GroupId = '123';
+    hearing.HearingCaseName = 'Day 2 of 2';
+    return hearing;
+}
+
+function MockBookedMultiDayHearing(): BookingsDetailsModel[] {
+    const groupId = '123';
+
+    const day1Hearing = MockBookedHearing();
+    day1Hearing.GroupId = groupId;
+    day1Hearing.HearingCaseName = 'Day 1 of 2';
+
+    const day2Hearing = MockBookedHearing();
+    day2Hearing.GroupId = groupId;
+    day2Hearing.HearingCaseName = 'Day 2 of 2';
+
+    const hearingsInGroup = [day1Hearing, day2Hearing];
+    day1Hearing.HearingsInGroup = hearingsInGroup;
+    day2Hearing.HearingsInGroup = hearingsInGroup;
+
+    return [day1Hearing, day2Hearing];
 }
 
 describe('BookingsPersistService', () => {
@@ -86,6 +120,119 @@ describe('BookingsPersistService', () => {
 
             const updatedHearing = service.bookingList[0].BookingsDetails[0];
             expect(updatedHearing.HearingCaseName).toBe(updatedCase.name);
+        });
+
+        it('should update all hearing model values for selected multi-day hearing', () => {
+            const multiDays = MockBookedMultiDayHearing();
+            service.bookingList = [MockGroupedBookings(multiDays)];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            // Simulate an update to the scheduled duration for all days in the multi day hearing
+            const newScheduledDurationValue = 180;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            hearing.scheduled_duration = newScheduledDurationValue;
+            hearing.hearingsInGroup = multiDays.map(x => {
+                const hearingInGroup = new HearingModel();
+                hearingInGroup.hearing_id = x.HearingId;
+                hearingInGroup.scheduled_duration = newScheduledDurationValue;
+                return hearingInGroup;
+            });
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearings = service.bookingList[0].BookingsDetails;
+            updatedHearings.forEach(h => {
+                expect(h.Duration).toBe(newScheduledDurationValue);
+            });
+        });
+
+        it('should update judge name for selected hearing', () => {
+            service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            const participants: ParticipantModel[] = [];
+            const judge = new ParticipantModel({ is_judge: true, display_name: 'Judge Test' });
+            participants.push(judge);
+            hearing.participants = participants;
+
+            const updatedCase = new CaseModel();
+            updatedCase.name = 'updated case';
+            hearing.cases = [updatedCase];
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearing = service.bookingList[0].BookingsDetails[0];
+            expect(updatedHearing.JudgeName).toBe(judge.display_name);
+        });
+
+        it('should update judge name for selected hearing with judiciary participant judge', () => {
+            service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            const judiciaryParticipants: JudicialMemberDto[] = [];
+            const judge = new JudicialMemberDto('Judge', 'One', 'Judge One', 'email', 'telephone', 'personalCode', false);
+            judge.displayName = 'Judge Test';
+            judge.roleCode = 'Judge';
+            judiciaryParticipants.push(judge);
+            hearing.judiciaryParticipants = judiciaryParticipants;
+
+            const updatedCase = new CaseModel();
+            updatedCase.name = 'updated case';
+            hearing.cases = [updatedCase];
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearing = service.bookingList[0].BookingsDetails[0];
+            expect(updatedHearing.JudgeName).toBe(judge.displayName);
+        });
+
+        it('should update judge name for selected hearing with judiciary participants but no judge', () => {
+            service.bookingList = [MockGroupedBookings([MockBookedHearing(), MockBookedHearing()])];
+
+            service.selectedGroupIndex = 0;
+            service.selectedItemIndex = 0;
+
+            const hearing = new HearingModel();
+            hearing.court_id = 1;
+            hearing.court_room = 'court room';
+            hearing.court_name = 'court';
+            const judiciaryParticipants: JudicialMemberDto[] = [];
+            const participant = new JudicialMemberDto('Panel', 'Member', 'Panel Member', 'email', 'telephone', 'personalCode', false);
+            participant.displayName = 'Panel Member';
+            participant.roleCode = 'PanelMember';
+            judiciaryParticipants.push(participant);
+            hearing.judiciaryParticipants = judiciaryParticipants;
+
+            const updatedCase = new CaseModel();
+            updatedCase.name = 'updated case';
+            hearing.cases = [updatedCase];
+
+            hearing.hearing_id = service.bookingList[0].BookingsDetails[0].HearingId;
+            service.updateBooking(hearing);
+
+            const updatedHearing = service.bookingList[0].BookingsDetails[0];
+            expect(updatedHearing.JudgeName).toBe('');
         });
     });
 

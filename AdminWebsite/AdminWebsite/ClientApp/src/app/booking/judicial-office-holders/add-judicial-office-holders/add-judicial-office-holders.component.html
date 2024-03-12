@@ -44,7 +44,9 @@
       </div>
 
       <div class="vh-top govuk-grid-column-full">
-        <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">Next</button>
+        <button id="nextButtonToParticipants" class="govuk-button" data-module="govuk-button" (click)="continueToNextStep()">
+          {{ judiciaryMembersAdded ? 'Next' : 'Continue Without Judiciary' }}
+        </button>
       </div>
     </div>
   </div>

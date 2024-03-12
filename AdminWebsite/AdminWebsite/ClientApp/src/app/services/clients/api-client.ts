@@ -1311,13 +1311,126 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * Update the hearing status.
-     * @param hearingId The hearing id
+     * Edit a multi-day hearing
+     * @param hearingId The id of the hearing
+     * @param body (optional) Hearing Request object for edit operation
+     * @return Success
+     */
+    editMultiDayHearing(hearingId: string, body: EditMultiDayHearingRequest | undefined): Observable<HearingDetailsResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/multi-day';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json',
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('put', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processEditMultiDayHearing(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processEditMultiDayHearing(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<HearingDetailsResponse>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<HearingDetailsResponse>;
+                })
+            );
+    }
+
+    protected processEditMultiDayHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = HearingDetailsResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ValidationProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @param body (optional)
      * @return Success
      */
-    updateBookingStatus(hearingId: string, body: UpdateBookingStatusRequest | undefined): Observable<UpdateBookingStatusResponse> {
-        let url_ = this.baseUrl + '/api/hearings/{hearingId}';
+    cancelMultiDayHearing(hearingId: string, body: CancelMultiDayHearingRequest | undefined): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/multi-day/cancel';
         if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
         url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
         url_ = url_.replace(/[?&]$/, '');
@@ -1342,14 +1455,14 @@ export class BHClient extends ApiClientBase {
             )
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processUpdateBookingStatus(response_);
+                    return this.processCancelMultiDayHearing(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processUpdateBookingStatus(response_ as any);
+                            return this.processCancelMultiDayHearing(response_ as any);
                         } catch (e) {
                             return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
                         }
@@ -1358,7 +1471,7 @@ export class BHClient extends ApiClientBase {
             );
     }
 
-    protected processUpdateBookingStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+    protected processCancelMultiDayHearing(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -1581,6 +1694,119 @@ export class BHClient extends ApiClientBase {
     }
 
     protected processGetHearingConferenceStatus(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = UpdateBookingStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result404: any = null;
+                    let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result404 = ProblemDetails.fromJS(resultData404);
+                    return throwException('Not Found', status, _responseText, _headers, result404);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Cancel the booking
+     * @param hearingId The hearing id
+     * @param reason (optional) The reason the hearing has been cancelled
+     * @return Success
+     */
+    cancelBooking(hearingId: string, reason: string | undefined): Observable<UpdateBookingStatusResponse> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/cancel?';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        if (reason === null) throw new Error("The parameter 'reason' cannot be null.");
+        else if (reason !== undefined) url_ += 'reason=' + encodeURIComponent('' + reason) + '&';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('patch', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processCancelBooking(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processCancelBooking(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<UpdateBookingStatusResponse>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<UpdateBookingStatusResponse>;
+                })
+            );
+    }
+
+    protected processCancelBooking(response: HttpResponseBase): Observable<UpdateBookingStatusResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse
@@ -5571,6 +5797,49 @@ export interface IBookingSearchRequest {
     noAllocated?: boolean;
 }
 
+export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingRequest {
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
+    /** The reason for cancelling the video hearing */
+    cancel_reason?: string | undefined;
+
+    constructor(data?: ICancelMultiDayHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.update_future_days = _data['update_future_days'];
+            this.cancel_reason = _data['cancel_reason'];
+        }
+    }
+
+    static fromJS(data: any): CancelMultiDayHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelMultiDayHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['update_future_days'] = this.update_future_days;
+        data['cancel_reason'] = this.cancel_reason;
+        return data;
+    }
+}
+
+export interface ICancelMultiDayHearingRequest {
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
+    /** The reason for cancelling the video hearing */
+    cancel_reason?: string | undefined;
+}
+
 export class CaseRequest implements ICaseRequest {
     number?: string | undefined;
     name?: string | undefined;
@@ -5612,6 +5881,80 @@ export interface ICaseRequest {
     number?: string | undefined;
     name?: string | undefined;
     is_lead_case?: boolean;
+}
+
+export class EditMultiDayHearingRequest implements IEditMultiDayHearingRequest {
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
+    /** List of endpoints for the hearing */
+    endpoints?: EditEndpointRequest[] | undefined;
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
+
+    constructor(data?: IEditMultiDayHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['participants'])) {
+                this.participants = [] as any;
+                for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['judiciary_participants'])) {
+                this.judiciary_participants = [] as any;
+                for (let item of _data['judiciary_participants'])
+                    this.judiciary_participants!.push(JudiciaryParticipantRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['endpoints'])) {
+                this.endpoints = [] as any;
+                for (let item of _data['endpoints']) this.endpoints!.push(EditEndpointRequest.fromJS(item));
+            }
+            this.update_future_days = _data['update_future_days'];
+        }
+    }
+
+    static fromJS(data: any): EditMultiDayHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditMultiDayHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.participants)) {
+            data['participants'] = [];
+            for (let item of this.participants) data['participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.judiciary_participants)) {
+            data['judiciary_participants'] = [];
+            for (let item of this.judiciary_participants) data['judiciary_participants'].push(item.toJSON());
+        }
+        if (Array.isArray(this.endpoints)) {
+            data['endpoints'] = [];
+            for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
+        }
+        data['update_future_days'] = this.update_future_days;
+        return data;
+    }
+}
+
+export interface IEditMultiDayHearingRequest {
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** List of judiciary participants in hearing */
+    judiciary_participants?: JudiciaryParticipantRequest[] | undefined;
+    /** List of endpoints for the hearing */
+    endpoints?: EditEndpointRequest[] | undefined;
+    /** When true, applies updates to future days of the multi day hearing as well */
+    update_future_days?: boolean;
 }
 
 export class EndpointRequest implements IEndpointRequest {
@@ -5657,6 +6000,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
     personal_code?: string | undefined;
     role?: string | undefined;
     display_name?: string | undefined;
+    optional_contact_telephone?: string | undefined;
+    optional_contact_email?: string | undefined;
 
     constructor(data?: IJudiciaryParticipantRequest) {
         if (data) {
@@ -5671,6 +6016,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
             this.personal_code = _data['personal_code'];
             this.role = _data['role'];
             this.display_name = _data['display_name'];
+            this.optional_contact_telephone = _data['optional_contact_telephone'];
+            this.optional_contact_email = _data['optional_contact_email'];
         }
     }
 
@@ -5686,6 +6033,8 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
         data['personal_code'] = this.personal_code;
         data['role'] = this.role;
         data['display_name'] = this.display_name;
+        data['optional_contact_telephone'] = this.optional_contact_telephone;
+        data['optional_contact_email'] = this.optional_contact_email;
         return data;
     }
 }
@@ -5694,6 +6043,8 @@ export interface IJudiciaryParticipantRequest {
     personal_code?: string | undefined;
     role?: string | undefined;
     display_name?: string | undefined;
+    optional_contact_telephone?: string | undefined;
+    optional_contact_email?: string | undefined;
 }
 
 export class LinkedParticipantRequest implements ILinkedParticipantRequest {
@@ -5948,6 +6299,67 @@ export interface IAllocationHearingsResponse {
     has_non_availability_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
+}
+
+export class AzureConfiguration implements IAzureConfiguration {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
+
+    constructor(data?: IAzureConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenant_id = _data['tenant_id'];
+            this.client_id = _data['client_id'];
+            this.resource_id = _data['resource_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
+        }
+    }
+
+    static fromJS(data: any): AzureConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new AzureConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['tenant_id'] = this.tenant_id;
+        data['client_id'] = this.client_id;
+        data['resource_id'] = this.resource_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
+        return data;
+    }
+}
+
+export interface IAzureConfiguration {
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
 }
 
 export class BookingsByDateResponse implements IBookingsByDateResponse {
@@ -6220,16 +6632,6 @@ export interface ICaseResponse {
 
 /** Configuration to initialise the UI application */
 export class ClientSettingsResponse implements IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
-    resource_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
     /** The Application Insights Connection String */
     connection_string?: string | undefined;
     /** The reform email */
@@ -6244,6 +6646,17 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     readonly launch_darkly_client_id?: string | undefined;
+    reform_tenant_config?: AzureConfiguration;
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -6255,11 +6668,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
 
     init(_data?: any) {
         if (_data) {
-            this.tenant_id = _data['tenant_id'];
-            this.client_id = _data['client_id'];
-            this.resource_id = _data['resource_id'];
-            this.redirect_uri = _data['redirect_uri'];
-            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
             this.connection_string = _data['connection_string'];
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
@@ -6267,6 +6675,14 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.join_by_phone_from_date = _data['join_by_phone_from_date'];
             this.video_web_url = _data['video_web_url'];
             (<any>this).launch_darkly_client_id = _data['launch_darkly_client_id'];
+            this.reform_tenant_config = _data['reform_tenant_config']
+                ? AzureConfiguration.fromJS(_data['reform_tenant_config'])
+                : <any>undefined;
+            this.tenant_id = _data['tenant_id'];
+            this.client_id = _data['client_id'];
+            this.resource_id = _data['resource_id'];
+            this.redirect_uri = _data['redirect_uri'];
+            this.post_logout_redirect_uri = _data['post_logout_redirect_uri'];
         }
     }
 
@@ -6279,11 +6695,6 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['tenant_id'] = this.tenant_id;
-        data['client_id'] = this.client_id;
-        data['resource_id'] = this.resource_id;
-        data['redirect_uri'] = this.redirect_uri;
-        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
         data['connection_string'] = this.connection_string;
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
@@ -6291,22 +6702,18 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         data['video_web_url'] = this.video_web_url;
         data['launch_darkly_client_id'] = this.launch_darkly_client_id;
+        data['reform_tenant_config'] = this.reform_tenant_config ? this.reform_tenant_config.toJSON() : <any>undefined;
+        data['tenant_id'] = this.tenant_id;
+        data['client_id'] = this.client_id;
+        data['resource_id'] = this.resource_id;
+        data['redirect_uri'] = this.redirect_uri;
+        data['post_logout_redirect_uri'] = this.post_logout_redirect_uri;
         return data;
     }
 }
 
 /** Configuration to initialise the UI application */
 export interface IClientSettingsResponse {
-    /** The Azure Tenant Id */
-    tenant_id?: string | undefined;
-    /** The UI Client Id */
-    client_id?: string | undefined;
-    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
-    resource_id?: string | undefined;
-    /** The Uri to redirect back to after a successful login */
-    redirect_uri?: string | undefined;
-    /** The Uri to redirect back to after a successful logout */
-    post_logout_redirect_uri?: string | undefined;
     /** The Application Insights Connection String */
     connection_string?: string | undefined;
     /** The reform email */
@@ -6321,6 +6728,17 @@ export interface IClientSettingsResponse {
     video_web_url?: string | undefined;
     /** The LaunchDarkly Client ID */
     launch_darkly_client_id?: string | undefined;
+    reform_tenant_config?: AzureConfiguration;
+    /** The Azure Tenant Id */
+    tenant_id?: string | undefined;
+    /** The UI Client Id */
+    client_id?: string | undefined;
+    /** The UI Resource Id, can be used as an alternative id to ClientId for authentication */
+    resource_id?: string | undefined;
+    /** The Uri to redirect back to after a successful login */
+    redirect_uri?: string | undefined;
+    /** The Uri to redirect back to after a successful logout */
+    post_logout_redirect_uri?: string | undefined;
 }
 
 export class DateForUnallocatedHearings implements IDateForUnallocatedHearings {
@@ -6451,6 +6869,9 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    /** Scheduled datetime of the last day of the multi day hearing, if applicable */
+    multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
+    hearings_in_group?: HearingDetailsResponse[] | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -6505,6 +6926,13 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
             this.group_id = _data['group_id'];
+            this.multi_day_hearing_last_day_scheduled_date_time = _data['multi_day_hearing_last_day_scheduled_date_time']
+                ? new Date(_data['multi_day_hearing_last_day_scheduled_date_time'].toString())
+                : <any>undefined;
+            if (Array.isArray(_data['hearings_in_group'])) {
+                this.hearings_in_group = [] as any;
+                for (let item of _data['hearings_in_group']) this.hearings_in_group!.push(HearingDetailsResponse.fromJS(item));
+            }
         }
     }
 
@@ -6558,6 +6986,13 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
         data['group_id'] = this.group_id;
+        data['multi_day_hearing_last_day_scheduled_date_time'] = this.multi_day_hearing_last_day_scheduled_date_time
+            ? this.multi_day_hearing_last_day_scheduled_date_time.toISOString()
+            : <any>undefined;
+        if (Array.isArray(this.hearings_in_group)) {
+            data['hearings_in_group'] = [];
+            for (let item of this.hearings_in_group) data['hearings_in_group'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -6596,6 +7031,9 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
     group_id?: string | undefined;
+    /** Scheduled datetime of the last day of the multi day hearing, if applicable */
+    multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
+    hearings_in_group?: HearingDetailsResponse[] | undefined;
 }
 
 export class HearingRoleResponse implements IHearingRoleResponse {
@@ -6790,6 +7228,12 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
     role_code?: string | undefined;
     /** The judiciary person's display name */
     display_name?: string | undefined;
+    /** Is a generic account, with custom contact details */
+    is_generic?: boolean;
+    /** Is an optional contact number for generic accounts */
+    optional_contact_email?: string | undefined;
+    /** Is an optional contact number for generic accounts */
+    optional_contact_telephone?: string | undefined;
 
     constructor(data?: IJudiciaryParticipantResponse) {
         if (data) {
@@ -6810,6 +7254,9 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
             this.personal_code = _data['personal_code'];
             this.role_code = _data['role_code'];
             this.display_name = _data['display_name'];
+            this.is_generic = _data['is_generic'];
+            this.optional_contact_email = _data['optional_contact_email'];
+            this.optional_contact_telephone = _data['optional_contact_telephone'];
         }
     }
 
@@ -6831,6 +7278,9 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
         data['personal_code'] = this.personal_code;
         data['role_code'] = this.role_code;
         data['display_name'] = this.display_name;
+        data['is_generic'] = this.is_generic;
+        data['optional_contact_email'] = this.optional_contact_email;
+        data['optional_contact_telephone'] = this.optional_contact_telephone;
         return data;
     }
 }
@@ -6854,6 +7304,12 @@ export interface IJudiciaryParticipantResponse {
     role_code?: string | undefined;
     /** The judiciary person's display name */
     display_name?: string | undefined;
+    /** Is a generic account, with custom contact details */
+    is_generic?: boolean;
+    /** Is an optional contact number for generic accounts */
+    optional_contact_email?: string | undefined;
+    /** Is an optional contact number for generic accounts */
+    optional_contact_telephone?: string | undefined;
 }
 
 export class JudiciaryPerson implements IJudiciaryPerson {
@@ -6871,6 +7327,8 @@ export class JudiciaryPerson implements IJudiciaryPerson {
     work_phone?: string | undefined;
     /** The Judiciary person's unique personal code */
     personal_code?: string | undefined;
+    /** Is a generic account */
+    is_generic?: boolean;
 
     constructor(data?: IJudiciaryPerson) {
         if (data) {
@@ -6889,6 +7347,7 @@ export class JudiciaryPerson implements IJudiciaryPerson {
             this.email = _data['email'];
             this.work_phone = _data['work_phone'];
             this.personal_code = _data['personal_code'];
+            this.is_generic = _data['is_generic'];
         }
     }
 
@@ -6908,6 +7367,7 @@ export class JudiciaryPerson implements IJudiciaryPerson {
         data['email'] = this.email;
         data['work_phone'] = this.work_phone;
         data['personal_code'] = this.personal_code;
+        data['is_generic'] = this.is_generic;
         return data;
     }
 }
@@ -6927,6 +7387,8 @@ export interface IJudiciaryPerson {
     work_phone?: string | undefined;
     /** The Judiciary person's unique personal code */
     personal_code?: string | undefined;
+    /** Is a generic account */
+    is_generic?: boolean;
 }
 
 export class LinkedParticipantResponse implements ILinkedParticipantResponse {
@@ -8065,6 +8527,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
     end_date?: Date;
     hearing_dates?: Date[] | undefined;
     is_individual_dates?: boolean;
+    scheduled_duration?: number;
 
     constructor(data?: IMultiHearingRequest) {
         if (data) {
@@ -8083,6 +8546,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
                 for (let item of _data['hearing_dates']) this.hearing_dates!.push(new Date(item));
             }
             this.is_individual_dates = _data['is_individual_dates'];
+            this.scheduled_duration = _data['scheduled_duration'];
         }
     }
 
@@ -8102,6 +8566,7 @@ export class MultiHearingRequest implements IMultiHearingRequest {
             for (let item of this.hearing_dates) data['hearing_dates'].push(item.toISOString());
         }
         data['is_individual_dates'] = this.is_individual_dates;
+        data['scheduled_duration'] = this.scheduled_duration;
         return data;
     }
 }
@@ -8111,6 +8576,7 @@ export interface IMultiHearingRequest {
     end_date?: Date;
     hearing_dates?: Date[] | undefined;
     is_individual_dates?: boolean;
+    scheduled_duration?: number;
 }
 
 export class PhoneConferenceResponse implements IPhoneConferenceResponse {
@@ -8355,13 +8821,6 @@ export enum JusticeUserRole {
     VhTeamLead = 'VhTeamLead'
 }
 
-export enum UpdateBookingStatus {
-    Booked = 'Booked',
-    Created = 'Created',
-    Cancelled = 'Cancelled',
-    Failed = 'Failed'
-}
-
 export class NonWorkingHours implements INonWorkingHours {
     id?: number;
     start_time?: Date;
@@ -8442,49 +8901,6 @@ export class RestoreJusticeUserRequest implements IRestoreJusticeUserRequest {
 export interface IRestoreJusticeUserRequest {
     id?: string;
     username?: string | undefined;
-}
-
-export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
-
-    constructor(data?: IUpdateBookingStatusRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.updated_by = _data['updated_by'];
-            this.status = _data['status'];
-            this.cancel_reason = _data['cancel_reason'];
-        }
-    }
-
-    static fromJS(data: any): UpdateBookingStatusRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateBookingStatusRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['updated_by'] = this.updated_by;
-        data['status'] = this.status;
-        data['cancel_reason'] = this.cancel_reason;
-        return data;
-    }
-}
-
-export interface IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
 }
 
 export class UpdateHearingAllocationToCsoRequest implements IUpdateHearingAllocationToCsoRequest {

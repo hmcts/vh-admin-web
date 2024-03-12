@@ -10,11 +10,6 @@ import { BookingModule } from './booking/booking.module';
 import { BookingsListModule } from './bookings-list/bookings-list.module';
 import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './security/auth.guard';
-import { AdminGuard } from './security/admin.guard';
-import { LastMinuteAmendmentsGuard } from './security/last-minute-amendments.guard';
-import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
-import { WorkAllocationFeatureGuard } from './security/work-allocation-feature.guard';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { BH_API_BASE_URL } from './services/clients/api-client';
@@ -41,8 +36,15 @@ import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 import { HomeComponent } from './home/home.component';
-import { ManageTeamFeatureGuard } from './security/manage-team-feature.guard';
+import { WorkAllocationFeatureGuard } from './security/guards/work-allocation-feature.guard';
+import { VhOfficerAdminGuard } from './security/guards/vh-officer-admin.guard';
+import { LastMinuteAmendmentsGuard } from './security/guards/last-minute-amendments.guard';
+import { AdminGuard } from './security/guards/admin.guard';
+import { AuthGuard } from './security/guards/auth.guard';
+import { ReformLoginComponent } from './security/reform-login.component';
 import { AudioSearchGuard } from './security/audio-search.guard';
+import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
+import { EditMultiDayBookingGuard } from './security/guards/edit-multi-day-booking.guard';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -53,6 +55,7 @@ export function loadConfig(configService: ConfigService) {
         AppComponent,
         DashboardComponent,
         LoginComponent,
+        ReformLoginComponent,
         LogoutComponent,
         UnauthorisedComponent,
         ErrorComponent,
@@ -101,7 +104,8 @@ export function loadConfig(configService: ConfigService) {
         WindowRef,
         WorkAllocationFeatureGuard,
         ManageTeamFeatureGuard,
-        AudioSearchGuard
+        AudioSearchGuard,
+        EditMultiDayBookingGuard
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]

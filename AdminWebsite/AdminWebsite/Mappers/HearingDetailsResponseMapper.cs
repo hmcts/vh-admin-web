@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
 using V1 = BookingsApi.Contract.V1.Responses;
@@ -23,9 +25,7 @@ public static class HearingDetailsResponseMapper
                 Number = e.Number
             }).ToList(),
             Participants = hearingDetails.Participants?.Map(),
-            TelephoneParticipants = hearingDetails.TelephoneParticipants?
-                .Select(t => t.Map())
-                .ToList(),
+            TelephoneParticipants = new List<TelephoneParticipantResponse>(),
             HearingRoomName = hearingDetails.HearingRoomName,
             OtherInformation = hearingDetails.OtherInformation,
             CreatedDate = hearingDetails.CreatedDate,
@@ -38,6 +38,7 @@ public static class HearingDetailsResponseMapper
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),
+            JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId
         };
     }
@@ -71,9 +72,45 @@ public static class HearingDetailsResponseMapper
             Status = (Contracts.Enums.BookingStatus)hearingDetails.Status,
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
-            Endpoints = hearingDetails.Endpoints.Select(e => e.Map()).ToList(),
+            Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),
             JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
             GroupId = hearingDetails.GroupId
         };
     }
+
+    public static HearingDetailsResponse Map(this V1.HearingDetailsResponse hearingDetails, ICollection<V1.HearingDetailsResponse> hearingsInGroup)
+    {
+        var response = hearingDetails.Map();
+        if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
+        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        response.HearingsInGroup = hearingsInGroup
+            .OrderBy(h => h.ScheduledDateTime)
+            .Select(h => h.Map())
+            .ToList();
+        return response;
+    }
+    
+    public static HearingDetailsResponse Map(this V2.HearingDetailsResponseV2 hearingDetails, ICollection<V2.HearingDetailsResponseV2> hearingsInGroup)
+    {
+        var response = hearingDetails.Map();
+        if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
+        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        response.HearingsInGroup = hearingsInGroup
+            .OrderBy(h => h.ScheduledDateTime)
+            .Select(h => h.Map())
+            .ToList();
+        return response;
+    }
+
+    private static DateTime? ScheduledDateTimeOfLastHearing(this IEnumerable<V2.HearingDetailsResponseV2> hearingsInGroup) =>
+        hearingsInGroup
+            .OrderBy(x => x.ScheduledDateTime)
+            .Last()
+            .ScheduledDateTime;
+    
+    private static DateTime? ScheduledDateTimeOfLastHearing(this IEnumerable<V1.HearingDetailsResponse> hearingsInGroup) =>
+        hearingsInGroup
+            .OrderBy(x => x.ScheduledDateTime)
+            .Last()
+            .ScheduledDateTime;
 }

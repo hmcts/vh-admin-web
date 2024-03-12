@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;

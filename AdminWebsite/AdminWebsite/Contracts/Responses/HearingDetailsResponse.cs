@@ -55,4 +55,9 @@ public class HearingDetailsResponse
     public string CancelReason { get; set; }
     public List<EndpointResponse> Endpoints { get; set; }
     public Guid? GroupId { get; set; }
+    /// <summary>
+    /// Scheduled datetime of the last day of the multi day hearing, if applicable
+    /// </summary>
+    public DateTime? MultiDayHearingLastDayScheduledDateTime { get; set; }
+    public List<HearingDetailsResponse> HearingsInGroup { get; set; }
 }

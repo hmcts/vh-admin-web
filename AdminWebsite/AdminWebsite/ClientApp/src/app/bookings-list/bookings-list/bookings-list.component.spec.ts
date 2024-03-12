@@ -562,6 +562,8 @@ export class BookingPersistServiceSpy {
             '1234567'
         );
         booking.IsStartTimeChanged = true;
+        booking.GroupId = '123';
+        booking.HearingsInGroup = [booking, booking];
         return booking;
     }
     resetAll() {}

@@ -13,7 +13,9 @@ import {
     BookingStatus,
     AllocatedCsoResponse,
     JusticeUserResponse,
-    JudiciaryParticipantResponse
+    JudiciaryParticipantResponse,
+    EditMultiDayHearingRequest,
+    CancelMultiDayHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -40,7 +42,9 @@ describe('Video hearing service', () => {
             'getUserList',
             'getAllocationForHearing',
             'rebookHearing',
-            'getHearingRoles'
+            'getHearingRoles',
+            'editMultiDayHearing',
+            'cancelMultiDayHearing'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -186,51 +190,85 @@ describe('Video hearing service', () => {
         expect(request.audio_recording_required).toBe(true);
     });
 
-    it('should map HearingDetailsResponse to HearingModel', () => {
-        const date = Date.now();
-        const caseModel = new CaseResponse();
-        caseModel.name = 'case1';
-        caseModel.number = 'Number 1';
-        const model = new HearingDetailsResponse();
-        model.id = '232423423jsn';
-        model.case_type_name = 'Tax';
-        model.hearing_type_name = 'hearing type';
-        model.scheduled_date_time = new Date(date);
-        model.scheduled_duration = 30;
-        model.hearing_venue_name = 'court address';
-        model.hearing_room_name = 'room 09';
-        model.other_information = 'note';
-        model.cases = [caseModel];
-        model.participants = [];
-        model.judiciary_participants = [
-            new JudiciaryParticipantResponse({
-                title: 'Mr',
-                first_name: 'Dan',
-                last_name: 'Smith',
-                display_name: 'Judge Dan Smith',
-                email: 'joh@judge.com',
-                full_name: 'Dan Smith',
-                personal_code: '1234',
-                work_phone: '123123123',
-                role_code: 'Judge'
-            })
-        ];
-        model.audio_recording_required = true;
+    describe('mapHearingDetailsResponseToHearingModel', () => {
+        it('should map HearingDetailsResponse to HearingModel', () => {
+            const model = createHearingDetailsResponse();
 
-        const request = service.mapHearingDetailsResponseToHearingModel(model);
-        expect(request.hearing_id).toEqual(model.id);
-        expect(request.case_type).toBe('Tax');
-        expect(request.court_room).toBe('room 09');
-        expect(request.court_name).toBe('court address');
-        expect(request.other_information).toBe('note');
-        expect(request.cases).toBeTruthy();
-        expect(request.cases[0].name).toBe('case1');
-        expect(request.cases[0].number).toBe('Number 1');
-        expect(request.scheduled_date_time).toEqual(new Date(date));
-        expect(request.scheduled_duration).toBe(30);
-        expect(request.audio_recording_required).toBeTruthy();
-        expect(request.judiciaryParticipants[0]).toBeTruthy();
-        expect(request.judiciaryParticipants[0].displayName).toBe('Judge Dan Smith');
+            const request = service.mapHearingDetailsResponseToHearingModel(model);
+            expect(request.hearing_id).toEqual(model.id);
+            expect(request.case_type).toBe('Tax');
+            expect(request.court_room).toBe('room 09');
+            expect(request.court_name).toBe('court address');
+            expect(request.other_information).toBe('note');
+            expect(request.cases).toBeTruthy();
+            expect(request.cases[0].name).toBe('case1');
+            expect(request.cases[0].number).toBe('Number 1');
+            expect(request.scheduled_date_time).toEqual(model.scheduled_date_time);
+            expect(request.scheduled_duration).toBe(30);
+            expect(request.audio_recording_required).toBeTruthy();
+            expect(request.judiciaryParticipants[0]).toBeTruthy();
+            expect(request.judiciaryParticipants[0].displayName).toBe('Judge Dan Smith');
+            expect(request.isMultiDay).toBeFalsy();
+            expect(request.multiDayHearingLastDayScheduledDateTime).toBeTruthy();
+        });
+
+        it('should map HearingDetailsResponse to HearingModel with non-null group id', () => {
+            const model = createHearingDetailsResponse();
+            model.group_id = '1234';
+
+            const request = service.mapHearingDetailsResponseToHearingModel(model);
+            expect(request.isMultiDay).toBeTruthy();
+        });
+
+        it('should map HearingDetailsResponse to HearingModel with non-null hearings in group', () => {
+            const hearingInGroup = createHearingDetailsResponse();
+            hearingInGroup.group_id = '1234';
+            hearingInGroup.created_date = new Date();
+            hearingInGroup.updated_date = new Date();
+            const model = createHearingDetailsResponse();
+            model.group_id = '1234';
+            model.hearings_in_group = [hearingInGroup];
+            const expectedMappedHearingInGroup = service.mapHearingDetailsResponseToHearingModel(hearingInGroup);
+
+            const request = service.mapHearingDetailsResponseToHearingModel(model);
+            expect(request.hearingsInGroup).toEqual([expectedMappedHearingInGroup]);
+        });
+
+        function createHearingDetailsResponse() {
+            const date = Date.now();
+            const caseModel = new CaseResponse();
+            caseModel.name = 'case1';
+            caseModel.number = 'Number 1';
+            const model = new HearingDetailsResponse();
+            model.id = '232423423jsn';
+            model.case_type_name = 'Tax';
+            model.hearing_type_name = 'hearing type';
+            model.scheduled_date_time = new Date(date);
+            model.scheduled_duration = 30;
+            model.hearing_venue_name = 'court address';
+            model.hearing_room_name = 'room 09';
+            model.other_information = 'note';
+            model.cases = [caseModel];
+            model.participants = [];
+            model.judiciary_participants = [
+                new JudiciaryParticipantResponse({
+                    title: 'Mr',
+                    first_name: 'Dan',
+                    last_name: 'Smith',
+                    display_name: 'Judge Dan Smith',
+                    email: 'joh@judge.com',
+                    full_name: 'Dan Smith',
+                    personal_code: '1234',
+                    work_phone: '123123123',
+                    role_code: 'Judge'
+                })
+            ];
+            model.audio_recording_required = true;
+            model.group_id = null;
+            model.multi_day_hearing_last_day_scheduled_date_time = new Date(date);
+
+            return model;
+        }
     });
 
     it('should map ParticipantResponse to ParticipantModel', () => {
@@ -246,7 +284,22 @@ describe('Video hearing service', () => {
         participant.telephone_number = '123123123';
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        participant.user_role_name = 'Individual';
         participants.push(participant);
+
+        const judgeParticipant = new ParticipantResponse();
+        judgeParticipant.title = 'Mr';
+        judgeParticipant.first_name = 'Judge';
+        judgeParticipant.middle_names = 'MiddleNames';
+        judgeParticipant.last_name = 'Test';
+        judgeParticipant.username = 'judge@hmcts.net';
+        judgeParticipant.display_name = 'Judge Test';
+        judgeParticipant.contact_email = 'judge@hmcts.net';
+        judgeParticipant.telephone_number = '123123123';
+        judgeParticipant.case_role_name = null;
+        judgeParticipant.hearing_role_name = null;
+        judgeParticipant.user_role_name = 'Judge';
+        participants.push(judgeParticipant);
 
         const model = service.mapParticipantResponseToParticipantModel(participants);
 
@@ -260,6 +313,19 @@ describe('Video hearing service', () => {
         expect(model[0].phone).toEqual(participant.telephone_number);
         expect(model[0].case_role_name).toEqual(participant.case_role_name);
         expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
+        expect(model[0].is_judge).toBeFalse();
+
+        expect(model[1].title).toEqual(judgeParticipant.title);
+        expect(model[1].first_name).toEqual(judgeParticipant.first_name);
+        expect(model[1].middle_names).toEqual(judgeParticipant.middle_names);
+        expect(model[1].last_name).toEqual(judgeParticipant.last_name);
+        expect(model[1].username).toEqual(judgeParticipant.username);
+        expect(model[1].display_name).toEqual(judgeParticipant.display_name);
+        expect(model[1].email).toEqual(judgeParticipant.contact_email);
+        expect(model[1].phone).toEqual(judgeParticipant.telephone_number);
+        expect(model[1].case_role_name).toEqual(judgeParticipant.case_role_name);
+        expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
+        expect(model[1].is_judge).toBeTrue();
     });
 
     it('should map ParticipantModel toParticipantResponse', () => {
@@ -638,7 +704,7 @@ describe('Video hearing service', () => {
     describe('addJudiciaryJudge', () => {
         it('should add a new judge when none exists', () => {
             // Arrange
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(-1);
 
             // Act
@@ -651,8 +717,8 @@ describe('Video hearing service', () => {
 
         it('should replace an existing judge', () => {
             // Arrange
-            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
-            const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678');
+            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+            const existingJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '5678', false);
             service['modelHearing'].judiciaryParticipants.push(existingJudge);
             spyOn(service['modelHearing'].judiciaryParticipants, 'findIndex').and.returnValue(0);
 
@@ -663,14 +729,31 @@ describe('Video hearing service', () => {
             expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
             expect(service['modelHearing'].judiciaryParticipants[0]).toBe(newJudge);
         });
+
+        it('should replace an existing judge, from participant list', () => {
+            // Arrange
+            const newJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+            const existingJudge = new ParticipantModel();
+            existingJudge.username = 'judge';
+            service['modelHearing'].participants.push(existingJudge);
+            spyOn(service['modelHearing'].participants, 'findIndex').and.returnValue(0);
+
+            // Act
+            service.addJudiciaryJudge(newJudge);
+
+            // Assert
+            expect(service['modelHearing'].judiciaryParticipants.length).toBe(1);
+            expect(service['modelHearing'].participants.length).toBe(0);
+            expect(service['modelHearing'].judiciaryParticipants[0]).toBe(newJudge);
+        });
     });
 
     describe('removeJudiciaryJudge', () => {
         it('should remove judge from judiciary participants', () => {
             // Arrange
-            const judge = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            const judge = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234', false);
             judge.roleCode = 'Judge';
-            const nonJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            const nonJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678', false);
             nonJudge.roleCode = 'PanelMember';
             service['modelHearing'].judiciaryParticipants = [judge, nonJudge];
 
@@ -684,9 +767,9 @@ describe('Video hearing service', () => {
 
         it('should not remove anything if judge is not present', () => {
             // Arrange
-            const nonJudge1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234');
+            const nonJudge1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test1@test.com', '1234567890', '1234', false);
             nonJudge1.roleCode = 'PanelMember';
-            const nonJudge2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678');
+            const nonJudge2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test2@test.com', '1234567890', '5678', false);
             nonJudge2.roleCode = 'PanelMember';
             service['modelHearing'].judiciaryParticipants = [nonJudge1, nonJudge2];
 
@@ -702,7 +785,7 @@ describe('Video hearing service', () => {
 
     describe('addJudiciaryPanelMember', () => {
         it('should add a new judiciary panel member', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
 
             service.addJudiciaryPanelMember(judicialMember);
 
@@ -711,9 +794,9 @@ describe('Video hearing service', () => {
         });
 
         it('should update an existing judiciary panel member', () => {
-            const judicialMember1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember1 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember1.displayName = 'Test User 1';
-            const judicialMember2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234');
+            const judicialMember2 = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
             judicialMember2.displayName = 'Test User 2';
 
             service.addJudiciaryPanelMember(judicialMember1);
@@ -728,7 +811,7 @@ describe('Video hearing service', () => {
         it('should remove judiciary participant from modelHearing', () => {
             // Arrange
             const participantEmail = 'test@example.com';
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234', false);
             service['modelHearing'].judiciaryParticipants = [judicialMember];
 
             // Act
@@ -741,7 +824,7 @@ describe('Video hearing service', () => {
         it('should not remove judiciary participant if email does not match', () => {
             // Arrange
             const participantEmail = 'test@example.com';
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234');
+            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', participantEmail, '1234567890', '1234', false);
             service['modelHearing'].judiciaryParticipants = [judicialMember];
 
             // Act
@@ -760,6 +843,107 @@ describe('Video hearing service', () => {
 
             // Assert
             expect(service['modelHearing']).toBeUndefined();
+        });
+    });
+
+    describe('updateMultiDayHearing', () => {
+        const hearing = new HearingModel();
+        const date = Date.now();
+        const caseModel = new CaseModel();
+        caseModel.name = 'case1';
+        caseModel.number = 'Number 1';
+        hearing.hearing_id = 'a8c6a042-bc0d-4846-a186-720cd1ddce58';
+        hearing.case_type = 'Tax';
+        hearing.scheduled_date_time = new Date(date);
+        hearing.scheduled_duration = 30;
+        hearing.cases = [caseModel];
+        hearing.audio_recording_required = true;
+        const judiciaryParticipants: JudicialMemberDto[] = [];
+        judiciaryParticipants.push(
+            new JudicialMemberDto(
+                'Court',
+                'Judge',
+                'Training.Judge1',
+                'Training.Judge1@hearings.reform.hmcts.net',
+                '',
+                'Training.Judge1',
+                true
+            )
+        );
+        hearing.judiciaryParticipants = judiciaryParticipants;
+        const participants: ParticipantModel[] = [];
+        participants.push(
+            new ParticipantModel({
+                id: 'e09882e8-345c-4bbb-b412-af6f4f622a24',
+                email: 'app.litigant@email.com',
+                display_name: 'Litigant',
+                hearing_role_code: 'APPL'
+            })
+        );
+        hearing.participants = participants;
+        const endpoints: EndpointModel[] = [];
+        const endpoint = new EndpointModel();
+        endpoint.id = 'b3e1521e-9e0e-496e-4cc9-08dc1682b559';
+        endpoint.displayName = 'Endpoint A';
+        endpoints.push(endpoint);
+        hearing.endpoints = endpoints;
+
+        beforeEach(() => {
+            clientApiSpy.editMultiDayHearing.calls.reset();
+        });
+
+        it('should call api to update hearing', () => {
+            // Arrange
+            hearing.isMultiDayEdit = false;
+
+            // Act
+            service.updateMultiDayHearing(hearing);
+
+            // Assert
+            const expectedRequest = mapExpectedRequest();
+            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearing_id, expectedRequest);
+        });
+
+        it('should call api to update hearing and future hearings', () => {
+            // Arrange
+            hearing.isMultiDayEdit = true;
+
+            // Act
+            service.updateMultiDayHearing(hearing);
+
+            // Assert
+            const expectedRequest = mapExpectedRequest();
+            expect(clientApiSpy.editMultiDayHearing).toHaveBeenCalledWith(hearing.hearing_id, expectedRequest);
+        });
+
+        function mapExpectedRequest() {
+            const mappedHearing = service.mapExistingHearing(hearing);
+            const expectedRequest = new EditMultiDayHearingRequest();
+            expectedRequest.participants = mappedHearing.participants;
+            expectedRequest.judiciary_participants = mappedHearing.judiciary_participants;
+            expectedRequest.endpoints = mappedHearing.endpoints;
+            expectedRequest.update_future_days = hearing.isMultiDayEdit;
+
+            return expectedRequest;
+        }
+    });
+
+    describe('cancelMultiDayBooking', () => {
+        it('should call api to cancel hearing', () => {
+            // Arrange
+            const hearingId = '96fc8dbc-012d-4f03-9a72-76dd06918f45';
+            const cancelReason = 'cancellation reason';
+            const updateFutureDays = true;
+
+            // Act
+            service.cancelMultiDayBooking(hearingId, cancelReason, updateFutureDays);
+
+            // Assert
+            const expectedRequest = new CancelMultiDayHearingRequest({
+                cancel_reason: cancelReason,
+                update_future_days: updateFutureDays
+            });
+            expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
         });
     });
 });

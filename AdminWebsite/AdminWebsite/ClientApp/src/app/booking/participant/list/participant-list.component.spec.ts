@@ -11,6 +11,8 @@ import { ParticipantItemComponent } from '../item/participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judicial-member.model';
 import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
+import { LaunchDarklyService } from '../../../services/launch-darkly.service';
+import { of } from 'rxjs';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -23,6 +25,7 @@ describe('ParticipantListComponent', () => {
     let component: ParticipantListComponent;
     let fixture: ComponentFixture<ParticipantListComponent>;
     let debugElement: DebugElement;
+
     const pat1 = new ParticipantModel();
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
@@ -35,16 +38,20 @@ describe('ParticipantListComponent', () => {
     pat2.display_name = 'Doe';
     pat2.addedDuringHearing = false;
     pat2.hearing_role_code = HearingRoleCodes.Applicant;
+
     const participants: any[] = [pat1, pat2];
+    const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        ldServiceSpy.getFlag.and.returnValue(of(true));
         TestBed.configureTestingModule({
             declarations: [ParticipantListComponent, ParticipantItemComponent],
             providers: [
                 { provide: Logger, useValue: loggerSpy },
                 { provide: Router, useValue: router },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: LaunchDarklyService, useValue: ldServiceSpy }
             ],
             imports: [RouterTestingModule]
         }).compileComponents();
@@ -76,14 +83,22 @@ describe('ParticipantListComponent', () => {
         });
 
         it('should call sortJudiciaryMembers when judiciary participant list changes', () => {
-            const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234');
+            const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234', false);
             johJudge.roleCode = 'Judge';
             johJudge.displayName = 'Judge Test User';
 
-            const johPm1 = new JudicialMemberDto('Test PM 1', 'User PM 1', 'Test User PM 1', 'testpm1@test.com', '1234567890', '2345');
+            const johPm1 = new JudicialMemberDto(
+                'Test PM 1',
+                'User PM 1',
+                'Test User PM 1',
+                'testpm1@test.com',
+                '1234567890',
+                '2345',
+                false
+            );
             johPm1.displayName = 'Test User 1';
             johPm1.roleCode = 'PanelMember';
-            const johPm2 = new JudicialMemberDto('Test PM 2', 'User PM 2', 'Test User PM 2', 'testpm2test.com', '123456098', '3456');
+            const johPm2 = new JudicialMemberDto('Test PM 2', 'User PM 2', 'Test User PM 2', 'testpm2test.com', '123456098', '3456', false);
             johPm2.displayName = 'Test User 2';
             johPm2.roleCode = 'PanelMember';
             component.hearing.judiciaryParticipants = [johPm2, johJudge, johPm1];
@@ -157,11 +172,11 @@ describe('ParticipantListComponent', () => {
         let panelMember: JudicialMemberDto;
 
         beforeEach(() => {
-            judge = new JudicialMemberDto('Judge', 'Fudge', 'Judge Fudge', 'judge@test.com', '1234567890', '1234');
+            judge = new JudicialMemberDto('Judge', 'Fudge', 'Judge Fudge', 'judge@test.com', '1234567890', '1234', false);
             judge.roleCode = 'Judge';
             judge.displayName = 'Judge Fudge';
 
-            panelMember = new JudicialMemberDto('John', 'Doe', 'John Doe', 'pm@test.com', '2345678901', '2345');
+            panelMember = new JudicialMemberDto('John', 'Doe', 'John Doe', 'pm@test.com', '2345678901', '2345', false);
             panelMember.roleCode = 'PanelMember';
             panelMember.displayName = 'PM Doe';
         });

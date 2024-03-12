@@ -1,5 +1,4 @@
-﻿using System;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -27,10 +26,13 @@ namespace AdminWebsite.UnitTests.Controllers
         private Mock<IUserAccountService> _userAccountService;
         private List<JudiciaryPersonResponse> _judiciaryResponse;
         private List<UserResponse> _userResponses;
+        private Mock<IFeatureToggles> _IFeatureFlagMock;
 
         [SetUp]
         public void Setup()
         {
+            _IFeatureFlagMock = new Mock<IFeatureToggles>();
+            _IFeatureFlagMock.Setup(x => x.EJudEnabled()).Returns(true);
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userAccountService = new Mock<IUserAccountService>();
             var testSettings = new TestUserSecrets
@@ -38,8 +40,11 @@ namespace AdminWebsite.UnitTests.Controllers
                 TestUsernameStem = "@hmcts.net"
             };
 
-            _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(testSettings));
+            _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(
+                _userAccountService.Object,
+                JavaScriptEncoder.Default,
+                _bookingsApiClient.Object, 
+                Options.Create(testSettings));
 
             _judiciaryResponse = new List<JudiciaryPersonResponse>
             {
@@ -279,7 +284,9 @@ namespace AdminWebsite.UnitTests.Controllers
             _userAccountService.Setup(x => x.SearchEjudiciaryJudgesByEmailUserResponse(It.IsAny<string>()))
                 .ReturnsAsync(_userResponses);
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
+                JavaScriptEncoder.Default,
+                _bookingsApiClient.Object,
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var result = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -301,7 +308,9 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
-                JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
+                JavaScriptEncoder.Default,
+                _bookingsApiClient.Object, 
+                Options.Create(new TestUserSecrets(){TestUsernameStem = "@hmcts.net"}));
 
             // Act
             var response = await _controller.PostJudiciaryPersonBySearchTermAsync(term);
@@ -327,27 +336,12 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        [TestCase(false, false)]
-        [TestCase(false, true)]
-        [TestCase(true, false)]
-        [TestCase(true, true)]
-        public async Task PostJudgesBySearchTerm_should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withJudiciary, bool withCourtroom)
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task PostJudgesBySearchTerm_should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withCourtroom)
         {
-            _judiciaryResponse = new List<JudiciaryPersonResponse>
-            {
-                new()
-                {
-                    Email = "jackman@judiciary.net",
-                    FirstName = "Jack",
-                    LastName = "Mann",
-                    WorkPhone = "",
-                    Title = "Mr",
-                    FullName = "Mr Jack Mann",
-                    PersonalCode = "12345678"
-                }
-            };
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : new List<JudiciaryPersonResponse>());
+                              .ReturnsAsync(new List<JudiciaryPersonResponse>());
 
             var _courtRoomResponse = new List<JudgeResponse>
             {
@@ -385,36 +379,107 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
-            var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
-            var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
+            var expectedResponse = new List<JudgeResponse>();
+            var expectedCourtRoomResponses = new List<JudgeResponse>();
 
-            var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
+            if (withCourtroom)
+            {
+                expectedCourtRoomResponses = _courtRoomResponse.ToList();
+                expectedResponse.AddRange(_courtRoomResponse);
+            }
+
+            var expectedTotal =  withCourtroom ? expectedCourtRoomResponses.Count : 0;
 
             personRespList.Count.Should().Be(expectedTotal);
-            if(!withJudiciary && withCourtroom) // Only courtroom is set up to test order
+            if(withCourtroom) // Only courtroom is set up to test order
             {
                 Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
                 Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
                 Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
             }
+
+            personRespList.Should().BeEquivalentTo(expectedResponse);
         }
 
+          
         [Test]
-        public async Task PostJudgesBySearchTerm_should_pass_on_bad_request_from_bookings_api_for_judge_accounts()
+        public async Task PostJudgesBySearchTerm_should_return_only_courtroom_accounts_if_match_to_search_term_when_Ejud_flag_off()
+        {
+            _IFeatureFlagMock.Setup(x => x.EJudEnabled()).Returns(false);
+            _judiciaryResponse = new List<JudiciaryPersonResponse>
+            {
+                new()
+                {
+                    Email = "jackman@judiciary.net",
+                    FirstName = "Jack",
+                    LastName = "Mann",
+                    WorkPhone = "",
+                    Title = "Mr",
+                    FullName = "Mr Jack Mann",
+                    PersonalCode = "12345678"
+                }
+            };
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                              .ReturnsAsync(_judiciaryResponse);
+
+            var _courtRoomResponse = new List<JudgeResponse>
+            {
+                new JudgeResponse
+                {
+                    FirstName = "FirstName1",
+                    LastName = "FirstName2",
+                    Email = "judge.1@judiciary.net",
+                    ContactEmail = "judge1@personal.com"
+                },
+                new JudgeResponse
+                {
+                    FirstName = "FirstName3",
+                    LastName = "LastName3",
+                    Email = "judge.3@judiciary.net",
+                    ContactEmail = "judge3@personal.com"
+                },
+                new JudgeResponse
+                {
+                    FirstName = "FirstName2",
+                    LastName = "LastName2",
+                    Email = "judge.2@judiciary.net", // Out of order to test order
+                    ContactEmail = "judge2@personal.com"
+                }
+            };
+
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
+                .ReturnsAsync(_courtRoomResponse);
+            
+            var searchTerm = "judici";
+            var result = await _controller.PostJudgesBySearchTermAsync(searchTerm);
+
+            var okRequestResult = (OkObjectResult)result.Result;
+            okRequestResult.StatusCode.Should().NotBeNull();
+            var personRespList = (List<JudgeResponse>)okRequestResult.Value;
+            personRespList.Count.Should().Be(_courtRoomResponse.Count);
+            Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
+            Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+            Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
+            personRespList.Should().BeEquivalentTo(_courtRoomResponse);
+            personRespList.Should().NotContain(x => _judiciaryResponse.Any(y => y.Email == x.Email));
+        }
+        
+        [Test]
+        public async Task PostJudgesBySearchTerm_should_pass_on_bad_request_from_bookings_api_for_Judicary_accounts()
         {
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
            
-            var response = await _controller.PostJudgesBySearchTermAsync("term");
+            var response = await _controller.PostJudiciaryPersonBySearchTermAsync("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Test]
-        public void PostJudgesBySearchTerm_should_pass_on_exception_request_from_bookings_api_for_judges_accounts()
+        public void PostJudicaryBySearchTerm_should_pass_on_exception_request_from_bookings_api_for_Judicary_accounts()
         {
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudgesBySearchTermAsync("term"));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostJudiciaryPersonBySearchTermAsync("term"));
         }
     }
 }

@@ -15,8 +15,10 @@ using VideoApi.Contract.Responses;
 using AdminWebsite.Security;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
+using BookingsApi.Contract.V2.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -27,6 +29,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IConferenceDetailsService> _conferenceDetailsServiceMock;
         private Mock<IHearingsService> _hearingServiceMock;
         private HearingDetailsResponse _vhExistingHearing;
+        private HearingDetailsResponseV2 _vhExistingHearingV2;
         private Mock<IFeatureToggles> _featureFlag;
         private Guid _guid;
         
@@ -77,21 +80,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net", DisplayName = "Judge Lumb",
                         FirstName = "Judge", HearingRoleName = "Judge", LastName = "Lumb", MiddleNames = string.Empty,
-                        TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hmcts.net"
+                        TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hearings.net", UserRoleName = "Judge"
                     },
                     new()
                     {
                         CaseRoleName = "Applicant", ContactEmail = "test.applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
-                        Title = "Mr", Username = "Test.Applicant@hmcts.net"
+                        Title = "Mr", Username = "Test.Applicant@hearings.net", UserRoleName = "Individual"
                     },
                     new()
                     {
                         CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
                         LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
-                        Title = "Mr", Username = "Test.Respondent@hmcts.net"
+                        Title = "Mr", Username = "Test.Respondent@hearings.net", UserRoleName = "Represntative"
                     },
                 },
                 ScheduledDateTime = DateTime.UtcNow.AddDays(10),
@@ -103,6 +106,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClientMock.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhExistingHearing);
+
+            _bookingsApiClientMock.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(GetHearingDetailsResponseV2(BookingsApi.Contract.V2.Enums.BookingStatusV2.Booked));
         }
 
         [Test]
@@ -114,7 +120,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Arrange
             _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
                 .ReturnsAsync(conferenceResponse);
-            _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
+            _vhExistingHearing.Status = BookingStatus.Created;
 
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
@@ -126,7 +132,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(true);
             _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
-            _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
@@ -137,7 +143,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Arrange
             _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(conferenceResponse);
-            _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
+            _vhExistingHearing.Status = BookingStatus.Created;
 
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
@@ -149,7 +155,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(false);
             _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
-            _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
@@ -172,7 +178,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(false);
             _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Never);
-            _bookingsApiClientMock.Verify(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>()), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()), Times.Once);
         }
 
         [Test]
@@ -199,7 +205,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
 
             // Arrange
-            _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).Throws(new BookingsApiException("Error", 400, null, null, null));
+            _bookingsApiClientMock.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).Throws(new BookingsApiException("Error", 400, null, null, null));
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
 
@@ -217,7 +223,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
 
             // Arrange
-            _bookingsApiClientMock.Setup(x => x.GetBookingStatusByIdAsync(It.IsAny<Guid>())).ReturnsAsync(BookingStatus.Created);
+            _vhExistingHearing.Status = BookingStatus.Created;
             _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false)).Throws(new VideoApiException("Error", 400, null, null, null));
             // Act
             var result = await _controller.GetHearingConferenceStatus(_guid);
@@ -228,57 +234,172 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_not_found_if_hearing_failed_to_update()
+        public async Task Should_return_not_found_if_hearing_failed_to_be_found()
         {
             // Arrange
-            _hearingServiceMock
-                .Setup(x => x.UpdateFailedBookingStatus(_guid))
+            _bookingsApiClientMock
+                .Setup(x => x.FailBookingAsync(_guid))
                 .ThrowsAsync(new VideoApiException("Error", 404, null, null, null));
 
             // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
-            _hearingServiceMock.Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
+            _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);
             var notFoundResult = (NotFoundResult)result;
             notFoundResult.StatusCode.Should().Be(404);
         }
 
         [Test]
-        public async Task Should_return_badRequest_if_hearing_failed_to_update()
+        public async Task Should_return_badRequest_if_hearing_failed_to_fail()
         {
             // Arrange
-            _hearingServiceMock
-                .Setup(x => x.UpdateFailedBookingStatus(_guid))
+            _bookingsApiClientMock
+                .Setup(x => x.FailBookingAsync(_guid))
                 .ThrowsAsync(new VideoApiException("Error", 400, null, null, null));
 
             // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
+            var result = await _controller.UpdateFailedBookingStatus(_guid);
 
             // Assert
-            _hearingServiceMock.Verify(x => x.UpdateFailedBookingStatus(_guid), Times.AtLeastOnce);
+            _bookingsApiClientMock.Verify(x => x.FailBookingAsync(_guid), Times.AtLeastOnce);
             var notFoundResult = (BadRequestObjectResult)result;
             notFoundResult.StatusCode.Should().Be(400);
         }
 
         [Test]
-        public async Task Should_return_ok_status_after_update_hearing()
+        public async Task Should_return_ok_status_with_success_when_V2flag_on()
         {
             // Arrange
+            ConferenceDetailsResponse conferenceResponse = new()
+            {
+                MeetingRoom = new()
+                {
+                    AdminUri = "AdminUri",
+                    ParticipantUri = "ParticipantUri",
+                    JudgeUri = "JudgeUri",
+                    PexipNode = "PexipNode"
+                }
+            };
+
+            _featureFlag.Setup(x => x.UseV2Api()).Returns(true);
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
+                .ReturnsAsync(conferenceResponse);
+            _vhExistingHearingV2.Status = BookingsApi.Contract.V2.Enums.BookingStatusV2.Created;
+
             // Act
-            var result = await _controller.UpdateHearingStatus(_guid);
+            var result = await _controller.GetHearingConferenceStatus(_guid);
 
             // Assert
-
-            _hearingServiceMock.Verify(
-                x => x.UpdateFailedBookingStatus(It.IsAny<Guid>()),
-                Times.Exactly(1));
-
             var okRequestResult = (OkObjectResult)result;
             okRequestResult.StatusCode.Should().Be(200);
 
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(true);
+            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
+            _bookingsApiClientMock.Verify(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()), Times.Once);
+
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Should_return_ok_status_with_success_when_users_not_created_for_successful_multi_day_booking_with_notify_flag_on(bool v2FlagOn)
+        {
+            // When the notify flag is enabled, users for multi day bookings are created as part of the clone process rather than the first day of the multi-day,
+            // so don't wait for them to be created
+            
+            // Arrange
+            _featureFlag.Setup(x => x.UsePostMay2023Template()).Returns(true);
+            _featureFlag.Setup(x => x.UseV2Api()).Returns(v2FlagOn);
+            
+            if (v2FlagOn)
+            {
+                _vhExistingHearingV2.GroupId = _vhExistingHearingV2.Id; // Multi day hearing
+                _vhExistingHearingV2.Status = BookingStatusV2.Created;
+            }
+            else
+            {
+                _vhExistingHearing.GroupId = _vhExistingHearing.Id; // Multi day hearing
+                _vhExistingHearing.Status = BookingStatus.Created;
+            }
+            
+            foreach (var participant in _vhExistingHearing.Participants)
+            {
+                // Contact email is same as username, so user not created
+                participant.Username = participant.ContactEmail;
+            }
+            
+            // Indicate a successful booking
+            var conferenceResponse = new ConferenceDetailsResponse
+            {
+                MeetingRoom = new()
+                {
+                    AdminUri = "AdminUri",
+                    ParticipantUri = "ParticipantUri",
+                    JudgeUri = "JudgeUri",
+                    PexipNode = "PexipNode"
+                }
+            };
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
+                .ReturnsAsync(conferenceResponse);
+            
+            // Act
+            var result = await _controller.GetHearingConferenceStatus(_guid);
+            
+            // Assert
+            var okRequestResult = (OkObjectResult)result;
+            okRequestResult.StatusCode.Should().Be(200);
+
+            var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
+            hearing.Success.Should().Be(true);
+        }
+
+        private HearingDetailsResponseV2 GetHearingDetailsResponseV2(BookingsApi.Contract.V2.Enums.BookingStatusV2 status)
+        {
+            _guid = Guid.NewGuid();
+            _vhExistingHearingV2 = new HearingDetailsResponseV2
+            {
+                Cases = new List<CaseResponseV2>
+                {
+                    new CaseResponseV2
+                        {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
+                },
+                CreatedBy = "CaseAdministrator",
+                CreatedDate = DateTime.UtcNow,
+                HearingRoomName = "Room 6.41D",
+                HearingVenueName = "Manchester Civil and Family Justice Centre",
+                Id = _guid,
+                OtherInformation = "Any other information about the hearing",
+                Participants = new List<BookingsApi.Contract.V2.Responses.ParticipantResponseV2>
+                {
+                    new()
+                    {
+                        ContactEmail = "Judge.Lumb@hmcts.net", DisplayName = "Judge Lumb",
+                        FirstName = "Judge", LastName = "Lumb", MiddleNames = string.Empty,
+                        TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hearings.net", UserRoleName = "Judge"
+                    },
+                    new()
+                    {
+                        ContactEmail = "test.applicant@hmcts.net",
+                        DisplayName = "Test Applicant", FirstName = "Test", 
+                        LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
+                        Title = "Mr", Username = "Test.Applicant@hearings.net", UserRoleName = "Individual"
+                    },
+                    new()
+                    {
+                        ContactEmail = "test.respondent@hmcts.net",
+                        DisplayName = "Test Respondent", FirstName = "Test",
+                        LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
+                        Title = "Mr", Username = "Test.Respondent@hearings.net", UserRoleName = "Representative"
+                    },
+                },
+                ScheduledDateTime = DateTime.UtcNow.AddDays(10),
+                ScheduledDuration = 60,
+                Status = status,
+                UpdatedBy = string.Empty,
+                UpdatedDate = DateTime.UtcNow
+            };
+            return _vhExistingHearingV2;
         }
     }
 }

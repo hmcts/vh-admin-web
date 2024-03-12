@@ -1,8 +1,5 @@
 import { fakeAsync, TestBed } from '@angular/core/testing';
-import { AuthGuard } from './auth.guard';
 import { Router } from '@angular/router';
-import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Logger } from '../services/logger';
 import { AudioSearchGuard } from './audio-search.guard';
 import { LaunchDarklyService } from '../services/launch-darkly.service';

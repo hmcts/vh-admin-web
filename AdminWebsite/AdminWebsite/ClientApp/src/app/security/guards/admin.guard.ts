@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Logger } from '../services/logger';
-import { UserIdentityService } from '../services/user-identity.service';
-import { IUserProfileResponse } from '../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { UserIdentityService } from '../../services/user-identity.service';
+import { IUserProfileResponse } from '../../services/clients/api-client';
 
 @Injectable()
 export class AdminGuard implements CanActivate {

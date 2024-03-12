@@ -260,6 +260,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Individual", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -273,14 +274,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult) result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
-                options => options.ExcludingMissingMembers());
+            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse, options => options.ExcludingMissingMembers());
             
             bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
 
             bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
             
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
+            _mocker.Mock<IHearingsService>().Verify(x
+                => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), 
+                    It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()), Times.Once);
         }

@@ -46,6 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     private destroyed$ = new Subject<void>();
     private addJudciaryMembersFeatureEnabled: boolean;
+    private multiDayBookingEnhancementsEnabled: boolean;
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -67,6 +68,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             .pipe(takeUntil(this.destroyed$))
             .subscribe(result => {
                 this.addJudciaryMembersFeatureEnabled = result;
+            });
+        this.ldService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(enabled => {
+                this.multiDayBookingEnhancementsEnabled = enabled;
             });
         this.failedSubmission = false;
         this.checkForExistingRequest();
@@ -139,16 +146,19 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                 room = this.hearing.court_room;
             }
 
-            this.multiDaysHearing = this.hearing.multiDays;
+            this.multiDaysHearing = this.hearing.isMultiDayEdit;
         }
 
-        if (this.multiDaysHearing) {
+        if (!this.showDurationControls) {
             this.durationHourControl = new FormControl(durationHour);
             this.durationMinuteControl = new FormControl(durationMinute);
         } else {
             this.durationHourControl = new FormControl(durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
             this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
+
+        this.selectedCourtName = this.hearing.court_name;
+        this.selectedCourtCode = this.hearing.court_code;
 
         this.form = this.formBuilder.group({
             hearingDate: [hearingDateParsed, [Validators.required, pastDateValidator()]],
@@ -276,7 +286,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get durationInvalid() {
-        if (!this.multiDaysHearing) {
+        if (this.showDurationControls) {
             let hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
             hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
             return hearingDuration <= 0;
@@ -424,6 +434,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         );
     }
 
+    get showDurationControls() {
+        return !this.multiDaysHearing || this.multiDayBookingEnhancementsEnabled;
+    }
+
     saveMultiIndividualDayHearing() {
         if (this.isMultiIndividualDayHearingValid) {
             this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
@@ -458,14 +472,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         if (this.editMode) {
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
             this.router.navigate([PageUrls.Summary]);
+        } else if (this.addJudciaryMembersFeatureEnabled) {
+            this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
+            this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
         } else {
-            if (this.addJudciaryMembersFeatureEnabled) {
-                this.logger.debug(`${this.loggerPrefix} Navigating to add joh page.`);
-                this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
-            } else {
-                this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
-                this.router.navigate([PageUrls.AssignJudge]);
-            }
+            this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
+            this.router.navigate([PageUrls.AssignJudge]);
         }
     }
 
@@ -480,7 +492,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
         this.hearing.scheduled_date_time = hearingDate;
         this.hearing.scheduled_duration = this.setHearingDuration();
-        this.hearing.multiDays = this.multiDaysHearing;
+        this.hearing.isMultiDayEdit = this.multiDaysHearing;
         this.hearing.hearing_dates = [];
         const endDate = new Date(this.form.value.endHearingDate);
         this.hearing.end_hearing_date_time = endDate;
@@ -498,7 +510,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         hearingDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
         this.hearing.scheduled_date_time = hearingDate;
         this.hearing.scheduled_duration = this.setHearingDuration();
-        this.hearing.multiDays = true;
+        this.hearing.isMultiDayEdit = true;
         this.hearing.hearing_dates = [];
 
         this.hearingDates.forEach(date => {
@@ -512,7 +524,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     private setHearingDuration() {
         let hearingDuration = 0;
-        if (!this.multiDaysHearing) {
+        if (this.showDurationControls) {
             hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
             hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
         }
@@ -566,19 +578,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     private multiDaysChanged() {
+        const previouslyShowedDurationControls = this.showDurationControls;
+
         if (this.multiDaysControl.value) {
             this.multiDaysHearing = true;
-            this.hearingDurationHourControl.clearValidators();
-            this.hearingDurationMinuteControl.clearValidators();
-            this.hearingDurationHourControl.updateValueAndValidity();
-            this.hearingDurationMinuteControl.updateValueAndValidity();
-
-            this.hearingDurationHourControl.setValue('');
-            this.hearingDurationMinuteControl.setValue('');
-            this.hearingDurationHourControl.markAsUntouched();
-            this.hearingDurationHourControl.markAsPristine();
-            this.hearingDurationMinuteControl.markAsUntouched();
-            this.hearingDurationMinuteControl.markAsPristine();
 
             if (this.multiDaysRangeControl.value) {
                 this.endHearingDateControl.setValidators([Validators.required, pastDateValidator()]);
@@ -595,7 +598,23 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.endHearingDateControl.clearValidators();
             this.endHearingDateControl.updateValueAndValidity();
             this.endHearingDateControl.setValue(null);
+        }
 
+        if (previouslyShowedDurationControls && !this.showDurationControls) {
+            this.hearingDurationHourControl.setValue('');
+            this.hearingDurationMinuteControl.setValue('');
+            this.hearingDurationHourControl.markAsUntouched();
+            this.hearingDurationHourControl.markAsPristine();
+            this.hearingDurationMinuteControl.markAsUntouched();
+            this.hearingDurationMinuteControl.markAsPristine();
+
+            this.hearingDurationHourControl.clearValidators();
+            this.hearingDurationMinuteControl.clearValidators();
+            this.hearingDurationHourControl.updateValueAndValidity();
+            this.hearingDurationMinuteControl.updateValueAndValidity();
+        }
+
+        if (!previouslyShowedDurationControls && this.showDurationControls) {
             this.hearingDurationHourControl.setValidators([Validators.required, Validators.min(0), Validators.max(23)]);
             this.hearingDurationHourControl.updateValueAndValidity();
             this.hearingDurationMinuteControl.setValidators([Validators.required, Validators.min(0), Validators.max(59)]);
