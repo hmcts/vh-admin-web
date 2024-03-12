@@ -600,6 +600,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             newDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
             hearingInGroup.scheduled_date_time = newDate;
         });
+        this.hearing.scheduled_duration = this.setHearingDuration();
 
         // Update the start and end dates in the hearing model, so that they are displayed correctly on the summary page
         const hearingsInGroup = this.hearingsInGroupToEdit;
