@@ -317,6 +317,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
 
             var request = CreateV2EditMultiDayHearingRequest(hearing);
+            request.HearingsInGroup = new List<UpdateHearingInGroupRequest>();
+            foreach (var hearingInGroup in existingHearingsInMultiDayGroup)
+            {
+                request.HearingsInGroup.Add(new UpdateHearingInGroupRequest
+                {
+                    HearingId = hearingInGroup.Id,
+                    ScheduledDateTime = hearingInGroup.ScheduledDateTime
+                });
+            }
             FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
