@@ -11,6 +11,8 @@ export class EditHearingDatesComponent {
     @Input() hearingsInGroupToEdit: HearingModel[];
     @Input() newDatesFormArray: FormArray;
 
+    today = new Date();
+
     constructor(private datePipe: DatePipe) {}
 
     get newDatesInvalid() {
