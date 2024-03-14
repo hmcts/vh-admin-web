@@ -211,6 +211,43 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task should_update_multi_day_hearing_for_v2_when_judiciary_participants_are_unchanged()
+        {
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var groupId = Guid.NewGuid();
+            var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroup(groupId, hearingId);
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            var hearing = existingHearingsInMultiDayGroup.First(x => x.Id == hearingId);
+
+            var request = CreateV2EditMultiDayHearingRequest(hearing);
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            
+            var updatedHearing = MapUpdatedHearingV2(hearing, request);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
+            // Act
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
+            
+            // Assert
+            var expectedResponse = updatedHearing.Map();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var objectResult = result.Result.As<OkObjectResult>();
+            objectResult.Value.Should().BeEquivalentTo(expectedResponse);
+            
+            // Assert
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequestV2>(r =>
+                    r.Hearings.TrueForAll(h =>
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == request.JudiciaryParticipants.Count
+                        ))));
+        }
+
+        [Test]
         public async Task Should_forward_not_found_from_bookings_api_for_v1()
         {
             // Arrange

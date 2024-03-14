@@ -557,7 +557,7 @@ namespace AdminWebsite.Controllers
                         RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
                     };
                     hearingRequest.Endpoints = endpointsV2;
-                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate);
+                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
                 
                     bookingsApiRequest.Hearings.Add(hearingRequest);
                 }
@@ -773,7 +773,7 @@ namespace AdminWebsite.Controllers
         }
 
         private static UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(List<JudiciaryParticipantRequest> judiciaryParticipants,
-            HearingDetailsResponse originalHearing)
+            HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true)
         {
             var request = new UpdateJudiciaryParticipantsRequestV2();
             
@@ -821,22 +821,37 @@ namespace AdminWebsite.Controllers
                 }
             }
             
+            request.ExistingJudiciaryParticipants = MapExistingJudiciaryParticipants(judiciaryParticipants, 
+                originalHearing, 
+                skipUnchangedParticipants: skipUnchangedParticipants);
+
+            return request;
+        }
+
+        private static List<EditableUpdateJudiciaryParticipantRequestV2> MapExistingJudiciaryParticipants(IEnumerable<JudiciaryParticipantRequest> judiciaryParticipantsToUpdate,
+            HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true)
+        {
             // get existing judiciary participants based on the personal code being present in the original hearing
-            var existingJohs = judiciaryParticipants.Where(jp =>
+            var existingJohs = judiciaryParticipantsToUpdate.Where(jp =>
                 originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
 
+            var existingJudiciaryParticipants = new List<EditableUpdateJudiciaryParticipantRequestV2>();
+            
             foreach (var joh in existingJohs)
             {
-                // Only update the joh if their details have changed
-                var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
-                if (joh.DisplayName == originalJoh.DisplayName &&
-                    joh.Role == originalJoh.RoleCode)
+                if (skipUnchangedParticipants)
                 {
-                    continue;
+                    // Only update the joh if their details have changed
+                    var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
+                    if (joh.DisplayName == originalJoh.DisplayName &&
+                        joh.Role == originalJoh.RoleCode)
+                    {
+                        continue;
+                    }
                 }
                 
                 var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
-                request.ExistingJudiciaryParticipants.Add(new EditableUpdateJudiciaryParticipantRequestV2
+                existingJudiciaryParticipants.Add(new EditableUpdateJudiciaryParticipantRequestV2
                 {
                     PersonalCode = joh.PersonalCode,
                     DisplayName = joh.DisplayName,
@@ -845,7 +860,7 @@ namespace AdminWebsite.Controllers
                 });
             }
 
-            return request;
+            return existingJudiciaryParticipants;
         }
 
         private static List<LinkedParticipantRequest> ExtractLinkedParticipants(
