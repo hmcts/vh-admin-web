@@ -44,7 +44,6 @@ import { AuthGuard } from './security/guards/auth.guard';
 import { ReformLoginComponent } from './security/reform-login.component';
 import { AudioSearchGuard } from './security/audio-search.guard';
 import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
-import { EditMultiDayBookingGuard } from './security/guards/edit-multi-day-booking.guard';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -104,8 +103,7 @@ export function loadConfig(configService: ConfigService) {
         WindowRef,
         WorkAllocationFeatureGuard,
         ManageTeamFeatureGuard,
-        AudioSearchGuard,
-        EditMultiDayBookingGuard
+        AudioSearchGuard
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]
