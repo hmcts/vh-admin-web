@@ -28,7 +28,8 @@ import {
     HearingRoleResponse,
     JudiciaryParticipantRequest,
     EditMultiDayHearingRequest,
-    CancelMultiDayHearingRequest
+    CancelMultiDayHearingRequest,
+    UpdateHearingInGroupRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -235,10 +236,24 @@ export class VideoHearingsService {
 
         const editHearingRequest = this.mapExistingHearing(booking);
 
+        editMultiDayRequest.scheduled_duration = editHearingRequest.scheduled_duration;
+        editMultiDayRequest.hearing_venue_code = editHearingRequest.hearing_venue_code;
+        editMultiDayRequest.hearing_venue_name = editHearingRequest.hearing_venue_name;
+        editMultiDayRequest.hearing_room_name = editHearingRequest.hearing_room_name;
+        editMultiDayRequest.other_information = editHearingRequest.other_information;
+        editMultiDayRequest.case_number = editHearingRequest.case.number;
+        editMultiDayRequest.audio_recording_required = editHearingRequest.audio_recording_required;
         editMultiDayRequest.participants = editHearingRequest.participants;
         editMultiDayRequest.judiciary_participants = editHearingRequest.judiciary_participants;
         editMultiDayRequest.endpoints = editHearingRequest.endpoints;
         editMultiDayRequest.update_future_days = booking.isMultiDayEdit;
+        editMultiDayRequest.hearings_in_group = booking.hearingsInGroup.map(
+            hearing =>
+                new UpdateHearingInGroupRequest({
+                    hearing_id: hearing.hearing_id,
+                    scheduled_date_time: hearing.scheduled_date_time
+                })
+        );
 
         return editMultiDayRequest;
     }
@@ -352,6 +367,7 @@ export class VideoHearingsService {
         hearing.isConfirmed = Boolean(response.confirmed_date);
         hearing.isMultiDay = response.group_id !== null;
         hearing.multiDayHearingLastDayScheduledDateTime = response.multi_day_hearing_last_day_scheduled_date_time;
+        hearing.originalScheduledDateTime = hearing.scheduled_date_time;
         hearing.hearingsInGroup = response.hearings_in_group?.map(hearingInGroup =>
             this.mapHearingDetailsResponseToHearingModel(hearingInGroup)
         );

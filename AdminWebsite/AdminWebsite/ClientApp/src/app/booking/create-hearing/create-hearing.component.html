@@ -40,6 +40,7 @@
       formControlName="caseNumber"
       required
       (blur)="caseNumberOnBlur()"
+      [attr.disabled]="canEditCaseNumber ? null : true"
     />
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
       <span id="caseNumber-error" class="govuk-error-message">
@@ -58,6 +59,7 @@
       formControlName="caseName"
       required
       (blur)="caseNameOnBlur()"
+      [attr.disabled]="canEditCaseName ? null : true"
     />
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
       <span id="caseName-error" class="govuk-error-message">

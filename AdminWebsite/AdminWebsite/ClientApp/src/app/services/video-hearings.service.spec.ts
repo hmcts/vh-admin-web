@@ -15,12 +15,13 @@ import {
     JusticeUserResponse,
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
-    CancelMultiDayHearingRequest
+    CancelMultiDayHearingRequest,
+    UpdateHearingInGroupRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, map, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
@@ -858,6 +859,10 @@ describe('Video hearing service', () => {
         hearing.scheduled_duration = 30;
         hearing.cases = [caseModel];
         hearing.audio_recording_required = true;
+        hearing.court_code = '701411';
+        hearing.court_name = 'Manchester Civil and Family Justice Centre';
+        hearing.court_room = 'Court Room1';
+        hearing.other_information = 'Other information';
         const judiciaryParticipants: JudicialMemberDto[] = [];
         judiciaryParticipants.push(
             new JudicialMemberDto(
@@ -887,6 +892,7 @@ describe('Video hearing service', () => {
         endpoint.displayName = 'Endpoint A';
         endpoints.push(endpoint);
         hearing.endpoints = endpoints;
+        hearing.hearingsInGroup = [Object.assign({}, hearing)];
 
         beforeEach(() => {
             clientApiSpy.editMultiDayHearing.calls.reset();
@@ -919,10 +925,24 @@ describe('Video hearing service', () => {
         function mapExpectedRequest() {
             const mappedHearing = service.mapExistingHearing(hearing);
             const expectedRequest = new EditMultiDayHearingRequest();
+            expectedRequest.scheduled_duration = mappedHearing.scheduled_duration;
+            expectedRequest.hearing_venue_code = mappedHearing.hearing_venue_code;
+            expectedRequest.hearing_venue_name = mappedHearing.hearing_venue_name;
+            expectedRequest.hearing_room_name = mappedHearing.hearing_room_name;
+            expectedRequest.other_information = mappedHearing.other_information;
+            expectedRequest.case_number = mappedHearing.case.number;
+            expectedRequest.audio_recording_required = mappedHearing.audio_recording_required;
             expectedRequest.participants = mappedHearing.participants;
             expectedRequest.judiciary_participants = mappedHearing.judiciary_participants;
             expectedRequest.endpoints = mappedHearing.endpoints;
             expectedRequest.update_future_days = hearing.isMultiDayEdit;
+            expectedRequest.hearings_in_group = hearing.hearingsInGroup.map(
+                h =>
+                    new UpdateHearingInGroupRequest({
+                        hearing_id: h.hearing_id,
+                        scheduled_date_time: h.scheduled_date_time
+                    })
+            );
 
             return expectedRequest;
         }

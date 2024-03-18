@@ -18,6 +18,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Requests.Enums;
 using BookingsApi.Contract.V2.Responses;
@@ -464,6 +465,12 @@ namespace AdminWebsite.Controllers
                 var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
                 hearingsToUpdate.AddRange(futureHearings);
             }
+            
+            hearingsToUpdate = hearingsToUpdate
+                .Where(h => 
+                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
+                    h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
+                .ToList();
 
             if (_featureToggles.UseV2Api())
             {
@@ -485,8 +492,17 @@ namespace AdminWebsite.Controllers
                 {
                     var hearingRequest = new HearingRequest
                     {
-                        HearingId = hearing.Id
+                        HearingId = hearing.Id,
+                        ScheduledDuration = request.ScheduledDuration,
+                        HearingVenueName = request.HearingVenueName,
+                        HearingRoomName = request.HearingRoomName,
+                        OtherInformation = request.OtherInformation,
+                        CaseNumber = request.CaseNumber,
+                        AudioRecordingRequired = request.AudioRecordingRequired
                     };
+                    
+                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
 
@@ -519,8 +535,17 @@ namespace AdminWebsite.Controllers
                 {
                     var hearingRequest = new HearingRequestV2
                     {
-                        HearingId = hearing.Id
+                        HearingId = hearing.Id,
+                        ScheduledDuration = request.ScheduledDuration,
+                        HearingVenueCode = request.HearingVenueCode,
+                        HearingRoomName = request.HearingRoomName,
+                        OtherInformation = request.OtherInformation,
+                        CaseNumber = request.CaseNumber,
+                        AudioRecordingRequired = request.AudioRecordingRequired
                     };
+                    
+                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
 
