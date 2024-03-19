@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Responses;
+using BookingsApi.Contract.V2.Enums;
 using V1 = BookingsApi.Contract.V1.Responses;
 using V2 = BookingsApi.Contract.V2.Responses;
 namespace AdminWebsite.Mappers;
@@ -82,7 +83,12 @@ public static class HearingDetailsResponseMapper
     {
         var response = hearingDetails.Map();
         if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
-        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        var activeHearings = hearingsInGroup
+            .Where(h => 
+                h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
+                h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
+            .ToList();
+        response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
         response.HearingsInGroup = hearingsInGroup
             .OrderBy(h => h.ScheduledDateTime)
             .Select(h => h.Map())
@@ -94,7 +100,12 @@ public static class HearingDetailsResponseMapper
     {
         var response = hearingDetails.Map();
         if (hearingsInGroup == null || !hearingsInGroup.Any()) return response;
-        response.MultiDayHearingLastDayScheduledDateTime = hearingsInGroup.ScheduledDateTimeOfLastHearing();
+        var activeHearings = hearingsInGroup
+            .Where(h => 
+                h.Status != BookingStatusV2.Cancelled && 
+                h.Status != BookingStatusV2.Failed)
+            .ToList();
+        response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
         response.HearingsInGroup = hearingsInGroup
             .OrderBy(h => h.ScheduledDateTime)
             .Select(h => h.Map())

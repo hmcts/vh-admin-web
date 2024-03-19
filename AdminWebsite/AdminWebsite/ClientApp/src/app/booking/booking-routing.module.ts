@@ -13,18 +13,17 @@ import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add
 import { LastMinuteAmendmentsGuard } from '../security/guards/last-minute-amendments.guard';
 import { AdminGuard } from '../security/guards/admin.guard';
 import { AuthGuard } from '../security/guards/auth.guard';
-import { EditMultiDayBookingGuard } from '../security/guards/edit-multi-day-booking.guard';
 
 export const routes: Routes = [
     {
         path: 'book-hearing',
         component: CreateHearingComponent,
-        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard]
     },
     {
         path: 'hearing-schedule',
         component: HearingScheduleComponent,
-        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard]
     },
     {
         path: 'assign-judge',
@@ -43,7 +42,7 @@ export const routes: Routes = [
     {
         path: 'other-information',
         component: OtherInformationComponent,
-        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard, EditMultiDayBookingGuard]
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard]
     },
     { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] }

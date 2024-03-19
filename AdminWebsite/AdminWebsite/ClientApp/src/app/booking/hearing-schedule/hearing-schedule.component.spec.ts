@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -19,6 +19,9 @@ import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { By } from '@angular/platform-browser';
+import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
+import { EditHearingDatesComponent } from './edit-hearing-dates/edit-hearing-dates.component';
 
 const newHearing = new HearingModel();
 
@@ -34,6 +37,8 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.isMultiDayEdit = false;
     existingRequest.court_name = 'Bedford';
     existingRequest.court_code = '333';
+    existingRequest.originalScheduledDateTime = existingRequest.scheduled_date_time;
+    existingRequest.status = 'Created';
     return existingRequest;
 }
 
@@ -604,7 +609,13 @@ describe('HearingScheduleComponent multi days hearing', () => {
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            declarations: [
+                HearingScheduleComponent,
+                BreadcrumbStubComponent,
+                CancelPopupComponent,
+                DiscardConfirmPopupComponent,
+                EditHearingDatesComponent
+            ]
         }).compileComponents();
     }));
 
@@ -728,6 +739,149 @@ describe('HearingScheduleComponent multi days hearing', () => {
             component.multiDaysControl.setValue(false);
             expect(component.durationHourControl.value).toBe(durationHours);
             expect(component.durationMinuteControl.value).toBe(durationMinutes);
+        });
+
+        describe('editing multiple hearings, day 2 of 4', () => {
+            let hearingsInGroupDatesTable: HTMLTableElement;
+            let multiDayHearing: HearingModel;
+            let hearing: HearingModel;
+            const dateTransfomer = new DatePipe('en-GB');
+
+            beforeEach(() => {
+                multiDayHearing = createMultiDayHearing(existingRequest);
+                hearing = Object.assign({}, multiDayHearing.hearingsInGroup[1]);
+                hearing.isMultiDayEdit = true;
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                videoHearingsServiceSpy.updateHearingRequest.calls.reset();
+            });
+
+            it('should display hearing in group dates table', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
+                const expectedHearingsInGroupToDisplay = hearing.hearingsInGroup.filter(
+                    h => h.scheduled_date_time >= hearing.scheduled_date_time
+                );
+                expect(hearingsInGroupDatesTable).toBeTruthy();
+                expect(hearingsInGroupDatesTable.rows.length).toBe(expectedHearingsInGroupToDisplay.length + 1); // +1 for header row
+                const rows: HTMLTableRowElement[] = Array.from(hearingsInGroupDatesTable.rows);
+                rows.forEach((row, index) => {
+                    if (index === 0) {
+                        // Skip the header row
+                        return;
+                    }
+                    const hearingInGroup = expectedHearingsInGroupToDisplay[index - 1];
+                    const expectedCurrentDate = dateTransfomer.transform(hearingInGroup.originalScheduledDateTime, 'dd/MM/yyyy');
+                    const expectedNewDate = dateTransfomer.transform(hearingInGroup.scheduled_date_time, 'yyyy-MM-dd');
+                    expect(row.cells[0].innerHTML).toBe(expectedCurrentDate);
+                    const hearingInGroupDateControl = row.cells[1].children[0] as HTMLInputElement;
+                    expect(hearingInGroupDateControl.value).toBe(expectedNewDate);
+                });
+            });
+
+            it('should exclude cancelled hearings from hearings in group to edit', () => {
+                const cancelledHearing = multiDayHearing.hearingsInGroup[2];
+                cancelledHearing.status = 'Cancelled';
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                component.ngOnInit();
+                fixture.detectChanges();
+                const hearingsInGroupToEdit = component.hearingsInGroupToEdit;
+                const foundHearing = hearingsInGroupToEdit.find(h => h.hearing_id === cancelledHearing.hearing_id);
+                expect(foundHearing).toBeFalsy();
+            });
+
+            it('should exclude failed hearings from hearings in group to edit', () => {
+                const failedHearing = multiDayHearing.hearingsInGroup[2];
+                failedHearing.status = 'Failed';
+                videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+                component.ngOnInit();
+                fixture.detectChanges();
+                const hearingsInGroupToEdit = component.hearingsInGroupToEdit;
+                const foundHearing = hearingsInGroupToEdit.find(h => h.hearing_id === failedHearing.hearing_id);
+                expect(foundHearing).toBeFalsy();
+            });
+
+            it('should fail validation when new dates are not unique', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('newDates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                newDateControls.controls[0].markAsTouched();
+                expect(newDateControls.valid).toBeFalsy();
+                expect(component.areNewDatesUnique).toBeFalsy();
+                expect(component.newDatesInvalid).toBeTruthy();
+            });
+
+            it('clicking Save should not update hearing when new dates are invalid', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('newDates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                newDateControls.controls[0].markAsTouched();
+                component.save();
+                expect(videoHearingsServiceSpy.updateHearingRequest).not.toHaveBeenCalled();
+            });
+
+            it('should fail new dates validation when submission has failed', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                const newDateControls = component.form.get('newDates') as FormArray;
+                newDateControls.controls[0].setValue(newDateControls.controls[1].value);
+                component.failedSubmission = true;
+                expect(component.newDatesInvalid).toBeTruthy();
+            });
+
+            it('should update hearing request and summary information with new dates upon save', () => {
+                component.ngOnInit();
+                fixture.detectChanges();
+                hearingsInGroupDatesTable = fixture.debugElement.query(By.css('#hearings-in-group-dates-table'))?.nativeElement;
+                const hearingInGroupDateControls = component.form.get('newDates') as FormArray;
+                const newDates: Date[] = [];
+                hearingInGroupDateControls.controls.forEach((hearingInGroupDateControl, index) => {
+                    const hearingInGroup = component.hearingsInGroupToEdit[index];
+                    const newDate = new Date(hearingInGroup.scheduled_date_time);
+                    newDate.setDate(newDate.getDate() + 1);
+                    newDates.push(newDate);
+                    const newDateValue = dateTransfomer.transform(newDate, 'yyyy-MM-dd');
+                    hearingInGroupDateControl.setValue(newDateValue);
+                    hearingInGroupDateControl.markAsTouched();
+                });
+                component.save();
+                const expectedUpdatedHearing = Object.assign({}, component.hearing);
+                expectedUpdatedHearing.hearing_venue_id = component.form.value.courtAddress;
+                expectedUpdatedHearing.court_room = component.form.value.courtRoom;
+                expectedUpdatedHearing.court_name = component.selectedCourtName;
+                expectedUpdatedHearing.court_code = component.selectedCourtCode;
+                expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time = setDateWithStartTimeOnForm(newDates[0]);
+                expectedUpdatedHearing.hearingsInGroup[2].scheduled_date_time = setDateWithStartTimeOnForm(newDates[1]);
+                expectedUpdatedHearing.hearingsInGroup[3].scheduled_date_time = setDateWithStartTimeOnForm(newDates[2]);
+                expectedUpdatedHearing.scheduled_duration = hearing.scheduled_duration;
+                expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalledWith(expectedUpdatedHearing);
+                const expectedStartDateTime = expectedUpdatedHearing.hearingsInGroup[1].scheduled_date_time;
+                const expectedEndDateTime = expectedUpdatedHearing.hearingsInGroup[3].scheduled_date_time;
+                const actualStartDateTime = component.hearing.scheduled_date_time;
+                const actualEndDateTime = component.hearing.multiDayHearingLastDayScheduledDateTime;
+                assertDateTimesMatch(expectedStartDateTime, actualStartDateTime);
+                assertDateTimesMatch(expectedEndDateTime, actualEndDateTime);
+            });
+
+            function setDateWithStartTimeOnForm(date: Date) {
+                const newDate = new Date(date);
+                newDate.setHours(component.form.value.hearingStartTimeHour, component.form.value.hearingStartTimeMinute);
+                return newDate;
+            }
+
+            function assertDateTimesMatch(date1: Date, date2: Date) {
+                const date1Date = dateTransfomer.transform(date1, 'dd/MM/yyyy');
+                const date1Hours = date1.getHours();
+                const date1Minutes = date1.getMinutes();
+                const date2Date = dateTransfomer.transform(date2, 'dd/MM/yyyy');
+                const date2Hours = date2.getHours();
+                const date2Minutes = date2.getMinutes();
+                expect(date1Date).toBe(date2Date);
+                expect(date1Hours).toBe(date2Hours);
+                expect(date1Minutes).toBe(date2Minutes);
+            }
         });
     });
 });

@@ -36,6 +36,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     destroyed$ = new Subject<void>();
 
     refDataEnabled: boolean;
+    private multiDayEnhancementsEnabled: boolean;
 
     constructor(
         protected hearingService: VideoHearingsService,
@@ -63,6 +64,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 if (this.form) {
                     this.form.get('hearingType').setValidators(this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]);
                 }
+            });
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.multiDayEnhancementsEnabled = flag;
             });
         this.failedSubmission = false;
         this.checkForExistingRequestOrCreateNew();
@@ -156,6 +163,29 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     get hearingTypeInvalid() {
         return this.hearingType.invalid && (this.hearingType.dirty || this.hearingType.touched || this.failedSubmission);
+    }
+
+    get canEditCaseName() {
+        if (this.hearing.isMultiDayEdit) {
+            return false;
+        }
+        if (this.hearing.isMultiDay && this.multiDayEnhancementsEnabled && !this.isFirstDayOfMultiDay()) {
+            return false;
+        }
+        return true;
+    }
+
+    get canEditCaseNumber() {
+        if (this.hearing.isMultiDayEdit && !this.isFirstDayOfMultiDay()) {
+            return false;
+        }
+        return true;
+    }
+
+    isFirstDayOfMultiDay(): boolean {
+        const firstDay = this.hearing.hearingsInGroup[0];
+        const isFirstDay = this.hearing.hearing_id === firstDay.hearing_id;
+        return isFirstDay;
     }
 
     saveHearingDetails() {
