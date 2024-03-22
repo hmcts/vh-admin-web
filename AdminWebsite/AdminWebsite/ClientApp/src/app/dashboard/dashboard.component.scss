@@ -94,21 +94,6 @@ $govuk-global-styles: true;
   text-decoration: none;
 }
 
-.vhlink:link {
-  color: #005ea5;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.vhlink:visited {
-  color: #005ea5;
-}
-
-.vhlink:hover {
-  color: #005ea5;
-  text-decoration: underline;
-}
-
 .vhtable {
   font-family: 'nta', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -116,16 +101,12 @@ $govuk-global-styles: true;
   font-weight: 400;
   font-size: 18px;
   line-height: 1;
-  color: #0b0c0c;
+  color: govuk-colour('black');
   width: 100%;
   margin-bottom: 10px;
   border-spacing: 0;
   border-collapse: collapse;
 }
-
-/*tr:hover {
-    background-color:#f8f8f8;
-}*/
 
 .vhtable-header {
   font-weight: 700;
@@ -140,7 +121,7 @@ $govuk-global-styles: true;
 }
 
 #rowbottom {
-  border-bottom: 1px solid #bfc1c3;
+  border-bottom: 1px solid govuk-colour('mid-grey');
   text-align: left;
 }
 
@@ -154,13 +135,13 @@ $govuk-global-styles: true;
 
 #cellsmall {
   font-size: 14px;
-  color: #6f777b;
+  color: govuk-colour('dark-grey');
   font-weight: 400;
 }
 
 #cellred {
   font-size: 14px;
-  color: #d4351c;
+  color: govuk-colour('red');
   font-weight: 400;
 }
 
@@ -199,30 +180,6 @@ h3.vhheading {
   padding: 30px;
 }
 
-#vhredbutton {
-  background-color: #d4351c;
-  -webkit-box-shadow: 0 2px 0 #360000;
-  box-shadow: 0 2px 0 #360000;
-  margin-bottom: 0px;
-  padding: 7px 17px 4px 17px;
-  font-size: 16px;
-}
-
-#vhredbutton:hover {
-  background-color: #8b0c18;
-}
-
-.vh2button {
-  background-color: #dee0e2;
-  -webkit-box-shadow: 0 2px 0 #888888;
-  box-shadow: 0 2px 0 #6f777b;
-  color: #0b0c0c;
-}
-
-#vh2button:hover {
-  background-color: #bfc1c3;
-}
-
 .sk-top {
   margin-top: 15px;
 }
@@ -258,44 +215,4 @@ h3.vhheading {
   float: left;
   list-style-type: none;
   font-size: 18px;
-}
-.vh-breadcrumbs:after {
-  content: '';
-  display: block;
-  clear: both;
-}
-.vh-breadcrumbs:before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: -1px;
-  bottom: 1px;
-  left: -3.31px;
-  width: 7px;
-  height: 7px;
-  margin: auto 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  border: solid;
-  border-width: 1px 1px 0 0;
-  border-color: #6f777b;
-}
-
-.vh-breadcrumbs:first-child:before {
-  content: none;
-  display: none;
-  margin-left: 0 !important;
-}
-
-.vh-active {
-  color: #1d8feb !important;
-}
-.vh-notactive {
-  color: #0b0c0c !important;
-}
-
-.vh-current {
-  color: #1d8feb !important;
-  font-weight: bold;
 }
