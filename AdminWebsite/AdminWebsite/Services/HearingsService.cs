@@ -116,7 +116,7 @@ namespace AdminWebsite.Services
         {
             // Add a new participant
             // Map the request except the username
-            var ejudFeatureFlag = _featureToggles.EJudEnabled();
+            var ejudFeatureFlag = _featureToggles.UseV2Api();
 
             if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge 
                 || participant.HearingRoleName == RoleNames.PanelMember
