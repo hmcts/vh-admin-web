@@ -38,7 +38,6 @@ import { ResponseTestData } from 'src/app/testing/data/response-test-data';
 import { BookingStatusService } from 'src/app/services/booking-status-service';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { TruncatableTextComponent } from 'src/app/shared/truncatable-text/truncatable-text.component';
-import { assert } from 'console';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -124,8 +123,7 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
     'updateMultiDayHearing'
 ]);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
-launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
@@ -308,9 +306,11 @@ describe('SummaryComponent with valid request', () => {
         expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalled();
     });
+
     it('should hide pop up that indicated process saving a booking', () => {
         expect(component.showWaitSaving).toBeFalsy();
     });
+
     it('should save new booking', fakeAsync(async () => {
         component.ngOnInit();
         fixture.detectChanges();
@@ -686,7 +686,7 @@ describe('SummaryComponent  with invalid request', () => {
     it('should not save booking, when no judge assigned and Ejud flag off', async () => {
         component.ngOnInit();
         fixture.detectChanges();
-        component.ejudFeatureFlag = false;
+        component.useApiV2 = false;
         await component.bookHearing();
         expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalledTimes(0);
         expect(component.showWaitSaving).toBeFalsy();
@@ -935,7 +935,6 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
     const component = new SummaryComponent(
         videoHearingsServiceSpy,
@@ -947,7 +946,7 @@ describe('SummaryComponent  with multi days request', () => {
         launchDarklyServiceSpy,
         bookingStatusService
     );
-    component.participantsListComponent = new ParticipantListComponent(loggerSpy, videoHearingsServiceSpy);
+    component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
     component.removePopupComponent = new RemovePopupComponent();
 

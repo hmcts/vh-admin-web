@@ -32,10 +32,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
-    private destroyed$ = new Subject<void>();
-    private judgeHearingRole = 'Judge';
-    private judiciaryRoles = this.constants.JudiciaryRoles;
-    private cannotAddNewUsersRoles = [this.judgeHearingRole];
+    private cannotAddNewUsersRoles = [this.constants.Judge];
 
     @Input() disabled = true;
 
@@ -51,22 +48,10 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(
-        private searchService: SearchService,
-        private configService: ConfigService,
-        private logger: Logger,
-        private featureFlagService: LaunchDarklyService
-    ) {}
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
         this.email = this.initialValue;
-        this.featureFlagService
-            .getFlag(FeatureFlags.eJudFeature)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(result => {
-                this.judiciaryRoles = result ? Constants.JudiciaryRoles : [];
-            });
-
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(
@@ -75,7 +60,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     switchMap(term => {
                         // do not wait for valid email to be completed, partial search is allowed
                         if (term.length > 2) {
-                            return this.searchService.participantSearch(term, this.hearingRoleParticipant, this.caseRole);
+                            return this.searchService.participantSearch(term, this.hearingRoleParticipant);
                         } else {
                             this.lessThanThreeLetters();
                             return NEVER;
@@ -218,6 +203,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     get isJudge() {
-        return this.hearingRoleParticipant === this.judgeHearingRole;
+        return this.hearingRoleParticipant === this.constants.Judge;
     }
 }

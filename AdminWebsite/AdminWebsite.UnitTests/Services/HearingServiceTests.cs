@@ -2,17 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
-using AdminWebsite.Contracts.Enums;
-using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
@@ -55,7 +51,6 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(c => c.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(true);
             _mocker.Mock<IFeatureToggles>()
                 .Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _service = _mocker.Create<HearingsService>();
@@ -123,149 +118,6 @@ namespace AdminWebsite.UnitTests.Services
                         && x.NewParticipants == newParticipants
                         && x.RemovedParticipantIds == removedParticipantIds
                         && x.LinkedParticipants == linkedParticipants)), Times.Once);
-        }
-
-        [TestCase(RoleNames.PanelMember)]
-        [TestCase(RoleNames.Winger)]
-        public async Task Should_process_new_joh_participant_EJudFeature_Is_ON(string hearingRole)
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                HearingRoleName = hearingRole,
-                ContactEmail = "contact@email.com"
-            };
-            var removedParticipantIds = new List<Guid>();
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().Be(participant.ContactEmail);
-        }
-
-        [TestCase(RoleNames.PanelMember)]
-        [TestCase(RoleNames.Winger)]
-        public async Task Should_process_new_joh_participant_EJudFeature_Is_OFF(string hearingRole)
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                HearingRoleName = hearingRole,
-                ContactEmail = "contact@email.com"
-            };
-            var removedParticipantIds = new List<Guid>();
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(false);
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().NotBe(participant.ContactEmail);
-        }
-
-        [Test]
-        public async Task Should_process_new_judge_participant_EJudFeature_Is_OFF()
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                CaseRoleName = "Judge",
-                ContactEmail = "contact@email.com"
-            };
-            var removedParticipantIds = new List<Guid>();
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.EJudEnabled()).Returns(false);
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().Be(participant.ContactEmail);
-        }
-
-        [Test]
-        public async Task Should_NOT_process_new_joh_participant_when_participant_is_in_list_and_NOT_removed()
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                HearingRoleName = "Panel Member",
-                ContactEmail = "contact@email.com"
-            };
-
-            _hearing.Participants.Add(new ParticipantResponse
-            {
-                Id = participant.Id.Value,
-                Username = participant.ContactEmail,
-                ContactEmail = participant.ContactEmail
-            });
-
-            var removedParticipantIds = new List<Guid>();
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().BeNull();
-        }
-
-        [Test]
-        public async Task Should_process_new_joh_participant_when_participant_is_in_list_and_is_removed()
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                CaseRoleName = "Judge",
-                ContactEmail = "contact@email.com"
-            };
-
-            _hearing.Participants.Add(new ParticipantResponse
-            {
-                Id = participant.Id.Value,
-                Username = participant.ContactEmail,
-                ContactEmail = participant.ContactEmail
-            });
-
-            var removedParticipantIds = new List<Guid>
-            {
-                participant.Id.Value
-            };
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().Be(participant.ContactEmail);
-        }
-
-        [Test]
-        public async Task Should_process_non_joh_participant()
-        {
-            // Arrange
-            var participant = new EditParticipantRequest
-            {
-                Id = Guid.NewGuid(),
-                CaseRoleName = "NOT JUDGE",
-                ContactEmail = "contact@email.com"
-            };
-
-            var removedParticipantIds = new List<Guid>();
-
-            // Act
-            var newParticipant = await _service.ProcessNewParticipant(_hearing.Id, participant, removedParticipantIds, _hearing.Map());
-
-            // Assert
-            newParticipant.Should().NotBeNull();
-            newParticipant.Username.Should().NotBe(participant.ContactEmail);
         }
         
         private HearingDetailsResponse InitHearing()

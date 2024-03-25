@@ -48,9 +48,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedUserIds: [];
     showSearch = false;
     today = new Date();
-    ejudFeatureFlag: boolean;
-    showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
+    isV2 = false;
 
     destroyed$ = new Subject<void>();
 
@@ -511,10 +510,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             });
 
         this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(flag => {
-                this.ejudFeatureFlag = flag;
+                this.isV2 = flag;
             });
     }
 }

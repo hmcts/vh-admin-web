@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject, combineLatest } from 'rxjs';
+import { first } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 @Component({
@@ -18,7 +18,6 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     currentItem: BreadcrumbItemModel;
     @Input()
     canNavigate: boolean;
-    ejudFeatureFlag = false;
     addJudiciaryMemberFlag = false;
     destroyed$ = new Subject<void>();
 
@@ -26,22 +25,20 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.currentRouter = this.router.url;
-        const ejudFeatureFlag$ = this.featureService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
-        const addJudicalMembers$ = this.featureService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
-
-        combineLatest([ejudFeatureFlag$, addJudicalMembers$]).subscribe(([ejudFeatureFlag, addJudiciaryMemberFlag]) => {
-            this.ejudFeatureFlag = ejudFeatureFlag;
-            this.addJudiciaryMemberFlag = addJudiciaryMemberFlag;
-
-            let tempBreadcrumbModel: BreadcrumbItemModel[];
-            if (this.addJudiciaryMemberFlag) {
-                tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
-            } else {
-                tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AddJudicialOfficeHolders);
-            }
-            this.breadcrumbItems = tempBreadcrumbModel;
-            this.initBreadcrumb();
-        });
+        this.featureService
+            .getFlag<boolean>(FeatureFlags.useV2Api)
+            .pipe(first())
+            .subscribe(result => {
+                this.addJudiciaryMemberFlag = result;
+                let tempBreadcrumbModel: BreadcrumbItemModel[];
+                if (this.addJudiciaryMemberFlag) {
+                    tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AssignJudge);
+                } else {
+                    tempBreadcrumbModel = BreadcrumbItems.filter(x => x.Url !== PageUrls.AddJudicialOfficeHolders);
+                }
+                this.breadcrumbItems = tempBreadcrumbModel;
+                this.initBreadcrumb();
+            });
     }
 
     ngOnDestroy(): void {
@@ -69,7 +66,6 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
             if (this.videoHearingsService.validCurrentRequest()) {
                 this.router.navigate([nextItem.Url]);
             }
-            return;
         }
     }
     private initBreadcrumb() {
@@ -77,7 +73,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
             if (item.Name !== 'Judge') {
                 return false;
             } else {
-                return this.ejudFeatureFlag ? !item.LastMinuteAmendable : item.LastMinuteAmendable;
+                return this.addJudiciaryMemberFlag ? !item.LastMinuteAmendable : item.LastMinuteAmendable;
             }
         };
         this.currentItem = this.breadcrumbItems.find(s => s.Url === this.currentRouter);

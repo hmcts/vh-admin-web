@@ -70,14 +70,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     ngOnInit() {
-        const referenceDataFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.useV2Api).pipe(takeUntil(this.destroyed$));
-        const ejudFeatureFlag$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.eJudFeature).pipe(takeUntil(this.destroyed$));
-
-        combineLatest([referenceDataFlag$, ejudFeatureFlag$]).subscribe(([referenceDataFlag, ejudFeatureFlag]) => {
-            this.referenceDataFeatureFlag = referenceDataFlag;
-            this.judiciaryRoles = ejudFeatureFlag ? Constants.JudiciaryRoles : [];
-        });
-
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.useV2Api)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.referenceDataFeatureFlag = flag;
+            });
         this.checkForExistingRequest();
         this.initialiseForm();
         super.ngOnInit();
@@ -316,32 +314,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     onRoleSelected($event) {
         $event.stopImmediatePropagation();
         this.roleSelected();
-        this.validateJudiciaryEmailAndRole();
     }
 
     titleSelected() {
         this.isTitleSelected = this.title.value !== this.constants.PleaseSelect;
-    }
-
-    validateJudiciaryEmailAndRole() {
-        if (this.searchEmail?.email?.length) {
-            this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(judiciaryEntries => {
-                this.errorJudiciaryAccount = false;
-                if (judiciaryEntries?.length) {
-                    if (!this.judiciaryRoles.includes(this.role.value)) {
-                        this.setErrorForJudiciaryAccount();
-                    }
-                } else if (this.judiciaryRoles.includes(this.role.value)) {
-                    this.setErrorForJudiciaryAccount();
-                }
-            });
-        }
-    }
-
-    private setErrorForJudiciaryAccount() {
-        this.role.setErrors({ invalid: true });
-        this.party.setErrors({ invalid: true });
-        this.errorJudiciaryAccount = true;
     }
 
     saveParticipant() {

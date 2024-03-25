@@ -2,7 +2,6 @@ import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit } from '@ang
 import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
-import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
@@ -14,18 +13,18 @@ import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
 })
 export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     @Input() hearing: HearingModel;
+    @Input() isSummaryPage = false;
+    @Input() canEdit = false;
+
     sortedParticipants: ParticipantModel[] = [];
     sortedJudiciaryMembers: ParticipantModel[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
 
-    @Input() isSummaryPage = false;
-    @Input() canEdit = false;
-
     isEditMode = false;
 
-    constructor(private logger: Logger, private videoHearingsService: VideoHearingsService) {}
+    constructor(private videoHearingsService: VideoHearingsService) {}
 
     ngDoCheck(): void {
         const participantsLocal = [...(this.hearing?.participants || [])].sort(this.sortByDisplayName());

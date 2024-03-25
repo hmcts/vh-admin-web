@@ -60,7 +60,7 @@
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">
           <div class="govuk-grid-column-one-half">
-            <div *ngIf="ejudFeatureFlag" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div *ngIf="isV2" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="noJudge" name="noJudge" type="checkbox" formControlName="noJudge" />
                 <label class="govuk-label govuk-checkboxes__label" for="noJudge"> Hearings with no judge </label>
