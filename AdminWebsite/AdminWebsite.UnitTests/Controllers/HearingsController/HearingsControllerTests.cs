@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using VideoApi.Contract.Responses;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -128,6 +129,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         DisplayName = "Endpoint B"
+                    }
+                };
+
+                hearing.Cases = new List<CaseResponse>
+                {
+                    new()
+                    {
+                        Number = "TestCaseNumber",
+                        Name = "TestCaseName"
                     }
                 };
                 

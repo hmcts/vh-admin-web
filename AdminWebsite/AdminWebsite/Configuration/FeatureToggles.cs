@@ -66,7 +66,8 @@ namespace AdminWebsite.Configuration
 
         public bool UseV2Api()
         {
-            return GetBoolValueWithKey(UseV2ApiToggleKey);
+            return false;
+            //return GetBoolValueWithKey(UseV2ApiToggleKey);
         }
         
         public bool UsePostMay2023Template()
