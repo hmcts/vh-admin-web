@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
-using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -28,6 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
+            _userAccountService = new Mock<IUserAccountService>();
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(
                 _userAccountService.Object,
                 JavaScriptEncoder.Default,
@@ -74,8 +74,9 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_pass_on_bad_request_from_bookings_api()
         {
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+            _bookingsApiClient
+                .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var response = await _controller.SearchForJudiciaryPersonAsync("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
@@ -84,8 +85,9 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_pass_on_exception_request_from_bookings_api()
         {
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+            _bookingsApiClient
+                .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
         }
         
@@ -104,7 +106,8 @@ namespace AdminWebsite.UnitTests.Controllers
                     Email = "johndoe@hmcts.net"
                 }
             };
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+            _bookingsApiClient
+                .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(expectedJudiciaryPersonResponse);
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object, JavaScriptEncoder.Default, _bookingsApiClient.Object);
 
@@ -124,8 +127,9 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task PostJudgesBySearchTerm_should_return_courtroom_accounts_if_match_to_search_term()
         {
-            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(new List<JudiciaryPersonResponse>());
+            _bookingsApiClient
+                .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                .ReturnsAsync(new List<JudiciaryPersonResponse>());
 
             var _courtRoomResponse = new List<JudgeResponse>
             {
