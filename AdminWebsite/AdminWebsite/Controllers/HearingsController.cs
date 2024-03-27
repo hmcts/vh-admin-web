@@ -111,13 +111,13 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
-                throw;
+                return StatusCode(500, e.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
                     e.Message, JsonConvert.SerializeObject(newBookingRequest));
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
