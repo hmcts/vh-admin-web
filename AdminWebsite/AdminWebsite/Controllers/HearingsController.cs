@@ -751,7 +751,8 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
                 {
                     DisplayName = newJudge.DisplayName,
-                    PersonalCode = newJudge.PersonalCode
+                    PersonalCode = newJudge.PersonalCode,
+                    OptionalContactEmail = newJudge.OptionalContactEmail
                 });
             }
 
@@ -820,7 +821,8 @@ namespace AdminWebsite.Controllers
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
-                    HearingRoleCode = roleCode
+                    HearingRoleCode = roleCode,
+                    ContactEmail = jp.OptionalContactEmail
                 };
             }).ToList();
             if (newJohRequest.Any())
