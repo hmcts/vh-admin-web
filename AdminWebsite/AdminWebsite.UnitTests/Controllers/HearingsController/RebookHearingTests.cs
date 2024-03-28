@@ -63,5 +63,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             response.Should().BeOfType<BadRequestObjectResult>();
         }
+        
+        [Test]
+        public async Task Should_pass_internalError_request_from_bookings_api()
+        {
+            var hearingId = Guid.NewGuid();
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.RebookHearingAsync(hearingId))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+            
+            var response = await _controller.RebookHearing(hearingId);
+
+            ((ObjectResult) response).StatusCode.Should().Be(500);
+        }
     }
 }

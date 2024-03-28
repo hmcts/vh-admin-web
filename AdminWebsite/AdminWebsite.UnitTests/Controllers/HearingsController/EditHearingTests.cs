@@ -486,7 +486,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
             //Act/Assert
-            Assert.ThrowsAsync<BookingsApiException>(async () => await _controller.EditHearing(_validId, _addNewParticipantRequest));
+            
+            var response = _controller.EditHearing(_validId, _addNewParticipantRequest);
+
+            ((ObjectResult)response.Result.Result).StatusCode.Should().Be(500);
         }
 
         [TestCase("Confirmed By")]

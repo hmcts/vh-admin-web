@@ -111,13 +111,13 @@ namespace AdminWebsite.Controllers
                     var typedException = e as BookingsApiException<ValidationProblemDetails>;
                     return ValidationProblem(typedException!.Result);
                 }
-                throw;
+                return StatusCode(500, e.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
                     e.Message, JsonConvert.SerializeObject(newBookingRequest));
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -179,7 +179,7 @@ namespace AdminWebsite.Controllers
                     e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -232,7 +232,7 @@ namespace AdminWebsite.Controllers
                     "There was a problem cloning the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -315,7 +315,7 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(typedException!.Result);
                 }
                 
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -364,7 +364,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -404,7 +404,7 @@ namespace AdminWebsite.Controllers
                 }
                 
                 _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -751,7 +751,8 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
                 {
                     DisplayName = newJudge.DisplayName,
-                    PersonalCode = newJudge.PersonalCode
+                    PersonalCode = newJudge.PersonalCode,
+                    OptionalContactEmail = newJudge.OptionalContactEmail
                 });
             }
 
@@ -820,7 +821,8 @@ namespace AdminWebsite.Controllers
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
-                    HearingRoleCode = roleCode
+                    HearingRoleCode = roleCode,
+                    ContactEmail = jp.OptionalContactEmail
                 };
             }).ToList();
             if (newJohRequest.Any())
@@ -1006,7 +1008,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -1032,7 +1034,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException ex)
             {
                 if (ex.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(ex.Response);
-                throw;
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -1051,7 +1053,7 @@ namespace AdminWebsite.Controllers
             var errorMessage = $"Failed to get the booking created status, possibly the conference was not created - hearingId: {hearingId}";
             try
             {
-                _logger.LogDebug($"Hearing {hearingId} is booked. Polling for the status in BookingsApi");
+                _logger.LogDebug("Hearing {1} is booked. Polling for the status in BookingsApi", hearingId);
                 var response = await GetHearing(hearingId);
                 var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
@@ -1197,7 +1199,7 @@ namespace AdminWebsite.Controllers
             {
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
