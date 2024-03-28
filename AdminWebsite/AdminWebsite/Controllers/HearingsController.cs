@@ -500,22 +500,7 @@ namespace AdminWebsite.Controllers
                         hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
                     }
                     
-                    var hearingRequest = new HearingRequest
-                    {
-                        HearingId = hearing.Id,
-                        ScheduledDuration = hearingChanges.ScheduledDurationChanged ? 
-                            request.ScheduledDuration : hearing.ScheduledDuration,
-                        HearingVenueName = hearingChanges.HearingVenueNameChanged ? 
-                            request.HearingVenueName : hearing.HearingVenueName,
-                        HearingRoomName = hearingChanges.HearingRoomNameChanged ? 
-                            request.HearingRoomName : hearing.HearingRoomName,
-                        OtherInformation = hearingChanges.OtherInformationChanged ? 
-                            request.OtherInformation : hearing.OtherInformation,
-                        CaseNumber = hearingChanges.CaseNumberChanged ? 
-                            request.CaseNumber : hearing.Cases[0].Number,
-                        AudioRecordingRequired = hearingChanges.AudioRecordingRequiredChanged ? 
-                            request.AudioRecordingRequired : hearing.AudioRecordingRequired
-                    };
+                    var hearingRequest = HearingRequestMapper.MapHearingRequest(hearing, hearingChanges, request);
                     
                     var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
                     hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
@@ -533,108 +518,10 @@ namespace AdminWebsite.Controllers
 
                     if (hearing.Id != hearingId)
                     {
-                        var participantsRequest = new UpdateHearingParticipantsRequest();
-                        
-                        var participantsForThisHearing = hearing.Participants.ToList();
-                        
-                        // New participants
-                        participantsRequest.NewParticipants.AddRange(participantsForEditedHearing.NewParticipants);
-                        
-                        // Removed participants
-                        // Get the participants removed relative to the edited hearing, and re-map their ids for this hearing
-                        foreach (var removedParticipant in hearingChanges.RemovedParticipants)
-                        {
-                            var participantToRemoveForThisHearing = participantsForThisHearing.Find(x => x.ContactEmail == removedParticipant.ContactEmail);
-                            if (participantToRemoveForThisHearing != null)
-                            {
-                                participantsRequest.RemovedParticipantIds.Add(participantToRemoveForThisHearing.Id);
-                            }
-                        }
-                        
-                        // Existing participants
-                        // Get the existing participants relative to the edited hearing, and work out which edits were made to them in the request.
-                        // Apply only these edits to the existing participants for subsequent days in the hearing
-                        foreach (var existingParticipant in participantsForThisHearing)
-                        {
-                            var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
-                            if (participantInRequest == null)
-                            {
-                                continue;
-                            }
-                            
-                            var participantRequest = participantInRequest.ParticipantRequest;
-                            
-                            participantsRequest.ExistingParticipants.Add(new UpdateParticipantRequest
-                            {
-                                Title = participantInRequest.TitleChanged ? 
-                                    participantRequest.Title : existingParticipant.Title,
-                                DisplayName = participantInRequest.DisplayNameChanged ? 
-                                    participantRequest.DisplayName : existingParticipant.DisplayName,
-                                OrganisationName = participantInRequest.OrganisationNameChanged ? 
-                                    participantRequest.OrganisationName : existingParticipant.Organisation,
-                                TelephoneNumber = participantInRequest.TelephoneChanged ? 
-                                    participantRequest.TelephoneNumber : existingParticipant.TelephoneNumber,
-                                Representee = participantInRequest.RepresenteeChanged ? 
-                                    participantRequest.Representee : existingParticipant.Representee,
-                                ParticipantId = existingParticipant.Id,
-                                ContactEmail = existingParticipant.ContactEmail
-                            });
-                        }
-
-                        // Linked participants
-                        
-                        // Put the existing linked participants for this hearing into the request
-
-                        var existingLinkedParticipants = new List<LinkedParticipantRequest>();
-                        var linkedParticipantsForThisHearing = participantsForThisHearing
-                            .SelectMany(x => x.LinkedParticipants)
-                            .ToList();
-
-                        foreach (var linkedParticipant in linkedParticipantsForThisHearing)
-                        {
-                            var linked = participantsForThisHearing.Find(x => x.Id == linkedParticipant.LinkedId);
-                            var participant = participantsForThisHearing
-                                .First(x => x.LinkedParticipants.Exists(y => y.LinkedId == linkedParticipant.LinkedId));
-                            
-                            existingLinkedParticipants.Add(new LinkedParticipantRequest
-                            {
-                                ParticipantContactEmail = participant.ContactEmail,
-                                LinkedParticipantContactEmail = linked.ContactEmail,
-                                Type = LinkedParticipantType.Interpreter
-                            });
-                        }
-
-                        var linkedParticipants = new List<LinkedParticipantRequest>();
-                        linkedParticipants.AddRange(existingLinkedParticipants);
-                        
-                        // Now get the new linked participants that have been added in the request.
-                        // For the ones that don't already exist on this hearing, add them to the request
-                        var newLinkedParticipants = new List<LinkedParticipantRequest>();
-                        var linkedParticipantsAddedInRequest = hearingChanges.LinkedParticipantChanges.NewLinkedParticipants.ToList();
-                        foreach (var newLinkedParticipantAddedInRequest in linkedParticipantsAddedInRequest)
-                        {
-                            newLinkedParticipants.Add(new LinkedParticipantRequest
-                            {
-                                ParticipantContactEmail = newLinkedParticipantAddedInRequest.ParticipantContactEmail,
-                                LinkedParticipantContactEmail = newLinkedParticipantAddedInRequest.LinkedParticipantContactEmail,
-                                Type = newLinkedParticipantAddedInRequest.Type
-                            });
-                        }
-                        
-                        linkedParticipants.AddRange(newLinkedParticipants);
-
-                        // Remove any that we previously identified as having been removed (linkedParticipantChanges.RemovedLinkedParticipants)
-                        var linkedParticipantsRemovedFromEditedHearing = hearingChanges.LinkedParticipantChanges.RemovedLinkedParticipants.ToList();
-                        foreach (var linkedParticipant in linkedParticipantsRemovedFromEditedHearing)
-                        {
-                            var linkedParticipantToRemove = linkedParticipants.Find(p => p.LinkedParticipantContactEmail == linkedParticipant.LinkedParticipantContactEmail);
-                            if (linkedParticipantToRemove != null)
-                            {
-                                linkedParticipants.Remove(linkedParticipantToRemove);
-                            }
-                        }
-
-                        participantsRequest.LinkedParticipants = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
+                        hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureHearingV1(
+                            hearing,
+                            participantsForEditedHearing,
+                            hearingChanges);
 
                         // Endpoints
                         // TODO determine which changes have been made to the edited hearing
