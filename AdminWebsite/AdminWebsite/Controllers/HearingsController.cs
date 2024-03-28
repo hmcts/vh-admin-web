@@ -179,7 +179,7 @@ namespace AdminWebsite.Controllers
                     e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound(e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -232,7 +232,7 @@ namespace AdminWebsite.Controllers
                     "There was a problem cloning the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -315,7 +315,7 @@ namespace AdminWebsite.Controllers
                     return ValidationProblem(typedException!.Result);
                 }
                 
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -364,7 +364,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 _logger.LogError(e, "Unexpected error trying to edit multi day hearing");
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -404,7 +404,7 @@ namespace AdminWebsite.Controllers
                 }
                 
                 _logger.LogError(e, "Unexpected error trying to cancel multi day hearing");
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -1008,7 +1008,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 
@@ -1034,7 +1034,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException ex)
             {
                 if (ex.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(ex.Response);
-                throw;
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -1199,7 +1199,7 @@ namespace AdminWebsite.Controllers
             {
                 if (e.StatusCode == (int)HttpStatusCode.NotFound) return NotFound();
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest) return BadRequest(e.Response);
-                throw;
+                return StatusCode(500, e.Message);
             }
         }
 

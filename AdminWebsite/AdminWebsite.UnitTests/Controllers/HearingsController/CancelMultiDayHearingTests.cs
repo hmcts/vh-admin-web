@@ -266,8 +266,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ThrowsAsync(apiException);
             
             // Act & Assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await Controller.CancelMultiDayHearing(hearingId, request)).Result
-                .Should().Be(errorMessage);
+            var response = Controller.CancelMultiDayHearing(hearingId, request);
+
+            ((ObjectResult) response.Result).StatusCode.Should().Be(500);
+            
         }
         
         private static CancelMultiDayHearingRequest CreateRequest() =>

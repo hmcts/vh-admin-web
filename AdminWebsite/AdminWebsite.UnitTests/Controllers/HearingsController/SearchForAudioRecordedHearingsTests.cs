@@ -120,8 +120,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<BookingsApiException>(() =>
-                _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today));
+            var response = _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today);
+
+            ((ObjectResult) response.Result).StatusCode.Should().Be(500);
         }
 
         [TestCase("Perf692831/69", "Perf692831%2F69")]

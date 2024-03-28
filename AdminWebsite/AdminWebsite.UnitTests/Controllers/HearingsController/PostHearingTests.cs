@@ -218,7 +218,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(bookingRequest));
+            var response = _controller.Post(bookingRequest);
+
+            ((ObjectResult) response.Result.Result).StatusCode.Should().Be(500);
         }
         
         [Test]
@@ -236,8 +238,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(new Exception("Some internal error"));
+            
+            var response = _controller.Post(bookingRequest);
 
-            Assert.ThrowsAsync<Exception>(() => _controller.Post(bookingRequest));
+            ((ObjectResult) response.Result.Result).StatusCode.Should().Be(500);
         }
 
         [Test]

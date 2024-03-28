@@ -509,8 +509,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ThrowsAsync(apiException);
             
             // Act & Assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await Controller.EditMultiDayHearing(hearingId, request)).Result
-                .Should().Be(errorMessage);
+            var response = Controller.EditMultiDayHearing(hearingId, request);
+
+            ((ObjectResult)response.Result.Result).StatusCode.Should().Be(500);
         }
         
         private static HearingDetailsResponse MapUpdatedHearingV1(
