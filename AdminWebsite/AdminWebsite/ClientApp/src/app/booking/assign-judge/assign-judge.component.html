@@ -35,7 +35,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudgeAndStaffMember()">
+    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
       <div
         [ngClass]="updateJudgeAttempted && (!isJudgeSelected || isJudgeParticipantError) ? 'govuk-form-group--error' : 'govuk-form-group'"
       >
@@ -120,7 +120,7 @@
           id="nextButton"
           class="govuk-button vh-mr25"
           data-module="govuk-button"
-          (click)="saveJudgeAndStaffMember()"
+          (click)="saveJudge()"
           alt="Save judge details and view add participant"
         >
           {{ buttonAction }}

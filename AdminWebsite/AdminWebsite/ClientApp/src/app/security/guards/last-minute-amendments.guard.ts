@@ -8,7 +8,7 @@ import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.
 
 @Injectable()
 export class LastMinuteAmendmentsGuard implements CanActivate {
-    eJudFeatureFlag: boolean;
+    isV2: boolean;
     constructor(
         private videoHearingsService: VideoHearingsService,
         private router: Router,
@@ -16,17 +16,17 @@ export class LastMinuteAmendmentsGuard implements CanActivate {
         private logger: Logger
     ) {
         this.featureService
-            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(first())
             .subscribe(result => {
-                this.eJudFeatureFlag = result;
+                this.isV2 = result;
             });
     }
 
     canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         const exceptionToRuleCheck = route.data?.exceptionToRuleCheck as boolean;
         if (!this.videoHearingsService.isConferenceClosed() && this.videoHearingsService.isHearingAboutToStart()) {
-            if (exceptionToRuleCheck && this.eJudFeatureFlag) {
+            if (exceptionToRuleCheck && this.isV2) {
                 return true;
             }
             this.router.navigate(['/summary']);

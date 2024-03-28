@@ -16,7 +16,7 @@ describe('LastMinuteAmendmentsGuard', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
     const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
+    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -67,7 +67,7 @@ describe('LastMinuteAmendmentsGuard', () => {
     describe('when accessing assign-judge; last minute', () => {
         it('ejudFeature flag off should override last-minute-amendment-guard and block assign-judge url to be reach', () => {
             // setup
-            guard.eJudFeatureFlag = false;
+            guard.isV2 = false;
             const url = 'assign-judge';
             const dataSnapshot = { exceptionToRuleCheck: true } as Data;
             const urlSegmentArray = [{ path: url }] as UrlSegment[];
@@ -95,7 +95,7 @@ describe('LastMinuteAmendmentsGuard', () => {
             expect(returned).toBe(true);
         });
         afterEach(() => {
-            guard.eJudFeatureFlag = true;
+            guard.isV2 = true;
         });
     });
 });
