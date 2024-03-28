@@ -1053,7 +1053,7 @@ namespace AdminWebsite.Controllers
             var errorMessage = $"Failed to get the booking created status, possibly the conference was not created - hearingId: {hearingId}";
             try
             {
-                _logger.LogDebug($"Hearing {hearingId} is booked. Polling for the status in BookingsApi");
+                _logger.LogDebug("Hearing {1} is booked. Polling for the status in BookingsApi", hearingId);
                 var response = await GetHearing(hearingId);
                 var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
