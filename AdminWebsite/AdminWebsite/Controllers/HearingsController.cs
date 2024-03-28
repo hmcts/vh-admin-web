@@ -475,135 +475,143 @@ namespace AdminWebsite.Controllers
 
             if (_featureToggles.UseV2Api())
             {
-                await UpdateMultiDayHearingV2();
+                await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);
             }
             else
             {
-                await UpdateMultiDayHearingV1();
+                await UpdateMultiDayHearingV1(hearingsToUpdate, hearingId, groupId, request);
             }
-
-            async Task UpdateMultiDayHearingV1()
+        }
+        
+        private async Task UpdateMultiDayHearingV1(
+            List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> hearingsToUpdate,
+            Guid originalEditedHearingId,
+            Guid groupId,
+            EditMultiDayHearingRequest request)
+        {
+            var bookingsApiRequest = new UpdateHearingsInGroupRequest
             {
-                var bookingsApiRequest = new UpdateHearingsInGroupRequest
-                {
-                    UpdatedBy = _userIdentity.GetUserIdentityName()
-                };
+                UpdatedBy = _userIdentity.GetUserIdentityName()
+            };
 
-                var participantsForEditedHearing = new UpdateHearingParticipantsRequest();
-                var endpointsForEditedHearing = new UpdateHearingEndpointsRequest();
-                var hearingChanges = new HearingChanges();
-                
-                foreach (var hearing in hearingsToUpdate)
-                {
-                    var isFutureDay = hearing.Id != hearingId;
-                    
-                    if (!isFutureDay)
-                    {
-                        hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
-                    }
-                    
-                    var hearingRequest = HearingRequestMapper.MapHearingRequest(hearing, hearingChanges, request);
-                    
-                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
-                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
-                
-                    var hearingToUpdate = hearing.Map();
-                    
-                    var participants = request.Participants.ToList();
-                    var endpoints = request.Endpoints.ToList();
-
-                    if (isFutureDay)
-                    {
-                        ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
-                        
-                        hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureDayHearingV1(
-                            hearing,
-                            participantsForEditedHearing,
-                            hearingChanges);
-
-                        // Endpoints
-                        // TODO determine which changes have been made to the edited hearing
-                    }
-                    else
-                    {
-                        hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
-                        hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
-
-                        participantsForEditedHearing = hearingRequest.Participants;
-                        endpointsForEditedHearing = hearingRequest.Endpoints;
-                    }
-                    
-                    bookingsApiRequest.Hearings.Add(hearingRequest);
-                }
-
-                await _bookingsApiClient.UpdateHearingsInGroupAsync(groupId, bookingsApiRequest);
-            }
-
-            async Task UpdateMultiDayHearingV2()
-            {
-                var bookingsApiRequest = new UpdateHearingsInGroupRequestV2
-                {
-                    UpdatedBy = _userIdentity.GetUserIdentityName()
-                };
+            var participantsForEditedHearing = new UpdateHearingParticipantsRequest();
+            var endpointsForEditedHearing = new UpdateHearingEndpointsRequest();
+            var hearingChanges = new HearingChanges();
             
-                foreach (var hearing in hearingsToUpdate)
+            foreach (var hearing in hearingsToUpdate)
+            {
+                var isFutureDay = hearing.Id != originalEditedHearingId;
+                
+                if (!isFutureDay)
                 {
-                    var hearingRequest = new HearingRequestV2
-                    {
-                        HearingId = hearing.Id,
-                        ScheduledDuration = request.ScheduledDuration,
-                        HearingVenueCode = request.HearingVenueCode,
-                        HearingRoomName = request.HearingRoomName,
-                        OtherInformation = request.OtherInformation,
-                        CaseNumber = request.CaseNumber,
-                        AudioRecordingRequired = request.AudioRecordingRequired
-                    };
-                    
-                    var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
-                    hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
-                
-                    var hearingToUpdate = hearing.Map();
-                    
-                    var participants = request.Participants.ToList();
-                    var judiciaryParticipants = request.JudiciaryParticipants.ToList();
-                    var endpoints = request.Endpoints.ToList();
-                    var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
-
-                    if (isFutureDay)
-                    {
-                        ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
-                    }
-                
-                    hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV2(hearingToUpdate.Id, participants, hearingToUpdate);
-                    
-                    var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
-                    var endpointsV2 = new UpdateHearingEndpointsRequestV2
-                    {
-                        NewEndpoints = endpointsV1.NewEndpoints
-                            .Select(v1 => new EndpointRequestV2
-                            {
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        ExistingEndpoints = endpointsV1.ExistingEndpoints
-                            .Select(v1 => new UpdateEndpointRequestV2
-                            {
-                                Id = v1.Id,
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
-                    };
-                    hearingRequest.Endpoints = endpointsV2;
-                    hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
-                
-                    bookingsApiRequest.Hearings.Add(hearingRequest);
+                    hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
                 }
+                
+                var hearingRequest = HearingRequestMapper.MapHearingRequest(hearing, hearingChanges, request);
+                
+                var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
+            
+                var hearingToUpdate = hearing.Map();
+                
+                var participants = request.Participants.ToList();
+                var endpoints = request.Endpoints.ToList();
 
-                await _bookingsApiClient.UpdateHearingsInGroupV2Async(groupId, bookingsApiRequest);
+                if (isFutureDay)
+                {
+                    ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
+                    
+                    hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureDayHearingV1(
+                        hearing,
+                        participantsForEditedHearing,
+                        hearingChanges);
+
+                    // Endpoints
+                    // TODO determine which changes have been made to the edited hearing
+                }
+                else
+                {
+                    hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
+
+                    participantsForEditedHearing = hearingRequest.Participants;
+                    endpointsForEditedHearing = hearingRequest.Endpoints;
+                }
+                
+                bookingsApiRequest.Hearings.Add(hearingRequest);
             }
+
+            await _bookingsApiClient.UpdateHearingsInGroupAsync(groupId, bookingsApiRequest);
+        }
+        
+        private async Task UpdateMultiDayHearingV2(
+            List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> hearingsToUpdate,
+            Guid originalEditedHearingId,
+            Guid groupId,
+            EditMultiDayHearingRequest request)
+        {
+            var bookingsApiRequest = new UpdateHearingsInGroupRequestV2
+            {
+                UpdatedBy = _userIdentity.GetUserIdentityName()
+            };
+        
+            foreach (var hearing in hearingsToUpdate)
+            {
+                var hearingRequest = new HearingRequestV2
+                {
+                    HearingId = hearing.Id,
+                    ScheduledDuration = request.ScheduledDuration,
+                    HearingVenueCode = request.HearingVenueCode,
+                    HearingRoomName = request.HearingRoomName,
+                    OtherInformation = request.OtherInformation,
+                    CaseNumber = request.CaseNumber,
+                    AudioRecordingRequired = request.AudioRecordingRequired
+                };
+                
+                var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
+                hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
+            
+                var hearingToUpdate = hearing.Map();
+                
+                var participants = request.Participants.ToList();
+                var judiciaryParticipants = request.JudiciaryParticipants.ToList();
+                var endpoints = request.Endpoints.ToList();
+                var isFutureDay = hearingToUpdate.Id != originalEditedHearingId;
+
+                if (isFutureDay)
+                {
+                    ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
+                }
+            
+                hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV2(hearingToUpdate.Id, participants, hearingToUpdate);
+                
+                var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
+                var endpointsV2 = new UpdateHearingEndpointsRequestV2
+                {
+                    NewEndpoints = endpointsV1.NewEndpoints
+                        .Select(v1 => new EndpointRequestV2
+                        {
+                            DisplayName = v1.DisplayName,
+                            DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                        })
+                        .ToList(),
+                    ExistingEndpoints = endpointsV1.ExistingEndpoints
+                        .Select(v1 => new UpdateEndpointRequestV2
+                        {
+                            Id = v1.Id,
+                            DisplayName = v1.DisplayName,
+                            DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                        })
+                        .ToList(),
+                    RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
+                };
+                hearingRequest.Endpoints = endpointsV2;
+                hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
+            
+                bookingsApiRequest.Hearings.Add(hearingRequest);
+            }
+
+            await _bookingsApiClient.UpdateHearingsInGroupV2Async(groupId, bookingsApiRequest);
         }
 
         private async Task CancelMultiDayHearing(CancelMultiDayHearingRequest request, Guid hearingId, Guid groupId)
