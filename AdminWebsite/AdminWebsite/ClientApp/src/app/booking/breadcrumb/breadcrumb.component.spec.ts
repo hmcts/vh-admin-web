@@ -22,7 +22,6 @@ describe('BreadcrumbComponent', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         component = new BreadcrumbComponent(router, videoHearingsServiceSpy, launchDarklyServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
@@ -95,7 +94,7 @@ describe('BreadcrumbComponent', () => {
     });
 
     it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         component.ngOnInit();
         expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
     });
@@ -114,8 +113,7 @@ describe('BreadcrumbComponent', () => {
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
     });
 
-    it('should set ejudFeatureFlag and addJudiciaryMemberFlag when ngOnInit is called', () => {
-        expect(component.ejudFeatureFlag).toBe(true);
+    it('should set addJudiciaryMemberFlag when ngOnInit is called', () => {
         expect(component.addJudiciaryMemberFlag).toBe(false);
     });
 

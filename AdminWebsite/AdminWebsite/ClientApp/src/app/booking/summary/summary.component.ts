@@ -72,7 +72,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     judgeAssigned: boolean;
-    ejudFeatureFlag = false;
     useApiV2 = false;
     saveFailedMessages: string[];
     multiDayBookingEnhancementsEnabled: boolean;
@@ -91,23 +90,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
-        this.$subscriptions.push(
-            this.featureService
-                .getFlag<boolean>(FeatureFlags.eJudFeature)
-                .pipe(first())
-                .subscribe(result => {
-                    this.ejudFeatureFlag = result;
-                })
-        );
-
-        this.$subscriptions.push(
-            this.featureService
-                .getFlag<boolean>(FeatureFlags.eJudFeature)
-                .pipe(first())
-                .subscribe(result => {
-                    this.ejudFeatureFlag = result;
-                })
-        );
 
         this.$subscriptions.push(
             this.featureService
@@ -314,7 +296,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
-                if (!this.judgeAssigned && !this.ejudFeatureFlag) {
+                if (!this.judgeAssigned && !this.useApiV2) {
                     const error = new Error('Ejud Feature flag must be true, to book without a judge');
                     this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error);
                     this.setError(error);

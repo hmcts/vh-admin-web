@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -22,7 +22,6 @@ import { OtherInformationModel } from '../../common/model/other-information.mode
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
-import { AddStaffMemberComponent } from '../add-staff-member/add-staff-member.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
@@ -104,7 +103,6 @@ describe('AssignJudgeComponent', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         emailValidationServiceSpy.validateEmail.and.returnValue(true);
         emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
@@ -162,7 +160,6 @@ describe('AssignJudgeComponent', () => {
             declarations: [
                 AssignJudgeComponent,
                 MockComponent(SearchEmailComponent),
-                MockComponent(AddStaffMemberComponent),
                 BreadcrumbStubComponent,
                 CancelPopupComponent,
                 ParticipantsListStubComponent,
@@ -185,35 +182,9 @@ describe('AssignJudgeComponent', () => {
             component.ngOnInit();
         }));
 
-        it('should hide functionality of adding staff member to the hearing', () => {
-            component.showStaffMemberFeature = false;
-            fixture.detectChanges();
-
-            const addStaffMemberCheckbox = fixture.debugElement.query(By.css('[data-add-staff-member-checkbox]'));
-            expect(addStaffMemberCheckbox).toBeFalsy();
-        });
-
-        it('should fail validation if there are form errors when adding a staff member', () => {
-            component.showAddStaffMemberFld.setValue(true);
-            component.isStaffMemberValid = false;
-
-            component.saveJudgeAndStaffMember();
-
-            expect(component.showStaffMemberErrorSummary).toBe(true);
-        });
-
-        it('should not show validation errors for staff member if there are none', () => {
-            component.showAddStaffMemberFld.setValue(true);
-            component.isStaffMemberValid = true;
-
-            component.saveJudgeAndStaffMember();
-
-            expect(component.showStaffMemberErrorSummary).toBe(false);
-        });
-
         it('should fail validation if a judge is not selected', () => {
             component.cancelAssignJudge();
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
             expect(component.form.valid).toBeFalsy();
         });
         it('should initialize form and create judgeDisplayName control', () => {
@@ -417,44 +388,20 @@ describe('AssignJudgeComponent', () => {
             component.judge = testJudge;
         });
 
-        it('should set correct validation errors if judge is null, and Ejud flag on', () => {
-            component.ejudFeatureFlag = true;
+        it('should set correct validation errors if judge is null', () => {
             component.judge = null;
 
-            component.saveJudgeAndStaffMember();
-
-            expect(component.isJudgeParticipantError).toBe(false);
-            expect(component.failedSubmission).toBe(false);
-            expect(component.isJudgeSelected).toBe(false);
-        });
-
-        it('should set correct validation errors if judge is null, and Ejud flag off', () => {
-            component.ejudFeatureFlag = false;
-            component.judge = null;
-
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(false);
         });
 
-        it('should set correct validation errors if email is null, and Ejud flag on', () => {
-            component.ejudFeatureFlag = true;
+        it('should set correct validation errors if email is null', () => {
             component.judge.email = null;
 
-            component.saveJudgeAndStaffMember();
-
-            expect(component.isJudgeParticipantError).toBe(false);
-            expect(component.failedSubmission).toBe(false);
-            expect(component.isJudgeSelected).toBe(false);
-        });
-
-        it('should set correct validation errors if email is null, and Ejud flag off', () => {
-            component.ejudFeatureFlag = false;
-            component.judge.email = null;
-
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -464,7 +411,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -473,7 +420,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
             expect(component.isJudgeSelected).toBe(true);
@@ -482,7 +429,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if cannot add judge', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
 
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(true);
             expect(component.failedSubmission).toBe(true);
@@ -492,7 +439,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but form is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.form.setErrors({ incorrect: true });
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -502,7 +449,7 @@ describe('AssignJudgeComponent', () => {
         it('should set correct validation errors if can add judge but email is invalid', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
             component.isValidEmail = false;
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(true);
@@ -516,7 +463,7 @@ describe('AssignJudgeComponent', () => {
             spyOn(component, 'changeEmail');
             spyOn(component, 'changeTelephone');
 
-            component.saveJudgeAndStaffMember();
+            component.saveJudge();
 
             expect(component.isJudgeParticipantError).toBe(false);
             expect(component.failedSubmission).toBe(false);
@@ -542,7 +489,7 @@ describe('AssignJudgeComponent', () => {
             });
 
             afterEach(() => {
-                component.saveJudgeAndStaffMember();
+                component.saveJudge();
                 expect(component.isJudgeParticipantError).toBe(false);
                 expect(component.failedSubmission).toBe(false);
                 expect(component.isJudgeSelected).toBe(true);

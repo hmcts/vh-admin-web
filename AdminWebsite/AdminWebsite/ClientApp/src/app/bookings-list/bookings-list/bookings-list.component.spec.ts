@@ -592,7 +592,7 @@ describe('BookingsListComponent', () => {
 
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.adminSearch).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         referenceDataServiceSpy.getCourts.and.returnValue(of(new Array<HearingVenueResponse>()));
         featureFlagServiceSpy.getFeatureFlagByName.and.returnValue(of(false));

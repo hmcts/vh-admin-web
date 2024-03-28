@@ -60,7 +60,6 @@ describe('SearchEmailComponent', () => {
 
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
         TestBed.configureTestingModule({
             declarations: [SearchEmailComponent],
@@ -395,11 +394,10 @@ describe('SearchEmailComponent email validate', () => {
     const searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
     const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
-    const component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy, launchDarklyServiceSpy);
+    const component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy);
     it('should config service return email pattern for validation', fakeAsync(() => {
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         component.getEmailPattern();

@@ -49,7 +49,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     invalidPattern: string;
     isValidEmail = true;
     showStaffMemberFeature: boolean;
-    ejudFeatureFlag = false;
     useV2Api = false;
     destroyed$ = new Subject<void>();
 
@@ -73,12 +72,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             .pipe(takeUntil(this.destroyed$))
             .subscribe(enabled => {
                 this.useV2Api = enabled;
-            });
-        this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.eJudFeature)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(enabled => {
-                this.ejudFeatureFlag = enabled;
             });
 
         this.failedSubmission = false;
@@ -261,14 +254,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judgePhoneFld.setValue(text);
     }
 
-    saveJudgeAndStaffMember() {
-        this.logger.debug(`${this.loggerPrefix} Attempting to save judge (and staff member if selected).`);
-
-        if (this.showAddStaffMemberFld.value === true && !this.isStaffMemberValid) {
-            this.logger.warn(`${this.loggerPrefix} Validation errors are present when adding a staff member`);
-            this.showStaffMemberErrorSummary = true;
-            return;
-        }
+    saveJudge() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
 
         if (this.judge?.email) {
             if (!this.judge.display_name) {
@@ -307,13 +294,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.failedSubmission = true;
             }
         } else {
-            if (this.ejudFeatureFlag) {
-                this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
-                this.router.navigate([PageUrls.AddParticipants]);
-            } else {
-                this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
-                this.failedSubmission = true;
-            }
+            this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
+            this.failedSubmission = true;
         }
     }
 
