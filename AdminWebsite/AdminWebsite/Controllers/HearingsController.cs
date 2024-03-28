@@ -495,7 +495,9 @@ namespace AdminWebsite.Controllers
                 
                 foreach (var hearing in hearingsToUpdate)
                 {
-                    if (hearing.Id == hearingId)
+                    var isFutureDay = hearing.Id != hearingId;
+                    
+                    if (!isFutureDay)
                     {
                         hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
                     }
@@ -509,16 +511,12 @@ namespace AdminWebsite.Controllers
                     
                     var participants = request.Participants.ToList();
                     var endpoints = request.Endpoints.ToList();
-                    var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
 
                     if (isFutureDay)
                     {
                         ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
-                    }
-
-                    if (hearing.Id != hearingId)
-                    {
-                        hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureHearingV1(
+                        
+                        hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureDayHearingV1(
                             hearing,
                             participantsForEditedHearing,
                             hearingChanges);

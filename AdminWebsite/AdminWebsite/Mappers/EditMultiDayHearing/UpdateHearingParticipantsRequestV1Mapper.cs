@@ -11,7 +11,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 {
     public static class UpdateHearingParticipantsRequestV1Mapper
     {
-        public static UpdateHearingParticipantsRequest MapParticipantsForFutureHearingV1(
+        public static UpdateHearingParticipantsRequest MapParticipantsForFutureDayHearingV1(
             HearingDetailsResponse hearing,
             UpdateHearingParticipantsRequest participantsForEditedHearing,
             HearingChanges hearingChanges)
