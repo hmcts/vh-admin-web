@@ -11,7 +11,9 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
+using AdminWebsite.Mappers.EditMultiDayHearing;
 using AdminWebsite.Models;
+using AdminWebsite.Models.EditMultiDayHearing;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using BookingsApi.Client;
@@ -487,125 +489,31 @@ namespace AdminWebsite.Controllers
                     UpdatedBy = _userIdentity.GetUserIdentityName()
                 };
 
-                // Work out which fields have changed relative to the day that we are editing
-                var scheduledDurationChanged = false;
-                var hearingVenueNameChanged = false;
-                var hearingRoomNameChanged = false;
-                var otherInformationChanged = false;
-                var caseNumberChanged = false;
-                var audioRecordingRequiredChanged = false;
-
                 var participantsForEditedHearing = new UpdateHearingParticipantsRequest();
                 var endpointsForEditedHearing = new UpdateHearingEndpointsRequest();
-                var participantChanges = new List<ParticipantChanges>();
-                var participantsRemovedForEditedHearing = new List<ParticipantResponse>();
-                var linkedParticipantChanges = new LinkedParticipantChanges();
+                var hearingChanges = new HearingChanges();
                 
                 foreach (var hearing in hearingsToUpdate)
                 {
                     if (hearing.Id == hearingId)
                     {
-                        if (request.ScheduledDuration != hearing.ScheduledDuration)
-                        {
-                            scheduledDurationChanged = true;
-                        }
-
-                        if (request.HearingVenueName != hearing.HearingVenueName)
-                        {
-                            hearingVenueNameChanged = true;
-                        }
-
-                        if (request.HearingRoomName != hearing.HearingRoomName)
-                        {
-                            hearingRoomNameChanged = true;
-                        }
-
-                        if (request.OtherInformation != hearing.OtherInformation)
-                        {
-                            otherInformationChanged = true;
-                        }
-
-                        if (request.CaseNumber != hearing.Cases[0].Number)
-                        {
-                            caseNumberChanged = true;
-                        }
-
-                        if (request.AudioRecordingRequired != hearing.AudioRecordingRequired)
-                        {
-                            audioRecordingRequiredChanged = true;
-                        }
-                        
-                        var participantsInRequest = request.Participants.ToList();
-                        
-                        // Existing participants
-                        var existingParticipantsInEditedHearing = hearing.Participants.ToList();
-                        foreach (var participantInRequest in participantsInRequest)
-                        {
-                            var existingParticipantForEditedHearing = existingParticipantsInEditedHearing.Find(x => x.Id == participantInRequest.Id);
-                            if (existingParticipantForEditedHearing == null)
-                            {
-                                continue;
-                            }
-
-                            participantChanges.Add(new ParticipantChanges
-                            {
-                                ParticipantRequest = participantInRequest,
-                                TitleChanged = participantInRequest.Title != existingParticipantForEditedHearing.Title,
-                                DisplayNameChanged = participantInRequest.DisplayName != existingParticipantForEditedHearing.DisplayName,
-                                OrganisationNameChanged = participantInRequest.OrganisationName != existingParticipantForEditedHearing.Organisation,
-                                TelephoneChanged = participantInRequest.TelephoneNumber != existingParticipantForEditedHearing.TelephoneNumber,
-                                RepresenteeChanged = participantInRequest.Representee != existingParticipantForEditedHearing.Representee
-                            });
-                        }
-                        
-                        // Removed participants
-                        participantsRemovedForEditedHearing = GetRemovedParticipants(request.Participants.ToList(), hearing.Map()).ToList();
-                        
-                        // Linked participants
-                        var linkedParticipantsInRequest = request.Participants
-                            .SelectMany(x => x.LinkedParticipants)
-                            .Select(x => new LinkedParticipant
-                            {
-                                LinkedId = x.LinkedId,
-                                Type = x.Type
-                            })
-                            .ToList();
-                        var existingLinkedParticipants = hearing.Participants
-                            .SelectMany(x => x.LinkedParticipants)
-                            .Select(x => new LinkedParticipant
-                            {
-                                LinkedId = x.LinkedId,
-                                Type = LinkedParticipantType.Interpreter
-                            })
-                            .ToList();
-                        
-                        var newLinkedParticipants = linkedParticipantsInRequest
-                            .Where(linked => !existingLinkedParticipants.Exists(existing => existing.LinkedId == linked.LinkedId && existing.Type == linked.Type))
-                            .ToList();
-                        
-                        var removedLinkedParticipants = existingLinkedParticipants
-                            .Where(existing => !linkedParticipantsInRequest.Exists(linked => linked.LinkedId == existing.LinkedId && linked.Type == existing.Type))
-                            .ToList();
-
-                        // We need to union these with each hearing
-                        linkedParticipantChanges.NewLinkedParticipants = newLinkedParticipants;
-                        linkedParticipantChanges.RemovedLinkedParticipants = removedLinkedParticipants;
+                        hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
                     }
                     
                     var hearingRequest = new HearingRequest
                     {
                         HearingId = hearing.Id,
-                        ScheduledDuration = scheduledDurationChanged ? 
+                        ScheduledDuration = hearingChanges.ScheduledDurationChanged ? 
                             request.ScheduledDuration : hearing.ScheduledDuration,
-                        HearingVenueName = hearingVenueNameChanged ? 
+                        HearingVenueName = hearingChanges.HearingVenueNameChanged ? 
                             request.HearingVenueName : hearing.HearingVenueName,
-                        HearingRoomName = hearingRoomNameChanged ? 
+                        HearingRoomName = hearingChanges.HearingRoomNameChanged ? 
                             request.HearingRoomName : hearing.HearingRoomName,
-                        OtherInformation = otherInformationChanged ? 
+                        OtherInformation = hearingChanges.OtherInformationChanged ? 
                             request.OtherInformation : hearing.OtherInformation,
-                        CaseNumber = caseNumberChanged ? 
+                        CaseNumber = hearingChanges.CaseNumberChanged ? 
                             request.CaseNumber : hearing.Cases[0].Number,
-                        AudioRecordingRequired = audioRecordingRequiredChanged ? 
+                        AudioRecordingRequired = hearingChanges.AudioRecordingRequiredChanged ? 
                             request.AudioRecordingRequired : hearing.AudioRecordingRequired
                     };
                     
@@ -613,14 +521,14 @@ namespace AdminWebsite.Controllers
                     hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
-
+                    
                     var participants = request.Participants.ToList();
                     var endpoints = request.Endpoints.ToList();
                     var isFutureDay = hearingToUpdate.Id != thisHearing.Id;
 
                     if (isFutureDay)
                     {
-                        AssignParticipantIdsForEditMultiDayHearingFutureDay(hearingToUpdate, participants, endpoints);
+                        ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
                     }
 
                     if (hearing.Id != hearingId)
@@ -634,7 +542,7 @@ namespace AdminWebsite.Controllers
                         
                         // Removed participants
                         // Get the participants removed relative to the edited hearing, and re-map their ids for this hearing
-                        foreach (var removedParticipant in participantsRemovedForEditedHearing)
+                        foreach (var removedParticipant in hearingChanges.RemovedParticipants)
                         {
                             var participantToRemoveForThisHearing = participantsForThisHearing.Find(x => x.ContactEmail == removedParticipant.ContactEmail);
                             if (participantToRemoveForThisHearing != null)
@@ -648,7 +556,7 @@ namespace AdminWebsite.Controllers
                         // Apply only these edits to the existing participants for subsequent days in the hearing
                         foreach (var existingParticipant in participantsForThisHearing)
                         {
-                            var participantInRequest = participantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
+                            var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
                             if (participantInRequest == null)
                             {
                                 continue;
@@ -674,24 +582,59 @@ namespace AdminWebsite.Controllers
                         }
 
                         // Linked participants
-                        // TODO determine which linked participants should be on this hearing after the update
-                        var requestParticipants = request.Participants.ToList();
-                        foreach (var requestParticipant in requestParticipants)
+                        
+                        // Put the existing linked participants for this hearing into the request
+
+                        var existingLinkedParticipants = new List<LinkedParticipantRequest>();
+                        var linkedParticipantsForThisHearing = participantsForThisHearing
+                            .SelectMany(x => x.LinkedParticipants)
+                            .ToList();
+
+                        foreach (var linkedParticipant in linkedParticipantsForThisHearing)
                         {
-                            // Re-map their participant ids to the ones on this hearing
-                            var participantOnThisHearing = hearing.Participants.Find(x => x.ContactEmail == requestParticipant.ContactEmail);
-                            if (participantOnThisHearing == null)
+                            var linked = participantsForThisHearing.Find(x => x.Id == linkedParticipant.LinkedId);
+                            var participant = participantsForThisHearing
+                                .First(x => x.LinkedParticipants.Exists(y => y.LinkedId == linkedParticipant.LinkedId));
+                            
+                            existingLinkedParticipants.Add(new LinkedParticipantRequest
                             {
-                                continue;
-                            }
+                                ParticipantContactEmail = participant.ContactEmail,
+                                LinkedParticipantContactEmail = linked.ContactEmail,
+                                Type = LinkedParticipantType.Interpreter
+                            });
+                        }
+
+                        var linkedParticipants = new List<LinkedParticipantRequest>();
+                        linkedParticipants.AddRange(existingLinkedParticipants);
+                        
+                        // Now get the new linked participants that have been added in the request.
+                        // For the ones that don't already exist on this hearing, add them to the request
+                        var newLinkedParticipants = new List<LinkedParticipantRequest>();
+                        var linkedParticipantsAddedInRequest = hearingChanges.LinkedParticipantChanges.NewLinkedParticipants.ToList();
+                        foreach (var newLinkedParticipantAddedInRequest in linkedParticipantsAddedInRequest)
+                        {
+                            newLinkedParticipants.Add(new LinkedParticipantRequest
+                            {
+                                ParticipantContactEmail = newLinkedParticipantAddedInRequest.ParticipantContactEmail,
+                                LinkedParticipantContactEmail = newLinkedParticipantAddedInRequest.LinkedParticipantContactEmail,
+                                Type = newLinkedParticipantAddedInRequest.Type
+                            });
                         }
                         
-                        var updatedLinkedParticipantsForThisHearing = ExtractLinkedParticipants(request.Participants,
-                            hearingToUpdate, participantsRequest.RemovedParticipantIds, new List<IUpdateParticipantRequest>(participantsRequest.ExistingParticipants),
-                            new List<IParticipantRequest>(participantsRequest.NewParticipants));
-                        var linkedParticipantsV1 = updatedLinkedParticipantsForThisHearing.Select(lp => lp.MapToV1()).ToList();
+                        linkedParticipants.AddRange(newLinkedParticipants);
 
-                        participantsRequest.LinkedParticipants = linkedParticipantsV1;
+                        // Remove any that we previously identified as having been removed (linkedParticipantChanges.RemovedLinkedParticipants)
+                        var linkedParticipantsRemovedFromEditedHearing = hearingChanges.LinkedParticipantChanges.RemovedLinkedParticipants.ToList();
+                        foreach (var linkedParticipant in linkedParticipantsRemovedFromEditedHearing)
+                        {
+                            var linkedParticipantToRemove = linkedParticipants.Find(p => p.LinkedParticipantContactEmail == linkedParticipant.LinkedParticipantContactEmail);
+                            if (linkedParticipantToRemove != null)
+                            {
+                                linkedParticipants.Remove(linkedParticipantToRemove);
+                            }
+                        }
+
+                        participantsRequest.LinkedParticipants = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
 
                         // Endpoints
                         // TODO determine which changes have been made to the edited hearing
@@ -735,7 +678,7 @@ namespace AdminWebsite.Controllers
                     hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
                 
                     var hearingToUpdate = hearing.Map();
-
+                    
                     var participants = request.Participants.ToList();
                     var judiciaryParticipants = request.JudiciaryParticipants.ToList();
                     var endpoints = request.Endpoints.ToList();
@@ -743,7 +686,7 @@ namespace AdminWebsite.Controllers
 
                     if (isFutureDay)
                     {
-                        AssignParticipantIdsForEditMultiDayHearingFutureDay(hearingToUpdate, participants, endpoints);
+                        ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
                     }
                 
                     hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV2(hearingToUpdate.Id, participants, hearingToUpdate);
@@ -809,36 +752,6 @@ namespace AdminWebsite.Controllers
             };
 
             await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
-        }
-
-        private static void AssignParticipantIdsForEditMultiDayHearingFutureDay(HearingDetailsResponse multiDayHearingFutureDay, 
-            List<EditParticipantRequest> participants, 
-            List<EditEndpointRequest> endpoints)
-        {
-            // For the future day hearings, the participant ids will be different
-            // So we need to set their ids to null if they are new participants, or use their existing ids if they already exist
-                    
-            foreach (var participant in participants)
-            {
-                var existingParticipant = multiDayHearingFutureDay.Participants.Find(x => x.ContactEmail == participant.ContactEmail);
-                if (existingParticipant == null)
-                {
-                    participant.Id = null;
-                            
-                }
-                else
-                {
-                    participant.Id = existingParticipant.Id;
-                }
-                
-                // TODO update linked participants
-            }
-
-            foreach (var endpoint in endpoints)
-            {
-                // Unlike participants we don't have a common identifier, so need to remove the existing endpoints and replace them
-                endpoint.Id = null;
-            }
         }
 
         private async Task UpdateParticipantsV1(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
