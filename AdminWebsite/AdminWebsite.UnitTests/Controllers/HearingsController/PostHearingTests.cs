@@ -360,6 +360,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             response.Should().BeOfType<BadRequestObjectResult>();
         }
+        
+        [Test]
+        public async Task Should_catch_InternalError_by_clone_hearing()
+        {
+            var request = GetMultiHearingRequest();
+            _mocker.Mock<IBookingsApiClient>()
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Throws(new BookingsApiException("Error", (int)HttpStatusCode.InternalServerError, "response", null, null));
+
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            ((ObjectResult) response).StatusCode.Should().Be(500);
+        }
 
         [TestCase("2023-01-07", "2023-01-09")]
         [TestCase("2023-01-08", "2023-01-09")]
