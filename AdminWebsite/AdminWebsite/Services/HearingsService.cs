@@ -96,17 +96,7 @@ namespace AdminWebsite.Services
             };
             await _bookingsApiClient.UpdateHearingParticipants2Async(hearingId, updateHearingParticipantsRequest);
         }
-
-        public async Task<ParticipantRequest> ProcessNewParticipant(
-            Guid hearingId, 
-            EditParticipantRequest participant,
-            List<Guid> removedParticipantIds,
-            HearingDetailsResponse hearing)
-        {
-            var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-            return (ParticipantRequest)await ProcessNewParticipant(hearingId, participant, newParticipant, removedParticipantIds, hearing);
-        }
-    
+        
         public Task<IParticipantRequest> ProcessNewParticipant(
             Guid hearingId,
             EditParticipantRequest participant,
@@ -116,12 +106,7 @@ namespace AdminWebsite.Services
         {
             // Add a new participant
             // Map the request except the username
-            var ejudFeatureFlag = _featureToggles.EJudEnabled();
-
-            if ((ejudFeatureFlag && (participant.CaseRoleName == RoleNames.Judge 
-                || participant.HearingRoleName == RoleNames.PanelMember
-                || participant.HearingRoleName == RoleNames.Winger))
-                || (!ejudFeatureFlag && participant.CaseRoleName == RoleNames.Judge))
+            if (participant.CaseRoleName == RoleNames.Judge || (_featureToggles.UseV2Api() && participant.HearingRoleName is RoleNames.PanelMember or RoleNames.Winger))
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.TrueForAll(removedParticipantId => removedParticipantId != p.Id)))

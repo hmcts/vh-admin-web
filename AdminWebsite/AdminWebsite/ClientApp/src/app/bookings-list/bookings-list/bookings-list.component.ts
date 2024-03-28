@@ -1,5 +1,5 @@
-import { DatePipe, DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { lastValueFrom, Observable, Subject, Subscription, takeUntil } from 'rxjs';
@@ -12,7 +12,6 @@ import { BookingsResponse, JusticeUserResponse } from '../../services/clients/ap
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
-import { ReferenceDataService } from 'src/app/services/reference-data.service';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { JusticeUsersMenuComponent } from '../../shared/menus/justice-users-menu/justice-users-menu.component';
@@ -48,9 +47,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedUserIds: [];
     showSearch = false;
     today = new Date();
-    ejudFeatureFlag: boolean;
-    showWorkAllocation = false;
     vhoWorkAllocationFeature = false;
+    isV2 = false;
 
     destroyed$ = new Subject<void>();
 
@@ -67,10 +65,8 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
-        private refDataService: ReferenceDataService,
         private datePipe: DatePipe,
-        private returnUrlService: ReturnUrlService,
-        @Inject(DOCUMENT) document
+        private returnUrlService: ReturnUrlService
     ) {}
 
     ngOnInit() {
@@ -229,7 +225,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.endDate = endDate;
             this.bookingPersistService.participantLastName = lastName;
             this.bookingPersistService.noJugdeInHearings = noJudge ?? false;
-            this.bookingPersistService.noAllocatedHearings = noAllocated ? noAllocated : false;
+            this.bookingPersistService.noAllocatedHearings = noAllocated || false;
             this.bookingPersistService.selectedUsers = selectedUserIds;
             this.cursor = undefined;
             this.clearSelectedRow();
@@ -511,10 +507,10 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             });
 
         this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.eJudFeature)
+            .getFlag<boolean>(FeatureFlags.useV2Api)
             .pipe(takeUntil(this.destroyed$))
             .subscribe(flag => {
-                this.ejudFeatureFlag = flag;
+                this.isV2 = flag;
             });
     }
 }

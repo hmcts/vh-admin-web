@@ -62,8 +62,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(BookingsApiClient.Object, _participantGroupLogger.Object, FeatureToggle.Object);
 
-            FeatureToggle.Setup(x => x.EJudEnabled()).Returns(true);
-
             Controller = new AdminWebsite.Controllers.HearingsController(BookingsApiClient.Object,
                 UserIdentity.Object,
                 _editHearingRequestValidator.Object,

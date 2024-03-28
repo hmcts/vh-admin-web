@@ -5,12 +5,11 @@ import { of } from 'rxjs';
 import { BHClient, JudgeAccountType, JudgeResponse, PersonResponse } from './clients/api-client';
 import { ParticipantModel } from '../common/model/participant.model';
 import { Constants } from '../common/constants';
-import { FeatureFlags, LaunchDarklyService } from './launch-darkly.service';
+import { LaunchDarklyService } from './launch-darkly.service';
 
 let service: SearchService;
 
 const roleRegular = 'Appelant';
-const roleJudiciary = 'Panel Member';
 const roleJudge = 'Judge';
 
 const validSearchTerms = 'abc';
@@ -44,18 +43,6 @@ const personList: PersonResponse[] = JSON.parse(
     ]
     `
 );
-
-const judiciaryPerson1 = new PersonResponse();
-judiciaryPerson1.first_name = 'JudiciaryPerson1Name';
-judiciaryPerson1.last_name = 'JudiciaryPerson1LastName';
-judiciaryPerson1.contact_email = 'JudiciaryPerson1ContactEmail';
-
-const judiciaryPerson2 = new PersonResponse();
-judiciaryPerson2.first_name = 'JudiciaryPerson2Name';
-judiciaryPerson2.last_name = 'JudiciaryPerson2LastName';
-judiciaryPerson2.contact_email = 'JudiciaryPerson2ContactEmail';
-
-const judiciaryPersonList: PersonResponse[] = [judiciaryPerson1, judiciaryPerson2];
 
 const judge1 = new JudgeResponse();
 judge1.first_name = 'JudgeFirstName1';
@@ -115,38 +102,15 @@ participant2.last_name = 'participant2LastName';
 participant2.display_name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
 const participantList: ParticipantModel[] = [participant1, participant2];
-
-const staffMember1 = new PersonResponse();
-staffMember1.first_name = 'StaffMember1FirstName';
-staffMember1.last_name = 'StaffMember1LastName';
-staffMember1.contact_email = 'StaffMember1Email';
-
-const staffMember2 = new PersonResponse();
-staffMember2.first_name = 'StaffMember2FirstName';
-staffMember2.last_name = 'StaffMember2LastName';
-staffMember2.contact_email = 'StaffMember2Email';
-
-// const staffMemberList: ParticipantModel[] = [staffMember1, staffMember2, participant1];
-const staffMemberList: PersonResponse[] = [staffMember1, staffMember2];
-
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 
 describe('SearchService', () => {
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
-            'postPersonBySearchTerm',
-            'postJudiciaryPersonBySearchTerm',
-            'postJudgesBySearchTerm',
-            'getStaffMembersBySearchTerm'
-        ]);
+        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudgesBySearchTerm']);
 
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
-        clientApiSpy.getStaffMembersBySearchTerm.and.returnValue(of(staffMemberList));
-        clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
-
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(true));
 
         spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
         spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
@@ -164,16 +128,9 @@ describe('SearchService', () => {
 
     describe('participantSearch', () => {
         beforeEach(() => {
-            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
-                'postPersonBySearchTerm',
-                'postJudiciaryPersonBySearchTerm',
-                'postJudgesBySearchTerm',
-                'getStaffMembersBySearchTerm'
-            ]);
+            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudgesBySearchTerm']);
 
-            spyOn(service, 'searchStaffMemberAccounts').and.returnValue(of(staffMemberList));
             spyOn(service, 'searchEntries').and.returnValue(of(personList));
-            spyOn(service, 'searchJudiciaryEntries').and.returnValue(of(judiciaryPersonList));
             spyOn(service, 'searchJudgeAccounts').and.returnValue(of(judgeList));
         });
 
@@ -184,30 +141,10 @@ describe('SearchService', () => {
             });
             expect(service.searchEntries).toHaveBeenCalledWith(terms);
             expect(service.searchEntries).toHaveBeenCalledTimes(1);
-
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
             expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(personList.length);
             personList.forEach(person => {
-                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
-            });
-        });
-
-        it('should call participantSearch and map response when role is judiciary ', () => {
-            const terms = validSearchTerms;
-            service.participantSearch(terms, roleJudiciary).subscribe(participants => {
-                expect(participants.length).toEqual(participantList.length);
-            });
-
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledWith(terms);
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-
-            expect(service.searchEntries).toHaveBeenCalledTimes(0);
-            expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
-
-            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
-            judiciaryPersonList.forEach(person => {
                 expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
             });
         });
@@ -222,7 +159,6 @@ describe('SearchService', () => {
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(1);
 
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
-            expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
 
             expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledTimes(judgeList.length);
             judgeList.forEach(judge => {
@@ -245,43 +181,6 @@ describe('SearchService', () => {
         });
     });
 
-    describe('searchJudiciaryEntries', () => {
-        it('should method searchJudiciaryEntries not call api and return empty array when term is invalid', () => {
-            const terms = invalidSearchTerms;
-            service.participantSearch(terms, Constants.HearingRoles.PanelMember).subscribe(participants => {
-                expect(participants.length).toBe(0);
-            });
-            service.participantSearch(terms, Constants.HearingRoles.Winger).subscribe(participants => {
-                expect(participants.length).toBe(0);
-            });
-        });
-
-        it('should method searchJudiciaryEntries call api and return person array when EJudFeature flag is OFF', () => {
-            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.eJudFeature).and.returnValue(of(false));
-
-            const terms = validSearchTerms;
-            service.participantSearch(terms, Constants.HearingRoles.PanelMember).subscribe(participants => {
-                expect(participants.length).toBe(participantList.length);
-            });
-            service.participantSearch(terms, Constants.HearingRoles.Winger).subscribe(participants => {
-                expect(participants.length).toBe(participantList.length);
-            });
-        });
-
-        it('should method searchJudiciaryEntries call api and return judiciary person array when EJudFeature flag is ON', () => {
-            service.participantSearch(validSearchTerms, Constants.HearingRoles.PanelMember).subscribe(participants => {
-                expect(participants.length).toBe(judiciaryPersonList.length);
-            });
-            service.participantSearch(validSearchTerms, Constants.HearingRoles.Winger).subscribe(participants => {
-                expect(participants.length).toBe(judiciaryPersonList.length);
-            });
-        });
-        it('should method searchJudiciaryEntries call api and return persons response array when term is valid', () => {
-            const terms = validSearchTerms;
-            service.searchJudiciaryEntries(terms).subscribe(x => expect(x).toBe(judiciaryPersonList));
-        });
-    });
-
     describe('searchJudgeAccounts', () => {
         it('should method searchJudgeAccounts not call api and return empty array when term is invalid', () => {
             const terms = invalidSearchTerms;
@@ -292,21 +191,6 @@ describe('SearchService', () => {
         it('should method searchJudgeAccounts call api and return persons response array when term is valid', () => {
             const terms = validSearchTerms;
             service.searchJudgeAccounts(terms).subscribe(x => expect(x).toBe(judgeList));
-        });
-    });
-
-    describe('searchStaffMemberAccounts', () => {
-        it('should method searchStaffMemberAccounts not call api and return empty array when term is invalid', () => {
-            const terms = invalidSearchTerms;
-            service.participantSearch(terms, Constants.HearingRoles.StaffMember).subscribe(participants => {
-                expect(participants.length).toBe(0);
-            });
-        });
-        it('should method searchStaffMemberAccounts call api and return persons response array when term is valid', () => {
-            const terms = validSearchTerms;
-            service.participantSearch(terms, Constants.HearingRoles.StaffMember).subscribe(participants => {
-                expect(participants.length).toBe(staffMemberList.length);
-            });
         });
     });
 
