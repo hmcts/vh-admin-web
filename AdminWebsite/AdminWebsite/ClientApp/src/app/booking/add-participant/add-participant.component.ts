@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
