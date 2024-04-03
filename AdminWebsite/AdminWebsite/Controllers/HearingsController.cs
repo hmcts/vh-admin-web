@@ -1216,27 +1216,5 @@ namespace AdminWebsite.Controllers
 
             return participantsNeedVHAccounts;
         }
-
-        private class ParticipantChanges
-        {
-            public EditParticipantRequest ParticipantRequest { get; set; }
-            public bool TitleChanged { get; set; }
-            public bool DisplayNameChanged { get; set; }
-            public bool OrganisationNameChanged { get; set; }
-            public bool TelephoneChanged { get; set; }
-            public bool RepresenteeChanged { get; set; }
-        }
-
-        private sealed class LinkedParticipantChanges
-        {
-            public List<LinkedParticipant> NewLinkedParticipants { get; set; } = new();
-            public List<LinkedParticipant> RemovedLinkedParticipants { get; set; } = new();
-        }
-
-        private sealed class LinkedParticipant
-        {
-            public Guid LinkedId { get; set; }
-            public LinkedParticipantType Type { get; set; }
-        }
     }
 }
