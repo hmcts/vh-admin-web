@@ -6,10 +6,7 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Models.EditMultiDayHearing;
-using BookingsApi.Contract.Interfaces.Requests;
-using BookingsApi.Contract.V1.Requests;
 using LinkedParticipant = AdminWebsite.Models.EditMultiDayHearing.LinkedParticipant;
-using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
 
 namespace AdminWebsite.Mappers.EditMultiDayHearing
 {
@@ -58,6 +55,10 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             var removedParticipantIds = hearingChanges.RemovedParticipants.Select(x => x.Id).ToList();
             hearingChanges.LinkedParticipantChanges = MapLinkedParticipantChanges(hearing, request, removedParticipantIds);
 
+            // Endpoints
+            hearingChanges.EndpointChanges = MapEndpointChanges(hearing, request);
+            hearingChanges.RemovedEndpoints = GetRemovedEndpoints(request.Endpoints.ToList(), hearing.Map()).ToList();
+            
             return hearingChanges;
         }
 
@@ -173,6 +174,45 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         private static IEnumerable<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
         {
             return originalHearing.Participants.Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
+                .Select(x => x).ToList();
+        }
+
+        private static List<EndpointChanges> MapEndpointChanges(BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearing, EditMultiDayHearingRequest request)
+        {
+            var endpointChanges = new List<EndpointChanges>();
+            var endpointsInRequest = request.Endpoints.ToList();
+            
+            // Existing endpoints
+            var existingEndpointsInEditedHearing = hearing.Endpoints.ToList();
+            foreach (var endpointInRequest in endpointsInRequest)
+            {
+                var existingEndpointForEditedHearing = existingEndpointsInEditedHearing.Find(x => x.Id == endpointInRequest.Id);
+                
+                if (existingEndpointForEditedHearing == null)
+                {
+                    continue;
+                }
+
+                BookingsApi.Contract.V1.Responses.ParticipantResponse existingDefenceAdvocate = null;
+                if (existingEndpointForEditedHearing.DefenceAdvocateId != null)
+                {
+                    existingDefenceAdvocate = hearing.Participants.Find(x => x.Id == existingEndpointForEditedHearing.DefenceAdvocateId.Value);
+                }
+                
+                endpointChanges.Add(new EndpointChanges
+                {
+                    EndpointRequest = endpointInRequest,
+                    DisplayNameChanged = endpointInRequest.DisplayName != existingEndpointForEditedHearing.DisplayName,
+                    DefenceAdvocateContactEmailChanged = endpointInRequest.DefenceAdvocateContactEmail != existingDefenceAdvocate?.ContactEmail
+                });
+            }
+
+            return endpointChanges;
+        }
+
+        private static IEnumerable<EndpointResponse> GetRemovedEndpoints(List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
+        {
+            return originalHearing.Endpoints.Where(p => endpoints.TrueForAll(rp => rp.Id != p.Id))
                 .Select(x => x).ToList();
         }
     }

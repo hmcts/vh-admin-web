@@ -495,7 +495,6 @@ namespace AdminWebsite.Controllers
             };
 
             var participantsForEditedHearing = new UpdateHearingParticipantsRequest();
-            var endpointsForEditedHearing = new UpdateHearingEndpointsRequest();
             var hearingChanges = new HearingChanges();
             
             foreach (var hearing in hearingsToUpdate)
@@ -515,6 +514,7 @@ namespace AdminWebsite.Controllers
                 var hearingToUpdate = hearing.Map();
                 
                 var participants = request.Participants.ToList();
+                var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                 var endpoints = request.Endpoints.ToList();
 
                 if (isFutureDay)
@@ -526,16 +526,14 @@ namespace AdminWebsite.Controllers
                         participantsForEditedHearing,
                         hearingChanges);
 
-                    // Endpoints
-                    // TODO determine which changes have been made to the edited hearing
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                 }
                 else
                 {
                     hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
-                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants));
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList);
 
                     participantsForEditedHearing = hearingRequest.Participants;
-                    endpointsForEditedHearing = hearingRequest.Endpoints;
                 }
                 
                 bookingsApiRequest.Hearings.Add(hearingRequest);

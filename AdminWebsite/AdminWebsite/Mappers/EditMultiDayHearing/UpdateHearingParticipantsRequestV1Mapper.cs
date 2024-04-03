@@ -18,15 +18,13 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         {
             var participantsForThisHearing = hearing.Participants.ToList();
 
-            var participantsRequest = new UpdateHearingParticipantsRequest
+            return new UpdateHearingParticipantsRequest
             {
-                NewParticipants = participantsForEditedHearing.NewParticipants.ToList(),
+                NewParticipants = participantsForEditedHearing.NewParticipants.ToList(), // TODO should we skip participants already on this hearing
                 RemovedParticipantIds = MapRemovedParticipantIds(participantsForThisHearing, hearingChanges),
                 ExistingParticipants = MapExistingParticipants(participantsForThisHearing, hearingChanges),
                 LinkedParticipants = MapLinkedParticipants(participantsForThisHearing, hearingChanges)
             };
-
-            return participantsRequest;
         }
 
         private static List<Guid> MapRemovedParticipantIds(

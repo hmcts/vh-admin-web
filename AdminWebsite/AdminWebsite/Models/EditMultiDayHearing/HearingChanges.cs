@@ -15,5 +15,7 @@ namespace AdminWebsite.Models.EditMultiDayHearing
         
         public List<ParticipantChanges> ParticipantChanges { get; set; } = new();
         public List<ParticipantResponse> RemovedParticipants { get; set; } = new();
+        public List<EndpointChanges> EndpointChanges { get; set; } = new();
+        public List<EndpointResponse> RemovedEndpoints { get; set; } = new();
     }
 }
