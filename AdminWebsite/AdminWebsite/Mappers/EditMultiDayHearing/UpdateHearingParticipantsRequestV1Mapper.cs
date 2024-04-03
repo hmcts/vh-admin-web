@@ -94,6 +94,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 
             var existingLinkedParticipants = new List<LinkedParticipantRequest>();
             var linkedParticipantsForThisHearing = participantsForThisHearing
+                .Where(x => x.LinkedParticipants != null)
                 .SelectMany(x => x.LinkedParticipants)
                 .ToList();
 
