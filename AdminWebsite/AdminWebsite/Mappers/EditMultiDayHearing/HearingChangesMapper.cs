@@ -137,7 +137,8 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             //     .ToList();
             
             var existingLinkedParticipants = hearing.Participants
-                .SelectMany(participant => participant.LinkedParticipants.Select(linkedParticipant => new LinkedParticipant
+                .Where(participant => participant.LinkedParticipants != null)
+                .SelectMany(participant => participant.LinkedParticipants?.Select(linkedParticipant => new LinkedParticipant
                 {
                     ParticipantId = participant.Id,
                     LinkedId = linkedParticipant.LinkedId,

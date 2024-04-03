@@ -514,23 +514,26 @@ namespace AdminWebsite.Controllers
                 var hearingToUpdate = hearing.Map();
                 
                 var participants = request.Participants.ToList();
-                var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
+                
                 var endpoints = request.Endpoints.ToList();
 
                 if (isFutureDay)
                 {
                     ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
-                    
+
                     hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureDayHearingV1(
                         hearing,
                         participantsForEditedHearing,
                         hearingChanges);
 
+                    var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
+                    
                     hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                 }
                 else
                 {
                     hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
+                    var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                     hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList);
 
                     participantsForEditedHearing = hearingRequest.Participants;
