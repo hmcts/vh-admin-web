@@ -640,7 +640,7 @@ namespace AdminWebsite.Controllers
                     
                     var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                     
-                    var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
+                    var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList);
                     var endpointsV2 = new UpdateHearingEndpointsRequestV2
                     {
                         NewEndpoints = endpointsV1.NewEndpoints
