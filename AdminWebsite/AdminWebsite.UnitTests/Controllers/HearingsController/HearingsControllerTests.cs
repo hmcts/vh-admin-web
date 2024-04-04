@@ -17,6 +17,7 @@ using NUnit.Framework;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -94,6 +95,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
 
+                var interpreteeId = Guid.NewGuid();
+                var interpreterId = Guid.NewGuid();
+                
                 hearing.Participants = new List<ParticipantResponse>
                 {
                     new()
@@ -104,7 +108,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         ContactEmail = "judge@email.com",
                         Username = "judge@hearings.reform.hmcts.net",
                         HearingRoleName = "Judge",
-                        UserRoleName = "Judge"
+                        UserRoleName = "Judge",
+                        LinkedParticipants = new List<LinkedParticipantResponse>()
                     },
                     new()
                     {
@@ -114,7 +119,44 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         ContactEmail = "applicant@email.com",
                         Username = "applicant@hearings.reform.hmcts.net",
                         HearingRoleName = "Applicant",
-                        UserRoleName = "Individual"
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>()
+                    },
+                    new()
+                    {
+                        Id = interpreteeId,
+                        FirstName = "Interpretee",
+                        LastName = "Test",
+                        ContactEmail = "interpretee@email.com",
+                        Username = "interpretee@hearings.reform.hmcts.net",
+                        HearingRoleName = "Applicant",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreterId,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Id = interpreterId,
+                        FirstName = "Interpreter",
+                        LastName = "Test",
+                        ContactEmail = "interpreter@email.com",
+                        Username = "interpreter@hearings.reform.hmcts.net",
+                        HearingRoleName = "Interpreter",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreteeId,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
                     }
                 };
         
@@ -128,7 +170,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     new()
                     {
                         Id = Guid.NewGuid(),
-                        DisplayName = "Endpoint B"
+                        DisplayName = "Endpoint B",
+                        DefenceAdvocateId = hearing.Participants[1].Id
                     }
                 };
 
@@ -177,6 +220,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
 
+                var interpreteeId = Guid.NewGuid();
+                var interpreterId = Guid.NewGuid();
+                
                 hearing.Participants = new List<ParticipantResponse>
                 {
                     new()
@@ -187,7 +233,44 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         ContactEmail = "applicant@email.com",
                         Username = "applicant@hearings.reform.hmcts.net",
                         HearingRoleName = "Applicant",
-                        UserRoleName = "Individual"
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>()
+                    },
+                    new()
+                    {
+                        Id = interpreteeId,
+                        FirstName = "Interpretee",
+                        LastName = "Test",
+                        ContactEmail = "interpretee@email.com",
+                        Username = "interpretee@hearings.reform.hmcts.net",
+                        HearingRoleName = "Applicant",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreterId,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Id = interpreterId,
+                        FirstName = "Interpreter",
+                        LastName = "Test",
+                        ContactEmail = "interpreter@email.com",
+                        Username = "interpreter@hearings.reform.hmcts.net",
+                        HearingRoleName = "Interpreter",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponse>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreteeId,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
                     }
                 };
                 

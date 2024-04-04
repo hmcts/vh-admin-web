@@ -25,6 +25,8 @@ using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryPar
 using HearingDetailsResponseV2 = BookingsApi.Contract.V2.Responses.HearingDetailsResponseV2;
 using ParticipantResponseV2 = BookingsApi.Contract.V2.Responses.ParticipantResponseV2;
 using EndpointResponseV2 = BookingsApi.Contract.V2.Responses.EndpointResponseV2;
+using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
+using LinkedParticipantType = AdminWebsite.Contracts.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -83,6 +85,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Update an endpoint
             var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
+            // Add an endpoint
+            var newEndpoint = new EditEndpointRequest
+            {
+                DisplayName = "Endpoint D",
+                DefenceAdvocateContactEmail = ""
+            };
+            request.Endpoints.Add(newEndpoint);
+
+            // TODO use linked participants for more test coverage for the mappers
 
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
@@ -137,14 +148,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.OtherInformation == request.OtherInformation &&
                         h.CaseNumber == request.CaseNumber &&
                         h.AudioRecordingRequired == request.AudioRecordingRequired &&
-                        h.Participants.ExistingParticipants.Count == 1 &&
+                        h.Participants.ExistingParticipants.Count == 3 &&
                         h.Participants.NewParticipants.Count == 2 &&
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == judge.ContactEmail) &&
                         h.Participants.RemovedParticipantIds.Count == 1 &&
                         h.Participants.RemovedParticipantIds.Any(id => oldJudges.Any(j => j.Id == id)) &&
-                        h.Participants.LinkedParticipants.Count == 0 &&
-                        h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id)
+                        h.Participants.LinkedParticipants.Count == 1 &&
+                        h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
+                        h.Endpoints.NewEndpoints.Count == 1 &&
+                        h.Endpoints.NewEndpoints.Exists(e => e.DisplayName == newEndpoint.DisplayName)
                     )))));
             
             // Hearing details specific to each hearing in the group
@@ -224,6 +237,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Update an endpoint
             var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
+            // Add an endpoint
+            var newEndpoint = new EditEndpointRequest
+            {
+                DisplayName = "Endpoint D",
+                DefenceAdvocateContactEmail = ""
+            };
+            request.Endpoints.Add(newEndpoint);
 
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
@@ -272,11 +292,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.OtherInformation == request.OtherInformation &&
                         h.CaseNumber == request.CaseNumber &&
                         h.AudioRecordingRequired == request.AudioRecordingRequired &&
-                        h.Participants.ExistingParticipants.Count == 1 &&
+                        h.Participants.ExistingParticipants.Count == 3 &&
                         h.Participants.NewParticipants.Count == 1 &&
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
                         h.Participants.RemovedParticipantIds.Count == 0 &&
-                        h.Participants.LinkedParticipants.Count == 0 &&
+                        h.Participants.LinkedParticipants.Count == 1 &&
                         h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 1 &&
                         h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(p => p.PersonalCode == newJudgePersonalCode) &&
@@ -350,6 +370,243 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     r.Hearings.TrueForAll(h =>
                         h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == request.JudiciaryParticipants.Count
                         ))));
+        }
+
+        [Test]
+        public async Task Should_not_overwrite_data_for_future_days_when_only_specific_details_are_changed_for_v1()
+        {
+            // Scenario - we have a 2 day hearing
+            // Day 2 has been individually edited, and so has different details, participants and endpoints to Day 1
+            // User then makes a small edit to Day 1 (eg they change the Other Information) and specifies to update the future days
+            // Only the Other Information should be updated on Day 2, all other data should remain as it was previously
+            
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var groupId = Guid.NewGuid();
+            var scheduledDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.Today.AddDays(2).AddHours(10)
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId, scheduledDates: scheduledDates);
+            
+            // Make the day 2 details different to day 1, so we can check that they are not overwritten
+            var day1Hearing = existingHearingsInMultiDayGroup[0];
+            var day2Hearing = existingHearingsInMultiDayGroup[1];
+            const string day2Suffix = " Day 2";
+            day2Hearing.ScheduledDuration = 90;
+            day2Hearing.HearingVenueName += day2Suffix;
+            day2Hearing.HearingRoomName += day2Suffix;
+            day2Hearing.OtherInformation += day2Suffix;
+            day2Hearing.Cases[0].Number += day2Suffix;
+            day2Hearing.Cases[0].Name += day2Suffix;
+            day2Hearing.AudioRecordingRequired = !day1Hearing.AudioRecordingRequired;
+            day2Hearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Applicant",
+                LastName = "Test 2",
+                ContactEmail = "applicant-day2@email.com",
+                Username = "applicant-day2@hearings.reform.hmcts.net",
+                HearingRoleName = "Applicant",
+                UserRoleName = "Individual"
+            });
+            day2Hearing.Endpoints.Add(new EndpointResponse
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Endpoint C"
+            });
+            
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            
+            var request = CreateV1EditMultiDayHearingRequest(day1Hearing);
+            request.HearingsInGroup = new List<UpdateHearingInGroupRequest>();
+            foreach (var hearingInGroup in existingHearingsInMultiDayGroup)
+            {
+                request.HearingsInGroup.Add(new UpdateHearingInGroupRequest
+                {
+                    HearingId = hearingInGroup.Id,
+                    ScheduledDateTime = hearingInGroup.ScheduledDateTime
+                });
+            }
+            request.ScheduledDuration = day1Hearing.ScheduledDuration;
+            request.HearingVenueName = day1Hearing.HearingVenueName;
+            request.HearingRoomName = day1Hearing.HearingRoomName;
+            request.OtherInformation = day1Hearing.OtherInformation + " EDITED"; // Change the other information
+            request.CaseNumber = day1Hearing.Cases[0].Number;
+            request.AudioRecordingRequired = day1Hearing.AudioRecordingRequired;
+            request.UpdateFutureDays = true;
+            
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            
+            var updatedHearing = MapUpdatedHearingV1(day1Hearing, request);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
+            // Act
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
+            
+            // Assert
+            var expectedResponse = updatedHearing.Map();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var objectResult = result.Result.As<OkObjectResult>();
+            objectResult.Value.Should().BeEquivalentTo(expectedResponse);
+
+            var expectedUpdatedHearings = new List<HearingDetailsResponse>();
+            expectedUpdatedHearings.AddRange(existingHearingsInMultiDayGroup);
+            
+            // Day 1
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day1Hearing.Id && 
+                        h.ScheduledDuration == day1Hearing.ScheduledDuration && 
+                        h.HearingVenueName == day1Hearing.HearingVenueName && 
+                        h.HearingRoomName == day1Hearing.HearingRoomName && 
+                        h.OtherInformation == request.OtherInformation && 
+                        h.CaseNumber == day1Hearing.Cases[0].Number && 
+                        h.AudioRecordingRequired == day1Hearing.AudioRecordingRequired && 
+                        h.Participants.ExistingParticipants.Count == day1Hearing.Participants.Count && 
+                        h.Participants.NewParticipants.Count == 0 && 
+                        h.Participants.RemovedParticipantIds.Count == 0 && 
+                        h.Participants.LinkedParticipants.Count == 1 && 
+                        h.Endpoints.ExistingEndpoints.Count == day1Hearing.Endpoints.Count && 
+                        h.Endpoints.NewEndpoints.Count == 0 && 
+                        h.Endpoints.RemovedEndpointIds.Count == 0
+                        ))));
+            
+            // Day 2
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day2Hearing.Id && 
+                        h.ScheduledDuration == day2Hearing.ScheduledDuration && 
+                        h.HearingVenueName == day2Hearing.HearingVenueName && 
+                        h.HearingRoomName == day2Hearing.HearingRoomName && 
+                        h.OtherInformation == request.OtherInformation && 
+                        h.CaseNumber == day2Hearing.Cases[0].Number && 
+                        h.AudioRecordingRequired == day2Hearing.AudioRecordingRequired && 
+                        h.Participants.ExistingParticipants.Count == day2Hearing.Participants.Count && 
+                        h.Participants.NewParticipants.Count == 0 && 
+                        h.Participants.RemovedParticipantIds.Count == 0 && 
+                        h.Participants.LinkedParticipants.Count == 1 && 
+                        h.Endpoints.ExistingEndpoints.Count == day2Hearing.Endpoints.Count && 
+                        h.Endpoints.NewEndpoints.Count == 0 && 
+                        h.Endpoints.RemovedEndpointIds.Count == 0
+                        ))));
+        }
+
+        [Test]
+        public async Task Should_update_multi_day_hearing_when_updated_participants_and_endpoints_do_not_exist_on_future_days_for_v1()
+        {
+            // Scenario - we have a 2 day hearing
+            // Day 1 has been individually edited, and has additional participants and endpoints not on Day 2
+            // User then edits these participants and endpoints and specifies to update the future days
+            // These additional participants and endpoints should be skipped on the Day 2 update
+            
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var groupId = Guid.NewGuid();
+            var scheduledDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.Today.AddDays(2).AddHours(10)
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId, scheduledDates: scheduledDates);
+            
+            // Add the additional participants and endpoints to day 1
+            var day1Hearing = existingHearingsInMultiDayGroup[0];
+            var day2Hearing = existingHearingsInMultiDayGroup[0];
+            day1Hearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Applicant",
+                LastName = "Test 2",
+                ContactEmail = "applicant-day1@email.com",
+                Username = "applicant-day1@hearings.reform.hmcts.net",
+                HearingRoleName = "Applicant",
+                UserRoleName = "Individual",
+                LinkedParticipants = new List<LinkedParticipantResponse>()
+            });
+            day1Hearing.Endpoints.Add(new EndpointResponse
+            {
+                Id = Guid.NewGuid(),
+                DisplayName = "Endpoint C"
+            });
+            
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            
+            var request = CreateV1EditMultiDayHearingRequest(day1Hearing);
+            request.HearingsInGroup = new List<UpdateHearingInGroupRequest>();
+            foreach (var hearingInGroup in existingHearingsInMultiDayGroup)
+            {
+                request.HearingsInGroup.Add(new UpdateHearingInGroupRequest
+                {
+                    HearingId = hearingInGroup.Id,
+                    ScheduledDateTime = hearingInGroup.ScheduledDateTime
+                });
+            }
+            request.UpdateFutureDays = true;
+            
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            
+            var updatedHearing = MapUpdatedHearingV1(day1Hearing, request);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
+            // Act
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
+            
+            // Assert
+            var expectedResponse = updatedHearing.Map();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var objectResult = result.Result.As<OkObjectResult>();
+            objectResult.Value.Should().BeEquivalentTo(expectedResponse);
+
+            var expectedUpdatedHearings = new List<HearingDetailsResponse>();
+            expectedUpdatedHearings.AddRange(existingHearingsInMultiDayGroup);
+            
+            // Day 1
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day1Hearing.Id && 
+                        h.Participants.ExistingParticipants.Count == day1Hearing.Participants.Count && 
+                        h.Participants.NewParticipants.Count == 0 && 
+                        h.Participants.RemovedParticipantIds.Count == 0 && 
+                        h.Participants.LinkedParticipants.Count == 1 && 
+                        h.Endpoints.ExistingEndpoints.Count == day1Hearing.Endpoints.Count && 
+                        h.Endpoints.NewEndpoints.Count == 0 && 
+                        h.Endpoints.RemovedEndpointIds.Count == 0
+                        ))));
+            
+            // Day 2
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day2Hearing.Id && 
+                        h.Participants.ExistingParticipants.Count == day2Hearing.Participants.Count && 
+                        h.Participants.NewParticipants.Count == 0 && 
+                        h.Participants.RemovedParticipantIds.Count == 0 && 
+                        h.Participants.LinkedParticipants.Count == 1 && 
+                        h.Endpoints.ExistingEndpoints.Count == day2Hearing.Endpoints.Count && 
+                        h.Endpoints.NewEndpoints.Count == 0 && 
+                        h.Endpoints.RemovedEndpointIds.Count == 0
+                        ))));
+        }
+
+        [Test]
+        public async Task Should_update_multi_day_hearing_when_removed_participants_and_endpoints_do_not_exist_on_future_days_for_v1()
+        {
+            // TODO - if code coverage requires it
         }
 
         [Test]
@@ -571,6 +828,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private static EditMultiDayHearingRequest CreateV1EditMultiDayHearingRequest(HearingDetailsResponse hearing) =>
             new()
             {
+                ScheduledDuration = 90,
+                HearingVenueCode = "701411",
+                HearingRoomName = "HearingRoomName",
+                OtherInformation = "OtherInformation",
+                CaseNumber = "CaseNumber",
+                AudioRecordingRequired = true,
                 Participants = hearing.Participants.Select(x => new EditParticipantRequest
                 {
                     Id = x.Id,
@@ -578,7 +841,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     LastName = x.LastName,
                     ContactEmail = x.ContactEmail,
                     DisplayName = x.DisplayName,
-                    HearingRoleName = x.HearingRoleName
+                    HearingRoleName = x.HearingRoleName,
+                    LinkedParticipants = x.LinkedParticipants.Select(lp => new LinkedParticipant
+                    {
+                        Type = LinkedParticipantType.Interpreter,
+                        //LinkedParticipantContactEmail = hearing.Participants.First(p => p.Id == lp.LinkedId).ContactEmail,
+                        LinkedId = lp.LinkedId
+                    }).ToList()
                 }).ToList(),
                 Endpoints = hearing.Endpoints.Select(x => new EditEndpointRequest
                 {
@@ -603,7 +872,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     LastName = x.LastName,
                     ContactEmail = x.ContactEmail,
                     DisplayName = x.DisplayName,
-                    HearingRoleCode = x.HearingRoleName
+                    HearingRoleCode = x.HearingRoleName,
+                    LinkedParticipants = x.LinkedParticipants.Select(lp => new LinkedParticipant
+                    {
+                        Type = LinkedParticipantType.Interpreter,
+                        //LinkedParticipantContactEmail = hearing.Participants.First(p => p.Id == lp.LinkedId).ContactEmail,
+                        LinkedId = lp.LinkedId
+                    }).ToList()
                 }).ToList(),
                 Endpoints = hearing.Endpoints.Select(x => new EditEndpointRequest
                 {

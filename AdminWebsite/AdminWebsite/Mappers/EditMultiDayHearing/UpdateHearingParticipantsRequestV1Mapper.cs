@@ -56,29 +56,41 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             // Apply only these edits to the existing participants for subsequent days in the hearing
             foreach (var existingParticipant in participantsForThisHearing)
             {
-                var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
-                if (participantInRequest == null)
+                var existingParticipantToAdd = new UpdateParticipantRequest
+                {
+                    Title = existingParticipant.Title,
+                    DisplayName = existingParticipant.DisplayName,
+                    OrganisationName = existingParticipant.Organisation,
+                    TelephoneNumber = existingParticipant.TelephoneNumber,
+                    Representee = existingParticipant.Representee,
+                    ParticipantId = existingParticipant.Id,
+                    ContactEmail = existingParticipant.ContactEmail
+                };
+
+                if (hearingChanges.RemovedParticipants.Exists(x => x.ContactEmail == existingParticipant.ContactEmail))
                 {
                     continue;
                 }
                 
-                var participantRequest = participantInRequest.ParticipantRequest;
+                var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
                 
-                existingParticipants.Add(new UpdateParticipantRequest
+                if (participantInRequest != null)
                 {
-                    Title = participantInRequest.TitleChanged ? 
-                        participantRequest.Title : existingParticipant.Title,
-                    DisplayName = participantInRequest.DisplayNameChanged ? 
-                        participantRequest.DisplayName : existingParticipant.DisplayName,
-                    OrganisationName = participantInRequest.OrganisationNameChanged ? 
-                        participantRequest.OrganisationName : existingParticipant.Organisation,
-                    TelephoneNumber = participantInRequest.TelephoneChanged ? 
-                        participantRequest.TelephoneNumber : existingParticipant.TelephoneNumber,
-                    Representee = participantInRequest.RepresenteeChanged ? 
-                        participantRequest.Representee : existingParticipant.Representee,
-                    ParticipantId = existingParticipant.Id,
-                    ContactEmail = existingParticipant.ContactEmail
-                });
+                    var participantRequest = participantInRequest.ParticipantRequest;
+
+                    existingParticipantToAdd.Title = participantInRequest.TitleChanged ?
+                        participantRequest.Title : existingParticipantToAdd.Title;
+                    existingParticipantToAdd.DisplayName = participantInRequest.DisplayNameChanged ?
+                        participantRequest.DisplayName : existingParticipantToAdd.DisplayName;
+                    existingParticipantToAdd.OrganisationName = participantInRequest.OrganisationNameChanged ?
+                        participantRequest.OrganisationName : existingParticipantToAdd.OrganisationName;
+                    existingParticipantToAdd.TelephoneNumber = participantInRequest.TelephoneChanged ?
+                        participantRequest.TelephoneNumber : existingParticipantToAdd.TelephoneNumber;
+                    existingParticipantToAdd.Representee = participantInRequest.RepresenteeChanged ?
+                        participantRequest.Representee : existingParticipantToAdd.Representee;
+                }
+                
+                existingParticipants.Add(existingParticipantToAdd);
             }
 
             return existingParticipants;
@@ -103,6 +115,12 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 var linked = participantsForThisHearing.Find(x => x.Id == linkedParticipant.LinkedId);
                 var participant = participantsForThisHearing
                     .First(x => x.LinkedParticipants.Exists(y => y.LinkedId == linkedParticipant.LinkedId));
+
+                if (existingLinkedParticipants.Exists(p => p.ParticipantContactEmail == linked.ContactEmail))
+                {
+                    // Avoid mapping them twice
+                    continue;
+                }
                 
                 existingLinkedParticipants.Add(new LinkedParticipantRequest
                 {
