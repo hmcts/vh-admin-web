@@ -289,8 +289,20 @@ namespace AdminWebsite.Services
             newOrExistingEndpoints.AddRange(existingEndpoints.Select(e => new EditEndpointRequest
             {
                 Id = e.Id,
-                DisplayName = e.DisplayName
+                DisplayName = e.DisplayName,
+                DefenceAdvocateContactEmail = hearing.Participants.Find(x => x.Id == e.DefenceAdvocateId)?.ContactEmail
             }));
+            
+            // If any of these endpoints relate to the ones in the request, update their properties to match those in the request
+            foreach (var endpoint in newOrExistingEndpoints)
+            {
+                var relatedEndpoint = hearingChanges.EndpointChanges.Find(x => x.OriginalDisplayName == endpoint.DisplayName);
+                if (relatedEndpoint != null)
+                {
+                    endpoint.DisplayName = relatedEndpoint.EndpointRequest.DisplayName;
+                    endpoint.DefenceAdvocateContactEmail = relatedEndpoint.EndpointRequest.DefenceAdvocateContactEmail;
+                }
+            }
 
             // Add any new endpoints that have been added as part of this request
             foreach (var newEndpoint in newEndpoints)

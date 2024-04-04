@@ -121,6 +121,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Update an endpoint
             var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
+            endpointToUpdate.DefenceAdvocateContactEmail = newParticipant.ContactEmail;
             // Add an endpoint
             var newEndpoint = new EditEndpointRequest
             {
@@ -189,6 +190,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Participants.RemovedParticipantIds.Count == 1 &&
                         h.Participants.RemovedParticipantIds.Any(id => oldJudges.Any(j => j.Id == id)) &&
                         h.Participants.LinkedParticipants.Count == 3 &&
+                        h.Endpoints.ExistingEndpoints.Count == 1 &&
+                        h.Endpoints.ExistingEndpoints[0].DisplayName == endpointToUpdate.DisplayName &&
+                        h.Endpoints.ExistingEndpoints[0].DefenceAdvocateContactEmail == endpointToUpdate.DefenceAdvocateContactEmail &&
                         h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
                         h.Endpoints.NewEndpoints.Count == 1 &&
                         h.Endpoints.NewEndpoints.Exists(e => e.DisplayName == newEndpoint.DisplayName)
@@ -209,12 +213,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             h.HearingId == hearingInGroup.HearingId &&
                             h.ScheduledDateTime == hearingInGroup.ScheduledDateTime))));
             }
-            
-            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
-                groupId,
-                It.Is<UpdateHearingsInGroupRequest>(r =>
-                    r.Hearings.Exists(h =>
-                        h.Endpoints.ExistingEndpoints.Count == 1))));
         }
         
         [TestCase(false)]
@@ -306,6 +304,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Update an endpoint
             var endpointToUpdate = request.Endpoints.First(x => x.DisplayName == "Endpoint A");
             endpointToUpdate.DisplayName = "Endpoint A EDITED";
+            endpointToUpdate.DefenceAdvocateContactEmail = newParticipant.ContactEmail;
             // Add an endpoint
             var newEndpoint = new EditEndpointRequest
             {
@@ -366,6 +365,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
                         h.Participants.RemovedParticipantIds.Count == 0 &&
                         h.Participants.LinkedParticipants.Count == 3 &&
+                        h.Endpoints.ExistingEndpoints.Count == 1 &&
+                        h.Endpoints.ExistingEndpoints[0].DisplayName == endpointToUpdate.DisplayName &&
+                        h.Endpoints.ExistingEndpoints[0].DefenceAdvocateContactEmail == endpointToUpdate.DefenceAdvocateContactEmail &&
                         h.Endpoints.RemovedEndpointIds.Any(id => removedEndpoints.Any(e => e.Id == id) &&
                         h.Endpoints.NewEndpoints.Count == 1 &&
                         h.Endpoints.NewEndpoints.Exists(e => e.DisplayName == newEndpoint.DisplayName) &&
@@ -389,12 +391,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             h.HearingId == hearingInGroup.HearingId &&
                             h.ScheduledDateTime == hearingInGroup.ScheduledDateTime))));
             }
-
-            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
-                groupId,
-                It.Is<UpdateHearingsInGroupRequestV2>(r =>
-                    r.Hearings.Exists(h =>
-                        h.Endpoints.ExistingEndpoints.Count == 1))));
         }
 
         [Test]

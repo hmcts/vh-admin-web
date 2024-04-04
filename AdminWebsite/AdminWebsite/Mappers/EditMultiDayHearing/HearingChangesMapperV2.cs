@@ -176,17 +176,10 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                     continue;
                 }
 
-                ParticipantResponseV2 existingDefenceAdvocate = null;
-                if (existingEndpointForEditedHearing.DefenceAdvocateId != null)
-                {
-                    existingDefenceAdvocate = hearing.Participants.Find(x => x.Id == existingEndpointForEditedHearing.DefenceAdvocateId.Value);
-                }
-                
                 endpointChanges.Add(new EndpointChanges
                 {
                     EndpointRequest = endpointInRequest,
-                    DisplayNameChanged = endpointInRequest.DisplayName != existingEndpointForEditedHearing.DisplayName,
-                    DefenceAdvocateContactEmailChanged = endpointInRequest.DefenceAdvocateContactEmail != existingDefenceAdvocate?.ContactEmail
+                    OriginalDisplayName = existingEndpointForEditedHearing.DisplayName
                 });
             }
 
