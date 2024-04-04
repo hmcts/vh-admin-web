@@ -8,6 +8,8 @@ using BookingsApi.Client;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
+using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
@@ -198,7 +200,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             return hearingsInMultiDay;
         }
         
-        protected static List<HearingDetailsResponse> CreateListOfV2HearingsInMultiDayGroup(
+        protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroup(
             Guid groupId, Guid initialHearingId)
         {
             var hearingDates = new List<DateTime>
@@ -208,7 +210,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 DateTime.UtcNow.AddDays(3).AddHours(10)
             };
 
-            return CreateListOfV2HearingsInMultiDayGroup(groupId, initialHearingId, hearingDates);
+            return CreateListOfV2HearingsInMultiDayGroupAsV2(groupId, initialHearingId, hearingDates);
         }
         
         protected static List<HearingDetailsResponse> CreateListOfV2HearingsInMultiDayGroup(
@@ -305,6 +307,123 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 hearing.ScheduledDateTime = date;
                 hearing.ScheduledDuration = 45;
                 hearing.Status = BookingStatus.Created;
+                hearing.Id = i == 0 ? initialHearingId : Guid.NewGuid();
+                
+                hearingsInMultiDay.Add(hearing);
+                
+                i++;
+            }
+
+            return hearingsInMultiDay;
+        }
+        
+        protected static List<HearingDetailsResponseV2> CreateListOfV2HearingsInMultiDayGroupAsV2(
+            Guid groupId, Guid initialHearingId, List<DateTime> scheduledDates)
+        {
+            var hearingsInMultiDay = new List<HearingDetailsResponseV2>();
+            var i = 0;
+            foreach (var date in scheduledDates)
+            {
+                var hearing = Builder<HearingDetailsResponseV2>.CreateNew().Build();
+
+                var interpreteeId = Guid.NewGuid();
+                var interpreterId = Guid.NewGuid();
+                
+                hearing.Participants = new List<ParticipantResponseV2>
+                {
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        FirstName = "Applicant",
+                        LastName = "Test",
+                        ContactEmail = "applicant@email.com",
+                        Username = "applicant@hearings.reform.hmcts.net",
+                        HearingRoleName = "Applicant",
+                        HearingRoleCode = "APPL",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponseV2>()
+                    },
+                    new()
+                    {
+                        Id = interpreteeId,
+                        FirstName = "Interpretee",
+                        LastName = "Test",
+                        ContactEmail = "interpretee@email.com",
+                        Username = "interpretee@hearings.reform.hmcts.net",
+                        HearingRoleName = "Applicant",
+                        HearingRoleCode = "APPL",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponseV2>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreterId,
+                                TypeV2 = LinkedParticipantTypeV2.Interpreter
+                            }
+                        }
+                    },
+                    new()
+                    {
+                        Id = interpreterId,
+                        FirstName = "Interpreter",
+                        LastName = "Test",
+                        ContactEmail = "interpreter@email.com",
+                        Username = "interpreter@hearings.reform.hmcts.net",
+                        HearingRoleName = "Interpreter",
+                        HearingRoleCode = "INTP",
+                        UserRoleName = "Individual",
+                        LinkedParticipants = new List<LinkedParticipantResponseV2>
+                        {
+                            new()
+                            {
+                                LinkedId = interpreteeId,
+                                TypeV2 = LinkedParticipantTypeV2.Interpreter
+                            }
+                        }
+                    }
+                };
+                
+                hearing.JudiciaryParticipants = new List<JudiciaryParticipantResponse>
+                {
+                    new()
+                    {
+                        PersonalCode = "PersonalCode",
+                        DisplayName = "Judge Test",
+                        FirstName = "Judge",
+                        LastName = "Test",
+                        Email = "judge@email.com",
+                        HearingRoleCode = JudiciaryParticipantHearingRoleCode.Judge
+                    }
+                };
+                
+                hearing.Endpoints = new List<EndpointResponseV2>
+                {
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        DisplayName = "Endpoint A"
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        DisplayName = "Endpoint B",
+                        DefenceAdvocateId = hearing.Participants[1].Id
+                    }
+                };
+                
+                hearing.Cases = new List<CaseResponseV2>
+                {
+                    new()
+                    {
+                        Number = "TestCaseNumber",
+                        Name = "TestCaseName"
+                    }
+                };
+                
+                hearing.GroupId = groupId;
+                hearing.ScheduledDateTime = date;
+                hearing.ScheduledDuration = 45;
+                hearing.Status = BookingStatusV2.Created;
                 hearing.Id = i == 0 ? initialHearingId : Guid.NewGuid();
                 
                 hearingsInMultiDay.Add(hearing);
