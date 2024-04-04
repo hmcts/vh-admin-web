@@ -26,12 +26,6 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             foreach (var participant in participants)
             {
                 MapParticipantId(participant);
-                
-                // // Update the linked participant ids
-                // foreach (var linkedParticipant in participant.LinkedParticipants)
-                // {
-                //     linkedParticipant.LinkedId = participantIdMappings[linkedParticipant.LinkedId];
-                // }
             }
 
             foreach (var endpoint in endpoints)

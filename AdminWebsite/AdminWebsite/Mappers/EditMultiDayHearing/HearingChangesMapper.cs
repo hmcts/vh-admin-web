@@ -114,9 +114,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 // New interpreters will have a LinkedParticipantContactEmail and ParticipantContactEmail, but no LinkedId
                 // Updated and removed interpreters will have a LinkedId, but no LinkedParticipantContactEmail or ParticipantContactEmail
                 // For our purposes, we need at least the LinkedParticipantContactEmail populated so that we can map across different hearings
-                
-                // LinkedId = hearing.Participants.Find(y => y.ContactEmail == x.LinkedParticipantContactEmail)?.Id ?? Guid.Empty,
-
+      
                 if (linkedParticipantInRequest.LinkedParticipantContactEmail == null)
                 {
                     var linkedParticipant = hearing.Participants.Find(x => x.Id == linkedParticipantInRequest.LinkedId);
@@ -124,18 +122,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                     linkedParticipantInRequest.LinkedParticipantContactEmail = linkedParticipant.ContactEmail;
                 }
             }
-            
-            // var existingLinkedParticipants = hearing.Participants
-            //     .SelectMany(x => x.LinkedParticipants)
-            //     .Select(x => new LinkedParticipant
-            //     {
-            //         LinkedId = x.LinkedId,
-            //         LinkedParticipantContactEmail = hearing.Participants.Find(y => y.Id == x.LinkedId)?.ContactEmail,
-            //         ParticipantId = x.
-            //         Type = LinkedParticipantType.Interpreter
-            //     })
-            //     .ToList();
-            
+
             var existingLinkedParticipants = hearing.Participants
                 .Where(participant => participant.LinkedParticipants != null)
                 .SelectMany(participant => participant.LinkedParticipants?.Select(linkedParticipant => new LinkedParticipant
@@ -150,21 +137,10 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             var newLinkedParticipants = linkedParticipantsInRequest
                 .Where(linked => !existingLinkedParticipants.Exists(existing => existing.LinkedId == linked.LinkedId && existing.Type == linked.Type))
                 .ToList();
-            
-            // var removedLinkedParticipants2 = request.Participants
-            //     .Where(x => x.LinkedParticipants.Any() &&
-            //                 removedParticipantIds.Contains(x.LinkedParticipants[0].LinkedId) ||
-            //                 removedParticipantIds.Contains(x.LinkedParticipants[0].ParticipantId))
-            //     .ToList();
-            
-            // TODO We need to extract here the existing linked participants whose id or linked id is in the removedParticipantIds list
+
             var removedLinkedParticipants = existingLinkedParticipants
                 .Where(x => removedParticipantIds.Contains(x.LinkedId) || removedParticipantIds.Contains(x.ParticipantId))
                 .ToList();
-
-            // var removedLinkedParticipants = existingLinkedParticipants
-            //     .Where(existing => !linkedParticipantsInRequest.Exists(linked => linked.LinkedId == existing.LinkedId))
-            //     .ToList();
 
             linkedParticipantChanges.NewLinkedParticipants = newLinkedParticipants;
             linkedParticipantChanges.RemovedLinkedParticipants = removedLinkedParticipants;

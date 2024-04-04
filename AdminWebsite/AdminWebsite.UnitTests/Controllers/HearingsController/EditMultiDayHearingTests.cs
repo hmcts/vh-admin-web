@@ -128,8 +128,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             request.Endpoints.Add(newEndpoint);
 
-            // TODO use linked participants for more test coverage for the mappers
-
             var updatedHearing = MapUpdatedHearingV1(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
             
