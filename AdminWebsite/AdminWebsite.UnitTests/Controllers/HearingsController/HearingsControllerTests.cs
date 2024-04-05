@@ -222,9 +222,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 var hearing = Builder<HearingDetailsResponse>.CreateNew().Build();
 
-                var interpreteeId = Guid.NewGuid();
-                var interpreterId = Guid.NewGuid();
-                
                 hearing.Participants = new List<ParticipantResponse>
                 {
                     new()
@@ -235,44 +232,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         ContactEmail = "applicant@email.com",
                         Username = "applicant@hearings.reform.hmcts.net",
                         HearingRoleName = "Applicant",
-                        UserRoleName = "Individual",
-                        LinkedParticipants = new List<LinkedParticipantResponse>()
-                    },
-                    new()
-                    {
-                        Id = interpreteeId,
-                        FirstName = "Interpretee",
-                        LastName = "Test",
-                        ContactEmail = "interpretee@email.com",
-                        Username = "interpretee@hearings.reform.hmcts.net",
-                        HearingRoleName = "Applicant",
-                        UserRoleName = "Individual",
-                        LinkedParticipants = new List<LinkedParticipantResponse>
-                        {
-                            new()
-                            {
-                                LinkedId = interpreterId,
-                                Type = LinkedParticipantType.Interpreter
-                            }
-                        }
-                    },
-                    new()
-                    {
-                        Id = interpreterId,
-                        FirstName = "Interpreter",
-                        LastName = "Test",
-                        ContactEmail = "interpreter@email.com",
-                        Username = "interpreter@hearings.reform.hmcts.net",
-                        HearingRoleName = "Interpreter",
-                        UserRoleName = "Individual",
-                        LinkedParticipants = new List<LinkedParticipantResponse>
-                        {
-                            new()
-                            {
-                                LinkedId = interpreteeId,
-                                Type = LinkedParticipantType.Interpreter
-                            }
-                        }
+                        UserRoleName = "Individual"
                     }
                 };
                 
