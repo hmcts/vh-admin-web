@@ -118,11 +118,11 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 .SelectMany(x => x.LinkedParticipants)
                 .ToList();
 
-            foreach (var linkedParticipant in linkedParticipantsForThisHearing)
+            foreach (var linkedId in linkedParticipantsForThisHearing.Select(linkedParticipant => linkedParticipant.LinkedId))
             {
-                var linked = participantsForThisHearing.Find(x => x.Id == linkedParticipant.LinkedId);
+                var linked = participantsForThisHearing.Find(x => x.Id == linkedId);
                 var participant = participantsForThisHearing
-                    .First(x => x.LinkedParticipants.Exists(y => y.LinkedId == linkedParticipant.LinkedId));
+                    .First(x => x.LinkedParticipants.Exists(y => y.LinkedId == linkedId));
 
                 if (existingLinkedParticipants.Exists(p => p.ParticipantContactEmail == linked.ContactEmail))
                 {

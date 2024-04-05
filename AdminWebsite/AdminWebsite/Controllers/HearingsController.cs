@@ -673,8 +673,8 @@ namespace AdminWebsite.Controllers
             var request = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, originalHearing);
             
             // Due to booking api's domain restrictions for removing participants, we have to update judges differently
-            var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == "Judge");
-            var newJudge = judiciaryParticipants.Find(njp => njp.Role == "Judge");
+            var oldJudge = originalHearing.JudiciaryParticipants.Find(ojp => ojp.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString());
+            var newJudge = judiciaryParticipants.Find(njp => njp.Role == JudiciaryParticipantHearingRoleCode.Judge.ToString());
             if (oldJudge?.PersonalCode != newJudge?.PersonalCode && newJudge != null)
             {
                 await _bookingsApiClient.ReassignJudiciaryJudgeAsync(hearingId, new ReassignJudiciaryJudgeRequest
@@ -688,7 +688,7 @@ namespace AdminWebsite.Controllers
             foreach (var removedJohPersonalCode in request.RemovedJudiciaryParticipantPersonalCodes)
             {
                 var removedJoh = originalHearing.JudiciaryParticipants.Find(p => p.PersonalCode == removedJohPersonalCode);
-                if (removedJoh.RoleCode == "Judge")
+                if (removedJoh.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString())
                 {
                     // Judges are re-assigned instead of removed or added
                     continue;
@@ -739,10 +739,10 @@ namespace AdminWebsite.Controllers
             {
                 removedJohs = new List<JudiciaryParticipantResponse>();
                 
-                if (hearingChanges.RemovedJudiciaryParticipants.Exists(x => x.RoleCode == "Judge"))
+                if (hearingChanges.RemovedJudiciaryParticipants.Exists(x => x.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString()))
                 {
                     // If the judge is removed as part of the request, then they are being reassigned, so need to remove the existing judge for this hearing regardless
-                    var existingJudge = originalHearing.JudiciaryParticipants.First(x => x.RoleCode == "Judge");
+                    var existingJudge = originalHearing.JudiciaryParticipants.First(x => x.RoleCode == JudiciaryParticipantHearingRoleCode.Judge.ToString());
                     removedJohs.Add(existingJudge);
                 }
                 else
