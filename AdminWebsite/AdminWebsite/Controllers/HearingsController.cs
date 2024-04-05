@@ -453,116 +453,27 @@ namespace AdminWebsite.Controllers
 
         private async Task UpdateMultiDayHearing(EditMultiDayHearingRequest request, Guid hearingId, Guid groupId)
         {
-            if (_featureToggles.UseV2Api())
+            var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdV2Async(groupId);
+            var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
+            
+            var hearingsToUpdate = new List<HearingDetailsResponseV2>
             {
-                var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdV2Async(groupId);
-                var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
-            
-                var hearingsToUpdate = new List<HearingDetailsResponseV2>
-                {
-                    thisHearing
-                };
-            
-                if (request.UpdateFutureDays)
-                {
-                    var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                    hearingsToUpdate.AddRange(futureHearings);
-                }
-            
-                hearingsToUpdate = hearingsToUpdate
-                    .Where(h => 
-                        h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Cancelled && 
-                        h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Failed)
-                    .ToList();
-                
-                await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);
-            }
-            else
-            {
-                var hearingsInMultiDay = await _bookingsApiClient.GetHearingsByGroupIdAsync(groupId);
-                var thisHearing = hearingsInMultiDay.First(x => x.Id == hearingId);
-            
-                var hearingsToUpdate = new List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse>
-                {
-                    thisHearing
-                };
-            
-                if (request.UpdateFutureDays)
-                {
-                    var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
-                    hearingsToUpdate.AddRange(futureHearings);
-                }
-            
-                hearingsToUpdate = hearingsToUpdate
-                    .Where(h => 
-                        h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
-                        h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
-                    .ToList();
-                
-                await UpdateMultiDayHearingV1(hearingsToUpdate, hearingId, groupId, request);
-            }
-        }
-        
-        private async Task UpdateMultiDayHearingV1(
-            List<BookingsApi.Contract.V1.Responses.HearingDetailsResponse> hearingsToUpdate,
-            Guid originalEditedHearingId,
-            Guid groupId,
-            EditMultiDayHearingRequest request)
-        {
-            var bookingsApiRequest = new UpdateHearingsInGroupRequest
-            {
-                UpdatedBy = _userIdentity.GetUserIdentityName()
+                thisHearing
             };
-
-            var participantsForEditedHearing = new UpdateHearingParticipantsRequest();
-            var hearingChanges = new HearingChanges();
             
-            foreach (var hearing in hearingsToUpdate)
+            if (request.UpdateFutureDays)
             {
-                var isFutureDay = hearing.Id != originalEditedHearingId;
-                
-                if (!isFutureDay)
-                {
-                    hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
-                }
-                
-                var hearingRequest = HearingRequestMapper.MapHearingRequest(hearing, hearingChanges, request);
-                
-                var hearingInGroup = request.HearingsInGroup.Find(h => h.HearingId == hearing.Id);
-                hearingRequest.ScheduledDateTime = hearingInGroup.ScheduledDateTime;
-            
-                var hearingToUpdate = hearing.Map();
-                
-                var participants = request.Participants.ToList();
-                
-                var endpoints = request.Endpoints.ToList();
-
-                if (isFutureDay)
-                {
-                    ParticipantIdMapper.AssignParticipantIdsForFutureDayHearing(hearingToUpdate, participants, endpoints);
-
-                    hearingRequest.Participants = UpdateHearingParticipantsRequestV1Mapper.MapParticipantsForFutureDayHearingV1(
-                        hearing,
-                        participantsForEditedHearing,
-                        hearingChanges);
-
-                    var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
-                    
-                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
-                }
-                else
-                {
-                    hearingRequest.Participants = await MapUpdateHearingParticipantsRequestV1(hearingToUpdate.Id, participants, hearingToUpdate);
-                    var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
-                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList);
-
-                    participantsForEditedHearing = hearingRequest.Participants;
-                }
-                
-                bookingsApiRequest.Hearings.Add(hearingRequest);
+                var futureHearings = hearingsInMultiDay.Where(x => x.ScheduledDateTime.Date > thisHearing.ScheduledDateTime.Date);
+                hearingsToUpdate.AddRange(futureHearings);
             }
-
-            await _bookingsApiClient.UpdateHearingsInGroupAsync(groupId, bookingsApiRequest);
+            
+            hearingsToUpdate = hearingsToUpdate
+                .Where(h => 
+                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Cancelled && 
+                    h.Status != BookingsApi.Contract.V2.Enums.BookingStatusV2.Failed)
+                .ToList();
+                
+            await UpdateMultiDayHearingV2(hearingsToUpdate, hearingId, groupId, request);
         }
         
         private async Task UpdateMultiDayHearingV2(
@@ -585,7 +496,7 @@ namespace AdminWebsite.Controllers
                 
                 if (!isFutureDay)
                 {
-                    hearingChanges = HearingChangesMapperV2.MapHearingChanges(hearing, request);
+                    hearingChanges = HearingChangesMapper.MapHearingChanges(hearing, request);
                 }
                 
                 var hearingRequest = HearingRequestMapper.MapHearingRequestV2(hearing, hearingChanges, request);

@@ -6,13 +6,14 @@ using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Models.EditMultiDayHearing;
+using BookingsApi.Contract.V2.Responses;
 using LinkedParticipant = AdminWebsite.Models.EditMultiDayHearing.LinkedParticipant;
 
 namespace AdminWebsite.Mappers.EditMultiDayHearing
 {
     public static class HearingChangesMapper
     {
-        public static HearingChanges MapHearingChanges(BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearing, EditMultiDayHearingRequest request)
+        public static HearingChanges MapHearingChanges(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
         {
             var hearingChanges = new HearingChanges();
             
@@ -22,9 +23,9 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 hearingChanges.ScheduledDurationChanged = true;
             }
 
-            if (request.HearingVenueName != hearing.HearingVenueName)
+            if (request.HearingVenueCode != hearing.HearingVenueCode)
             {
-                hearingChanges.HearingVenueNameChanged = true;
+                hearingChanges.HearingVenueCodeChanged = true;
             }
 
             if (request.HearingRoomName != hearing.HearingRoomName)
@@ -59,10 +60,14 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             hearingChanges.EndpointChanges = MapEndpointChanges(hearing, request);
             hearingChanges.RemovedEndpoints = GetRemovedEndpoints(request.Endpoints.ToList(), hearing.Map()).ToList();
             
+            // Judiciary participants
+            hearingChanges.NewJudiciaryParticipants = GetNewJudiciaryParticipants(hearing, request).ToList();
+            hearingChanges.RemovedJudiciaryParticipants = GetRemovedJudiciaryParticipants(request.JudiciaryParticipants.ToList(), hearing.Map()).ToList();
+            
             return hearingChanges;
         }
 
-        private static List<ParticipantChanges> MapParticipantChanges(BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearing, EditMultiDayHearingRequest request)
+        private static List<ParticipantChanges> MapParticipantChanges(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
         {
             var participantChanges = new List<ParticipantChanges>();
             var participantsInRequest = request.Participants.ToList();
@@ -92,7 +97,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         }
 
         private static LinkedParticipantChanges MapLinkedParticipantChanges(
-            BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearing, 
+            HearingDetailsResponseV2 hearing, 
             EditMultiDayHearingRequest request,
             List<Guid> removedParticipantIds)
         {
@@ -150,16 +155,17 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 
         private static IEnumerable<ParticipantResponse> GetRemovedParticipants(List<EditParticipantRequest> participants, HearingDetailsResponse originalHearing)
         {
-            return originalHearing.Participants.Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
-                .Select(x => x).ToList();
+            return originalHearing.Participants
+                .Where(p => participants.TrueForAll(rp => rp.Id != p.Id))
+                .Select(x => x)
+                .ToList();
         }
 
-        private static List<EndpointChanges> MapEndpointChanges(BookingsApi.Contract.V1.Responses.HearingDetailsResponse hearing, EditMultiDayHearingRequest request)
+        private static List<EndpointChanges> MapEndpointChanges(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
         {
             var endpointChanges = new List<EndpointChanges>();
             var endpointsInRequest = request.Endpoints.ToList();
-            
-            // Existing endpoints
+
             var existingEndpointsInEditedHearing = hearing.Endpoints.ToList();
             foreach (var endpointInRequest in endpointsInRequest)
             {
@@ -182,8 +188,27 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 
         private static IEnumerable<EndpointResponse> GetRemovedEndpoints(List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
-            return originalHearing.Endpoints.Where(p => endpoints.TrueForAll(rp => rp.Id != p.Id))
-                .Select(x => x).ToList();
+            return originalHearing.Endpoints
+                .Where(p => endpoints.TrueForAll(rp => rp.Id != p.Id))
+                .Select(x => x)
+                .ToList();
+        }
+
+        private static IEnumerable<JudiciaryParticipantRequest> GetNewJudiciaryParticipants(HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request)
+        {
+            return request.JudiciaryParticipants
+                .Where(rjp => !hearing.JudiciaryParticipants.Exists(jp => jp.PersonalCode == rjp.PersonalCode))
+                .ToList();
+        }
+        
+        private static IEnumerable<JudiciaryParticipantResponse> GetRemovedJudiciaryParticipants(
+            List<JudiciaryParticipantRequest> judiciaryParticipants, 
+            HearingDetailsResponse originalHearing)
+        {
+            return originalHearing.JudiciaryParticipants
+                .Where(jp => judiciaryParticipants.TrueForAll(rp => rp.PersonalCode != jp.PersonalCode))
+                .Select(x => x)
+                .ToList();
         }
     }
 }
