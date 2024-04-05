@@ -65,43 +65,48 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             // Apply only these edits to the existing participants for subsequent days in the hearing
             foreach (var existingParticipant in participantsForThisHearing)
             {
-                var existingParticipantToAdd = new UpdateParticipantRequestV2
-                {
-                    Title = existingParticipant.Title,
-                    DisplayName = existingParticipant.DisplayName,
-                    OrganisationName = existingParticipant.Organisation,
-                    TelephoneNumber = existingParticipant.TelephoneNumber,
-                    Representee = existingParticipant.Representee,
-                    ParticipantId = existingParticipant.Id
-                };
-
                 if (hearingChanges.RemovedParticipants.Exists(x => x.ContactEmail == existingParticipant.ContactEmail))
                 {
                     continue;
                 }
-                
-                var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
-                
-                if (participantInRequest != null)
-                {
-                    var participantRequest = participantInRequest.ParticipantRequest;
 
-                    existingParticipantToAdd.Title = participantInRequest.TitleChanged ?
-                        participantRequest.Title : existingParticipantToAdd.Title;
-                    existingParticipantToAdd.DisplayName = participantInRequest.DisplayNameChanged ?
-                        participantRequest.DisplayName : existingParticipantToAdd.DisplayName;
-                    existingParticipantToAdd.OrganisationName = participantInRequest.OrganisationNameChanged ?
-                        participantRequest.OrganisationName : existingParticipantToAdd.OrganisationName;
-                    existingParticipantToAdd.TelephoneNumber = participantInRequest.TelephoneChanged ?
-                        participantRequest.TelephoneNumber : existingParticipantToAdd.TelephoneNumber;
-                    existingParticipantToAdd.Representee = participantInRequest.RepresenteeChanged ?
-                        participantRequest.Representee : existingParticipantToAdd.Representee;
-                }
-                
+                var existingParticipantToAdd = MapExistingParticipantToAdd(existingParticipant, hearingChanges);
                 existingParticipants.Add(existingParticipantToAdd);
             }
 
             return existingParticipants;
+        }
+
+        private static UpdateParticipantRequestV2 MapExistingParticipantToAdd(ParticipantResponseV2 existingParticipant, HearingChanges hearingChanges)
+        {
+            var existingParticipantToAdd = new UpdateParticipantRequestV2
+            {
+                Title = existingParticipant.Title,
+                DisplayName = existingParticipant.DisplayName,
+                OrganisationName = existingParticipant.Organisation,
+                TelephoneNumber = existingParticipant.TelephoneNumber,
+                Representee = existingParticipant.Representee,
+                ParticipantId = existingParticipant.Id
+            };
+
+            var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
+
+            if (participantInRequest == null) return existingParticipantToAdd;
+            
+            var participantRequest = participantInRequest.ParticipantRequest;
+
+            existingParticipantToAdd.Title = participantInRequest.TitleChanged ?
+                participantRequest.Title : existingParticipantToAdd.Title;
+            existingParticipantToAdd.DisplayName = participantInRequest.DisplayNameChanged ?
+                participantRequest.DisplayName : existingParticipantToAdd.DisplayName;
+            existingParticipantToAdd.OrganisationName = participantInRequest.OrganisationNameChanged ?
+                participantRequest.OrganisationName : existingParticipantToAdd.OrganisationName;
+            existingParticipantToAdd.TelephoneNumber = participantInRequest.TelephoneChanged ?
+                participantRequest.TelephoneNumber : existingParticipantToAdd.TelephoneNumber;
+            existingParticipantToAdd.Representee = participantInRequest.RepresenteeChanged ?
+                participantRequest.Representee : existingParticipantToAdd.Representee;
+
+            return existingParticipantToAdd;
         }
 
         private static List<LinkedParticipantRequestV2> MapLinkedParticipants(

@@ -7,7 +7,8 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 {
     public static class ParticipantIdMapper
     {
-        public static void AssignParticipantIdsForFutureDayHearing(HearingDetailsResponse multiDayHearingFutureDay, 
+        public static void AssignParticipantIdsForFutureDayHearing(
+            HearingDetailsResponse multiDayHearingFutureDay, 
             List<EditParticipantRequest> participants, 
             List<EditEndpointRequest> endpoints)
         {
@@ -20,12 +21,16 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
             var participantIdMappings = new Dictionary<Guid, Guid>();
             var participantsNewToEditedHearingButExistOnFutureDayHearing = new Dictionary<string, Guid>();
                    
-            CreateParticipantMappings();
+            CreateParticipantMappings(
+                multiDayHearingFutureDay, 
+                participants, 
+                participantIdMappings, 
+                participantsNewToEditedHearingButExistOnFutureDayHearing);
             
             // Update the participant ids
             foreach (var participant in participants)
             {
-                MapParticipantId(participant);
+                MapParticipantId(participant, participantIdMappings, participantsNewToEditedHearingButExistOnFutureDayHearing);
             }
 
             foreach (var endpoint in endpoints)
@@ -33,54 +38,60 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 // Unlike participants we don't have a common identifier, so need to remove the existing endpoints and replace them
                 endpoint.Id = null;
             }
-   
-            void CreateParticipantMappings()
+        }
+        
+        private static void CreateParticipantMappings(
+            HearingDetailsResponse multiDayHearingFutureDay,
+            List<EditParticipantRequest> participants,
+            IDictionary<Guid, Guid> participantIdMappings,
+            IDictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
+        {
+            foreach (var participant in participants)
             {
-                // Create the participant mappings
-                foreach (var participant in participants)
+                var existingParticipant = multiDayHearingFutureDay.Participants.Find(x => x.ContactEmail == participant.ContactEmail);
+                if (existingParticipant == null)
                 {
-                    var existingParticipant = multiDayHearingFutureDay.Participants.Find(x => x.ContactEmail == participant.ContactEmail);
-                    if (existingParticipant == null)
-                    {
-                        continue;
-                    }
-
-                    if (participant.Id == null)
-                    {
-                        // This participant is new to the edited hearing, but exists on the future day hearing
-                        participantsNewToEditedHearingButExistOnFutureDayHearing.Add(participant.ContactEmail, existingParticipant.Id);
-                        continue;
-                    }
-                
-                    participantIdMappings.Add(participant.Id.Value, existingParticipant.Id);
+                    continue;
                 }
-            }
 
-            void MapParticipantId(EditParticipantRequest participant)
-            {
-                if (participant.Id.HasValue)
+                if (participant.Id == null)
                 {
-                    if (participantIdMappings.TryGetValue(participant.Id.Value, out var id))
-                    {
-                        participant.Id = id;
-                    }
-                    else
-                    {
-                        // Participant exists on the edited hearing, but is new to the future day hearing
-                        participant.Id = null;
-                    }
+                    // This participant is new to the edited hearing, but exists on the future day hearing
+                    participantsNewToEditedHearingButExistOnFutureDayHearing.Add(participant.ContactEmail, existingParticipant.Id);
+                    continue;
+                }
+                
+                participantIdMappings.Add(participant.Id.Value, existingParticipant.Id);
+            }
+        }
+        
+        private static void MapParticipantId(
+            EditParticipantRequest participant,
+            IReadOnlyDictionary<Guid, Guid> participantIdMappings,
+            IReadOnlyDictionary<string, Guid> participantsNewToEditedHearingButExistOnFutureDayHearing)
+        {
+            if (participant.Id.HasValue)
+            {
+                if (participantIdMappings.TryGetValue(participant.Id.Value, out var id))
+                {
+                    participant.Id = id;
                 }
                 else
                 {
-                    // Check if the participant is new to the edited hearing, but exists on the future day hearing
-                    if (participantsNewToEditedHearingButExistOnFutureDayHearing.TryGetValue(participant.ContactEmail, out var id))
-                    {
-                        participant.Id = id;
-                    }
-                    else
-                    {
-                        participant.Id = null;
-                    }
+                    // Participant exists on the edited hearing, but is new to the future day hearing
+                    participant.Id = null;
+                }
+            }
+            else
+            {
+                // Check if the participant is new to the edited hearing, but exists on the future day hearing
+                if (participantsNewToEditedHearingButExistOnFutureDayHearing.TryGetValue(participant.ContactEmail, out var id))
+                {
+                    participant.Id = id;
+                }
+                else
+                {
+                    participant.Id = null;
                 }
             }
         }
