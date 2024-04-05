@@ -868,11 +868,22 @@ namespace AdminWebsite.Controllers
                 judiciaryParticipants.TrueForAll(jp => jp.PersonalCode != ojp.PersonalCode)).ToList();
             if (hearingChanges != null)
             {
-                // Only remove judiciary participants that have been explicitly removed as part of this request, if they exist on this hearing
-                removedJohs = originalHearing.JudiciaryParticipants
-                    .Where(ojp => hearingChanges.RemovedJudiciaryParticipants
-                        .Exists(jp => jp.PersonalCode == ojp.PersonalCode))
-                    .ToList();
+                removedJohs = new List<JudiciaryParticipantResponse>();
+                
+                if (hearingChanges.RemovedJudiciaryParticipants.Exists(x => x.RoleCode == "Judge"))
+                {
+                    // If the judge is removed as part of the request, then they are being reassigned, so need to remove the existing judge for this hearing regardless
+                    var existingJudge = originalHearing.JudiciaryParticipants.First(x => x.RoleCode == "Judge");
+                    removedJohs.Add(existingJudge);
+                }
+                else
+                {
+                    // Only remove judiciary participants that have been explicitly removed as part of this request, if they exist on this hearing
+                    removedJohs = originalHearing.JudiciaryParticipants
+                        .Where(ojp => hearingChanges.RemovedJudiciaryParticipants
+                            .Exists(jp => jp.PersonalCode == ojp.PersonalCode))
+                        .ToList();
+                }
             }
             foreach (var removedJoh in removedJohs)
             {
@@ -924,19 +935,19 @@ namespace AdminWebsite.Controllers
             request.ExistingJudiciaryParticipants = MapExistingJudiciaryParticipants(judiciaryParticipants, 
                 originalHearing, 
                 skipUnchangedParticipants: skipUnchangedParticipants,
-                hearingChanges: hearingChanges);
+                removedJudiciaryParticipantPersonalCodes: hearingChanges != null ? request.RemovedJudiciaryParticipantPersonalCodes : null);
 
             return request;
         }
 
         private static List<EditableUpdateJudiciaryParticipantRequestV2> MapExistingJudiciaryParticipants(IEnumerable<JudiciaryParticipantRequest> judiciaryParticipantsToUpdate,
-            HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true, HearingChanges hearingChanges = null)
+            HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true, List<string> removedJudiciaryParticipantPersonalCodes = null)
         {
             // get existing judiciary participants based on the personal code being present in the original hearing
             var existingJohs = judiciaryParticipantsToUpdate.Where(jp =>
                 originalHearing.JudiciaryParticipants.Exists(ojp => ojp.PersonalCode == jp.PersonalCode)).ToList();
 
-            if (hearingChanges != null)
+            if (removedJudiciaryParticipantPersonalCodes != null)
             {
                 // Get the existing judiciary participants on this hearing
                 existingJohs = originalHearing.JudiciaryParticipants
@@ -952,8 +963,8 @@ namespace AdminWebsite.Controllers
                 
                 // Exclude any that have been explicitly removed as part of this request
                 existingJohs = existingJohs
-                    .Where(e => hearingChanges.RemovedJudiciaryParticipants
-                        .TrueForAll(d => d.PersonalCode != e.PersonalCode))
+                    .Where(e => removedJudiciaryParticipantPersonalCodes
+                        .TrueForAll(d => d != e.PersonalCode))
                     .ToList();
             }
 

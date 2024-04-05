@@ -18,13 +18,20 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
         {
             var participantsForThisHearing = hearing.Participants.ToList();
 
-            return new UpdateHearingParticipantsRequest
+            var participants = new UpdateHearingParticipantsRequest
             {
                 NewParticipants = MapNewParticipants(participantsForThisHearing, participantsForEditedHearing),
                 RemovedParticipantIds = MapRemovedParticipantIds(participantsForThisHearing, hearingChanges),
                 ExistingParticipants = MapExistingParticipants(participantsForThisHearing, hearingChanges),
                 LinkedParticipants = MapLinkedParticipants(participantsForThisHearing, hearingChanges)
             };
+
+            // Ensure that any removed participants are removed from the existing participants list
+            participants.ExistingParticipants = participants.ExistingParticipants
+                .Where(x => !participants.RemovedParticipantIds.Contains(x.ParticipantId))
+                .ToList();
+
+            return participants;
         }
 
         private static List<ParticipantRequest> MapNewParticipants(
@@ -49,6 +56,16 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
                 if (participantToRemoveForThisHearing != null)
                 {
                     removedParticipantIds.Add(participantToRemoveForThisHearing.Id);
+                }
+            }
+
+            if (hearingChanges.RemovedParticipants.Exists(x => x.HearingRoleName == "Judge"))
+            {
+                // If the judge is removed as part of the request, then they are being reassigned, so need to remove the existing judge for this hearing regardless
+                var judgeToRemove = participantsForThisHearing.Find(x => x.HearingRoleName == "Judge");
+                if (!removedParticipantIds.Contains(judgeToRemove.Id))
+                {
+                    removedParticipantIds.Add(judgeToRemove.Id);
                 }
             }
 

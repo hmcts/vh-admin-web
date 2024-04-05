@@ -1257,6 +1257,168 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_reassign_judge_when_future_day_hearing_is_assigned_to_different_judge_on_v2()
+        {
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var groupId = Guid.NewGuid();
+            var scheduledDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.Today.AddDays(2).AddHours(10)
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV2HearingsInMultiDayGroupAsV2(groupId, hearingId, scheduledDates: scheduledDates);
+            
+            // Assign day 2 to a different judge
+            var day1Hearing = existingHearingsInMultiDayGroup[0];
+            var day2Hearing = existingHearingsInMultiDayGroup[1];
+            var day1OldJudge = day1Hearing.JudiciaryParticipants.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            var day2OldJudge = day2Hearing.JudiciaryParticipants.Find(x => x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge);
+            day2OldJudge.PersonalCode = Guid.NewGuid().ToString();
+            day2OldJudge.Email = "day2Judge@email.com";
+
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdV2Async(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            
+            var request = CreateV2EditMultiDayHearingRequest(day1Hearing);
+            request.HearingsInGroup = new List<UpdateHearingInGroupRequest>();
+            foreach (var hearingInGroup in existingHearingsInMultiDayGroup)
+            {
+                request.HearingsInGroup.Add(new UpdateHearingInGroupRequest
+                {
+                    HearingId = hearingInGroup.Id,
+                    ScheduledDateTime = hearingInGroup.ScheduledDateTime
+                });
+            }
+            var newJudge = request.JudiciaryParticipants.Find(x => x.Role == "Judge");
+            newJudge.PersonalCode = Guid.NewGuid().ToString();
+            request.UpdateFutureDays = true;
+            
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
+            
+            var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
+            // Act
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
+            
+            // Assert
+            var expectedResponse = updatedHearing.Map();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var objectResult = result.Result.As<OkObjectResult>();
+            objectResult.Value.Should().BeEquivalentTo(expectedResponse);
+            
+            // Day 1
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequestV2>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day1Hearing.Id &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 1 &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(x => x.PersonalCode == newJudge.PersonalCode) &&
+                        h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 1 &&
+                        h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Contains(day1OldJudge.PersonalCode) &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day1Hearing.JudiciaryParticipants.Count - 1
+                    ))));
+            
+            // Day 2
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupV2Async(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequestV2>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day2Hearing.Id &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Count == 1 &&
+                        h.JudiciaryParticipants.NewJudiciaryParticipants.Exists(x => x.PersonalCode == newJudge.PersonalCode) &&
+                        h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Count == 1 &&
+                        h.JudiciaryParticipants.RemovedJudiciaryParticipantPersonalCodes.Contains(day2OldJudge.PersonalCode) &&
+                        h.JudiciaryParticipants.ExistingJudiciaryParticipants.Count == day2Hearing.JudiciaryParticipants.Count - 1
+                    ))));
+        }
+
+        [Test]
+        public async Task Should_reassign_judge_when_future_day_hearing_is_assigned_to_different_judge_on_v1()
+        {
+            // Arrange
+            var hearingId = Guid.NewGuid();
+            var groupId = Guid.NewGuid();
+            var scheduledDates = new List<DateTime>
+            {
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.Today.AddDays(2).AddHours(10)
+            };
+            var existingHearingsInMultiDayGroup = CreateListOfV1HearingsInMultiDayGroup(groupId, hearingId, scheduledDates: scheduledDates);
+            
+            // Assign day 2 to a different judge
+            var day1Hearing = existingHearingsInMultiDayGroup[0];
+            var day2Hearing = existingHearingsInMultiDayGroup[1];
+            var day1OldJudge = day1Hearing.Participants.Find(x => x.HearingRoleName == "Judge");
+            var day2OldJudge = day2Hearing.Participants.Find(x => x.HearingRoleName == "Judge");
+            day2OldJudge.ContactEmail = "day2Judge@email.com";
+
+            BookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(groupId)).ReturnsAsync(existingHearingsInMultiDayGroup);
+            
+            var request = CreateV1EditMultiDayHearingRequest(day1Hearing);
+            request.HearingsInGroup = new List<UpdateHearingInGroupRequest>();
+            foreach (var hearingInGroup in existingHearingsInMultiDayGroup)
+            {
+                request.HearingsInGroup.Add(new UpdateHearingInGroupRequest
+                {
+                    HearingId = hearingInGroup.Id,
+                    ScheduledDateTime = hearingInGroup.ScheduledDateTime
+                });
+            }
+            var newJudge = request.Participants.Find(x => x.HearingRoleName == "Judge");
+            newJudge.Id = null;
+            newJudge.ContactEmail = "newJudge@email.com";
+            request.UpdateFutureDays = true;
+            
+            FeatureToggle.Setup(e => e.UseV2Api()).Returns(false);
+            
+            var updatedHearing = MapUpdatedHearingV1(day1Hearing, request);
+            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId)).ReturnsAsync(updatedHearing);
+            
+            const string updatedBy = "updatedBy@email.com";
+            UserIdentity.Setup(x => x.GetUserIdentityName()).Returns(updatedBy);
+            
+            // Act
+            var result = await Controller.EditMultiDayHearing(hearingId, request);
+            
+            // Assert
+            var expectedResponse = updatedHearing.Map();
+            result.Result.Should().BeOfType<OkObjectResult>();
+            var objectResult = result.Result.As<OkObjectResult>();
+            objectResult.Value.Should().BeEquivalentTo(expectedResponse);
+            
+            // Day 1
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day1Hearing.Id &&
+                        h.Participants.NewParticipants.Count == 1 &&
+                        h.Participants.NewParticipants.Exists(x => x.ContactEmail == newJudge.ContactEmail) &&
+                        h.Participants.RemovedParticipantIds.Count == 1 &&
+                        h.Participants.RemovedParticipantIds.Contains(day1OldJudge.Id) &&
+                        h.Participants.ExistingParticipants.Count == day1Hearing.Participants.Count(x => x.HearingRoleName != "Judge")
+                    ))));
+            
+            // Day 2
+            BookingsApiClient.Verify(x => x.UpdateHearingsInGroupAsync(
+                groupId,
+                It.Is<UpdateHearingsInGroupRequest>(r =>
+                    r.Hearings.Exists(h => 
+                        h.HearingId == day2Hearing.Id &&
+                        h.Participants.NewParticipants.Count == 1 &&
+                        h.Participants.NewParticipants.Exists(x => x.ContactEmail == newJudge.ContactEmail) &&
+                        h.Participants.RemovedParticipantIds.Count == 1 &&
+                        h.Participants.RemovedParticipantIds.Contains(day2OldJudge.Id) &&
+                        h.Participants.ExistingParticipants.Count == day2Hearing.Participants.Count(x => x.HearingRoleName != "Judge")
+                    ))));
+        }
+
+        [Test]
         public async Task Should_forward_not_found_from_bookings_api_for_v1()
         {
             // Arrange
