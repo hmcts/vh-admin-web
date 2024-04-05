@@ -530,7 +530,7 @@ namespace AdminWebsite.Controllers
                     
                     var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                     
-                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);;
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                     hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
                     
                     participantsForEditedHearing = hearingRequest.Participants;

@@ -7,7 +7,6 @@ namespace AdminWebsite.Models.EditMultiDayHearing
     public class HearingChanges
     {
         public bool ScheduledDurationChanged { get; set; }
-        public bool HearingVenueNameChanged { get; set; }
         public bool HearingVenueCodeChanged { get; set; }
         public bool HearingRoomNameChanged { get; set; }
         public bool OtherInformationChanged { get; set; }
