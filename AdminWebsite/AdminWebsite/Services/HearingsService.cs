@@ -23,7 +23,7 @@ namespace AdminWebsite.Services
         Task ProcessParticipantsV2(Guid hearingId, List<UpdateParticipantRequestV2> existingParticipants, List<ParticipantRequestV2> newParticipants, List<Guid> removedParticipantIds, List<LinkedParticipantRequestV2> linkedParticipants);
         Task<IParticipantRequest> ProcessNewParticipant(Guid hearingId, EditParticipantRequest participant, IParticipantRequest newParticipant, List<Guid> removedParticipantIds, HearingDetailsResponse hearing);
         Task ProcessEndpoints(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList);
-        UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null);
+        UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing, List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null);
     }
 
     public class HearingsService : IHearingsService
@@ -146,7 +146,34 @@ namespace AdminWebsite.Services
             }
         }
 
-        public UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
+        public UpdateHearingEndpointsRequestV2 MapUpdateHearingEndpointsRequestV2(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
+            List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
+        {
+            var endpointsV1 = MapUpdateHearingEndpointsRequest(hearingId, endpoints, hearing, newParticipantList, hearingChanges: hearingChanges);
+            var endpointsV2 = new UpdateHearingEndpointsRequestV2
+            {
+                NewEndpoints = endpointsV1.NewEndpoints
+                    .Select(v1 => new EndpointRequestV2
+                    {
+                        DisplayName = v1.DisplayName,
+                        DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                    })
+                    .ToList(),
+                ExistingEndpoints = endpointsV1.ExistingEndpoints
+                    .Select(v1 => new UpdateEndpointRequestV2
+                    {
+                        Id = v1.Id,
+                        DisplayName = v1.DisplayName,
+                        DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
+                    })
+                    .ToList(),
+                RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
+            };
+
+            return endpointsV2;
+        }
+        
+        private UpdateHearingEndpointsRequest MapUpdateHearingEndpointsRequest(Guid hearingId, List<EditEndpointRequest> endpoints, HearingDetailsResponse hearing,
             List<IParticipantRequest> newParticipantList, HearingChanges hearingChanges = null)
         {
             if (hearing.Endpoints == null) return null;

@@ -520,29 +520,8 @@ namespace AdminWebsite.Controllers
                         hearingChanges);
 
                     var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
-                    
-                    var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
-                    var endpointsV2 = new UpdateHearingEndpointsRequestV2
-                    {
-                        NewEndpoints = endpointsV1.NewEndpoints
-                            .Select(v1 => new EndpointRequestV2
-                            {
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        ExistingEndpoints = endpointsV1.ExistingEndpoints
-                            .Select(v1 => new UpdateEndpointRequestV2
-                            {
-                                Id = v1.Id,
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
-                    };
 
-                    hearingRequest.Endpoints = endpointsV2;
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);
                     hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false, hearingChanges: hearingChanges);
                 }
                 else
@@ -551,28 +530,7 @@ namespace AdminWebsite.Controllers
                     
                     var newParticipantList = new List<IParticipantRequest>(hearingRequest.Participants.NewParticipants);
                     
-                    var endpointsV1 = _hearingsService.MapUpdateHearingEndpointsRequest(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList);
-                    var endpointsV2 = new UpdateHearingEndpointsRequestV2
-                    {
-                        NewEndpoints = endpointsV1.NewEndpoints
-                            .Select(v1 => new EndpointRequestV2
-                            {
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        ExistingEndpoints = endpointsV1.ExistingEndpoints
-                            .Select(v1 => new UpdateEndpointRequestV2
-                            {
-                                Id = v1.Id,
-                                DisplayName = v1.DisplayName,
-                                DefenceAdvocateContactEmail = v1.DefenceAdvocateContactEmail
-                            })
-                            .ToList(),
-                        RemovedEndpointIds = endpointsV1.RemovedEndpointIds.ToList()
-                    };
-
-                    hearingRequest.Endpoints = endpointsV2;
+                    hearingRequest.Endpoints = _hearingsService.MapUpdateHearingEndpointsRequestV2(originalEditedHearingId, endpoints, hearingToUpdate, newParticipantList, hearingChanges: hearingChanges);;
                     hearingRequest.JudiciaryParticipants = MapUpdateJudiciaryParticipantsRequestV2(judiciaryParticipants, hearingToUpdate, skipUnchangedParticipants: false);
                     
                     participantsForEditedHearing = hearingRequest.Participants;
