@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM node:18.10-alpine AS client 
+FROM node:18.13-alpine AS client 
 ARG skip_client_build=false 
 WORKDIR /app 
 COPY AdminWebsite/ClientApp . 
