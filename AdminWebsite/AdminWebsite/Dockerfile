@@ -23,7 +23,7 @@ FROM build AS publish
 RUN dotnet publish "AdminWebsite.csproj" -c Release -o /app/publish -p:PublishRunWebpack=false
 
 FROM base AS final
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y curl && apt-get clean
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=client /app/dist /app/ClientApp/dist
