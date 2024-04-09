@@ -2,7 +2,9 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "types": []
+    "types": [],
+    "target": "es2019",
+    "lib": ["es2019", "dom"]
   },
   "files": ["main.ts", "polyfills.ts"],
   "include": ["src/**/*.d.ts"]
