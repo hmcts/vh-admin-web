@@ -66,18 +66,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "AdminWebsite:build"
+            "buildTarget": "AdminWebsite:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "AdminWebsite:build:production"
+              "buildTarget": "AdminWebsite:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "AdminWebsite:build"
+            "buildTarget": "AdminWebsite:build"
           }
         },
         "test": {
