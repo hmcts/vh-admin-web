@@ -16,9 +16,7 @@ export class VenuesMenuComponent extends MenuBase {
     formGroupName = 'selectedVenueIds';
     venues: HearingVenueResponse[];
     selectedItems: [];
-    formConfiguration = {
-        selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
-    };
+    formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<number[]>();
 
@@ -29,6 +27,9 @@ export class VenuesMenuComponent extends MenuBase {
         logger: Logger
     ) {
         super(formBuilder, logger);
+        this.formConfiguration = {
+            selectedVenueIds: [this.bookingPersistService.selectedVenueIds || []]
+        };
     }
 
     loadItems(): void {

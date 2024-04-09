@@ -16,9 +16,7 @@ export class CaseTypesMenuComponent extends MenuBase {
     formGroupName = 'selectedCaseTypes';
     caseTypes: string[];
     selectedItems: string[];
-    formConfiguration = {
-        selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
-    };
+    formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<string[]>();
 
@@ -29,6 +27,9 @@ export class CaseTypesMenuComponent extends MenuBase {
         logger: Logger
     ) {
         super(formBuilder, logger);
+        this.formConfiguration = {
+            selectedCaseTypes: [this.bookingPersistService.selectedCaseTypes || []]
+        };
     }
 
     loadItems(): void {
