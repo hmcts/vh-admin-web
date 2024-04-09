@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticatedResult, OidcSecurityService } from 'angular-auth-oidc-client';
-import { Observable, takeUntil } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PageUrls } from '../shared/page-url.constants';
 import { Logger } from '../services/logger';
@@ -16,11 +15,11 @@ export class AudioSearchGuard {
         return this.launchDarklyService.getFlag<boolean>(FeatureFlags.audioSearch).pipe(
             map(result => {
                 if (result) {
-                    this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
+                    this.logger.warn(`${this.loggerPrefix} - canActivate isAuthorized: false`);
                     this.router.navigate([`/${PageUrls.Login}`]);
                     return false;
                 }
-                this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: ` + !result);
+                this.logger.debug(`${this.loggerPrefix} - canActivate isAuthorized: true`);
                 return true;
             })
         );

@@ -15,7 +15,7 @@ export class VhOfficerAdminGuard {
         this.logger.debug(`${this.loggerPrefix} Checking if user is vho.`);
         return this.userIdentityService.getUserInformation().pipe(
             map(userProfile => {
-                if (userProfile && userProfile.is_vh_officer_administrator_role) {
+                if (userProfile?.is_vh_officer_administrator_role) {
                     this.logger.debug(`${this.loggerPrefix} Success! User is vho.`);
                     return true;
                 } else {
