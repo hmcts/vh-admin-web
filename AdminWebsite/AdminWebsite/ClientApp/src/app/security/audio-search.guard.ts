@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthenticatedResult, OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable, takeUntil } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { Logger } from '../services/logger';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 
 @Injectable()
-export class AudioSearchGuard implements CanActivate {
+export class AudioSearchGuard {
     private readonly loggerPrefix = '[AudioSearchGuard] -';
     constructor(private launchDarklyService: LaunchDarklyService, private router: Router, private logger: Logger) {}
 
