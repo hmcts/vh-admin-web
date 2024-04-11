@@ -41,16 +41,7 @@ export class BookingEditComponent {
     }
 
     get canEdit() {
-        if (this.videoHearingsService.isConferenceClosed() || this.videoHearingsService.isHearingAboutToStart()) {
-            return false;
-        }
-
-        const booking = this.videoHearingsService.getCurrentRequest();
-        if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
-            return false;
-        }
-
-        return true;
+        return !this.videoHearingsService.isConferenceClosed() && !this.videoHearingsService.isHearingAboutToStart();
     }
 
     edit() {
