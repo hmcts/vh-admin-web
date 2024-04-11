@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 
 @Injectable()
-export class VhOfficerAdminGuard implements CanActivate {
+export class VhOfficerAdminGuard {
     private readonly loggerPrefix = '[VhOfficerAdminGuard] -';
 
     constructor(private userIdentityService: UserIdentityService, private router: Router, private logger: Logger) {}
@@ -15,7 +15,7 @@ export class VhOfficerAdminGuard implements CanActivate {
         this.logger.debug(`${this.loggerPrefix} Checking if user is vho.`);
         return this.userIdentityService.getUserInformation().pipe(
             map(userProfile => {
-                if (userProfile && userProfile.is_vh_officer_administrator_role) {
+                if (userProfile?.is_vh_officer_administrator_role) {
                     this.logger.debug(`${this.loggerPrefix} Success! User is vho.`);
                     return true;
                 } else {

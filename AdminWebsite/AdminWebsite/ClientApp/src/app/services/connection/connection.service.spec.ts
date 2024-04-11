@@ -1,6 +1,6 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { discardPeriodicTasks, fakeAsync, inject, TestBed, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { ConnectionServiceConfigToken } from './connection';
 import { ConnectionService } from './connection.service';
 
@@ -45,12 +45,10 @@ describe('Connection service (connected)', () => {
         })
     ));
 
-    it('hasConnection subject emits true', done => {
+    it('hasConnection subject emits true', async () => {
         service = TestBed.inject(ConnectionService);
-        service.hasConnection$.subscribe(x => {
-            expect(x).toBeTruthy();
-            done();
-        });
+        const result = await firstValueFrom(service.hasConnection$);
+        expect(result).toBeTruthy();
     });
 });
 
