@@ -15,8 +15,8 @@ export class CopySipComponent extends CopyDetailsBase implements OnInit {
         }
     }
 
-    displayTooltip: boolean;
-    tooltip: string;
+    displayTooltip = true;
+    tooltip = '';
     @ViewChild('sipAddress', { static: false }) sipAddress: ElementRef;
 
     constructor(protected clipboardService: ClipboardService) {

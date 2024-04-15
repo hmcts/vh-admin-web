@@ -16,9 +16,7 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
     loggerPrefix = '[MenuJusticeUser] -';
     formGroupName = 'selectedUserIds';
     selectedItems: [] | string;
-    formConfiguration = {
-        selectedUserIds: [this.bookingPersistService.selectedUsers || []]
-    };
+    formConfiguration: any;
 
     @Output() selectedEmitter = new EventEmitter<string[] | string>();
     @Input() dropDownLabel = 'Allocated CSO';
@@ -30,6 +28,9 @@ export class JusticeUsersMenuComponent extends MenuBase implements OnInit {
         logger: Logger
     ) {
         super(formBuilder, logger);
+        this.formConfiguration = {
+            selectedUserIds: [this.bookingPersistService.selectedUsers || []]
+        };
     }
 
     ngOnInit(): void {

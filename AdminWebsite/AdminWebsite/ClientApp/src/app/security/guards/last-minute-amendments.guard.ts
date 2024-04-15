@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { Logger } from '../../services/logger';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
 @Injectable()
-export class LastMinuteAmendmentsGuard implements CanActivate {
+export class LastMinuteAmendmentsGuard {
     isV2: boolean;
     constructor(
         private videoHearingsService: VideoHearingsService,

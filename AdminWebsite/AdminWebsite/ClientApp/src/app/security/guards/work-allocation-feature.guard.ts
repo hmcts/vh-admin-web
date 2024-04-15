@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { map, take } from 'rxjs/operators';
 
 @Injectable()
-export class WorkAllocationFeatureGuard implements CanActivate {
+export class WorkAllocationFeatureGuard {
     private readonly loggerPrefix = '[WorkAllocationFeatureGuard] -';
 
     constructor(private launchDarklyService: LaunchDarklyService, private router: Router) {}

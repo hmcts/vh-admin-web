@@ -1,5 +1,4 @@
-import { CanActivate } from '@angular/router';
-export class MockAdminGuard implements CanActivate {
+export class MockAdminGuard {
     private _flag: boolean;
     canActivate() {
         return this._flag;
