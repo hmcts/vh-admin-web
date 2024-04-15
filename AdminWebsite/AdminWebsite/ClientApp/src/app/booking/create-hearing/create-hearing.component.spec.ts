@@ -483,11 +483,21 @@ describe('CreateHearingComponent with existing request in session', () => {
                 fixture.detectChanges();
                 expect(caseNameElement.disabled).toBeFalse();
             }));
-            it('should enable editing of case number', () => {
+            it('should disable editing of case number when multi-day hearing enhancements are enabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
                 component.ngOnInit();
+                tick();
+                fixture.detectChanges();
+                expect(caseNumberElement.disabled).toBeTrue();
+            }));
+
+            it('should enable editing of case number when multi-day hearing enhancements are disabled', fakeAsync(() => {
+                launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+                component.ngOnInit();
+                tick();
                 fixture.detectChanges();
                 expect(caseNumberElement.disabled).toBeFalse();
-            });
+            }));
         });
     });
     describe('editing multiple days in a multi-day hearing', () => {

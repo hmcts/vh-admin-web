@@ -179,6 +179,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         if (this.hearing.isMultiDayEdit && !this.isFirstDayOfMultiDay()) {
             return false;
         }
+        if (this.hearing.isMultiDay && this.multiDayEnhancementsEnabled && !this.isFirstDayOfMultiDay()) {
+            return false;
+        }
         return true;
     }
 
