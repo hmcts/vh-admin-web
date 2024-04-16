@@ -15,6 +15,7 @@ import { Logger } from '../../../services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { CanDeactiveComponent } from '../../../common/guards/changes.guard';
 import { EditWorkHoursService } from '../../services/edit-work-hours.service';
+import { ErrorMessages } from './error-messages';
 
 const requiredFieldNames = ['start_date', 'end_date', 'start_time', 'end_time'] as const;
 type RequiredField = (typeof requiredFieldNames)[number];
@@ -61,22 +62,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
         }
     }
 
-    public static readonly ErrorStartDateRequired = 'Start date is required';
-    public static readonly ErrorEndDateRequired = 'End date is required';
-    public static readonly ErrorEndTimeCannotBeBeforeStartTime = 'End time cannot be before Start time';
-    public static readonly ErrorEndDatetimeMustBeAfterStartDatetime = 'End datetime must be after Start datetime';
-    public static readonly ErrorOverlappingDatetimes = 'You cannot enter overlapping non-availability for the same person';
-    public static readonly ErrorStartTimeRequired = 'Start time is required';
-    public static readonly ErrorEndTimeRequired = 'End time is required';
-    public static readonly WarningRecordLimitExeeded = 'Showing only 20 Records, For more records please use filter by date';
-    public static readonly WarningNoWorkingHoursForVho = 'There are no non-availability hours uploaded for this team member';
-    public static readonly DeleteRowMessageNonAvailabilityHours = 'Non-availability hours deleted successfully';
-
     private static DateTimeErrors = {
-        start_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired,
-        end_date: VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired,
-        start_time: VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired,
-        end_time: VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired
+        start_date: ErrorMessages.ErrorStartDateRequired,
+        end_date: ErrorMessages.ErrorEndDateRequired,
+        start_time: ErrorMessages.ErrorStartTimeRequired,
+        end_time: ErrorMessages.ErrorEndTimeRequired
     };
 
     private filterSize = 20;
@@ -229,7 +219,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     validateEndTimeBeforeStartTime(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeCannotBeBeforeStartTime;
+        const error = ErrorMessages.ErrorEndTimeCannotBeBeforeStartTime;
         const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
         const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
         if (endDateTime < startDateTime) {
@@ -241,7 +231,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     validateEndDatetimeAfterStartDatetime(nonWorkHour: EditVhoNonAvailabilityWorkHoursModel) {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDatetimeMustBeAfterStartDatetime;
+        const error = ErrorMessages.ErrorEndDatetimeMustBeAfterStartDatetime;
         const startDateTime = this.combineDateAndTime(nonWorkHour.start_date, nonWorkHour.start_time);
         const endDateTime = this.combineDateAndTime(nonWorkHour.end_date, nonWorkHour.end_time);
         if (endDateTime.toISOString() === startDateTime.toISOString()) {
@@ -253,7 +243,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
 
     validateOverlappingDates() {
-        const error = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
+        const error = ErrorMessages.ErrorOverlappingDatetimes;
         const overlappingDateFailures = this.checkOverlappingDates();
         overlappingDateFailures.forEach(failure => {
             this.addValidationError(failure.id, error);
@@ -294,7 +284,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 if (uncheckedHours.some(uncheckedHour => this.overlapsWith(firstHour, uncheckedHour))) {
                     validationFailures.push({
                         id: firstHour.id,
-                        errorMessage: VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes
+                        errorMessage: ErrorMessages.ErrorOverlappingDatetimes
                     });
                 }
             }
@@ -372,7 +362,7 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
                 next: () => {
                     this.logger.info(`${this.loggerPrefix} Non Working hours deleted`);
                     this.removeSlot();
-                    this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.DeleteRowMessageNonAvailabilityHours);
+                    this.showMessage(ErrorMessages.DeleteRowMessageNonAvailabilityHours);
                 },
                 error: error => {
                     this.logger.error(`${this.loggerPrefix} Working hours could not be saved`, error);
@@ -455,11 +445,11 @@ export class VhoWorkHoursNonAvailabilityTableComponent implements OnInit, CanDea
     }
     private checkResultsLength() {
         if (this.nonWorkHours.length >= 20) {
-            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+            this.showMessage(ErrorMessages.WarningRecordLimitExceeded);
         } else if (this.nonWorkHours.length < 20 && this.nonWorkHours.length > 0) {
             this.hideMessage();
         } else if (this.nonWorkHours.length === 0) {
-            this.showMessage(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+            this.showMessage(ErrorMessages.WarningNoWorkingHoursForVho);
         }
     }
 }

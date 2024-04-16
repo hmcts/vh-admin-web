@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LoadingSpinnerService } from 'src/app/services/loading-spinner.service';
 
 @Component({
@@ -13,6 +14,9 @@ export class WaitPopupComponent {
     @Input()
     UseLoaderService = false;
 
-    isLoading$ = this.spinnerService.loading$;
-    constructor(public spinnerService: LoadingSpinnerService) {}
+    isLoading$: Observable<boolean>;
+
+    constructor(public spinnerService: LoadingSpinnerService) {
+        this.isLoading$ = this.spinnerService.loading$;
+    }
 }
