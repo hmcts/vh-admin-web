@@ -79,15 +79,7 @@ namespace AdminWebsite.Mappers.EditMultiDayHearing
 
         private static UpdateParticipantRequestV2 MapExistingParticipantToAdd(ParticipantResponseV2 existingParticipant, HearingChanges hearingChanges)
         {
-            var existingParticipantToAdd = new UpdateParticipantRequestV2
-            {
-                Title = existingParticipant.Title,
-                DisplayName = existingParticipant.DisplayName,
-                OrganisationName = existingParticipant.Organisation,
-                TelephoneNumber = existingParticipant.TelephoneNumber,
-                Representee = existingParticipant.Representee,
-                ParticipantId = existingParticipant.Id
-            };
+            var existingParticipantToAdd = UpdateParticipantRequestMapper.MapToV2(existingParticipant);
 
             var participantInRequest = hearingChanges.ParticipantChanges.Find(x => x.ParticipantRequest.ContactEmail == existingParticipant.ContactEmail);
 
