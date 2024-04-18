@@ -344,6 +344,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Assert
             var okRequestResult = (OkObjectResult) result;
             okRequestResult.StatusCode.Should().Be(200);
+            
+            var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
+            response.MultiDayHearingLastDayScheduledDateTime.Should().BeNull();
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
 
         [Test]
@@ -388,6 +392,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // Assert
             var okRequestResult = (OkObjectResult) result;
             okRequestResult.StatusCode.Should().Be(200);
+            
+            var response = (HearingDetailsResponse) ((OkObjectResult) result).Value;
+            response.MultiDayHearingLastDayScheduledDateTime.Should().BeNull();
+            response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
 
         [Test]
