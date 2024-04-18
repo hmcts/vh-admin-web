@@ -79,11 +79,4 @@ describe('BookingEditComponent', () => {
         videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
         expect(component.canEdit).toBe(false);
     });
-    it('should not be able to edit when booking is multi day and multi day booking enhancements are enabled', () => {
-        const currentRequest = new HearingModel();
-        currentRequest.isMultiDay = true;
-        videoHearingServiceSpy.getCurrentRequest.and.returnValue(currentRequest);
-        component.multiDayBookingEnhancementsEnabled = true;
-        expect(component.canEdit).toBe(false);
-    });
 });

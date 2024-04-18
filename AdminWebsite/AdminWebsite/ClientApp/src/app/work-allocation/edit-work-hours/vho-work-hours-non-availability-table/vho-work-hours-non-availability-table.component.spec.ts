@@ -11,6 +11,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VideoHearingsService } from '../../../services/video-hearings.service';
 import { MockWorkAllocationValues } from '../../../testing/data/work-allocation-test-data';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
+import { ErrorMessages } from './error-messages';
 
 describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     let component: VhoWorkHoursNonAvailabilityTableComponent;
@@ -153,14 +154,13 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
     });
 
     describe('editing non availability', () => {
-        const ERROR_START_DATE_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartDateRequired;
-        const ERROR_END_DATE_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDateRequired;
-        const ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeCannotBeBeforeStartTime;
-        const ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME =
-            VhoWorkHoursNonAvailabilityTableComponent.ErrorEndDatetimeMustBeAfterStartDatetime;
-        const ERROR_OVERLAPPING_DATETIMES = VhoWorkHoursNonAvailabilityTableComponent.ErrorOverlappingDatetimes;
-        const ERROR_START_TIME_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorStartTimeRequired;
-        const ERROR_END_TIME_REQUIRED = VhoWorkHoursNonAvailabilityTableComponent.ErrorEndTimeRequired;
+        const ERROR_START_DATE_REQUIRED = ErrorMessages.ErrorStartDateRequired;
+        const ERROR_END_DATE_REQUIRED = ErrorMessages.ErrorEndDateRequired;
+        const ERROR_END_TIME_CANNOT_BE_BEFORE_START_TIME = ErrorMessages.ErrorEndTimeCannotBeBeforeStartTime;
+        const ERROR_END_DATETIME_MUST_BE_AFTER_START_DATETIME = ErrorMessages.ErrorEndDatetimeMustBeAfterStartDatetime;
+        const ERROR_OVERLAPPING_DATETIMES = ErrorMessages.ErrorOverlappingDatetimes;
+        const ERROR_START_TIME_REQUIRED = ErrorMessages.ErrorStartTimeRequired;
+        const ERROR_END_TIME_REQUIRED = ErrorMessages.ErrorEndTimeRequired;
 
         beforeEach(() => {
             const nonWorkHours: EditVhoNonAvailabilityWorkHoursModel[] = [];
@@ -963,7 +963,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.result = testData;
             // assert
             expect(component.displayMessage).toBeTruthy();
-            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningNoWorkingHoursForVho);
+            expect(component.message).toBe(ErrorMessages.WarningNoWorkingHoursForVho);
         });
 
         it('should display a message when results length exceeds 20 after filter', () => {
@@ -980,7 +980,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             component.filterByDate();
             // assert
             expect(component.displayMessage).toBeTruthy();
-            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.WarningRecordLimitExeeded);
+            expect(component.message).toBe(ErrorMessages.WarningRecordLimitExceeded);
         });
 
         it('should not display a message when results are between 0 and  less than 20 after filter', () => {
@@ -1009,7 +1009,7 @@ describe('VhoNonAvailabilityWorkHoursTableComponent', () => {
             fixture.detectChanges();
             // assert
             expect(component.displayMessage).toBeTruthy();
-            expect(component.message).toBe(VhoWorkHoursNonAvailabilityTableComponent.DeleteRowMessageNonAvailabilityHours);
+            expect(component.message).toBe(ErrorMessages.DeleteRowMessageNonAvailabilityHours);
         });
     });
 
