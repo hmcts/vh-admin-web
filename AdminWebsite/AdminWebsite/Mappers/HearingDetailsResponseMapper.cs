@@ -88,7 +88,10 @@ public static class HearingDetailsResponseMapper
                 h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Cancelled && 
                 h.Status != BookingsApi.Contract.V1.Enums.BookingStatus.Failed)
             .ToList();
-        response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
+        if (activeHearings.Any())
+        {
+            response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
+        }
         response.HearingsInGroup = hearingsInGroup
             .OrderBy(h => h.ScheduledDateTime)
             .Select(h => h.Map())
@@ -105,7 +108,10 @@ public static class HearingDetailsResponseMapper
                 h.Status != BookingStatusV2.Cancelled && 
                 h.Status != BookingStatusV2.Failed)
             .ToList();
-        response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
+        if (activeHearings.Any())
+        {
+            response.MultiDayHearingLastDayScheduledDateTime = activeHearings.ScheduledDateTimeOfLastHearing();
+        }
         response.HearingsInGroup = hearingsInGroup
             .OrderBy(h => h.ScheduledDateTime)
             .Select(h => h.Map())
