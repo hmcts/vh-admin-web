@@ -436,12 +436,27 @@ namespace AdminWebsite.Controllers
         private async Task UpdateHearing(EditHearingRequest request, Guid hearingId, HearingDetailsResponse originalHearing)
         {
             //Save hearing details
+            
+            // Adding an interpreter forces the audio recording to be required. The update hearing details do not work
+            // with the close to start time window, but the domain will update the audio recording required flag when
+            // an interpreter is added. Revert to the original audio recording setting to avoid the time clash.
+            // This is only an issue because we update hearing details and participants in the same request.
+            var containsInterpreter =
+                request.Participants.Exists(p => p.HearingRoleCode == HearingRoleCodes.Interpreter);
+            
+            if(containsInterpreter)
+            {
+                // revert to the original audio recording setting if an interpreter is added so that the domain rules
+                // kick in rather than using update hearing details which do not work with the close to start time window
+                request.AudioRecordingRequired = originalHearing.AudioRecordingRequired;
+            }
+            
             if (_featureToggles.UseV2Api())
             {
                 var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
-                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
                 await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
                 await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
+                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
             }
             else
             {
