@@ -442,7 +442,7 @@ namespace AdminWebsite.Controllers
             // an interpreter is added. Revert to the original audio recording setting to avoid the time clash.
             // This is only an issue because we update hearing details and participants in the same request.
             var containsInterpreter =
-                request.Participants.Exists(p => p.HearingRoleCode == HearingRoleCodes.Interpreter);
+                request.Participants.Exists(p => p.IsInterpreter());
             
             if(containsInterpreter)
             {
