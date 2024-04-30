@@ -30,7 +30,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
+        public ActionResult<UserProfileResponse> GetUserProfile()
         {
             var username = User.Identity?.Name;
             if (string.IsNullOrWhiteSpace(username))
@@ -41,23 +41,10 @@ namespace AdminWebsite.Controllers
                 return StatusCode((int)HttpStatusCode.NotFound, message);
             }
 
-            JusticeUserResponse justiceUser = null;
-
-            try
-            {
-                justiceUser = await _bookingsApiClient
-                    .GetJusticeUserByUsernameAsync(username);
-            }
-            catch (BookingsApiException e)
-            {
-                _logger.LogError(e, "Failed to get justice user by username");
-                if (e.StatusCode != 404)
-                    return StatusCode(e.StatusCode, e.Response);
-            }
             var profile = new UserProfileResponse
             {
                 IsVhOfficerAdministratorRole = User.IsInRole(AppRoles.VhOfficerRole) || User.IsInRole(AppRoles.AdministratorRole),
-                IsVhTeamLeader = justiceUser?.IsVhTeamLeader == true,
+                IsVhTeamLeader = User.IsInRole(AppRoles.AdministratorRole),
                 IsCaseAdministrator = User.IsInRole(AppRoles.CaseAdminRole)
             };
 
