@@ -454,9 +454,9 @@ namespace AdminWebsite.Controllers
             if (_featureToggles.UseV2Api())
             {
                 var updateHearingRequestV2 = HearingUpdateRequestMapper.MapToV2(request, _userIdentity.GetUserIdentityName());
+                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
                 await UpdateParticipantsV2(hearingId, request.Participants, request.Endpoints, originalHearing);
                 await UpdateJudiciaryParticipants(hearingId, request.JudiciaryParticipants, originalHearing);
-                await _bookingsApiClient.UpdateHearingDetails2Async(hearingId, updateHearingRequestV2);
             }
             else
             {
