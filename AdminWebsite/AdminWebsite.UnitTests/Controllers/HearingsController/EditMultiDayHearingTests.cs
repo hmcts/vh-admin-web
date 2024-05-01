@@ -170,7 +170,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         h.HearingRoomName == request.HearingRoomName &&
                         h.OtherInformation == request.OtherInformation &&
                         h.CaseNumber == request.CaseNumber &&
-                        h.AudioRecordingRequired == request.AudioRecordingRequired &&
+                        !h.AudioRecordingRequired && // must be false (original value) as we added an interpreter
                         h.Participants.ExistingParticipants.Count == 3 &&
                         h.Participants.NewParticipants.Count == 3 &&
                         h.Participants.NewParticipants.Exists(p => p.ContactEmail == newParticipant.ContactEmail) &&
