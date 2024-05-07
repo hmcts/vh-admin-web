@@ -13,7 +13,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using AdminWebsite.Configuration;
-using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -36,6 +35,7 @@ using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
+using RoleNames = AdminWebsite.Contracts.Enums.RoleNames;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {

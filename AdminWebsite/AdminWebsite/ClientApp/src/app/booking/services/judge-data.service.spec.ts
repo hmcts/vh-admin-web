@@ -6,7 +6,7 @@ import { BHClient } from 'src/app/services/clients/api-client';
 describe('JudgeDataService', () => {
     let bhClientSpy: jasmine.SpyObj<BHClient>;
     beforeEach(() => {
-        bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getJudges', 'searchJudgesByEmail']);
+        bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['searchJudgesByEmail']);
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
             providers: [JudgeDataService, { provide: BHClient, useValue: bhClientSpy }]
@@ -15,11 +15,6 @@ describe('JudgeDataService', () => {
 
     it('should be created', inject([JudgeDataService], (service: JudgeDataService) => {
         expect(service).toBeTruthy();
-    }));
-
-    it('should call getJudges', inject([JudgeDataService], (service: JudgeDataService) => {
-        service.getJudges();
-        expect(bhClientSpy.getJudges).toHaveBeenCalledTimes(1);
     }));
 
     it('should call searchJudgesByEmail with correct term', inject([JudgeDataService], (service: JudgeDataService) => {
