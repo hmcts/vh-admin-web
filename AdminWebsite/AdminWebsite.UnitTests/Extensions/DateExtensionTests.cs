@@ -1,7 +1,4 @@
-using System;
 using AdminWebsite.Extensions;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Extensions;
 

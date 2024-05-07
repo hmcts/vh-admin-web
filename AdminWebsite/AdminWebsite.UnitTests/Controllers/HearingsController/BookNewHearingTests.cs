@@ -1,11 +1,6 @@
 using AdminWebsite.Models;
 using AdminWebsite.Services;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -190,7 +185,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             // Arrange
             const int expectedMultiDayHearingDuration = 3;
-            DateTime expectedStartDate = new DateTime(2021, 5, 10, 0, 0, 1);
+            DateTime expectedStartDate = new DateTime(2021, 5, 10, 0, 0, 1, DateTimeKind.Utc);
             DateTime expectedEndDate = expectedStartDate.AddDays(expectedMultiDayHearingDuration - 1);
 
             var bookingDetails = InitHearingForTest();
@@ -351,7 +346,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
 
-            response.Status.Should().Be(BookingStatus.Failed);
+            response.Status.Should().Be((AdminWebsite.Contracts.Enums.BookingStatus)BookingStatus.Failed);
 
             ((ObjectResult)result.Result).StatusCode.Should().Be(201);
           

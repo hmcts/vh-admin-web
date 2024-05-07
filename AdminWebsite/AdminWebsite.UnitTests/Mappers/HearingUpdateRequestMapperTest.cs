@@ -1,9 +1,6 @@
-﻿using System;
-using AdminWebsite.Mappers;
+﻿using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.V1.Requests;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -39,7 +36,11 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScheduledDateTime.Should().Be(_scheduledDateTime);
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
-            result.Cases.Should().BeEquivalentTo(_caseRequest);
+            
+            // Create a collection for the expected cases
+            var expectedCases = new List<CaseRequest> { _caseRequest };
+            result.Cases.Should().BeEquivalentTo(expectedCases);
+            
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
     }

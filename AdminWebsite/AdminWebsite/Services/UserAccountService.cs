@@ -19,15 +19,6 @@ namespace AdminWebsite.Services
     public interface IUserAccountService
     {
         /// <summary>
-        ///     Returns a list of all judges in the active directory
-        /// </summary>
-        /// <remarks>
-        /// Filters test accounts if configured to run as live environment 
-        /// </remarks>
-        Task<IEnumerable<JudgeResponse>> GetJudgeUsers();
-
-
-        /// <summary>
         ///     Returns a list of judges filtered by email in the active directory
         /// </summary>
         /// <remarks>
@@ -125,21 +116,6 @@ namespace AdminWebsite.Services
                 _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user");
                 throw;
             }
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<JudgeResponse>> GetJudgeUsers()
-        {
-            _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetJudgesAsync();
-            return judgesList.Select(x => new JudgeResponse
-            {
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                DisplayName = x.DisplayName,
-                Email = x.Email,
-                ContactEmail = x.ContactEmail
-            }).ToList();
         }
 
         public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)

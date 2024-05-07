@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Models;
@@ -10,8 +8,6 @@ using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 
@@ -64,7 +60,7 @@ namespace AdminWebsite.UnitTests.Services
             var editParticipants1 = new List<EditParticipantRequest> { participantRequest1 };
             var editParticipants2 = new List<EditParticipantRequest> { participantRequest1 };
 
-            Assert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
+            ClassicAssert.True(_service.GetAddedParticipant(editParticipants1, editParticipants2).Count == 0);
         }
 
         [Test]
@@ -94,7 +90,7 @@ namespace AdminWebsite.UnitTests.Services
                 } 
             };
 
-            Assert.AreEqual(1, _service.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
+            ClassicAssert.AreEqual(1, _service.GetAddedParticipant(originalParticipants, editParticipantRequest).Count);
         }
         
         [Test]

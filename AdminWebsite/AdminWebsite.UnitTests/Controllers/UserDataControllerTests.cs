@@ -2,12 +2,7 @@
 using AdminWebsite.Controllers;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -57,27 +52,6 @@ namespace AdminWebsite.UnitTests.Controllers
                 ContactEmail = "judge2@personal.com"
             };
             _judgeResponse.Add(judgeData);
-        }
-
-        [Test]
-        public void Should_return_a_list_of_judges()
-        {
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(_judgeResponse);
-
-            _controller = new UserDataController(_userAccountService.Object);
-            var result = _controller.GetJudges().Result;
-            var okObjectResult = (OkObjectResult) result.Result;
-            okObjectResult.StatusCode.Should().Be(200);
-
-            var judges = (List<JudgeResponse>) okObjectResult.Value;
-
-            var testJudge = judges.First(j =>
-                j.Email.Equals("Test.Judge01@hmcts.net", StringComparison.CurrentCultureIgnoreCase));
-
-            testJudge.LastName.Should().Be("Judge01");
-            testJudge.FirstName.Should().Be("Test");
-            testJudge.DisplayName.Should().Be("Test Judge01");
-            testJudge.ContactEmail.Should().Be("judge@personal.com");
         }
 
         [Test]

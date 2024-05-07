@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
@@ -7,12 +6,9 @@ using AdminWebsite.Models;
 using AdminWebsite.Testing.Common.Builders;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Responses;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -59,7 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             result.Should().NotBeNull();
 
-            Assert.AreEqual(404, result.StatusCode);
+            ClassicAssert.AreEqual(404, result.StatusCode);
         }
         
         [Test]
@@ -78,7 +74,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             result.Should().NotBeNull();
 
-            Assert.AreEqual(400, result.StatusCode);
+            ClassicAssert.AreEqual(400, result.StatusCode);
         }
 
         [Test]

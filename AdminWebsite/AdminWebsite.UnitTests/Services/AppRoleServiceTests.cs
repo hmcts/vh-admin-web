@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,10 +8,7 @@ using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
-using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -68,7 +63,6 @@ namespace AdminWebsite.UnitTests.Services
         public async Task should_return_an_empty_list_of_claims_if_justice_user_has_no_app_role()
         {
             // arrange
-            var justiceUserRole = JusticeUserRole.Individual;
             var username = "random@claims.com";
             var uniqueId = Guid.NewGuid().ToString();
             var justiceUser = new JusticeUserResponse()

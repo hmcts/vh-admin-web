@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {
@@ -109,7 +104,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 .ThrowsAsync(apiException);
 
             // Act & Assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.DeleteJusticeUser(id)).Result
+            ClassicAssert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.DeleteJusticeUser(id)).Result
                 .Should().Be(errorMessage);
         }
     }

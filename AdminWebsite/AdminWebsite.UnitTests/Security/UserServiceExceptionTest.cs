@@ -1,6 +1,4 @@
 ﻿using AdminWebsite.Security;
-using NUnit.Framework;
-using System;
 using System.Runtime.Serialization;
 using BookingsApi.Contract.V1.Requests;
 
@@ -22,7 +20,7 @@ namespace AdminWebsite.UnitTests.Security
             var info = new SerializationInfo(typeof(CaseRequest), new FormatterConverter());
             _exception.GetObjectData(info, new StreamingContext());
 
-            Assert.That(info.ObjectType == typeof(CaseRequest));
+            ClassicAssert.That(info.ObjectType == typeof(CaseRequest));
         }
 
         [Test]
@@ -34,7 +32,7 @@ namespace AdminWebsite.UnitTests.Security
             }
             catch (ArgumentNullException x)
             {
-                Assert.That(x.ToString().Contains("Value cannot be null"));
+                ClassicAssert.That(x.ToString().Contains("Value cannot be null"));
             }
         }
             

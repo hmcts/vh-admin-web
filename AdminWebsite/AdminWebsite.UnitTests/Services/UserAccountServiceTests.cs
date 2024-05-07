@@ -1,12 +1,7 @@
-using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using FluentAssertions;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.UnitTests.Helper;
@@ -170,7 +165,7 @@ namespace AdminWebsite.UnitTests.Services
 
 
             var exception =
-                Assert.ThrowsAsync<UserServiceException>(() => _service.ResetParticipantPassword(userName));
+                ClassicAssert.ThrowsAsync<UserServiceException>(() => _service.ResetParticipantPassword(userName));
 
             exception.Reason.Should().Be("Unable to generate new password");
         }
@@ -238,7 +233,7 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync(new UserProfile {UserRole = UserRoleType.Judge.ToString()});
 
             var exception =
-                Assert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
+                ClassicAssert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
             exception.Reason.Should().Be("Unable to delete account with role Judge");
 
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
@@ -257,7 +252,7 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync(new UserProfile {UserRole = UserRoleType.VhOfficer.ToString()});
 
             var exception =
-                Assert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
+                ClassicAssert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
             exception.Reason.Should().Be("Unable to delete account with role VhOfficer");
 
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
@@ -275,7 +270,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<UserApiException>(() => _service.DeleteParticipantAccountAsync(username));
+            ClassicAssert.ThrowsAsync<UserApiException>(() => _service.DeleteParticipantAccountAsync(username));
 
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
@@ -292,7 +287,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ReturnsAsync(new UserProfile {UserRole = UserRoleType.Individual.ToString()});
 
-            Assert.ThrowsAsync<BookingsApiException>(() => _service.DeleteParticipantAccountAsync(username));
+            ClassicAssert.ThrowsAsync<BookingsApiException>(() => _service.DeleteParticipantAccountAsync(username));
 
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
@@ -330,7 +325,7 @@ namespace AdminWebsite.UnitTests.Services
             _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<UserApiException>(() =>
+            ClassicAssert.ThrowsAsync<UserApiException>(() =>
                 _service.GetAdUserIdForUsername("123"));
         }
 
@@ -340,7 +335,7 @@ namespace AdminWebsite.UnitTests.Services
             _userApiClient.Setup(x => x.AddUserToGroupAsync(It.IsAny<AddUserToGroupRequest>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<UserApiException>(() =>
+            ClassicAssert.ThrowsAsync<UserApiException>(() =>
                 _service.AssignParticipantToGroup(null, "Individual"));
         }
     }

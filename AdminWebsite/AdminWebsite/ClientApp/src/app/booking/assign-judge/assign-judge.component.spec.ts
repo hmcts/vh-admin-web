@@ -107,8 +107,8 @@ describe('AssignJudgeComponent', () => {
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
-        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>('JudgeDataService', ['getJudges']);
-        judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
+        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>('JudgeDataService', ['searchJudgesByEmail']);
+        judgeDataServiceSpy.searchJudgesByEmail.and.returnValue(of(MockValues.Judges));
         configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
 

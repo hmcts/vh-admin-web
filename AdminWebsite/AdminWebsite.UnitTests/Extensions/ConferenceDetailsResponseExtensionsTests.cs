@@ -1,7 +1,4 @@
-﻿using NUnit.Framework;
-using System;
-using AdminWebsite.Extensions;
-using FluentAssertions;
+﻿using AdminWebsite.Extensions;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Extensions

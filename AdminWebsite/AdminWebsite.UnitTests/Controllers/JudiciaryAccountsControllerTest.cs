@@ -1,11 +1,7 @@
 ﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -88,7 +84,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient
                 .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
+            ClassicAssert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
         }
         
         [Test]
@@ -172,9 +168,9 @@ namespace AdminWebsite.UnitTests.Controllers
             expectedResponse.AddRange(_courtRoomResponse);
             personRespList.Count.Should().Be(expectedCourtRoomResponses.Count);
    
-            Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
-            Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
-            Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
+            ClassicAssert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
+            ClassicAssert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+            ClassicAssert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
 
             personRespList.Should().BeEquivalentTo(expectedResponse);
         }

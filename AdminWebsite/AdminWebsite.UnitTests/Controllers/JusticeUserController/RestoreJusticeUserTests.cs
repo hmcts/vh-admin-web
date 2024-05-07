@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
@@ -7,10 +5,7 @@ using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {
@@ -118,7 +113,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             var request = new RestoreJusticeUserRequest();
             
             // Act & Assert
-            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.RestoreJusticeUser(request)).Result
+            ClassicAssert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.RestoreJusticeUser(request)).Result
                 .Should().Be(errorMessage);
         }
     }

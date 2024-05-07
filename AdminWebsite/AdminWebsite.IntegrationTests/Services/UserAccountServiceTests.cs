@@ -1,7 +1,6 @@
 using AdminWebsite.Services;
 using FluentAssertions;
 using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingsApi.Client;
@@ -41,14 +40,6 @@ namespace AdminWebsite.IntegrationTests.Services
         {
             return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiClient.Object, _logger.Object);
-        }
-
-        [Test]
-        public async Task GetJudgeUsers_Should_return_list_of_judges()
-        {
-            _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
-            var group = await GetService().GetJudgeUsers();
-            group.Should().NotBeNullOrEmpty();
         }
 
         [Test]

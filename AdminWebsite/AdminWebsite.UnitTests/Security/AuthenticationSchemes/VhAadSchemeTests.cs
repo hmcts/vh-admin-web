@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,12 +7,9 @@ using AdminWebsite.Security.Authentication;
 using AdminWebsite.Services;
 using AdminWebsite.Testing.Common.Builders;
 using Autofac.Extras.Moq;
-using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
 {

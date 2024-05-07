@@ -1,9 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
 using AdminWebsite.Services;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -29,7 +26,7 @@ namespace AdminWebsite.UnitTests.Services
 #pragma warning restore S3626 // Jump statements should not be redundant
             );
 
-            Assert.True(retryInvoked);
+            ClassicAssert.True(retryInvoked);
         }
 
         [Test]
@@ -43,7 +40,7 @@ namespace AdminWebsite.UnitTests.Services
                 () => Task.FromResult<object>("returned")
             );
 
-            Assert.False(retryInvoked);
+            ClassicAssert.False(retryInvoked);
             result.Should().Be("returned");
         }
 
@@ -65,7 +62,7 @@ namespace AdminWebsite.UnitTests.Services
             }
             catch
             {
-                Assert.True(retryInvoked);
+                ClassicAssert.True(retryInvoked);
             }
         }
 
@@ -81,7 +78,7 @@ namespace AdminWebsite.UnitTests.Services
                 () => Task.FromResult(new UpdateBookingStatusResponse {Success = false})
             );
 
-            Assert.True(retryInvoked);
+            ClassicAssert.True(retryInvoked);
         }
 
         [Test]
@@ -96,7 +93,7 @@ namespace AdminWebsite.UnitTests.Services
                 () => Task.FromResult(new UpdateBookingStatusResponse {Success = true})
             );
 
-            Assert.False(retryInvoked);
+            ClassicAssert.False(retryInvoked);
             
             result.Success.Should().BeTrue();
         }

@@ -1,11 +1,6 @@
 ﻿using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -30,13 +25,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Guid _v1HearingId;
         private Guid _v2HearingId;
         private HearingDetailsResponseV2 _vhExistingHearingV2;
-        private Mock<IFeatureToggles> _featureToggle;
 
         [SetUp]
         public void Setup()
         {
             _mocker = AutoMock.GetLoose();
-            _featureToggle = new Mock<IFeatureToggles>();
             _mocker.Mock<IConferenceDetailsService>().Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {
