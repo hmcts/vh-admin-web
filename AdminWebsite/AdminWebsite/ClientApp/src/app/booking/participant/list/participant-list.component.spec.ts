@@ -82,7 +82,7 @@ describe('ParticipantListComponent', () => {
             expect(sortSpy).not.toHaveBeenCalled();
         });
 
-        it('should call sortJudiciaryMembers when judiciary participant list changes', () => {
+        it('should call sortJudiciaryMembers when judiciary participant list changes and participants have different display name', () => {
             const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234', false);
             johJudge.roleCode = 'Judge';
             johJudge.displayName = 'Judge Test User';
@@ -109,6 +109,49 @@ describe('ParticipantListComponent', () => {
             expect(component.sortedJudiciaryMembers[1].display_name).toEqual(johPm1.displayName);
             expect(component.sortedJudiciaryMembers[2].hearing_role_code).toEqual('PanelMember');
             expect(component.sortedJudiciaryMembers[2].display_name).toEqual(johPm2.displayName);
+        });
+
+        it('should call sortJudiciaryMembers once for multiple ngDoChecks when judiciary participant list changes and participants have same display name', () => {
+            // When calling ngDoCheck multiple times, it should only attempt to sort the judiciary members on the first call. For subsequent calls
+            // it should detect that there are no changes and therefore not attempt to sort again.
+            // In the real application, attempting to sort more than once will lead to infinite ngDoChecks
+
+            const displayName = 'Display Name';
+            const johJudge = new JudicialMemberDto('Test', 'User', 'Test User', 'testjudge@test.com', '1234567890', '1234', false);
+            johJudge.roleCode = 'Judge';
+            johJudge.displayName = displayName;
+
+            const johPm1 = new JudicialMemberDto(
+                'Test PM 1',
+                'User PM 1',
+                'Test User PM 1',
+                'testpm1@test.com',
+                '1234567890',
+                '2345',
+                false
+            );
+            johPm1.displayName = displayName;
+            johPm1.roleCode = 'PanelMember';
+            component.hearing.judiciaryParticipants = [johPm1, johJudge];
+            component.sortedJudiciaryMembers = [];
+
+            let sortJudiciaryMembersCalled = false;
+
+            spyOn(component, 'sortJoh').and.callFake(() => {
+                sortJudiciaryMembersCalled = true;
+                component.sortJudiciaryMembers();
+            });
+
+            component.ngDoCheck();
+            expect(sortJudiciaryMembersCalled).toBe(true);
+
+            sortJudiciaryMembersCalled = false;
+            component.ngDoCheck();
+            component.ngDoCheck();
+
+            expect(sortJudiciaryMembersCalled).toBe(false);
+            expect(component.sortedJudiciaryMembers[0].hearing_role_code).toEqual('Judge');
+            expect(component.sortedJudiciaryMembers[1].hearing_role_code).toEqual('PanelMember');
         });
     });
 
