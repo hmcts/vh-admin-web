@@ -136,8 +136,6 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_pass_on_bad_request_from_bookings_api()
         {
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
-
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
@@ -151,8 +149,6 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_pass_on_exception_request_from_bookings_api()
         {
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(new List<JudgeResponse>());
-
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ReturnsAsync(new List<JudiciaryPersonResponse>());
             
