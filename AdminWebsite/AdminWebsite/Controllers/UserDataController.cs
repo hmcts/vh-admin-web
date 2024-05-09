@@ -21,18 +21,6 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        ///     Get Judges
-        /// </summary>
-        [HttpGet("judges", Name = "GetJudges")]
-        [ProducesResponseType(typeof(IList<JudgeResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<JudgeResponse>>> GetJudges()
-        {
-            var response = await _userAccountService.GetJudgeUsers();
-            return Ok(response);
-        }
-
-        /// <summary>
         ///     Search Judges by email
         /// </summary>
         /// <param name="term"></param>
