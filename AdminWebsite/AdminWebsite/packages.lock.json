@@ -154,9 +154,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.2, )",
-        "resolved": "1.44.2",
-        "contentHash": "zZ/reiiXi7niCDE+SObUbeGnq5ON394jHg4YCZX2ZNOM1tz0wnIendQOPOSl4IMuHsLYr/xv6rOB0VqnFdjH/A==",
+        "requested": "[1.51.1, )",
+        "resolved": "1.51.1",
+        "contentHash": "rqVuXv6ZCKnJ76Mq6ZQyiumVTzux+TrmHSmg9eb2PSVPTVY/ma5yYSI4kK7u/HyABowvribmxlubKlFKDkW97g==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.1"
@@ -231,9 +231,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.2, )",
-        "resolved": "1.44.2",
-        "contentHash": "sL9YCnF9D1MuXULRgMkz8pbUfuevzX78BLMtIbJcRLgOsv0X+FCIEImQa6ytPmqjQhl5PpuP/s72uC9bSzdxIA==",
+        "requested": "[1.49.1, )",
+        "resolved": "1.49.1",
+        "contentHash": "tOFiD2t3iD2RDRM/SWlI7Xf6fDQ4r/lMbOFf1aQaXSeD00dNA9XgPN4ioQF1qonObWjCJ1opGQH2+OQq0G8i5A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -253,11 +253,12 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.49.4, )",
-        "resolved": "1.49.4",
-        "contentHash": "THMXshzCq8bHCsoU+p79Vmoyh0XoIfFkd13VFve8dzZC/wgE9Z6XmNSRt7SahDgkIlAhOucQVv2TE8avp869MQ==",
+        "requested": "[1.51.3, )",
+        "resolved": "1.51.3",
+        "contentHash": "FtypwlsC+QD57r2WVl/baRhSn+kN/eJ2iwiRKe3R66OLjw9+3rWo1MeANSjSsmNQLAw78bNIZhA5AczNxbJDbg==",
         "dependencies": {
-          "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "13.0.3"
         }
       },
       "FluentValidation": {
@@ -991,8 +992,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
