@@ -21,9 +21,9 @@
 
   <div *ngIf="!multiDaysHearing" class="vh-bottom-m">
     <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-      <label class="govuk-label govuk-!-width-one-quarter" for="hearingDateSelect"> Date of hearing </label>
+      <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate"> Date of hearing </label>
       <input
-        id="hearingDateSelect"
+        id="hearingDate"
         class="govuk-input govuk-!-width-one-quarter"
         type="date"
         formControlName="hearingDate"
@@ -94,7 +94,9 @@
 
       <div class="govuk-radios__item individual-date-radio">
         <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-yes" type="radio" [value]="false" />
-        <label class="govuk-label govuk-radios__label" for="multiDaysRange-choice-yes"> Select individual dates </label>
+        <label class="govuk-label govuk-radios__label" id="multiDaysRange-choice-yes-label" for="multiDaysRange-choice-yes">
+          Select individual dates
+        </label>
       </div>
 
       <div class="multi-date-selection" *ngIf="!multiDaysRangeControl.value">
@@ -113,7 +115,7 @@
           [class.govuk-form-group--error]="!isAddHearingControlValid()"
         >
           <input
-            id="hearingDate"
+            id="multiHearingDateIndividual"
             class="govuk-input govuk-!-width-one-quarter"
             type="date"
             [formControl]="addHearingDateControl"
