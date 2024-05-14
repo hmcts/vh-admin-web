@@ -7,6 +7,7 @@
         <PackageProjectUrl>https://github.com/hmcts/vh-admin-web</PackageProjectUrl>
     </PropertyGroup>
     <PropertyGroup>
+        <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
         <LangVersion>latestmajor</LangVersion>
     </PropertyGroup>
 </Project>
