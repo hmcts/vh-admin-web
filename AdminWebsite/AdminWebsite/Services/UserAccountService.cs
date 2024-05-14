@@ -10,6 +10,7 @@ using AdminWebsite.Services.Models;
 using BookingsApi.Client;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -110,10 +111,10 @@ namespace AdminWebsite.Services
             {
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD User not found.");
+                    _logger.LogWarning("AD User not found for username {Username}", username);
                     return null;
                 }
-                _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user");
+                _logger.LogError(e, "Unhandled error getting an AD user by username {Username}", username);
                 throw;
             }
         }
@@ -149,12 +150,12 @@ namespace AdminWebsite.Services
                 throw new UserServiceException { Reason = "Unable to generate new password" };
             
             var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
-            var passwordResetNotificationRequest = 
-                AddNotificationRequestMapper.MapToPasswordResetNotification(
-                    $"{userProfile.FirstName} {userProfile.LastName}", 
-                    passwordResetResponse.NewPassword, 
-                    userProfile.Email);
-            await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
+            await _notificationApiClient.SendResetPasswordEmailAsync(new PasswordResetEmailRequest()
+            {
+                ContactEmail = userProfile.Email,
+                Password = passwordResetResponse.NewPassword,
+                Name = $"{userProfile.FirstName} {userProfile.LastName}"
+            });
         }
 
         public async Task DeleteParticipantAccountAsync(string username)
@@ -219,8 +220,7 @@ namespace AdminWebsite.Services
             }
             catch (UserApiException e)
             {
-                _logger.LogError(e, $"Failed to add user to {groupName} in User API. " +
-                    $"Status Code {e.StatusCode} - Message {e.Message}");
+                _logger.LogError(e, "Failed to add user to {GroupName} in User API", groupName);
                 throw;
             }
         }

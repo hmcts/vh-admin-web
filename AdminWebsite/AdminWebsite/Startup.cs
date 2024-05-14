@@ -52,7 +52,9 @@ namespace AdminWebsite
             services.AddMvc(opt =>
             {
                 opt.Filters.Add(new ProducesResponseTypeAttribute(typeof(UnexpectedErrorResponse), 500));
-            }).AddFluentValidation();
+            });
+                
+            services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });

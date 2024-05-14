@@ -32,10 +32,10 @@ namespace AdminWebsite.UnitTests.Validators
             };
 
             var result = _validator.Validate(testRequest);
-            ClassicAssert.That(result.Errors.Any(o => o.PropertyName == "ContactEmail" && o.ErrorMessage == EMAIL_MSG));
-            ClassicAssert.That(result.Errors.Any(o => o.PropertyName == "DisplayName" && o.ErrorMessage == DisplayName_MSG));
-            ClassicAssert.That(result.Errors.Any(o => o.PropertyName == "FirstName" && o.ErrorMessage == FirstName_MSG));
-            ClassicAssert.That(result.Errors.Any(o => o.PropertyName == "LastName" && o.ErrorMessage == LASTNAME_MSG));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "ContactEmail" && o.ErrorMessage == EMAIL_MSG));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "DisplayName" && o.ErrorMessage == DisplayName_MSG));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "FirstName" && o.ErrorMessage == FirstName_MSG));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "LastName" && o.ErrorMessage == LASTNAME_MSG));
 
         }
 
@@ -51,8 +51,8 @@ namespace AdminWebsite.UnitTests.Validators
                 LastName = shortString
             };
             var result = _validator.Validate(testRequest);
-            ClassicAssert.That(result.Errors.Any(o => o.ErrorMessage.Contains("must not be empty.")));
-            ClassicAssert.That(result.Errors.Count == 5);
+            Assert.That(result.Errors.Exists(o => o.ErrorMessage.Contains("must not be empty.")));
+            Assert.That(result.Errors.Count == 5);
         }
 
         [Test]

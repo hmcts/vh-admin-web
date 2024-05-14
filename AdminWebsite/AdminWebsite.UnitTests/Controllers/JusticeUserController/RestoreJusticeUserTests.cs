@@ -72,7 +72,6 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         public async Task should_forward_bad_request_from_bookings_api_to_client_app()
         {
             // Arrange
-            var id = Guid.Empty;
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
                 {"id", new[] {"Please provide a valid id"}}
@@ -100,7 +99,6 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         public void should_forward_unhandled_error_from_bookings_api_to_client_app()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var errorMessage = "Unexpected error for unit test";
             var apiException = new BookingsApiException<string>("Server Error",
                 (int) HttpStatusCode.InternalServerError,

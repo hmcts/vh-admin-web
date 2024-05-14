@@ -7,9 +7,9 @@ namespace AdminWebsite.UnitTests.Mappers
     public class HearingUpdateRequestMapperTest
     {
         private EditHearingRequest _newParticipantRequest;
-        private string _username = "username";
-        private DateTime _scheduledDateTime = new DateTime(2020, 12, 12);
-        private CaseRequest _caseRequest = new CaseRequest {Name = "casename", Number = "casenumber"};
+        private readonly string _username = "username";
+        private readonly DateTime _scheduledDateTime = new(2020, 12, 12);
+        private readonly CaseRequest _caseRequest = new() {Name = "casename", Number = "casenumber"};
 
         [SetUp]
         public void Setup()
