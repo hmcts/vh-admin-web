@@ -37,16 +37,20 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
         const judicialMembersLocal =
             this.hearing?.judiciaryParticipants
                 ?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode }))
-                .sort((a, b) => a.displayName.localeCompare(b.displayName)) ?? [];
+                .sort(this.sortByDisplayNameThenByEmail()) ?? [];
         const sortedJudicialMembersLocal =
             this.sortedJudiciaryMembers
                 ?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code }))
-                .sort((a, b) => a.displayName.localeCompare(b.displayName)) ?? [];
+                .sort(this.sortByDisplayNameThenByEmail()) ?? [];
 
         const judiciaryEmailListChanged = JSON.stringify(judicialMembersLocal) !== JSON.stringify(sortedJudicialMembersLocal);
         if (judiciaryEmailListChanged) {
-            this.sortJudiciaryMembers();
+            this.sortJoh();
         }
+    }
+
+    sortJoh() {
+        this.sortJudiciaryMembers();
     }
 
     sortJudiciaryMembers() {
@@ -135,6 +139,17 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
                 return a.first_name < b.first_name ? -1 : swapIndices;
             }
             return partyA < partyB ? -1 : swapIndices;
+        };
+    }
+
+    private sortByDisplayNameThenByEmail() {
+        return (a: { displayName: string; email: string }, b: { displayName: string; email: string }) => {
+            const displayNameComparison = a.displayName.localeCompare(b.displayName);
+            if (displayNameComparison !== 0) {
+                return displayNameComparison;
+            } else {
+                return a.email.localeCompare(b.email);
+            }
         };
     }
 

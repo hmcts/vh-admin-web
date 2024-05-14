@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
@@ -126,6 +127,30 @@ namespace AdminWebsite.UnitTests.Controllers
             okObjectResult.Value.Should().BeEquivalentTo(expectedResponse);
             _bookingsApiClient.Verify(x => x.PostPersonBySearchTermAsync(It.Is<SearchTermRequest>(request => request.Term == searchTerm)), Times.Once);
             
+        }
+        
+        [Test]
+        public async Task Should_pass_on_bad_request_from_bookings_api()
+        {
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                .ReturnsAsync(new List<JudiciaryPersonResponse>());
+            
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+
+            var response = await _controller.PostPersonBySearchTerm("term");
+            response.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public void Should_pass_on_exception_request_from_bookings_api()
+        {
+            _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                .ReturnsAsync(new List<JudiciaryPersonResponse>());
+            
+            _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
+                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.PostPersonBySearchTerm("term"));
         }
     }
 }
