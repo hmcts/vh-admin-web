@@ -103,6 +103,6 @@ public class AllocateHearingsToCsoTests
         _mocker.Mock<IBookingsApiClient>().Setup(client => client.AllocateHearingsToCsoAsync(request))
             .ThrowsAsync(mockException);
 
-        ClassicAssert.ThrowsAsync<BookingsApiException>(async () => await _controller.AllocateHearingsToCso(request));
+        Assert.ThrowsAsync<BookingsApiException>(async () => await _controller.AllocateHearingsToCso(request));
     }
 }

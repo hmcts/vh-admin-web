@@ -71,7 +71,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             var id = Guid.Empty;
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", ["Please provide a valid id"] }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,
@@ -104,7 +104,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
                 .ThrowsAsync(apiException);
 
             // Act & Assert
-            ClassicAssert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.DeleteJusticeUser(id)).Result
+            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.DeleteJusticeUser(id)).Result
                 .Should().Be(errorMessage);
         }
     }

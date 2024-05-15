@@ -793,7 +793,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"hearingId", new[] {"Hearing is not multi-day"}}
+                {"hearingId", ["Hearing is not multi-day"] }
             });
             
             // Act
@@ -806,7 +806,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var errors = validationProblems.Errors;
             errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
         }
-        
+
+        private static readonly string[] value = ["Please provide a valid id"];
+
         [Test]
         public async Task Should_forward_bad_request_from_bookings_api()
         {
@@ -815,7 +817,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var request = new EditMultiDayHearingRequest();
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", value }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,

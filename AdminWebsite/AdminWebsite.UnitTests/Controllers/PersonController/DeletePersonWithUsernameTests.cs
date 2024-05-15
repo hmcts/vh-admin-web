@@ -85,7 +85,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            ClassicAssert.ThrowsAsync<BookingsApiException>(() =>
+            Assert.ThrowsAsync<BookingsApiException>(() =>
                 _controller.GetHearingsByUsernameForDeletionAsync("usernamefailed@hmcts.net"));
         }
 

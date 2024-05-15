@@ -73,8 +73,8 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             // arrange
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"FirstName", new[] {"First name is required"}},
-                {"LastName", new[] {"Last name is required"}}
+                {"FirstName", ["First name is required"] },
+                {"LastName", ["Last name is required"] }
             });
 
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest",
@@ -130,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             var request = new AddNewJusticeUserRequest();
 
             // act & assert
-            ClassicAssert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.AddNewJusticeUser(request)).Result
+            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.AddNewJusticeUser(request)).Result
                 .Should().Be(errorMessage);
         }
     }

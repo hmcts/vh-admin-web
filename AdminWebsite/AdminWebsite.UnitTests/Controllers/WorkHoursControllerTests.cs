@@ -199,8 +199,8 @@ namespace AdminWebsite.UnitTests.Controllers
             // Arrange
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"username", new[] {"Please provide a valid username"}},
-                {"nonavailabilityId", new[] {"Please provide a valid nonavailabilityId"}}
+                {"username", ["Please provide a valid username"] },
+                {"nonavailabilityId", ["Please provide a valid nonavailabilityId"] }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest",
                 (int) HttpStatusCode.BadRequest,

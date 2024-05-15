@@ -186,7 +186,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             const string errorMessage = "ScheduledDateTime cannot be in the past";
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {key, new[] {errorMessage}},
+                {key, [errorMessage] },
             });
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));

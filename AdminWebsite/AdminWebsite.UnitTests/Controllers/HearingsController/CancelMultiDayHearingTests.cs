@@ -204,7 +204,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"hearingId", new[] {"Hearing is not multi-day"}}
+                {"hearingId", ["Hearing is not multi-day"] }
             });
             
             // Act
@@ -226,7 +226,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var request = new CancelMultiDayHearingRequest();
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", ["Please provide a valid id"] }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,

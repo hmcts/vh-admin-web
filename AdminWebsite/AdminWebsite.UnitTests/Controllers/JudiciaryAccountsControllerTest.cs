@@ -84,7 +84,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient
                 .Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
-            ClassicAssert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.SearchForJudiciaryPersonAsync("term"));
         }
         
         [Test]
@@ -162,9 +162,8 @@ namespace AdminWebsite.UnitTests.Controllers
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
             var expectedResponse = new List<JudgeResponse>();
-            var expectedCourtRoomResponses = new List<JudgeResponse>();
-            
-            expectedCourtRoomResponses = _courtRoomResponse.ToList();
+
+            var expectedCourtRoomResponses = _courtRoomResponse.ToList();
             expectedResponse.AddRange(_courtRoomResponse);
             personRespList.Count.Should().Be(expectedCourtRoomResponses.Count);
    

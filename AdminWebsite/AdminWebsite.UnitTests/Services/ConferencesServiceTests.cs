@@ -11,7 +11,7 @@ namespace AdminWebsite.UnitTests.Services
     public class ConferencesServiceTests
     {
         private AutoMock _mocker;
-        private IConferenceDetailsService _serviceUnderTest;
+        private ConferenceDetailsService _serviceUnderTest;
         
         [SetUp]
         public void SetUp()

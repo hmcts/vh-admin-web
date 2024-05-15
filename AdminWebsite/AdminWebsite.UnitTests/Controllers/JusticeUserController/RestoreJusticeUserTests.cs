@@ -13,6 +13,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
     {
         private JusticeUsersController _sut;
         private AutoMock _mocker;
+        private static readonly string[] value = {"Please provide a valid id"};
 
         [SetUp]
         public void SetUp()
@@ -74,7 +75,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             // Arrange
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", value }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,
@@ -111,7 +112,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
             var request = new RestoreJusticeUserRequest();
             
             // Act & Assert
-            ClassicAssert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.RestoreJusticeUser(request)).Result
+            Assert.ThrowsAsync<BookingsApiException<string>>(async () => await _sut.RestoreJusticeUser(request)).Result
                 .Should().Be(errorMessage);
         }
     }
