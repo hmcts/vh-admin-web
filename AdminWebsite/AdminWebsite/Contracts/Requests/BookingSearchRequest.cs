@@ -49,6 +49,7 @@ namespace AdminWebsite.Contracts.Requests
         public bool Nojudge { get; set; }
         
         [JsonProperty("noAllocated")]
+        [Required]
         public bool NoAllocated { get; set; }
     }
 }

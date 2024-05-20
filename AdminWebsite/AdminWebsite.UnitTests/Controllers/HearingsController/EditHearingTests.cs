@@ -1255,7 +1255,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_process_participants()
         {
             //Arrange
-            var existingLinkedParticipantOne = _existingHearingWithLinkedParticipants.Participants.Find(x => x.LinkedParticipants.Any());
+            var existingLinkedParticipantOne =
+                _existingHearingWithLinkedParticipants.Participants.Find(x => x.LinkedParticipants.Count > 0);
             var existingLinkedParticipantTwo =
                 _existingHearingWithLinkedParticipants.Participants
                 .SingleOrDefault(x => x.Id == existingLinkedParticipantOne.LinkedParticipants[0].LinkedId);
