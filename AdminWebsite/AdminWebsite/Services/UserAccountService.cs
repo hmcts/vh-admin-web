@@ -109,19 +109,19 @@ namespace AdminWebsite.Services
             }
             catch (UserApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode != (int)HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning("AD User not found for username {Username}", username);
-                    return null;
+                    _logger.LogError(e, "Unhandled error getting an AD user by username {Username}", username);
+                    throw;
                 }
-                _logger.LogError(e, "Unhandled error getting an AD user by username {Username}", username);
-                throw;
+                _logger.LogWarning("AD User not found for username {Username}", username);
+                return null;
             }
         }
 
         public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
         {
-            _logger.LogDebug("Attempting to get all judge accounts.");
+            _logger.LogDebug("Attempting to get all judge accounts");
 
             var judgesList = (await _userApiClient.GetJudgesByUsernameAsync(term)).Select(x => new JudgeResponse
             {
@@ -245,12 +245,9 @@ namespace AdminWebsite.Services
             catch (UserApiException e)
             {
                 _logger.LogError(e, "Failed to get user in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                    return false;
-                }
-                throw;
+                if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
+                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
+                return false;
             }
         }
         
@@ -264,12 +261,9 @@ namespace AdminWebsite.Services
             catch (BookingsApiException e)
             {
                 _logger.LogError(e, "Failed to get person in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
-                    return false;
-                }
-                throw;
+                if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
+                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
+                return false;
             }
         }
     }
