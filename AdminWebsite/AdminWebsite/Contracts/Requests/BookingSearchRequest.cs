@@ -41,7 +41,6 @@ namespace AdminWebsite.Contracts.Requests
         public DateTime? EndDate { get; set; }
 
         [JsonProperty("lastName")]
-        [Required]
         public string LastName { get; set; } = string.Empty;
 
         [JsonProperty("noJudge")]
