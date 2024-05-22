@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.V2.Responses;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Moq;
-using NUnit.Framework;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 

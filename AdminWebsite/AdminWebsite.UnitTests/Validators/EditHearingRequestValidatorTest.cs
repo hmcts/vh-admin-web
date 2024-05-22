@@ -1,8 +1,5 @@
 ﻿using AdminWebsite.Models;
 using AdminWebsite.Validators;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Contracts.Requests;
 
@@ -25,7 +22,7 @@ namespace AdminWebsite.UnitTests.Validators
 
             var testRequest = new EditHearingRequest { Participants = null };
             var result = _validator.Validate(testRequest);
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Participants" && o.ErrorMessage == PARTICIPANT_MSG));
+            ClassicAssert.That(result.Errors.Exists(o => o.PropertyName == "Participants" && o.ErrorMessage == PARTICIPANT_MSG));
         }
 
         [Test]
@@ -35,7 +32,7 @@ namespace AdminWebsite.UnitTests.Validators
 
             var testRequest = new EditHearingRequest { Participants = new List<EditParticipantRequest>() };
             var result = _validator.Validate(testRequest);
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Participants" && o.ErrorMessage == PARTICIPANT_MSG));
+            ClassicAssert.That(result.Errors.Exists(o => o.PropertyName == "Participants" && o.ErrorMessage == PARTICIPANT_MSG));
         }
 
         [Test]
@@ -46,7 +43,7 @@ namespace AdminWebsite.UnitTests.Validators
                 Case = new EditCaseRequest(),
             };
             var result = _validator.Validate(testRequest);
-            Assert.That(!result.Errors.Any(o => o.PropertyName == "Participants"));
+            ClassicAssert.That(!result.Errors.Exists(o => o.PropertyName == "Participants"));
         }
         
         [Test]
@@ -57,7 +54,7 @@ namespace AdminWebsite.UnitTests.Validators
                 Case = new EditCaseRequest(),
             };
             var result = _validator.Validate(testRequest);
-            Assert.That(!result.Errors.Any(o => o.PropertyName == "Participants"));
+            ClassicAssert.That(!result.Errors.Exists(o => o.PropertyName == "Participants"));
         }
 
         [Test]
@@ -70,7 +67,7 @@ namespace AdminWebsite.UnitTests.Validators
                 ScheduledDateTime = DateTime.Now.AddMinutes(30)
             };
             var result = _validator.Validate(testRequest);
-            Assert.That(!result.Errors.Any(o => o.ErrorMessage == SCHEDLUED_TIME_MSG));
+            ClassicAssert.That(!result.Errors.Exists(o => o.ErrorMessage == SCHEDLUED_TIME_MSG));
         }
     }
 }

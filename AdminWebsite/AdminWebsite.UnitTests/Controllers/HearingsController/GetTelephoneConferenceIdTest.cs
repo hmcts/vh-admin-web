@@ -1,14 +1,10 @@
 ﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Moq;
 using NotificationApi.Client;
-using NUnit.Framework;
-using System;
 using BookingsApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;

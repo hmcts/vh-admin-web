@@ -45,7 +45,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
-            _logger.LogInformation($"Getting audio recording for hearing: {hearingId}");
+            _logger.LogInformation("Getting audio recording for hearing: {HearingId}", hearingId);
 
             try
             {

@@ -1,10 +1,7 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using AdminWebsite.Configuration;
 using AdminWebsite.Security.Authentication;
-using FluentAssertions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
 {

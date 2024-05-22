@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AdminWebsite.Models;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Models
 {
@@ -15,7 +11,7 @@ namespace AdminWebsite.UnitTests.Models
             var endpoint1 = new EditEndpointRequest {Id = Guid.NewGuid(),};
             var endpointList1 = new List<EditEndpointRequest> {endpoint1};
             var endpointList2 = endpointList1;
-            Assert.True(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.True(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
         }
 
         [Test]
@@ -25,7 +21,7 @@ namespace AdminWebsite.UnitTests.Models
             var endpoint2 = new EditEndpointRequest {Id = Guid.NewGuid(),};
             var endpointList1 = new List<EditEndpointRequest> {endpoint1};
             var endpointList2 = new List<EditEndpointRequest> {endpoint2};
-            Assert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
         }
         [Test]
         public void Should_not_equal_when_DisplayName_different()
@@ -42,7 +38,7 @@ namespace AdminWebsite.UnitTests.Models
             };
             var endpointList1 = new List<EditEndpointRequest> { endpoint1 };
             var endpointList2 = new List<EditEndpointRequest> { endpoint2 };
-            Assert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
         }
         [Test]
         public void Equals_DifferentDisplayName_False()
@@ -59,7 +55,7 @@ namespace AdminWebsite.UnitTests.Models
             };
             var endpointList1 = new List<EditEndpointRequest> { endpoint1 };
             var endpointList2 = new List<EditEndpointRequest> { endpoint2 };
-            Assert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
         }
 
         [Test]
@@ -72,8 +68,8 @@ namespace AdminWebsite.UnitTests.Models
             };
             var endpointList1 = new List<EditEndpointRequest> { endpoint1 };
             var endpointList2 = new List<EditEndpointRequest> { null };
-            Assert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
-            Assert.False(endpointList2.SequenceEqual(endpointList1, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.False(endpointList1.SequenceEqual(endpointList2, EditEndpointRequest.EditEndpointRequestComparer));
+            ClassicAssert.False(endpointList2.SequenceEqual(endpointList1, EditEndpointRequest.EditEndpointRequestComparer));
         }
     }
 }

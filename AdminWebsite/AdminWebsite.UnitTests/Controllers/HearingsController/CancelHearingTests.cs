@@ -1,12 +1,7 @@
 ﻿using AdminWebsite.Models;
 using AdminWebsite.Services;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests.Enums;

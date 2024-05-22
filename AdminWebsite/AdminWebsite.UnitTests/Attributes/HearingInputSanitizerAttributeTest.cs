@@ -1,12 +1,9 @@
 ﻿using AdminWebsite.Attributes;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
-using NUnit.Framework;
-using System.Collections.Generic;
 using AdminWebsite.Models;
 using AdminWebsite.UnitTests.Controllers;
 using BookingsApi.Contract.V1.Requests;
@@ -32,7 +29,7 @@ namespace AdminWebsite.UnitTests.Attributes
             var request = context.ActionArguments
                 .Should().NotBeNull()
                 .And.ContainKey("request")
-                .WhichValue.As<BookNewHearingRequest>()
+                .WhoseValue.As<BookNewHearingRequest>()
                 .Should().NotBeNull()
                 .And.Subject.As<BookNewHearingRequest>();
 
@@ -63,7 +60,7 @@ namespace AdminWebsite.UnitTests.Attributes
             var request = context.ActionArguments
                 .Should().NotBeNull()
                 .And.ContainKey("request")
-                .WhichValue.As<EditHearingRequest>()
+                .WhoseValue.As<EditHearingRequest>()
                 .Should().NotBeNull()
                 .And.Subject.As<EditHearingRequest>();
 
@@ -93,7 +90,7 @@ namespace AdminWebsite.UnitTests.Attributes
             var request = context.ActionArguments
                 .Should().NotBeNull()
                 .And.ContainKey("nothing")
-                .WhichValue.As<BookNewHearingRequest>()
+                .WhoseValue.As<BookNewHearingRequest>()
                 .Should().NotBeNull()
                 .And.Subject.As<BookNewHearingRequest>();
 

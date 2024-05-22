@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace AdminWebsite.Contracts.Requests
@@ -18,6 +19,7 @@ namespace AdminWebsite.Contracts.Requests
         public string Cursor { get; set; }
 
         [JsonProperty("limit")]
+        [Required]
         public int Limit { get; set; } = DefaultLimit;
 
         [JsonProperty("caseNumber")]
@@ -42,9 +44,11 @@ namespace AdminWebsite.Contracts.Requests
         public string LastName { get; set; } = string.Empty;
 
         [JsonProperty("noJudge")]
+        [Required]
         public bool Nojudge { get; set; }
         
         [JsonProperty("noAllocated")]
+        [Required]
         public bool NoAllocated { get; set; }
     }
 }

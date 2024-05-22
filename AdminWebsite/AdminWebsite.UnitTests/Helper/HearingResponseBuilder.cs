@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using BookingsApi.Contract.V1.Responses;
 using FizzWare.NBuilder;
 

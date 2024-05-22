@@ -1,12 +1,7 @@
-using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using FluentAssertions;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.UnitTests.Helper;
@@ -142,7 +137,10 @@ namespace AdminWebsite.UnitTests.Services
         public async Task Should_update_password_if_a_user_was_found_in_aad()
         {
             const string userName = "existingUser";
-            var userProfile = new UserProfile {UserName = "existingUser@hmcts.net"};
+            var userProfile = new UserProfile
+            {
+                UserName = "existingUser@hmcts.net", Email = "person@test.com", FirstName = "Person", LastName = "Test"
+            };
             var updatedUserResponse = new UpdateUserResponse {NewPassword = "SomePassword"};
 
             _userApiClient
@@ -154,8 +152,8 @@ namespace AdminWebsite.UnitTests.Services
             await _service.ResetParticipantPassword(userName);
 
             _userApiClient.Verify(x => x.ResetUserPasswordAsync(userName), Times.Once);
-            _notificationApiClient.Verify(x=> x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request => 
-                request.NotificationType ==NotificationType.PasswordReset && request.Parameters.ContainsValue(updatedUserResponse.NewPassword)
+            _notificationApiClient.Verify(x=> x.SendResetPasswordEmailAsync(It.Is<PasswordResetEmailRequest>(request => 
+                request.Password.Equals(updatedUserResponse.NewPassword) && request.ContactEmail.Equals(userProfile.Email) && request.Name.Equals($"{userProfile.FirstName} {userProfile.LastName}")
                 )));
         }
 

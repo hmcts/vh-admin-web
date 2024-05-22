@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using AdminWebsite.Mappers.EditMultiDayHearing;
 using AdminWebsite.Models;
 using AdminWebsite.Models.EditMultiDayHearing;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentAssertions;
-using NUnit.Framework;
 using LinkedParticipant = AdminWebsite.Models.EditMultiDayHearing.LinkedParticipant;
 
 namespace AdminWebsite.UnitTests.Mappers.EditMultiDayHearing
