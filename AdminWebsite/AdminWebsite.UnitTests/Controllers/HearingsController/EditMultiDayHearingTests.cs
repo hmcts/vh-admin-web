@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,10 +10,7 @@ using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using HearingDetailsResponseV2 = BookingsApi.Contract.V2.Responses.HearingDetailsResponseV2;
 using ParticipantResponseV2 = BookingsApi.Contract.V2.Responses.ParticipantResponseV2;
@@ -798,7 +793,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"hearingId", new[] {"Hearing is not multi-day"}}
+                {"hearingId", ["Hearing is not multi-day"] }
             });
             
             // Act
@@ -811,7 +806,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var errors = validationProblems.Errors;
             errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
         }
-        
+
+        private static readonly string[] value = ["Please provide a valid id"];
+
         [Test]
         public async Task Should_forward_bad_request_from_bookings_api()
         {
@@ -820,7 +817,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var request = new EditMultiDayHearingRequest();
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", value }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,

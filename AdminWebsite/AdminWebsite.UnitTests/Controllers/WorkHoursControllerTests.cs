@@ -1,16 +1,11 @@
-using System;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using BookingsApi.Contract.V1.Responses;
-using FluentAssertions;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -50,7 +45,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             // Assert
             _bookingsApiClientMock.Verify(x => x.SaveWorkHoursAsync(request), Times.Once);
-            Assert.AreEqual(_failedUsernames, (response.Value as UploadWorkHoursResponse).FailedUsernames);
+            ClassicAssert.AreEqual(_failedUsernames, (response.Value as UploadWorkHoursResponse).FailedUsernames);
         }
 
         [Test]
@@ -65,7 +60,7 @@ namespace AdminWebsite.UnitTests.Controllers
 
             // Assert
             _bookingsApiClientMock.Verify(x => x.SaveNonWorkingHoursAsync(request), Times.Once);
-            Assert.AreEqual(_failedUsernames, (response.Value as UploadNonWorkingHoursResponse).FailedUsernames);
+            ClassicAssert.AreEqual(_failedUsernames, (response.Value as UploadNonWorkingHoursResponse).FailedUsernames);
         }
 
         [Test]
@@ -204,8 +199,8 @@ namespace AdminWebsite.UnitTests.Controllers
             // Arrange
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"username", new[] {"Please provide a valid username"}},
-                {"nonavailabilityId", new[] {"Please provide a valid nonavailabilityId"}}
+                {"username", ["Please provide a valid username"] },
+                {"nonavailabilityId", ["Please provide a valid nonavailabilityId"] }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest",
                 (int) HttpStatusCode.BadRequest,

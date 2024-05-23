@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using AdminWebsite.Configuration;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -14,8 +12,6 @@ using FizzWare.NBuilder;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;

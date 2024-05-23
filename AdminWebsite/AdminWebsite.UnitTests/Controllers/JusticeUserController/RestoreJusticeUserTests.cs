@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
@@ -7,10 +5,7 @@ using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
 {
@@ -18,6 +13,7 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
     {
         private JusticeUsersController _sut;
         private AutoMock _mocker;
+        private static readonly string[] value = {"Please provide a valid id"};
 
         [SetUp]
         public void SetUp()
@@ -77,10 +73,9 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         public async Task should_forward_bad_request_from_bookings_api_to_client_app()
         {
             // Arrange
-            var id = Guid.Empty;
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {"id", new[] {"Please provide a valid id"}}
+                {"id", value }
             });
             var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
                 (int)HttpStatusCode.BadRequest,
@@ -105,7 +100,6 @@ namespace AdminWebsite.UnitTests.Controllers.JusticeUserController
         public void should_forward_unhandled_error_from_bookings_api_to_client_app()
         {
             // Arrange
-            var id = Guid.NewGuid();
             var errorMessage = "Unexpected error for unit test";
             var apiException = new BookingsApiException<string>("Server Error",
                 (int) HttpStatusCode.InternalServerError,

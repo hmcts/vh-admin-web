@@ -70,3 +70,8 @@ variables:
 
   - name: app_redirect_uri
     value: "/,/logout,/home"
+
+  - name: dotnetVersion
+    value: '8.x'
+  - name: efDotnetToolVersion
+    value: '8.0.4'

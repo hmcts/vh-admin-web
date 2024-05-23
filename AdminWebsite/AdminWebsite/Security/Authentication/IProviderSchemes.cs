@@ -13,7 +13,7 @@ namespace AdminWebsite.Security.Authentication
 
         public bool BelongsToScheme(JwtSecurityToken jwtSecurityToken);
 
-        public string[] GetProviderSchemes() => new[] { SchemeName };
+        public string[] GetProviderSchemes() => [SchemeName];
 
         public AuthenticationBuilder AddSchemes(AuthenticationBuilder builder)
         {

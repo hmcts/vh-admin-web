@@ -1,6 +1,4 @@
 ﻿using AdminWebsite.Mappers;
-using FluentAssertions;
-using NUnit.Framework;
 using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers

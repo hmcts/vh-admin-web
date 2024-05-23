@@ -1,8 +1,5 @@
-﻿using System;
-using AdminWebsite.Contracts.Responses;
+﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Mappers
 {

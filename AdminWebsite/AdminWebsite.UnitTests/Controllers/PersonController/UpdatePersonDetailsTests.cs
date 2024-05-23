@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -8,11 +7,8 @@ using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.PersonController

@@ -1,11 +1,9 @@
-using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AdminWebsite.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
-using NUnit.Framework;
 
 namespace AdminWebsite.IntegrationTests.Services
 {
@@ -32,7 +30,7 @@ namespace AdminWebsite.IntegrationTests.Services
         {
             var result = await _sut.RetrieveUpcomingHolidays();
 
-            result.Any(x => x.Date < DateTime.Today).Should().BeFalse();
+            result.Exists(x => x.Date < DateTime.Today).Should().BeFalse();
         }
     }
 }

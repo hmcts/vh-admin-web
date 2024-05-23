@@ -1,13 +1,9 @@
-using System;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.UnitTests.Helper;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {

@@ -2,12 +2,7 @@
 using AdminWebsite.Controllers;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;

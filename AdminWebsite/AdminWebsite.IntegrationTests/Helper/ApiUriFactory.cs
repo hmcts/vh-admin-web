@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Testing.Common
+﻿namespace Testing.Common
 {
     public class ApiUriFactory
     {

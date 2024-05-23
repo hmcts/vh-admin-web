@@ -1,11 +1,7 @@
 ﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -166,15 +162,14 @@ namespace AdminWebsite.UnitTests.Controllers
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
             var expectedResponse = new List<JudgeResponse>();
-            var expectedCourtRoomResponses = new List<JudgeResponse>();
-            
-            expectedCourtRoomResponses = _courtRoomResponse.ToList();
+
+            var expectedCourtRoomResponses = _courtRoomResponse.ToList();
             expectedResponse.AddRange(_courtRoomResponse);
             personRespList.Count.Should().Be(expectedCourtRoomResponses.Count);
    
-            Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
-            Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
-            Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
+            ClassicAssert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
+            ClassicAssert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+            ClassicAssert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
 
             personRespList.Should().BeEquivalentTo(expectedResponse);
         }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
-using FluentAssertions;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 
@@ -15,7 +11,7 @@ namespace AdminWebsite.UnitTests.Services
     public class ConferencesServiceTests
     {
         private AutoMock _mocker;
-        private IConferenceDetailsService _serviceUnderTest;
+        private ConferenceDetailsService _serviceUnderTest;
         
         [SetUp]
         public void SetUp()

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using AdminWebsite.Mappers;
+﻿using AdminWebsite.Mappers;
 using BookingsApi.Contract.V2.Responses;
-using FluentAssertions;
-using NUnit.Framework;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Mappers
