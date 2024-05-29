@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace AdminWebsite.Security.Authentication
 {
@@ -28,9 +29,9 @@ namespace AdminWebsite.Security.Authentication
             options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
             options.TokenValidationParameters.ValidateLifetime = true;
             options.Events = new JwtBearerEvents()
-                {OnTokenValidated = context => GetClaimsPostTokenValidation(context, options)};
+            { OnTokenValidated = context => GetClaimsPostTokenValidation(context, options) };
         }
-        
+
         public async Task GetClaimsPostTokenValidation(TokenValidatedContext context, JwtBearerOptions options)
         {
             if (context.SecurityToken is JwtSecurityToken jwtToken)
@@ -38,6 +39,14 @@ namespace AdminWebsite.Security.Authentication
                 var usernameClaim = jwtToken.Claims.First(x => x.Type == options.TokenValidationParameters.NameClaimType);
                 var appRoleService = context.HttpContext.RequestServices.GetService(typeof(IAppRoleService)) as IAppRoleService;
                 var claims = await appRoleService!.GetClaimsForUserAsync(jwtToken.RawPayload, usernameClaim.Value);
+                context.Principal.AddIdentity(new ClaimsIdentity(claims));
+            }
+
+            if (context.SecurityToken is JsonWebToken jsonWebToken)
+            {
+                var usernameClaim = jsonWebToken.Claims.First(x => x.Type == options.TokenValidationParameters.NameClaimType);
+                var appRoleService = context.HttpContext.RequestServices.GetService(typeof(IAppRoleService)) as IAppRoleService;
+                var claims = await appRoleService!.GetClaimsForUserAsync(jsonWebToken.EncodedPayload, usernameClaim.Value);
                 context.Principal.AddIdentity(new ClaimsIdentity(claims));
             }
         }
