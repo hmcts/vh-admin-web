@@ -12,7 +12,6 @@ import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
 export class VideoEndpointFormComponent {
     errorMessages = Constants.Error;
 
-    availableIntermediaries: ParticipantModel[] = [];
     availableRepresentatives: ParticipantModel[] = [];
     constants = Constants;
 
@@ -43,10 +42,7 @@ export class VideoEndpointFormComponent {
     @Input() set participants(value: ParticipantModel[]) {
         this._participants = value;
 
-        this.availableRepresentatives = this._participants.filter(
-            p => p.user_role_name === this.constants.Representative && p.hearing_role_code !== HearingRoleCodes.Intermediary && p.email
-        );
-        this.availableIntermediaries = this._participants.filter(p => p.hearing_role_code === HearingRoleCodes.Intermediary && p.email);
+        this.availableRepresentatives = this._participants.filter(p => p.user_role_name === this.constants.Representative && p.email);
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();

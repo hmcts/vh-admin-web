@@ -18,6 +18,43 @@ function initHearingRequest(): HearingModel {
     newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
+    newHearing.participants = [
+        {
+            id: '1',
+            first_name: 'John',
+            last_name: 'Doe',
+            email: 'john@doe.com',
+            display_name: 'John Doe',
+            user_role_name: 'Representative'
+        },
+        {
+            id: '2',
+            first_name: 'Chris',
+            last_name: 'Green',
+            email: 'chris@green,com',
+            display_name: 'Chris Green',
+            user_role_name: 'Representative'
+        },
+        {
+            id: '3',
+            first_name: 'Jane',
+            last_name: 'Smith',
+            email: 'jane@smith.com',
+            display_name: 'Jane Smith',
+            user_role_name: 'Individual'
+        }
+    ];
+    newHearing.endpoints = [
+        {
+            id: '1',
+            displayName: 'Already Here',
+            defenceAdvocate: null,
+            sip: 'sip',
+            pin: 'pin',
+            username: 'test@existing.com',
+            contactEmail: 'test@existing.com'
+        }
+    ];
     return newHearing;
 }
 
@@ -75,51 +112,19 @@ describe('EndpointsComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should return true for hearing about to start', () => {
+        component.ngOnInit();
+        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
+        expect(component.isHearingAboutToStart).toBe(true);
+    });
+
     it('should get booking data from storage', () => {
         component.ngOnInit();
         fixture.detectChanges();
         expect(component.hearing).toBeTruthy();
     });
 
-    describe('when booking is multi day', () => {
-        beforeEach(() => {
-            const booking = new HearingModel();
-            booking.isMultiDay = true;
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
-        });
-        it('should navigate to the summary page when next clicked and multi day booking enhancements are enabled', () => {
-            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
-            component.ngOnInit();
-            component.saveEndpoints();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
-        });
-        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
-            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-            component.ngOnInit();
-            component.saveEndpoints();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
-        });
-    });
-    describe('when booking is not multi day', () => {
-        beforeEach(() => {
-            const booking = new HearingModel();
-            booking.isMultiDay = false;
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
-        });
-
-        it('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
-            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
-            component.ngOnInit();
-            component.saveEndpoints();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
-        });
-        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
-            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-            component.ngOnInit();
-            component.saveEndpoints();
-            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
-        });
-    });
     it('should show a confirmation popup if cancel clicked in new mode', () => {
         bookingServiceSpy.isEditMode.and.returnValue(false);
         component.ngOnInit();
@@ -168,9 +173,112 @@ describe('EndpointsComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
     });
 
-    it('should return true for hearing about to start', () => {
-        component.ngOnInit();
-        videoHearingsServiceSpy.isHearingAboutToStart.and.returnValue(true);
-        expect(component.isHearingAboutToStart).toBe(true);
+    describe('when booking is multi day', () => {
+        beforeEach(() => {
+            const booking = new HearingModel();
+            booking.isMultiDay = true;
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
+        });
+        it('should navigate to the summary page when next clicked and multi day booking enhancements are enabled', () => {
+            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
+        });
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
+            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
+    });
+    describe('when booking is not multi day', () => {
+        beforeEach(() => {
+            const booking = new HearingModel();
+            booking.isMultiDay = false;
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(booking);
+        });
+
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
+            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+            component.ngOnInit();
+            component.videoEndpoints = [{ id: '1', displayName: 'Test', defenceAdvocate: null }];
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
+        it('should navigate to the other information page when next clicked and multi day booking enhancements are not enabled', () => {
+            featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+            component.ngOnInit();
+            component.saveEndpoints();
+            expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+        });
+    });
+
+    describe('onEndpoitnAdded', () => {
+        it('should add endpoint', () => {
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            component.onEndpointAdded(endpoint);
+            expect(component.videoEndpoints).toContain(endpoint);
+        });
+
+        it('should not add an endpoint when the display name already exists', () => {
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            component.videoEndpoints = [endpoint];
+            component.onEndpointAdded(endpoint);
+            expect(component.videoEndpoints.length).toBe(1);
+        });
+    });
+
+    describe('onEndpointUpdated', () => {
+        beforeEach(() => {
+            component.videoEndpoints = [
+                { id: '1', displayName: 'Test', defenceAdvocate: null },
+                { id: '2', displayName: 'Test2', defenceAdvocate: null }
+            ];
+        });
+
+        it('should update endpoint', () => {
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            component.videoEndpoints = [endpoint];
+            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null };
+            component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
+            expect(component.videoEndpoints).toContain(updatedEndpoint);
+        });
+
+        it('should not update endpoint when the original endpoint does not exist', () => {
+            const endpoint = { id: '1', displayName: 'DoesNotExist', defenceAdvocate: null };
+            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null };
+            component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
+            expect(component.videoEndpoints).not.toContain(endpoint);
+        });
+    });
+
+    describe('onEndpointSelectedForDeletion', () => {
+        beforeEach(() => {
+            component.videoEndpoints = [
+                { id: '1', displayName: 'Test', defenceAdvocate: null },
+                { id: '2', displayName: 'Test2', defenceAdvocate: null }
+            ];
+        });
+
+        it('should delete endpoint', () => {
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            component.onEndpointSelectedForDeletion(endpoint);
+            expect(component.videoEndpoints).not.toContain(endpoint);
+        });
+
+        it('should not delete endpoint when the endpoint does not exist', () => {
+            const endpoint = { id: '3', displayName: 'Test3', defenceAdvocate: null };
+            component.onEndpointSelectedForDeletion(endpoint);
+            expect(component.videoEndpoints.length).toBe(2);
+        });
+    });
+
+    describe('onEndpointSelectedForEdit', () => {
+        it('should set endpoint to edit', () => {
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            component.onEndpointSelectedForEdit(endpoint);
+            expect(component.videoEndpointToEdit).toBe(endpoint);
+        });
     });
 });
