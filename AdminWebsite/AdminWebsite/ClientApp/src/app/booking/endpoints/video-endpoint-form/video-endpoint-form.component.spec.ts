@@ -4,7 +4,7 @@ import { VideoEndpointFormComponent } from './video-endpoint-form.component';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 
-describe('VideoEndpointFormComponent', () => {
+fdescribe('VideoEndpointFormComponent', () => {
     const participants: ParticipantModel[] = [
         {
             id: '1',

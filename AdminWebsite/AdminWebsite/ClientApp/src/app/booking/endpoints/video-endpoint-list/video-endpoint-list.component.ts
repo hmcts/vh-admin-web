@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
-import { LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 
 @Component({
     selector: 'app-video-endpoint-list',
