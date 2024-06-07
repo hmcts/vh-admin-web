@@ -44,7 +44,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             ([workAllocationFlag, audioSearchFlag, dom1FeatureFlag]) => {
                 this.vhoWorkAllocationFeature = workAllocationFlag;
                 this.audioSearchFeature = audioSearchFlag;
-                console.log('################### ' + audioSearchFlag);
                 this.dom1Feature = dom1FeatureFlag;
                 lastValueFrom(this.userIdentityService.getUserInformation()).then(profile => {
                     this.showCheckList = profile.is_vh_officer_administrator_role;

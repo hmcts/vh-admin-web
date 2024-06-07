@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, first } from 'rxjs';
+import { first } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
-import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
 import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
@@ -14,6 +12,8 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { VideoAccessPointDto } from './models/video-access-point.model';
+import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-endpoints',
@@ -23,19 +23,17 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     canNavigate = true;
     constants = Constants;
     hearing: HearingModel;
-    $subscriptions: Subscription[] = [];
+
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
-    failedValidation: boolean;
-    newEndpoints: EndpointModel[] = [];
-    availableDefenceAdvocates: DefenceAdvocateModel[] = [];
+
     participants: ParticipantModel[] = [];
-    select: any[] = [];
-    duplicateDa = false;
+
     multiDayBookingEnhancementsEnabled: boolean;
+    videoEndpoints: VideoAccessPointDto[];
+    videoEndpointToEdit: VideoAccessPointDto;
 
     constructor(
-        private fb: FormBuilder,
         protected bookingService: BookingService,
         protected router: Router,
         protected videoHearingService: VideoHearingsService,
@@ -45,10 +43,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         super(bookingService, router, videoHearingService, logger);
     }
 
+    get isHearingAboutToStart(): boolean {
+        return this.videoHearingService.isHearingAboutToStart();
+    }
+
     ngOnInit(): void {
-        this.failedValidation = false;
+        this.form = new FormGroup({}); // need to initialise form to avoid errors
         this.checkForExistingRequest();
-        this.initialiseForm();
         this.featureService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
             .pipe(first())
@@ -60,86 +61,36 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
     ngOnDestroy(): void {
         this.bookingService.removeEditMode();
-        this.$subscriptions.forEach(subcription => {
-            if (subcription) {
-                subcription.unsubscribe();
-            }
-        });
-    }
-
-    get endpoints(): FormArray {
-        return <FormArray>this.form.get('endpoints');
-    }
-
-    get hasEndpoints(): boolean {
-        return this.endpoints.length > 1;
-    }
-
-    get isHearingAboutToStart(): boolean {
-        return this.videoHearingService.isHearingAboutToStart();
-    }
-
-    addEndpoint(): void {
-        this.duplicateDa = false;
-        if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
-            this.failedValidation = false;
-            this.logger.debug(`${this.loggerPrefix} Updating list of endpoints.`);
-            this.endpoints.push(this.addEndpointsFormGroup());
-        } else {
-            this.failedValidation = true;
-            this.logger.warn(`${this.loggerPrefix} Cannot add an endpoint with the same display name.`);
-        }
     }
 
     saveEndpoints(): void {
         this.logger.debug(`${this.loggerPrefix} Attempting to save endpoints to booking.`);
-        this.duplicateDa = false;
+
         const newEndpointsArray: EndpointModel[] = [];
-        for (const control of this.endpoints.controls) {
+        for (const vapDto of this.videoEndpoints) {
             const endpointModel = new EndpointModel();
-            if (control.value.displayName.trim() !== '') {
-                let defenceAdvocate = null;
-                if (control.value.defenceAdvocate !== this.constants.None) {
-                    defenceAdvocate = control.value.defenceAdvocate;
-                }
-                endpointModel.displayName = SanitizeInputText(control.value.displayName);
-                endpointModel.id = control.value.id;
-                endpointModel.defenceAdvocate = defenceAdvocate;
-                newEndpointsArray.push(endpointModel);
-            }
+            endpointModel.id = vapDto.id;
+            endpointModel.displayName = vapDto.displayName;
+            endpointModel.defenceAdvocate = vapDto.defenceAdvocate?.email;
+            newEndpointsArray.push(endpointModel);
         }
 
-        if (!this.hasDuplicateDisplayName(newEndpointsArray)) {
-            this.failedValidation = false;
-            this.hearing.endpoints = newEndpointsArray;
-            this.videoHearingService.updateHearingRequest(this.hearing);
-            this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
+        this.hearing.endpoints = newEndpointsArray;
+        this.videoHearingService.updateHearingRequest(this.hearing);
+        this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
 
-            let canEditOtherInformation = true;
-            const booking = this.videoHearingService.getCurrentRequest();
-            if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
-                canEditOtherInformation = false;
-            }
-
-            if (this.editMode || !canEditOtherInformation) {
-                this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
-                this.router.navigate([PageUrls.Summary]);
-            } else {
-                this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
-                this.router.navigate([PageUrls.OtherInformation]);
-            }
-        } else {
-            this.failedValidation = true;
-            this.logger.warn(`${this.loggerPrefix} Cannot add an endpoint with the same display name`);
+        let canEditOtherInformation = true;
+        const booking = this.videoHearingService.getCurrentRequest();
+        if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
+            canEditOtherInformation = false;
         }
-    }
 
-    removeEndpoint(rowIndex: number): void {
-        if (!this.isHearingAboutToStart) {
-            this.logger.debug(`${this.loggerPrefix} Removing endpoint at index position ${rowIndex}.`);
-            this.endpoints.removeAt(rowIndex);
+        if (this.editMode || !canEditOtherInformation) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
         } else {
-            this.logger.warn(`${this.loggerPrefix} Cannot remove an endpoint when hearing is about to start ${rowIndex}.`);
+            this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
+            this.router.navigate([PageUrls.OtherInformation]);
         }
     }
 
@@ -180,99 +131,53 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.navigateToSummary();
     }
 
+    onEndpointAdded($event: VideoAccessPointDto) {
+        // Check if the videoEndpoints array already contains an endpoint with the same displayName
+        const existingEndpoint = this.videoEndpoints.find(endpoint => endpoint.displayName === $event.displayName);
+
+        // If no such endpoint exists, push the new endpoint to the videoEndpoints array
+        if (!existingEndpoint) {
+            this.videoEndpoints.push($event);
+            this.videoHearingService.setBookingHasChanged(true);
+        }
+    }
+
+    onEndpointUpdated($event: { original: VideoAccessPointDto; updated: VideoAccessPointDto }) {
+        // Find the index of the original endpoint in the videoEndpoints array
+        const index = this.videoEndpoints.findIndex(endpoint => endpoint.displayName === $event.original.displayName);
+
+        // If the original endpoint is found, replace it with the updated endpoint
+        if (index !== -1) {
+            this.videoEndpoints[index] = $event.updated;
+            this.videoEndpointToEdit = null;
+            this.videoHearingService.setBookingHasChanged(true);
+        }
+    }
+
+    onEndpointSelectedForDeletion(existingEndpoint: VideoAccessPointDto) {
+        this.videoEndpoints = this.videoEndpoints.filter(endpoint => endpoint.displayName !== existingEndpoint.displayName);
+        this.videoHearingService.setBookingHasChanged(true);
+    }
+
+    onEndpointSelectedForEdit(existingEndpoint: VideoAccessPointDto) {
+        this.videoEndpointToEdit = existingEndpoint;
+    }
+
     private checkForExistingRequest(): void {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.participants = this.hearing.participants.filter(p => p.user_role_name === this.constants.Representative);
-    }
-    private initialiseForm(): void {
-        this.availableDefenceAdvocates = this.populateDefenceAdvocates();
-        this.form = this.fb.group({
-            endpoints: this.fb.array([this.addEndpointsFormGroup()])
+        this.videoEndpoints = this.hearing.endpoints.map(e => {
+            const defenceAdvocate = this.participants.find(p => p.email === e.defenceAdvocate);
+            return {
+                id: e.id,
+                displayName: e.displayName,
+                defenceAdvocate: defenceAdvocate
+                    ? {
+                          displayName: defenceAdvocate?.display_name,
+                          email: defenceAdvocate?.email
+                      }
+                    : null
+            };
         });
-        if (this.hearing.endpoints.length > 0) {
-            this.newEndpoints = this.hearing.endpoints;
-            this.form.setControl('endpoints', this.setExistingEndpoints(this.newEndpoints));
-        }
-        this.$subscriptions.push(
-            this.form.get('endpoints').valueChanges.subscribe(ep => {
-                this.newEndpoints = ep;
-            })
-        );
-    }
-    private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
-        const formArray = new FormArray([]);
-        endpoints.forEach(e => {
-            formArray.push(
-                this.fb.group({
-                    id: e.id,
-                    displayName: e.displayName,
-                    defenceAdvocateId: e.defenceAdvocate,
-                    defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getEmailFromId(e.defenceAdvocate)
-                })
-            );
-        });
-        return formArray;
-    }
-    private populateDefenceAdvocates(): DefenceAdvocateModel[] {
-        let defenceAdvocates: Array<DefenceAdvocateModel> = [];
-        if (this.hearing.participants && this.hearing.participants.length > 0) {
-            defenceAdvocates = this.participants.map(x => this.mapParticipantsToDefenceAdvocateModel(x));
-        }
-        const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
-            id: null,
-            username: this.constants.None,
-            displayName: this.constants.None,
-            contactEmail: this.constants.None,
-            isSelected: null
-        });
-        defenceAdvocates.unshift(defenceAdvocateModel);
-        return defenceAdvocates;
-    }
-    mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
-        const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
-            id: participant.id,
-            username: participant.username,
-            displayName: participant.display_name,
-            contactEmail: participant.email,
-            isSelected: null
-        });
-        return defenceAdvocateModel;
-    }
-    getEmailFromId(participantId: string): string {
-        const defAdv = this.hearing.participants.find(p => p.id === participantId);
-        if (defAdv) {
-            return defAdv.email;
-        }
-        return participantId;
-    }
-    private addEndpointsFormGroup(): FormGroup {
-        return this.fb.group({
-            displayName: ['', [blankSpaceValidator, Validators.pattern(this.constants.EndpointDisplayNamePattern)]],
-            defenceAdvocate: ['None'],
-            id: [],
-            defenceAdvocateId: []
-        });
-    }
-
-    private hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
-        const listOfDisplayNames = endpoints.map(function (item) {
-            return item.displayName;
-        });
-        const duplicateDisplayName = listOfDisplayNames.some(function (item, position) {
-            return listOfDisplayNames.indexOf(item) !== position;
-        });
-        if (duplicateDisplayName) {
-            this.duplicateDa = true;
-        }
-        return duplicateDisplayName;
-    }
-}
-
-function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
-    const displayNameText: string = control.value;
-    if (displayNameText?.replace(/\s/g, '').length) {
-        return null;
-    } else {
-        return { blankSpaceValidator: true };
     }
 }

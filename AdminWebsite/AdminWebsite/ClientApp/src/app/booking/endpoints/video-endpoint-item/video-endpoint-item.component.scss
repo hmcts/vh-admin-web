@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  line-height: 1.3em;
+}
+
+.container {
+  padding: 1em 0;
+
+  .endpoint-row {
+    display: flex;
+    align-items: center;
+
+    > div {
+      padding-left: 15px;
+      flex: 1 1 auto;
+    }
+
+    &__actions {
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    > div:last-child {
+      padding-right: 15px;
+    }
+  }
+
+  .endpoint-row {
+    > div:first-child {
+      flex: 0 0 auto;
+    }
+    .linked-rep-display-name,
+    .linked-intermediary {
+      margin-left: 40px;
+    }
+    justify-content: space-between;
+
+    &__name {
+      font-weight: bold;
+    }
+  }
+}
+
+.wrap {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
