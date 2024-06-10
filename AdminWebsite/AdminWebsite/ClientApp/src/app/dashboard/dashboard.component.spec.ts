@@ -162,5 +162,4 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeFalsy();
     });
-
 });
