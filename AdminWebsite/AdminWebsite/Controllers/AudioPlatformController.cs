@@ -50,14 +50,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var requestKey = "";
-                if (_featureToggles.HrsEnabled())
-                {
-                    requestKey = await GetAudioHrsFileName(hearingId);
-                }
-                else
-                {
-                    requestKey = hearingId.ToString();
-                }
+                requestKey = await GetAudioHrsFileName(hearingId);
                 
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(requestKey);
                 return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.AudioFileLinks });

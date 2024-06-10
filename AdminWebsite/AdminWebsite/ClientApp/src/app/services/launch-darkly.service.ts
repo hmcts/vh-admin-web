@@ -6,7 +6,6 @@ import { first, map } from 'rxjs/operators';
 
 export const FeatureFlags = {
     dom1Integration: 'dom1',
-    hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements'
 };
