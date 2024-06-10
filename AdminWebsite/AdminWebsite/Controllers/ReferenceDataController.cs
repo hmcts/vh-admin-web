@@ -60,13 +60,12 @@ namespace AdminWebsite.Controllers
                 Code = hearingType.Code
             } )).ToList();
             
-            if (_featureToggles.UseV2Api())
-                result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
-                    .Select(caseType => new HearingTypeResponse
-                    {
-                        Group = caseType.Name,
-                        ServiceId = caseType.ServiceId
-                    }));
+            result.AddRange(caseTypes.Where(ct => !ct.HearingTypes.Any())
+                .Select(caseType => new HearingTypeResponse
+                {
+                    Group = caseType.Name,
+                    ServiceId = caseType.ServiceId
+                }));
 
             return Ok(result);
         }

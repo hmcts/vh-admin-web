@@ -23,7 +23,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     {
         [TestCase(false)]
         [TestCase(true)]
-        public async Task Should_update_multi_day_hearing_for_v2(bool updateFutureDays)
+        public async Task Should_update_multi_day_hearing(bool updateFutureDays)
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -53,7 +53,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     ScheduledDateTime = hearingInGroup.ScheduledDateTime.AddDays(1)
                 });
             }
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             // Change the judge
             var judge = request.JudiciaryParticipants.First(x => x.Role == "Judge");
@@ -200,7 +199,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_update_multi_day_hearing_for_v2_when_judiciary_participants_are_unchanged()
+        public async Task should_update_multi_day_hearing_when_judiciary_participants_are_unchanged()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -219,7 +218,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     ScheduledDateTime = hearingInGroup.ScheduledDateTime
                 });
             }
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
@@ -246,7 +244,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_overwrite_data_for_future_days_when_only_specific_details_are_changed_for_v2()
+        public async Task Should_not_overwrite_data_for_future_days_when_only_specific_details_are_changed()
         {
             // Scenario - we have a 2 day hearing
             // Day 2 has been individually edited, and so has different details, participants and endpoints to Day 1
@@ -339,8 +337,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             request.AudioRecordingRequired = day1Hearing.AudioRecordingRequired;
             request.UpdateFutureDays = true;
             
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-            
             var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
@@ -406,7 +402,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_update_multi_day_hearing_when_updated_participants_and_endpoints_do_not_exist_on_future_days_for_v2()
+        public async Task Should_update_multi_day_hearing_when_updated_participants_and_endpoints_do_not_exist_on_future_days()
         {
             // Scenario - we have a 2 day hearing
             // Day 1 has been individually edited, and has additional participants and endpoints not on Day 2
@@ -463,8 +459,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             }
             request.UpdateFutureDays = true;
             
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-            
             var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
@@ -518,7 +512,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_remove_linked_participants_for_v2()
+        public async Task Should_remove_linked_participants()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -548,8 +542,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             }
             request.UpdateFutureDays = true;
             
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-            
             var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
@@ -576,7 +568,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_update_multi_day_hearing_when_participant_is_new_to_edited_hearing_but_exists_on_future_days_for_v2()
+        public async Task Should_update_multi_day_hearing_when_participant_is_new_to_edited_hearing_but_exists_on_future_days()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -625,8 +617,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 LinkedParticipants = new List<LinkedParticipant>()
             });
             request.UpdateFutureDays = true;
-            
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
@@ -706,8 +696,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             newJudge.PersonalCode = Guid.NewGuid().ToString();
             request.UpdateFutureDays = true;
             
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-            
             var updatedHearing = MapUpdatedHearingV2(day1Hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             
@@ -751,7 +739,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_forward_not_found_from_bookings_api_for_v2()
+        public async Task Should_forward_not_found_from_bookings_api()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -765,7 +753,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 null);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId))
                 .ThrowsAsync(apiException);
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
             
             // Act
             var result = await Controller.EditMultiDayHearing(hearingId, request);
@@ -776,7 +763,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_bad_request_when_hearing_is_not_multi_day_for_v2()
+        public async Task Should_return_bad_request_when_hearing_is_not_multi_day()
         {
             // Arrange
             var hearingId = Guid.NewGuid();
@@ -786,8 +773,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var request = CreateV2EditMultiDayHearingRequest(hearing);
             hearing.GroupId = null;
-            FeatureToggle.Setup(e => e.UseV2Api()).Returns(true);
-
+            
             var updatedHearing = MapUpdatedHearingV2(hearing, request);
             BookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(hearingId)).ReturnsAsync(updatedHearing);
             

@@ -263,7 +263,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_ok_status_with_success_when_V2flag_on()
+        public async Task Should_return_ok_status_with_success()
         {
             // Arrange
             ConferenceDetailsResponse conferenceResponse = new()
@@ -277,7 +277,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            _featureFlag.Setup(x => x.UseV2Api()).Returns(true);
             _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
                 .ReturnsAsync(conferenceResponse);
             _vhExistingHearingV2.Status = BookingsApi.Contract.V2.Enums.BookingStatusV2.Created;

@@ -517,7 +517,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_return_updated_hearing()
+        public async Task Should_return_updated_hearing1()
         {
             var updatedHearing = new HearingDetailsResponse
             {
@@ -548,9 +548,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_return_updated_hearingV2()
+        public async Task Should_return_updated_hearing2()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
                 .ReturnsAsync(updatedHearing)
@@ -635,9 +634,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task Should_return_updated_hearingV2_with_no_participants_provided()
+        public async Task Should_return_updated_hearingV2()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
@@ -679,7 +677,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2_with_no_judiciary_participants_provided()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             updatedHearing.JudiciaryParticipants.Clear();
@@ -714,7 +711,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2_with_new_judge_different_to_old_judge()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
@@ -761,7 +757,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2_with_new_judge_and_no_old_judge()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             updatedHearing.JudiciaryParticipants.Clear();
@@ -800,7 +795,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2_with_old_judge_and_no_new_judge()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
@@ -831,7 +825,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_reassign_a_generic_judge_booked_with_v1_to_ejud_judge_on_v2()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Add(new ()
             {
@@ -877,7 +870,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_updated_hearingV2_with_participants_unchanged_and_hearing_close_to_start_time()
         {
-            _featureToggle.Setup(e => e.UseV2Api()).Returns(true);
             var updatedHearing = _v2HearingDetailsResponse;
             updatedHearing.Participants.Clear();
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
@@ -1087,48 +1079,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         }
         
-        [TestCase(false)]
-        [TestCase(true)]
-        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked(bool useV2)
+        [Test]
+        public async Task Should_update_endpoint_to_be_linked_to_new_defence_advocate_when_endpoint_is_not_currently_linked()
         {
             // ie there is an endpoint currently not linked to a defence advocate
             // as part of the request we add a new participant and link them to this endpoint as a defence advocate
             
-            // Arrange
-            _featureToggle.Setup(x => x.UseV2Api()).Returns(useV2);
-
             Guid hearingId;
             var request = _editEndpointOnHearingRequestWithJudge;
             var endpointInRequestToUpdate = request.Endpoints[0];
             
-            if (useV2)
+            var hearing = _v2HearingDetailsResponse;
+            hearingId = hearing.Id;
+            var existingEndpointToUpdate = new EndpointResponseV2
             {
-                var hearing = _v2HearingDetailsResponse;
-                hearingId = hearing.Id;
-                var existingEndpointToUpdate = new EndpointResponseV2
-                {
-                    Id = endpointInRequestToUpdate.Id.Value,
-                    DisplayName = "Endpoint A",
-                    DefenceAdvocateId = null
-                };
-                hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
-                hearing.Endpoints.Add(existingEndpointToUpdate);
-
-                _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
-                    .ReturnsAsync(hearing);
-            }
-            else
-            {
-                var hearing = _existingHearingWithEndpointsOriginal;
-                hearingId = hearing.Id;
-                var existingEndpointToUpdate = hearing.Endpoints[0];
-                existingEndpointToUpdate.DefenceAdvocateId = null;
-                hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
-
-                _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(hearing);
-            }
-      
+                Id = endpointInRequestToUpdate.Id.Value,
+                DisplayName = "Endpoint A",
+                DefenceAdvocateId = null
+            };
+            hearing.Endpoints.RemoveAll(e => e.Id != existingEndpointToUpdate.Id);
+            hearing.Endpoints.Add(existingEndpointToUpdate);
+            
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()))
+                .ReturnsAsync(hearing);
+            
             var newParticipantDefenceAdvocate = new EditParticipantRequest
             {
                 ContactEmail = "legalrep@email.com",

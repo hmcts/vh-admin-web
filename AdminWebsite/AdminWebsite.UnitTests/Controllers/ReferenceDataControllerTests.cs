@@ -47,8 +47,6 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_all_hearing_types_and_case_types_where_hearing_type_is_empty()
         {
-            
-            _featureTogglesMock.Setup(x => x.UseV2Api()).Returns(true);
             // Arrange
             var includeDeleted = true;
             _userIdentityMock.Setup(x => x.IsATeamLead())
@@ -66,17 +64,12 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClientMock.Verify(x => x.GetCaseTypesAsync(includeDeleted), Times.Once);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task Should_return_participants_roles(bool refDataFeatureToggle)
+        [Test]
+        public async Task Should_return_participants_roles()
         {
-            _featureTogglesMock.Setup(x => x.ReferenceDataToggle()).Returns(refDataFeatureToggle);
             List<ICaseRoleResponse> listTypes;
-            if(refDataFeatureToggle)
-                listTypes = new List<ICaseRoleResponse> { new CaseRoleResponseV2 { Name = "type1" } };
-            else
-                listTypes = new List<ICaseRoleResponse> { new CaseRoleResponse { Name = "type1" } };
-            SetTestCase(listTypes, refDataFeatureToggle);
+            listTypes = new List<ICaseRoleResponse> { new CaseRoleResponseV2 { Name = "type1" } };
+            SetTestCase(listTypes, true);
 
             var response = await _controller.GetParticipantRoles("type1");
             response.Should().NotBeNull();

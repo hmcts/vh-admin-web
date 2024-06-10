@@ -10,7 +10,7 @@ namespace AdminWebsite.Configuration
     {
         public bool Dom1Enabled();
         public bool ReferenceDataToggle();
-        public bool UseV2Api();
+        //public bool UseV2Api();
         public bool HrsEnabled();
     }
 
@@ -21,7 +21,7 @@ namespace AdminWebsite.Configuration
         private const string LdUser = "vh-admin-web";
         private const string Dom1EnabledToggleKey = "dom1";
         private const string ReferenceDataToggleKey = "reference-data";
-        private const string UseV2ApiToggleKey = "use-bookings-api-v2";
+        //private const string UseV2ApiToggleKey = "use-bookings-api-v2";
         private const string HrsFeatureToggleKey = "hrs-integration";
         
 
@@ -48,10 +48,10 @@ namespace AdminWebsite.Configuration
             return GetBoolValueWithKey(HrsFeatureToggleKey);
         }
 
-        public bool UseV2Api()
-        {
-            return GetBoolValueWithKey(UseV2ApiToggleKey);
-        }
+        // public bool UseV2Api()
+        // {
+        //     return GetBoolValueWithKey(UseV2ApiToggleKey);
+        // }
         
         private bool GetBoolValueWithKey(string key)
         {

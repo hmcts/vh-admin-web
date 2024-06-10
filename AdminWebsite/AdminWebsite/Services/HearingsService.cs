@@ -107,7 +107,7 @@ namespace AdminWebsite.Services
         {
             // Add a new participant
             // Map the request except the username
-            if (participant.CaseRoleName == RoleNames.Judge || (_featureToggles.UseV2Api() && participant.HearingRoleName is RoleNames.PanelMember or RoleNames.Winger))
+            if (participant.CaseRoleName == RoleNames.Judge || (participant.HearingRoleName is RoleNames.PanelMember or RoleNames.Winger))
             {
                 if (hearing.Participants != null &&
                     hearing.Participants.Exists(p => p.ContactEmail.Equals(participant.ContactEmail) && removedParticipantIds.TrueForAll(removedParticipantId => removedParticipantId != p.Id)))
