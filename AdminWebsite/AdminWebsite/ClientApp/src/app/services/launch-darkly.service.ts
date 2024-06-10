@@ -9,7 +9,6 @@ export const FeatureFlags = {
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',
     audioSearch: 'hide-audio-search-tile',
-    useV2Api: 'use-bookings-api-v2',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements'
 };
 
