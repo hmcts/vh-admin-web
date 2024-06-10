@@ -5,8 +5,6 @@ import { Observable, Subject } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 
 export const FeatureFlags = {
-    adminSearch: 'admin_search',
-    vhoWorkAllocation: 'vho-work-allocation',
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',

@@ -296,59 +296,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public async Task Should_return_ok_status_with_success_when_users_not_created_for_successful_multi_day_booking_with_notify_flag_on(bool v2FlagOn)
-        {
-            // When the notify flag is enabled, users for multi day bookings are created as part of the clone process rather than the first day of the multi-day,
-            // so don't wait for them to be created
-            
-            // Arrange
-            _featureFlag.Setup(x => x.UsePostMay2023Template()).Returns(true);
-            _featureFlag.Setup(x => x.UseV2Api()).Returns(v2FlagOn);
-            
-            if (v2FlagOn)
-            {
-                _vhExistingHearingV2.GroupId = _vhExistingHearingV2.Id; // Multi day hearing
-                _vhExistingHearingV2.Status = BookingStatusV2.Created;
-            }
-            else
-            {
-                _vhExistingHearing.GroupId = _vhExistingHearing.Id; // Multi day hearing
-                _vhExistingHearing.Status = BookingStatus.Created;
-            }
-            
-            foreach (var participant in _vhExistingHearing.Participants)
-            {
-                // Contact email is same as username, so user not created
-                participant.Username = participant.ContactEmail;
-            }
-            
-            // Indicate a successful booking
-            var conferenceResponse = new ConferenceDetailsResponse
-            {
-                MeetingRoom = new()
-                {
-                    AdminUri = "AdminUri",
-                    ParticipantUri = "ParticipantUri",
-                    JudgeUri = "JudgeUri",
-                    PexipNode = "PexipNode"
-                }
-            };
-            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
-                .ReturnsAsync(conferenceResponse);
-            
-            // Act
-            var result = await _controller.GetHearingConferenceStatus(_guid);
-            
-            // Assert
-            var okRequestResult = (OkObjectResult)result;
-            okRequestResult.StatusCode.Should().Be(200);
-
-            var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
-            hearing.Success.Should().Be(true);
-        }
-
         private HearingDetailsResponseV2 GetHearingDetailsResponseV2(BookingsApi.Contract.V2.Enums.BookingStatusV2 status)
         {
             _guid = Guid.NewGuid();

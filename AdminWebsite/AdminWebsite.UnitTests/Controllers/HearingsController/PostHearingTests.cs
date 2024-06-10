@@ -54,7 +54,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     },
                     CaseTypeName = "Generic"
                 });
-            _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
 

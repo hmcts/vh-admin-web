@@ -22,7 +22,6 @@ describe('BreadcrumbComponent', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         component = new BreadcrumbComponent(router, videoHearingsServiceSpy, launchDarklyServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
@@ -93,12 +92,6 @@ describe('BreadcrumbComponent', () => {
         expect(router.navigate).toHaveBeenCalledTimes(0);
     });
 
-    it('should set the breadcrumb name for assign-judge as Judge when staff member feature is OFF', () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
-        component.ngOnInit();
-        expect(component.breadcrumbItems.find(b => b.Url === PageUrls.AssignJudge).Name).toBe('Judge');
-    });
-
     it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
         component.canNavigate = true;
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
@@ -111,10 +104,6 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
-    });
-
-    it('should set addJudiciaryMemberFlag when ngOnInit is called', () => {
-        expect(component.addJudiciaryMemberFlag).toBe(false);
     });
 
     it('should unsubscribe from subscriptions when ngOnDestroy is called', () => {

@@ -16,7 +16,6 @@ import { PipeStringifierService } from '../../services/pipe-stringifier.service'
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { map, takeUntil } from 'rxjs/operators';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -29,8 +28,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     judge: ParticipantModel;
     otherInformationDetails: OtherInformationModel;
     showAddStaffMemberFld: FormControl;
-    isStaffMemberValid = false;
-    showStaffMemberErrorSummary = false;
     isStaffMemberExisting = false;
     judgeDisplayNameFld: FormControl;
     judgeEmailFld: FormControl;
@@ -49,7 +46,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     invalidPattern: string;
     isValidEmail = true;
     showStaffMemberFeature: boolean;
-    useV2Api = false;
     destroyed$ = new Subject<void>();
 
     constructor(
@@ -60,20 +56,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         private pipeStringifier: PipeStringifierService,
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
-        private configService: ConfigService,
-        private launchDarklyService: LaunchDarklyService
+        private configService: ConfigService
     ) {
         super(bookingService, router, hearingService, logger);
     }
 
     ngOnInit() {
-        this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(enabled => {
-                this.useV2Api = enabled;
-            });
-
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.initForm();
@@ -362,10 +350,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
                 judge.case_role_name = 'Judge';
-                if (this.useV2Api) {
-                    judge.case_role_name = null;
-                    judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
-                }
+                judge.case_role_name = null;
+                judge.hearing_role_code = Constants.HearingRoleCodes.Judge;
                 judge.hearing_role_name = 'Judge';
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
                 this.hearing.participants.unshift(judge);

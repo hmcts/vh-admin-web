@@ -290,7 +290,6 @@ describe('AddParticipantComponent', () => {
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
@@ -524,7 +523,6 @@ describe('AddParticipantComponent', () => {
             companyName.setValue('CC');
             component.isRoleSelected = true;
             component.isPartySelected = true;
-            component.referenceDataFeatureFlag = false;
 
             component.participantDetails = participant;
         });
@@ -572,15 +570,6 @@ describe('AddParticipantComponent', () => {
             const addedParticipant = component.hearing.participants[0];
             expect(addedParticipant.addedDuringHearing).toBe(false);
         });
-        it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
-            component.hearing.participants = [];
-            component.referenceDataFeatureFlag = true;
-            component.ngAfterViewInit();
-            tick(600);
-            component.saveParticipant();
-            expect(component.hearingRoleList).toContain('Interpreter');
-            flush();
-        }));
     });
     it('press button cancel display pop up confirmation dialog', () => {
         component.addParticipantCancel();

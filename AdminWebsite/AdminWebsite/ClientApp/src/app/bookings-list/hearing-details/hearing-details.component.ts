@@ -6,7 +6,6 @@ import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
-import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
 @Component({
     selector: 'app-hearing-details',
@@ -24,28 +23,15 @@ export class HearingDetailsComponent implements OnInit, OnDestroy {
     private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
 
-    vhoWorkAllocationFeature = false;
     $subcription: Subscription;
 
     destroyed$ = new Subject<void>();
     enableSearchFeature: boolean;
     ejudFeatureFlag: boolean;
 
-    constructor(
-        private route: ActivatedRoute,
-        private logger: Logger,
-        private configService: ConfigService,
-        private lanchDarklyService: LaunchDarklyService
-    ) {}
+    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
 
-    ngOnInit() {
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.vhoWorkAllocationFeature = flag;
-            });
-    }
+    ngOnInit() {}
 
     ngOnDestroy(): void {
         this.destroyed$.next();

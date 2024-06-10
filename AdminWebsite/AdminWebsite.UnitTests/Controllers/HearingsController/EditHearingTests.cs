@@ -66,7 +66,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _conferencesServiceMock = new Mock<IConferenceDetailsService>();
             _featureToggle = new Mock<IFeatureToggles>();
-            _featureToggle.Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _conferencesServiceMock.Setup(cs => cs.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false))
                 .ReturnsAsync(new ConferenceDetailsResponse
                 {

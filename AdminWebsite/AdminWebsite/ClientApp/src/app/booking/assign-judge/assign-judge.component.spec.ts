@@ -25,7 +25,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { MockComponent } from 'ng-mocks';
 import { Constants } from 'src/app/common/constants';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -74,7 +73,6 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
-const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 const configSettings = new ClientSettingsResponse();
@@ -103,7 +101,6 @@ describe('AssignJudgeComponent', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
         emailValidationServiceSpy.validateEmail.and.returnValue(true);
         emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -119,7 +116,6 @@ describe('AssignJudgeComponent', () => {
                 { provide: JudgeDataService, useValue: judgeDataServiceSpy },
                 { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                 { provide: ConfigService, useValue: configServiceSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 {
                     provide: Router,
                     useValue: {
@@ -560,7 +556,6 @@ describe('AssignJudgeComponent', () => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
                     videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
                     component.judge.display_name = updatedJudgeDisplayName;
-                    component.useV2Api = false;
                 });
 
                 it('should add judge account when none present', () => {
@@ -571,9 +566,6 @@ describe('AssignJudgeComponent', () => {
                     component.hearing.participants.unshift(alternateJudge);
                 });
 
-                it('should add update judge when reference data flag is on', () => {
-                    component.useV2Api = true;
-                });
                 afterEach(() => {
                     component.updateJudge(judge);
                     expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
@@ -583,10 +575,8 @@ describe('AssignJudgeComponent', () => {
                     expect(component.courtAccountJudgeEmail).toEqual(judge.username);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);
                     expect(updatedJudges[0]).toBe(judge);
-                    if (component.useV2Api) {
-                        expect(updatedJudges[0].case_role_name).toBeNull();
-                        expect(updatedJudges[0].hearing_role_code).toBe(Constants.HearingRoleCodes.Judge);
-                    }
+                    expect(updatedJudges[0].case_role_name).toBeNull();
+                    expect(updatedJudges[0].hearing_role_code).toBe(Constants.HearingRoleCodes.Judge);
 
                     expect(component.canNavigate).toBe(true);
                     expect(component.isJudgeParticipantError).toBe(false);

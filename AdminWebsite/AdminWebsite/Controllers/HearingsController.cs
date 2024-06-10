@@ -1048,8 +1048,7 @@ namespace AdminWebsite.Controllers
                 var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
                 var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
                 var isMultiDay = response.GroupId != null;
-                var isNotifyFlagOn = _featureToggles.UsePostMay2023Template();
-                if (isMultiDay && isNotifyFlagOn)
+                if (isMultiDay)
                 {
                     // Users are created as part of the clone process, so don't wait for them here
                     accountsStillNeedCreating = false;
