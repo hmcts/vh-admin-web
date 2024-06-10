@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
@@ -25,19 +24,16 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
-        private readonly IFeatureToggles _featureToggles;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
         public ReferenceDataController(
             IBookingsApiClient bookingsApiClient, 
-            IPublicHolidayRetriever publicHolidayRetriever,
-            IFeatureToggles featureToggles)
+            IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _publicHolidayRetriever = publicHolidayRetriever;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>

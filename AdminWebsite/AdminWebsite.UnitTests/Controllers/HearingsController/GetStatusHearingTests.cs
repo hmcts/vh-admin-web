@@ -44,8 +44,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 new Mock<IValidator<EditHearingRequest>>().Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingServiceMock.Object,
-                _conferenceDetailsServiceMock.Object,
-                _featureFlag.Object);
+                _conferenceDetailsServiceMock.Object);
                 
 
             Initialise();

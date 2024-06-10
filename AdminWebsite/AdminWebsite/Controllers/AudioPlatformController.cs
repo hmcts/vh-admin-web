@@ -24,14 +24,12 @@ namespace AdminWebsite.Controllers
         private readonly IVideoApiClient _videoAPiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<AudioPlatformController> _logger;
-        private readonly IFeatureToggles _featureToggles;
 
-        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger, IBookingsApiClient bookingsApiClient, IFeatureToggles featureToggles)
+        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger, IBookingsApiClient bookingsApiClient)
         {
             _videoAPiClient = videoAPiClient;
             _logger = logger;
             _bookingsApiClient = bookingsApiClient;
-            _featureToggles = featureToggles;
         }
 
         /// <summary>

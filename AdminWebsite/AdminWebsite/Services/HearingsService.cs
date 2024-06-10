@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models.EditMultiDayHearing;
 using BookingsApi.Contract.Interfaces.Requests;
@@ -29,14 +28,12 @@ namespace AdminWebsite.Services
     public class HearingsService : IHearingsService
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsService> _logger;
 #pragma warning disable S107
-        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger, IFeatureToggles featureToggles)
+        public HearingsService(IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
-            _featureToggles = featureToggles;
         }
 
         public void AssignEndpointDefenceAdvocates(List<Contracts.Requests.EndpointRequest> endpointsWithDa, IReadOnlyCollection<Contracts.Requests.ParticipantRequest> participants)

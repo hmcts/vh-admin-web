@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
@@ -48,7 +47,6 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly IHearingsService _hearingsService;
         private readonly IConferenceDetailsService _conferenceDetailsService;
-        private readonly IFeatureToggles _featureToggles;
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserIdentity _userIdentity;
 
@@ -61,8 +59,7 @@ namespace AdminWebsite.Controllers
             IValidator<EditHearingRequest> editHearingRequestValidator,
             ILogger<HearingsController> logger, 
             IHearingsService hearingsService,
-            IConferenceDetailsService conferenceDetailsService,
-            IFeatureToggles featureToggles)
+            IConferenceDetailsService conferenceDetailsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -70,7 +67,6 @@ namespace AdminWebsite.Controllers
             _logger = logger;
             _hearingsService = hearingsService;
             _conferenceDetailsService = conferenceDetailsService;
-            _featureToggles = featureToggles;
         }
 #pragma warning restore S107
         /// <summary>
