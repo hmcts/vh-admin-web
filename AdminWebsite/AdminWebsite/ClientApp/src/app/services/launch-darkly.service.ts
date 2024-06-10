@@ -8,7 +8,6 @@ export const FeatureFlags = {
     dom1Integration: 'dom1',
     hrsIntegration: 'hrs-integration',
     referenceData: 'reference-data',
-    audioSearch: 'hide-audio-search-tile',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements'
 };
 

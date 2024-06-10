@@ -16,7 +16,6 @@ describe('DashboardComponent', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(waitForAsync(() => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
@@ -151,7 +150,7 @@ describe('DashboardComponent', () => {
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
     });
-    it('should not show  link to audio file  if feature is switched on', async () => {
+    it('should not show  link to audio file', async () => {
         userIdentitySpy.getUserInformation.and.returnValue(
             of(
                 new UserProfileResponse({
@@ -160,22 +159,8 @@ describe('DashboardComponent', () => {
             )
         );
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(true));
         await component.ngOnInit();
         expect(component.showAudioFileLink).toBeFalsy();
     });
 
-    it('should  show  link to audio file  if feature is switched off', async () => {
-        userIdentitySpy.getUserInformation.and.returnValue(
-            of(
-                new UserProfileResponse({
-                    is_vh_officer_administrator_role: true
-                })
-            )
-        );
-
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(false));
-        await component.ngOnInit();
-        expect(component.showAudioFileLink).toBeTruthy();
-    });
 });
