@@ -27,7 +27,9 @@ export class AppComponent implements OnInit {
     showSaveConfirmation = false;
     title = 'Book hearing';
     loggedIn: boolean;
+    username: string;
     menuItemIndex: number;
+
     constructor(
         private securityService: SecurityService,
         private router: Router,
@@ -50,8 +52,10 @@ export class AppComponent implements OnInit {
         this.checkBrowser();
 
         this.securityService.checkAuthMultiple().subscribe(response => {
-            if (response.find(x => x.configId === this.securityService.currentIdpConfigId && x.isAuthenticated)) {
+            const user = response.find(x => x.configId === this.securityService.currentIdpConfigId && x.isAuthenticated);
+            if (user) {
                 this.loggedIn = true;
+                this.username = user.userData?.preferred_username?.toLowerCase();
             }
         });
 

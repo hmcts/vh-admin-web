@@ -3,20 +3,10 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { ConnectionService } from 'src/app/services/connection/connection.service';
-import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
-declare const window: any;
 
 describe('HeaderComponent', () => {
     let httpClient: jasmine.SpyObj<HttpClient>;
-    const connection = {
-        hasConnection$: {
-            subscribe: () => of(null),
-            pipe: () => of(null)
-        }
-    };
 
     describe('view', () => {
         let component: HeaderComponent;
@@ -29,11 +19,7 @@ describe('HeaderComponent', () => {
                 declarations: [HeaderComponent],
                 providers: [
                     { provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) },
-                    { provide: HttpClient, useValue: httpClient },
-                    {
-                        provide: ConnectionService,
-                        useValue: connection
-                    }
+                    { provide: HttpClient, useValue: httpClient }
                 ],
                 schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
@@ -82,8 +68,7 @@ describe('HeaderComponent', () => {
                 declarations: [HeaderComponent],
                 providers: [
                     { provide: Router, useValue: router },
-                    { provide: HttpClient, useValue: httpClient },
-                    { provide: ConnectionService, useValue: connection }
+                    { provide: HttpClient, useValue: httpClient }
                 ],
                 schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
@@ -110,16 +95,6 @@ describe('HeaderComponent', () => {
         it('user should navigate by selecting top menu item', () => {
             component.navigateToSelectedMenuItem(0);
             expect(router.navigate).toHaveBeenCalledWith([component.topMenuItems[0].url]);
-        });
-
-        it('should be sticky if having scrolled', () => {
-            window.pageYOffset = 10;
-            component.headerElement = {
-                nativeElement: { offsetTop: 0 }
-            };
-            component.checkScroll();
-
-            expect(component.isSticky).toBeTruthy();
         });
     });
 });
