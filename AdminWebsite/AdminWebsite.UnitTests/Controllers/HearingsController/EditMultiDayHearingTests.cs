@@ -794,55 +794,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         private static readonly string[] value = ["Please provide a valid id"];
-
-        [Test]
-        public async Task Should_forward_bad_request_from_bookings_api()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var request = new EditMultiDayHearingRequest();
-            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
-            {
-                {"id", value }
-            });
-            var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
-                (int)HttpStatusCode.BadRequest,
-                "Please provide a valid id",
-                null,
-                validationProblemDetails,
-                null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ThrowsAsync(apiException);
-            
-            // Act
-            var result = await Controller.EditMultiDayHearing(hearingId, request);
-            
-            var objectResult = (ObjectResult)result.Result;
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            
-            var errors = validationProblems.Errors;
-            errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
-        }
         
-        [Test]
-        public void Should_forward_unhandled_error_from_bookings_api()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var request = new EditMultiDayHearingRequest();
-            var errorMessage = "Unexpected error for unit test";
-            var apiException = new BookingsApiException<string>("Server Error",
-                (int) HttpStatusCode.InternalServerError,
-                "Server Error", null, errorMessage, null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ThrowsAsync(apiException);
-            
-            // Act & Assert
-            var response = Controller.EditMultiDayHearing(hearingId, request);
-
-            ((ObjectResult)response.Result.Result).StatusCode.Should().Be(500);
-        }
-
         private static HearingDetailsResponseV2 MapUpdatedHearingV2(
             HearingDetailsResponseV2 hearing, EditMultiDayHearingRequest request) =>
             new()

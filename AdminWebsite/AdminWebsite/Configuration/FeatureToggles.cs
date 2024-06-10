@@ -9,7 +9,6 @@ namespace AdminWebsite.Configuration
     public interface IFeatureToggles
     {
         public bool Dom1Enabled();
-        public bool ReferenceDataToggle();
     }
 
     public class FeatureToggles : IFeatureToggles
@@ -18,7 +17,6 @@ namespace AdminWebsite.Configuration
         private readonly Context _context;
         private const string LdUser = "vh-admin-web";
         private const string Dom1EnabledToggleKey = "dom1";
-        private const string ReferenceDataToggleKey = "reference-data";
         
 
         public FeatureToggles(string sdkKey, string environmentName)
@@ -32,11 +30,6 @@ namespace AdminWebsite.Configuration
         public bool Dom1Enabled()
         {
             return GetBoolValueWithKey(Dom1EnabledToggleKey);
-        }
-        
-        public bool ReferenceDataToggle()
-        {
-            return GetBoolValueWithKey(ReferenceDataToggleKey);
         }
         
         private bool GetBoolValueWithKey(string key)

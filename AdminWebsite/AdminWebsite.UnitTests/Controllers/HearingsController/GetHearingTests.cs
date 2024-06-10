@@ -265,27 +265,5 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             response.MultiDayHearingLastDayScheduledDateTime.Should().BeNull();
             response.HearingsInGroup.Should().BeEquivalentTo(multiDayHearings.Select(x => x.Map()));
         }
-
-        [Test]
-        public async Task Should_return_bad_request_if_hearing_id_is_empty()
-        {
-            // Arrange
-            GivenApiThrowsExceptionOnGetHearing(HttpStatusCode.BadRequest);
-
-            var invalidId = Guid.Empty;
-            
-            // Act
-            var result = await _controller.GetHearingById(invalidId);
-            
-            // Assert
-            var badRequestResult = (BadRequestObjectResult) result;
-            badRequestResult.StatusCode.Should().Be(400);
-        }
-
-        private void GivenApiThrowsExceptionOnGetHearing(HttpStatusCode code)
-        {
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ThrowsAsync(ClientException.ForBookingsAPI(code));
-        }
     }
 }

@@ -69,7 +69,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             List<ICaseRoleResponse> listTypes;
             listTypes = new List<ICaseRoleResponse> { new CaseRoleResponseV2 { Name = "type1" } };
-            SetTestCase(listTypes, true);
+            SetTestCase(listTypes);
 
             var response = await _controller.GetParticipantRoles("type1");
             response.Should().NotBeNull();
@@ -108,27 +108,17 @@ namespace AdminWebsite.UnitTests.Controllers
             caseRoles.Count.Should().Be(0);
         }
 
-        private void SetTestCase(List<ICaseRoleResponse> listTypes, bool refDataToggle = false)
+        private void SetTestCase(List<ICaseRoleResponse> listTypes)
         {
-            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", UserRole = "role1"} };
             var listHearingRoles2 = new List<HearingRoleResponseV2> { new HearingRoleResponseV2 { Name = "type1", UserRole = "role1"} };
 
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
-            if (refDataToggle)
-            {
-                //v2 endpoints
-                var casetypeV2Response = listTypes?.Select(e => (CaseRoleResponseV2)e).ToList();
-                _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseServiceAsync(It.IsAny<string>())).ReturnsAsync(casetypeV2Response);
-                _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleV2Async(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles2);
-            }
-            else
-            {
-                //V1 endpoints
-                var casetypeV1Response = listTypes?.Select(e => (CaseRoleResponse)e).ToList();
-                _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(casetypeV1Response);   
-                _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
-
-            }
+            
+            //v2 endpoints
+            var casetypeV2Response = listTypes?.Select(e => (CaseRoleResponseV2)e).ToList();
+            _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseServiceAsync(It.IsAny<string>())).ReturnsAsync(casetypeV2Response);
+            _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleV2Async(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles2);
+            
         }
 
         private static List<CaseTypeResponse> GetCaseTypesList()

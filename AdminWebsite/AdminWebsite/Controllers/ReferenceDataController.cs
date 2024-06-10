@@ -81,16 +81,9 @@ namespace AdminWebsite.Controllers
         {
             var response = new List<CaseAndHearingRolesResponse>();
             List<ICaseRoleResponse> iCaseRoles;
-            if (_featureToggles.ReferenceDataToggle())
-            {
-                var caseRoles2 = await _bookingsApiClient.GetCaseRolesForCaseServiceAsync(caseTypeParameter);
-                iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
-            }
-            else
-            {
-                var caseRoles1 = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeParameter);
-                iCaseRoles = caseRoles1?.Select(e => (ICaseRoleResponse)e).ToList();
-            }
+            var caseRoles2 = await _bookingsApiClient.GetCaseRolesForCaseServiceAsync(caseTypeParameter);
+            iCaseRoles = caseRoles2?.Select(e => (ICaseRoleResponse)e).ToList();
+            
         
             if (iCaseRoles != null && iCaseRoles.Any())
             {
@@ -98,16 +91,8 @@ namespace AdminWebsite.Controllers
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = caseRoleName };
                     List<IHearingRoleResponse> iHearingRoles;
-                    if (_featureToggles.ReferenceDataToggle())
-                    {
-                        var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRoleName);
-                        iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
-                    }
-                    else
-                    {
-                        var hearingRoles2 = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeParameter, caseRoleName);  
-                        iHearingRoles = hearingRoles2.Select(e => (IHearingRoleResponse)e).ToList();
-                    }
+                    var hearingRoles1 = await _bookingsApiClient.GetHearingRolesForCaseRoleV2Async(caseTypeParameter, caseRoleName);
+                    iHearingRoles = hearingRoles1.Select(e => (IHearingRoleResponse)e).ToList();
                     
                     caseRole.HearingRoles = iHearingRoles.ConvertAll(x => new HearingRole(x.Name, x.UserRole));
 

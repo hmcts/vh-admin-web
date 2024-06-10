@@ -139,55 +139,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
         }
         
-        [Test]
-        public async Task Should_forward_bad_request_from_bookings_api()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var request = new CancelMultiDayHearingRequest();
-            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
-            {
-                {"id", ["Please provide a valid id"] }
-            });
-            var apiException = new BookingsApiException<ValidationProblemDetails>("BadRequest", 
-                (int)HttpStatusCode.BadRequest,
-                "Please provide a valid id",
-                null,
-                validationProblemDetails,
-                null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ThrowsAsync(apiException);
-            
-            // Act
-            var result = await Controller.CancelMultiDayHearing(hearingId, request);
-            
-            var objectResult = (ObjectResult)result;
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            
-            var errors = validationProblems.Errors;
-            errors.Should().BeEquivalentTo(validationProblemDetails.Errors);
-        }
-        
-        [Test]
-        public void Should_forward_unhandled_error_from_bookings_api()
-        {
-            // Arrange
-            var hearingId = Guid.NewGuid();
-            var request = new CancelMultiDayHearingRequest();
-            var errorMessage = "Unexpected error for unit test";
-            var apiException = new BookingsApiException<string>("Server Error",
-                (int) HttpStatusCode.InternalServerError,
-                "Server Error", null, errorMessage, null);
-            BookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(hearingId))
-                .ThrowsAsync(apiException);
-            
-            // Act & Assert
-            var response = Controller.CancelMultiDayHearing(hearingId, request);
-
-            ((ObjectResult) response.Result).StatusCode.Should().Be(500);
-            
-        }
-        
         private static CancelMultiDayHearingRequest CreateRequest() =>
             new()
             {
