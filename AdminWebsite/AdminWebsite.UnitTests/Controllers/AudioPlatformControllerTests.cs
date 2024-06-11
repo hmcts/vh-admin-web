@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using BookingsApi.Client;
@@ -20,16 +19,14 @@ namespace AdminWebsite.UnitTests.Controllers
         
         private readonly Mock<IBookingsApiClient> _bookingsApiClientMock;
         private readonly Mock<ILogger<AudioPlatformController>> _loggerMock;
-        private readonly Mock<IFeatureToggles> _featureTogglesMock;
 
         public AudioPlatformControllerTests()
         {
             _videoApiClientMock = new Mock<IVideoApiClient>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _loggerMock = new Mock<ILogger<AudioPlatformController>>();
-            _featureTogglesMock = new Mock<IFeatureToggles>();
 
-            _controller = new AudioPlatformController(_videoApiClientMock.Object, _loggerMock.Object, _bookingsApiClientMock.Object, _featureTogglesMock.Object);
+            _controller = new AudioPlatformController(_videoApiClientMock.Object, _loggerMock.Object, _bookingsApiClientMock.Object);
         }
 
         [Test]
