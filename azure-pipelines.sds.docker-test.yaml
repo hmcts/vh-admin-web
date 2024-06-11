@@ -30,7 +30,8 @@ jobs:
         inputs:
           targetType: 'inline'
           script: |
-            #$file = "docker-compose.test.yml"
+            
+            $file = "docker-compose.test.yml"
             $dockerComposeTestFile = $file
             $repositoryName = $("Build.Repository.Name")
             $dockerComposeCommand = "up"
