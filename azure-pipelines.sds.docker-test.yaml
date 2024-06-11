@@ -25,7 +25,7 @@ jobs:
   - job: UnitAndIntegrationTests
     displayName: Unit and Integration Tests
     steps:
-      - task: AzureCLI@2
+      - task: PowerShell@2
         displayName: Run Unit & Integration Tests
         inputs:
           scriptType: pscore
