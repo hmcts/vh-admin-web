@@ -25,7 +25,7 @@
 
     <div class="govuk-header__content govuk-header__content_secondary">
       <nav aria-label="Secondary Menu" class="govuk-header__navigation">
-        <ul class="govuk-header__navigation-list">
+        <ul *ngIf="loggedIn" class="govuk-header__navigation-list">
           <li class="govuk-header__navigation-item" *ngFor="let topItem of topMenuItems; index as i">
             <a
               class="govuk-header__link"
@@ -38,8 +38,8 @@
             </a>
           </li>
 
-          <li *ngIf="loggedIn" class="govuk-header__navigation-item keep-right">
-            <a id="linkSignOut" class="govuk-header__link" (click)="logout()">Sign out</a>
+          <li class="govuk-header__navigation-item keep-right">
+            <a id="linkSignOut" href="javascript:void(0)" class="govuk-header__link" (click)="logout()">Sign out</a>
           </li>
         </ul>
       </nav>
