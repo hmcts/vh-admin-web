@@ -11,6 +11,7 @@
 .sticky {
     position: sticky;
     top: 0;
+    z-index: 2000;
 }
 
 .govuk-header__navigation-item--active {
