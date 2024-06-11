@@ -22,22 +22,25 @@ variables:
     value: false
 
 jobs:
-  - job: UnitAndIntegrationTests
-    displayName: Unit and Integration Tests
-    steps:
-      - task: PowerShell@2
-        displayName: Run Unit & Integration Tests
-        inputs:
-          targetType: 'inline'
-          script: |
-            
-            $file = "docker-compose.test.yml"
-            $dockerComposeTestFile = $file
-            $repositoryName = $("Build.Repository.Name")
-            $dockerComposeCommand = "up"
-            $arguments = "--build --abort-on-container-exit"
+- job: UnitAndIntegrationTests
+  displayName: "Unit and Integration Tests"
+  steps:
+    - checkout: self
 
-            Write-Host "Running Unit & Integration Tests using Docker Compose"
-            $command = "docker-compose -f $dockerComposeTestFile -p $repositoryName $dockerComposeCommand $arguments"
-            Write-Host "Executing: $command"
-            Invoke-Expression $command
+    - template: templates/dotnet/build-test-analyse.yml@azTemplates
+      parameters:
+        dotnetVersion: ${{ variables.dotnetVersion }}
+        nugetConfigPath: nuget.config
+        appName: ${{ variables.appName }}
+        dockerComposeTestFile: docker-compose.tests.yml
+        publishNodeTests: true
+        nodeTestResultFolder: $(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp
+        sonarExtraProperties: |
+          sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/src/app/testing/**, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs, **/src/app/testing/data/*.ts, **/auth-config.module.ts
+          sonar.cs.opencover.reportsPaths=$(System.DefaultWorkingDirectory)/coverage.opencover.xml
+          sonar.javascript.lcov.reportPaths=**/ClientApp/coverage/lcov.info
+          sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
+          sonar.coverage.exclusions=**/AdminWebsite/Configuration/**, **/AdminWebsite/Security/**, **/AdminWebsite.Testing.Common/**, **/AdminWebsite/Views/*, **/AdminWebsite/Pages/*, **/AdminWebsite.AcceptanceTests/*, **/AdminWebsite.*Tests/*
+          sonar.issue.ignore.multicriteria=e1
+          sonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S6544
+          sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
