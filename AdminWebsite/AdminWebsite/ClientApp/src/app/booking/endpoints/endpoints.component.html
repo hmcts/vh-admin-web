@@ -9,16 +9,14 @@
   <!-- Add the endpoint column (left)-->
   <div class="govuk-grid-column-one-half">
     <div class="govuk-!-margin-bottom-5">
-      <div class="govuk-grid-column-full">
-        <h2 class="govuk-heading-m">Video Access Points</h2>
-        <app-video-endpoint-form
-          [existingVideoEndpoint]="videoEndpointToEdit"
-          [existingVideoEndpoints]="videoEndpoints"
-          [participants]="hearing.participants"
-          (endpointAdded)="onEndpointAdded($event)"
-          (endpointUpdated)="onEndpointUpdated($event)"
-        ></app-video-endpoint-form>
-      </div>
+      <h2 class="govuk-heading-m">Video Access Points</h2>
+      <app-video-endpoint-form
+        [existingVideoEndpoint]="videoEndpointToEdit"
+        [existingVideoEndpoints]="videoEndpoints"
+        [participants]="hearing.participants"
+        (endpointAdded)="onEndpointAdded($event)"
+        (endpointUpdated)="onEndpointUpdated($event)"
+      ></app-video-endpoint-form>
     </div>
   </div>
   <!-- Current endpoint list column (column)-->

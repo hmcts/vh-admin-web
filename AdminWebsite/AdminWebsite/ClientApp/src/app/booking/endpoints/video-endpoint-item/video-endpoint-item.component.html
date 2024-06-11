@@ -1,7 +1,7 @@
 <div *ngIf="displayName" class="govuk-grid-row container">
-  <div class="endpoint-row govuk-!-margin-left-4">
+  <div class="endpoint-row">
     <div class="vhtable-header">
-      <div class="govuk-heading-s">{{ displayName }}</div>
+      <div class="endpoint-row__name">{{ displayName }}</div>
       <div *ngIf="linkedRepresentative"><strong>Defence Advocate:</strong> {{ linkedRepresentative.displayName }}</div>
     </div>
 

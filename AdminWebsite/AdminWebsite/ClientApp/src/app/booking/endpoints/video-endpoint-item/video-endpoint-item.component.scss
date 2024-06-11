@@ -1,9 +1,21 @@
 .container {
+  padding: 1em 0;
+
   .endpoint-row {
-    // rules for .endpoint-row
+    display: flex;
+    align-items: center;
+
+    > div {
+      padding-left: 15px;
+      flex: 1 auto;
+    }
 
     > div:first-child {
-      flex: 0 0 auto;
+      flex: 0 auto;
+    }
+
+    > div:last-child {
+      padding-right: 15px;
     }
 
     .linked-rep-display-name,
@@ -15,6 +27,12 @@
 
     &__name {
       font-weight: bold;
+    }
+
+    &__actions {
+      flex: 0 auto;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }

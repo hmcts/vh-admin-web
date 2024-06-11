@@ -16,7 +16,7 @@ export class VideoEndpointFormComponent {
     constants = Constants;
 
     form: FormGroup<VideoEndpointForm>;
-    saveButtonText = 'Save';
+    saveButtonText = '';
     videoEndpoint: VideoAccessPointDto;
     private editMode = false;
 
@@ -32,8 +32,10 @@ export class VideoEndpointFormComponent {
             );
             this.editMode = true;
             this.form.markAllAsTouched();
+            this.saveButtonText = 'Update Access Point';
         } else {
             this.editMode = false;
+            this.saveButtonText = 'Save Access Point';
         }
     }
 
@@ -70,7 +72,7 @@ export class VideoEndpointFormComponent {
             return;
         }
         let defenceAdvocate: EndpointLink = null;
-        if (this.form.value.linkedRepresentative) {
+        if (this.form.value.linkedRepresentative && this.form.value.linkedRepresentative !== 'null') {
             const representative = this.availableRepresentatives.find(p => p.email === this.form.value.linkedRepresentative);
             defenceAdvocate = {
                 email: representative.email,
