@@ -11,6 +11,7 @@ import { ConnectionService } from 'src/app/services/connection/connection.servic
 })
 export class HeaderComponent {
     @Input() loggedIn: boolean;
+    @Input() username: string;
 
     @ViewChild('headerElement', { static: true })
     headerElement: ElementRef;
@@ -33,17 +34,9 @@ export class HeaderComponent {
         }
     ];
 
-    isSticky = false;
-
-    constructor(private router: Router, private connection: ConnectionService) {
+    constructor(private router: Router) {
         this.$confirmLogout = new EventEmitter();
         this.$confirmSaveBooking = new EventEmitter();
-        this.showMenuItems$ = connection.hasConnection$;
-    }
-
-    @HostListener('window:scroll', ['$event'])
-    checkScroll() {
-        this.isSticky = window.pageYOffset > this.headerElement.nativeElement.offsetTop;
     }
 
     selectMenuItem(indexOfItem: number) {
