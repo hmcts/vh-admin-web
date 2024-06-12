@@ -63,6 +63,22 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
 
     saveEndpoints(): void {
+        this.upsertEndpointsToBooking;
+        let canEditOtherInformation = true;
+        const booking = this.videoHearingService.getCurrentRequest();
+        if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
+            canEditOtherInformation = false;
+        }
+        if (this.editMode || !canEditOtherInformation) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
+            this.router.navigate([PageUrls.Summary]);
+        } else {
+            this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
+            this.router.navigate([PageUrls.OtherInformation]);
+        }
+    }
+
+    upsertEndpointsToBooking(): void {
         this.logger.debug(`${this.loggerPrefix} Attempting to save endpoints to booking.`);
 
         const newEndpointsArray: EndpointModel[] = [];
@@ -77,20 +93,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.hearing.endpoints = newEndpointsArray;
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request`, { hearing: this.hearing?.hearing_id, payload: this.hearing });
-
-        let canEditOtherInformation = true;
-        const booking = this.videoHearingService.getCurrentRequest();
-        if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
-            canEditOtherInformation = false;
-        }
-
-        if (this.editMode || !canEditOtherInformation) {
-            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
-            this.router.navigate([PageUrls.Summary]);
-        } else {
-            this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
-            this.router.navigate([PageUrls.OtherInformation]);
-        }
     }
 
     cancelBooking(): void {
@@ -139,6 +141,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.videoEndpoints.push($event);
             this.videoHearingService.setBookingHasChanged(true);
         }
+        this.upsertEndpointsToBooking();
     }
 
     onEndpointUpdated($event: { original: VideoAccessPointDto; updated: VideoAccessPointDto }) {
@@ -151,11 +154,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.videoEndpointToEdit = null;
             this.videoHearingService.setBookingHasChanged(true);
         }
+        this.upsertEndpointsToBooking();
     }
 
     onEndpointSelectedForDeletion(existingEndpoint: VideoAccessPointDto) {
         this.videoEndpoints = this.videoEndpoints.filter(endpoint => endpoint.displayName !== existingEndpoint.displayName);
         this.videoHearingService.setBookingHasChanged(true);
+        this.upsertEndpointsToBooking();
     }
 
     onEndpointSelectedForEdit(existingEndpoint: VideoAccessPointDto) {
