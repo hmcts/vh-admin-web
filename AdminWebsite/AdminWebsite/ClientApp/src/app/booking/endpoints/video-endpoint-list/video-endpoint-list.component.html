@@ -1,0 +1,12 @@
+<h3 class="govuk-heading-m">{{ false ? 'Endpoints' : 'Endpoints added' }}</h3>
+
+<div class="endpoint-list" id="endpoint-list">
+  <app-video-endpoint-item
+    class="endpoint-item"
+    *ngFor="let videoEndpoint of videoEndpoints"
+    [displayRemoveButton]="canRemove"
+    [videoEndpoint]="videoEndpoint"
+    (editEndpoint)="editEndpoint.emit($event)"
+    (deleteEndpoint)="deleteEndpoint.emit($event)"
+  ></app-video-endpoint-item>
+</div>
