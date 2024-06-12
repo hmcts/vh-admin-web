@@ -72,7 +72,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
     judgeAssigned: boolean;
-    useApiV2 = false;
     saveFailedMessages: string[];
     multiDayBookingEnhancementsEnabled: boolean;
 
@@ -91,14 +90,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
 
-        this.$subscriptions.push(
-            this.featureService
-                .getFlag<boolean>(FeatureFlags.useV2Api)
-                .pipe(first())
-                .subscribe(result => {
-                    this.useApiV2 = result;
-                })
-        );
     }
 
     ngOnInit() {
@@ -296,12 +287,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             this.setDurationOfMultiHearing();
             try {
-                if (!this.judgeAssigned && !this.useApiV2) {
-                    const error = new Error('Ejud Feature flag must be true, to book without a judge');
-                    this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error);
-                    this.setError(error);
-                    return;
-                }
                 this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
                     caseName: this.hearing.cases[0].name,
                     caseNumber: this.hearing.cases[0].number
@@ -554,10 +539,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     navToAddJudge() {
-        if (this.useApiV2) {
-            this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
-        } else {
-            this.router.navigate([PageUrls.AssignJudge]);
-        }
+        this.router.navigate([PageUrls.AddJudicialOfficeHolders]);
     }
 }

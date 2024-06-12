@@ -2,9 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, Data, Router, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { LastMinuteAmendmentsGuard } from './last-minute-amendments.guard';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { of } from 'rxjs';
 import { Logger } from '../../services/logger';
-import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 
 describe('LastMinuteAmendmentsGuard', () => {
     let guard: LastMinuteAmendmentsGuard;
@@ -15,8 +13,6 @@ describe('LastMinuteAmendmentsGuard', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['warn', 'debug']);
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
     const redirectPath = '/summary';
-    const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -24,7 +20,6 @@ describe('LastMinuteAmendmentsGuard', () => {
                 LastMinuteAmendmentsGuard,
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                 { provide: Router, useValue: router },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy },
                 { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
@@ -64,38 +59,4 @@ describe('LastMinuteAmendmentsGuard', () => {
         });
     });
 
-    describe('when accessing assign-judge; last minute', () => {
-        it('ejudFeature flag off should override last-minute-amendment-guard and block assign-judge url to be reach', () => {
-            // setup
-            guard.isV2 = false;
-            const url = 'assign-judge';
-            const dataSnapshot = { exceptionToRuleCheck: true } as Data;
-            const urlSegmentArray = [{ path: url }] as UrlSegment[];
-            // execute
-            const returned = guard.canActivate(
-                <ActivatedRouteSnapshot>{ url: urlSegmentArray, data: dataSnapshot },
-                <RouterStateSnapshot>{ url: url }
-            );
-            // assert
-            expect(returned).toBe(false);
-            expect(router.navigate).toHaveBeenCalledWith([redirectPath]);
-        });
-
-        it('ejudFeature flag on should allow last-minute-amendment-guard and allow assign-judge url to be reached', () => {
-            // setup
-            const url = 'assign-judge';
-            const dataSnapshot = { exceptionToRuleCheck: true } as Data;
-            const urlSegmentArray = [{ path: url }] as UrlSegment[];
-            // execute
-            const returned = guard.canActivate(
-                <ActivatedRouteSnapshot>{ url: urlSegmentArray, data: dataSnapshot },
-                <RouterStateSnapshot>{ url: url }
-            );
-            // assert
-            expect(returned).toBe(true);
-        });
-        afterEach(() => {
-            guard.isV2 = true;
-        });
-    });
 });

@@ -35,7 +35,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
 
-    refDataEnabled: boolean;
     private multiDayEnhancementsEnabled: boolean;
 
     constructor(
@@ -53,18 +52,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
 
     ngOnInit() {
-        this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.refDataEnabled = flag;
-                this.checkForExistingRequestOrCreateNew();
-                this.initForm();
-                this.retrieveHearingTypes();
-                if (this.form) {
-                    this.form.get('hearingType').setValidators(this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]);
-                }
-            });
         this.launchDarklyService
             .getFlag<boolean>(FeatureFlags.multiDayBookingEnhancements)
             .pipe(takeUntil(this.destroyed$))
@@ -91,13 +78,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
 
-        if (this.hearing.case_type && this.refDataEnabled) {
-            this.selectedCaseType = this.hearing.case_type;
-            return;
-        } else {
-            this.selectedCaseType = Constants.PleaseSelect;
-        }
-        if (!!this.hearing.hearing_type_name && !!this.hearing.case_type && !this.refDataEnabled) {
+        this.selectedCaseType = this.hearing.case_type;
+        return;
+
+        if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
             this.selectedCaseType = this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Updating selected case type to current hearing case type.`, {
                 hearing: this.hearing.hearing_id
@@ -126,7 +110,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
-            hearingType: [this.hearing.hearing_type_id, this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]]
+            hearingType: [this.hearing.hearing_type_id, []]
         });
 
         if (this.isExistingHearingOrParticipantsAdded()) {

@@ -4,7 +4,6 @@ import { BreadcrumbItems } from './breadcrumbItems';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { Subject } from 'rxjs';
-import { LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
@@ -20,7 +19,7 @@ export class BreadcrumbComponent implements OnInit, OnDestroy {
     canNavigate: boolean;
     destroyed$ = new Subject<void>();
 
-    constructor(private router: Router, private videoHearingsService: VideoHearingsService, private featureService: LaunchDarklyService) {}
+    constructor(private router: Router, private videoHearingsService: VideoHearingsService) {}
 
     ngOnInit() {
         this.currentRouter = this.router.url;

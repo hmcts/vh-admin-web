@@ -60,7 +60,6 @@ describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
     let fixture: ComponentFixture<OtherInformationComponent>;
     launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
         'getCurrentRequest',
         'cancelRequest',

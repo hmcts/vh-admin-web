@@ -682,78 +682,77 @@ describe('BookingsListComponent', () => {
             bookingPersistService.noJugdeInHearings,
             bookingPersistService.noAllocatedHearings
         );
+    });
 
-        it('should onSearch with populated endDate and empty startDate', () => {
-            bookingsListServiceSpy.getBookingsList.calls.reset();
-            setFormValue();
-            component.searchForm.controls['startDate'].setValue(null);
-            component.onSearch();
-            expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
-            expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-            expect(bookingPersistService.startDate).toBeNull();
-            expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
-            expect(component.bookings.length).toBeGreaterThan(0);
-            expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
-                undefined,
-                component.limit,
-                bookingPersistService.caseNumber,
-                bookingPersistService.selectedVenueIds,
-                bookingPersistService.selectedCaseTypes,
-                bookingPersistService.selectedUsers,
-                moment(bookingPersistService.endDate).startOf('day').toDate(),
-                moment(bookingPersistService.endDate).endOf('day').toDate(),
-                bookingPersistService.participantLastName,
-                bookingPersistService.noJugdeInHearings,
-                bookingPersistService.noAllocatedHearings
-            );
-        });
+    it('should onSearch (admin_search flag on) with populated endDate and empty startDate', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue();
+        component.searchForm.controls['startDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
+        expect(bookingPersistService.startDate).toBeNull();
+        expect(bookingPersistService.endDate).toEqual(moment().startOf('day').add(2, 'days').toDate());
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.caseNumber,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
+            moment(bookingPersistService.endDate).startOf('day').toDate(),
+            moment(bookingPersistService.endDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
+        );
+    });
 
-        it('should onSearch with populated startDate and empty endDate', () => {
-            bookingsListServiceSpy.getBookingsList.calls.reset();
-            setFormValue();
+    it('should onSearch (admin_search flag on) with populated startDate and empty endDate', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue();
+        component.searchForm.controls['endDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
+        expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
+        expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
+        expect(bookingPersistService.endDate).toBeNull();
+        expect(component.bookings.length).toBeGreaterThan(0);
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.caseNumber,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
+        );
+    });
 
-            component.searchForm.controls['endDate'].setValue(null);
-            component.onSearch();
-            expect(bookingPersistService.caseNumber).toMatch('CASE_NUMBER');
-            expect(bookingPersistService.participantLastName).toMatch('PARTICIPANT_LAST_NAME');
-            expect(bookingPersistService.startDate).toEqual(moment().startOf('day').add(1, 'days').toDate());
-            expect(bookingPersistService.endDate).toBeNull();
-            expect(component.bookings.length).toBeGreaterThan(0);
-            expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
-                undefined,
-                component.limit,
-                bookingPersistService.caseNumber,
-                bookingPersistService.selectedVenueIds,
-                bookingPersistService.selectedCaseTypes,
-                bookingPersistService.selectedUsers,
-                moment(bookingPersistService.startDate).startOf('day').toDate(),
-                moment(bookingPersistService.startDate).endOf('day').toDate(),
-                bookingPersistService.participantLastName,
-                bookingPersistService.noJugdeInHearings,
-                bookingPersistService.noAllocatedHearings
-            );
-        });
-
-        it('should onSearch with no judge option selected', () => {
-            bookingsListServiceSpy.getBookingsList.calls.reset();
-            setFormValue(true);
-            component.searchForm.controls['endDate'].setValue(null);
-            component.onSearch();
-            expect(bookingPersistService.noJugdeInHearings).toBeTruthy();
-            expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
-                undefined,
-                component.limit,
-                bookingPersistService.caseNumber,
-                bookingPersistService.selectedVenueIds,
-                bookingPersistService.selectedCaseTypes,
-                bookingPersistService.selectedUsers,
-                moment(bookingPersistService.startDate).startOf('day').toDate(),
-                moment(bookingPersistService.startDate).endOf('day').toDate(),
-                bookingPersistService.participantLastName,
-                bookingPersistService.noJugdeInHearings,
-                bookingPersistService.noAllocatedHearings
-            );
-        });
+    it('should onSearch (admin_search flag on) with no judge option selected', () => {
+        bookingsListServiceSpy.getBookingsList.calls.reset();
+        setFormValue(true);
+        component.searchForm.controls['endDate'].setValue(null);
+        component.onSearch();
+        expect(bookingPersistService.noJugdeInHearings).toBeTruthy();
+        expect(bookingsListServiceSpy.getBookingsList).toHaveBeenCalledWith(
+            undefined,
+            component.limit,
+            bookingPersistService.caseNumber,
+            bookingPersistService.selectedVenueIds,
+            bookingPersistService.selectedCaseTypes,
+            bookingPersistService.selectedUsers,
+            moment(bookingPersistService.startDate).startOf('day').toDate(),
+            moment(bookingPersistService.startDate).endOf('day').toDate(),
+            bookingPersistService.participantLastName,
+            bookingPersistService.noJugdeInHearings,
+            bookingPersistService.noAllocatedHearings
+        );
     });
 
     describe('noJudgeInHearing', () => {
@@ -1015,6 +1014,12 @@ describe('BookingsListComponent', () => {
         expect(component.showSearch).toBe(false);
     });
 
+    it('should hide the search panel on initial load', () => {
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.showSearch).toBe(false);
+    });
+
     it('should add bookings list records on the next scroll and delete duplicated hearings', waitForAsync(() => {
         component.bookings = new ArrayBookingslistModelTestData().getTestData();
         component.ngOnInit();
@@ -1207,5 +1212,6 @@ describe('BookingsListComponent', () => {
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
+
     });
 });

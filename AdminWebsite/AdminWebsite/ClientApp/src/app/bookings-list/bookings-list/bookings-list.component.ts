@@ -10,7 +10,6 @@ import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
@@ -46,7 +45,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedUserIds: [];
     showSearch = false;
     today = new Date();
-    isV2 = false;
 
     destroyed$ = new Subject<void>();
 
@@ -60,7 +58,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
         private formBuilder: FormBuilder,
-        private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
         private datePipe: DatePipe,
@@ -68,7 +65,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.subscribeToFeatureFlags();
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
@@ -475,12 +471,4 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.bookingPersistService.selectedVenueIds = $event;
     }
 
-    subscribeToFeatureFlags() {
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.isV2 = flag;
-            });
-    }
 }

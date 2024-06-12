@@ -57,7 +57,6 @@ describe('CreateHearingComponent with multiple case types', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -95,15 +94,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         caseNumberControl = component.form.controls['caseNumber'];
         caseTypeControl = component.form.controls['caseType'];
         hearingTypeControl = component.form.controls['hearingType'];
-    });
-
-    it('should create', () => {
-        fixture.detectChanges();
-        expect(component).toBeTruthy();
-        expect(component.caseNumber.value).toBeNull();
-        expect(component.caseName.value).toBeNull();
-        expect(component.caseType.value).toBe('Please select');
-        expect(component.hearingType.value).toBe(null);
     });
 
     it('should not set case type when multiple items returned', () => {
@@ -152,21 +142,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         expect(caseTypeControl.valid).toBeTruthy();
     });
 
-    it('should validate hearing type', () => {
-        expect(hearingTypeControl.valid).toBeFalsy();
-        hearingTypeControl.setValue(2);
-        expect(hearingTypeControl.valid).toBeTruthy();
-    });
-
-    it('should set hearing type to please select when case type changes', () => {
-        const caseTypeValue = 'Generic';
-        caseTypeControl.setValue(caseTypeValue);
-        expect(component.selectedCaseType).toBe(caseTypeValue);
-        expect(caseTypeControl.valid).toBeTruthy();
-        expect(component.hearingType.value).toBe(null);
-        expect(hearingTypeControl.valid).toBeFalsy();
-    });
-
     it('should update hearing request when form is valid', () => {
         expect(component.form.valid).toBeFalsy();
 
@@ -191,7 +166,6 @@ describe('CreateHearingComponent with single case type', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -244,7 +218,7 @@ describe('CreateHearingComponent with single case type', () => {
     });
 });
 
-describe('CreateHearingComponent with ref data toggle on', () => {
+describe('CreateHearingComponent', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     let hearingTypeControl: AbstractControl;
@@ -252,7 +226,6 @@ describe('CreateHearingComponent with ref data toggle on', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -305,7 +278,6 @@ describe('CreateHearingComponent with existing request in session', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -356,12 +328,6 @@ describe('CreateHearingComponent with existing request in session', () => {
     afterEach(() => {
         sessionStorage.clear();
     });
-
-    it('should repopulate form with existing request', fakeAsync(() => {
-        expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
-        expect(component.caseName.value).toBe(existingRequest.cases[0].name);
-        expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
-    }));
 
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;

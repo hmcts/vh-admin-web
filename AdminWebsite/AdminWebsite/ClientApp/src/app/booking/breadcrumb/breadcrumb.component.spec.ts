@@ -2,10 +2,7 @@ import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
-import { of } from 'rxjs';
-import { PageUrls } from '../../shared/page-url.constants';
 import { BreadcrumbItems } from './breadcrumbItems';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 describe('BreadcrumbComponent', () => {
     const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -13,7 +10,6 @@ describe('BreadcrumbComponent', () => {
         'isConferenceClosed',
         'isHearingAboutToStart'
     ]);
-    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     let component: BreadcrumbComponent;
     const router = {
         url: '/hearing-schedule',
@@ -21,8 +17,7 @@ describe('BreadcrumbComponent', () => {
     } as jasmine.SpyObj<Router>;
 
     beforeEach(() => {
-        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        component = new BreadcrumbComponent(router, videoHearingsServiceSpy, launchDarklyServiceSpy);
+        component = new BreadcrumbComponent(router, videoHearingsServiceSpy);
         component.breadcrumbItems = BreadcrumbItems.slice();
         component.canNavigate = true;
         component.ngOnInit();
@@ -90,20 +85,6 @@ describe('BreadcrumbComponent', () => {
         const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/some-thing', false, false);
         component.clickBreadcrumbs(step);
         expect(router.navigate).toHaveBeenCalledTimes(0);
-    });
-
-    it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
-        component.canNavigate = true;
-        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
-        component.clickBreadcrumbs(step);
-        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
-    });
-
-    it('should init breadcrumb when the current item has not been set', () => {
-        component.currentItem = null;
-        const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false, false);
-        component.clickBreadcrumbs(step);
-        expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
     });
 
     it('should unsubscribe from subscriptions when ngOnDestroy is called', () => {

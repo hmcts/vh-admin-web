@@ -21,7 +21,7 @@
     </div>
 
     <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
-      <a [routerLink]="isV2 ? '/add-judicial-office-holders' : '/assign-judge'" class="vhlink" (click)="editJudge()">Change</a>
+      <a [routerLink]="'/add-judicial-office-holders'" class="vhlink" (click)="editJudge()">Change</a>
     </div>
   </div>
 

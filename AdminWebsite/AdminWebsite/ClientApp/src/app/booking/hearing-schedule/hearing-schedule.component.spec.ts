@@ -95,7 +95,6 @@ describe('HearingScheduleComponent first visit', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
@@ -426,7 +425,6 @@ describe('HearingScheduleComponent returning to page', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
@@ -594,7 +592,6 @@ describe('HearingScheduleComponent multi days hearing', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({

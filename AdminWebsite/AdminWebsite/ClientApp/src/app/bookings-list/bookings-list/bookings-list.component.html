@@ -54,20 +54,20 @@
               (blur)="onEndDateBlur()"
             />
           </div>
-          <div class="govuk-grid-column-one-half" *ngIf="workAllocationEnabled()">
+          <div class="govuk-grid-column-one-half">
             <app-justice-users-menu (selectedEmitter)="selectedUsersEmitter($event)"></app-justice-users-menu>
           </div>
         </div>
         <div class="govuk-grid-row govuk-!-margin-left-6 govuk-!-margin-top-6 govuk-!-margin-right-6">
           <div class="govuk-grid-column-one-half">
-            <div *ngIf="isV2" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="noJudge" name="noJudge" type="checkbox" formControlName="noJudge" />
                 <label class="govuk-label govuk-checkboxes__label" for="noJudge"> Hearings with no judge </label>
               </div>
             </div>
           </div>
-          <div class="govuk-grid-column-one-half vh-right-align" *ngIf="workAllocationEnabled()">
+          <div class="govuk-grid-column-one-half vh-right-align">
             <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
               <div class="govuk-checkboxes__item">
                 <input
@@ -173,7 +173,7 @@
                 </span>
               </div>
             </div>
-            <div id="allocated-to-{{ detail.HearingId }}" class="govuk-grid-row" *ngIf="vhoWorkAllocationFeature">
+            <div id="allocated-to-{{ detail.HearingId }}" class="govuk-grid-row">
               <div class="govuk-grid-column-full vh-l">
                 <div class="govuk-hint vh-xsml vh-font-black">Allocated to: {{ detail.AllocatedTo }}</div>
               </div>
