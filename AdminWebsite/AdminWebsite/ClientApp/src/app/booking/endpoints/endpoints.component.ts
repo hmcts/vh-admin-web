@@ -63,7 +63,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
 
     saveEndpoints(): void {
-        this.upsertEndpointsToBooking;
+        this.upsertEndpointsToBooking();
         let canEditOtherInformation = true;
         const booking = this.videoHearingService.getCurrentRequest();
         if (booking.isMultiDay && this.multiDayBookingEnhancementsEnabled) {
