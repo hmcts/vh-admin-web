@@ -18,6 +18,21 @@
         (endpointUpdated)="onEndpointUpdated($event)"
       ></app-video-endpoint-form>
     </div>
+
+    <div class="govuk-button-group">
+      <button id="nextButton" type="button" class="govuk-button" data-module="govuk-button" (click)="saveEndpoints()">
+        {{ buttonAction }}
+      </button>
+      <button
+        id="cancelButton"
+        type="button"
+        class="govuk-button govuk-button--secondary"
+        data-module="govuk-button"
+        (click)="cancelBooking()"
+      >
+        Cancel
+      </button>
+    </div>
   </div>
   <!-- Current endpoint list column (column)-->
   <div class="govuk-grid-column-one-half keep-right">
@@ -30,14 +45,6 @@
   </div>
 </div>
 
-<div class="govuk-button-group">
-  <button id="nextButton" type="button" class="govuk-button" data-module="govuk-button" (click)="saveEndpoints()">
-    {{ buttonAction }}
-  </button>
-  <button id="cancelButton" type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" (click)="cancelBooking()">
-    Cancel
-  </button>
-</div>
 <div *ngIf="attemptingCancellation">
   <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelEndpoints($event)"> </app-cancel-popup>
 </div>
