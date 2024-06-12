@@ -33,5 +33,4 @@ describe('LaunchDarklyService', () => {
 
         expect(ldClientSpy.close).toHaveBeenCalled();
     });
-
 });

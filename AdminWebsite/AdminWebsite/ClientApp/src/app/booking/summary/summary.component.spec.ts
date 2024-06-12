@@ -681,7 +681,6 @@ describe('SummaryComponent  with invalid request', () => {
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
-
 });
 
 describe('SummaryComponent  with existing request', () => {

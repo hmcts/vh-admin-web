@@ -58,5 +58,4 @@ describe('LastMinuteAmendmentsGuard', () => {
             expect(router.navigate).toHaveBeenCalledTimes(1);
         });
     });
-
 });

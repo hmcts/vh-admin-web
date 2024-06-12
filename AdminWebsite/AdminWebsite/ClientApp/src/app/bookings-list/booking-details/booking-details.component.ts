@@ -364,8 +364,6 @@ CY: ${this.conferencePhoneNumberWelsh} (ID: ${this.telephoneConferenceId})`;
     }
 
     isMultiDayUpdateAvailable(): boolean {
-        return (
-            this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing
-        );
+        return this.hearing.isMultiDay && this.multiDayBookingEnhancementsEnabled && !this.hearing.isLastDayOfMultiDayHearing;
     }
 }

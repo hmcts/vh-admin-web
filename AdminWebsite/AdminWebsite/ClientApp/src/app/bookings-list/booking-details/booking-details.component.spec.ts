@@ -641,7 +641,6 @@ CY: 54321 (ID: 7777)`);
             discardPeriodicTasks();
         }));
 
-
         it('should return false when last day of multi day hearing', fakeAsync(() => {
             component.ngOnInit();
             tick(1000);

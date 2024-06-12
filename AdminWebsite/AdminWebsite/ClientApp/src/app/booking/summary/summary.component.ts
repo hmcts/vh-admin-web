@@ -89,7 +89,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
-
     }
 
     ngOnInit() {

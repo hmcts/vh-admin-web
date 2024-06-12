@@ -470,5 +470,4 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     selectedVenueEmitter($event: number[]) {
         this.bookingPersistService.selectedVenueIds = $event;
     }
-
 }

@@ -258,11 +258,12 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
 ]);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let searchServiceSpy: jasmine.SpyObj<SearchService>;
-let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
-launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+const launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService> = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', [
+    'getFlag'
+]);
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 let participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',

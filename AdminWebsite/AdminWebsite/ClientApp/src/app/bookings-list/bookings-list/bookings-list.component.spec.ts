@@ -1212,6 +1212,5 @@ describe('BookingsListComponent', () => {
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
         });
-
     });
 });

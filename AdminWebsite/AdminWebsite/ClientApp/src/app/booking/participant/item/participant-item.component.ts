@@ -35,8 +35,7 @@ export class ParticipantItemComponent implements OnInit {
         private logger: Logger,
         private router: Router,
         private videoHearingsService: VideoHearingsService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.showParticipantActions = this.router.url.includes(PageUrls.AddParticipants) || this.router.url.includes(PageUrls.Summary);
