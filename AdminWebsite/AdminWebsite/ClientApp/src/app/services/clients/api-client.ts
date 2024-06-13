@@ -39,7 +39,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get the audio recording for a given hearing.
      * @param hearingId The hearing id.
-     * @return Success
+     * @return OK
      */
     getAudioRecordingLink(hearingId: string): Observable<HearingAudioRecordingResponse> {
         let url_ = this.baseUrl + '/api/audio/{hearingId}';
@@ -100,7 +100,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -138,7 +138,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getCvpAudioRecordingsAll(cloudroom: string, date: string, caseReference: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/all/{cloudroom}/{date}/{caseReference}';
@@ -203,7 +203,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -232,7 +232,7 @@ export class BHClient extends ApiClientBase {
         } else if (status === 504) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap((_responseText: string) => {
-                    return throwException('Server Error', status, _responseText, _headers);
+                    return throwException('Gateway Timeout', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
@@ -252,7 +252,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getCvpAudioRecordingsByCloudRoom(cloudroom: string, date: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/cloudroom/{cloudroom}/{date}';
@@ -315,7 +315,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -344,7 +344,7 @@ export class BHClient extends ApiClientBase {
         } else if (status === 504) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap((_responseText: string) => {
-                    return throwException('Server Error', status, _responseText, _headers);
+                    return throwException('Gateway Timeout', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
@@ -364,7 +364,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getCvpAudioRecordingsByDate(date: string, caseReference: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/date/{date}/{caseReference}';
@@ -427,7 +427,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -456,7 +456,7 @@ export class BHClient extends ApiClientBase {
         } else if (status === 504) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap((_responseText: string) => {
-                    return throwException('Server Error', status, _responseText, _headers);
+                    return throwException('Gateway Timeout', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
@@ -478,7 +478,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     bookingsList(body: BookingSearchRequest | undefined): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings/bookingsList';
@@ -541,7 +541,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -589,7 +589,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get the configuration settings for client
-     * @return Success
+     * @return OK
      */
     getConfigSettings(): Observable<ClientSettingsResponse> {
         let url_ = this.baseUrl + '/api/config';
@@ -648,7 +648,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -677,7 +677,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getHearingRoles(): Observable<HearingRoleResponse[]> {
         let url_ = this.baseUrl + '/api/hearingroles';
@@ -736,7 +736,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -835,7 +835,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 201) {
@@ -934,7 +934,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 204) {
@@ -1045,7 +1045,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 204) {
@@ -1083,7 +1083,7 @@ export class BHClient extends ApiClientBase {
      * Edit a hearing
      * @param hearingId The id of the hearing to update
      * @param body (optional) Hearing Request object for edit operation
-     * @return Success
+     * @return OK
      */
     editHearing(hearingId: string, body: EditHearingRequest | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}';
@@ -1148,7 +1148,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1203,7 +1203,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Gets bookings hearing by Id.
      * @param hearingId The unique sequential value of hearing ID.
-     * @return Success
+     * @return OK
      */
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}';
@@ -1264,7 +1264,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1314,7 +1314,7 @@ export class BHClient extends ApiClientBase {
      * Edit a multi-day hearing
      * @param hearingId The id of the hearing
      * @param body (optional) Hearing Request object for edit operation
-     * @return Success
+     * @return OK
      */
     editMultiDayHearing(hearingId: string, body: EditMultiDayHearingRequest | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/multi-day';
@@ -1379,7 +1379,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1427,7 +1427,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     cancelMultiDayHearing(hearingId: string, body: CancelMultiDayHearingRequest | undefined): Observable<UpdateBookingStatusResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/multi-day/cancel';
@@ -1492,7 +1492,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1542,7 +1542,7 @@ export class BHClient extends ApiClientBase {
      * Get hearings by case number.
      * @param caseNumber (optional) The case number.
      * @param date (optional) The date to filter by
-     * @return Success
+     * @return OK
      */
     searchForAudioRecordedHearings(
         caseNumber: string | undefined,
@@ -1608,7 +1608,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1653,7 +1653,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get the conference status.
      * @param hearingId The hearing id
-     * @return Success
+     * @return OK
      */
     getHearingConferenceStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/conference-status';
@@ -1714,7 +1714,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1764,7 +1764,7 @@ export class BHClient extends ApiClientBase {
      * Cancel the booking
      * @param hearingId The hearing id
      * @param reason (optional) The reason the hearing has been cancelled
-     * @return Success
+     * @return OK
      */
     cancelBooking(hearingId: string, reason: string | undefined): Observable<UpdateBookingStatusResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/cancel?';
@@ -1827,7 +1827,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1876,7 +1876,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Update the failed hearing status.
      * @param hearingId The hearing id
-     * @return Success
+     * @return OK
      */
     updateFailedBookingStatus(hearingId: string): Observable<UpdateBookingStatusResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/failed-status';
@@ -1937,7 +1937,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -1986,7 +1986,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Gets for confirmed booking the telephone conference Id by hearing Id.
      * @param hearingId The unique sequential value of hearing ID.
-     * @return Success
+     * @return OK
      */
     getTelephoneConferenceIdById(hearingId: string): Observable<PhoneConferenceResponse> {
         let url_ = this.baseUrl + '/api/hearings/{hearingId}/telephoneConferenceId';
@@ -2047,7 +2047,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2096,7 +2096,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Find judges and court rooms accounts list by email search term.
      * @param body (optional) The email address search term.
-     * @return Success
+     * @return OK
      */
     postJudgesBySearchTerm(body: string | undefined): Observable<JudgeResponse[]> {
         let url_ = this.baseUrl + '/api/judiciary/judges';
@@ -2159,7 +2159,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2204,7 +2204,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Find judiciary person list by email search term.
      * @param body (optional) The email address search term.
-     * @return Success
+     * @return OK
      */
     searchForJudiciaryPerson(body: string | undefined): Observable<JudiciaryPerson[]> {
         let url_ = this.baseUrl + '/api/judiciary/search';
@@ -2267,7 +2267,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2375,7 +2375,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 201) {
@@ -2424,7 +2424,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     editJusticeUser(body: EditJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
         let url_ = this.baseUrl + '/api/justice-users';
@@ -2487,7 +2487,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2598,7 +2598,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 204) {
@@ -2648,7 +2648,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     restoreJusticeUser(body: RestoreJusticeUserRequest | undefined): Observable<JusticeUserResponse> {
         let url_ = this.baseUrl + '/api/justice-users/restore';
@@ -2711,7 +2711,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2761,7 +2761,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Find person list by email search term.
      * @param body (optional) The email address search term.
-     * @return Success
+     * @return OK
      */
     postPersonBySearchTerm(body: string | undefined): Observable<PersonResponse[]> {
         let url_ = this.baseUrl + '/api/persons';
@@ -2824,7 +2824,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2869,7 +2869,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Search for non judge persons by contact email
      * @param contactEmail (optional)
-     * @return Success
+     * @return OK
      */
     getPersonForUpdateByContactEmail(contactEmail: string | undefined): Observable<PersonResponse> {
         let url_ = this.baseUrl + '/api/persons?';
@@ -2930,7 +2930,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -2970,7 +2970,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get all hearings for a person by username
      * @param username (optional)
-     * @return Success
+     * @return OK
      */
     getHearingsByUsernameForDeletion(username: string | undefined): Observable<HearingsByUsernameForDeletionResponse[]> {
         let url_ = this.baseUrl + '/api/persons/username/hearings?';
@@ -3031,7 +3031,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3135,7 +3135,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 204) {
@@ -3237,7 +3237,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 202) {
@@ -3283,7 +3283,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Gets a list hearing types
      * @param includeDeleted (optional)
-     * @return Success
+     * @return OK
      */
     getHearingTypes(includeDeleted: boolean | undefined): Observable<HearingTypeResponse[]> {
         let url_ = this.baseUrl + '/api/reference/types?';
@@ -3344,7 +3344,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3389,7 +3389,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get available participant roles
      * @param caseTypeParameter (optional)
-     * @return Success
+     * @return OK
      */
     getParticipantRoles(caseTypeParameter: string | undefined): Observable<CaseAndHearingRolesResponse[]> {
         let url_ = this.baseUrl + '/api/reference/participantroles?';
@@ -3450,7 +3450,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3494,7 +3494,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get available courts
-     * @return Success
+     * @return OK
      */
     getCourts(): Observable<HearingVenueResponse[]> {
         let url_ = this.baseUrl + '/api/reference/courts';
@@ -3553,7 +3553,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3597,7 +3597,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * Get upcoming public holidays in England and Wales
-     * @return Success
+     * @return OK
      */
     publicHolidays(): Observable<PublicHolidayResponse[]> {
         let url_ = this.baseUrl + '/api/reference/public-holidays';
@@ -3656,7 +3656,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3699,9 +3699,103 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
+     * Get available languages for interpreters
+     * @return OK
+     */
+    getAvailableLanguages(): Observable<AvailableLanguageResponse[]> {
+        let url_ = this.baseUrl + '/api/reference/available-languages';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetAvailableLanguages(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetAvailableLanguages(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<AvailableLanguageResponse[]>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<AvailableLanguageResponse[]>;
+                })
+            );
+    }
+
+    protected processGetAvailableLanguages(response: HttpResponseBase): Observable<AvailableLanguageResponse[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    if (Array.isArray(resultData200)) {
+                        result200 = [] as any;
+                        for (let item of resultData200) result200!.push(AvailableLanguageResponse.fromJS(item));
+                    } else {
+                        result200 = <any>null;
+                    }
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Search Judges by email
      * @param term (optional)
-     * @return Success
+     * @return OK
      */
     searchJudgesByEmail(term: string | undefined): Observable<JudgeResponse[]> {
         let url_ = this.baseUrl + '/api/accounts/judges/search/email?';
@@ -3762,7 +3856,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3804,7 +3898,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Updates the users AAD password.
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     resetPassword(body: string | undefined): Observable<void> {
         let url_ = this.baseUrl + '/api/accounts/resetpassword';
@@ -3866,7 +3960,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -3904,7 +3998,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getUserProfile(): Observable<UserProfileResponse> {
         let url_ = this.baseUrl + '/api/user';
@@ -3963,7 +4057,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4004,7 +4098,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get list of Justice User filtered by term. If term is null then no filter applied.
      * @param term (optional) term to filter result
-     * @return Success
+     * @return OK
      */
     getUserList(term: string | undefined): Observable<JusticeUserResponse[]> {
         let url_ = this.baseUrl + '/api/user/list?';
@@ -4065,7 +4159,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4099,7 +4193,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     getUnallocatedHearings(): Observable<UnallocatedHearingsForVhoResponse> {
         let url_ = this.baseUrl + '/api/work-allocation/unallocated';
@@ -4158,7 +4252,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4193,7 +4287,7 @@ export class BHClient extends ApiClientBase {
      * @param caseType (optional)
      * @param caseNumber (optional)
      * @param isUnallocated (optional)
-     * @return Success
+     * @return OK
      */
     getAllocationHearings(
         fromDate: Date | undefined,
@@ -4279,7 +4373,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4315,7 +4409,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Update the hearing status.
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     allocateHearingsToCso(body: UpdateHearingAllocationToCsoRequest | undefined): Observable<AllocationHearingsResponse[]> {
         let url_ = this.baseUrl + '/api/work-allocation/allocations';
@@ -4378,7 +4472,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4424,7 +4518,7 @@ export class BHClient extends ApiClientBase {
     /**
      * Get allocation for hearing Id
      * @param hearingId (optional) Guid
-     * @return Success
+     * @return OK
      */
     getAllocationForHearing(hearingId: string | undefined): Observable<AllocatedCsoResponse> {
         let url_ = this.baseUrl + '/api/work-allocation/allocations/cso?';
@@ -4485,7 +4579,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4524,7 +4618,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     uploadWorkHours(body: UploadWorkHoursRequest[] | undefined): Observable<UploadWorkHoursResponse> {
         let url_ = this.baseUrl + '/api/workhours/UploadWorkHours';
@@ -4587,7 +4681,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4617,7 +4711,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return OK
      */
     uploadNonWorkingHours(body: UploadNonWorkingHoursRequest[] | undefined): Observable<UploadNonWorkingHoursResponse> {
         let url_ = this.baseUrl + '/api/workhours/UploadNonWorkingHours';
@@ -4680,7 +4774,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4710,7 +4804,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param vho (optional)
-     * @return Success
+     * @return OK
      */
     getWorkAvailabilityHours(vho: string | undefined): Observable<VhoWorkHoursResponse[]> {
         let url_ = this.baseUrl + '/api/workhours/VHO?';
@@ -4771,7 +4865,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4818,7 +4912,7 @@ export class BHClient extends ApiClientBase {
 
     /**
      * @param vho (optional)
-     * @return Success
+     * @return OK
      */
     getNonAvailabilityWorkHours(vho: string | undefined): Observable<VhoNonAvailabilityWorkHoursResponse[]> {
         let url_ = this.baseUrl + '/api/workhours/NonAvailability/VHO?';
@@ -4879,7 +4973,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -4991,7 +5085,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 204) {
@@ -5017,7 +5111,7 @@ export class BHClient extends ApiClientBase {
     }
 
     /**
-     * @return Success
+     * @return OK
      */
     deleteNonAvailabilityWorkHours(username: string, nonAvailabilityId: number): Observable<void> {
         let url_ = this.baseUrl + '/api/workhours/NonAvailability/{username}/{nonAvailabilityId}';
@@ -5079,7 +5173,7 @@ export class BHClient extends ApiClientBase {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = UnexpectedErrorResponse.fromJS(resultData500);
-                    return throwException('Server Error', status, _responseText, _headers, result500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
                 })
             );
         } else if (status === 200) {
@@ -5124,6 +5218,11 @@ export enum BookingStatus {
     Failed = 'Failed',
     BookedWithoutJudge = 'BookedWithoutJudge',
     ConfirmedWithoutJudge = 'ConfirmedWithoutJudge'
+}
+
+export enum InterprepretationType {
+    Sign = 'Sign',
+    Verbal = 'Verbal'
 }
 
 export enum JudgeAccountType {
@@ -5392,7 +5491,7 @@ export interface IBookingDetailsRequest {
 
 export class BookingSearchRequest implements IBookingSearchRequest {
     cursor?: string | undefined;
-    limit?: number;
+    limit!: number;
     caseNumber?: string | undefined;
     venueIds?: number[] | undefined;
     caseTypes?: string[] | undefined;
@@ -5400,8 +5499,8 @@ export class BookingSearchRequest implements IBookingSearchRequest {
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
-    noJudge?: boolean;
-    noAllocated?: boolean;
+    noJudge!: boolean;
+    noAllocated!: boolean;
 
     constructor(data?: IBookingSearchRequest) {
         if (data) {
@@ -5471,7 +5570,7 @@ export class BookingSearchRequest implements IBookingSearchRequest {
 
 export interface IBookingSearchRequest {
     cursor?: string | undefined;
-    limit?: number;
+    limit: number;
     caseNumber?: string | undefined;
     venueIds?: number[] | undefined;
     caseTypes?: string[] | undefined;
@@ -5479,8 +5578,8 @@ export interface IBookingSearchRequest {
     startDate?: Date | undefined;
     endDate?: Date | undefined;
     lastName?: string | undefined;
-    noJudge?: boolean;
-    noAllocated?: boolean;
+    noJudge: boolean;
+    noAllocated: boolean;
 }
 
 export class CancelMultiDayHearingRequest implements ICancelMultiDayHearingRequest {
@@ -6078,6 +6177,55 @@ export interface IAllocationHearingsResponse {
     has_non_availability_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
+}
+
+/** Defines an available language supported for interpretation */
+export class AvailableLanguageResponse implements IAvailableLanguageResponse {
+    /** The short code for the language */
+    code?: string | undefined;
+    /** The plain text description of the language */
+    description?: string | undefined;
+    type?: InterprepretationType;
+
+    constructor(data?: IAvailableLanguageResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data['code'];
+            this.description = _data['description'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): AvailableLanguageResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AvailableLanguageResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['code'] = this.code;
+        data['description'] = this.description;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+/** Defines an available language supported for interpretation */
+export interface IAvailableLanguageResponse {
+    /** The short code for the language */
+    code?: string | undefined;
+    /** The plain text description of the language */
+    description?: string | undefined;
+    type?: InterprepretationType;
 }
 
 export class AzureConfiguration implements IAzureConfiguration {
