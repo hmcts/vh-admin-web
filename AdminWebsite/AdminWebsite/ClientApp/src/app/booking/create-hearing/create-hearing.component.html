@@ -23,9 +23,6 @@
       <li *ngIf="caseType.invalid">
         <a (click)="goToDiv('caseType-error')">Please enter a case type</a>
       </li>
-      <li *ngIf="hearingType.invalid">
-        <a (click)="goToDiv('hearingType-error')">Please enter a hearing type</a>
-      </li>
     </ul>
   </div>
 </div>
@@ -87,28 +84,6 @@
     />
     <div *ngIf="caseTypeInvalid" class="alert alert-danger">
       <span id="caseType-error" class="govuk-error-message"> Please select a case type </span>
-    </div>
-  </div>
-
-  <div *ngIf="!refDataEnabled" [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
-    <!--suppress XmlDuplicatedId -->
-    <select *ngIf="!this.editMode" class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
-      <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
-        {{ availableHearingType.name }}
-      </option>
-    </select>
-    <!--suppress XmlDuplicatedId -->
-    <input
-      *ngIf="this.editMode"
-      id="hearingType"
-      class="govuk-input govuk-!-width-one-half"
-      type="text"
-      formControlName="hearingType"
-      [value]="this.hearing.hearing_type_name"
-    />
-    <div *ngIf="hearingTypeInvalid" class="alert alert-danger">
-      <span id="hearingType-error" class="govuk-error-message"> Please select a hearing type </span>
     </div>
   </div>
 

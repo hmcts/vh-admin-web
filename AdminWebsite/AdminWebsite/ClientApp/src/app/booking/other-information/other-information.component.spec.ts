@@ -29,7 +29,6 @@ function initHearingRequest(): HearingModel {
     const today = new Date();
     today.setHours(14, 30);
 
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_date_time = today;
     newHearing.scheduled_duration = 0;

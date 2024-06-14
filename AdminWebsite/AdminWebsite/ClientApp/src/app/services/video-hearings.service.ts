@@ -127,8 +127,7 @@ export class VideoHearingsService {
             localRequest.scheduled_date_time &&
             localRequest.scheduled_duration > 0 &&
             localRequest.participants.length > 1 &&
-            localRequest.hearing_venue_id > 0 &&
-            localRequest.hearing_type_id > 0
+            localRequest.hearing_venue_id > 0
         );
     }
 
@@ -323,8 +322,6 @@ export class VideoHearingsService {
         newHearingRequest.cases = this.mapCases(newRequest);
         newHearingRequest.case_type_name = newRequest.case_type;
         newHearingRequest.case_type_service_id = newRequest.case_type_service_id;
-        newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
-        newHearingRequest.hearing_type_code = newRequest.hearing_type_code;
         newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
         newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
         newHearingRequest.hearing_venue_name = newRequest.court_name;
@@ -344,8 +341,6 @@ export class VideoHearingsService {
         const hearing = new HearingModel();
         hearing.hearing_id = response.id;
         hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
-        hearing.hearing_type_name = response.hearing_type_name;
-        hearing.hearing_type_code = response.hearing_type_code;
         hearing.case_type = response.case_type_name;
         hearing.scheduled_date_time = new Date(response.scheduled_date_time);
         hearing.scheduled_duration = response.scheduled_duration;

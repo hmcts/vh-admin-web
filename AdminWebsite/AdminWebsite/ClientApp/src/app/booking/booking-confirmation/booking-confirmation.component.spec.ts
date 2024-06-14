@@ -6,7 +6,7 @@ import { CaseModel } from 'src/app/common/model/case.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { LongDatetimePipe } from '../../shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
 import { BookingConfirmationComponent } from './booking-confirmation.component';
 import { BookingStatus, HearingDetailsResponse } from 'src/app/services/clients/api-client';
@@ -65,7 +65,6 @@ function initHearingRequest(): HearingModel {
     const today = new Date();
     today.setHours(14, 30);
 
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_date_time = today;
     newHearing.scheduled_duration = 0;
@@ -85,7 +84,6 @@ describe('BookingConfirmationComponent', () => {
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
         routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'getHearingById',

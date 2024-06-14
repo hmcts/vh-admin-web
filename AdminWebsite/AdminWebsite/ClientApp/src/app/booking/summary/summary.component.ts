@@ -212,7 +212,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     private retrieveHearingSummary() {
         this.caseNumber = this.hearing.cases.length > 0 ? this.hearing.cases[0].number : '';
         this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
-        this.caseHearingType = this.hearing.hearing_type_name;
         this.hearingDate = this.hearing.scheduled_date_time;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);

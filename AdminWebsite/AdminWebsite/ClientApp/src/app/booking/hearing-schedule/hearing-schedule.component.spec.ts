@@ -30,7 +30,6 @@ function initExistingHearingRequest(): HearingModel {
     today.setHours(10, 30);
 
     const existingRequest = new HearingModel();
-    existingRequest.hearing_type_id = 2;
     existingRequest.hearing_venue_id = 1;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
@@ -85,7 +84,6 @@ describe('HearingScheduleComponent first visit', () => {
         referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
@@ -415,7 +413,6 @@ describe('HearingScheduleComponent returning to page', () => {
         referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
@@ -542,8 +539,6 @@ describe('HearingScheduleComponent returning to page', () => {
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(courts));
         const existingHearingRequest = { ...existingRequest };
         existingHearingRequest.hearing_id = '123455555900';
-        existingHearingRequest.hearing_type_name = 'HearingTypeName';
-        existingHearingRequest.hearing_type_code = null;
         existingHearingRequest.court_name = selectedCourt.name;
         existingHearingRequest.court_id = selectedCourt.id;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingHearingRequest);
@@ -582,7 +577,6 @@ describe('HearingScheduleComponent multi days hearing', () => {
         referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',

@@ -199,7 +199,6 @@ const constants = Constants;
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     newHearing.participants = participants;
@@ -212,7 +211,6 @@ function initExistHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
     newHearing.hearing_id = '12345';
-    newHearing.hearing_type_id = 1;
     newHearing.hearing_venue_id = 1;
     newHearing.scheduled_duration = 20;
     newHearing.participants = participants;

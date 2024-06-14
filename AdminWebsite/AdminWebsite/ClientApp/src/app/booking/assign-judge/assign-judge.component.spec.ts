@@ -57,7 +57,6 @@ function initHearingRequest(): HearingModel {
     newHearing.cases = [];
     newHearing.participants = participants;
 
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_date_time = null;
     newHearing.scheduled_duration = 0;
@@ -90,7 +89,6 @@ describe('AssignJudgeComponent', () => {
             'validateEmail'
         ]);
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
             'getCurrentRequest',
             'updateHearingRequest',
             'cancelRequest',
