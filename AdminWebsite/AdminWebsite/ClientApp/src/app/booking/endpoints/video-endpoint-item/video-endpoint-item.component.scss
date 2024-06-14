@@ -1,0 +1,43 @@
+.container {
+  padding: 1em 0;
+
+  .endpoint-row {
+    display: flex;
+    align-items: center;
+
+    > div {
+      padding-left: 15px;
+      flex: 1 auto;
+    }
+
+    > div:first-child {
+      flex: 0 auto;
+    }
+
+    > div:last-child {
+      padding-right: 15px;
+    }
+
+    .linked-rep-display-name,
+    .linked-intermediary {
+      margin-left: 40px;
+    }
+
+    justify-content: space-between;
+
+    &__name {
+      font-weight: bold;
+    }
+
+    &__actions {
+      flex: 0 auto;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
+
+.wrap {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}

@@ -49,6 +49,10 @@ export const Constants = {
             RolesCheckBoxCSOandAdmin: 'User cannot be both a CSO and an Administrator',
             RolesCheckBoxAtLeastOne: 'Please select a role'
         },
+        VideoEndpointForm: {
+            DisplayNameRequired: 'Display name is required',
+            DuplicateDisplayName: 'Display name must be unique'
+        },
         JusticeUserForm: {
             SaveError: 'There was an unexpected error. Please try again later.',
             SaveErrorDuplicateUser: 'A justice user with the same username already exists'

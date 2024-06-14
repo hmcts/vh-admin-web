@@ -1,0 +1,22 @@
+<div *ngIf="displayName" class="govuk-grid-row container">
+  <div class="endpoint-row">
+    <div class="vhtable-header">
+      <div class="endpoint-row__name">{{ displayName }}</div>
+      <div *ngIf="linkedRepresentative"><strong>Defence Advocate:</strong> {{ linkedRepresentative.displayName }}</div>
+    </div>
+
+    <div class="endpoint-row__actions">
+      <a class="vhlink" href="javascript:void(0)" (click)="edit()">Edit</a>
+      <a *ngIf="displayRemoveButton" class="vhlink" href="javascript:void(0)" (click)="delete()">Remove</a>
+      <a
+        *ngIf="!displayRemoveButton"
+        class="vhlink"
+        href="javascript:void(0)"
+        appTooltip
+        [text]="'Cannot remove an endpoint when hearing is about to start'"
+        [colour]="'blue'"
+        >Remove</a
+      >
+    </div>
+  </div>
+</div>

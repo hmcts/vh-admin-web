@@ -1,0 +1,40 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div
+    class="govuk-form-group"
+    [ngClass]="{ 'govuk-form-group--error': form.controls.displayName.touched && form.controls.displayName.invalid }"
+  >
+    <label class="govuk-label" for="displayName">Display name</label>
+    <p
+      *ngIf="
+        form.controls.displayName.touched &&
+        (form.controls.displayName.errors?.required || form.controls.displayName.errors?.blankSpaceValidator)
+      "
+      id="displayName-error"
+      class="govuk-error-message"
+    >
+      <span class="govuk-visually-hidden">Error:</span> {{ errorMessages.VideoEndpointForm.DisplayNameRequired }}
+    </p>
+    <p
+      *ngIf="form.controls.displayName.touched && form.controls.displayName.errors?.displayNameExists"
+      id="displayName-duplicate"
+      class="govuk-error-message"
+    >
+      <span class="govuk-visually-hidden">Error:</span> {{ errorMessages.VideoEndpointForm.DuplicateDisplayName }}
+    </p>
+    <input class="govuk-input" id="displayName" name="eventName" formControlName="displayName" type="text" />
+  </div>
+
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="representative"> Linked Defence Advocate </label>
+    <select class="govuk-select" id="representative" name="representative" formControlName="linkedRepresentative">
+      <option [value]="null">None</option>
+      <option *ngFor="let representative of availableRepresentatives" [value]="representative.email">
+        {{ representative.display_name }}
+      </option>
+    </select>
+  </div>
+
+  <button type="submit" id="confirmEndpointBtn" class="govuk-button" data-module="govuk-button">
+    {{ saveButtonText }}
+  </button>
+</form>
