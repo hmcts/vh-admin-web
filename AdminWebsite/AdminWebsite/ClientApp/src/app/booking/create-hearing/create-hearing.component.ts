@@ -79,7 +79,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
 
         this.selectedCaseType = this.hearing.case_type;
-        return;
+        if (this.hearing.case_type) {
+            this.selectedCaseType = this.hearing.case_type;
+            return;
+        } else {
+            this.selectedCaseType = Constants.PleaseSelect;
+        }
 
         if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
             this.selectedCaseType = this.hearing.case_type;
