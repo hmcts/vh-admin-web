@@ -46,41 +46,4 @@ jobs:
           sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
 
 
-- job: Dock
-  displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-  steps:
-          - checkout: self
 
-          - template: templates\Github\get-app-token.yaml@azTemplates
-            parameters:
-              privateKeyFileName: ${{ variables.gh_app_private_key_file_name }}
-              appId: $(gh_app_app_id)
-
-          - template: templates\Github\bump-chart-versions.yaml@azTemplates
-            parameters:
-              chartName: ${{ variables.chartName }}
-              chartPath: $(Build.SourcesDirectory)
-              chartBranch: $(System.PullRequest.SourceBranch)
-              githubToken: $(githubappinstall.token)
-              githubUsername: $(gh_app_name)
-              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
-
-          - bash: |
-              sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
-            displayName: Add NuGet Feed Authentication
-            workingDirectory: ${{ variables.app_path }}
-
-          - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-
-          - template: templates\Containerisation\docker\docker-push-azure.yaml@azTemplates
-            parameters:
-              azureSubscription: ${{ variables.acrSubscription }}
-              acrName: ${{ variables.acrName }}
-              repositoryName: ${{ variables.repositoryName }}
-              imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
-              imageTags:
-                - "${{ variables.prTagName }}"
