@@ -45,20 +45,10 @@ jobs:
           sonar.issue.ignore.multicriteria.e1.ruleKey=typescript:S6544
           sonar.issue.ignore.multicriteria.e1.resourceKey=**/*.ts
 
-    #####################################################
-  # Build Docker Image. ###############################
-  - stage: Dock
-    displayName: Docker Build & Push Image
-    variables:
-      - template: variables/dev.yaml
-      - template: variables/shared.yaml
-        parameters:
-          env: ${{ variables.env }}
-      - group: vh-github-app-credentials
-    jobs:
-      - job: Dock
-        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
-        steps:
+
+- job: Dock
+  displayName: "Build and Push Image ${{ variables.git_repo_name }}"
+  steps:
           - checkout: self
 
           - template: templates\Github\get-app-token.yaml@azTemplates
