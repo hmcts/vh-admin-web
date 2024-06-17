@@ -12,6 +12,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
+import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
@@ -63,6 +64,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     protected constants = Constants;
 
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
+    @ViewChild(InterpreterFormComponent, { static: false }) interpreterForm: InterpreterFormComponent;
 
     constructor(
         protected bookingService: BookingService,
@@ -244,6 +246,12 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         setTimeout(() => {
             this.form.get('role').setValue(this.participantDetails.hearing_role_name);
             this.roleSelected();
+
+            if (this.participantDetails?.interpretationLanguage) {
+                this.interpreterForm.prepopulateForm(this.participantDetails.interpretationLanguage);
+            } else {
+                this.interpreterForm?.resetForm();
+            }
         }, 500);
     }
 

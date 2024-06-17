@@ -418,15 +418,15 @@ describe('CreateHearingComponent with existing request in session', () => {
     });
     it('should return true if participants have been added', () => {
         component.hearing.participants = [
-            { is_judge: false, is_exist_person: true },
-            { is_judge: true, is_exist_person: true }
+            { is_judge: false, is_exist_person: true, interpretationLanguage: undefined },
+            { is_judge: true, is_exist_person: true, interpretationLanguage: undefined }
         ];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(true);
     });
     it('should return false if participants have not been added', () => {
         component.hearing.participants = [];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
-        component.hearing.participants = [{ is_judge: true, is_exist_person: true }];
+        component.hearing.participants = [{ is_judge: true, is_exist_person: true, interpretationLanguage: undefined }];
         expect(component.isExistingHearingOrParticipantsAdded()).toBe(false);
     });
     it('should return false if hearing is undefined', () => {

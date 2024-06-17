@@ -87,6 +87,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             endpointModel.id = vapDto.id;
             endpointModel.displayName = vapDto.displayName;
             endpointModel.defenceAdvocate = vapDto.defenceAdvocate?.email;
+            endpointModel.interpretationLanguage = vapDto.interpretationLanguage;
             newEndpointsArray.push(endpointModel);
         }
 
@@ -180,7 +181,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                           displayName: defenceAdvocate?.display_name,
                           email: defenceAdvocate?.email
                       }
-                    : null
+                    : null,
+                interpretationLanguage: e.interpretationLanguage
             };
         });
     }

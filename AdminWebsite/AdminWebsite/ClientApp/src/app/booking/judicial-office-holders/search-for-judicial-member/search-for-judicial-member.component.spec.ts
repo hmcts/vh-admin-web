@@ -5,20 +5,32 @@ import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { SearchForJudicialMemberComponent } from './search-for-judicial-member.component';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
+import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
+import { MockComponent } from 'ng-mocks';
 
 describe('SearchForJudicialMemberComponent', () => {
     let component: SearchForJudicialMemberComponent;
     let fixture: ComponentFixture<SearchForJudicialMemberComponent>;
     let judicialServiceSpy: jasmine.SpyObj<JudicialService>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     beforeEach(async () => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+
         judicialServiceSpy = jasmine.createSpyObj('JudicialService', ['getJudicialUsers']);
         judicialServiceSpy.getJudicialUsers.and.returnValue(of([]));
 
         await TestBed.configureTestingModule({
             imports: [ReactiveFormsModule],
-            declarations: [SearchForJudicialMemberComponent],
-            providers: [{ provide: JudicialService, useValue: judicialServiceSpy }]
+            declarations: [SearchForJudicialMemberComponent, FeatureFlagDirective, MockComponent(InterpreterFormComponent)],
+            providers: [
+                { provide: JudicialService, useValue: judicialServiceSpy },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
+            ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(SearchForJudicialMemberComponent);
@@ -134,15 +146,6 @@ describe('SearchForJudicialMemberComponent', () => {
                 personal_code: '1234',
                 work_phone: '1234567890'
             });
-            const expectedJudicialMember = new JudicialMemberDto(
-                judicialMember.first_name,
-                judicialMember.last_name,
-                judicialMember.full_name,
-                judicialMember.email,
-                judicialMember.work_phone,
-                judicialMember.personal_code,
-                judicialMember.is_generic
-            );
             spyOn(component.judicialMemberSelected, 'emit');
 
             component.selectJudicialMember(judicialMember);
@@ -155,49 +158,81 @@ describe('SearchForJudicialMemberComponent', () => {
 
     describe('confirmJudiciaryMemberWithAdditionalContactDetail', () => {
         it('should set judicialMember displayName and emit judicialMemberSelected event with the correct values', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
-            const displayName = 'Test User';
+            const judicialMember = new JudiciaryPerson({
+                email: 'test@test.com',
+                full_name: 'Test User',
+                title: 'Mr',
+                first_name: 'Test',
+                last_name: 'User',
+                personal_code: '1234',
+                work_phone: '1234567890',
+                is_generic: false
+            });
+
+            const expectedJudicialMember = new JudicialMemberDto(
+                judicialMember.first_name,
+                judicialMember.last_name,
+                judicialMember.full_name,
+                judicialMember.email,
+                judicialMember.work_phone,
+                judicialMember.personal_code,
+                judicialMember.is_generic
+            );
+            expectedJudicialMember.displayName = 'Test User';
+            expectedJudicialMember.optionalContactEmail = undefined;
+            expectedJudicialMember.optionalContactNumber = undefined;
+
             spyOn(component.judicialMemberSelected, 'emit');
 
-            component['judicialMember'] = judicialMember;
-            component.form.controls.displayName.setValue(displayName);
-            //(these form fields wont be accessible ordinarily in a non generic judicary account)
-            component.form.controls.optionalContactEmail.setValue(displayName);
-            component.form.controls.optionalContactTelephone.setValue(displayName);
+            component.selectJudicialMember(judicialMember);
             component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
-            expect(component['judicialMember'].displayName).toBe(displayName);
-            expect(component['judicialMember'].optionalContactEmail).not.toBe(displayName);
-            expect(component['judicialMember'].optionalContactNumber).not.toBe(displayName);
-            expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(judicialMember);
+            expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(expectedJudicialMember);
             expect(component.form.value.judiciaryEmail).toBe('');
             expect(component.form.value.displayName).toBe('');
-            expect(component.form.value.optionalContactTelephone).toBe('');
-            expect(component.form.value.optionalContactEmail).toBe('');
+            expect(component.form.value.optionalContactTelephone).toBeNull();
+            expect(component.form.value.optionalContactEmail).toBeNull();
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
         });
 
         it('should set judicialMember displayName, and optional values and emit judicialMemberSelected event with the correct values, when generic', () => {
-            const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', true);
-            judicialMember.optionalContactEmail = 'test@email.com';
-            judicialMember.optionalContactNumber = '1234';
-            const displayName = 'Test User';
-            spyOn(component.judicialMemberSelected, 'emit');
+            const judicialMember = new JudiciaryPerson({
+                email: 'test@test.com',
+                full_name: 'Test User',
+                title: 'Mr',
+                first_name: 'Test',
+                last_name: 'User',
+                personal_code: '1234',
+                work_phone: '1234567890',
+                is_generic: true
+            });
 
-            component['judicialMember'] = judicialMember;
-            component.form.controls.optionalContactEmail.setValue('test@email.com');
-            component.form.controls.optionalContactTelephone.setValue('1234');
-            component.form.controls.displayName.setValue(displayName);
+            const expectedJudicialMember = new JudicialMemberDto(
+                judicialMember.first_name,
+                judicialMember.last_name,
+                judicialMember.full_name,
+                judicialMember.email,
+                judicialMember.work_phone,
+                judicialMember.personal_code,
+                judicialMember.is_generic
+            );
+            expectedJudicialMember.displayName = 'Test User';
+            expectedJudicialMember.optionalContactEmail = 'test@email.com';
+            expectedJudicialMember.optionalContactNumber = '1234';
+
+            spyOn(component.judicialMemberSelected, 'emit');
+            component.selectJudicialMember(judicialMember);
+
+            component.form.controls.optionalContactEmail.setValue(expectedJudicialMember.optionalContactEmail);
+            component.form.controls.optionalContactTelephone.setValue(expectedJudicialMember.optionalContactNumber);
+
             component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
-            expect(component['judicialMember'].displayName).toBe(displayName);
-            expect(component['judicialMember'].optionalContactEmail).toBe('test@email.com');
-            expect(component['judicialMember'].optionalContactNumber).toBe('1234');
-            expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(judicialMember);
+            expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(expectedJudicialMember);
             expect(component.form.value.judiciaryEmail).toBe('');
             expect(component.form.value.displayName).toBe('');
-            expect(component.form.value.optionalContactTelephone).toBe('');
-            expect(component.form.value.optionalContactEmail).toBe('');
+            expect(component.form.value.optionalContactTelephone).toBeNull();
+            expect(component.form.value.optionalContactEmail).toBeNull();
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
         });
     });
@@ -229,8 +264,8 @@ describe('SearchForJudicialMemberComponent', () => {
             expect(component.form.reset).toHaveBeenCalledWith({
                 judiciaryEmail: '',
                 displayName: '',
-                optionalContactEmail: '',
-                optionalContactTelephone: ''
+                optionalContactEmail: null,
+                optionalContactTelephone: null
             });
         }));
 
@@ -302,6 +337,66 @@ describe('SearchForJudicialMemberComponent', () => {
             component.form.controls.optionalContactTelephone.setValue('012345');
             fixture.detectChanges();
             expect(component.displayContactTelephoneError).toBeFalse();
+        });
+    });
+
+    describe('with interpreter enhancements', () => {
+        beforeEach(() => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(true));
+            fixture = TestBed.createComponent(SearchForJudicialMemberComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('should show interpreter form when interpreter flag is enabled', () => {
+            expect(component.interpreterForm).toBeDefined();
+        });
+
+        it('should set the interpreterSelection when onInterpreterLanguageSelected is called', () => {
+            const interpreterSelection: InterpreterSelectedDto = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+            component.onInterpreterLanguageSelected(interpreterSelection);
+            expect(component.interpreterSelection).toEqual(interpreterSelection);
+        });
+
+        it('should reset interpreterSelection when no interpreter is required', () => {
+            component.interpreterSelection = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+
+            const newSelection: InterpreterSelectedDto = {
+                interpreterRequired: false,
+                signLanguageCode: undefined,
+                spokenLanguageCode: undefined
+            };
+
+            component.onInterpreterLanguageSelected(newSelection);
+            expect(component.interpreterSelection).toBeNull();
+        });
+
+        describe('existingJudicialMember provided', () => {
+            beforeEach(() => {
+                fixture = TestBed.createComponent(SearchForJudicialMemberComponent);
+                component = fixture.componentInstance;
+
+                const judicialMember = new JudicialMemberDto('Test', 'User', 'Test User', 'test@test.com', '1234567890', '1234', false);
+                judicialMember.displayName = 'Test User display name';
+                judicialMember.roleCode = 'Judge';
+                component.existingJudicialMember = judicialMember;
+
+                fixture.detectChanges();
+            });
+
+            it('should prepopulate interpreter form when existingJudicialMember is set', () => {
+                const spy = spyOn(component.interpreterForm, 'prepopulateForm');
+                component.ngAfterViewInit();
+                expect(spy).toHaveBeenCalled();
+            });
         });
     });
 });

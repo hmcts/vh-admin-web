@@ -31,6 +31,10 @@
       <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
     </div>
   </div>
+
+  <ng-container *appFeatureFlag="featureFlags.interpreterEnhancements">
+    <app-interpreter-form #interpreterForm (interpreterLanguageSelected)="onInterpreterLanguageSelected($event)"></app-interpreter-form>
+  </ng-container>
   <button
     *ngIf="judicialMember && form.valid"
     id="confirmJudiciaryMemberBtn"

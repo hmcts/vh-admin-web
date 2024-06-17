@@ -76,12 +76,19 @@ describe('ParticipantItemComponent', () => {
 
     it('should edit participant details', () => {
         component.isSummaryPage = true;
-        component.participant = { representee: 'rep', is_judge: false, is_exist_person: false, isJudiciaryMember: false };
+        component.participant = {
+            representee: 'rep',
+            is_judge: false,
+            is_exist_person: false,
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
+        };
         const pat: ParticipantModel = {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
         };
         component.editParticipant(pat);
         fixture.detectChanges();
@@ -92,8 +99,20 @@ describe('ParticipantItemComponent', () => {
 
     it('should edit judicial office holder details', () => {
         component.isSummaryPage = true;
-        component.participant = { representee: 'rep', is_judge: true, is_exist_person: false, isJudiciaryMember: true };
-        const pat: ParticipantModel = { email: 'email@hmcts.net', is_exist_person: false, is_judge: true, isJudiciaryMember: true };
+        component.participant = {
+            representee: 'rep',
+            is_judge: true,
+            is_exist_person: false,
+            isJudiciaryMember: true,
+            interpretationLanguage: undefined
+        };
+        const pat: ParticipantModel = {
+            email: 'email@hmcts.net',
+            is_exist_person: false,
+            is_judge: true,
+            isJudiciaryMember: true,
+            interpretationLanguage: undefined
+        };
         component.editParticipant(pat);
         fixture.detectChanges();
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
@@ -107,7 +126,8 @@ describe('ParticipantItemComponent', () => {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
         };
         spyOn(component.edit, 'emit');
         component.editParticipant(pat);
@@ -116,7 +136,13 @@ describe('ParticipantItemComponent', () => {
     });
 
     it('should return true if participant has a representative', () => {
-        component.participant = { representee: 'rep', is_judge: false, is_exist_person: false, isJudiciaryMember: false };
+        component.participant = {
+            representee: 'rep',
+            is_judge: false,
+            is_exist_person: false,
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
+        };
         fixture.detectChanges();
         expect(component.isRepresentative).toBeTruthy();
     });
@@ -144,19 +170,37 @@ describe('ParticipantItemComponent', () => {
     });
 
     it('should return false if participant`s case role is None', () => {
-        component.participant = { case_role_name: 'None', is_judge: true, is_exist_person: false, isJudiciaryMember: false };
+        component.participant = {
+            case_role_name: 'None',
+            is_judge: true,
+            is_exist_person: false,
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
+        };
         fixture.detectChanges();
         expect(component.hasCaseRole).toBeFalsy();
     });
 
     it('should return true if participant is an observer', () => {
-        component.participant = { hearing_role_name: 'Observer', is_judge: true, is_exist_person: false, isJudiciaryMember: false };
+        component.participant = {
+            hearing_role_name: 'Observer',
+            is_judge: true,
+            is_exist_person: false,
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
+        };
         fixture.detectChanges();
         expect(component.isObserverOrPanelMember).toBeTruthy();
     });
 
     it('should return true if participant is a panel member', () => {
-        component.participant = { hearing_role_name: 'Panel Member', is_judge: true, is_exist_person: false, isJudiciaryMember: false };
+        component.participant = {
+            hearing_role_name: 'Panel Member',
+            is_judge: true,
+            is_exist_person: false,
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
+        };
         fixture.detectChanges();
         expect(component.isObserverOrPanelMember).toBeTruthy();
     });
@@ -167,7 +211,8 @@ describe('ParticipantItemComponent', () => {
             case_role_name: 'Judge',
             is_judge: true,
             is_exist_person: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
         };
         fixture.detectChanges();
         expect(component.displayCaseRole).toBeTruthy();
@@ -178,7 +223,8 @@ describe('ParticipantItemComponent', () => {
             case_role_name: 'Judge',
             is_judge: true,
             is_exist_person: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
         };
         const email = component.getJudgeEmail();
         expect(email).toBe('James.Doe@hmcts.net');
@@ -189,14 +235,20 @@ describe('ParticipantItemComponent', () => {
             case_role_name: 'Judge',
             is_judge: true,
             is_exist_person: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: undefined
         };
         const phone = component.getJudgePhone(component.participant);
         expect(phone).toBe('123456789');
     });
 
     it('should return true if participant is an interpreter', () => {
-        component.participant = { hearing_role_name: 'Interpreter', is_judge: true, is_exist_person: false };
+        component.participant = {
+            hearing_role_name: 'Interpreter',
+            is_judge: true,
+            is_exist_person: false,
+            interpretationLanguage: undefined
+        };
         fixture.detectChanges();
         expect(component.isInterpreter).toBeTruthy();
     });

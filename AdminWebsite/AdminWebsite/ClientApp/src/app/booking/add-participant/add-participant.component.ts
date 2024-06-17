@@ -19,6 +19,7 @@ import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/mo
 import { Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
 
 @Component({
     selector: 'app-add-participant',
@@ -27,6 +28,7 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 })
 export class AddParticipantComponent extends AddParticipantBaseDirective implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
     constants = Constants;
+    featureFlags = FeatureFlags;
 
     notFound: boolean;
     titleList: IDropDownModel[] = [];
@@ -50,6 +52,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     interpreteeList: ParticipantModel[] = [];
     showConfirmRemoveInterpretee = false;
+    showInterpreterForm = false;
+    interpreterSelection: InterpreterSelectedDto;
 
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
@@ -67,6 +71,15 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     ) {
         super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
+    }
+
+    private get isInterpreterFormValid() {
+        const includeInterpreter = this.interpreterForm ?? false;
+        let interpreterFormValid = true;
+        if (includeInterpreter) {
+            interpreterFormValid = this.interpreterForm?.form.valid;
+        }
+        return interpreterFormValid;
     }
 
     ngOnInit() {
@@ -192,7 +205,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         const self = this;
         this.$subscriptions.push(
-            this.form.valueChanges.subscribe(() => {
+            this.form.valueChanges.subscribe(changes => {
+                self.showInterpreterForm = changes.role?.toLocaleLowerCase() !== HearingRoles.INTERPRETER.toLocaleLowerCase();
+
                 setTimeout(() => {
                     if (
                         self.showDetails &&
@@ -325,6 +340,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         if (
             this.form.valid &&
+            this.isInterpreterFormValid &&
             this.validEmail() &&
             this.isRoleSelected &&
             this.isPartySelected &&
@@ -403,7 +419,14 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             this.bookingHasParticipants = true;
         } else {
             this.actionsBeforeSave();
-            if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isTitleSelected && !this.errorAlternativeEmail) {
+            if (
+                this.form.valid &&
+                this.isInterpreterFormValid &&
+                this.validEmail() &&
+                this.isRoleSelected &&
+                this.isTitleSelected &&
+                !this.errorAlternativeEmail
+            ) {
                 this.isShowErrorSummary = false;
                 this.hearing.participants.forEach(newParticipant => {
                     if (newParticipant.email === this.selectedParticipantEmail) {
@@ -431,6 +454,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.lastName.markAsTouched();
         this.phone.markAsTouched();
         this.displayName.markAsTouched();
+        this.interpreterForm?.form.markAsDirty();
+        this.interpreterForm?.form.updateValueAndValidity();
     }
 
     confirmRemoveParticipant() {
@@ -493,6 +518,17 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.linked_participants = this.addUpdateLinkedParticipant(newParticipant);
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
         newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
+        if (this.interpreterSelection?.interpreterRequired) {
+            newParticipant.interpretationLanguage = {
+                interpreterRequired: true,
+                signLanguageCode: this.interpreterSelection.signLanguageCode,
+                spokenLanguageCode: this.interpreterSelection.spokenLanguageCode
+            };
+        } else {
+            newParticipant.interpretationLanguage = {
+                interpreterRequired: false
+            };
+        }
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
@@ -632,6 +668,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         if (this.hearing.participants.length > 1) {
             this.displayNext();
         }
+        this.interpreterForm?.form.reset();
     }
 
     /**
@@ -744,10 +781,18 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             is_exist_person: false,
             is_judge: false,
             is_courtroom_account: false,
-            isJudiciaryMember: false
+            isJudiciaryMember: false,
+            interpretationLanguage: null
         };
 
         this.interpreteeList.unshift(interpreteeModel);
+    }
+
+    onInterpreterLanguageSelected($event: InterpreterSelectedDto) {
+        this.interpreterSelection = $event;
+        if (!$event.interpreterRequired) {
+            this.interpreterSelection = null;
+        }
     }
 
     private removeInterpreteeAndInterpreter() {

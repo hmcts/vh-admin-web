@@ -1,17 +1,20 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
 import { debounceTime, tap } from 'rxjs';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
 import { Constants } from '../../../common/constants';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
+import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
+import { FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-search-for-judicial-member',
     templateUrl: './search-for-judicial-member.component.html',
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
-export class SearchForJudicialMemberComponent {
+export class SearchForJudicialMemberComponent implements AfterViewInit {
     readonly NotificationDelayTime = 1200;
     get isSelectedAccountGeneric(): boolean {
         return this.judicialMember?.isGeneric;
@@ -19,6 +22,9 @@ export class SearchForJudicialMemberComponent {
     form: FormGroup<SearchForJudicialMemberForm>;
     searchResult: JudiciaryPerson[] = [];
     showResult = false;
+    judicialMember: JudicialMemberDto;
+    interpreterSelection: InterpreterSelectedDto;
+    featureFlags = FeatureFlags;
 
     @Input() saveButtonText = 'Save';
     @Input() existingJudicialMembers: JudicialMemberDto[] = [];
@@ -28,8 +34,8 @@ export class SearchForJudicialMemberComponent {
                 {
                     judiciaryEmail: judicialMember.email,
                     displayName: judicialMember.displayName,
-                    optionalContactEmail: judicialMember.optionalContactEmail ?? '',
-                    optionalContactTelephone: judicialMember.optionalContactNumber ?? ''
+                    optionalContactEmail: judicialMember.optionalContactEmail ?? null,
+                    optionalContactTelephone: judicialMember.optionalContactNumber ?? null
                 },
                 { emitEvent: false, onlySelf: true }
             );
@@ -44,11 +50,18 @@ export class SearchForJudicialMemberComponent {
 
     @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
-    judicialMember: JudicialMemberDto;
+    @ViewChild('interpreterForm') interpreterForm: InterpreterFormComponent;
+
     private editMode = false;
 
     constructor(private judiciaryService: JudicialService) {
         this.createForm();
+    }
+
+    ngAfterViewInit() {
+        if (this.judicialMember) {
+            this.interpreterForm?.prepopulateForm(this.judicialMember.intepretationLanguage);
+        }
     }
 
     createForm() {
@@ -58,8 +71,8 @@ export class SearchForJudicialMemberComponent {
                 Validators.pattern(Constants.TextInputPatternDisplayName),
                 Validators.maxLength(255)
             ]),
-            optionalContactEmail: new FormControl<string>('', [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
-            optionalContactTelephone: new FormControl<string>('', [Validators.pattern(Constants.PhonePattern), Validators.maxLength(255)])
+            optionalContactEmail: new FormControl<string>(null, [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]),
+            optionalContactTelephone: new FormControl<string>(null, [Validators.pattern(Constants.PhonePattern), Validators.maxLength(255)])
         });
 
         this.form.controls.judiciaryEmail.valueChanges
@@ -76,8 +89,8 @@ export class SearchForJudicialMemberComponent {
                     this.form.reset({
                         judiciaryEmail: '',
                         displayName: '',
-                        optionalContactEmail: '',
-                        optionalContactTelephone: ''
+                        optionalContactEmail: null,
+                        optionalContactTelephone: null
                     });
                 }
 
@@ -107,8 +120,8 @@ export class SearchForJudicialMemberComponent {
             {
                 judiciaryEmail: judicialMember.email,
                 displayName: judicialMember.full_name,
-                optionalContactEmail: '',
-                optionalContactTelephone: ''
+                optionalContactEmail: null,
+                optionalContactTelephone: null
             },
             { emitEvent: false, onlySelf: true }
         );
@@ -125,6 +138,13 @@ export class SearchForJudicialMemberComponent {
     }
 
     confirmJudiciaryMemberWithAdditionalContactDetails() {
+        const includeInterpreter = this.interpreterForm ?? false;
+        this.interpreterForm?.form.markAsDirty();
+        this.interpreterForm?.form.updateValueAndValidity();
+
+        if (!this.form.valid || (includeInterpreter && !this.interpreterForm?.form.valid)) {
+            return;
+        }
         this.judicialMember.displayName = this.form.controls.displayName.value;
         if (this.judicialMember.isGeneric) {
             this.judicialMember.optionalContactNumber = this.form.value.optionalContactTelephone;
@@ -135,9 +155,10 @@ export class SearchForJudicialMemberComponent {
         this.form.reset({
             judiciaryEmail: '',
             displayName: '',
-            optionalContactEmail: '',
-            optionalContactTelephone: ''
+            optionalContactEmail: null,
+            optionalContactTelephone: null
         });
+        this.interpreterForm?.resetForm();
 
         this.form.controls.displayName.removeValidators(Validators.required);
     }
@@ -153,11 +174,21 @@ export class SearchForJudicialMemberComponent {
     get displayContactTelephoneError(): boolean {
         return this.form.controls.optionalContactTelephone.invalid && this.form.controls.optionalContactTelephone.dirty;
     }
+
+    onInterpreterLanguageSelected($event: InterpreterSelectedDto) {
+        this.interpreterSelection = $event;
+        if (!$event.interpreterRequired) {
+            this.interpreterSelection = null;
+            this.judicialMember = { ...this.judicialMember, intepretationLanguage: null };
+        } else {
+            this.judicialMember = { ...this.judicialMember, intepretationLanguage: $event };
+        }
+    }
 }
 
 interface SearchForJudicialMemberForm {
     judiciaryEmail: FormControl<string>;
     displayName: FormControl<string>;
-    optionalContactEmail: FormControl<string>;
-    optionalContactTelephone: FormControl<string>;
+    optionalContactEmail: FormControl<string | null>;
+    optionalContactTelephone: FormControl<string | null>;
 }
