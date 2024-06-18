@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
@@ -14,7 +14,7 @@ import { FeatureFlags } from 'src/app/services/launch-darkly.service';
     templateUrl: './search-for-judicial-member.component.html',
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
-export class SearchForJudicialMemberComponent implements AfterViewInit {
+export class SearchForJudicialMemberComponent implements AfterViewInit, AfterContentChecked {
     readonly NotificationDelayTime = 1200;
     get isSelectedAccountGeneric(): boolean {
         return this.judicialMember?.isGeneric;
@@ -50,12 +50,17 @@ export class SearchForJudicialMemberComponent implements AfterViewInit {
 
     @Output() judicialMemberSelected = new EventEmitter<JudicialMemberDto>();
 
-    @ViewChild('interpreterForm') interpreterForm: InterpreterFormComponent;
+    @ViewChild('interpreterForm', { static: false }) interpreterForm: InterpreterFormComponent;
 
     private editMode = false;
 
-    constructor(private judiciaryService: JudicialService) {
+    constructor(private judiciaryService: JudicialService, private cdr: ChangeDetectorRef) {
         this.createForm();
+    }
+    ngAfterContentChecked(): void {
+        if (this.judicialMember) {
+            this.interpreterForm?.prepopulateForm(this.judicialMember.intepretationLanguage);
+        }
     }
 
     ngAfterViewInit() {

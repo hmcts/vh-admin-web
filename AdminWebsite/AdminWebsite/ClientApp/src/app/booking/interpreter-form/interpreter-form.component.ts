@@ -66,6 +66,9 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
     }
 
     prepopulateForm(interpreterSelected: InterpreterSelectedDto) {
+        if (!interpreterSelected) {
+            return;
+        }
         this.displayForm = interpreterSelected.interpreterRequired;
         this.form.reset({
             signLanguageCode: interpreterSelected.signLanguageCode,
