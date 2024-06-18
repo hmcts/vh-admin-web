@@ -36,13 +36,11 @@ import { AuthConfigModule } from './security/auth-config.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { UnallocatedHearingsComponent } from './dashboard/unallocated-hearings/unallocated-hearings.component';
 import { HomeComponent } from './home/home.component';
-import { WorkAllocationFeatureGuard } from './security/guards/work-allocation-feature.guard';
 import { VhOfficerAdminGuard } from './security/guards/vh-officer-admin.guard';
 import { LastMinuteAmendmentsGuard } from './security/guards/last-minute-amendments.guard';
 import { AdminGuard } from './security/guards/admin.guard';
 import { AuthGuard } from './security/guards/auth.guard';
 import { ReformLoginComponent } from './security/reform-login.component';
-import { AudioSearchGuard } from './security/audio-search.guard';
 import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
 
 export function loadConfig(configService: ConfigService) {
@@ -101,9 +99,7 @@ export function loadConfig(configService: ConfigService) {
         PageTrackerService,
         AppInsightsLogger,
         WindowRef,
-        WorkAllocationFeatureGuard,
-        ManageTeamFeatureGuard,
-        AudioSearchGuard
+        ManageTeamFeatureGuard
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]

@@ -103,15 +103,6 @@ export class AllocateHearingsComponent implements OnInit {
                     ariaLabel: item.first_name
                 }));
             });
-
-        const distinct = (value, index, array) => array.indexOf(value) === index;
-        this.videoHearingService.getHearingTypes(true).subscribe((data: HearingTypeResponse[]) => {
-            this.caseTypesSelectOptions = data
-                .map(item => item.group)
-                .filter(distinct)
-                .sort((a, b) => a.localeCompare(b))
-                .map(group => ({ entityId: group, label: group }));
-        });
     }
 
     searchForHearings(keepExistingMessage: boolean = false) {

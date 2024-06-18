@@ -28,7 +28,6 @@ import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkl
 export class AddParticipantComponent extends AddParticipantBaseDirective implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
     constants = Constants;
 
-    notFound: boolean;
     titleList: IDropDownModel[] = [];
     roleList: string[];
     selectedParticipantEmail: string = null;
@@ -40,12 +39,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     showConfirmationRemoveParticipant = false;
     removerFullName: string;
     localEditMode = false;
-    isExistingHearing: boolean;
-    isAnyParticipants: boolean;
-    existingPerson: boolean;
     bookingHasParticipants: boolean;
     $subscriptions: Subscription[] = [];
-    referenceDataFeatureFlag = false;
     destroyed$ = new Subject<void>();
 
     interpreteeList: ParticipantModel[] = [];
@@ -70,12 +65,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     ngOnInit() {
-        this.launchDarklyService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.referenceDataFeatureFlag = flag;
-            });
         this.checkForExistingRequest();
         this.initialiseForm();
         super.ngOnInit();
@@ -117,27 +106,17 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         setTimeout(() => {
             const self = this;
-            const caseTypeIdentifier = this.referenceDataFeatureFlag ? this.hearing.case_type_service_id : this.hearing.case_type;
+            const caseTypeIdentifier = this.hearing.case_type_service_id;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
 
-            if (this.referenceDataFeatureFlag) {
-                this.videoHearingService
-                    .getHearingRoles()
-                    .then((data: HearingRoleResponse[]) => {
-                        self.setupRolesWithoutCaseRole(data);
-                        self.removePartyValidators();
-                        self.handleRoleSetupForEditMode(self);
-                    })
-                    .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
-            } else {
-                this.videoHearingService
-                    .getParticipantRoles(caseTypeIdentifier)
-                    .then((data: CaseAndHearingRolesResponse[]) => {
-                        self.setupRoles(data);
-                        self.handleRoleSetupForEditMode(self);
-                    })
-                    .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
-            }
+            this.videoHearingService
+                .getHearingRoles()
+                .then((data: HearingRoleResponse[]) => {
+                    self.setupRolesWithoutCaseRole(data);
+                    self.removePartyValidators();
+                    self.handleRoleSetupForEditMode(self);
+                })
+                .catch(error => this.logger.error(`${this.loggerPrefix} Error getting hearing roles.`, error));
         }, 500);
     }
 
@@ -364,10 +343,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 });
                 this.participantDetails = null;
                 this.clearForm();
-                if (this.referenceDataFeatureFlag) {
-                    // Refresh the list in case an interpreter can now be added
-                    this.setupHearingRolesWithoutCaseRole();
-                }
+                // Refresh the list in case an interpreter can now be added
+                this.setupHearingRolesWithoutCaseRole();
                 this.displayNext();
                 this.form.markAsPristine();
                 this.showDetails = false;
@@ -472,13 +449,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.phone = this.phone.value;
         newParticipant.title = this.title.value === this.constants.PleaseSelect ? null : this.title.value;
         newParticipant.case_role_name = this.party.value;
-        if (this.referenceDataFeatureFlag) {
-            newParticipant.case_role_name = null;
-        }
+        newParticipant.case_role_name = null;
         newParticipant.hearing_role_name = this.role.value;
-        if (this.referenceDataFeatureFlag) {
-            newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
-        }
+        newParticipant.hearing_role_code = this.hearingRoles.find(h => h.name === this.role.value)?.code;
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
         newParticipant.display_name = this.displayName.value;
         if (this.isRoleRepresentative(this.role.value, this.party.value)) {
@@ -496,13 +469,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private getUserRoleName(newParticipant: ParticipantModel): string {
-        if (this.referenceDataFeatureFlag) {
-            return this.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
-        } else {
-            return this.caseAndHearingRoles
-                .find(c => c.name === newParticipant.case_role_name)
-                ?.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
-        }
+        return this.hearingRoles.find(h => h.name === newParticipant.hearing_role_name)?.userRole;
     }
 
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {

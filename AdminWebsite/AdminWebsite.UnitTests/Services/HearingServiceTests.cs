@@ -47,8 +47,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>()
                 .Setup(c => c.GetHearingsByGroupIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new List<HearingDetailsResponse> { _hearing });
-            _mocker.Mock<IFeatureToggles>()
-                .Setup(x => x.BookAndConfirmToggle()).Returns(true);
+            
             _service = _mocker.Create<HearingsService>();
             _hearing = InitHearing();
         }
