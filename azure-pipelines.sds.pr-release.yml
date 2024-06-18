@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: fix_upgrade_docker2
+      ref: fix_docker_compose
       endpoint: hmcts
 
 pool:
