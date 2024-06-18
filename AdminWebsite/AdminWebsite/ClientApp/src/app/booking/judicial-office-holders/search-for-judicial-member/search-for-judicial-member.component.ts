@@ -1,4 +1,4 @@
-import { AfterContentChecked, AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JudicialService } from '../../services/judicial.service';
 import { JudiciaryPerson } from 'src/app/services/clients/api-client';
@@ -14,7 +14,7 @@ import { FeatureFlags } from 'src/app/services/launch-darkly.service';
     templateUrl: './search-for-judicial-member.component.html',
     styleUrls: ['./search-for-judicial-member.component.scss']
 })
-export class SearchForJudicialMemberComponent implements AfterViewInit, AfterContentChecked {
+export class SearchForJudicialMemberComponent implements AfterContentChecked {
     readonly NotificationDelayTime = 1200;
     get isSelectedAccountGeneric(): boolean {
         return this.judicialMember?.isGeneric;
@@ -57,15 +57,10 @@ export class SearchForJudicialMemberComponent implements AfterViewInit, AfterCon
     constructor(private judiciaryService: JudicialService, private cdr: ChangeDetectorRef) {
         this.createForm();
     }
+
     ngAfterContentChecked(): void {
         if (this.judicialMember) {
-            this.interpreterForm?.prepopulateForm(this.judicialMember.intepretationLanguage);
-        }
-    }
-
-    ngAfterViewInit() {
-        if (this.judicialMember) {
-            this.interpreterForm?.prepopulateForm(this.judicialMember.intepretationLanguage);
+            this.interpreterForm?.prepopulateForm(this.judicialMember.interpretationLanguage);
         }
     }
 
@@ -157,12 +152,7 @@ export class SearchForJudicialMemberComponent implements AfterViewInit, AfterCon
         }
 
         this.judicialMemberSelected.emit(this.judicialMember);
-        this.form.reset({
-            judiciaryEmail: '',
-            displayName: '',
-            optionalContactEmail: null,
-            optionalContactTelephone: null
-        });
+        this.form.reset();
         this.interpreterForm?.resetForm();
 
         this.form.controls.displayName.removeValidators(Validators.required);
@@ -184,9 +174,9 @@ export class SearchForJudicialMemberComponent implements AfterViewInit, AfterCon
         this.interpreterSelection = $event;
         if (!$event.interpreterRequired) {
             this.interpreterSelection = null;
-            this.judicialMember = { ...this.judicialMember, intepretationLanguage: null };
+            this.judicialMember = { ...this.judicialMember, interpretationLanguage: null };
         } else {
-            this.judicialMember = { ...this.judicialMember, intepretationLanguage: $event };
+            this.judicialMember = { ...this.judicialMember, interpretationLanguage: $event };
         }
     }
 }

@@ -83,7 +83,8 @@ export class ParticipantModel {
             hearing_role_code: hearingRoleCode,
             phone: judicialMember.telephone,
             display_name: judicialMember.displayName,
-            is_judge: isJudge
+            is_judge: isJudge,
+            interpretationLanguage: judicialMember.interpretationLanguage
         });
     }
 }

@@ -522,7 +522,9 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             newParticipant.interpretationLanguage = {
                 interpreterRequired: true,
                 signLanguageCode: this.interpreterSelection.signLanguageCode,
-                spokenLanguageCode: this.interpreterSelection.spokenLanguageCode
+                signLanguageDescription: this.interpreterSelection.signLanguageDescription,
+                spokenLanguageCode: this.interpreterSelection.spokenLanguageCode,
+                spokenLanguageCodeDescription: this.interpreterSelection.spokenLanguageCodeDescription
             };
         } else {
             newParticipant.interpretationLanguage = {

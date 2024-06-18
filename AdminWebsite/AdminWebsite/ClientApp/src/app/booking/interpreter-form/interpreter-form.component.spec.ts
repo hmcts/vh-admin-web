@@ -72,7 +72,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: null,
-                spokenLanguageCode: null
+                spokenLanguageCode: null,
+                signLanguageDescription: null,
+                spokenLanguageCodeDescription: null
             });
         });
 
@@ -81,7 +83,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: 'bsl',
-                spokenLanguageCode: null
+                signLanguageDescription: 'British Sign Language',
+                spokenLanguageCode: null,
+                spokenLanguageCodeDescription: null
             });
         });
 
@@ -98,7 +102,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: 'bsl',
-                spokenLanguageCode: null
+                signLanguageDescription: 'British Sign Language',
+                spokenLanguageCode: null,
+                spokenLanguageCodeDescription: null
             });
         });
 
@@ -128,7 +134,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: null,
-                spokenLanguageCode: null
+                spokenLanguageCode: null,
+                signLanguageDescription: null,
+                spokenLanguageCodeDescription: null
             });
         });
 
@@ -137,7 +145,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: null,
-                spokenLanguageCode: 'fr'
+                signLanguageDescription: null,
+                spokenLanguageCode: 'fr',
+                spokenLanguageCodeDescription: 'French'
             });
         });
 
@@ -154,7 +164,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: null,
-                spokenLanguageCode: 'fr'
+                spokenLanguageCode: 'fr',
+                signLanguageDescription: null,
+                spokenLanguageCodeDescription: 'French'
             });
         });
 
@@ -193,7 +205,9 @@ describe('InterpreterFormComponent', () => {
             expect(langSelectedEmitter).toHaveBeenCalledWith({
                 interpreterRequired: true,
                 signLanguageCode: null,
-                spokenLanguageCode: null
+                spokenLanguageCode: null,
+                signLanguageDescription: null,
+                spokenLanguageCodeDescription: null
             });
         });
     });

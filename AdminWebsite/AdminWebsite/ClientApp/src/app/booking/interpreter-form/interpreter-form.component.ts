@@ -110,11 +110,16 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.interpreterLanguageSelected.emit({
+        const dto: InterpreterSelectedDto = {
             interpreterRequired: true,
             signLanguageCode: this.form.value.signLanguageCode,
-            spokenLanguageCode: this.form.value.spokenLanguageCode
-        });
+            spokenLanguageCode: this.form.value.spokenLanguageCode,
+            signLanguageDescription:
+                this.availableSignLanguages.find(l => l.code === this.form.value.signLanguageCode)?.description ?? null,
+            spokenLanguageCodeDescription:
+                this.availableSpokenLanguages.find(l => l.code === this.form.value.spokenLanguageCode)?.description ?? null
+        };
+        this.interpreterLanguageSelected.emit(dto);
     }
 
     languageCodeValidator = (group: FormGroup): { [key: string]: any } | null => {

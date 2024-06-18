@@ -188,8 +188,8 @@ describe('SearchForJudicialMemberComponent', () => {
             component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
             expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(expectedJudicialMember);
-            expect(component.form.value.judiciaryEmail).toBe('');
-            expect(component.form.value.displayName).toBe('');
+            expect(component.form.value.judiciaryEmail).toBeNull();
+            expect(component.form.value.displayName).toBeNull();
             expect(component.form.value.optionalContactTelephone).toBeNull();
             expect(component.form.value.optionalContactEmail).toBeNull();
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
@@ -229,8 +229,8 @@ describe('SearchForJudicialMemberComponent', () => {
             component.confirmJudiciaryMemberWithAdditionalContactDetails();
 
             expect(component.judicialMemberSelected.emit).toHaveBeenCalledWith(expectedJudicialMember);
-            expect(component.form.value.judiciaryEmail).toBe('');
-            expect(component.form.value.displayName).toBe('');
+            expect(component.form.value.judiciaryEmail).toBeNull();
+            expect(component.form.value.displayName).toBeNull();
             expect(component.form.value.optionalContactTelephone).toBeNull();
             expect(component.form.value.optionalContactEmail).toBeNull();
             expect(component.form.controls.displayName.hasValidator(Validators.required)).toBeFalse();
@@ -394,7 +394,7 @@ describe('SearchForJudicialMemberComponent', () => {
 
             it('should prepopulate interpreter form when existingJudicialMember is set', () => {
                 const spy = spyOn(component.interpreterForm, 'prepopulateForm');
-                component.ngAfterViewInit();
+                component.ngAfterContentChecked();
                 expect(spy).toHaveBeenCalled();
             });
         });
