@@ -31,7 +31,6 @@ using VideoApi.Client;
 using HearingDetailsResponse = AdminWebsite.Contracts.Responses.HearingDetailsResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantRequest = AdminWebsite.Contracts.Requests.LinkedParticipantRequest;
-using ParticipantRequest = BookingsApi.Contract.V1.Requests.ParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -204,7 +203,7 @@ namespace AdminWebsite.Controllers
                 var groupedHearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearingId);
 
                 var conferenceStatusToGet = groupedHearings.Where(x => x.Participants?
-                    .Exists(x => x.HearingRoleName == RoleNames.Judge) ?? false);
+                    .Exists(gh => gh.HearingRoleName == RoleNames.Judge) ?? false);
                 var tasks = conferenceStatusToGet.Select(x => GetHearingConferenceStatus(x.Id)).ToList();
                 await Task.WhenAll(tasks);
                 
@@ -551,45 +550,6 @@ namespace AdminWebsite.Controllers
 
             await _bookingsApiClient.CancelHearingsInGroupAsync(groupId, cancelRequest);
         }
-
-        private async Task UpdateParticipantsV1(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
-        {
-            var request = await MapUpdateHearingParticipantsRequestV1(hearingId, participants, originalHearing);
-
-            await _hearingsService.ProcessParticipants(hearingId, request.ExistingParticipants, request.NewParticipants, request.RemovedParticipantIds, request.LinkedParticipants);
-            await _hearingsService.ProcessEndpoints(hearingId, endpoints, originalHearing, new List<IParticipantRequest>(request.NewParticipants));
-        }
-
-        private async Task<UpdateHearingParticipantsRequest> MapUpdateHearingParticipantsRequestV1(Guid hearingId, 
-            List<EditParticipantRequest> participants, 
-            HearingDetailsResponse originalHearing)
-        {
-            var existingParticipants = new List<UpdateParticipantRequest>();
-            var newParticipants = new List<ParticipantRequest>();
-            var removedParticipantIds = GetRemovedParticipantIds(participants, originalHearing);
-
-            foreach (var participant in participants)
-            {
-                var newParticipantToAdd = NewParticipantRequestMapper.MapTo(participant);
-                if (participant.Id.HasValue)
-                    ExtractExistingParticipants(originalHearing, participant, existingParticipants);
-                else if (await _hearingsService.ProcessNewParticipant(hearingId, participant, newParticipantToAdd, removedParticipantIds, originalHearing) is { } newParticipant)
-                    newParticipants.Add((ParticipantRequest)newParticipant);
-            }
-            
-            var linkedParticipants = ExtractLinkedParticipants(participants, originalHearing, removedParticipantIds, new List<IUpdateParticipantRequest>(existingParticipants), new List<IParticipantRequest>(newParticipants));
-            var linkedParticipantsV1 = linkedParticipants.Select(lp => lp.MapToV1()).ToList();
-            
-            var updateHearingParticipantsRequest = new UpdateHearingParticipantsRequest
-            {
-                ExistingParticipants = existingParticipants,
-                NewParticipants = newParticipants,
-                RemovedParticipantIds = removedParticipantIds,
-                LinkedParticipants = linkedParticipantsV1
-            };
-
-            return updateHearingParticipantsRequest;
-        }
         
         private async Task UpdateParticipantsV2(Guid hearingId, List<EditParticipantRequest> participants, List<EditEndpointRequest> endpoints, HearingDetailsResponse originalHearing)
         {
@@ -893,19 +853,6 @@ namespace AdminWebsite.Controllers
             }
             return linkedParticipants;
         }
-
-        private static void ExtractExistingParticipants(
-            HearingDetailsResponse originalHearing,
-            EditParticipantRequest participant, 
-            List<UpdateParticipantRequest> existingParticipants)
-        {
-            var existingParticipant = originalHearing.Participants.Find(p => p.Id.Equals(participant.Id));
-            if (existingParticipant == null || string.IsNullOrEmpty(existingParticipant.UserRoleName))
-                return;
-            
-            var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-            existingParticipants.Add(updateParticipantRequest);
-        }
         
         private static void ExtractExistingParticipantsV2(
             HearingDetailsResponse originalHearing,
@@ -995,8 +942,8 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Hearing {1} is booked. Polling for the status in BookingsApi", hearingId);
                 var response = await GetHearing(hearingId);
-                var participantsNeedVHAccounts = ParticipantsNeedVHAccounts(response.Participants);
-                var accountsStillNeedCreating = participantsNeedVHAccounts.Any(x => x.ContactEmail == x.Username);
+                var participantsNeedVhAccounts = ParticipantsNeedVhAccounts(response.Participants);
+                var accountsStillNeedCreating = participantsNeedVhAccounts.Any(x => x.ContactEmail == x.Username);
                 var isMultiDay = response.GroupId != null;
                 if (isMultiDay)
                 {
@@ -1142,11 +1089,11 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private IEnumerable<ParticipantResponse> ParticipantsNeedVHAccounts(List<ParticipantResponse> allParticipants)
+        private IEnumerable<ParticipantResponse> ParticipantsNeedVhAccounts(List<ParticipantResponse> allParticipants)
         {
-            var participantsNeedVHAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
+            var participantsNeedVhAccounts = allParticipants.Where(x => x.UserRoleName == RoleNames.Individual || x.UserRoleName == RoleNames.Representative);
             
-            return participantsNeedVHAccounts;
+            return participantsNeedVhAccounts;
         }
     }
 }

@@ -1,11 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { ConfigService } from 'src/app/services/config.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-hearing-details',
@@ -20,14 +20,9 @@ export class HearingDetailsComponent implements OnDestroy {
         this.phoneConferenceDetails = value;
     }
 
-    private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
 
-    $subcription: Subscription;
-
     destroyed$ = new Subject<void>();
-    enableSearchFeature: boolean;
-    ejudFeatureFlag: boolean;
 
     constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
 

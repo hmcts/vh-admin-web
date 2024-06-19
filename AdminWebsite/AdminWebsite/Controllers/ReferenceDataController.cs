@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Mappers;
-using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.Interfaces.Response;
@@ -23,17 +20,14 @@ namespace AdminWebsite.Controllers
     public class ReferenceDataController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
         public ReferenceDataController(
-            IBookingsApiClient bookingsApiClient, 
-            IPublicHolidayRetriever publicHolidayRetriever)
+            IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _publicHolidayRetriever = publicHolidayRetriever;
         }
 
         /// <summary>

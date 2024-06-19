@@ -15,7 +15,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
-import { map, takeUntil } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -39,7 +39,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     canNavigate = false;
     constants = Constants;
     updateJudgeAttempted = false;
-    expanded = false;
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
     isBookedHearing = false;

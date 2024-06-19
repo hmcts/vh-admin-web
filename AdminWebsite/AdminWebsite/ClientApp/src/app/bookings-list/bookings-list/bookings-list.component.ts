@@ -2,13 +2,13 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { lastValueFrom, Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { lastValueFrom, Observable, Subject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { BookingsResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import * as moment from 'moment';
@@ -432,10 +432,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.$subcription?.unsubscribe();
         this.destroyed$.next();
         this.destroyed$.complete();
-    }
-
-    getFullName(item: JusticeUserResponse) {
-        return item.first_name + ' ' + item.lastname;
     }
 
     selectedUsersEmitter($event: string[]) {

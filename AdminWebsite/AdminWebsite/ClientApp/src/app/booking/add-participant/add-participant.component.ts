@@ -1,6 +1,6 @@
 import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
@@ -17,8 +17,6 @@ import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
-import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-add-participant',
@@ -57,7 +55,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        private launchDarklyService: LaunchDarklyService,
         protected logger: Logger
     ) {
         super(bookingService, router, videoHearingService, logger);
@@ -106,7 +103,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
         setTimeout(() => {
             const self = this;
-            const caseTypeIdentifier = this.hearing.case_type_service_id;
             this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
 
             this.videoHearingService
@@ -633,14 +629,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     get canNavigate() {
         return this.checkParticipants();
     }
-
-    hasChanges(): Observable<boolean> | boolean {
-        if (this.form.dirty) {
-            this.showCancelPopup = true;
-        }
-        return this.form.dirty;
-    }
-
     goToDiv(fragment: string): void {
         window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
     }
