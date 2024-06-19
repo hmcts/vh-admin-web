@@ -6,20 +6,9 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class ReferenceDataService {
-    private publicHolidays: PublicHolidayResponse[];
     constructor(private bhClient: BHClient) {}
 
     getCourts(): Observable<HearingVenueResponse[]> {
         return this.bhClient.getCourts();
-    }
-
-    fetchPublicHolidays(): void {
-        this.bhClient.publicHolidays().subscribe({
-            next: pb => (this.publicHolidays = pb)
-        });
-    }
-
-    getPublicHolidays(): PublicHolidayResponse[] {
-        return this.publicHolidays;
     }
 }

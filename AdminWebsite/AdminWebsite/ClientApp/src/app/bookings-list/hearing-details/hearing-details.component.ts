@@ -12,7 +12,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
     templateUrl: 'hearing-details.component.html',
     styleUrls: ['hearing-details.component.css']
 })
-export class HearingDetailsComponent implements OnInit, OnDestroy {
+export class HearingDetailsComponent implements OnDestroy {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
 
@@ -30,8 +30,6 @@ export class HearingDetailsComponent implements OnInit, OnDestroy {
     ejudFeatureFlag: boolean;
 
     constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
-
-    ngOnInit() {}
 
     ngOnDestroy(): void {
         this.destroyed$.next();

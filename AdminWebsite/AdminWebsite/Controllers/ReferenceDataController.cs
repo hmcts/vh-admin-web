@@ -111,19 +111,5 @@ namespace AdminWebsite.Controllers
             var response = await _bookingsApiClient.GetHearingVenuesAsync(true);
             return Ok(response);
         }
-
-        /// <summary>
-        ///     Get upcoming public holidays in England and Wales
-        /// </summary>
-        /// <returns>List upcoming public holidays</returns>
-        [HttpGet("public-holidays")]
-        [ProducesResponseType(typeof(IList<PublicHolidayResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<PublicHolidayResponse>>> PublicHolidays()
-        {
-            var holidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
-            var response = holidays.Select(PublicHolidayResponseMapper.MapFrom).ToList();
-            return Ok(response);
-        }
     }
 }

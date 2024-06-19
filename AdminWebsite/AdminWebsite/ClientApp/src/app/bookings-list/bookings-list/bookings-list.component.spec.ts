@@ -57,7 +57,7 @@ const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService', [
     'getHearingTypes',
     'getUsers'
 ]);
-const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts', 'fetchPublicHolidays', 'getPublicHolidays']);
+const referenceDataServiceSpy = jasmine.createSpyObj('ReferenceDataService', ['getCourts']);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 let returnUrlService: ReturnUrlService;
 const featureFlagServiceSpy = jasmine.createSpyObj('FeatureFlagService', ['getFeatureFlagByName']);
