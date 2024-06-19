@@ -7,8 +7,7 @@ import { InterpreterSelectedDto } from './interpreter-selected.model';
 
 @Component({
     selector: 'app-interpreter-form',
-    templateUrl: './interpreter-form.component.html',
-    styleUrl: './interpreter-form.component.scss'
+    templateUrl: './interpreter-form.component.html'
 })
 export class InterpreterFormComponent implements OnInit, OnDestroy {
     @Output() interpreterLanguageSelected = new EventEmitter<InterpreterSelectedDto>();
