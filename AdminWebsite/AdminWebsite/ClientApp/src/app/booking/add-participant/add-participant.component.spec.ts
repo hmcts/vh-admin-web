@@ -311,7 +311,6 @@ describe('AddParticipantComponent', () => {
             participantServiceSpy,
             routerSpy,
             bookingServiceSpy,
-            launchDarklyServiceSpy,
             loggerSpy
         );
 
@@ -1513,7 +1512,6 @@ describe('AddParticipantComponent set representer', () => {
             participantServiceSpy,
             { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
             bookingServiceSpy,
-            launchDarklyServiceSpy,
             loggerSpy
         );
         component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
