@@ -1,65 +1,90 @@
 <h1 class="govuk-heading-l">Manage Ref Data</h1>
 
-<label class="govuk-label" for="file-upload"> Upload the master ref data file </label>
-
 <div class="govuk-grid-column-full govuk-!-margin-top-2">
+  <label class="govuk-label" for="file-upload"> Upload the master ref data file </label>
   <input accept=".csv" type="file" class="govuk-file-upload" (change)="onFileSelected($event)" #fileUpload />
   <button class="govuk-button" data-module="govuk-button" (click)="uploadFile()" [disabled]="!fileName">Upload</button>
 </div>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-quarter">
-    <p>New: {{ newLanguages.length }}</p>
+<ng-container *ngIf="fileProcessed">
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="selectedStatus"> Select Filter</label>
+    <select [(ngModel)]="selectedStatus" class="govuk-select" id="selectedStatus" name="selectedStatus">
+      <option value="all">All</option>
+      <option *ngFor="let status of languageStatuses" [value]="status">{{ status }}</option>
+    </select>
   </div>
-  <div class="govuk-grid-column-one-quarter">
-    <p>Modified: {{ modifiedLanguages.length }}</p>
+  <div *ngIf="duplicateCodeDetected" class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      Duplicate language codes detected in the file. Please correct the file before proceeding.
+    </strong>
   </div>
-  <div class="govuk-grid-column-one-quarter">
-    <p>Unchanged: {{ unchangedLanguages.length }}</p>
-  </div>
-  <div class="govuk-grid-column-one-quarter">
-    <p>Removed: {{ removedLanguages.length }}</p>
-  </div>
-</div>
 
-<table class="govuk-table">
-  <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">Status</th>
-      <th scope="col" class="govuk-table__header">Count</th>
-    </tr>
-  </thead>
-  <tbody class="govuk-table__body">
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">New</td>
-      <td class="govuk-table__cell">{{ newLanguages.length }}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">Modified</td>
-      <td class="govuk-table__cell">{{ modifiedLanguages.length }}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">Unchanged</td>
-      <td class="govuk-table__cell">{{ unchangedLanguages.length }}</td>
-    </tr>
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">Removed</td>
-      <td class="govuk-table__cell">{{ removedLanguages.length }}</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- One line summary -->
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <p>New: {{ newLanguages.length }}</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <p>Modified: {{ modifiedLanguages.length }}</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <p>Unchanged: {{ unchangedLanguages.length }}</p>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <p>Removed: {{ removedLanguages.length }}</p>
+    </div>
+  </div>
 
-<table class="govuk-table">
-  <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">Language</th>
-      <th scope="col" class="govuk-table__header">Status</th>
-    </tr>
-  </thead>
-  <tbody class="govuk-table__body">
-    <tr class="govuk-table__row" *ngFor="let item of this.data">
-      <td class="govuk-table__cell">{{ item.language.description }}</td>
-      <td class="govuk-table__cell" [ngClass]="item.status">{{ item.status }}</td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Table line summary -->
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Status</th>
+        <th scope="col" class="govuk-table__header">Count</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">New</td>
+        <td class="govuk-table__cell new">{{ newLanguages.length }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">Modified</td>
+        <td class="govuk-table__cell modified">{{ modifiedLanguages.length }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">Unchanged</td>
+        <td class="govuk-table__cell unchanged">{{ unchangedLanguages.length }}</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">Removed</td>
+        <td class="govuk-table__cell removed">{{ removedLanguages.length }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Full content changes -->
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Language (EN)</th>
+        <th scope="col" class="govuk-table__header">Language (CY)</th>
+        <th scope="col" class="govuk-table__header">Code</th>
+        <th scope="col" class="govuk-table__header">Type</th>
+        <th scope="col" class="govuk-table__header">Status</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row" *ngFor="let item of this.filteredData">
+        <td class="govuk-table__cell">{{ item.language.description }}</td>
+        <td class="govuk-table__cell">Pending</td>
+        <td class="govuk-table__cell">{{ item.language.code }}</td>
+        <td class="govuk-table__cell">{{ item.language.type }}</td>
+        <td class="govuk-table__cell" [ngClass]="item.status | lowercase">{{ item.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>

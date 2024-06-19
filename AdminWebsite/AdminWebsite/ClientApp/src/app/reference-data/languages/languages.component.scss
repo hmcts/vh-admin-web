@@ -1,20 +1,24 @@
 @import 'govuk-frontend/govuk/base';
 .new {
   text-align: center;
-  background-color: govuk-colour('light-blue');
+  color: govuk-colour('white');
+  background-color: govuk-colour('green');
 }
 
 .modified {
   text-align: center;
-  background-color: govuk-colour('yellow');
+  color: govuk-colour('white');
+  background-color: govuk-colour('orange');
 }
 
 .removed {
   text-align: center;
-  background-color: govuk-colour('orange');
+  color: govuk-colour('white');
+  background-color: govuk-colour('red');
 }
 
 .unchanged {
   text-align: center;
-  background-color: govuk-colour('light-green');
+  color: govuk-colour('white');
+  background-color: govuk-colour('blue');
 }

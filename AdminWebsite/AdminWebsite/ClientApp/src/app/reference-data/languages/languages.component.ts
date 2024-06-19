@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { parse } from 'papaparse';
 import { RefDataRowItem } from '../models/ref-data.model';
 import { ReferenceDataService } from 'src/app/services/reference-data.service';
-import { AvailableLanguageResponse } from 'src/app/services/clients/api-client';
+import { InterprepretationType } from 'src/app/services/clients/api-client';
+import { map } from 'rxjs';
 
-type LanguageStatus = 'new' | 'removed' | 'modified' | 'unchanged';
+type LanguageStatus = 'New' | 'Removed' | 'Modified' | 'Unchanged';
 interface LanguageComparisonResult {
     language: AvailableLanguage;
     status: LanguageStatus;
@@ -18,32 +19,61 @@ interface LanguageComparisonResult {
 export class LanguagesComponent implements OnInit {
     fileName = '';
     file;
-    existingDbLanguages: AvailableLanguageResponse[];
+    existingDbLanguages: AvailableLanguage[];
     proposedCsvLanguages: RefDataRowItem[] = [];
     data: LanguageComparisonResult[] = [];
+
+    languageStatuses: LanguageStatus[] = ['New', 'Removed', 'Modified', 'Unchanged'];
+    selectedStatus: LanguageStatus | string = 'all';
+
+    fileProcessed = false;
+    duplicateCodeDetected = false;
 
     constructor(private refDataService: ReferenceDataService) {}
 
     get unchangedLanguages() {
-        return this.data.filter(x => x.status === 'unchanged');
+        return this.data.filter(x => x.status === 'Unchanged');
     }
 
     get newLanguages() {
-        return this.data.filter(x => x.status === 'new');
+        return this.data.filter(x => x.status === 'New');
     }
 
     get modifiedLanguages() {
-        return this.data.filter(x => x.status === 'modified');
+        return this.data.filter(x => x.status === 'Modified');
     }
 
     get removedLanguages() {
-        return this.data.filter(x => x.status === 'removed');
+        return this.data.filter(x => x.status === 'Removed');
+    }
+
+    get filteredData() {
+        if (!this.selectedStatus) {
+            return this.data;
+        }
+        if (this.selectedStatus === 'all') {
+            return this.data;
+        }
+        return this.data.filter(item => item.status === this.selectedStatus);
     }
 
     ngOnInit() {
-        this.refDataService.getAvailableInterpreterLanguages().subscribe(data => {
-            this.existingDbLanguages = data;
-        });
+        this.refDataService
+            .getAvailableInterpreterLanguages()
+            .pipe(
+                map(data => {
+                    return data.map(lang => {
+                        return {
+                            code: lang.code,
+                            description: lang.description,
+                            type: lang.type
+                        };
+                    });
+                })
+            )
+            .subscribe(data => {
+                this.existingDbLanguages = data;
+            });
     }
 
     onFileSelected($event: Event) {
@@ -88,10 +118,13 @@ export class LanguagesComponent implements OnInit {
         this.proposedCsvLanguages = [...signLanguages, ...spokenLanguages];
 
         this.data = this.compareLanguages(this.proposedCsvLanguages, this.existingDbLanguages);
-        console.log(this.data);
+        this.duplicateCodeDetected =
+            this.proposedCsvLanguages.length !==
+            this.proposedCsvLanguages.map(x => x.Key).filter((value, index, self) => self.indexOf(value) === index).length;
+        this.fileProcessed = true;
     }
 
-    compareLanguages(proposedLanguages: RefDataRowItem[], currentLanguages: AvailableLanguageResponse[]): LanguageComparisonResult[] {
+    compareLanguages(proposedLanguages: RefDataRowItem[], currentLanguages: AvailableLanguage[]): LanguageComparisonResult[] {
         const comparisonResult: LanguageComparisonResult[] = [];
 
         const currentLanguageCodes = currentLanguages.map(lang => lang.code);
@@ -101,21 +134,25 @@ export class LanguagesComponent implements OnInit {
             const currentLanguage = currentLanguages.find(lang => lang.code === proposedLanguage.Key);
 
             if (!currentLanguage) {
-                comparisonResult.push({ language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN }, status: 'new' });
+                const type = proposedLanguage.CategoryKey === 'SignLanguage' ? InterprepretationType.Sign : InterprepretationType.Verbal;
+                comparisonResult.push({
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: type },
+                    status: 'New'
+                });
             } else if (!proposedLanguage.Active) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN },
-                    status: 'removed'
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    status: 'Removed'
                 });
             } else if (proposedLanguage.Value_EN !== currentLanguage.description) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN },
-                    status: 'modified'
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    status: 'Modified'
                 });
             } else {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN },
-                    status: 'unchanged'
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    status: 'Unchanged'
                 });
             }
         }
@@ -123,45 +160,19 @@ export class LanguagesComponent implements OnInit {
         // Check for removed languages in currentLanguages
         for (const currentLanguage of currentLanguages) {
             if (!proposedLanguages.map(lang => lang.Key).includes(currentLanguage.code)) {
-                comparisonResult.push({ language: currentLanguage, status: 'removed' });
+                comparisonResult.push({
+                    language: currentLanguage,
+                    status: 'Removed'
+                });
             }
         }
 
         return comparisonResult;
     }
-
-    // compareLanguages(proposedLanguages: RefDataRowItem[], currentLanguages: AvailableLanguageResponse[]): LanguageComparisonResult[] {
-    //     const comparisonResult: LanguageComparisonResult[] = [];
-
-    //     const currentLanguageKeys = proposedLanguages.map(lang => lang.Key);
-    //     const proposedLanguageCodes = currentLanguages.map(lang => lang.code);
-
-    //     // Check for new and modified languages
-    //     for (const currentLanguage of currentLanguages) {
-    //         if (!currentLanguageKeys.includes(currentLanguage.code)) {
-    //             comparisonResult.push({ language: currentLanguage, status: 'removed' });
-    //         } else {
-    //             const currentLanguage = proposedLanguages.find(lang => lang.Key === currentLanguage.code);
-    //             if (currentLanguage.Value_EN !== currentLanguage.description) {
-    //                 comparisonResult.push({ language: currentLanguage, status: 'modified' });
-    //             } else {
-    //                 comparisonResult.push({ language: currentLanguage, status: 'unchanged' });
-    //             }
-    //         }
-    //     }
-
-    //     // Check for new languages
-    //     for (const currentLanguage of proposedLanguages) {
-    //         if (!proposedLanguageCodes.includes(currentLanguage.Key)) {
-    //             comparisonResult.push({
-    //                 language: { code: currentLanguage.Key, description: currentLanguage.Value_EN },
-    //                 status: 'new'
-    //             });
-    //         }
-    //     }
-
-    //     return comparisonResult;
-    // }
 }
 
-export interface AvailableLanguage extends Omit<AvailableLanguageResponse, 'init' | 'toJSON'> {}
+export interface AvailableLanguage {
+    code: string | undefined;
+    description: string | undefined;
+    type: InterprepretationType;
+}
