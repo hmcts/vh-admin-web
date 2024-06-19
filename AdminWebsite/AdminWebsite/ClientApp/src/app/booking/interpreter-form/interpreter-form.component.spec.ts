@@ -224,6 +224,13 @@ describe('InterpreterFormComponent', () => {
             expect(component.form.controls.signLanguageCode.value).toBeNull();
             expect(component.form.controls.spokenLanguageCode.value).toBe('fr');
         });
+
+        it('should ignore when paramater is null', () => {
+            component.prepopulateForm(null);
+            expect(component.displayForm).toBeFalse();
+            expect(component.form.controls.signLanguageCode.value).toBeNull();
+            expect(component.form.controls.spokenLanguageCode.value).toBeNull();
+        });
     });
 
     it('should call refDataService.getAvailableInterpreterLanguages on component initialization', () => {
