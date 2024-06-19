@@ -5,7 +5,7 @@ resources:
     - repository: azTemplates
       type: github
       name: hmcts/azure-devops-templates
-      ref: fix_docker_compose
+      ref: master
       endpoint: hmcts
 
 pool:
@@ -31,7 +31,7 @@ stages:
       - template: variables/shared.yaml
     jobs:
       - job: CI_Helm
-        displayName: 'Helm CI'
+        displayName: "Helm CI"
         steps:
           - checkout: self
 
@@ -42,7 +42,7 @@ stages:
               helmVersion: '3.12.3'
 
       - job: UnitAndIntegrationTests
-        displayName: 'Unit and Integration Tests'
+        displayName: "Unit and Integration Tests"
         steps:
           - checkout: self
 
@@ -76,7 +76,7 @@ stages:
       - group: vh-github-app-credentials
     jobs:
       - job: Dock
-        displayName: 'Build and Push Image ${{ variables.git_repo_name }}'
+        displayName: "Build and Push Image ${{ variables.git_repo_name }}"
         steps:
           - checkout: self
 
@@ -92,7 +92,7 @@ stages:
               chartBranch: $(System.PullRequest.SourceBranch)
               githubToken: $(githubappinstall.token)
               githubUsername: $(gh_app_name)
-              githubEmail: '$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com'
+              githubEmail: "$(gh_app_app_id)+$(gh_app_name)[bot]@users.noreply.github.com"
 
           - bash: |
               sed -i "s|</configuration>|<packageSourceCredentials><vh-packages><add key=\"Username\" value=\"PAT\" /><add key=\"ClearTextPassword\" value=\"$(System.AccessToken)\" /></vh-packages></packageSourceCredentials></configuration>|" nuget.config
@@ -101,7 +101,6 @@ stages:
 
           - template: templates\Containerisation\docker\docker-compose.yaml@azTemplates
             parameters:
-              dockerComposeFile: $(System.DefaultWorkingDirectory)/docker-compose.yml
               azureSubscription: ${{ variables.acrSubscription }}
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
@@ -113,7 +112,7 @@ stages:
               repositoryName: ${{ variables.repositoryName }}
               imageName: "${{ replace(variables.git_repo_name, '-', '') }}"
               imageTags:
-                - '${{ variables.prTagName }}'
+                - "${{ variables.prTagName }}"
 
   #####################################################
   # Deploy Helm Chart to Dev. #########################
@@ -134,16 +133,16 @@ stages:
         steps:
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:
-              subscriptionName: '${{ variables.subscriptionName }}'
+              subscriptionName: "${{ variables.subscriptionName }}"
               environment: ${{ variables.env }}
 
           - template: templates/Containerisation/helm/helm-uninstall.yaml@azTemplates
             parameters:
-              namespace: 'vh'
-              releaseName: '${{ variables.chartName }}-${{ variables.prTagPrefix }}'
-              azureSubscription: '${{ variables.subscriptionName }}'
-              aksResourceGroupName: '$(aksCluster.resourceGroup)'
-              aksClusterName: '$(aksCluster.name)'
+              namespace: "vh"
+              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
+              azureSubscription: "${{ variables.subscriptionName }}"
+              aksResourceGroupName: "$(aksCluster.resourceGroup)"
+              aksClusterName: "$(aksCluster.name)"
 
       - job: aks_push
         displayName: Deploy To Dev AKS
@@ -153,14 +152,14 @@ stages:
               azureClientId: $(vh_client_id)
               azureClientSecret: $(vh_client_secret)
               azureTenant: $(vh_tenant_id)
-              action: 'add'
-              domain: 'https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}'
-              name: 'a${{ variables.gitRepoName }}.${{ variables.dnsZone }}'
+              action: "add"
+              domain: "https://${{ variables.dnsRecordName }}.${{ variables.dnsZone }}"
+              name: "a${{ variables.gitRepoName }}.${{ variables.dnsZone }}"
               domainUris: ${{ variables.app_redirect_uri }}
 
           - template: templates\Azure\Aks\get-active-cluster.yaml@azTemplates
             parameters:
-              subscriptionName: '${{ variables.subscriptionName }}'
+              subscriptionName: "${{ variables.subscriptionName }}"
               environment: ${{ variables.env }}
 
           - template: templates/Containerisation/helm/helm-install.yaml@azTemplates
@@ -172,14 +171,14 @@ stages:
               acrName: ${{ variables.acrName }}
               repositoryName: ${{ variables.repositoryName }}
               prTagName: ${{ variables.prTagName }}
-              releaseName: '${{ variables.chartName }}-${{ variables.prTagPrefix }}'
+              releaseName: "${{ variables.chartName }}-${{ variables.prTagPrefix }}"
               dnsRecordName: ${{ variables.dnsRecordName }}
               dnsZone: ${{ variables.dnsZone }}
               env: ${{ variables.env }}
               chartName: ${{ variables.chartName }}
               chartPath: ${{ variables.chartPath }}
-              subscriptionName: '${{ variables.subscriptionName }}'
-              aksResourceGroupName: '$(aksCluster.resourceGroup)'
-              aksClusterName: '$(aksCluster.name)'
-              dnsSubscriptionName: '${{ variables.dnsZoneSubscription }}'
-              dnsResourceGroupName: '${{ variables.dnsZoneResourceGroup }}'
+              subscriptionName: "${{ variables.subscriptionName }}"
+              aksResourceGroupName: "$(aksCluster.resourceGroup)"
+              aksClusterName: "$(aksCluster.name)"
+              dnsSubscriptionName: "${{ variables.dnsZoneSubscription }}"
+              dnsResourceGroupName: "${{ variables.dnsZoneResourceGroup }}"
