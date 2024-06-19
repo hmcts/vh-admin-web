@@ -50,6 +50,7 @@
     "ngx-clipboard": "^16.0.0",
     "ngx-device-detector": "^7.0.0",
     "ngx-moment": "^6.0.2",
+    "papaparse": "^5.4.1",
     "rxjs": "^7.4.0",
     "ts-case-convert": "^2.0.2",
     "tslib": "^2.2.0",

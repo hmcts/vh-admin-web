@@ -3,7 +3,7 @@ import { Subject, combineLatest, lastValueFrom, takeUntil } from 'rxjs';
 import { FeatureFlags, LaunchDarklyService } from '../services/launch-darkly.service';
 import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase, faUsers } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-dashboard',
@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ) {}
 
     faUsers = faUsers;
+    faRefData = faDatabase;
 
     showCheckList = false;
     showBooking = false;

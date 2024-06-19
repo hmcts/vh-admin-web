@@ -46,6 +46,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard, VhOfficerAdminGuard, ManageTeamFeatureGuard],
         loadChildren: () => import('./manage-team/manage-team.module').then(m => m.ManageTeamModule)
     },
+    {
+        path: 'manage-ref-data',
+        canActivate: [AuthGuard, VhOfficerAdminGuard],
+        loadChildren: () => import('./reference-data/reference-data.module').then(m => m.ReferenceDataModule)
+    },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 

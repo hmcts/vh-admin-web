@@ -1,0 +1,22 @@
+<h1 class="govuk-heading-l">Manage Ref Data</h1>
+
+<label class="govuk-label" for="file-upload"> Upload the master ref data file </label>
+<!-- <input
+  formControlName="file"
+  (change)="onFileSelect($event)"
+  class="govuk-file-upload"
+  id="file-upload"
+  name="fileUpload"
+  type="file"
+  accept=".csv"
+/> -->
+<!-- <button type="submit">Upload</button> -->
+
+<div class="govuk-grid-column-two-thirds govuk-!-margin-top-2">
+  <input accept=".csv" type="file" class="govuk-file-upload" (change)="onFileSelected($event)" #fileUpload />
+  <button class="govuk-button" data-module="govuk-button" (click)="uploadFile()" [disabled]="!fileName">Upload</button>
+</div>
+
+<!-- <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+    <mat-icon>attach_file</mat-icon>
+  </button> -->
