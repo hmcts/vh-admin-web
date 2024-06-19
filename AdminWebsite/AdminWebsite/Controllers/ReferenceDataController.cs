@@ -145,5 +145,17 @@ namespace AdminWebsite.Controllers
             var response = holidays.Select(PublicHolidayResponseMapper.MapFrom).ToList();
             return Ok(response);
         }
+        
+        /// <summary>
+        /// Get available languages for interpreters
+        /// </summary>
+        /// <returns>List of languages</returns>
+        [HttpGet("available-languages", Name = "GetAvailableLanguages")]
+        [ProducesResponseType(typeof(IList<AvailableLanguageResponse>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IList<AvailableLanguageResponse>>> GetAvailableLanguages()
+        {
+            var response = await _bookingsApiClient.GetAvailableInterpreterLanguagesAsync();
+            return Ok(response.Select(AvailableLanguageResponseMapper.Map).ToList());
+        }
     }
 }

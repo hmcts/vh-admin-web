@@ -9,13 +9,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import {
-    CaseAndHearingRolesResponse,
-    ClientSettingsResponse,
-    HearingRole,
-    HearingRoleResponse,
-    PersonResponse
-} from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, HearingRoleResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -32,6 +26,10 @@ import { TestingModule } from 'src/app/testing/testing.module';
 import { By } from '@angular/platform-browser';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
+import { MockComponent } from 'ng-mocks';
+import { InterpreterSelectedDto } from '../interpreter-form/interpreter-selected.model';
+import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -998,6 +996,7 @@ describe('AddParticipantComponent edit mode', () => {
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
+            declarations: [MockComponent(InterpreterFormComponent), FeatureFlagDirective],
             providers: [
                 { provide: SearchService, useClass: SearchServiceStub },
                 { provide: Router, useValue: routerSpy },
@@ -1011,6 +1010,7 @@ describe('AddParticipantComponent edit mode', () => {
         }).compileComponents();
 
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
@@ -1431,9 +1431,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
             imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
+            declarations: [MockComponent(InterpreterFormComponent), FeatureFlagDirective],
             providers: [
                 { provide: SearchService, useClass: SearchServiceStub },
                 { provide: Router, useValue: routerSpy },
@@ -1494,7 +1496,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
-        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
+        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false, interpretationLanguage: undefined });
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
@@ -1504,7 +1506,12 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         tick(600);
         const partList = component.participantsListComponent;
-        partList.removeParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
+        partList.removeParticipant({
+            email: 'test2@hmcts.net',
+            is_exist_person: false,
+            is_judge: false,
+            interpretationLanguage: undefined
+        });
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();
         tick(600);
@@ -1631,6 +1638,68 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayUpdateButton).toBeFalsy();
         expect(component.participantDetails).not.toBeNull();
         expect(component.participantDetails.username).toBeNull();
+    });
+
+    describe('with interpreter enhancements', () => {
+        beforeEach(async () => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(true));
+            configServiceSpy.getClientSettings.and.returnValue(of(new ClientSettingsResponse()));
+            fixture = TestBed.createComponent(AddParticipantComponent);
+            component = fixture.componentInstance;
+            const searchServiceStub = jasmine.createSpyObj<SearchService>(['participantSearch']);
+            component.searchEmail = new SearchEmailComponent(searchServiceStub, configServiceSpy, loggerSpy);
+            component.searchEmail.email = 'test3@hmcts.net';
+            component.showDetails = true;
+
+            fixture.detectChanges();
+        });
+
+        it('should show interpreter form when role is not interpreter', fakeAsync(() => {
+            component.form.controls.role.setValue('Representative');
+
+            fixture.detectChanges();
+            flush();
+
+            expect(component.showInterpreterForm).toBeTrue();
+            expect(component.interpreterForm).toBeDefined();
+        }));
+
+        it('should not show interpreter form when role is interpreter', fakeAsync(() => {
+            component.form.controls.role.setValue('Interpreter');
+
+            fixture.detectChanges();
+            flush();
+
+            expect(component.showInterpreterForm).toBeFalse();
+            expect(component.interpreterForm).toBeUndefined();
+        }));
+
+        it('should set the interpreterSelection when onInterpreterLanguageSelected is called', () => {
+            const interpreterSelection: InterpreterSelectedDto = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+            component.onInterpreterLanguageSelected(interpreterSelection);
+            expect(component.interpreterSelection).toEqual(interpreterSelection);
+        });
+
+        it('should reset interpreterSelection when no interpreter is required', () => {
+            component.interpreterSelection = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+
+            const newSelection: InterpreterSelectedDto = {
+                interpreterRequired: false,
+                signLanguageCode: undefined,
+                spokenLanguageCode: undefined
+            };
+
+            component.onInterpreterLanguageSelected(newSelection);
+            expect(component.interpreterSelection).toBeNull();
+        });
     });
 });
 describe('AddParticipantComponent set representer', () => {

@@ -18,6 +18,13 @@
       <div class="judge-row__email" id="judge-user">{{ getJudgeUser(participant) }}</div>
       <div class="judge-row__email" id="judge-email">{{ getJudgeEmail() }}</div>
       <div class="judge-row__phone" id="judge-phone">{{ getJudgePhone(participant) }}</div>
+      <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
+        <div class="participant-row__lang">
+          {{
+            participant.interpretationLanguage.spokenLanguageCodeDescription ?? participant.interpretationLanguage.signLanguageDescription
+          }}
+        </div>
+      </ng-container>
     </div>
 
     <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
@@ -97,6 +104,14 @@
           </div>
         </ng-template>
       </ng-template>
+
+      <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
+        <div class="participant-row__lang">
+          {{
+            participant.interpretationLanguage.spokenLanguageCodeDescription ?? participant.interpretationLanguage.signLanguageDescription
+          }}
+        </div>
+      </ng-container>
     </div>
     <div
       *ngIf="

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EndpointLink, VideoAccessPointDto } from '../models/video-access-point.model';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 
 @Component({
     selector: 'app-video-endpoint-item',
@@ -11,6 +12,7 @@ export class VideoEndpointItemComponent {
         this._videoEndpoint = videoEndpoint;
         this.displayName = videoEndpoint.displayName;
         this.linkedRepresentative = videoEndpoint.defenceAdvocate;
+        this.interpretationLanguage = videoEndpoint.interpretationLanguage;
     }
 
     @Input() displayRemoveButton = true;
@@ -20,6 +22,7 @@ export class VideoEndpointItemComponent {
 
     displayName: string;
     linkedRepresentative: EndpointLink;
+    interpretationLanguage: InterpreterSelectedDto;
 
     private _videoEndpoint: VideoAccessPointDto;
 

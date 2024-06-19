@@ -15,7 +15,7 @@
     <label class="govuk-label" for="judiciaryDisplayNameInput">Display Name</label>
     <input id="judiciaryDisplayNameInput" class="govuk-input" type="text" formControlName="displayName" tabindex="2" />
   </div>
-  <div *ngIf="isSelectedAccountGeneric">
+  <div *ngIf="isSelectedAccountGeneric && this.form.dirty">
     <div class="govuk-form-group">
       <div *ngIf="displayContactTelephoneError" class="alert alert-danger">
         <span id="judiciaryOptionContactTelephoneError" class="govuk-error-message">Contact Telephone Invalid</span>
@@ -31,6 +31,10 @@
       <input id="judiciaryOptionContactEmail" class="govuk-input" type="text" formControlName="optionalContactEmail" tabindex="2" />
     </div>
   </div>
+
+  <ng-container *appFeatureFlag="featureFlags.interpreterEnhancements">
+    <app-interpreter-form #interpreterForm (interpreterLanguageSelected)="onInterpreterLanguageSelected($event)"></app-interpreter-form>
+  </ng-container>
   <button
     *ngIf="judicialMember && form.valid"
     id="confirmJudiciaryMemberBtn"

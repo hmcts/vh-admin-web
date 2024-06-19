@@ -68,16 +68,29 @@ describe('ParticipantListComponent', () => {
     describe('ngDoCheck - sorting participants on change', () => {
         it('should call sortParticipants when participant list changes', () => {
             const sortSpy = spyOn(component, 'sortParticipants');
-            component.hearing.participants = [{ display_name: 'B' }, { display_name: 'A' }, { display_name: 'C' }];
-            component.sortedParticipants = [{ display_name: 'A' }, { display_name: 'B' }];
+            component.hearing.participants = [
+                { display_name: 'B', interpretationLanguage: undefined },
+                { display_name: 'A', interpretationLanguage: undefined },
+                { display_name: 'C', interpretationLanguage: undefined }
+            ];
+            component.sortedParticipants = [
+                { display_name: 'A', interpretationLanguage: undefined },
+                { display_name: 'B', interpretationLanguage: undefined }
+            ];
             component.ngDoCheck();
             expect(sortSpy).toHaveBeenCalled();
         });
 
         it('should not call sortParticipants when participant list does not change', () => {
             const sortSpy = spyOn(component, 'sortParticipants');
-            component.hearing.participants = [{ display_name: 'A' }, { display_name: 'B' }];
-            component.sortedParticipants = [{ display_name: 'A' }, { display_name: 'B' }];
+            component.hearing.participants = [
+                { display_name: 'A', interpretationLanguage: undefined },
+                { display_name: 'B', interpretationLanguage: undefined }
+            ];
+            component.sortedParticipants = [
+                { display_name: 'A', interpretationLanguage: undefined },
+                { display_name: 'B', interpretationLanguage: undefined }
+            ];
             component.ngDoCheck();
             expect(sortSpy).not.toHaveBeenCalled();
         });
@@ -176,7 +189,12 @@ describe('ParticipantListComponent', () => {
     describe('Edit rules', () => {
         it('should emit on remove', () => {
             spyOn(component.$selectedForRemove, 'emit');
-            component.removeParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false });
+            component.removeParticipant({
+                email: 'email@hmcts.net',
+                is_exist_person: false,
+                is_judge: false,
+                interpretationLanguage: undefined
+            });
             expect(component.$selectedForRemove.emit).toHaveBeenCalled();
         });
         it('should not be able to edit participant if canEdit is false', () => {
@@ -328,7 +346,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 display_name: p.display_name,
                 linked_participants: p.linked_participant,
                 id: `${i + 1}`,
-                is_courtroom_account: false
+                is_courtroom_account: false,
+                interpretationLanguage: undefined
             });
         });
 
@@ -399,7 +418,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 first_name: p.first_name,
                 case_role_name: p.case_role_name,
                 email: p.email,
-                interpreterFor: p.interpreterFor
+                interpreterFor: p.interpreterFor,
+                interpretationLanguage: undefined
             });
         });
 
@@ -412,7 +432,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Judge',
             first_name: 'L',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -420,7 +441,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Panel Member',
             first_name: 'H',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -428,7 +450,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Winger',
             first_name: 'J',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -436,7 +459,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'None',
             first_name: 'K',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -444,7 +468,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Staff Member',
             first_name: 'I',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -452,7 +477,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Litigant in Person',
             first_name: 'A',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -461,7 +487,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             hearing_role_name: 'Litigant in Person',
             first_name: 'C',
             is_interpretee: true,
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -470,7 +497,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             hearing_role_name: 'Interpreter',
             first_name: 'A',
             interpreterFor: 'interpretees@email.co.uk',
-            interpretee_name: undefined
+            interpretee_name: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -478,7 +506,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Litigant in Person',
             first_name: 'D',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -486,7 +515,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Litigant in Person',
             first_name: 'F',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -494,7 +524,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Litigant in Person',
             first_name: 'B',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -502,7 +533,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Litigant in Person',
             first_name: 'E',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -510,7 +542,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'Observer',
             first_name: 'G',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
         expectedResult.push({
             is_judge: false,
@@ -518,7 +551,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
             email: undefined,
             hearing_role_name: 'new observer type',
             first_name: 'M',
-            interpreterFor: undefined
+            interpreterFor: undefined,
+            interpretationLanguage: undefined
         });
 
         for (let i = 0; i < expectedResult.length; i++) {
@@ -540,28 +574,84 @@ describe('ParticipantListComponent-SortParticipants', () => {
         linked_participantList1.push(linked_participant1);
 
         const participantsArr = [
-            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge1', linked_participants: null },
-            { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge2', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger1', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger2', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Staff Member', display_name: 'Staff Member', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Panel Member', display_name: 'Panel Member', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Observer', display_name: 'Observer', linked_participants: null },
+            {
+                is_judge: true,
+                hearing_role_name: 'Judge',
+                display_name: 'Judge1',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: true,
+                hearing_role_name: 'Judge',
+                display_name: 'Judge2',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Winger',
+                display_name: 'Winger1',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Winger',
+                display_name: 'Winger2',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Staff Member',
+                display_name: 'Staff Member',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Panel Member',
+                display_name: 'Panel Member',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Observer',
+                display_name: 'Observer',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
             {
                 is_judge: false,
                 hearing_role_name: 'Litigant in Person',
                 display_name: 'Litigant in Person1',
                 linked_participants: linked_participantList1,
-                id: '7'
+                id: '7',
+                interpretationLanguage: undefined
             },
-            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person2', linked_participants: null },
-            { is_judge: false, hearing_role_name: 'Litigant in Person', display_name: 'Litigant in Person3', linked_participants: null },
+            {
+                is_judge: false,
+                hearing_role_name: 'Litigant in Person',
+                display_name: 'Litigant in Person2',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
+            {
+                is_judge: false,
+                hearing_role_name: 'Litigant in Person',
+                display_name: 'Litigant in Person3',
+                linked_participants: null,
+                interpretationLanguage: undefined
+            },
             {
                 is_judge: false,
                 hearing_role_name: 'Interpreter',
                 display_name: 'Interpreter1',
                 linked_participants: linked_participantList,
-                id: '9'
+                id: '9',
+                interpretationLanguage: undefined
             }
         ];
 
@@ -577,7 +667,12 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
         it('should detect participant added to hearing.participants', () => {
             // Act
-            component.hearing.participants.push({ is_judge: false, hearing_role_name: 'Winger', display_name: 'Winger3' });
+            component.hearing.participants.push({
+                is_judge: false,
+                hearing_role_name: 'Winger',
+                display_name: 'Winger3',
+                interpretationLanguage: undefined
+            });
             component.ngDoCheck();
 
             // Assert
@@ -637,7 +732,8 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 interpreterFor: p.interpreterFor,
                 email: p.email,
                 id: `${i + 1},`,
-                is_courtroom_account: false
+                is_courtroom_account: false,
+                interpretationLanguage: undefined
             });
         });
         component.ngOnInit();

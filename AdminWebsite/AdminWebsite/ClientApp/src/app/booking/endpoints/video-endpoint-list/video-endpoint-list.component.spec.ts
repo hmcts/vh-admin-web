@@ -24,7 +24,8 @@ describe('VideoEndpointListComponent', () => {
         spyOn(component.editEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null
+            defenceAdvocate: null,
+            interpretationLanguage: undefined
         };
         component.editEndpoint.emit(dto);
         expect(component.editEndpoint.emit).toHaveBeenCalledWith(dto);
@@ -34,7 +35,8 @@ describe('VideoEndpointListComponent', () => {
         spyOn(component.deleteEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null
+            defenceAdvocate: null,
+            interpretationLanguage: undefined
         };
         component.deleteEndpoint.emit(dto);
         expect(component.deleteEndpoint.emit).toHaveBeenCalledWith(dto);

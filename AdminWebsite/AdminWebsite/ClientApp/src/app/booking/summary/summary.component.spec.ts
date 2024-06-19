@@ -546,7 +546,7 @@ describe('SummaryComponent with valid request', () => {
             status: BookingStatus.Failed,
             created_by: 'test@hmcts.net',
             participants: participants
-        } as HearingDetailsResponse;
+        } as unknown as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
@@ -576,7 +576,7 @@ describe('SummaryComponent with valid request', () => {
             status: BookingStatus.Created,
             created_by: 'test@hmcts.net',
             participants: participants
-        } as HearingDetailsResponse;
+        } as unknown as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
@@ -1006,7 +1006,8 @@ describe('SummaryComponent  with multi days request', () => {
         participantList.removeParticipant({
             email: 'firstname.lastname@email.com',
             is_exist_person: false,
-            is_judge: false
+            is_judge: false,
+            interpretationLanguage: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);
@@ -1014,7 +1015,8 @@ describe('SummaryComponent  with multi days request', () => {
         participantList.removeParticipant({
             email: 'firstname1.lastname1@email.com',
             is_exist_person: false,
-            is_judge: false
+            is_judge: false,
+            interpretationLanguage: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);

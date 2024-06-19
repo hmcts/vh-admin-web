@@ -1,6 +1,7 @@
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
+import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
 
 export class ParticipantModel {
     id?: string;
@@ -29,6 +30,7 @@ export class ParticipantModel {
     is_staff_member?: boolean;
     contact_email?: string;
     isJudiciaryMember?: boolean;
+    interpretationLanguage: InterpreterSelectedDto;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
@@ -42,7 +44,8 @@ export class ParticipantModel {
                   phone: person.telephone_number,
                   representee: '',
                   company: person.organisation,
-                  isJudiciaryMember: false
+                  isJudiciaryMember: false,
+                  interpretationLanguage: null
               }
             : null;
     }
@@ -54,7 +57,8 @@ export class ParticipantModel {
                   email: judge.contact_email ?? judge.email,
                   username: judge.email,
                   is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
-                  isJudiciaryMember: false
+                  isJudiciaryMember: false,
+                  interpretationLanguage: null
               }
             : null;
     }
@@ -79,7 +83,8 @@ export class ParticipantModel {
             hearing_role_code: hearingRoleCode,
             phone: judicialMember.telephone,
             display_name: judicialMember.displayName,
-            is_judge: isJudge
+            is_judge: isJudge,
+            interpretationLanguage: judicialMember.interpretationLanguage
         });
     }
 }

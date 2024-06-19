@@ -1,0 +1,43 @@
+<div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.invalid }">
+  <p *ngIf="form.hasError('interpreterLangMissing')" id="interpreter-lang-missing-error" class="govuk-error-message">
+    <span class="govuk-visually-hidden">Error:</span> Please select either a sign language or a spoken language.
+  </p>
+  <div class="govuk-checkboxes">
+    <div class="govuk-checkboxes__item">
+      <input
+        class="govuk-checkboxes__input"
+        [id]="checkboxId"
+        name="interpreter-required"
+        type="checkbox"
+        [(ngModel)]="displayForm"
+        (keydown.enter)="displayForm = !displayForm; $event.stopPropagation()"
+        (click)="displayForm = !displayForm; $event.stopPropagation()"
+      />
+      <label class="govuk-label govuk-checkboxes__label" [htmlFor]="checkboxId"> Interpreter required </label>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="displayForm">
+  <form [formGroup]="form">
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.invalid }">
+      <label class="govuk-label" for="sign-language"> Sign Language </label>
+      <select class="govuk-select" id="sign-language" name="signLanguage" formControlName="signLanguageCode">
+        <option [value]="null">None</option>
+        <option *ngFor="let language of availableSignLanguages" [value]="language.code">
+          {{ language.description }}
+        </option>
+      </select>
+    </div>
+
+    <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': form.invalid }">
+      <label class="govuk-label" for="verbal-language"> Spoken Language </label>
+      <select class="govuk-select" id="verbal-language" name="spokenLanguage" formControlName="spokenLanguageCode">
+        <option [value]="null">None</option>
+        <option *ngFor="let language of availableSpokenLanguages" [value]="language.code">
+          {{ language.description }}
+        </option>
+      </select>
+    </div>
+  </form>
+</ng-container>

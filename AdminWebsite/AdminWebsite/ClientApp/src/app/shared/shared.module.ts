@@ -24,6 +24,7 @@ import { SelectComponent } from './select';
 import { RolesToDisplayPipe } from './pipes/roles-to-display.pipe';
 import { SpinnerInterceptor } from './interceptors/spinner.interceptor';
 import { TruncatableTextComponent } from './truncatable-text/truncatable-text.component';
+import { FeatureFlagDirective } from '../src/app/shared/feature-flag.directive';
 
 @NgModule({
     imports: [
@@ -50,6 +51,7 @@ import { TruncatableTextComponent } from './truncatable-text/truncatable-text.co
         MinutesToHoursPipe,
         RolesToDisplayPipe,
         TooltipDirective,
+        FeatureFlagDirective,
         SelectComponent,
         TruncatableTextComponent
     ],
@@ -70,6 +72,7 @@ import { TruncatableTextComponent } from './truncatable-text/truncatable-text.co
         VenuesMenuComponent,
         MinutesToHoursPipe,
         TooltipDirective,
+        FeatureFlagDirective,
         SelectComponent,
         RolesToDisplayPipe,
         TruncatableTextComponent
