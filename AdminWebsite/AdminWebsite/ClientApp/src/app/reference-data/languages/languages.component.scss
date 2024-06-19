@@ -1,0 +1,20 @@
+@import 'govuk-frontend/govuk/base';
+.new {
+  text-align: center;
+  background-color: govuk-colour('light-blue');
+}
+
+.modified {
+  text-align: center;
+  background-color: govuk-colour('yellow');
+}
+
+.removed {
+  text-align: center;
+  background-color: govuk-colour('orange');
+}
+
+.unchanged {
+  text-align: center;
+  background-color: govuk-colour('light-green');
+}
