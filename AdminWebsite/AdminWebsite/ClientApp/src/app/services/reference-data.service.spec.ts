@@ -1,10 +1,8 @@
-import { inject } from '@angular/core/testing';
-
 import { ReferenceDataService } from './reference-data.service';
 import { AvailableLanguageResponse, BHClient, InterprepretationType } from './clients/api-client';
 import { of } from 'rxjs';
 
-fdescribe('ReferenceDataService', () => {
+describe('ReferenceDataService', () => {
     let service: ReferenceDataService;
     let bhClientSpy: jasmine.SpyObj<BHClient>;
 
