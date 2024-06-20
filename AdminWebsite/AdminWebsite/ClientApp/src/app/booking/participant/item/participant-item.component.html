@@ -18,10 +18,10 @@
       <div class="judge-row__email" id="judge-user">{{ getJudgeUser(participant) }}</div>
       <div class="judge-row__email" id="judge-email">{{ getJudgeEmail() }}</div>
       <div class="judge-row__phone" id="judge-phone">{{ getJudgePhone(participant) }}</div>
-      <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
+      <ng-container *ngIf="participant?.interpretation_language?.interpreterRequired">
         <div class="participant-row__lang">
           {{
-            participant.interpretationLanguage.spokenLanguageCodeDescription ?? participant.interpretationLanguage.signLanguageDescription
+            participant.interpretation_language.spokenLanguageCodeDescription ?? participant.interpretation_language.signLanguageDescription
           }}
         </div>
       </ng-container>
@@ -105,10 +105,10 @@
         </ng-template>
       </ng-template>
 
-      <ng-container *ngIf="participant?.interpretationLanguage?.interpreterRequired">
+      <ng-container *ngIf="participant?.interpretation_language?.interpreterRequired">
         <div class="participant-row__lang">
           {{
-            participant.interpretationLanguage.spokenLanguageCodeDescription ?? participant.interpretationLanguage.signLanguageDescription
+            participant.interpretation_language.spokenLanguageCodeDescription ?? participant.interpretation_language.signLanguageDescription
           }}
         </div>
       </ng-container>

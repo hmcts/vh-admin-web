@@ -519,7 +519,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         newParticipant.user_role_name = this.getUserRoleName(newParticipant);
         newParticipant.addedDuringHearing = this.participantDetails?.addedDuringHearing;
         if (this.interpreterSelection?.interpreterRequired) {
-            newParticipant.interpretationLanguage = {
+            newParticipant.interpretation_language = {
                 interpreterRequired: true,
                 signLanguageCode: this.interpreterSelection.signLanguageCode,
                 signLanguageDescription: this.interpreterSelection.signLanguageDescription,
@@ -527,7 +527,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                 spokenLanguageCodeDescription: this.interpreterSelection.spokenLanguageCodeDescription
             };
         } else {
-            newParticipant.interpretationLanguage = {
+            newParticipant.interpretation_language = {
                 interpreterRequired: false
             };
         }
@@ -784,7 +784,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             is_judge: false,
             is_courtroom_account: false,
             isJudiciaryMember: false,
-            interpretationLanguage: null
+            interpretation_language: null
         };
 
         this.interpreteeList.unshift(interpreteeModel);

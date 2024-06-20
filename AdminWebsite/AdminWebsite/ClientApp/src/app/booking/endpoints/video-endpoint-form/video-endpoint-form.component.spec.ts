@@ -19,7 +19,7 @@ describe('VideoEndpointFormComponent', () => {
             email: 'john@doe.com',
             display_name: 'John Doe',
             user_role_name: 'Representative',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         },
         {
             id: '2',
@@ -28,7 +28,7 @@ describe('VideoEndpointFormComponent', () => {
             email: 'chris@green,com',
             display_name: 'Chris Green',
             user_role_name: 'Representative',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         },
         {
             id: '3',
@@ -37,7 +37,7 @@ describe('VideoEndpointFormComponent', () => {
             email: 'jane@smith.com',
             display_name: 'Jane Smith',
             user_role_name: 'Individual',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         }
     ];
 

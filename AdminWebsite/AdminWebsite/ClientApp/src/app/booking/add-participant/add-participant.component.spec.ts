@@ -1496,7 +1496,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
-        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false, interpretationLanguage: undefined });
+        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false, interpretation_language: undefined });
         flush();
         expect(component.showDetails).toBeTruthy();
     }));
@@ -1510,7 +1510,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             email: 'test2@hmcts.net',
             is_exist_person: false,
             is_judge: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         });
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();

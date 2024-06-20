@@ -30,7 +30,7 @@ export class ParticipantModel {
     is_staff_member?: boolean;
     contact_email?: string;
     isJudiciaryMember?: boolean;
-    interpretationLanguage: InterpreterSelectedDto;
+    interpretation_language: InterpreterSelectedDto;
 
     constructor(init?: Partial<ParticipantModel>) {
         Object.assign(this, init);
@@ -45,7 +45,7 @@ export class ParticipantModel {
                   representee: '',
                   company: person.organisation,
                   isJudiciaryMember: false,
-                  interpretationLanguage: null
+                  interpretation_language: null
               }
             : null;
     }
@@ -58,7 +58,7 @@ export class ParticipantModel {
                   username: judge.email,
                   is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom,
                   isJudiciaryMember: false,
-                  interpretationLanguage: null
+                  interpretation_language: null
               }
             : null;
     }
@@ -84,7 +84,7 @@ export class ParticipantModel {
             phone: judicialMember.telephone,
             display_name: judicialMember.displayName,
             is_judge: isJudge,
-            interpretationLanguage: judicialMember.interpretationLanguage
+            interpretation_language: judicialMember.interpretationLanguage
         });
     }
 }

@@ -49,13 +49,13 @@ const interpreter: ParticipantModel = {
     hearing_role_name: 'Interpreter ',
     is_judge: false,
     is_exist_person: false,
-    interpretationLanguage: undefined
+    interpretation_language: undefined
 };
 const notInterpreter: ParticipantModel = {
     hearing_role_name: 'Not Interpreter ',
     is_judge: false,
     is_exist_person: false,
-    interpretationLanguage: undefined
+    interpretation_language: undefined
 };
 
 describe('OtherInformationComponent', () => {

@@ -81,14 +81,14 @@ describe('ParticipantItemComponent', () => {
             is_judge: false,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         const pat: ParticipantModel = {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         component.editParticipant(pat);
         fixture.detectChanges();
@@ -104,14 +104,14 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: true,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         const pat: ParticipantModel = {
             email: 'email@hmcts.net',
             is_exist_person: false,
             is_judge: true,
             isJudiciaryMember: true,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         component.editParticipant(pat);
         fixture.detectChanges();
@@ -127,7 +127,7 @@ describe('ParticipantItemComponent', () => {
             is_exist_person: false,
             is_judge: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         spyOn(component.edit, 'emit');
         component.editParticipant(pat);
@@ -141,7 +141,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: false,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.isRepresentative).toBeTruthy();
@@ -175,7 +175,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.hasCaseRole).toBeFalsy();
@@ -187,7 +187,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.isObserverOrPanelMember).toBeTruthy();
@@ -199,7 +199,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.isObserverOrPanelMember).toBeTruthy();
@@ -212,7 +212,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.displayCaseRole).toBeTruthy();
@@ -224,7 +224,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         const email = component.getJudgeEmail();
         expect(email).toBe('James.Doe@hmcts.net');
@@ -236,7 +236,7 @@ describe('ParticipantItemComponent', () => {
             is_judge: true,
             is_exist_person: false,
             isJudiciaryMember: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         const phone = component.getJudgePhone(component.participant);
         expect(phone).toBe('123456789');
@@ -247,7 +247,7 @@ describe('ParticipantItemComponent', () => {
             hearing_role_name: 'Interpreter',
             is_judge: true,
             is_exist_person: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         };
         fixture.detectChanges();
         expect(component.isInterpreter).toBeTruthy();

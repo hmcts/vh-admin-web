@@ -247,8 +247,8 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             this.form.get('role').setValue(this.participantDetails.hearing_role_name);
             this.roleSelected();
 
-            if (this.participantDetails?.interpretationLanguage) {
-                this.interpreterForm.prepopulateForm(this.participantDetails.interpretationLanguage);
+            if (this.participantDetails?.interpretation_language) {
+                this.interpreterForm.prepopulateForm(this.participantDetails.interpretation_language);
             } else {
                 this.interpreterForm?.resetForm();
             }

@@ -1007,7 +1007,7 @@ describe('SummaryComponent  with multi days request', () => {
             email: 'firstname.lastname@email.com',
             is_exist_person: false,
             is_judge: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);
@@ -1016,7 +1016,7 @@ describe('SummaryComponent  with multi days request', () => {
             email: 'firstname1.lastname1@email.com',
             is_exist_person: false,
             is_judge: false,
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);

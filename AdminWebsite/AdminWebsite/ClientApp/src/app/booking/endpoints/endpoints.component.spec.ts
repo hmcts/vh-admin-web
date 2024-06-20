@@ -27,7 +27,7 @@ function initHearingRequest(): HearingModel {
             email: 'john@doe.com',
             display_name: 'John Doe',
             user_role_name: 'Representative',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         },
         {
             id: '2',
@@ -36,7 +36,7 @@ function initHearingRequest(): HearingModel {
             email: 'chris@green,com',
             display_name: 'Chris Green',
             user_role_name: 'Representative',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         },
         {
             id: '3',
@@ -45,7 +45,7 @@ function initHearingRequest(): HearingModel {
             email: 'jane@smith.com',
             display_name: 'Jane Smith',
             user_role_name: 'Individual',
-            interpretationLanguage: undefined
+            interpretation_language: undefined
         }
     ];
     newHearing.endpoints = [
