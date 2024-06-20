@@ -579,49 +579,49 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 hearing_role_name: 'Judge',
                 display_name: 'Judge1',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: true,
                 hearing_role_name: 'Judge',
                 display_name: 'Judge2',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Winger',
                 display_name: 'Winger1',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Winger',
                 display_name: 'Winger2',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Staff Member',
                 display_name: 'Staff Member',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Panel Member',
                 display_name: 'Panel Member',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Observer',
                 display_name: 'Observer',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
@@ -629,21 +629,21 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 display_name: 'Litigant in Person1',
                 linked_participants: linked_participantList1,
                 id: '7',
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Litigant in Person',
                 display_name: 'Litigant in Person2',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
                 hearing_role_name: 'Litigant in Person',
                 display_name: 'Litigant in Person3',
                 linked_participants: null,
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             },
             {
                 is_judge: false,
@@ -651,7 +651,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 display_name: 'Interpreter1',
                 linked_participants: linked_participantList,
                 id: '9',
-                interpretationLanguage: undefined
+                interpretation_language: undefined
             }
         ];
 
