@@ -66,6 +66,7 @@ export class LanguagesComponent implements OnInit {
                         return {
                             code: lang.code,
                             description: lang.description,
+                            descriptionWelsh: lang.description_welsh,
                             type: lang.type
                         };
                     });
@@ -136,22 +137,22 @@ export class LanguagesComponent implements OnInit {
             if (!currentLanguage) {
                 const type = proposedLanguage.CategoryKey === 'SignLanguage' ? InterprepretationType.Sign : InterprepretationType.Verbal;
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: type },
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY, type: type },
                     status: 'New'
                 });
             } else if (!proposedLanguage.Active) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
                     status: 'Removed'
                 });
             } else if (proposedLanguage.Value_EN !== currentLanguage.description) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
                     status: 'Modified'
                 });
             } else {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, type: currentLanguage.type },
+                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
                     status: 'Unchanged'
                 });
             }
@@ -174,5 +175,6 @@ export class LanguagesComponent implements OnInit {
 export interface AvailableLanguage {
     code: string | undefined;
     description: string | undefined;
+    descriptionWelsh: string | undefined;
     type: InterprepretationType;
 }

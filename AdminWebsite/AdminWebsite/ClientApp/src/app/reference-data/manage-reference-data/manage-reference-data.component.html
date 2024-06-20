@@ -1,0 +1,45 @@
+<h1 class="govuk-heading-l">Manage Ref Data</h1>
+
+<div class="govuk-tabs" id="tabs" data-module="govuk-tabs">
+  <h2 class="govuk-tabs__title">Contents</h2>
+  <ul class="govuk-tabs__list">
+    <li class="govuk-tabs__list-item" [ngClass]="{ 'govuk-tabs__list-item--selected': fragment === 'languages' }">
+      <a class="govuk-tabs__tab" routerLink="/manage-ref-data/" fragment="languages"> Languages </a>
+    </li>
+    <li class="govuk-tabs__list-item" [ngClass]="{ 'govuk-tabs__list-item--selected': fragment === 'venues' }">
+      <a class="govuk-tabs__tab" routerLink="/manage-ref-data/" fragment="venues"> Venues </a>
+    </li>
+    <li class="govuk-tabs__list-item" [ngClass]="{ 'govuk-tabs__list-item--selected': fragment === 'case-types' }">
+      <a class="govuk-tabs__tab" routerLink="/manage-ref-data/" fragment="case-types"> Case Types </a>
+    </li>
+    <li class="govuk-tabs__list-item" [ngClass]="{ 'govuk-tabs__list-item--selected': fragment === 'hearing-roles' }">
+      <a class="govuk-tabs__tab" routerLink="/manage-ref-data/" fragment="hearing-roles"> Hearing Roles </a>
+    </li>
+  </ul>
+  <div class="govuk-tabs__panel" [ngClass]="{ 'govuk-tabs__panel--hidden': fragment !== 'languages' }" id="languages">
+    <h2 class="govuk-heading-l">Languages</h2>
+    <div class="govuk-grid-row">
+      <ng-container *ngIf="fragment === 'languages'">
+        <app-languages></app-languages>
+      </ng-container>
+    </div>
+  </div>
+  <div class="govuk-tabs__panel" [ngClass]="{ 'govuk-tabs__panel--hidden': fragment !== 'venues' }" id="venues">
+    <h2 class="govuk-heading-l">Venues</h2>
+    <div>
+      <p>There are no venues to display.</p>
+    </div>
+  </div>
+  <div class="govuk-tabs__panel" [ngClass]="{ 'govuk-tabs__panel--hidden': fragment !== 'case-types' }" id="case-types">
+    <h2 class="govuk-heading-l">Case types</h2>
+    <div>
+      <p>There are no case types to display.</p>
+    </div>
+  </div>
+  <div class="govuk-tabs__panel" [ngClass]="{ 'govuk-tabs__panel--hidden': fragment !== 'hearing-roles' }" id="hearing-roles">
+    <h2 class="govuk-heading-l">Hearing roles</h2>
+    <div>
+      <p>There are no hearing roles to display.</p>
+    </div>
+  </div>
+</div>

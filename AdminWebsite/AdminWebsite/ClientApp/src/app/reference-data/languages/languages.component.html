@@ -1,5 +1,3 @@
-<h1 class="govuk-heading-l">Manage Ref Data</h1>
-
 <div class="govuk-grid-column-full govuk-!-margin-top-2">
   <label class="govuk-label" for="file-upload"> Upload the master ref data file </label>
   <input accept=".csv" type="file" class="govuk-file-upload" (change)="onFileSelected($event)" #fileUpload />
@@ -7,37 +5,6 @@
 </div>
 
 <ng-container *ngIf="fileProcessed">
-  <div class="govuk-form-group">
-    <label class="govuk-label" for="selectedStatus"> Select Filter</label>
-    <select [(ngModel)]="selectedStatus" class="govuk-select" id="selectedStatus" name="selectedStatus">
-      <option value="all">All</option>
-      <option *ngFor="let status of languageStatuses" [value]="status">{{ status }}</option>
-    </select>
-  </div>
-  <div *ngIf="duplicateCodeDetected" class="govuk-warning-text">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      Duplicate language codes detected in the file. Please correct the file before proceeding.
-    </strong>
-  </div>
-
-  <!-- One line summary -->
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-quarter">
-      <p>New: {{ newLanguages.length }}</p>
-    </div>
-    <div class="govuk-grid-column-one-quarter">
-      <p>Modified: {{ modifiedLanguages.length }}</p>
-    </div>
-    <div class="govuk-grid-column-one-quarter">
-      <p>Unchanged: {{ unchangedLanguages.length }}</p>
-    </div>
-    <div class="govuk-grid-column-one-quarter">
-      <p>Removed: {{ removedLanguages.length }}</p>
-    </div>
-  </div>
-
   <!-- Table line summary -->
   <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -66,6 +33,22 @@
     </tbody>
   </table>
 
+  <div *ngIf="duplicateCodeDetected" class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      Duplicate language codes detected in the file. Please correct the file before proceeding.
+    </strong>
+  </div>
+
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="selectedStatus"> Select Filter</label>
+    <select [(ngModel)]="selectedStatus" class="govuk-select" id="selectedStatus" name="selectedStatus">
+      <option value="all">All</option>
+      <option *ngFor="let status of languageStatuses" [value]="status">{{ status }}</option>
+    </select>
+  </div>
+
   <!-- Full content changes -->
   <table class="govuk-table">
     <thead class="govuk-table__head">
@@ -80,7 +63,7 @@
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row" *ngFor="let item of this.filteredData">
         <td class="govuk-table__cell">{{ item.language.description }}</td>
-        <td class="govuk-table__cell">Pending</td>
+        <td class="govuk-table__cell">{{ item.language.descriptionWelsh }}</td>
         <td class="govuk-table__cell">{{ item.language.code }}</td>
         <td class="govuk-table__cell">{{ item.language.type }}</td>
         <td class="govuk-table__cell" [ngClass]="item.status | lowercase">{{ item.status }}</td>

@@ -6186,6 +6186,8 @@ export class AvailableLanguageResponse implements IAvailableLanguageResponse {
     /** The plain text description of the language */
     description?: string | undefined;
     type?: InterprepretationType;
+    /** The plain text description of the language in Welsh */
+    description_welsh?: string | undefined;
 
     constructor(data?: IAvailableLanguageResponse) {
         if (data) {
@@ -6200,6 +6202,7 @@ export class AvailableLanguageResponse implements IAvailableLanguageResponse {
             this.code = _data['code'];
             this.description = _data['description'];
             this.type = _data['type'];
+            this.description_welsh = _data['description_welsh'];
         }
     }
 
@@ -6215,6 +6218,7 @@ export class AvailableLanguageResponse implements IAvailableLanguageResponse {
         data['code'] = this.code;
         data['description'] = this.description;
         data['type'] = this.type;
+        data['description_welsh'] = this.description_welsh;
         return data;
     }
 }
@@ -6226,6 +6230,8 @@ export interface IAvailableLanguageResponse {
     /** The plain text description of the language */
     description?: string | undefined;
     type?: InterprepretationType;
+    /** The plain text description of the language in Welsh */
+    description_welsh?: string | undefined;
 }
 
 export class AzureConfiguration implements IAzureConfiguration {

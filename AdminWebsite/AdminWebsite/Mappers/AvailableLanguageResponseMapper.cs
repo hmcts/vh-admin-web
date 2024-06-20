@@ -11,6 +11,7 @@ public static class AvailableLanguageResponseMapper
         {
             Code = languagesResponse.Code,
             Description = languagesResponse.Value,
+            DescriptionWelsh = languagesResponse.WelshValue,
             Type = (InterprepretationType)languagesResponse.Type
         };
     }

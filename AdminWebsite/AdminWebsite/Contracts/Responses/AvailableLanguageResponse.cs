@@ -21,5 +21,10 @@ namespace AdminWebsite.Contracts.Responses
         /// The type of interpretation
         /// </summary>
         public InterprepretationType Type { get; set; }
+
+        /// <summary>
+        /// The plain text description of the language in Welsh
+        /// </summary>
+        public string DescriptionWelsh { get; set; }
     }
 }
