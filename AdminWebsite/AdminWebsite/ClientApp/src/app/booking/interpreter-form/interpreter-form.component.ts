@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AvailableLanguageResponse, InterprepretationType } from 'src/app/services/clients/api-client';
@@ -10,6 +10,12 @@ import { InterpreterSelectedDto } from './interpreter-selected.model';
     templateUrl: './interpreter-form.component.html'
 })
 export class InterpreterFormComponent implements OnInit, OnDestroy {
+    forceDisplayForm: boolean;
+    @Input() set requireLanguageSelection(forceSelection: boolean) {
+        this.forceDisplayForm = forceSelection;
+        this.displayForm = forceSelection;
+        this.cdRef.detectChanges();
+    }
     @Output() interpreterLanguageSelected = new EventEmitter<InterpreterSelectedDto>();
 
     availableLanguages: AvailableLanguageResponse[] = [];
@@ -76,9 +82,14 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
         this.cdRef.detectChanges();
     }
 
-    resetForm() {
-        this.displayForm = false;
+    resetForm(keepDisplayForm = false) {
+        this.displayForm = keepDisplayForm;
         this.form.reset();
+    }
+
+    forceValidation() {
+        this.form.markAsDirty();
+        this.form.updateValueAndValidity();
     }
 
     ngOnInit(): void {
@@ -122,7 +133,7 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
     }
 
     languageCodeValidator = (group: FormGroup): { [key: string]: any } | null => {
-        if (group.pristine) {
+        if (group.pristine && !this.forceDisplayForm) {
             return null;
         }
         const signLanguageCode = group.get('signLanguageCode').value;

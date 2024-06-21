@@ -80,7 +80,7 @@
         <ng-container *appFeatureFlag="featureFlags.interpreterEnhancements">
           <app-interpreter-form
             #interpreterForm
-            *ngIf="showInterpreterForm"
+            [requireLanguageSelection]="isInterpreter"
             (interpreterLanguageSelected)="onInterpreterLanguageSelected($event)"
           ></app-interpreter-form>
         </ng-container>
@@ -149,7 +149,7 @@
           <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
         </div>
 
-        <div *ngIf="isInterpreter">
+        <div *ngIf="isInterpreter && !interpreterEnhancementsFlag">
           <div class="govuk-form-group" [class.govuk-form-group--error]="interpreterForInvalid">
             <legend id="interpreterFor-error" *ngIf="interpreterForInvalid">
               <span class="govuk-error-message">

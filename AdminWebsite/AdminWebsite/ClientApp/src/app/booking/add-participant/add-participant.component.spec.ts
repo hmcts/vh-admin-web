@@ -289,6 +289,7 @@ describe('AddParticipantComponent', () => {
             'mapParticipantHearingRoles'
         ]);
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
@@ -316,7 +317,7 @@ describe('AddParticipantComponent', () => {
         );
 
         component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy);
+        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, launchDarklyServiceSpy);
 
         component.ngOnInit();
 
@@ -1188,6 +1189,7 @@ describe('AddParticipantComponent edit mode', () => {
 
     it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         component.ngOnInit();
         component.ngAfterViewInit();
@@ -1450,7 +1452,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
         fixture = TestBed.createComponent(AddParticipantComponent);
         component = fixture.componentInstance;
-        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy);
+        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, launchDarklyServiceSpy);
         component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
         component.editMode = true;
         component.ngOnInit();
@@ -1654,24 +1656,24 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             fixture.detectChanges();
         });
 
-        it('should show interpreter form when role is not interpreter', fakeAsync(() => {
+        it('should show interpreter form when role is selected', fakeAsync(() => {
             component.form.controls.role.setValue('Representative');
 
             fixture.detectChanges();
             flush();
 
-            expect(component.showInterpreterForm).toBeTrue();
             expect(component.interpreterForm).toBeDefined();
         }));
 
-        it('should not show interpreter form when role is interpreter', fakeAsync(() => {
-            component.form.controls.role.setValue('Interpreter');
+        it('should force language selection when interpreter role is selected', fakeAsync(() => {
+            component.form.controls.role.setValue('Interpreter', { emitEvent: true });
+            component.roleSelected();
 
             fixture.detectChanges();
             flush();
 
-            expect(component.showInterpreterForm).toBeFalse();
-            expect(component.interpreterForm).toBeUndefined();
+            expect(component.isInterpreter).toBeTrue();
+            expect(component.interpreterForm).toBeDefined();
         }));
 
         it('should set the interpreterSelection when onInterpreterLanguageSelected is called', () => {

@@ -75,10 +75,12 @@
         </ng-container>
 
         <ng-container *ngIf="isInterpreter">
-          <div>Interpreting for</div>
-          <div>
-            <strong>{{ participant.interpretee_name }}</strong>
-          </div>
+          <ng-container *ngIf="!interpreterEnhancementsEnabled">
+            <div>Interpreting for</div>
+            <div>
+              <strong>{{ participant.interpretee_name }}</strong>
+            </div>
+          </ng-container>
           <div *ngIf="displayCaseRole">
             {{ participant.case_role_name }}
           </div>
@@ -87,10 +89,12 @@
 
       <ng-template #individual>
         <div *ngIf="isInterpreter; else otherIndividual">
-          <div>Interpreting for</div>
-          <div>
-            <strong>{{ participant.interpretee_name }}</strong>
-          </div>
+          <ng-container *ngIf="!interpreterEnhancementsEnabled">
+            <div>Interpreting for</div>
+            <div>
+              <strong>{{ participant.interpretee_name }}</strong>
+            </div>
+          </ng-container>
           <div *ngIf="displayCaseRole">
             {{ participant.case_role_name }}
           </div>

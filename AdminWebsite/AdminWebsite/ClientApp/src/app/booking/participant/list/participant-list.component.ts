@@ -1,30 +1,39 @@
-import { Component, DoCheck, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { Constants } from 'src/app/common/constants';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { HearingModel } from '../../../common/model/hearing.model';
 import { HearingRoleCodes } from '../../../common/model/hearing-roles.model';
+import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-participant-list',
     templateUrl: './participant-list.component.html',
     styleUrls: ['./participant-list.component.scss']
 })
-export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
+export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnDestroy {
     @Input() hearing: HearingModel;
     @Input() isSummaryPage = false;
     @Input() canEdit = false;
 
+    interpreterEnhancementsEnabled = false;
     sortedParticipants: ParticipantModel[] = [];
     sortedJudiciaryMembers: ParticipantModel[] = [];
 
     $selectedForEdit = new EventEmitter<string>();
     $selectedForRemove = new EventEmitter<string>();
+    private destroyed$ = new EventEmitter<void>();
 
     isEditMode = false;
 
-    constructor(private videoHearingsService: VideoHearingsService) {}
+    constructor(private videoHearingsService: VideoHearingsService, private ldService: LaunchDarklyService) {}
+
+    ngOnDestroy(): void {
+        this.destroyed$.unsubscribe();
+        this.destroyed$.unsubscribe();
+    }
 
     ngDoCheck(): void {
         const participantsLocal = [...(this.hearing?.participants || [])].sort(this.sortByDisplayName());
@@ -82,6 +91,12 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck {
     }
 
     ngOnInit() {
+        this.ldService
+            .getFlag<boolean>(FeatureFlags.interpreterEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.interpreterEnhancementsEnabled = flag;
+            });
         this.sortParticipants();
     }
 

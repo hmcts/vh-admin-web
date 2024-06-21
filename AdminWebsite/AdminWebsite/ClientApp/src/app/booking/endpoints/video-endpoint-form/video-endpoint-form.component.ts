@@ -77,8 +77,7 @@ export class VideoEndpointFormComponent {
         this.form.markAllAsTouched();
 
         const includeInterpreter = this.interpreterForm ?? false;
-        this.interpreterForm?.form.markAsDirty();
-        this.interpreterForm?.form.updateValueAndValidity();
+        this.interpreterForm?.forceValidation();
         if (!this.form.valid || (includeInterpreter && !this.interpreterForm?.form.valid)) {
             return;
         }

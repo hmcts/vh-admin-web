@@ -52,7 +52,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
     interpreteeList: ParticipantModel[] = [];
     showConfirmRemoveInterpretee = false;
-    showInterpreterForm = false;
+    forceInterpretationLanguageSelection = false;
     interpreterSelection: InterpreterSelectedDto;
 
     @ViewChild(ParticipantListComponent, { static: true })
@@ -88,6 +88,12 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
             .pipe(takeUntil(this.destroyed$))
             .subscribe(flag => {
                 this.referenceDataFeatureFlag = flag;
+            });
+        this.launchDarklyService
+            .getFlag<boolean>(FeatureFlags.interpreterEnhancements)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(flag => {
+                this.interpreterEnhancementsFlag = flag;
             });
         this.checkForExistingRequest();
         this.initialiseForm();
@@ -206,7 +212,8 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         const self = this;
         this.$subscriptions.push(
             this.form.valueChanges.subscribe(changes => {
-                self.showInterpreterForm = changes.role?.toLocaleLowerCase() !== HearingRoles.INTERPRETER.toLocaleLowerCase();
+                self.forceInterpretationLanguageSelection =
+                    changes.role?.toLocaleLowerCase() !== HearingRoles.INTERPRETER.toLocaleLowerCase();
 
                 setTimeout(() => {
                     if (
@@ -454,8 +461,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         this.lastName.markAsTouched();
         this.phone.markAsTouched();
         this.displayName.markAsTouched();
-        this.interpreterForm?.form.markAsDirty();
-        this.interpreterForm?.form.updateValueAndValidity();
+        this.interpreterForm?.forceValidation();
     }
 
     confirmRemoveParticipant() {

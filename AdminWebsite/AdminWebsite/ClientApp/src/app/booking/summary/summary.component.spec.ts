@@ -124,7 +124,8 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
 ]);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
-launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
 describe('SummaryComponent with valid request', () => {
@@ -924,6 +925,10 @@ describe('SummaryComponent  with existing request', () => {
 
 describe('SummaryComponent  with multi days request', () => {
     const bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
+    const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
         'switchOffRecording',
         'mandatoryRecordingForHearingRole'
@@ -946,7 +951,7 @@ describe('SummaryComponent  with multi days request', () => {
         launchDarklyServiceSpy,
         bookingStatusService
     );
-    component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy);
+    component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, ldServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
     component.removePopupComponent = new RemovePopupComponent();
 

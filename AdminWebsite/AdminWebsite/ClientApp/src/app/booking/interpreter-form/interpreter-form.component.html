@@ -2,7 +2,7 @@
   <p *ngIf="form.hasError('interpreterLangMissing')" id="interpreter-lang-missing-error" class="govuk-error-message">
     <span class="govuk-visually-hidden">Error:</span> Please select either a sign language or a spoken language.
   </p>
-  <div class="govuk-checkboxes">
+  <div *ngIf="!forceDisplayForm" class="govuk-checkboxes">
     <div class="govuk-checkboxes__item">
       <input
         class="govuk-checkboxes__input"

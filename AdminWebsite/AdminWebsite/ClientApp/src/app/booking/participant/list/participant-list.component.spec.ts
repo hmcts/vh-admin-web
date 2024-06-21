@@ -11,7 +11,7 @@ import { ParticipantItemComponent } from '../item/participant-item.component';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judicial-member.model';
 import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
-import { LaunchDarklyService } from '../../../services/launch-darkly.service';
+import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
 import { of } from 'rxjs';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
@@ -44,7 +44,8 @@ describe('ParticipantListComponent', () => {
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
-        ldServiceSpy.getFlag.and.returnValue(of(true));
+        ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+        ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         TestBed.configureTestingModule({
             declarations: [ParticipantListComponent, ParticipantItemComponent],
             providers: [
@@ -285,12 +286,17 @@ describe('ParticipantListComponent-SortParticipants', () => {
 
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['isConferenceClosed', 'isHearingAboutToStart']);
+        const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+        ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+
         TestBed.configureTestingModule({
             declarations: [ParticipantListComponent, ParticipantItemComponent],
             providers: [
                 { provide: Logger, useValue: loggerSpy },
                 { provide: Router, useValue: router },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                { provide: LaunchDarklyService, useValue: ldServiceSpy }
             ],
             imports: [RouterTestingModule]
         }).compileComponents();
