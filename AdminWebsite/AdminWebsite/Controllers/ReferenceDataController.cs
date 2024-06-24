@@ -155,7 +155,7 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<AvailableLanguageResponse>>> GetAvailableLanguages()
         {
             var response = await _bookingsApiClient.GetAvailableInterpreterLanguagesAsync();
-            return Ok(response.Select(AvailableLanguageResponseMapper.Map).ToList());
+            return Ok(response.OrderBy(x => x.Value).Select(AvailableLanguageResponseMapper.Map).ToList());
         }
     }
 }
