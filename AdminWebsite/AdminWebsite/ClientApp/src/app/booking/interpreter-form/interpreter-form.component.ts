@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AvailableLanguageResponse, InterprepretationType } from 'src/app/services/clients/api-client';
@@ -9,13 +9,15 @@ import { InterpreterSelectedDto } from './interpreter-selected.model';
     selector: 'app-interpreter-form',
     templateUrl: './interpreter-form.component.html'
 })
-export class InterpreterFormComponent implements OnInit, OnDestroy {
+export class InterpreterFormComponent implements OnInit, OnDestroy, OnChanges {
     forceDisplayForm: boolean;
+
     @Input() set requireLanguageSelection(forceSelection: boolean) {
         this.forceDisplayForm = forceSelection;
         this.displayForm = forceSelection;
         this.cdRef.detectChanges();
     }
+
     @Output() interpreterLanguageSelected = new EventEmitter<InterpreterSelectedDto>();
 
     availableLanguages: AvailableLanguageResponse[] = [];
@@ -28,6 +30,12 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
 
     constructor(private refDataService: ReferenceDataService, private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef) {
         this.createForm();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.requireLanguageSelection) {
+            this.forceValidation();
+        }
     }
 
     get availableSignLanguages(): AvailableLanguageResponse[] {
@@ -85,6 +93,7 @@ export class InterpreterFormComponent implements OnInit, OnDestroy {
     resetForm(keepDisplayForm = false) {
         this.displayForm = keepDisplayForm;
         this.form.reset();
+        this.form.markAsPristine();
     }
 
     forceValidation() {

@@ -51,7 +51,7 @@
   <div class="participant-row" *ngIf="!isJudge && !isStaffMember">
     <div class="interpreter-icon">
       <img
-        *ngIf="isInterpreter || isInterpretee"
+        *ngIf="(interpreterEnhancementsEnabled && isInterpreter) || (!interpreterEnhancementsEnabled && (isInterpreter || isInterpretee))"
         src="/assets/images/interpreter.png"
         height="40"
         width="40"

@@ -427,6 +427,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         const isInterpreter = this.isRoleInterpreter(this.role.value);
         if (isInterpreter && this.interpreterEnhancementsFlag) {
             this.interpreterFor.clearValidators();
+            this.interpreterFor.reset();
             this.isInterpreter = true;
         } else if (isInterpreter && !this.interpreterEnhancementsFlag) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);
