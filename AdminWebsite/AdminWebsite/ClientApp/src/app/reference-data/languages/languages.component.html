@@ -41,6 +41,10 @@
     </strong>
   </div>
 
+  <div class="govuk-button-group">
+    <button class="govuk-button" data-module="govuk-button" (click)="generateMigrationScript()">Generate SQL</button>
+  </div>
+
   <div class="govuk-form-group">
     <label class="govuk-label" for="selectedStatus"> Select Filter</label>
     <select [(ngModel)]="selectedStatus" class="govuk-select" id="selectedStatus" name="selectedStatus">

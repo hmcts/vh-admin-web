@@ -84,7 +84,6 @@ export class LanguagesComponent implements OnInit {
     }
 
     uploadFile() {
-        console.log('Uploading file...');
         const reader = new FileReader();
 
         const self = this;
@@ -137,22 +136,42 @@ export class LanguagesComponent implements OnInit {
             if (!currentLanguage) {
                 const type = proposedLanguage.CategoryKey === 'SignLanguage' ? InterprepretationType.Sign : InterprepretationType.Verbal;
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY, type: type },
+                    language: {
+                        code: proposedLanguage.Key,
+                        description: proposedLanguage.Value_EN,
+                        descriptionWelsh: proposedLanguage.Value_CY,
+                        type: type
+                    },
                     status: 'New'
                 });
             } else if (!proposedLanguage.Active) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
+                    language: {
+                        code: proposedLanguage.Key,
+                        description: proposedLanguage.Value_EN,
+                        descriptionWelsh: proposedLanguage.Value_CY,
+                        type: currentLanguage.type
+                    },
                     status: 'Removed'
                 });
             } else if (proposedLanguage.Value_EN !== currentLanguage.description) {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
+                    language: {
+                        code: proposedLanguage.Key,
+                        description: proposedLanguage.Value_EN,
+                        descriptionWelsh: proposedLanguage.Value_CY,
+                        type: currentLanguage.type
+                    },
                     status: 'Modified'
                 });
             } else {
                 comparisonResult.push({
-                    language: { code: proposedLanguage.Key, description: proposedLanguage.Value_EN, descriptionWelsh: proposedLanguage.Value_CY,type: currentLanguage.type },
+                    language: {
+                        code: proposedLanguage.Key,
+                        description: proposedLanguage.Value_EN,
+                        descriptionWelsh: proposedLanguage.Value_CY,
+                        type: currentLanguage.type
+                    },
                     status: 'Unchanged'
                 });
             }
@@ -169,6 +188,41 @@ export class LanguagesComponent implements OnInit {
         }
 
         return comparisonResult;
+    }
+
+    generateMigrationScript() {
+        let sql = '';
+        for (const language of this.data) {
+            sql += this.getUpsertSql(language);
+        }
+
+        // write the sql to a file for the user to download
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(sql));
+        element.setAttribute('download', 'migration.sql');
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        element.remove();
+    }
+
+    private getUpsertSql(result: LanguageComparisonResult): string {
+        const code = result.language.code;
+        const description = result.language.description;
+        const descriptionWelsh = result.language.descriptionWelsh;
+        const active = result.status !== 'Removed' ? 1 : 0;
+        const type = result.language.type === InterprepretationType.Sign ? 1 : 2; // sign = 1, verbal = 2
+
+        const sql = `MERGE INTO InterpreterLanguage AS Target
+        USING (VALUES ('${code}', '${description}', '${descriptionWelsh}', ${active}, ${type})) 
+        AS Source (Code, Value, WelshValue, Live, Type)
+        ON Target.Code = Source.Code
+        WHEN MATCHED THEN
+            UPDATE SET Value = Source.Value, WelshValue = Source.WelshValue, Live = Source.Live, Type = Source.Type, UpdatedDate = GETDATE()
+        WHEN NOT MATCHED BY TARGET THEN
+            INSERT (Code, Value, WelshValue, Type, Live, CreatedDate, UpdatedDate) VALUES (Source.Code, Source.Value, Source.WelshValue, Source.Type,  Source.Live, GETDATE(), GETDATE());`;
+
+        return sql;
     }
 }
 
