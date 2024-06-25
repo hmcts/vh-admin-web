@@ -14,7 +14,7 @@ env:
   ado_pipeline: 'hmcts.vh-admin-web.sds.pr-close'
   pr_number: ${{github.event.pull_request.number}}
   branch: ${{ github.ref_name }}
-  AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+  AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_TOKEN_TEST }}
 
 jobs:
   deployment:
