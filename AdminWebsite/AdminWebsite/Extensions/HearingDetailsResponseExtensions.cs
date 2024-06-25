@@ -44,11 +44,11 @@ namespace AdminWebsite.Extensions
 
             if (isNewJudgeEJud && isOriginalJudgeEJud)
             {
-                var judgeA = hearing.Participants.FirstOrDefault(x =>
+                var judgeA = hearing.Participants.Find(x =>
                     x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
 
-                var judgeB = originalHearing.Participants.FirstOrDefault(x =>
+                var judgeB = originalHearing.Participants.Find(x =>
                     x.UserRoleName.Contains(RoleNames.Judge, StringComparison.CurrentCultureIgnoreCase));
 
                 return judgeA?.ContactEmail != judgeB?.ContactEmail;

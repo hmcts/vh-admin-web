@@ -24,7 +24,7 @@ namespace AdminWebsite.Helper
         public AdministratorRoleClaims(IEnumerable<Claim> claims)
         {
             var claimsList = claims.ToList();
-            var userCaseTypes = claimsList.FirstOrDefault(x => x.Type == ClaimNames.UserCaseTypes);
+            var userCaseTypes = claimsList.Find(x => x.Type == ClaimNames.UserCaseTypes);
             
             UserCaseTypes = userCaseTypes?.Value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                             ??

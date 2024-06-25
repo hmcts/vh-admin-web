@@ -1,6 +1,4 @@
 ﻿using AdminWebsite.Models;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Attributes
 {

@@ -1,13 +1,9 @@
-﻿using System;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Controllers;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers
 {

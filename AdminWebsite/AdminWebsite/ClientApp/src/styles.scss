@@ -176,7 +176,7 @@ body {
   right: 0;
   background: rgba(0, 0, 0, 0.7);
   transition: opacity 500ms;
-  z-index: 999;
+  z-index: 3000;
 }
 
 .vh-popup-small {
@@ -383,8 +383,8 @@ p {
 }
 
 .vh-popup-medium {
-    max-width: 800px !important;
-    text-align: center;
+  max-width: 800px !important;
+  text-align: center;
 }
 
 .vh-popup-message-xsmall {

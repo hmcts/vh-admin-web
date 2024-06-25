@@ -1,6 +1,4 @@
 ﻿using AdminWebsite.Validators;
-using NUnit.Framework;
-using System;
 using System.Linq;
 using BookingsApi.Contract.V1.Requests;
 
@@ -25,8 +23,8 @@ namespace AdminWebsite.UnitTests.Validators
         var longString = new String('a', 257);
             var testRequest = new CaseRequest { Number = longString, Name=longString };
             var result = _validator.Validate(testRequest);
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Number" && o.ErrorMessage == CaseNumber_MESSAGE));
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Name" && o.ErrorMessage == CaseName_MESSAGE));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "Number" && o.ErrorMessage == CaseNumber_MESSAGE));
+            Assert.That(result.Errors.Exists(o => o.PropertyName == "Name" && o.ErrorMessage == CaseName_MESSAGE));
         }
 
         [Test]
@@ -35,7 +33,7 @@ namespace AdminWebsite.UnitTests.Validators
             var shortString = "";
             var testRequest = new CaseRequest { Number = shortString, Name = shortString };
             var result = _validator.Validate(testRequest);
-            Assert.That(result.Errors.All(o => o.ErrorMessage.Contains("must not be empty.")));
+            Assert.That(result.Errors.TrueForAll(o => o.ErrorMessage.Contains("must not be empty.")));
             Assert.That(result.Errors.Count == 2);
         }
 

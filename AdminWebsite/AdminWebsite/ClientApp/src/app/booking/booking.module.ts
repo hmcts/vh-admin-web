@@ -20,6 +20,9 @@ import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add
 import { SearchForJudicialMemberComponent } from './judicial-office-holders/search-for-judicial-member/search-for-judicial-member.component';
 import { NgOptimizedImage } from '@angular/common';
 import { EditHearingDatesComponent } from './hearing-schedule/edit-hearing-dates/edit-hearing-dates.component';
+import { VideoEndpointFormComponent } from './endpoints/video-endpoint-form/video-endpoint-form.component';
+import { VideoEndpointListComponent } from './endpoints/video-endpoint-list/video-endpoint-list.component';
+import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/video-endpoint-item.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -39,7 +42,10 @@ export const Components: Type<any>[] = [
     ParticipantListComponent,
     ParticipantItemComponent,
     EndpointsComponent,
-    MultiDayHearingScheduleComponent
+    MultiDayHearingScheduleComponent,
+    VideoEndpointFormComponent,
+    VideoEndpointListComponent,
+    VideoEndpointItemComponent
 ];
 
 @NgModule({

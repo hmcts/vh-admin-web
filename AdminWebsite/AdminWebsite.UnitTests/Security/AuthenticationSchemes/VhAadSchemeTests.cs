@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,12 +7,10 @@ using AdminWebsite.Security.Authentication;
 using AdminWebsite.Services;
 using AdminWebsite.Testing.Common.Builders;
 using Autofac.Extras.Moq;
-using FluentAssertions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Moq;
-using NUnit.Framework;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
 {
@@ -116,7 +112,7 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
         }
 
         [Test]
-        public async Task ShouldAddClaimsFromAppRoleService()
+        public async Task ShouldAddClaimsFromAppRoleService_WhenSecurityContextIs_JwtSecurityToken()
         {
             // arrange
             var claimsPrincipal = new ClaimsPrincipalBuilder().Build();
@@ -132,6 +128,43 @@ namespace AdminWebsite.UnitTests.Security.AuthenticationSchemes
             {
                 Principal = claimsPrincipal,
                 SecurityToken = new JwtSecurityToken(issuer: "Issuer", claims: claimsPrincipal.Claims)
+            };
+            
+            _mocker.Mock<IAppRoleService>().Setup(x => x.GetClaimsForUserAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<Claim>(){ new(ClaimTypes.Role, AppRoles.StaffMember) });
+            
+            // act
+            await _sut.GetClaimsPostTokenValidation(tokenValidatedContext, options);
+
+            // assert
+            claimsPrincipal.IsInRole(AppRoles.StaffMember).Should().BeTrue();
+        }
+        
+        [Test]
+        public async Task ShouldAddClaimsFromAppRoleService_WhenSecurityContextIs_JsonWebToken()
+        {
+            // arrange
+            var claimsPrincipal = new ClaimsPrincipalBuilder().Build();
+            var userClaimsPrincipal = new ClaimsPrincipalBuilder().Build();
+            var httpContext = new DefaultHttpContext()
+            {
+                User = userClaimsPrincipal,
+                RequestServices = _mocker.Mock<IServiceProvider>().Object
+            };
+            var options = new JwtBearerOptions();
+            _sut.SetJwtBearerOptions(options);
+            var jwtSecurityToken = new JwtSecurityToken(issuer: "Issuer", claims: claimsPrincipal.Claims);
+            // convert to JsonWebToken
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            // Write the JwtSecurityToken to a string
+            string jwtString = handler.WriteToken(jwtSecurityToken);
+
+// Create a new JsonWebToken from the string
+            JsonWebToken jsonWebToken = new JsonWebToken(jwtString);
+            var tokenValidatedContext = new TokenValidatedContext(httpContext, new AuthenticationScheme("name", "displayName", typeof(AuthenticationHandler<JwtBearerOptions>)), options)
+            {
+                Principal = claimsPrincipal,
+                SecurityToken = jsonWebToken
             };
             
             _mocker.Mock<IAppRoleService>().Setup(x => x.GetClaimsForUserAsync(It.IsAny<string>(), It.IsAny<string>()))

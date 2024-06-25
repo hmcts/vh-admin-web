@@ -1,13 +1,9 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Middleware;
 using BookingsApi.Client;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Moq;
-using NUnit.Framework;
 using UserApi.Client;
 
 namespace AdminWebsite.UnitTests.Middleware;
@@ -51,7 +47,7 @@ public class ExceptionMiddlewareTests
 
         await ExceptionMiddleware.InvokeAsync(_HttpContext);
 
-        Assert.AreEqual(bookingsApiException.StatusCode, _HttpContext.Response.StatusCode);
+        ClassicAssert.AreEqual(bookingsApiException.StatusCode, _HttpContext.Response.StatusCode);
         _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
     
@@ -67,7 +63,7 @@ public class ExceptionMiddlewareTests
 
         await ExceptionMiddleware.InvokeAsync(_HttpContext);
 
-        Assert.AreEqual(userApiException.StatusCode, _HttpContext.Response.StatusCode);
+        ClassicAssert.AreEqual(userApiException.StatusCode, _HttpContext.Response.StatusCode);
         _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
 
@@ -83,7 +79,7 @@ public class ExceptionMiddlewareTests
 
         await ExceptionMiddleware.InvokeAsync(_HttpContext);
 
-        Assert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
+        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
         _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
     }
 
@@ -99,7 +95,7 @@ public class ExceptionMiddlewareTests
 
         await ExceptionMiddleware.InvokeAsync(_HttpContext);
 
-        Assert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
+        ClassicAssert.AreEqual((int) HttpStatusCode.InternalServerError, _HttpContext.Response.StatusCode);
         _HttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
 
         _HttpContext.Response.Body.Seek(0, SeekOrigin.Begin);

@@ -10,6 +10,7 @@ using AdminWebsite.Services.Models;
 using BookingsApi.Client;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -18,15 +19,6 @@ namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
-        /// <summary>
-        ///     Returns a list of all judges in the active directory
-        /// </summary>
-        /// <remarks>
-        /// Filters test accounts if configured to run as live environment 
-        /// </remarks>
-        Task<IEnumerable<JudgeResponse>> GetJudgeUsers();
-
-
         /// <summary>
         ///     Returns a list of judges filtered by email in the active directory
         /// </summary>
@@ -117,34 +109,19 @@ namespace AdminWebsite.Services
             }
             catch (UserApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode != (int)HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD User not found.");
-                    return null;
+                    _logger.LogError(e, "Unhandled error getting an AD user by username {Username}", username);
+                    throw;
                 }
-                _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user");
-                throw;
+                _logger.LogWarning("AD User not found for username {Username}", username);
+                return null;
             }
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<JudgeResponse>> GetJudgeUsers()
-        {
-            _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = await _userApiClient.GetJudgesAsync();
-            return judgesList.Select(x => new JudgeResponse
-            {
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                DisplayName = x.DisplayName,
-                Email = x.Email,
-                ContactEmail = x.ContactEmail
-            }).ToList();
         }
 
         public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
         {
-            _logger.LogDebug("Attempting to get all judge accounts.");
+            _logger.LogDebug("Attempting to get all judge accounts");
 
             var judgesList = (await _userApiClient.GetJudgesByUsernameAsync(term)).Select(x => new JudgeResponse
             {
@@ -173,12 +150,12 @@ namespace AdminWebsite.Services
                 throw new UserServiceException { Reason = "Unable to generate new password" };
             
             var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
-            var passwordResetNotificationRequest = 
-                AddNotificationRequestMapper.MapToPasswordResetNotification(
-                    $"{userProfile.FirstName} {userProfile.LastName}", 
-                    passwordResetResponse.NewPassword, 
-                    userProfile.Email);
-            await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
+            await _notificationApiClient.SendResetPasswordEmailAsync(new PasswordResetEmailRequest()
+            {
+                ContactEmail = userProfile.Email,
+                Password = passwordResetResponse.NewPassword,
+                Name = $"{userProfile.FirstName} {userProfile.LastName}"
+            });
         }
 
         public async Task DeleteParticipantAccountAsync(string username)
@@ -243,8 +220,7 @@ namespace AdminWebsite.Services
             }
             catch (UserApiException e)
             {
-                _logger.LogError(e, $"Failed to add user to {groupName} in User API. " +
-                    $"Status Code {e.StatusCode} - Message {e.Message}");
+                _logger.LogError(e, "Failed to add user to {GroupName} in User API", groupName);
                 throw;
             }
         }
@@ -269,12 +245,9 @@ namespace AdminWebsite.Services
             catch (UserApiException e)
             {
                 _logger.LogError(e, "Failed to get user in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                    return false;
-                }
-                throw;
+                if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
+                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
+                return false;
             }
         }
         
@@ -288,12 +261,9 @@ namespace AdminWebsite.Services
             catch (BookingsApiException e)
             {
                 _logger.LogError(e, "Failed to get person in User API. Status Code {StatusCode} - Message {Message}",e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
-                    return false;
-                }
-                throw;
+                if (e.StatusCode != (int)HttpStatusCode.NotFound) throw;
+                _logger.LogWarning(e, "User not found. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
+                return false;
             }
         }
     }

@@ -20,9 +20,17 @@ export class DeviceType {
     }
 
     isSupportedBrowser(): boolean {
-        const supportedBrowsers = [BROWSERS.CHROME, BROWSERS.MS_EDGE_CHROMIUM, BROWSERS.MS_EDGE, BROWSERS.FIREFOX];
+        const unsupportedBrowsers = [
+            BROWSERS.FB_MESSANGER,
+            BROWSERS.SAMSUNG,
+            BROWSERS.UCBROWSER,
+            BROWSERS.OPERA,
+            BROWSERS.UNKNOWN,
+            BROWSERS.IE,
+            BROWSERS.MS_EDGE
+        ];
         const browser = this.deviceDetectorService.browser;
-        return supportedBrowsers.findIndex(x => x.toUpperCase() === browser.toUpperCase()) > -1;
+        return unsupportedBrowsers.indexOf(browser) === -1;
     }
 
     getBrowserName(): string {

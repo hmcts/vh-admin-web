@@ -3,12 +3,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using FizzWare.NBuilder;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -191,7 +186,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             const string errorMessage = "ScheduledDateTime cannot be in the past";
             var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
             {
-                {key, new[] {errorMessage}},
+                {key, [errorMessage] },
             });
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));

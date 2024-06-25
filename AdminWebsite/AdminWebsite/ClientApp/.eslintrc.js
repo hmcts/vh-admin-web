@@ -9,9 +9,10 @@ module.exports = {
         project: 'tsconfig.json',
         sourceType: 'module'
     },
-    plugins: ['eslint-plugin-import', '@angular-eslint/eslint-plugin', '@typescript-eslint', '@typescript-eslint/tslint'],
+    plugins: ['eslint-plugin-import', '@angular-eslint/eslint-plugin', '@typescript-eslint', '@typescript-eslint/tslint', 'jasmine'],
     root: true,
     rules: {
+        'jasmine/no-focused-tests': 'error',
         '@angular-eslint/component-class-suffix': 'error',
         '@angular-eslint/directive-class-suffix': 'error',
         '@angular-eslint/no-host-metadata-property': 'error',

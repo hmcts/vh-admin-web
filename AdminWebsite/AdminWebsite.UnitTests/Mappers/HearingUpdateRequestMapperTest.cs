@@ -1,18 +1,15 @@
-﻿using System;
-using AdminWebsite.Mappers;
+﻿using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.V1.Requests;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
     public class HearingUpdateRequestMapperTest
     {
         private EditHearingRequest _newParticipantRequest;
-        private string _username = "username";
-        private DateTime _scheduledDateTime = new DateTime(2020, 12, 12);
-        private CaseRequest _caseRequest = new CaseRequest {Name = "casename", Number = "casenumber"};
+        private readonly string _username = "username";
+        private readonly DateTime _scheduledDateTime = new(2020, 12, 12);
+        private readonly CaseRequest _caseRequest = new() {Name = "casename", Number = "casenumber"};
 
         [SetUp]
         public void Setup()
@@ -39,7 +36,11 @@ namespace AdminWebsite.UnitTests.Mappers
             result.ScheduledDateTime.Should().Be(_scheduledDateTime);
             result.ScheduledDuration.Should().Be(_newParticipantRequest.ScheduledDuration);
             result.OtherInformation.Should().Be(_newParticipantRequest.OtherInformation);
-            result.Cases.Should().BeEquivalentTo(_caseRequest);
+            
+            // Create a collection for the expected cases
+            var expectedCases = new List<CaseRequest> { _caseRequest };
+            result.Cases.Should().BeEquivalentTo(expectedCases);
+            
             result.AudioRecordingRequired.Should().Be(_newParticipantRequest.AudioRecordingRequired);
         }
     }

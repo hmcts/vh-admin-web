@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using BookingsApi.Contract.V2.Requests;
-using FluentAssertions;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Mappers
 {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using AdminWebsite.Models;
-using Moq;
-using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Models
 {
@@ -17,7 +13,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = editParticipants1;
-            Assert.True(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.True(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
 
@@ -29,7 +25,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest2};
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
 
@@ -41,7 +37,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest2};
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
 
@@ -53,7 +49,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest2};
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
 
@@ -65,7 +61,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest2};
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
 
@@ -83,7 +79,7 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> {participantRequest1};
             var editParticipants2 = new List<EditParticipantRequest> {participantRequest2};
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
         [Test]
@@ -97,9 +93,9 @@ namespace AdminWebsite.UnitTests.Models
 
             var editParticipants1 = new List<EditParticipantRequest> { participantRequest1 };
             var editParticipants2 = new List<EditParticipantRequest> { null };
-            Assert.False(editParticipants1.SequenceEqual(editParticipants2,
+            ClassicAssert.False(editParticipants1.SequenceEqual(editParticipants2,
                 EditParticipantRequest.EditParticipantRequestComparer));
-            Assert.False(editParticipants2.SequenceEqual(editParticipants1,
+            ClassicAssert.False(editParticipants2.SequenceEqual(editParticipants1,
                 EditParticipantRequest.EditParticipantRequestComparer));
         }
     }

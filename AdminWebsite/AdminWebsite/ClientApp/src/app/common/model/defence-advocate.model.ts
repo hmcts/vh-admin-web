@@ -1,4 +1,4 @@
-export class DefenceAdvocateModel {
+export interface DefenceAdvocateModel {
     id?: string | undefined;
     username?: string | undefined;
     displayName?: string | undefined;

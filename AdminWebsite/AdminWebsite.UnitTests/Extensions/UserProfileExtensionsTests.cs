@@ -1,6 +1,4 @@
 ﻿using AdminWebsite.Extensions;
-using FluentAssertions;
-using NUnit.Framework;
 using UserApi.Contract.Responses;
 
 

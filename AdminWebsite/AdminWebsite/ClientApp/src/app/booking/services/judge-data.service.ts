@@ -8,10 +8,6 @@ import { Observable } from 'rxjs';
 export class JudgeDataService {
     constructor(private bhClient: BHClient) {}
 
-    getJudges(): Observable<JudgeResponse[]> {
-        return this.bhClient.getJudges();
-    }
-
     searchJudgesByEmail(term: string): Observable<JudgeResponse[]> {
         return this.bhClient.searchJudgesByEmail(term);
     }

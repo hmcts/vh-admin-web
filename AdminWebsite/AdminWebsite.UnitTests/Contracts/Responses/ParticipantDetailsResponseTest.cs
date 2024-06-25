@@ -1,7 +1,4 @@
 ﻿using AdminWebsite.Contracts.Responses;
-using FluentAssertions;
-using NUnit.Framework;
-using System;
 
 namespace AdminWebsite.UnitTests.Contracts.Responses
 {

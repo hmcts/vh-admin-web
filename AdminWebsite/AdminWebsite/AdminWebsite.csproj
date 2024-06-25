@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -12,7 +11,6 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <ProjectGuid>4ACDEFE1-58CD-4E6B-A11D-FD219633B38E</ProjectGuid>
-    <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -31,36 +29,36 @@
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="6.0.3" />
-    <PackageReference Include="BookingsApi.Client" Version="1.52.2" />
-    <PackageReference Include="LaunchDarkly.ServerSdk" Version="7.0.3" />
-    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.51.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.9" />
-    <PackageReference Include="Microsoft.Graph" Version="1.21.0" />
-    <PackageReference Include="Microsoft.OpenApi" Version="1.4.2" />
-    <PackageReference Include="NotificationApi.Client" Version="1.44.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="8.0.1" />
+    <PackageReference Include="BookingsApi.Client" Version="2.0.6" />
+    <PackageReference Include="LaunchDarkly.ServerSdk" Version="8.5.0" />
+    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.32" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Graph" Version="5.52.0" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />
+    <PackageReference Include="NotificationApi.Client" Version="1.52.1" />
     <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
-    <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.54.0.64047">
+    <PackageReference Include="Polly" Version="8.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.6.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.1" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.25.0.90414">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TimeZoneConverter" Version="6.0.1" />
-    <PackageReference Include="UserApi.Client" Version="1.44.2" />
+    <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
+    <PackageReference Include="UserApi.Client" Version="1.49.2" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.13" />
-    <PackageReference Include="VideoApi.Client" Version="1.49.4" />
+    <PackageReference Include="VideoApi.Client" Version="1.51.4" />
   </ItemGroup>
 
   <ItemGroup>

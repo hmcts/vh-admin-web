@@ -3,12 +3,7 @@ using AdminWebsite.Security;
 using BookingsApi.Client;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Responses;
-using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
@@ -337,7 +332,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var startDate = new DateTime(2022, 3, 25);
+            var startDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
@@ -362,7 +357,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var endDate = new DateTime(2022, 3, 25);
+            var endDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
@@ -386,8 +381,8 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var startDate = new DateTime(2022, 3, 24);
-            var endDate = new DateTime(2022, 3, 25);
+            var startDate = new DateTime(2022, 3, 24, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 
@@ -413,8 +408,8 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             SetupTestCase();
 
-            var startDate = new DateTime(2022, 3, 25);
-            var endDate = new DateTime(2022, 3, 24);
+            var startDate = new DateTime(2022, 3, 25, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(2022, 3, 24, 0, 0, 0, DateTimeKind.Utc);
 
             _bookingsApiClient.Setup(s => s.GetCaseTypesAsync(true)).ReturnsAsync(default(List<CaseTypeResponse>));
 

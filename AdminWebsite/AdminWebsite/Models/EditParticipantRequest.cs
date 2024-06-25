@@ -110,6 +110,12 @@ namespace AdminWebsite.Models
             }
         }
 
+        public bool IsInterpreter()
+        {
+            return HearingRoleCode?.Equals(HearingRoleCodes.Interpreter) == true ||
+                   HearingRoleName?.Equals("Interpreter", StringComparison.CurrentCultureIgnoreCase) == true;
+        }
+
         public static IEqualityComparer<EditParticipantRequest> EditParticipantRequestComparer { get; } = new EditParticipantRequestEqualityComparer();
 
     }

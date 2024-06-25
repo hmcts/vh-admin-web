@@ -45,14 +45,14 @@
     <div *ngIf="!hearing.isMultiDayEdit">
       <div class="govuk-radios__item">
         <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-no" type="radio" [value]="true" />
-        <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Select start and end dates </label>
+        <label class="govuk-label govuk-radios__label" for="multiDaysRange-choice-no"> Select start and end dates </label>
       </div>
 
       <div class="multi-date-select range" *ngIf="multiDaysRangeControl.value">
         <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-          <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate"> Start of hearing </label>
+          <label class="govuk-label govuk-!-width-one-quarter" for="startHearingDate"> Start of hearing </label>
           <input
-            id="hearingDate"
+            id="startHearingDate"
             class="govuk-input govuk-!-width-one-quarter"
             type="date"
             formControlName="hearingDate"
@@ -94,7 +94,9 @@
 
       <div class="govuk-radios__item individual-date-radio">
         <input formControlName="multiDaysRange" class="govuk-radios__input" id="multiDaysRange-choice-yes" type="radio" [value]="false" />
-        <label class="govuk-label govuk-radios__label" for="audio-choice-no"> Select individual dates </label>
+        <label class="govuk-label govuk-radios__label" id="multiDaysRange-choice-yes-label" for="multiDaysRange-choice-yes">
+          Select individual dates
+        </label>
       </div>
 
       <div class="multi-date-selection" *ngIf="!multiDaysRangeControl.value">
@@ -113,7 +115,7 @@
           [class.govuk-form-group--error]="!isAddHearingControlValid()"
         >
           <input
-            id="hearingDate"
+            id="multiHearingDateIndividual"
             class="govuk-input govuk-!-width-one-quarter"
             type="date"
             [formControl]="addHearingDateControl"
@@ -152,7 +154,7 @@
         : 'govuk-form-group'
     "
   >
-    <label class="govuk-label govuk-!-width-one-half" for="hearingStartTime"> Hearing start time (use the 24 hour clock) </label>
+    <label class="govuk-label govuk-!-width-one-half" for="hearingStartTimeHour"> Hearing start time (use the 24 hour clock) </label>
     <fieldset class="govuk-fieldset" aria-describedby="hearingStartTimeHour" role="group">
       <legend></legend>
       <div class="govuk-date-input">
@@ -211,7 +213,7 @@
         hearingDurationHourInvalid || hearingDurationMinuteInvalid || durationInvalid ? 'govuk-form-group--error' : 'govuk-form-group'
       "
     >
-      <label class="govuk-label govuk-!-width-one-half" for="hearingDuration"> Duration </label>
+      <label class="govuk-label govuk-!-width-one-half" for="hearingDurationHour"> Duration </label>
       <fieldset class="govuk-fieldset" aria-describedby="hearingDurationHour" role="group">
         <legend></legend>
         <div class="govuk-date-input">
