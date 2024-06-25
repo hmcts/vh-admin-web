@@ -118,6 +118,12 @@ export class VideoEndpointFormComponent {
     uniqueDisplayNameValidator(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } | null => {
             const isUnique = !this.existingVideoEndpoints.some(endpoint => endpoint.displayName === control.value);
+            // if this.videoEndpoint is set, we are in edit mode, so we need to check if the new name is the same as the old name
+            if (this.videoEndpoint) {
+                return isUnique || control.value === this.videoEndpoint.displayName
+                    ? null
+                    : { displayNameExists: { value: control.value } };
+            }
             return isUnique ? null : { displayNameExists: { value: control.value } };
         };
     }
