@@ -1,8 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { VideoEndpointFormComponent } from './video-endpoint-form.component';
 import { VideoAccessPointDto } from '../models/video-access-point.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
+import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { of } from 'rxjs';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
+import { MockComponent } from 'ng-mocks';
 
 describe('VideoEndpointFormComponent', () => {
     const participants: ParticipantModel[] = [
@@ -12,7 +18,8 @@ describe('VideoEndpointFormComponent', () => {
             last_name: 'Doe',
             email: 'john@doe.com',
             display_name: 'John Doe',
-            user_role_name: 'Representative'
+            user_role_name: 'Representative',
+            interpretation_language: undefined
         },
         {
             id: '2',
@@ -20,7 +27,8 @@ describe('VideoEndpointFormComponent', () => {
             last_name: 'Green',
             email: 'chris@green,com',
             display_name: 'Chris Green',
-            user_role_name: 'Representative'
+            user_role_name: 'Representative',
+            interpretation_language: undefined
         },
         {
             id: '3',
@@ -28,17 +36,22 @@ describe('VideoEndpointFormComponent', () => {
             last_name: 'Smith',
             email: 'jane@smith.com',
             display_name: 'Jane Smith',
-            user_role_name: 'Individual'
+            user_role_name: 'Individual',
+            interpretation_language: undefined
         }
     ];
 
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
     let component: VideoEndpointFormComponent;
     let fixture: ComponentFixture<VideoEndpointFormComponent>;
 
     beforeEach(async () => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
+
         await TestBed.configureTestingModule({
-            declarations: [VideoEndpointFormComponent],
-            providers: [FormBuilder],
+            declarations: [VideoEndpointFormComponent, MockComponent(InterpreterFormComponent), FeatureFlagDirective],
+            providers: [FormBuilder, { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }],
             imports: [ReactiveFormsModule]
         }).compileComponents();
 
@@ -57,12 +70,18 @@ describe('VideoEndpointFormComponent', () => {
         expect(component.form).toBeDefined();
     });
 
+    it('should set button text when input is falsy', () => {
+        component.existingVideoEndpoint = null;
+        expect(component.saveButtonText).toBe('Save Access Point');
+    });
+
     describe('on form submit', () => {
         it('should emit endpointAdded event when onSubmit is called and form is valid', () => {
             spyOn(component.endpointAdded, 'emit');
             const dto: VideoAccessPointDto = {
                 displayName: 'Test',
-                defenceAdvocate: null
+                defenceAdvocate: null,
+                interpretationLanguage: undefined
             };
             component.form.setValue({
                 displayName: dto.displayName,
@@ -87,12 +106,14 @@ describe('VideoEndpointFormComponent', () => {
             const originalDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Original',
-                defenceAdvocate: null
+                defenceAdvocate: null,
+                interpretationLanguage: undefined
             };
             const updatedDto: VideoAccessPointDto = {
                 id: '1',
                 displayName: 'Updated',
-                defenceAdvocate: null
+                defenceAdvocate: null,
+                interpretationLanguage: undefined
             };
             component.existingVideoEndpoint = originalDto;
             component.form.setValue({
@@ -100,6 +121,7 @@ describe('VideoEndpointFormComponent', () => {
                 linkedRepresentative: null
             });
             component.onSubmit();
+            expect(component.saveButtonText).toBe('Update Access Point');
             expect(component.endpointUpdated.emit).toHaveBeenCalledWith({ original: originalDto, updated: updatedDto });
         });
 
@@ -122,7 +144,8 @@ describe('VideoEndpointFormComponent', () => {
                 defenceAdvocate: {
                     email: rep.email,
                     displayName: rep.display_name
-                }
+                },
+                interpretationLanguage: undefined
             });
         });
 
@@ -141,13 +164,15 @@ describe('VideoEndpointFormComponent', () => {
                 {
                     id: '1',
                     displayName: 'Test',
-                    defenceAdvocate: null
+                    defenceAdvocate: null,
+                    interpretationLanguage: undefined
                 }
             ];
             component.videoEndpoint = {
                 id: '2',
                 displayName: 'Test',
-                defenceAdvocate: null
+                defenceAdvocate: null,
+                interpretationLanguage: undefined
             };
             component.form.setValue({
                 displayName: 'Test',
@@ -155,6 +180,48 @@ describe('VideoEndpointFormComponent', () => {
             });
             component.onSubmit();
             expect(component.form.valid).toBeFalse();
+        });
+    });
+
+    describe('with interpreter enhancements', () => {
+        beforeEach(() => {
+            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(true));
+            fixture = TestBed.createComponent(VideoEndpointFormComponent);
+            component = fixture.componentInstance;
+            component.participants = participants;
+
+            fixture.detectChanges();
+        });
+
+        it('should show interpreter form when interpreter flag is enabled', () => {
+            expect(component.interpreterForm).toBeDefined();
+        });
+
+        it('should set the interpreterSelection when onInterpreterLanguageSelected is called', () => {
+            const interpreterSelection: InterpreterSelectedDto = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+            component.onInterpreterLanguageSelected(interpreterSelection);
+            expect(component.interpreterSelection).toEqual(interpreterSelection);
+        });
+
+        it('should reset interpreterSelection when no interpreter is required', () => {
+            component.interpreterSelection = {
+                interpreterRequired: true,
+                signLanguageCode: 'BSL',
+                spokenLanguageCode: undefined
+            };
+
+            const newSelection: InterpreterSelectedDto = {
+                interpreterRequired: false,
+                signLanguageCode: undefined,
+                spokenLanguageCode: undefined
+            };
+
+            component.onInterpreterLanguageSelected(newSelection);
+            expect(component.interpreterSelection).toBeNull();
         });
     });
 });

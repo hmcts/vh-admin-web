@@ -15,6 +15,9 @@ import { JudicialService } from '../../services/judicial.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { JudicialMemberDto } from '../models/add-judicial-member.model';
+import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
+import { FeatureFlags, LaunchDarklyService } from 'src/app/services/launch-darkly.service';
+import { of } from 'rxjs';
 
 describe('AddJudicialOfficeHoldersComponent', () => {
     let component: AddJudicialOfficeHoldersComponent;
@@ -24,10 +27,13 @@ describe('AddJudicialOfficeHoldersComponent', () => {
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
     let routerSpy: jasmine.SpyObj<Router>;
+    let launchDarklyServiceSpy: jasmine.SpyObj<LaunchDarklyService>;
 
     let hearing: HearingModel;
 
     beforeEach(async () => {
+        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         hearing = new HearingModel();
         hearing.judiciaryParticipants = [];
         videoHearingsServiceSpy = jasmine.createSpyObj('VideoHearingsService', [
@@ -49,7 +55,8 @@ describe('AddJudicialOfficeHoldersComponent', () => {
                 AddJudicialOfficeHoldersComponent,
                 ParticipantsListStubComponent,
                 BreadcrumbStubComponent,
-                SearchForJudicialMemberComponent
+                SearchForJudicialMemberComponent,
+                FeatureFlagDirective
             ],
             providers: [
                 { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -58,7 +65,8 @@ describe('AddJudicialOfficeHoldersComponent', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: JudicialService, useValue: judicialServiceSpy },
                 { provide: ParticipantListComponent, useClass: ParticipantsListStubComponent },
-                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent }
+                { provide: BreadcrumbComponent, useClass: BreadcrumbStubComponent },
+                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
             ]
         }).compileComponents();
 

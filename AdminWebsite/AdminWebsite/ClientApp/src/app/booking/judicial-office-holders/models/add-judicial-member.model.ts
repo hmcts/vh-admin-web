@@ -1,4 +1,5 @@
 import { JudiciaryParticipantResponse } from 'src/app/services/clients/api-client';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 
 export type JudicaryRoleCode = 'Judge' | 'PanelMember';
 
@@ -7,6 +8,7 @@ export class JudicialMemberDto {
     public displayName: string;
     public optionalContactNumber: string;
     public optionalContactEmail: string;
+    public interpretationLanguage: InterpreterSelectedDto;
     constructor(
         public firstName: string,
         public lastName: string,
@@ -31,6 +33,9 @@ export class JudicialMemberDto {
         dto.optionalContactEmail = response.optional_contact_email;
         dto.roleCode = response.role_code as JudicaryRoleCode;
         dto.displayName = response.display_name;
+
+        // todo: map from response when API is implemented
+
         return dto;
     }
 }

@@ -23,6 +23,7 @@ import { EditHearingDatesComponent } from './hearing-schedule/edit-hearing-dates
 import { VideoEndpointFormComponent } from './endpoints/video-endpoint-form/video-endpoint-form.component';
 import { VideoEndpointListComponent } from './endpoints/video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/video-endpoint-item.component';
+import { InterpreterFormComponent } from './interpreter-form/interpreter-form.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -45,7 +46,8 @@ export const Components: Type<any>[] = [
     MultiDayHearingScheduleComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
-    VideoEndpointItemComponent
+    VideoEndpointItemComponent,
+    InterpreterFormComponent
 ];
 
 @NgModule({

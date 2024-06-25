@@ -12,6 +12,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { HearingRoleModel } from 'src/app/common/model/hearing-role.model';
+import { InterpreterFormComponent } from '../interpreter-form/interpreter-form.component';
 
 @Directive()
 export abstract class AddParticipantBaseDirective extends BookingBaseComponent implements OnInit {
@@ -58,11 +59,14 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     representing: FormControl;
     title: FormControl;
 
+    interpreterEnhancementsFlag = false;
+
     public judiciaryRoles = Constants.JudiciaryRoles;
 
     protected constants = Constants;
 
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
+    @ViewChild(InterpreterFormComponent, { static: false }) interpreterForm: InterpreterFormComponent;
 
     constructor(
         protected bookingService: BookingService,
@@ -244,6 +248,10 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         setTimeout(() => {
             this.form.get('role').setValue(this.participantDetails.hearing_role_name);
             this.roleSelected();
+
+            if (this.participantDetails?.interpretation_language) {
+                this.interpreterForm.prepopulateForm(this.participantDetails.interpretation_language);
+            }
         }, 500);
     }
 
@@ -327,6 +335,11 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         return interpreteeEmail;
     }
     private updateHearingRoleList(hearingRoleList: string[]) {
+        if (this.interpreterEnhancementsFlag) {
+            // interpreter enhances allow any number of interpreters to be added without being tied to a participant
+            return;
+        }
+
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
             if (!this.interpreterSelected) {
@@ -372,6 +385,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     roleSelected() {
+        this.isInterpreter = this.isRoleInterpreter(this.role.value);
         this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
         if (!this.isRoleRepresentative(this.role.value, this.party.value)) {
             this.companyName.clearValidators();
@@ -410,7 +424,12 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     private setInterpreterForValidation() {
-        if (this.isRoleInterpreter(this.role.value)) {
+        const isInterpreter = this.isRoleInterpreter(this.role.value);
+        if (isInterpreter && this.interpreterEnhancementsFlag) {
+            this.interpreterFor.clearValidators();
+            this.interpreterFor.reset();
+            this.isInterpreter = true;
+        } else if (isInterpreter && !this.interpreterEnhancementsFlag) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);
             this.interpreterFor.updateValueAndValidity();
             this.isInterpreter = true;
@@ -420,6 +439,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             this.interpreterFor.setValue(Constants.PleaseSelect);
             this.isInterpreter = false;
         }
+        this.interpreterForm?.forceValidation();
     }
 
     protected isAnObserver(participant): boolean {
