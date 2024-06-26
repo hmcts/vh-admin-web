@@ -24,7 +24,8 @@ describe('VideoEndpointItemComponent', () => {
         spyOn(component.editEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null
+            defenceAdvocate: null,
+            interpretationLanguage: undefined
         };
         component.videoEndpoint = dto;
         component.edit();
@@ -35,7 +36,8 @@ describe('VideoEndpointItemComponent', () => {
         spyOn(component.deleteEndpoint, 'emit');
         const dto: VideoAccessPointDto = {
             displayName: 'Test',
-            defenceAdvocate: null
+            defenceAdvocate: null,
+            interpretationLanguage: undefined
         };
         component.videoEndpoint = dto;
         component.delete();

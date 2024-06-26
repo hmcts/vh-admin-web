@@ -22,6 +22,7 @@ export class ParticipantItemComponent implements OnInit {
     @Input() hearing: HearingModel;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
+    @Input() interpreterEnhancementsEnabled = false;
 
     @Output() edit = new EventEmitter<ParticipantModel>();
     @Output() remove = new EventEmitter<ParticipantModel>();

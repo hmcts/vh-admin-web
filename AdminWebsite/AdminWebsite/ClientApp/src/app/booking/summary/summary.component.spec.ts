@@ -10,7 +10,7 @@ import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpret
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { LongDatetimePipe } from '../../shared/directives/date-time.pipe';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -54,6 +54,7 @@ function initExistingHearingRequest(): HearingModel {
     newCaseRequest.number = 'TX/12345/2018';
 
     const existingRequest = new HearingModel();
+    existingRequest.hearing_type_id = 2;
     existingRequest.cases.push(newCaseRequest);
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
@@ -61,6 +62,8 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.other_information = '|OtherInformation|some notes';
     existingRequest.audio_recording_required = true;
     existingRequest.court_room = '123W';
+    const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
+    existingRequest.hearing_type_name = hearingTypeName;
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
     existingRequest.court_name = courtString;
     existingRequest.isMultiDayEdit = false;
@@ -86,6 +89,7 @@ function initBadHearingRequest(): HearingModel {
     newCaseRequest.number = 'TX/12345/2018';
 
     const existingRequest = new HearingModel();
+    existingRequest.hearing_type_id = 2;
     existingRequest.cases.push(newCaseRequest);
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
@@ -104,6 +108,7 @@ recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('Recordin
 ]);
 
 const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+    'getHearingTypes',
     'getCurrentRequest',
     'updateHearingRequest',
     'saveHearing',
@@ -118,7 +123,9 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
     'updateMultiDayHearing'
 ]);
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 const bookingStatusService = new BookingStatusService(videoHearingsServiceSpy);
 
 describe('SummaryComponent with valid request', () => {
@@ -133,6 +140,7 @@ describe('SummaryComponent with valid request', () => {
         const mockResp = new UpdateBookingStatusResponse();
         mockResp.success = true;
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(ResponseTestData.getHearingResponseTestData()));
         videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
         videoHearingsServiceSpy.getStatus.and.returnValue(Promise.resolve(mockResp));
@@ -266,6 +274,8 @@ describe('SummaryComponent with valid request', () => {
         expect(component.otherInformation.OtherInformation).toEqual(
             stringifier.decode<OtherInformationModel>(existingRequest.other_information).OtherInformation
         );
+        const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
+        expect(component.caseHearingType).toEqual(hearingstring);
         expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
         const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
         expect(component.courtRoomAddress).toEqual(`${courtString.name}, 123W`);
@@ -537,7 +547,7 @@ describe('SummaryComponent with valid request', () => {
             status: BookingStatus.Failed,
             created_by: 'test@hmcts.net',
             participants: participants
-        } as HearingDetailsResponse;
+        } as unknown as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
@@ -567,7 +577,7 @@ describe('SummaryComponent with valid request', () => {
             status: BookingStatus.Created,
             created_by: 'test@hmcts.net',
             participants: participants
-        } as HearingDetailsResponse;
+        } as unknown as HearingDetailsResponse;
 
         videoHearingsServiceSpy.saveHearing.and.returnValue(Promise.resolve(response));
 
@@ -620,6 +630,7 @@ describe('SummaryComponent  with invalid request', () => {
         initExistingHearingRequest();
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
         const validationProblem = new ValidationProblemDetails({
             errors: {
@@ -672,6 +683,16 @@ describe('SummaryComponent  with invalid request', () => {
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
+
+    it('should not save booking, when no judge assigned and Ejud flag off', async () => {
+        component.ngOnInit();
+        fixture.detectChanges();
+        component.useApiV2 = false;
+        await component.bookHearing();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalledTimes(0);
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(component.showErrorSaving).toBeTruthy();
+    });
 });
 
 describe('SummaryComponent  with existing request', () => {
@@ -682,6 +703,7 @@ describe('SummaryComponent  with existing request', () => {
         const existingRequest = initExistingHearingRequest();
         existingRequest.hearing_id = '12345ty';
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
         videoHearingsServiceSpy.updateMultiDayHearing.and.returnValue(of(new HearingDetailsResponse()));
 
@@ -728,7 +750,15 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(component.isExistingBooking).toBeTruthy();
     });
-
+    it('should retrieve hearing data', () => {
+        component.ngOnInit();
+        fixture.detectChanges();
+        expect(component.caseNumber).toBe('TX/12345/2018');
+        expect(component.caseName).toBe('Mr. Test User vs HMRC');
+        expect(component.caseHearingType).toBe('Automated Test');
+        expect(component.courtRoomAddress).toBeTruthy();
+        expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
+    });
     it('should hide pop up if continue booking pressed', () => {
         component.continueBooking();
         fixture.detectChanges();
@@ -895,6 +925,10 @@ describe('SummaryComponent  with existing request', () => {
 
 describe('SummaryComponent  with multi days request', () => {
     const bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
+    const ldServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
+    ldServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', [
         'switchOffRecording',
         'mandatoryRecordingForHearingRole'
@@ -903,6 +937,7 @@ describe('SummaryComponent  with multi days request', () => {
     existingRequest.isMultiDayEdit = true;
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     const participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
 
@@ -916,7 +951,7 @@ describe('SummaryComponent  with multi days request', () => {
         launchDarklyServiceSpy,
         bookingStatusService
     );
-    component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy);
+    component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, ldServiceSpy);
     component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
     component.removePopupComponent = new RemovePopupComponent();
 
@@ -976,7 +1011,8 @@ describe('SummaryComponent  with multi days request', () => {
         participantList.removeParticipant({
             email: 'firstname.lastname@email.com',
             is_exist_person: false,
-            is_judge: false
+            is_judge: false,
+            interpretation_language: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);
@@ -984,7 +1020,8 @@ describe('SummaryComponent  with multi days request', () => {
         participantList.removeParticipant({
             email: 'firstname1.lastname1@email.com',
             is_exist_person: false,
-            is_judge: false
+            is_judge: false,
+            interpretation_language: undefined
         });
         participantList.selectedParticipant.emit();
         tick(600);

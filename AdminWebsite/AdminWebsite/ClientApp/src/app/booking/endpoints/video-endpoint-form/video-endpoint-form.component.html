@@ -34,6 +34,10 @@
     </select>
   </div>
 
+  <ng-container *appFeatureFlag="featureFlags.interpreterEnhancements">
+    <app-interpreter-form #interpreterForm (interpreterLanguageSelected)="onInterpreterLanguageSelected($event)"></app-interpreter-form
+  ></ng-container>
+
   <button type="submit" id="confirmEndpointBtn" class="govuk-button" data-module="govuk-button">
     {{ saveButtonText }}
   </button>

@@ -46,7 +46,8 @@ export const Components: Type<any>[] = [
     MultiDayHearingScheduleComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
-    VideoEndpointItemComponent
+    VideoEndpointItemComponent,
+    InterpreterFormComponent
 ];
 
 @NgModule({

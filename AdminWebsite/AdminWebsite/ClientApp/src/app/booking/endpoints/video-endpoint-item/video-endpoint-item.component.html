@@ -3,6 +3,9 @@
     <div class="vhtable-header">
       <div class="endpoint-row__name">{{ displayName }}</div>
       <div *ngIf="linkedRepresentative"><strong>Defence Advocate:</strong> {{ linkedRepresentative.displayName }}</div>
+      <div *ngIf="interpretationLanguage?.interpreterRequired" class="endpoint-row__lang">
+        {{ interpretationLanguage.spokenLanguageCodeDescription ?? interpretationLanguage.signLanguageDescription }}
+      </div>
     </div>
 
     <div class="endpoint-row__actions">

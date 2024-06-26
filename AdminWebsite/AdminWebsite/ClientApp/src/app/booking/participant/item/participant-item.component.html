@@ -18,6 +18,13 @@
       <div class="judge-row__email" id="judge-user">{{ getJudgeUser(participant) }}</div>
       <div class="judge-row__email" id="judge-email">{{ getJudgeEmail() }}</div>
       <div class="judge-row__phone" id="judge-phone">{{ getJudgePhone(participant) }}</div>
+      <ng-container *ngIf="participant?.interpretation_language?.interpreterRequired">
+        <div class="participant-row__lang">
+          {{
+            participant.interpretation_language.spokenLanguageCodeDescription ?? participant.interpretation_language.signLanguageDescription
+          }}
+        </div>
+      </ng-container>
     </div>
 
     <div *ngIf="isSummaryPage && canEditJudge()" class="judge-row__actions">
@@ -44,7 +51,7 @@
   <div class="participant-row" *ngIf="!isJudge && !isStaffMember">
     <div class="interpreter-icon">
       <img
-        *ngIf="isInterpreter || isInterpretee"
+        *ngIf="(interpreterEnhancementsEnabled && isInterpreter) || (!interpreterEnhancementsEnabled && (isInterpreter || isInterpretee))"
         src="/assets/images/interpreter.png"
         height="40"
         width="40"
@@ -68,10 +75,12 @@
         </ng-container>
 
         <ng-container *ngIf="isInterpreter">
-          <div>Interpreting for</div>
-          <div>
-            <strong>{{ participant.interpretee_name }}</strong>
-          </div>
+          <ng-container *ngIf="!interpreterEnhancementsEnabled">
+            <div>Interpreting for</div>
+            <div>
+              <strong>{{ participant.interpretee_name }}</strong>
+            </div>
+          </ng-container>
           <div *ngIf="displayCaseRole">
             {{ participant.case_role_name }}
           </div>
@@ -80,10 +89,12 @@
 
       <ng-template #individual>
         <div *ngIf="isInterpreter; else otherIndividual">
-          <div>Interpreting for</div>
-          <div>
-            <strong>{{ participant.interpretee_name }}</strong>
-          </div>
+          <ng-container *ngIf="!interpreterEnhancementsEnabled">
+            <div>Interpreting for</div>
+            <div>
+              <strong>{{ participant.interpretee_name }}</strong>
+            </div>
+          </ng-container>
           <div *ngIf="displayCaseRole">
             {{ participant.case_role_name }}
           </div>
@@ -97,6 +108,14 @@
           </div>
         </ng-template>
       </ng-template>
+
+      <ng-container *ngIf="participant?.interpretation_language?.interpreterRequired">
+        <div class="participant-row__lang">
+          {{
+            participant.interpretation_language.spokenLanguageCodeDescription ?? participant.interpretation_language.signLanguageDescription
+          }}
+        </div>
+      </ng-container>
     </div>
     <div
       *ngIf="
