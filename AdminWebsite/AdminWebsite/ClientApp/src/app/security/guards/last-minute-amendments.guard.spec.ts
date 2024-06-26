@@ -58,4 +58,20 @@ describe('LastMinuteAmendmentsGuard', () => {
             expect(router.navigate).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe('when accessing assign-judge; last minute', () => {
+        it('should allow last-minute-amendment-guard and allow assign-judge url to be reached', () => {
+            // setup
+            const url = 'assign-judge';
+            const dataSnapshot = { exceptionToRuleCheck: true } as Data;
+            const urlSegmentArray = [{ path: url }] as UrlSegment[];
+            // execute
+            const returned = guard.canActivate(
+                <ActivatedRouteSnapshot>{ url: urlSegmentArray, data: dataSnapshot },
+                <RouterStateSnapshot>{ url: url }
+            );
+            // assert
+            expect(returned).toBe(true);
+        });
+    });
 });
