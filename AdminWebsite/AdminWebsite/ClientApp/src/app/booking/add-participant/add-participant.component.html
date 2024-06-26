@@ -60,6 +60,14 @@
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isTitleSelected }">
+        <ng-container *appFeatureFlag="featureFlags.interpreterEnhancements">
+          <app-interpreter-form
+            #interpreterForm
+            [requireLanguageSelection]="isInterpreter"
+            (interpreterLanguageSelected)="onInterpreterLanguageSelected($event)"
+          ></app-interpreter-form>
+        </ng-container>
+        <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': titleInvalid || !isTitleSelected }">
           <label class="govuk-label" for="title"> Title <span class="govuk-hint vh-inline">(optional)</span> </label>
           <select id="title" formControlName="title" class="govuk-select vh-input-w390">
             <option *ngFor="let tit of titleList" [ngValue]="tit.value">
@@ -124,7 +132,7 @@
           <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
         </div>
 
-        <div *ngIf="isInterpreter">
+        <div *ngIf="isInterpreter && !interpreterEnhancementsFlag">
           <div class="govuk-form-group" [class.govuk-form-group--error]="interpreterForInvalid">
             <legend id="interpreterFor-error" *ngIf="interpreterForInvalid">
               <span class="govuk-error-message">
@@ -158,7 +166,7 @@
 
         <div *ngIf="isRepresentative">
           <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': companyInvalid }">
-            <legend id="display-name-error" *ngIf="companyInvalid">
+              <legend id="company-name-error" *ngIf="companyInvalid">
               <span class="govuk-error-message">
                 {{ constants.Error.CompanyErrorMsg }}
               </span>
@@ -175,7 +183,7 @@
 
           <h2 class="govuk-heading-m">Client details</h2>
           <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': representeeInvalid }">
-            <legend id="display-name-error" *ngIf="representeeInvalid">
+            <legend id="representee-error" *ngIf="representeeInvalid">
               <span class="govuk-error-message">
                 {{ representeeErrorMessage }}
               </span>

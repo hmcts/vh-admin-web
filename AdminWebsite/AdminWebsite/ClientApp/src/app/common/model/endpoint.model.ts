@@ -1,3 +1,5 @@
+import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
+
 export class EndpointModel {
     id?: string | undefined;
     displayName?: string | undefined;
@@ -9,4 +11,5 @@ export class EndpointModel {
     defenceAdvocate?: string | undefined;
     username?: string | undefined;
     contactEmail?: string | undefined;
+    interpretationLanguage: InterpreterSelectedDto;
 }
