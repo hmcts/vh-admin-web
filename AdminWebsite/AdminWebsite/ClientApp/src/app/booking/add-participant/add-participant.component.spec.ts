@@ -9,12 +9,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import {
-    CaseAndHearingRolesResponse,
-    ClientSettingsResponse,
-    HearingRole,
-    HearingRoleResponse
-} from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, HearingRoleResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -196,6 +191,8 @@ participants.push(p1);
 participants.push(p2);
 participants.push(p3);
 participants.push(p4);
+
+const constants = Constants;
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -639,7 +636,8 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        component.caseAndHearingRoles = [roles];
+        const partyLst: PartyModel[] = [roles];
+        component.caseAndHearingRoles = partyLst;
         role.setValue('Applicant');
         component.setupHearingRoles('Applicant');
         expect(component.hearingRoleList.length).toBe(2);
@@ -650,7 +648,8 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        component.caseAndHearingRoles = [roles];
+        const partyLst: PartyModel[] = [roles];
+        component.caseAndHearingRoles = partyLst;
         component.setupHearingRoles('Respondent');
         expect(component.hearingRoleList.length).toBe(1);
     });
@@ -693,6 +692,7 @@ describe('AddParticipantComponent', () => {
         tick(600);
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
+        flush();
     }));
     it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
         component.ngOnInit();
@@ -701,6 +701,7 @@ describe('AddParticipantComponent', () => {
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
+        const _participants: ParticipantModel[] = [];
         let participant01 = new ParticipantModel();
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
@@ -1043,7 +1044,7 @@ describe('AddParticipantComponent edit mode', () => {
         videoHearingsServiceSpy.getParticipantRoles.calls.reset();
     });
 
-    it('should set errorJohAccountNotFound to true when no results found', () => {
+    it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
         component.form.setValue({
             party: 'Panel Member',
             role: 'Panel Member',
@@ -1161,7 +1162,7 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
     }));
 
-    it('shows single role list when reference data flag is on', fakeAsync(async () => {
+    it('shows single role list', fakeAsync(async () => {
         component.ngOnInit();
         component.ngAfterViewInit();
         flush();
