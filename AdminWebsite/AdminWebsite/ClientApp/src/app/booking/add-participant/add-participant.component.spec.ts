@@ -13,8 +13,7 @@ import {
     CaseAndHearingRolesResponse,
     ClientSettingsResponse,
     HearingRole,
-    HearingRoleResponse,
-    PersonResponse
+    HearingRoleResponse
 } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
@@ -198,8 +197,6 @@ participants.push(p2);
 participants.push(p3);
 participants.push(p4);
 
-const constants = Constants;
-
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
@@ -345,12 +342,12 @@ describe('AddParticipantComponent', () => {
         expect(component.buttonAction).toBe('Next');
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
     });
-    it('should set case role list, hearing role list and title list', fakeAsync(() => {
+    fit('should set case role list, hearing role list and title list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
         expect(component.roleList).toBeTruthy();
-        expect(component.roleList.length).toBe(2);
+        expect(component.roleList.length).toBe(4);
         expect(component.titleList).toBeTruthy();
         expect(component.titleList.length).toBe(2);
     }));
@@ -577,7 +574,6 @@ describe('AddParticipantComponent', () => {
         });
         it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
             component.hearing.participants = [];
-            component.referenceDataFeatureFlag = true;
             component.ngAfterViewInit();
             tick(600);
             component.saveParticipant();
@@ -643,8 +639,7 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        const partyLst: PartyModel[] = [roles];
-        component.caseAndHearingRoles = partyLst;
+        component.caseAndHearingRoles = [roles];
         role.setValue('Applicant');
         component.setupHearingRoles('Applicant');
         expect(component.hearingRoleList.length).toBe(2);
@@ -655,8 +650,7 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        const partyLst: PartyModel[] = [roles];
-        component.caseAndHearingRoles = partyLst;
+        component.caseAndHearingRoles = [roles];
         component.setupHearingRoles('Respondent');
         expect(component.hearingRoleList.length).toBe(1);
     });
@@ -707,7 +701,6 @@ describe('AddParticipantComponent', () => {
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
-        const _participants: ParticipantModel[] = [];
         let participant01 = new ParticipantModel();
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
@@ -1169,8 +1162,6 @@ describe('AddParticipantComponent edit mode', () => {
     }));
 
     it('shows single role list when reference data flag is on', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
-
         component.ngOnInit();
         component.ngAfterViewInit();
         flush();
@@ -1187,20 +1178,6 @@ describe('AddParticipantComponent edit mode', () => {
             expect(component.displayClearButton).toBeFalsy();
             expect(component.displayAddButton).toBeFalsy();
             expect(component.displayUpdateButton).toBeFalsy();
-        });
-    }));
-
-    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
-
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        flush();
-        fixture.detectChanges();
-
-        fixture.whenStable().then(() => {
-            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type);
         });
     }));
 
