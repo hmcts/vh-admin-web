@@ -342,7 +342,7 @@ describe('AddParticipantComponent', () => {
         expect(component.buttonAction).toBe('Next');
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
     });
-    fit('should set case role list, hearing role list and title list', fakeAsync(() => {
+    it('should set case role list, hearing role list and title list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
