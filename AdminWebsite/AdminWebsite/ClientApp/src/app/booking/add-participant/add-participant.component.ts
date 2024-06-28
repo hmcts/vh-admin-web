@@ -30,7 +30,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     constants = Constants;
     featureFlags = FeatureFlags;
 
-    notFound: boolean;
     titleList: IDropDownModel[] = [];
     roleList: string[];
     selectedParticipantEmail: string = null;
@@ -42,9 +41,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     showConfirmationRemoveParticipant = false;
     removerFullName: string;
     localEditMode = false;
-    isExistingHearing: boolean;
-    isAnyParticipants: boolean;
-    existingPerson: boolean;
     bookingHasParticipants: boolean;
     $subscriptions: Subscription[] = [];
     referenceDataFeatureFlag = false;

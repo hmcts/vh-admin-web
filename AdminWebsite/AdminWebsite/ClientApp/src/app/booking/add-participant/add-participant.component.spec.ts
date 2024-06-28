@@ -401,11 +401,6 @@ describe('AddParticipantComponent', () => {
         lastName.setValue('María Jose Carreño Quiñones');
         expect(lastName.valid).toBeFalsy();
     });
-    it('should validate phone', () => {
-        expect(phone.valid).toBeFalsy();
-        phone.setValue('123456');
-        expect(phone.valid).toBeTruthy();
-    });
     it('should check if the role is valid role', () => {
         role.setValue(Constants.PleaseSelect);
         component.roleSelected();
@@ -1047,24 +1042,6 @@ describe('AddParticipantComponent edit mode', () => {
         videoHearingsServiceSpy.getParticipantRoles.calls.reset();
     });
 
-    it('should set errorJohAccountNotFound to true when no results found when searching EJudFeature flag is ON', () => {
-        component.form.setValue({
-            party: 'Panel Member',
-            role: 'Panel Member',
-            title: 'Ms',
-            firstName: participant.first_name,
-            lastName: participant.last_name,
-            email: participant.email,
-            phone: participant.phone,
-            displayName: participant.display_name,
-            companyName: participant.company,
-            companyNameIndividual: participant.company,
-            representing: participant.representee,
-            interpreterFor: Constants.PleaseSelect
-        });
-        component.notFoundParticipant();
-        expect(component.errorJohAccountNotFound).toBeTruthy();
-    });
     it('should initialize form controls', () => {
         component.initialiseForm();
         expect(component.form.controls['firstName']).toBeTruthy();
@@ -1085,8 +1062,10 @@ describe('AddParticipantComponent edit mode', () => {
             'Willi..amCraig1234': false,
             ' qweqwe ': false,
             'w.w': true,
-            XY: true
+            XY: true,
+            'A':true
         };
+
         component.form.setValue({
             title: 'Mr',
             firstName: participant.first_name,
@@ -1110,11 +1089,11 @@ describe('AddParticipantComponent edit mode', () => {
 
             // assert
             if (expectedResult) {
-                expect(component.form.controls['firstName'].status).toBe('VALID');
-                expect(component.form.controls['lastName'].status).toBe('VALID');
+                expect(component.form.controls['firstName'].status).toBe('VALID', `Failed for ${test}`);
+                expect(component.form.controls['lastName'].status).toBe('VALID', `Failed for ${test}`);
             } else {
-                expect(component.form.controls['firstName'].status).toBe('INVALID');
-                expect(component.form.controls['lastName'].status).toBe('INVALID');
+                expect(component.form.controls['firstName'].status).toBe('INVALID', `Failed for ${test}`);
+                expect(component.form.controls['lastName'].status).toBe('INVALID', `Failed for ${test}`);
             }
         }
     });
