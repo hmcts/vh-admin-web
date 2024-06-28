@@ -48,12 +48,14 @@ const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'war
 const interpreter: ParticipantModel = {
     hearing_role_name: 'Interpreter ',
     is_judge: false,
-    is_exist_person: false
+    is_exist_person: false,
+    interpretation_language: undefined
 };
 const notInterpreter: ParticipantModel = {
     hearing_role_name: 'Not Interpreter ',
     is_judge: false,
-    is_exist_person: false
+    is_exist_person: false,
+    interpretation_language: undefined
 };
 
 describe('OtherInformationComponent', () => {

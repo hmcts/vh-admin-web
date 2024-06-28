@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { EndpointLink, VideoAccessPointDto } from '../models/video-access-point.model';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Constants } from 'src/app/common/constants';
-import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
+import { InterpreterFormComponent } from '../../interpreter-form/interpreter-form.component';
+import { FeatureFlags } from 'src/app/services/launch-darkly.service';
 
 @Component({
     selector: 'app-video-endpoint-form',
@@ -11,6 +13,7 @@ import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
 })
 export class VideoEndpointFormComponent {
     errorMessages = Constants.Error;
+    featureFlags = FeatureFlags;
 
     availableRepresentatives: ParticipantModel[] = [];
     constants = Constants;
@@ -18,6 +21,7 @@ export class VideoEndpointFormComponent {
     form: FormGroup<VideoEndpointForm>;
     saveButtonText = '';
     videoEndpoint: VideoAccessPointDto;
+    interpreterSelection: InterpreterSelectedDto;
     private editMode = false;
 
     @Input() set existingVideoEndpoint(value: VideoAccessPointDto) {
@@ -32,6 +36,7 @@ export class VideoEndpointFormComponent {
             );
             this.editMode = true;
             this.form.markAllAsTouched();
+            this.interpreterForm?.prepopulateForm(value.interpretationLanguage);
             this.saveButtonText = 'Update Access Point';
         } else {
             this.editMode = false;
@@ -48,6 +53,8 @@ export class VideoEndpointFormComponent {
     }
     @Output() endpointAdded = new EventEmitter<VideoAccessPointDto>();
     @Output() endpointUpdated = new EventEmitter<{ original: VideoAccessPointDto; updated: VideoAccessPointDto }>();
+
+    @ViewChild('interpreterForm') interpreterForm: InterpreterFormComponent;
 
     private _participants: ParticipantModel[];
 
@@ -68,7 +75,10 @@ export class VideoEndpointFormComponent {
 
     onSubmit() {
         this.form.markAllAsTouched();
-        if (!this.form.valid) {
+
+        const includeInterpreter = this.interpreterForm ?? false;
+        this.interpreterForm?.forceValidation();
+        if (!this.form.valid || (includeInterpreter && !this.interpreterForm?.form.valid)) {
             return;
         }
         let defenceAdvocate: EndpointLink = null;
@@ -82,7 +92,8 @@ export class VideoEndpointFormComponent {
         const dto: VideoAccessPointDto = {
             ...this.videoEndpoint,
             displayName: this.form.value.displayName,
-            defenceAdvocate
+            defenceAdvocate,
+            interpretationLanguage: this.interpreterSelection
         };
         if (this.editMode) {
             this.endpointUpdated.emit({ original: this.videoEndpoint, updated: dto });
@@ -94,13 +105,25 @@ export class VideoEndpointFormComponent {
             displayName: null,
             linkedRepresentative: null
         });
+        this.interpreterForm?.resetForm();
+    }
+
+    onInterpreterLanguageSelected($event: InterpreterSelectedDto) {
+        this.interpreterSelection = $event;
+        if (!$event.interpreterRequired) {
+            this.interpreterSelection = null;
+        }
     }
 
     uniqueDisplayNameValidator(): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } | null => {
-            const isUnique = !this.existingVideoEndpoints.some(
-                endpoint => endpoint.displayName === control.value && endpoint.id !== this.videoEndpoint.id
-            );
+            const isUnique = !this.existingVideoEndpoints.some(endpoint => endpoint.displayName === control.value);
+            // if this.videoEndpoint is set, we are in edit mode, so we need to check if the new name is the same as the old name
+            if (this.videoEndpoint) {
+                return isUnique || control.value === this.videoEndpoint.displayName
+                    ? null
+                    : { displayNameExists: { value: control.value } };
+            }
             return isUnique ? null : { displayNameExists: { value: control.value } };
         };
     }

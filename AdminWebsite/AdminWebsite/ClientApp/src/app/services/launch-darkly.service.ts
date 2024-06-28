@@ -12,7 +12,8 @@ export const FeatureFlags = {
     referenceData: 'reference-data',
     audioSearch: 'hide-audio-search-tile',
     useV2Api: 'use-bookings-api-v2',
-    multiDayBookingEnhancements: 'multi-day-booking-enhancements'
+    multiDayBookingEnhancements: 'multi-day-booking-enhancements',
+    interpreterEnhancements: 'interpreter-enhancements'
 };
 
 @Injectable({

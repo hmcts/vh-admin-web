@@ -12,6 +12,7 @@ import { VideoEndpointFormComponent } from './video-endpoint-form/video-endpoint
 import { VideoEndpointListComponent } from './video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './video-endpoint-item/video-endpoint-item.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { FeatureFlagDirective } from 'src/app/src/app/shared/feature-flag.directive';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -25,7 +26,8 @@ function initHearingRequest(): HearingModel {
             last_name: 'Doe',
             email: 'john@doe.com',
             display_name: 'John Doe',
-            user_role_name: 'Representative'
+            user_role_name: 'Representative',
+            interpretation_language: undefined
         },
         {
             id: '2',
@@ -33,7 +35,8 @@ function initHearingRequest(): HearingModel {
             last_name: 'Green',
             email: 'chris@green,com',
             display_name: 'Chris Green',
-            user_role_name: 'Representative'
+            user_role_name: 'Representative',
+            interpretation_language: undefined
         },
         {
             id: '3',
@@ -41,7 +44,8 @@ function initHearingRequest(): HearingModel {
             last_name: 'Smith',
             email: 'jane@smith.com',
             display_name: 'Jane Smith',
-            user_role_name: 'Individual'
+            user_role_name: 'Individual',
+            interpretation_language: undefined
         }
     ];
     newHearing.endpoints = [
@@ -52,7 +56,8 @@ function initHearingRequest(): HearingModel {
             sip: 'sip',
             pin: 'pin',
             username: 'test@existing.com',
-            contactEmail: 'test@existing.com'
+            contactEmail: 'test@existing.com',
+            interpretationLanguage: undefined
         }
     ];
     return newHearing;
@@ -84,6 +89,7 @@ describe('EndpointsComponent', () => {
         loggerSpy = jasmine.createSpyObj('Logger', ['debug']);
         featureServiceSpy = jasmine.createSpyObj('LaunchDarklyService', ['getFlag']);
         featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
+        featureServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -91,7 +97,8 @@ describe('EndpointsComponent', () => {
                 VideoEndpointFormComponent,
                 VideoEndpointListComponent,
                 VideoEndpointItemComponent,
-                BreadcrumbStubComponent
+                BreadcrumbStubComponent,
+                FeatureFlagDirective
             ],
             providers: [
                 { provide: BookingService, useValue: bookingServiceSpy },
@@ -99,6 +106,7 @@ describe('EndpointsComponent', () => {
                 { provide: Router, useValue: routerSpy },
                 { provide: Logger, useValue: loggerSpy },
                 { provide: LaunchDarklyService, useValue: featureServiceSpy },
+
                 FormBuilder
             ],
             imports: [ReactiveFormsModule]
@@ -202,7 +210,7 @@ describe('EndpointsComponent', () => {
         it('should navigate to the other information page when next clicked and multi day booking enhancements are enabled', () => {
             featureServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
             component.ngOnInit();
-            component.videoEndpoints = [{ id: '1', displayName: 'Test', defenceAdvocate: null }];
+            component.videoEndpoints = [{ id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined }];
             component.saveEndpoints();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
         });
@@ -216,13 +224,13 @@ describe('EndpointsComponent', () => {
 
     describe('onEndpoitnAdded', () => {
         it('should add endpoint', () => {
-            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointAdded(endpoint);
             expect(component.videoEndpoints).toContain(endpoint);
         });
 
         it('should not add an endpoint when the display name already exists', () => {
-            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined };
             component.videoEndpoints = [endpoint];
             component.onEndpointAdded(endpoint);
             expect(component.videoEndpoints.length).toBe(1);
@@ -232,22 +240,22 @@ describe('EndpointsComponent', () => {
     describe('onEndpointUpdated', () => {
         beforeEach(() => {
             component.videoEndpoints = [
-                { id: '1', displayName: 'Test', defenceAdvocate: null },
-                { id: '2', displayName: 'Test2', defenceAdvocate: null }
+                { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined },
+                { id: '2', displayName: 'Test2', defenceAdvocate: null, interpretationLanguage: undefined }
             ];
         });
 
         it('should update endpoint', () => {
-            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined };
             component.videoEndpoints = [endpoint];
-            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null };
+            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
             expect(component.videoEndpoints).toContain(updatedEndpoint);
         });
 
         it('should not update endpoint when the original endpoint does not exist', () => {
-            const endpoint = { id: '1', displayName: 'DoesNotExist', defenceAdvocate: null };
-            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'DoesNotExist', defenceAdvocate: null, interpretationLanguage: undefined };
+            const updatedEndpoint = { id: '1', displayName: 'Updated', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointUpdated({ original: endpoint, updated: updatedEndpoint });
             expect(component.videoEndpoints).not.toContain(endpoint);
         });
@@ -256,19 +264,19 @@ describe('EndpointsComponent', () => {
     describe('onEndpointSelectedForDeletion', () => {
         beforeEach(() => {
             component.videoEndpoints = [
-                { id: '1', displayName: 'Test', defenceAdvocate: null },
-                { id: '2', displayName: 'Test2', defenceAdvocate: null }
+                { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined },
+                { id: '2', displayName: 'Test2', defenceAdvocate: null, interpretationLanguage: undefined }
             ];
         });
 
         it('should delete endpoint', () => {
-            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointSelectedForDeletion(endpoint);
             expect(component.videoEndpoints).not.toContain(endpoint);
         });
 
         it('should not delete endpoint when the endpoint does not exist', () => {
-            const endpoint = { id: '3', displayName: 'Test3', defenceAdvocate: null };
+            const endpoint = { id: '3', displayName: 'Test3', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointSelectedForDeletion(endpoint);
             expect(component.videoEndpoints.length).toBe(2);
         });
@@ -276,7 +284,7 @@ describe('EndpointsComponent', () => {
 
     describe('onEndpointSelectedForEdit', () => {
         it('should set endpoint to edit', () => {
-            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null };
+            const endpoint = { id: '1', displayName: 'Test', defenceAdvocate: null, interpretationLanguage: undefined };
             component.onEndpointSelectedForEdit(endpoint);
             expect(component.videoEndpointToEdit).toBe(endpoint);
         });
