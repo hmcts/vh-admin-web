@@ -54,7 +54,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     forceInterpretationLanguageSelection = false;
     interpreterSelection: InterpreterSelectedDto;
 
-    @ViewChild(ParticipantListComponent, {static: true})
+    @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
 
     public judiciaryRoles = Constants.JudiciaryRoles;
@@ -252,10 +252,10 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         if (this.hearing) {
-            this.logger.debug(`${this.loggerPrefix} Found existing hearing.`, {hearing: this.hearing.hearing_id});
+            this.logger.debug(`${this.loggerPrefix} Found existing hearing.`, { hearing: this.hearing.hearing_id });
             const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
             if (this.editMode) {
-                this.logger.debug(`${this.loggerPrefix} Mapping existing participants.`, {hearing: this.hearing.hearing_id});
+                this.logger.debug(`${this.loggerPrefix} Mapping existing participants.`, { hearing: this.hearing.hearing_id });
                 this.bookingHasParticipants = anyParticipants && !anyParticipants.is_judge;
             }
         }
@@ -357,7 +357,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = {...this.hearing};
+                this.hearing = { ...this.hearing };
 
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
@@ -425,7 +425,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                     }
                 });
                 this.hearing.participants = [...this.hearing.participants];
-                this.hearing = {...this.hearing};
+                this.hearing = { ...this.hearing };
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -475,7 +475,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = {...this.hearing};
+        this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }
@@ -795,7 +795,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-        this.hearing = {...this.hearing};
+        this.hearing = { ...this.hearing };
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }
