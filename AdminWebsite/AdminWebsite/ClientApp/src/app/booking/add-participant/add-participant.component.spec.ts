@@ -401,6 +401,14 @@ describe('AddParticipantComponent', () => {
         lastName.setValue('María Jose Carreño Quiñones');
         expect(lastName.valid).toBeFalsy();
     });
+
+    it('should validate phone', () => {
+        phone.setValue('ABC');
+        expect(phone.valid).toBeFalsy();
+        phone.setValue('123456');
+        expect(phone.valid).toBeTruthy();
+    });
+
     it('should check if the role is valid role', () => {
         role.setValue(Constants.PleaseSelect);
         component.roleSelected();
@@ -1063,7 +1071,7 @@ describe('AddParticipantComponent edit mode', () => {
             ' qweqwe ': false,
             'w.w': true,
             XY: true,
-            'A':true
+            A: true
         };
 
         component.form.setValue({
