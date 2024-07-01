@@ -229,7 +229,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                         self.party.value === self.constants.PleaseSelect
                     ) {
                         self.displayNext();
-                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail()) {
+                    } else if (self.showDetails && self.form.valid && self.searchEmail?.validateEmail()) {
                         if (self.localEditMode) {
                             self.displayUpdate();
                         } else {
