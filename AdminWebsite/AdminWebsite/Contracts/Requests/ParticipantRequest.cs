@@ -19,4 +19,5 @@ public class ParticipantRequest
     public string HearingRoleCode { get; set; }
     public string Representee { get; set; }
     public string OrganisationName { get; set; }
+    public string InterpreterLanguageCode { get; set; }
 }

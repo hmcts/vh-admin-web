@@ -8,4 +8,5 @@ public class EndpointRequest
     [RegularExpression("^([-A-Za-z0-9 \',._])*$")]
     public string DisplayName { get; set; }
     public string DefenceAdvocateContactEmail { get; set; }
+    public string InterpreterLanguageCode { get; set; }
 }

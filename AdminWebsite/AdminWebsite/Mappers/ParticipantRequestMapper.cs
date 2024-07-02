@@ -38,6 +38,7 @@ public static class ParticipantRequestMapper
             TelephoneNumber = participantRequest.TelephoneNumber,
             Title = participantRequest.Title,
             OrganisationName = participantRequest.OrganisationName,
+            InterpreterLanguageCode = participantRequest.InterpreterLanguageCode
         };
     }
 }

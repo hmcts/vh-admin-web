@@ -21,7 +21,6 @@ using BookingsApi.Contract.Interfaces.Requests;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V2.Requests;
-using BookingsApi.Contract.V2.Requests.Enums;
 using BookingsApi.Contract.V2.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -717,7 +716,7 @@ namespace AdminWebsite.Controllers
                 {
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
-                    HearingRoleCode = jp.HearingRoleCode == JudiciaryParticipantHearingRoleCodeV2.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                    HearingRoleCode = jp.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
                         : JudiciaryParticipantHearingRoleCode.PanelMember
                 })
                 // Judges are re-assigned instead of removed or added
@@ -731,7 +730,7 @@ namespace AdminWebsite.Controllers
 
             foreach (var joh in request.ExistingJudiciaryParticipants)
             {
-                var roleCode = joh.HearingRoleCode == JudiciaryParticipantHearingRoleCodeV2.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                var roleCode = joh.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
                     : JudiciaryParticipantHearingRoleCode.PanelMember;
                 
                 await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
@@ -742,10 +741,10 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private static UpdateJudiciaryParticipantsRequestV2 MapUpdateJudiciaryParticipantsRequestV2(List<JudiciaryParticipantRequest> judiciaryParticipants,
+        private static UpdateJudiciaryParticipantsRequest MapUpdateJudiciaryParticipantsRequestV2(List<JudiciaryParticipantRequest> judiciaryParticipants,
             HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true, HearingChanges hearingChanges = null)
         {
-            var request = new UpdateJudiciaryParticipantsRequestV2();
+            var request = new UpdateJudiciaryParticipantsRequest();
             
             // keep the order of removal first. this will allow admin web to change judiciary judges post booking
             var removedJohs = originalHearing.JudiciaryParticipants.Where(ojp =>
@@ -801,13 +800,13 @@ namespace AdminWebsite.Controllers
                 if (johsToAdd.Any())
                 {
                     var newParticipants = johsToAdd
-                        .Select(x => new JudiciaryParticipantRequestV2
+                        .Select(x => new BookingsApi.Contract.V1.Requests.JudiciaryParticipantRequest
                         {
                             ContactEmail = x.ContactEmail,
                             DisplayName = x.DisplayName,
                             PersonalCode = x.PersonalCode,
-                            HearingRoleCode = x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCodeV2.Judge
-                                : JudiciaryParticipantHearingRoleCodeV2.PanelMember,
+                            HearingRoleCode = x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                                : JudiciaryParticipantHearingRoleCode.PanelMember,
                             ContactTelephone = x.ContactTelephone
                         })
                         .ToList();
@@ -824,7 +823,7 @@ namespace AdminWebsite.Controllers
             return request;
         }
 
-        private static List<EditableUpdateJudiciaryParticipantRequestV2> MapExistingJudiciaryParticipants(IEnumerable<JudiciaryParticipantRequest> judiciaryParticipantsToUpdate,
+        private static List<EditableUpdateJudiciaryParticipantRequest> MapExistingJudiciaryParticipants(IEnumerable<JudiciaryParticipantRequest> judiciaryParticipantsToUpdate,
             HearingDetailsResponse originalHearing, bool skipUnchangedParticipants = true, List<string> removedJudiciaryParticipantPersonalCodes = null)
         {
             // get existing judiciary participants based on the personal code being present in the original hearing
@@ -852,7 +851,7 @@ namespace AdminWebsite.Controllers
                     .ToList();
             }
 
-            var existingJudiciaryParticipants = new List<EditableUpdateJudiciaryParticipantRequestV2>();
+            var existingJudiciaryParticipants = new List<EditableUpdateJudiciaryParticipantRequest>();
             
             foreach (var joh in existingJohs)
             {
@@ -868,12 +867,12 @@ namespace AdminWebsite.Controllers
                 }
                 
                 var roleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(joh.Role);
-                existingJudiciaryParticipants.Add(new EditableUpdateJudiciaryParticipantRequestV2
+                existingJudiciaryParticipants.Add(new EditableUpdateJudiciaryParticipantRequest
                 {
                     PersonalCode = joh.PersonalCode,
                     DisplayName = joh.DisplayName,
-                    HearingRoleCode = roleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCodeV2.Judge
-                        : JudiciaryParticipantHearingRoleCodeV2.PanelMember
+                    HearingRoleCode = roleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
+                        : JudiciaryParticipantHearingRoleCode.PanelMember
                 });
             }
 
