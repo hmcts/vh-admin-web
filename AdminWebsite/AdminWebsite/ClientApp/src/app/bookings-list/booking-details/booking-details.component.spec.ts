@@ -189,7 +189,8 @@ describe('BookingDetailsComponent', () => {
         'getAllocatedCsoForHearing',
         'rebookHearing',
         'getStatus',
-        'cancelMultiDayBooking'
+        'cancelMultiDayBooking',
+        'isTotalHearingMoreThanThreshold'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -492,7 +493,16 @@ CY: 54321 (ID: 7777)`);
         videoHearingServiceSpy.isConferenceClosed.and.returnValue(true);
         expect(component.canEditHearing).toBe(false);
     });
-
+    it('should show edit series button if total days is less than 40', () => {
+        component.ngOnInit();
+        videoHearingServiceSpy.isTotalHearingMoreThanThreshold.and.returnValue(false);
+        expect(component.isTotalHearingMoreThanThreshold).toBe(false);
+    });
+    it('should not show edit series button if total days is more than 40', () => {
+        component.ngOnInit();
+        videoHearingServiceSpy.isTotalHearingMoreThanThreshold.and.returnValue(true);
+        expect(component.isTotalHearingMoreThanThreshold).toBe(true);
+    });
     it('should not be able to see retry confirmation when booking is not defined', () => {
         component.booking = null;
         expect(component.canRetryConfirmation).toBeFalsy();
