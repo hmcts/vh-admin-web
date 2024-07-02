@@ -39,7 +39,6 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
-import { Logger } from './logger';
 
 @Injectable({
     providedIn: 'root'
