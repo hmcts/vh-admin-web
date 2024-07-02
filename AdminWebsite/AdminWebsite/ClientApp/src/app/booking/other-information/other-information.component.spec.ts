@@ -29,7 +29,6 @@ function initHearingRequest(): HearingModel {
     const today = new Date();
     today.setHours(14, 30);
 
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_date_time = today;
     newHearing.scheduled_duration = 0;
@@ -62,7 +61,6 @@ describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
     let fixture: ComponentFixture<OtherInformationComponent>;
     launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-    launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
         'getCurrentRequest',
         'cancelRequest',

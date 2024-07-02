@@ -288,7 +288,6 @@ describe('AddParticipantComponent', () => {
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
@@ -343,9 +342,9 @@ describe('AddParticipantComponent', () => {
     it('should set case role list, hearing role list and title list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         expect(component.roleList).toBeTruthy();
-        expect(component.roleList.length).toBe(2);
+        expect(component.roleList.length).toBe(4);
         expect(component.titleList).toBeTruthy();
         expect(component.titleList.length).toBe(2);
     }));
@@ -526,7 +525,6 @@ describe('AddParticipantComponent', () => {
             companyName.setValue('CC');
             component.isRoleSelected = true;
             component.isPartySelected = true;
-            component.referenceDataFeatureFlag = false;
 
             component.participantDetails = participant;
         });
@@ -576,9 +574,8 @@ describe('AddParticipantComponent', () => {
         });
         it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
             component.hearing.participants = [];
-            component.referenceDataFeatureFlag = true;
             component.ngAfterViewInit();
-            tick(600);
+            tick(1000);
             component.saveParticipant();
             expect(component.hearingRoleList).toContain('Interpreter');
             flush();
@@ -685,24 +682,25 @@ describe('AddParticipantComponent', () => {
     it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         expect(component.hearingRoleList).toContain('Interpreter');
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
-        tick(600);
+        tick(1000);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
     it('should show the interpreter in hearings role if lip or witness is added', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
+        flush();
     }));
     it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
@@ -720,13 +718,13 @@ describe('AddParticipantComponent', () => {
         participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         component.setupHearingRoles('Claimant');
-        tick(600);
+        tick(1000);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
     it('should not show the interpreter option in hearings role if observer/appraiser participant is added.', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         component.hearing.participants = [];
         expect(component.hearingRoleList).toContain('Interpreter');
         let participant01 = new ParticipantModel();
@@ -763,7 +761,7 @@ describe('AddParticipantComponent', () => {
     it('should not show observers in the interpretee list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         const observer01 = new ParticipantModel();
         observer01.id = 'Observer Observer';
         observer01.first_name = 'firstName';
@@ -1013,7 +1011,6 @@ describe('AddParticipantComponent edit mode', () => {
             ]
         }).compileComponents();
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
@@ -1152,9 +1149,7 @@ describe('AddParticipantComponent edit mode', () => {
         fixture.detectChanges();
     }));
 
-    it('shows single role list when reference data flag is on', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
-
+    it('shows single role list', fakeAsync(async () => {
         component.ngOnInit();
         component.ngAfterViewInit();
         flush();
@@ -1171,20 +1166,6 @@ describe('AddParticipantComponent edit mode', () => {
             expect(component.displayClearButton).toBeFalsy();
             expect(component.displayAddButton).toBeFalsy();
             expect(component.displayUpdateButton).toBeFalsy();
-        });
-    }));
-
-    it('gets participant roles by case type service id when reference data flag is off', fakeAsync(async () => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
-
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        flush();
-        fixture.detectChanges();
-
-        fixture.whenStable().then(() => {
-            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalledWith(component.hearing.case_type);
         });
     }));
 
@@ -1419,7 +1400,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         TestBed.configureTestingModule({
@@ -1457,14 +1437,14 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     it('should show button add participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         expect(component.editMode).toBeTruthy();
         expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
         expect(component.selectedParticipantEmail).toBe('');
         expect(component.showDetails).toBeFalsy();
-        expect(component.displayNextButton).toBeFalsy();
-        expect(component.displayClearButton).toBeTruthy();
-        expect(component.displayAddButton).toBeTruthy();
+        expect(component.displayNextButton).toBeTruthy();
+        expect(component.displayClearButton).toBeFalsy();
+        expect(component.displayAddButton).toBeFalsy();
         expect(component.displayUpdateButton).toBeFalsy();
     }));
 
@@ -1481,7 +1461,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         participant.addedDuringHearing = false;
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
@@ -1493,7 +1473,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     it('should show confirmation to remove participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(600);
+        tick(1000);
         const partList = component.participantsListComponent;
         partList.removeParticipant({
             email: 'test2@hmcts.net',
@@ -1503,7 +1483,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         });
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();
-        tick(600);
+        tick(1000);
 
         expect(component.showConfirmationRemoveParticipant).toBeTruthy();
     }));
@@ -1559,10 +1539,10 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         component.selectedParticipantEmail = '';
         component.ngOnInit();
-        tick(600);
+        tick(1000);
 
         expect(component.showDetails).toBeFalsy();
-        expect(component.displayAddButton).toBeTruthy();
+        expect(component.displayAddButton).toBeFalsy();
     }));
     it('should set existingParticipant to false', () => {
         participant.id = '';
@@ -1701,7 +1681,6 @@ describe('AddParticipantComponent set representer', () => {
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
 
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 
