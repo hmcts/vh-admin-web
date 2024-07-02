@@ -134,6 +134,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         return !this.videoHearingService.isConferenceClosed();
     }
 
+    get isTotalHearingMoreThanThreshold(): boolean {
+        return this.videoHearingService.isTotalHearingMoreThanThreshold();
+    }
+
     get canRetryConfirmation(): boolean {
         if (!this.booking || this.booking.status !== BookingStatus.Failed) {
             return false;
