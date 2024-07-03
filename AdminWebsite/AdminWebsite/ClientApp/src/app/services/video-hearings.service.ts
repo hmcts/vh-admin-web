@@ -29,10 +29,7 @@ import {
     JudiciaryParticipantRequest,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest,
-    AvailableLanguageResponse,
-    InterprepretationType
-} from './clients/api-client';
+    UpdateHearingInGroupRequest} from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
@@ -484,7 +481,7 @@ export class VideoHearingsService {
                 participant.is_staff_member = p.user_role_name === Constants.UserRoles.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
-                participant.interpretation_language = this.mapInterpreterLanguage(p.interpreter_language);
+                participant.interpretation_language = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
                 participants.push(participant);
             });
         }
@@ -517,37 +514,11 @@ export class VideoHearingsService {
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
-                endpoint.interpretationLanguage = this.mapInterpreterLanguage(e.interpreter_language);
+                endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoints.push(endpoint);
             });
         }
         return endpoints;
-    }
-
-    mapInterpreterLanguage(interpreterLanguage: AvailableLanguageResponse) {
-        if (!interpreterLanguage) return null;
-
-        let interpretationLanguage: InterpreterSelectedDto = {
-            interpreterRequired: true,
-            spokenLanguageCode: null,
-            spokenLanguageCodeDescription: null,
-            signLanguageCode: null,
-            signLanguageDescription: null
-        };
-        switch (interpreterLanguage.type) {
-            case InterprepretationType.Verbal:
-                interpretationLanguage.spokenLanguageCode = interpreterLanguage.code;
-                interpretationLanguage.spokenLanguageCodeDescription = interpreterLanguage.description;
-                break;
-            case InterprepretationType.Sign:
-                interpretationLanguage.signLanguageCode = interpreterLanguage.code;
-                interpretationLanguage.signLanguageDescription = interpreterLanguage.description;
-                break;
-            default:
-                throw new Error(`Unknown interpretation type ${interpreterLanguage.type}`);
-        }
-
-        return interpretationLanguage;
     }
 
     mapLinkedParticipants(linkedParticipantModels: LinkedParticipantModel[] = []): LinkedParticipantRequest[] {
