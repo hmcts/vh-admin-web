@@ -6729,6 +6729,7 @@ export class EndpointResponse implements IEndpointResponse {
     sip?: string | undefined;
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 
     constructor(data?: IEndpointResponse) {
         if (data) {
@@ -6745,6 +6746,9 @@ export class EndpointResponse implements IEndpointResponse {
             this.sip = _data['sip'];
             this.pin = _data['pin'];
             this.defence_advocate_id = _data['defence_advocate_id'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
         }
     }
 
@@ -6762,6 +6766,7 @@ export class EndpointResponse implements IEndpointResponse {
         data['sip'] = this.sip;
         data['pin'] = this.pin;
         data['defence_advocate_id'] = this.defence_advocate_id;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -6772,6 +6777,7 @@ export interface IEndpointResponse {
     sip?: string | undefined;
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 }
 
 export class HearingDetailsResponse implements IHearingDetailsResponse {
@@ -7391,6 +7397,7 @@ export class ParticipantResponse implements IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 
     constructor(data?: IParticipantResponse) {
@@ -7418,6 +7425,9 @@ export class ParticipantResponse implements IParticipantResponse {
             this.username = _data['username'];
             this.organisation = _data['organisation'];
             this.representee = _data['representee'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
@@ -7449,6 +7459,7 @@ export class ParticipantResponse implements IParticipantResponse {
         data['username'] = this.username;
         data['organisation'] = this.organisation;
         data['representee'] = this.representee;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -7473,6 +7484,7 @@ export interface IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 

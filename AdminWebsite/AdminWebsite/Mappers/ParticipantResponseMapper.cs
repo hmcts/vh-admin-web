@@ -50,6 +50,7 @@ public static class ParticipantResponseMapper
                 TelephoneNumber = p.TelephoneNumber,
                 Organisation = p.Organisation,
                 Representee = p.Representee,
+                InterpreterLanguage = p.InterpreterLanguage?.Map(),
                 LinkedParticipants = p.LinkedParticipants?.Select(lp => lp.Map()).ToList()
         }).ToList();
     }

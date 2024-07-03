@@ -1,4 +1,4 @@
-import { JudiciaryParticipantResponse } from 'src/app/services/clients/api-client';
+import { AvailableLanguageResponse, InterprepretationType, JudiciaryParticipantResponse } from 'src/app/services/clients/api-client';
 import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 
 export type JudicaryRoleCode = 'Judge' | 'PanelMember';
@@ -33,9 +33,34 @@ export class JudicialMemberDto {
         dto.optionalContactEmail = response.optional_contact_email;
         dto.roleCode = response.role_code as JudicaryRoleCode;
         dto.displayName = response.display_name;
-
-        // todo: map from response when API is implemented
+        dto.interpretationLanguage = this.mapInterpreterLanguage(response.interpreter_language);
 
         return dto;
+    }
+
+    static mapInterpreterLanguage(interpreterLanguage: AvailableLanguageResponse) {
+        if (!interpreterLanguage) return null;
+
+        let interpretationLanguage: InterpreterSelectedDto = {
+            interpreterRequired: true,
+            spokenLanguageCode: null,
+            spokenLanguageCodeDescription: null,
+            signLanguageCode: null,
+            signLanguageDescription: null
+        };
+        switch (interpreterLanguage.type) {
+            case InterprepretationType.Verbal:
+                interpretationLanguage.spokenLanguageCode = interpreterLanguage.code;
+                interpretationLanguage.spokenLanguageCodeDescription = interpreterLanguage.description;
+                break;
+            case InterprepretationType.Sign:
+                interpretationLanguage.signLanguageCode = interpreterLanguage.code;
+                interpretationLanguage.signLanguageDescription = interpreterLanguage.description;
+                break;
+            default:
+                throw new Error(`Unknown interpretation type ${interpreterLanguage.type}`);
+        }
+
+        return interpretationLanguage;
     }
 }
