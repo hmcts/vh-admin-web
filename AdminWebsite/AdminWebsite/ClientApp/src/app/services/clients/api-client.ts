@@ -5799,6 +5799,7 @@ export interface IEditMultiDayHearingRequest {
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IEndpointRequest) {
         if (data) {
@@ -5812,6 +5813,7 @@ export class EndpointRequest implements IEndpointRequest {
         if (_data) {
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5826,6 +5828,7 @@ export class EndpointRequest implements IEndpointRequest {
         data = typeof data === 'object' ? data : {};
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -5833,6 +5836,7 @@ export class EndpointRequest implements IEndpointRequest {
 export interface IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest {
@@ -5841,6 +5845,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
     display_name?: string | undefined;
     optional_contact_telephone?: string | undefined;
     optional_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IJudiciaryParticipantRequest) {
         if (data) {
@@ -5857,6 +5862,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
             this.display_name = _data['display_name'];
             this.optional_contact_telephone = _data['optional_contact_telephone'];
             this.optional_contact_email = _data['optional_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5874,6 +5880,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
         data['display_name'] = this.display_name;
         data['optional_contact_telephone'] = this.optional_contact_telephone;
         data['optional_contact_email'] = this.optional_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -5884,6 +5891,7 @@ export interface IJudiciaryParticipantRequest {
     display_name?: string | undefined;
     optional_contact_telephone?: string | undefined;
     optional_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class LinkedParticipantRequest implements ILinkedParticipantRequest {
@@ -5943,6 +5951,7 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -5967,6 +5976,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5992,6 +6002,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -6010,6 +6021,7 @@ export interface IParticipantRequest {
     hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -7161,6 +7173,7 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
     optional_contact_email?: string | undefined;
     /** Is an optional contact number for generic accounts */
     optional_contact_telephone?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 
     constructor(data?: IJudiciaryParticipantResponse) {
         if (data) {
@@ -7184,6 +7197,9 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
             this.is_generic = _data['is_generic'];
             this.optional_contact_email = _data['optional_contact_email'];
             this.optional_contact_telephone = _data['optional_contact_telephone'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
         }
     }
 
@@ -7208,6 +7224,7 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
         data['is_generic'] = this.is_generic;
         data['optional_contact_email'] = this.optional_contact_email;
         data['optional_contact_telephone'] = this.optional_contact_telephone;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -7237,6 +7254,7 @@ export interface IJudiciaryParticipantResponse {
     optional_contact_email?: string | undefined;
     /** Is an optional contact number for generic accounts */
     optional_contact_telephone?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 }
 
 export class JudiciaryPerson implements IJudiciaryPerson {

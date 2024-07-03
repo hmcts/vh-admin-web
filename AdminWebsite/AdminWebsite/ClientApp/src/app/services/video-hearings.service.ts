@@ -39,6 +39,7 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 
 @Injectable({
     providedIn: 'root'
@@ -409,7 +410,8 @@ export class VideoHearingsService {
                 display_name: judicialMemberDto.displayName,
                 role: judicialMemberDto.roleCode,
                 optional_contact_email: judicialMemberDto.optionalContactEmail,
-                optional_contact_telephone: judicialMemberDto.optionalContactNumber
+                optional_contact_telephone: judicialMemberDto.optionalContactNumber,
+                interpreter_language_code: this.mapInterpreterLanguageCode(judicialMemberDto.interpretationLanguage)
             });
             return judiciaryParticipantRequest;
         });
@@ -434,6 +436,7 @@ export class VideoHearingsService {
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
+                participant.interpreter_language_code = this.mapInterpreterLanguageCode(p.interpretation_language);
                 participants.push(participant);
             });
         }
@@ -448,6 +451,7 @@ export class VideoHearingsService {
                 endpoint = new EndpointRequest();
                 endpoint.display_name = e.displayName;
                 endpoint.defence_advocate_contact_email = e.defenceAdvocate;
+                endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
                 eps.push(endpoint);
             });
         }
@@ -525,6 +529,12 @@ export class VideoHearingsService {
             acc.push(request);
             return acc;
         }, []);
+    }
+
+    mapInterpreterLanguageCode(interpreterLanguage: InterpreterSelectedDto): string {
+        if (interpreterLanguage == null) return null;
+
+        return interpreterLanguage.spokenLanguageCode || interpreterLanguage.signLanguageCode;
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

@@ -61,4 +61,9 @@ public class JudiciaryParticipantResponse
     /// Is an optional contact number for generic accounts
     /// </summary>
     public string OptionalContactTelephone { get; set; }
+
+    /// <summary>
+    /// The judiciary person's interpreter language details
+    /// </summary>
+    public AvailableLanguageResponse InterpreterLanguage { get; set; }
 }

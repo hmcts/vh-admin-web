@@ -25,6 +25,7 @@ import { lastValueFrom, map, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -964,6 +965,121 @@ describe('Video hearing service', () => {
                 update_future_days: updateFutureDays
             });
             expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
+        });
+    });
+
+    describe('mapJudicialMemberDtoToJudiciaryParticipantRequest', () => {
+        it('should map judicial member dto', () => {
+            // Arrange
+            const dtos: JudicialMemberDto[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const dto = new JudicialMemberDto('FirstName', 'LastName', 'FullName', 'Email', '1234', 'PersonalCode', true);
+            dto.interpretationLanguage = language;
+            dtos.push(dto);
+
+            // Act
+            const result = service.mapJudicialMemberDtoToJudiciaryParticipantRequest(dtos);
+
+            // Assert
+            expect(result.length).toBe(dtos.length);
+            expect(result[0].personal_code).toBe(dto.personalCode);
+            expect(result[0].display_name).toBe(dto.displayName);
+            expect(result[0].role).toBe(dto.roleCode);
+            expect(result[0].optional_contact_email).toBe(dto.optionalContactEmail);
+            expect(result[0].optional_contact_telephone).toBe(dto.optionalContactNumber);
+            expect(result[0].interpreter_language_code).toBe(dto.interpretationLanguage.spokenLanguageCode);
+        });
+    });
+
+    describe('mapParticipants', () => {
+        it('should map participants', () => {
+            // Arrange
+            const participants: ParticipantModel[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const participant = new ParticipantModel({
+                interpretation_language: language
+            });
+            participants.push(participant);
+
+            // Act
+            const result = service.mapParticipants(participants);
+
+            // Assert
+            expect(result.length).toBe(participants.length);
+            expect(result[0].interpreter_language_code).toBe(participant.interpretation_language.spokenLanguageCode);
+        });
+    });
+
+    describe('mapEndpoints', () => {
+        it('should map endpoints', () => {
+            // Arrange
+            const endpoints: EndpointModel[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const endpoint = new EndpointModel();
+            endpoint.interpretationLanguage = language;
+            endpoints.push(endpoint);
+
+            // Act
+            const result = service.mapEndpoints(endpoints);
+
+            // Assert
+            expect(result.length).toBe(endpoints.length);
+            expect(result[0].interpreter_language_code).toBe(endpoint.interpretationLanguage.spokenLanguageCode);
+        });
+    });
+
+    describe('mapInterpreterLanguageCode', () => {
+        it('should return spoken language code when specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBe(language.spokenLanguageCode);
+        });
+
+        it('should return sign language code when specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: 'bfi',
+                spokenLanguageCode: null,
+                interpreterRequired: true
+            };
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBe(language.signLanguageCode);
+        });
+
+        it('should return null when no language specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = null;
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBeNull();
         });
     });
 });
