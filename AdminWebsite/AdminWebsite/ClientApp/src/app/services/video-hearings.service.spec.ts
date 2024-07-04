@@ -16,9 +16,7 @@ import {
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest,
-    AvailableLanguageResponse,
-    InterprepretationType
+    UpdateHearingInGroupRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -980,6 +978,43 @@ describe('Video hearing service', () => {
                 update_future_days: updateFutureDays
             });
             expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
+        });
+    });
+
+    describe('isTotalHearingMoreThanThreshold', () => {
+        it('should return false if booking is multiday and the total days are less than 40', () => {
+            const hearing = new HearingModel();
+            hearing.hearing_id = 'SomeGuid';
+            hearing.hearingsInGroup = [];
+
+            for (let i = 0; i < 39; i++) {
+                const model = new HearingModel();
+                model.status = BookingStatus.Booked;
+                model.hearing_id = 'guid' + i;
+                hearing.hearingsInGroup.push(model);
+            }
+            sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
+
+            service = new VideoHearingsService(clientApiSpy);
+
+            expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
+        });
+        it('should return true if booking is multiday and the total days are more than 40', () => {
+            const hearing = new HearingModel();
+            hearing.hearing_id = 'SomeGuid';
+            hearing.hearingsInGroup = [];
+
+            for (let i = 0; i < 50; i++) {
+                const model = new HearingModel();
+                model.status = BookingStatus.Booked;
+                model.hearing_id = 'guid' + i;
+                hearing.hearingsInGroup.push(model);
+            }
+            sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
+
+            service = new VideoHearingsService(clientApiSpy);
+
+            expect(service.isTotalHearingMoreThanThreshold()).toBe(true);
         });
     });
 
