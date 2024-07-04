@@ -136,19 +136,11 @@ describe('ParticipantListComponent', () => {
                 spokenLanguageCode: 'spa',
                 interpreterRequired: true
             };
-            const joh = new JudicialMemberDto(
-                'Test PM 1',
-                'User PM 1',
-                'Test User PM 1',
-                'testpm1@test.com',
-                '1234567890',
-                '2345',
-                false
-            );
+            const joh = new JudicialMemberDto('Test PM 1', 'User PM 1', 'Test User PM 1', 'testpm1@test.com', '1234567890', '2345', false);
             joh.roleCode = 'PanelMember';
             const existingJoh = ParticipantModel.fromJudicialMember(joh, false);
             existingJoh.interpretation_language = oldInterpreterLanguage;
-            const updatedJoh = {...joh};
+            const updatedJoh = { ...joh };
             updatedJoh.interpretationLanguage = newInterpreterLanguage;
 
             component.sortedJudiciaryMembers = [existingJoh];
@@ -158,7 +150,9 @@ describe('ParticipantListComponent', () => {
             component.ngDoCheck();
 
             // assert
-            expect(component.sortedJudiciaryMembers[0].interpretation_language.spokenLanguageCode).toEqual(newInterpreterLanguage.spokenLanguageCode);
+            expect(component.sortedJudiciaryMembers[0].interpretation_language.spokenLanguageCode).toEqual(
+                newInterpreterLanguage.spokenLanguageCode
+            );
         });
 
         it('should call sortJudiciaryMembers once for multiple ngDoChecks when judiciary participant list changes and participants have same display name', () => {
