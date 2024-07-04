@@ -867,7 +867,8 @@ namespace AdminWebsite.Controllers
                     // Only update the joh if their details have changed
                     var originalJoh = originalHearing.JudiciaryParticipants.Find(x => x.PersonalCode == joh.PersonalCode);
                     if (joh.DisplayName == originalJoh.DisplayName &&
-                        joh.Role == originalJoh.RoleCode)
+                        joh.Role == originalJoh.RoleCode &&
+                        joh.InterpreterLanguageCode == originalJoh.InterpreterLanguage?.Code)
                     {
                         continue;
                     }
