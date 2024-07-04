@@ -537,7 +537,9 @@ export class VideoHearingsService {
     }
 
     mapInterpreterLanguageCode(interpreterLanguage: InterpreterSelectedDto): string {
-        if (interpreterLanguage == null) return null;
+        if (interpreterLanguage == null) {
+            return null;
+        }
 
         return interpreterLanguage.spokenLanguageCode || interpreterLanguage.signLanguageCode;
     }

@@ -129,11 +129,11 @@ describe('ParticipantListComponent', () => {
         it('should call sortJudiciaryMembers when interpreter language changes', () => {
             // arrange
             const oldInterpreterLanguage: InterpreterSelectedDto = {
-                spokenLanguageCode: 'fr', 
+                spokenLanguageCode: 'fr',
                 interpreterRequired: true
             };
             const newInterpreterLanguage: InterpreterSelectedDto = {
-                spokenLanguageCode: 'spa', 
+                spokenLanguageCode: 'spa',
                 interpreterRequired: true
             };
             const joh = new JudicialMemberDto(

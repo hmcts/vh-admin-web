@@ -10,9 +10,11 @@ export interface InterpreterSelectedDto {
 
 export class InterpreterSelectedDto {
     static fromAvailableLanguageResponse(response: AvailableLanguageResponse) {
-        if (!response) return null;
+        if (!response) {
+            return null;
+        }
 
-        let dto: InterpreterSelectedDto = {
+        const dto: InterpreterSelectedDto = {
             interpreterRequired: true,
             spokenLanguageCode: null,
             spokenLanguageCodeDescription: null,
