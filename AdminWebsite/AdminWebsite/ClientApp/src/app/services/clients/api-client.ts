@@ -7871,6 +7871,8 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     display_name?: string | undefined;
     /** The username of the participant */
     defence_advocate_contact_email?: string | undefined;
+    /** The code for the endpoint's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IEditEndpointRequest) {
         if (data) {
@@ -7885,6 +7887,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
             this.id = _data['id'];
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -7900,6 +7903,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data['id'] = this.id;
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -7911,6 +7915,8 @@ export interface IEditEndpointRequest {
     display_name?: string | undefined;
     /** The username of the participant */
     defence_advocate_contact_email?: string | undefined;
+    /** The code for the endpoint's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
 }
 
 /** Request for updating an existing hearing */
@@ -8071,6 +8077,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** The code for the participant's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 
@@ -8097,6 +8105,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
@@ -8126,6 +8135,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -8162,6 +8172,8 @@ export interface IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** The code for the participant's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 }

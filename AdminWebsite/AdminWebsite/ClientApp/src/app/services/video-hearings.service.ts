@@ -29,7 +29,8 @@ import {
     JudiciaryParticipantRequest,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest} from './clients/api-client';
+    UpdateHearingInGroupRequest
+} from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
@@ -290,6 +291,7 @@ export class VideoHearingsService {
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
         editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
+        editParticipant.interpreter_language_code = this.mapInterpreterLanguageCode(participant.interpretation_language);
         return editParticipant;
     }
 
@@ -315,6 +317,7 @@ export class VideoHearingsService {
         editEndpoint.id = endpoint.id;
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
+        editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
         return editEndpoint;
     }
 

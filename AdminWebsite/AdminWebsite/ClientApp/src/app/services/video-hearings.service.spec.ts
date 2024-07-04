@@ -378,6 +378,12 @@ describe('Video hearing service', () => {
         participant.phone = '123123123';
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        const interpretationLanguage: InterpreterSelectedDto = {
+            signLanguageCode: null,
+            spokenLanguageCode: 'fr',
+            interpreterRequired: true
+        };
+        participant.interpretation_language = interpretationLanguage;
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();
         linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
@@ -432,6 +438,7 @@ describe('Video hearing service', () => {
         expect(actualEndpoint).toEqual(expectedEndpoint);
         expect(actualLinkedParticipants.linked_id).toEqual(expectedLinkedParticipants.linkedParticipantId);
         expect(actualLinkedParticipants.type).toEqual(expectedLinkedParticipants.linkType);
+        expect(actualParticipant.interpreter_language_code).toEqual(expectedParticipant.interpretation_language.spokenLanguageCode);
     });
 
     it('should map Existing hearing', () => {

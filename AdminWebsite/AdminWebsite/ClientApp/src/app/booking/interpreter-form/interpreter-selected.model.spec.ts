@@ -1,5 +1,5 @@
-import { AvailableLanguageResponse, InterprepretationType } from "src/app/services/clients/api-client";
-import { InterpreterSelectedDto } from "./interpreter-selected.model";
+import { AvailableLanguageResponse, InterprepretationType } from 'src/app/services/clients/api-client';
+import { InterpreterSelectedDto } from './interpreter-selected.model';
 
 describe('InterpreterSelectedDto', () => {
     describe('fromAvailableLanguageResponse', () => {

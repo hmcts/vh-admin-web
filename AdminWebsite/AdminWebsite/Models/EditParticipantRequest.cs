@@ -80,6 +80,11 @@ namespace AdminWebsite.Models
         /// Organisation name
         /// </summary>
         public string OrganisationName { get; set; }
+        
+        /// <summary>
+        ///     The code for the participant's interpreter language, if applicable
+        /// </summary>
+        public string InterpreterLanguageCode { get; set; }
 
         /// <summary>
         ///     List of linked participants

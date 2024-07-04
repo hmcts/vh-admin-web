@@ -1,4 +1,4 @@
-import { AvailableLanguageResponse, InterprepretationType } from "src/app/services/clients/api-client";
+import { AvailableLanguageResponse, InterprepretationType } from 'src/app/services/clients/api-client';
 
 export interface InterpreterSelectedDto {
     interpreterRequired: boolean;

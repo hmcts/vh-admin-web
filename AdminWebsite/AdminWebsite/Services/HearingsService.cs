@@ -291,7 +291,8 @@ namespace AdminWebsite.Services
             {
                 Id = endpoint.Id.Value,
                 DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
+                InterpreterLanguageCode = endpoint.InterpreterLanguageCode
             };
 
             return updateEndpointRequest;

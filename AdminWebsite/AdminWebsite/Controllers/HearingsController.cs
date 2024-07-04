@@ -695,7 +695,8 @@ namespace AdminWebsite.Controllers
                 {
                     DisplayName = newJudge.DisplayName,
                     PersonalCode = newJudge.PersonalCode,
-                    OptionalContactEmail = newJudge.OptionalContactEmail
+                    OptionalContactEmail = newJudge.OptionalContactEmail,
+                    InterpreterLanguageCode = newJudge.InterpreterLanguageCode
                 });
             }
 
@@ -717,7 +718,8 @@ namespace AdminWebsite.Controllers
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
                     HearingRoleCode = jp.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
-                        : JudiciaryParticipantHearingRoleCode.PanelMember
+                        : JudiciaryParticipantHearingRoleCode.PanelMember,
+                    InterpreterLanguageCode = jp.InterpreterLanguageCode
                 })
                 // Judges are re-assigned instead of removed or added
                 .Where(jp => jp.HearingRoleCode != JudiciaryParticipantHearingRoleCode.Judge)
@@ -734,9 +736,11 @@ namespace AdminWebsite.Controllers
                     : JudiciaryParticipantHearingRoleCode.PanelMember;
                 
                 await _bookingsApiClient.UpdateJudiciaryParticipantAsync(hearingId, joh.PersonalCode,
-                    new UpdateJudiciaryParticipantRequest()
+                    new UpdateJudiciaryParticipantRequest
                     {
-                        DisplayName = joh.DisplayName, HearingRoleCode = roleCode
+                        DisplayName = joh.DisplayName, 
+                        HearingRoleCode = roleCode, 
+                        InterpreterLanguageCode = joh.InterpreterLanguageCode
                     });
             }
         }
@@ -789,7 +793,8 @@ namespace AdminWebsite.Controllers
                     DisplayName = jp.DisplayName,
                     PersonalCode = jp.PersonalCode,
                     HearingRoleCode = roleCode,
-                    ContactEmail = jp.OptionalContactEmail
+                    ContactEmail = jp.OptionalContactEmail,
+                    InterpreterLanguageCode = jp.InterpreterLanguageCode
                 };
             }).ToList();
             if (newJohRequest.Any())
@@ -807,7 +812,8 @@ namespace AdminWebsite.Controllers
                             PersonalCode = x.PersonalCode,
                             HearingRoleCode = x.HearingRoleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
                                 : JudiciaryParticipantHearingRoleCode.PanelMember,
-                            ContactTelephone = x.ContactTelephone
+                            ContactTelephone = x.ContactTelephone,
+                            InterpreterLanguageCode = x.InterpreterLanguageCode
                         })
                         .ToList();
                     
@@ -840,7 +846,8 @@ namespace AdminWebsite.Controllers
                         Role = jp.RoleCode.ToString(),
                         DisplayName = jp.DisplayName,
                         OptionalContactTelephone = jp.OptionalContactTelephone,
-                        OptionalContactEmail = jp.OptionalContactEmail
+                        OptionalContactEmail = jp.OptionalContactEmail,
+                        InterpreterLanguageCode = jp.InterpreterLanguage?.Code
                     })
                     .ToList();
                 
@@ -872,7 +879,8 @@ namespace AdminWebsite.Controllers
                     PersonalCode = joh.PersonalCode,
                     DisplayName = joh.DisplayName,
                     HearingRoleCode = roleCode == JudiciaryParticipantHearingRoleCode.Judge ? JudiciaryParticipantHearingRoleCode.Judge
-                        : JudiciaryParticipantHearingRoleCode.PanelMember
+                        : JudiciaryParticipantHearingRoleCode.PanelMember,
+                    InterpreterLanguageCode = joh.InterpreterLanguageCode
                 });
             }
 

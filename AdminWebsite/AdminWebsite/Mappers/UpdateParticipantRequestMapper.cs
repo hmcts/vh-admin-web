@@ -35,7 +35,8 @@ namespace AdminWebsite.Mappers
                 ParticipantId = participant.Id ?? Guid.Empty,
                 FirstName = participant.FirstName,
                 LastName = participant.LastName,
-                MiddleNames = participant.MiddleNames
+                MiddleNames = participant.MiddleNames,
+                InterpreterLanguageCode = participant.InterpreterLanguageCode
             };
             return updateParticipantRequest;
         }
