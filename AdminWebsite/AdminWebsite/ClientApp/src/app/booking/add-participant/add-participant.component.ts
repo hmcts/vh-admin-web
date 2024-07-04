@@ -30,7 +30,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     constants = Constants;
     featureFlags = FeatureFlags;
 
-    notFound: boolean;
     titleList: IDropDownModel[] = [];
     roleList: string[];
     selectedParticipantEmail: string = null;
@@ -42,9 +41,6 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     showConfirmationRemoveParticipant = false;
     removerFullName: string;
     localEditMode = false;
-    isExistingHearing: boolean;
-    isAnyParticipants: boolean;
-    existingPerson: boolean;
     bookingHasParticipants: boolean;
     $subscriptions: Subscription[] = [];
     destroyed$ = new Subject<void>();
@@ -216,7 +212,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
                         self.party.value === self.constants.PleaseSelect
                     ) {
                         self.displayNext();
-                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail()) {
+                    } else if (self.showDetails && self.form.valid && self.searchEmail?.validateEmail()) {
                         if (self.localEditMode) {
                             self.displayUpdate();
                         } else {

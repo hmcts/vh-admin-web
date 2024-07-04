@@ -137,7 +137,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             Validators.maxLength(255)
         ]);
         this.email = new FormControl('', [Validators.required, Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)]);
-        this.phone = new FormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
+        this.phone = new FormControl('', [Validators.pattern(Constants.PhonePattern)]);
         this.displayName = new FormControl('', [
             Validators.required,
             Validators.pattern(Constants.TextInputPatternDisplayName),

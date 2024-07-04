@@ -49,6 +49,7 @@ export class VideoHearingsService {
     private readonly conferencePhoneNumberKey: string;
     private readonly conferencePhoneNumberWelshKey: string;
     private readonly vhoNonAvailabiltiesHaveChangesKey: string;
+    private readonly totalHearingsCountThreshold: number = 40;
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
@@ -626,5 +627,10 @@ export class VideoHearingsService {
         if (index !== -1) {
             this.modelHearing.judiciaryParticipants.splice(index, 1);
         }
+    }
+
+    isTotalHearingMoreThanThreshold(): boolean {
+        const totalHearings = this.modelHearing.hearingsInGroup.length;
+        return totalHearings >= this.totalHearingsCountThreshold;
     }
 }

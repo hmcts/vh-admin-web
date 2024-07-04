@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Constants } from '../common/constants';
 
 const participantEmailKey = 'participantEmailKey';
 const existingCaseTypeKey = 'selectedCaseType';
