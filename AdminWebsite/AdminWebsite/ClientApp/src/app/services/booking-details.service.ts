@@ -113,6 +113,7 @@ export class BookingDetailsService {
                 epModel.pin = e.pin;
                 epModel.sip = e.sip;
                 epModel.defenceAdvocate = defenceAdvocate?.contact_email;
+                epModel.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoints.push(epModel);
             });
         }
