@@ -54,6 +54,14 @@
           <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
             {{ participant?.CaseRoleName }}
           </div>
+
+          <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
+            <div class="participant-row__lang">
+              {{
+                participant.InterpretationLanguage.spokenLanguageCodeDescription ?? participant.InterpretationLanguage.signLanguageDescription
+              }}
+            </div>
+          </ng-container>
         </div>
         <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
           <img

@@ -1,6 +1,7 @@
 import { CaseRoles } from './case-roles';
 import { HearingRoleCodes, HearingRoles } from './hearing-roles.model';
 import { LinkedParticipant } from '../../services/clients/api-client';
+import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
 
 export class ParticipantDetailsModel {
     constructor(
@@ -61,6 +62,7 @@ export class ParticipantDetailsModel {
     Phone: string;
     Interpretee: string;
     IsInterpretee: boolean;
+    InterpretationLanguage: InterpreterSelectedDto;
     LinkedParticipants: LinkedParticipant[];
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;

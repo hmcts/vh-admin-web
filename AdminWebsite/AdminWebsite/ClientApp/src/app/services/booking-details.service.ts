@@ -6,6 +6,7 @@ import { ParticipantDetailsModel } from '../common/model/participant-details.mod
 import { JudiciaryParticipantDetailsModel } from '../common/model/judiciary-participant-details.model';
 import { HearingDetailsResponse, ParticipantResponse } from './clients/api-client';
 import { JudicaryRoleCode } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingDetailsService {
@@ -51,8 +52,8 @@ export class BookingDetailsService {
         const judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
 
         const mappedJohs = hearingResponse.judiciary_participants?.map(
-            j =>
-                new JudiciaryParticipantDetailsModel(
+            j => {
+                const model = new JudiciaryParticipantDetailsModel(
                     j.title,
                     j.first_name,
                     j.last_name,
@@ -62,7 +63,10 @@ export class BookingDetailsService {
                     j.personal_code,
                     j.role_code.toString() as JudicaryRoleCode,
                     j.display_name
-                )
+                );
+                model.InterpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(j.interpreter_language);
+                return model;
+            }
         );
         judicialMembers.push(...mappedJohs);
 
@@ -88,6 +92,7 @@ export class BookingDetailsService {
                     this.isInterpretee(p),
                     p.linked_participants
                 );
+                model.InterpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
                 if (p.user_role_name === this.JUDGE) {
                     judges.push(model);
                 } else {
