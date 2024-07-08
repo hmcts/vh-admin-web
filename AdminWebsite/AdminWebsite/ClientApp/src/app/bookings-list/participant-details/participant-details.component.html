@@ -58,7 +58,8 @@
           <ng-container *ngIf="participant?.InterpretationLanguage?.interpreterRequired">
             <div class="participant-row__lang">
               {{
-                participant.InterpretationLanguage.spokenLanguageCodeDescription ?? participant.InterpretationLanguage.signLanguageDescription
+                participant.InterpretationLanguage.spokenLanguageCodeDescription ??
+                  participant.InterpretationLanguage.signLanguageDescription
               }}
             </div>
           </ng-container>

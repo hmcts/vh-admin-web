@@ -51,23 +51,21 @@ export class BookingDetailsService {
         const judges: Array<ParticipantDetailsModel> = [];
         const judicialMembers: Array<JudiciaryParticipantDetailsModel> = [];
 
-        const mappedJohs = hearingResponse.judiciary_participants?.map(
-            j => {
-                const model = new JudiciaryParticipantDetailsModel(
-                    j.title,
-                    j.first_name,
-                    j.last_name,
-                    j.full_name,
-                    j.email,
-                    j.work_phone,
-                    j.personal_code,
-                    j.role_code.toString() as JudicaryRoleCode,
-                    j.display_name
-                );
-                model.InterpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(j.interpreter_language);
-                return model;
-            }
-        );
+        const mappedJohs = hearingResponse.judiciary_participants?.map(j => {
+            const model = new JudiciaryParticipantDetailsModel(
+                j.title,
+                j.first_name,
+                j.last_name,
+                j.full_name,
+                j.email,
+                j.work_phone,
+                j.personal_code,
+                j.role_code.toString() as JudicaryRoleCode,
+                j.display_name
+            );
+            model.InterpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(j.interpreter_language);
+            return model;
+        });
         judicialMembers.push(...mappedJohs);
 
         if (hearingResponse.participants && hearingResponse.participants.length > 0) {
