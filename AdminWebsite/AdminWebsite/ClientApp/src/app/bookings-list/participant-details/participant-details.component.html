@@ -42,7 +42,7 @@
             </ng-template>
           </ng-container>
 
-          <ng-template #interpreter>
+          <ng-template #interpreter *ngIf="participant?.Interpretee">
             <span>Interpreting for</span>
             <div id="participant-{{ participant?.ParticipantId }}-representee">
               <strong>
