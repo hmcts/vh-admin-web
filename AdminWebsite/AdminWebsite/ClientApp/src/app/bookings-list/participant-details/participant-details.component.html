@@ -42,14 +42,14 @@
             </ng-template>
           </ng-container>
 
-          <ng-template #interpreter *ngIf="participant?.Interpretee">
+          <ng-container *ngIf="participant?.Interpretee">
             <span>Interpreting for</span>
             <div id="participant-{{ participant?.ParticipantId }}-representee">
               <strong>
                 {{ participant?.Interpretee }}
               </strong>
             </div>
-          </ng-template>
+          </ng-container>
 
           <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
             {{ participant?.CaseRoleName }}
