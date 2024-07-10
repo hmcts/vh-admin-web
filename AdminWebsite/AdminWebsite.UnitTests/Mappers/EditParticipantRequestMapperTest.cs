@@ -35,7 +35,8 @@ namespace AdminWebsite.UnitTests.Mappers
                 DisplayName = "display name",
                 OrganisationName = "organisation",
                 TelephoneNumber = "01234567890",
-                Representee = "representee"
+                Representee = "representee",
+                InterpreterLanguageCode = "spa"
             };
 
             var result = UpdateParticipantRequestMapper.MapToV2(source);
@@ -45,6 +46,7 @@ namespace AdminWebsite.UnitTests.Mappers
             result.OrganisationName.Should().Be(source.OrganisationName);
             result.TelephoneNumber.Should().Be(source.TelephoneNumber);
             result.Representee.Should().Be(source.Representee);
+            result.InterpreterLanguageCode.Should().Be(source.InterpreterLanguageCode);
         }
     }
 }

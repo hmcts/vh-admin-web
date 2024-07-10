@@ -1,6 +1,8 @@
 ﻿using AdminWebsite.Mappers;
+using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V2.Responses;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
+using V1 = BookingsApi.Contract.V1.Responses;
 
 namespace AdminWebsite.UnitTests.Mappers
 {
@@ -75,6 +77,14 @@ namespace AdminWebsite.UnitTests.Mappers
                 Username = "UserName",
                 Organisation = "Pluto",
                 Representee = "Representee",
+                InterpreterLanguage = new V1.InterpreterLanguagesResponse
+                {
+                    Code = "spa",
+                    Value = "Spanish",
+                    Type = InterpreterType.Verbal,
+                    WelshValue = "WelshValue",
+                    Live = true
+                },
                 LinkedParticipants = new List<LinkedParticipantResponseV2>()
             };
             participants.Add(participant);
@@ -98,7 +108,43 @@ namespace AdminWebsite.UnitTests.Mappers
                 participantResponse.Organisation.Should().Be(participant.Organisation);
                 participantResponse.Representee.Should().Be(participant.Representee);
                 participantResponse.LinkedParticipants.Should().AllBeEquivalentTo(participant.LinkedParticipants);
+                participantResponse.InterpreterLanguage.Should().NotBeNull();
+                participantResponse.InterpreterLanguage.Should().BeEquivalentTo(participant.InterpreterLanguage.Map());
             }
+        }
+
+        [Test]
+        public void Should_map_participant_without_interpreter_language_V2()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var participants = new List<ParticipantResponseV2>
+            {
+                new()
+                {
+                    FirstName = "Sam",
+                    LastName = "Smith",
+                    ContactEmail = "judge@personal.com",
+                    HearingRoleName = "Judge",
+                    DisplayName = "Display Name",
+                    Id = id,
+                    HearingRoleCode = "123",
+                    UserRoleName = "Judge",
+                    Title = "Title",
+                    MiddleNames = "Middle Names",
+                    TelephoneNumber = "01223445532",
+                    Username = "UserName",
+                    Organisation = "Pluto",
+                    Representee = "Representee",
+                    InterpreterLanguage = null
+                }
+            };
+
+            // Act
+            var participantsResponse = participants.Map();
+
+            // Assert
+            participantsResponse[0].InterpreterLanguage.Should().BeNull();
         }
     }
 }

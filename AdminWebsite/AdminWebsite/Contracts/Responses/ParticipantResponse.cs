@@ -20,5 +20,6 @@ public class ParticipantResponse
     public string Username { get; set; }
     public string Organisation { get; set; }
     public string Representee { get; set; }
+    public AvailableLanguageResponse InterpreterLanguage { get; set; }
     public List<LinkedParticipantResponse> LinkedParticipants { get; set; }
 }

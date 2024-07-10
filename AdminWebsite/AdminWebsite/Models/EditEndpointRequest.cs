@@ -21,6 +21,11 @@ namespace AdminWebsite.Models
         ///     The username of the participant
         /// </summary>
         public string DefenceAdvocateContactEmail { get; set; }
+        
+        /// <summary>
+        ///     The code for the endpoint's interpreter language, if applicable
+        /// </summary>
+        public string InterpreterLanguageCode { get; set; }
 
         private sealed class EditEndpointRequestEqualityComparer : IEqualityComparer<EditEndpointRequest>
         {

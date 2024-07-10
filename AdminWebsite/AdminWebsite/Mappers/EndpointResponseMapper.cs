@@ -25,7 +25,8 @@ public static class EndpointResponseMapper
             DisplayName = endpointResponse.DisplayName,
             Sip = endpointResponse.Sip,
             Pin = endpointResponse.Pin,
-            DefenceAdvocateId = endpointResponse.DefenceAdvocateId
+            DefenceAdvocateId = endpointResponse.DefenceAdvocateId,
+            InterpreterLanguage = endpointResponse.InterpreterLanguage?.Map()
         };
     }
 }
