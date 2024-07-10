@@ -41,6 +41,7 @@ import { LastMinuteAmendmentsGuard } from './security/guards/last-minute-amendme
 import { AdminGuard } from './security/guards/admin.guard';
 import { AuthGuard } from './security/guards/auth.guard';
 import { ReformLoginComponent } from './security/reform-login.component';
+import { AudioSearchGuard } from './security/audio-search.guard';
 import { ManageTeamFeatureGuard } from './security/guards/manage-team-feature.guard';
 
 export function loadConfig(configService: ConfigService) {
@@ -99,7 +100,8 @@ export function loadConfig(configService: ConfigService) {
         PageTrackerService,
         AppInsightsLogger,
         WindowRef,
-        ManageTeamFeatureGuard
+        ManageTeamFeatureGuard,
+        AudioSearchGuard
     ],
     exports: [UnallocatedHearingsComponent],
     bootstrap: [AppComponent]

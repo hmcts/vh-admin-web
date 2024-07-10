@@ -6,6 +6,7 @@ import { first, map } from 'rxjs/operators';
 
 export const FeatureFlags = {
     adminSearch: 'admin_search',
+    audioSearch: 'hide-audio-search-tile',
     dom1Integration: 'dom1',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements',
     interpreterEnhancements: 'interpreter-enhancements'
