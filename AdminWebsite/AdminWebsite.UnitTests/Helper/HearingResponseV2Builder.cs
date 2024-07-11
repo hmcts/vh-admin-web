@@ -20,7 +20,15 @@ namespace AdminWebsite.UnitTests.Helper
 
         public static HearingDetailsResponseV2 WithEndPoints(this HearingDetailsResponseV2 hearingDetailsResponse, int size)
         {
-            var endPoints = Builder<EndpointResponseV2>.CreateListOfSize(size).Build().ToList();
+            var endPoints = Builder<EndpointResponseV2>.CreateListOfSize(size)
+                .All()
+                .With(x => x.InterpreterLanguage == new InterpreterLanguagesResponse
+                {
+                    Code = "spa",
+                    Value = "Spanish"
+                })
+                .Build()
+                .ToList();
 
             hearingDetailsResponse.Endpoints = endPoints;
 
@@ -39,6 +47,11 @@ namespace AdminWebsite.UnitTests.Helper
                     .With(x => x.WorkPhone = "0123456789")
                     .With(x => x.OptionalContactEmail = null)
                     .With(x => x.OptionalContactTelephone = null)
+                    .With(x => x.InterpreterLanguage == new InterpreterLanguagesResponse
+                    {
+                        Code = "spa",
+                        Value = "Spanish"
+                    })
                     .Build();
                 
                 hearingDetailsResponse.JudiciaryParticipants.Add(joh);
@@ -52,6 +65,11 @@ namespace AdminWebsite.UnitTests.Helper
                     .With(x => x.WorkPhone = "0123456789")
                     .With(x => x.OptionalContactEmail = null)
                     .With(x => x.OptionalContactTelephone = null)
+                    .With(x => x.InterpreterLanguage == new InterpreterLanguagesResponse
+                    {
+                        Code = "spa",
+                        Value = "Spanish"
+                    })
                     .Build();
                 hearingDetailsResponse.JudiciaryParticipants.Add(joh);
             }

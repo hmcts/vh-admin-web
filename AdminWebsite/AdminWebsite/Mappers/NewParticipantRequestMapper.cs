@@ -39,6 +39,7 @@ namespace AdminWebsite.Mappers
                 TelephoneNumber = participant.TelephoneNumber,
                 Title = participant.Title,
                 OrganisationName = participant.OrganisationName,
+                InterpreterLanguageCode = participant.InterpreterLanguageCode
             };
             return newParticipant;
         }

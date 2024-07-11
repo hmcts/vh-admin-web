@@ -5799,6 +5799,7 @@ export interface IEditMultiDayHearingRequest {
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IEndpointRequest) {
         if (data) {
@@ -5812,6 +5813,7 @@ export class EndpointRequest implements IEndpointRequest {
         if (_data) {
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5826,6 +5828,7 @@ export class EndpointRequest implements IEndpointRequest {
         data = typeof data === 'object' ? data : {};
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -5833,6 +5836,7 @@ export class EndpointRequest implements IEndpointRequest {
 export interface IEndpointRequest {
     display_name?: string | undefined;
     defence_advocate_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest {
@@ -5841,6 +5845,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
     display_name?: string | undefined;
     optional_contact_telephone?: string | undefined;
     optional_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IJudiciaryParticipantRequest) {
         if (data) {
@@ -5857,6 +5862,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
             this.display_name = _data['display_name'];
             this.optional_contact_telephone = _data['optional_contact_telephone'];
             this.optional_contact_email = _data['optional_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5874,6 +5880,7 @@ export class JudiciaryParticipantRequest implements IJudiciaryParticipantRequest
         data['display_name'] = this.display_name;
         data['optional_contact_telephone'] = this.optional_contact_telephone;
         data['optional_contact_email'] = this.optional_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -5884,6 +5891,7 @@ export interface IJudiciaryParticipantRequest {
     display_name?: string | undefined;
     optional_contact_telephone?: string | undefined;
     optional_contact_email?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class LinkedParticipantRequest implements ILinkedParticipantRequest {
@@ -5943,6 +5951,7 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -5967,6 +5976,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -5992,6 +6002,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -6010,6 +6021,7 @@ export interface IParticipantRequest {
     hearing_role_code?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
+    interpreter_language_code?: string | undefined;
 }
 
 export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
@@ -6717,6 +6729,7 @@ export class EndpointResponse implements IEndpointResponse {
     sip?: string | undefined;
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 
     constructor(data?: IEndpointResponse) {
         if (data) {
@@ -6733,6 +6746,9 @@ export class EndpointResponse implements IEndpointResponse {
             this.sip = _data['sip'];
             this.pin = _data['pin'];
             this.defence_advocate_id = _data['defence_advocate_id'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
         }
     }
 
@@ -6750,6 +6766,7 @@ export class EndpointResponse implements IEndpointResponse {
         data['sip'] = this.sip;
         data['pin'] = this.pin;
         data['defence_advocate_id'] = this.defence_advocate_id;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -6760,6 +6777,7 @@ export interface IEndpointResponse {
     sip?: string | undefined;
     pin?: string | undefined;
     defence_advocate_id?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 }
 
 export class HearingDetailsResponse implements IHearingDetailsResponse {
@@ -7161,6 +7179,7 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
     optional_contact_email?: string | undefined;
     /** Is an optional contact number for generic accounts */
     optional_contact_telephone?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 
     constructor(data?: IJudiciaryParticipantResponse) {
         if (data) {
@@ -7184,6 +7203,9 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
             this.is_generic = _data['is_generic'];
             this.optional_contact_email = _data['optional_contact_email'];
             this.optional_contact_telephone = _data['optional_contact_telephone'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
         }
     }
 
@@ -7208,6 +7230,7 @@ export class JudiciaryParticipantResponse implements IJudiciaryParticipantRespon
         data['is_generic'] = this.is_generic;
         data['optional_contact_email'] = this.optional_contact_email;
         data['optional_contact_telephone'] = this.optional_contact_telephone;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -7237,6 +7260,7 @@ export interface IJudiciaryParticipantResponse {
     optional_contact_email?: string | undefined;
     /** Is an optional contact number for generic accounts */
     optional_contact_telephone?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
 }
 
 export class JudiciaryPerson implements IJudiciaryPerson {
@@ -7373,6 +7397,7 @@ export class ParticipantResponse implements IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 
     constructor(data?: IParticipantResponse) {
@@ -7400,6 +7425,9 @@ export class ParticipantResponse implements IParticipantResponse {
             this.username = _data['username'];
             this.organisation = _data['organisation'];
             this.representee = _data['representee'];
+            this.interpreter_language = _data['interpreter_language']
+                ? AvailableLanguageResponse.fromJS(_data['interpreter_language'])
+                : <any>undefined;
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
@@ -7431,6 +7459,7 @@ export class ParticipantResponse implements IParticipantResponse {
         data['username'] = this.username;
         data['organisation'] = this.organisation;
         data['representee'] = this.representee;
+        data['interpreter_language'] = this.interpreter_language ? this.interpreter_language.toJSON() : <any>undefined;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -7455,6 +7484,7 @@ export interface IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    interpreter_language?: AvailableLanguageResponse;
     linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
@@ -7841,6 +7871,8 @@ export class EditEndpointRequest implements IEditEndpointRequest {
     display_name?: string | undefined;
     /** The username of the participant */
     defence_advocate_contact_email?: string | undefined;
+    /** The code for the endpoint's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
 
     constructor(data?: IEditEndpointRequest) {
         if (data) {
@@ -7855,6 +7887,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
             this.id = _data['id'];
             this.display_name = _data['display_name'];
             this.defence_advocate_contact_email = _data['defence_advocate_contact_email'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
         }
     }
 
@@ -7870,6 +7903,7 @@ export class EditEndpointRequest implements IEditEndpointRequest {
         data['id'] = this.id;
         data['display_name'] = this.display_name;
         data['defence_advocate_contact_email'] = this.defence_advocate_contact_email;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         return data;
     }
 }
@@ -7881,6 +7915,8 @@ export interface IEditEndpointRequest {
     display_name?: string | undefined;
     /** The username of the participant */
     defence_advocate_contact_email?: string | undefined;
+    /** The code for the endpoint's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
 }
 
 /** Request for updating an existing hearing */
@@ -8041,6 +8077,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** The code for the participant's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 
@@ -8067,6 +8105,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_code = _data['hearing_role_code'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            this.interpreter_language_code = _data['interpreter_language_code'];
             if (Array.isArray(_data['linked_participants'])) {
                 this.linked_participants = [] as any;
                 for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
@@ -8096,6 +8135,7 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['hearing_role_code'] = this.hearing_role_code;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        data['interpreter_language_code'] = this.interpreter_language_code;
         if (Array.isArray(this.linked_participants)) {
             data['linked_participants'] = [];
             for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
@@ -8132,6 +8172,8 @@ export interface IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** The code for the participant's interpreter language, if applicable */
+    interpreter_language_code?: string | undefined;
     /** List of linked participants */
     linked_participants?: LinkedParticipant[] | undefined;
 }

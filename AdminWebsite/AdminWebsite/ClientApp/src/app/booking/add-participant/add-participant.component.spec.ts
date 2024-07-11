@@ -979,6 +979,34 @@ describe('AddParticipantComponent', () => {
             expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe('mapParticipant', () => {
+        it('should map when interpreter enhancements flag is enabled', () => {
+            // arrange
+            const newParticipant = new ParticipantModel();
+            component.role.setValue('Interpreter');
+            component.interpreterEnhancementsFlag = true;
+
+            // act
+            component.mapParticipant(newParticipant);
+
+            // assert
+            expect(newParticipant.linked_participants.length).toBe(0);
+        });
+        it('should map when interpreter enhancements flag is disabled', () => {
+            // arrange
+            const newParticipant = new ParticipantModel();
+            component.role.setValue('Interpreter');
+            newParticipant.interpreterFor = 'interpretee@email.com';
+            component.interpreterEnhancementsFlag = false;
+
+            // act
+            component.mapParticipant(newParticipant);
+
+            // assert
+            expect(newParticipant.linked_participants.length).toBe(1);
+        });
+    });
 });
 describe('AddParticipantComponent edit mode', () => {
     beforeEach(waitForAsync(() => {

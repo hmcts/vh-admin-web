@@ -521,7 +521,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
     }
 
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
-        return newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER
+        return newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER && !this.interpreterEnhancementsFlag
             ? this.updateLinkedParticipantList(newParticipant)
             : [];
     }
