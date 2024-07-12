@@ -39,6 +39,8 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { HealthCheckClient } from './clients/health-check-client';
+import { map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -54,7 +56,7 @@ export class VideoHearingsService {
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
     private judiciaryRoles = Constants.JudiciaryRoles;
 
-    constructor(private bhClient: BHClient) {
+    constructor(private bhClient: BHClient, private healthCheckClient: HealthCheckClient) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
         this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
@@ -631,5 +633,14 @@ export class VideoHearingsService {
         if (index !== -1) {
             this.modelHearing.judiciaryParticipants.splice(index, 1);
         }
+    }
+
+    isBookingServiceDegraded(): Observable<boolean> {
+        return this.healthCheckClient.getHealth().pipe(
+            map(response => {
+                const bookingsApiStatus = response.details.find((detail: any) => detail.key === 'Bookings API')?.value;
+                return bookingsApiStatus === 'Degraded';
+            })
+        );
     }
 }

@@ -25,10 +25,12 @@ import { lastValueFrom, map, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { HealthCheckClient } from './clients/health-check-client';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
+    let healthCheckClientSpy: jasmine.SpyObj<HealthCheckClient>;
     const newRequestKey = 'bh-newRequest';
     const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     const conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
@@ -47,7 +49,8 @@ describe('Video hearing service', () => {
             'editMultiDayHearing',
             'cancelMultiDayHearing'
         ]);
-        service = new VideoHearingsService(clientApiSpy);
+        healthCheckClientSpy = jasmine.createSpyObj<HealthCheckClient>(['getHealth']);
+        service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
     });
 
     afterEach(() => {
@@ -964,6 +967,24 @@ describe('Video hearing service', () => {
                 update_future_days: updateFutureDays
             });
             expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
+        });
+    });
+
+    describe('isBookingServiceDegraded', () => {
+        it('should return true if booking service is degraded', () => {
+            const healthResponse = { status: 'Healthy', details: [{ key: 'Bookings API', value: 'Degraded' }] };
+            healthCheckClientSpy.getHealth.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeTrue();
+            });
+        });
+
+        it('should return false if booking service is not degraded', () => {
+            const healthResponse = { status: 'Healthy', details: [{ key: 'Bookings API', value: null }] };
+            healthCheckClientSpy.getHealth.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeFalse();
+            });
         });
     });
 });
