@@ -362,26 +362,13 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     }
 
     isRoleRepresentative(hearingRole: string, party: string): boolean {
-        if (party === this.constants.PleaseSelect) {
-            const role = this.hearingRoles.find(x => x.name === hearingRole);
+        const role = this.hearingRoles.find(x => x.name === hearingRole);
 
-            if (!role) {
-                return false;
-            }
-
-            return role && role.userRole === 'Representative';
-        } else {
-            const partyHearingRoles = this.caseAndHearingRoles.find(
-                x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
-            );
-
-            if (!partyHearingRoles) {
-                return false;
-            }
-
-            const findHearingRole = partyHearingRoles.hearingRoles.find(x => x.name === hearingRole);
-            return findHearingRole && findHearingRole.userRole === 'Representative';
+        if (!role) {
+            return false;
         }
+
+        return role && role.userRole === Constants.HearingRoles.Representative;
     }
 
     roleSelected() {

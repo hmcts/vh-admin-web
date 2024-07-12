@@ -70,6 +70,21 @@ const flatRoleList: HearingRoleResponse[] = [
         name: 'Litigant in person',
         code: 'LIP',
         user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Representative',
+        code: 'RPTT',
+        user_role: Constants.HearingRoles.Representative
+    }),
+    new HearingRoleResponse({
+        name: 'Barrister',
+        code: 'BARR',
+        user_role: Constants.HearingRoles.Representative
+    }),
+    new HearingRoleResponse({
+        name: 'Intermediary',
+        code: 'INTE',
+        user_role: Constants.HearingRoles.Representative
     })
 ];
 
@@ -1182,6 +1197,36 @@ describe('AddParticipantComponent edit mode', () => {
 
     it('shows single role list when reference data flag is on', fakeAsync(async () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
+        const roles: HearingRoleResponse[] = [
+            new HearingRoleResponse({
+                name: 'Applicant',
+                code: 'APPL',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Interpreter',
+                code: 'INTP',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Judge',
+                code: 'JUDG',
+                user_role: 'Judge'
+            }),
+            new HearingRoleResponse({
+                name: 'Litigant in person',
+                code: 'LIP',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Staff Member',
+                code: 'STAF',
+                user_role: 'Staff Member'
+            })
+        ];
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(roles));
+        const mappedHearingRoles = new ParticipantService(loggerSpy).mapParticipantHearingRoles(roles);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
 
         component.ngOnInit();
         component.ngAfterViewInit();
@@ -1729,7 +1774,7 @@ describe('AddParticipantComponent set representer', () => {
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
 
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['participantSearch']);
 
@@ -1743,6 +1788,7 @@ describe('AddParticipantComponent set representer', () => {
             loggerSpy
         );
         component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
+        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, launchDarklyServiceSpy);
 
         component.ngOnInit();
 
@@ -1757,6 +1803,8 @@ describe('AddParticipantComponent set representer', () => {
         companyName = component.form.controls['companyName'];
         representing = component.form.controls['representing'];
         component.hearingRoles = [];
+
+        component.ngAfterViewInit();
     }));
 
     it('should show company and name of representing person', () => {
@@ -1783,8 +1831,6 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.form.get('representing').value).toEqual('');
     });
     it('should set representee label for representatives', () => {
-        const representative = new HearingRoleModel('Representative', 'Representative', 'RPTT');
-        component.hearingRoles.push(representative);
         component.form.get('role').setValue('Representative');
         component.roleSelected();
 
@@ -1792,8 +1838,6 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.representeeErrorMessage).toBe(Constants.Error.RepresenteeErrorMsg);
     });
     it('should set representee label for intermediaries', () => {
-        const intermediary = new HearingRoleModel('Intermediary', 'Representative', 'INTE');
-        component.hearingRoles.push(intermediary);
         component.form.get('role').setValue('Intermediary');
         component.roleSelected();
 
@@ -1863,17 +1907,14 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
     it('should indicate that role Representative is Representative', () => {
-        component.caseAndHearingRoles = partyList;
         const result = component.isRoleRepresentative('Representative', 'Applicant');
         expect(result).toBe(true);
     });
-    it('should indicate that role presenting officer is Representative', () => {
-        component.caseAndHearingRoles = partyList;
-        const result = component.isRoleRepresentative('presenting officer', 'Applicant');
+    it('should indicate that role Barrister is Representative', () => {
+        const result = component.isRoleRepresentative('Barrister', 'Applicant');
         expect(result).toBe(true);
     });
     it('should indicate that role is not representative', () => {
-        component.caseAndHearingRoles = partyList;
         const result = component.isRoleRepresentative('someRole', 'Applicant');
         expect(result).toBe(false);
     });
