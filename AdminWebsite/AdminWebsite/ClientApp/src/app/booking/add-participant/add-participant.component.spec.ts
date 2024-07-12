@@ -1170,29 +1170,27 @@ describe('AddParticipantComponent edit mode', () => {
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     });
 
-    it('should set edit mode and populate participant data', fakeAsync(async () => {
+    it('should set edit mode and populate participant data', fakeAsync(() => {
         component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
         component.searchEmail.email = 'test3@hmcts.net';
 
         component.ngOnInit();
         component.ngAfterViewInit();
-        flush();
         fixture.detectChanges();
+        tick(1000);
 
-        fixture.whenStable().then(() => {
-            expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
-            expect(component.hearing).toBeTruthy();
-            expect(component.existingParticipant).toBeTruthy();
-            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
-            expect(component.showDetails).toBeTruthy();
-            expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
-            expect(component.displayNextButton).toBeFalsy();
-            expect(component.displayClearButton).toBeTruthy();
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayUpdateButton).toBeTruthy();
-        });
-        tick(100);
-        fixture.detectChanges();
+        expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+        expect(component.hearing).toBeTruthy();
+        expect(component.existingParticipant).toBeTruthy();
+        expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
+        expect(component.showDetails).toBeTruthy();
+        expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
+        expect(component.displayNextButton).toBeFalsy();
+        expect(component.displayClearButton).toBeTruthy();
+        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayUpdateButton).toBeTruthy();
+
+        flush();
     }));
 
     it('shows single role list when reference data flag is on', fakeAsync(async () => {
