@@ -998,7 +998,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy);
+            service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
         });
@@ -1015,7 +1015,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy);
+            service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(true);
         });
