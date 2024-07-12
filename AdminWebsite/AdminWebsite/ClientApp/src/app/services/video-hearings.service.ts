@@ -41,6 +41,7 @@ import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { HealthCheckClient } from './clients/health-check-client';
 import { map } from 'rxjs/operators';
+import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 
 @Injectable({
     providedIn: 'root'
@@ -51,6 +52,7 @@ export class VideoHearingsService {
     private readonly conferencePhoneNumberKey: string;
     private readonly conferencePhoneNumberWelshKey: string;
     private readonly vhoNonAvailabiltiesHaveChangesKey: string;
+    private readonly totalHearingsCountThreshold: number = 40;
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
@@ -292,6 +294,7 @@ export class VideoHearingsService {
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
         editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
+        editParticipant.interpreter_language_code = this.mapInterpreterLanguageCode(participant.interpretation_language);
         return editParticipant;
     }
 
@@ -317,6 +320,7 @@ export class VideoHearingsService {
         editEndpoint.id = endpoint.id;
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_contact_email = endpoint.defenceAdvocate;
+        editEndpoint.interpreter_language_code = this.mapInterpreterLanguageCode(endpoint.interpretationLanguage);
         return editEndpoint;
     }
 
@@ -411,7 +415,8 @@ export class VideoHearingsService {
                 display_name: judicialMemberDto.displayName,
                 role: judicialMemberDto.roleCode,
                 optional_contact_email: judicialMemberDto.optionalContactEmail,
-                optional_contact_telephone: judicialMemberDto.optionalContactNumber
+                optional_contact_telephone: judicialMemberDto.optionalContactNumber,
+                interpreter_language_code: this.mapInterpreterLanguageCode(judicialMemberDto.interpretationLanguage)
             });
             return judiciaryParticipantRequest;
         });
@@ -436,6 +441,7 @@ export class VideoHearingsService {
                 participant.hearing_role_code = p.hearing_role_code;
                 participant.representee = p.representee;
                 participant.organisation_name = p.company;
+                participant.interpreter_language_code = this.mapInterpreterLanguageCode(p.interpretation_language);
                 participants.push(participant);
             });
         }
@@ -450,6 +456,7 @@ export class VideoHearingsService {
                 endpoint = new EndpointRequest();
                 endpoint.display_name = e.displayName;
                 endpoint.defence_advocate_contact_email = e.defenceAdvocate;
+                endpoint.interpreter_language_code = this.mapInterpreterLanguageCode(e.interpretationLanguage);
                 eps.push(endpoint);
             });
         }
@@ -480,6 +487,7 @@ export class VideoHearingsService {
                 participant.is_staff_member = p.user_role_name === Constants.UserRoles.StaffMember;
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participant.user_role_name = p.user_role_name;
+                participant.interpretation_language = InterpreterSelectedDto.fromAvailableLanguageResponse(p.interpreter_language);
                 participants.push(participant);
             });
         }
@@ -512,6 +520,7 @@ export class VideoHearingsService {
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;
                 endpoint.defenceAdvocate = defenceAdvocate?.contact_email;
+                endpoint.interpretationLanguage = InterpreterSelectedDto.fromAvailableLanguageResponse(e.interpreter_language);
                 endpoints.push(endpoint);
             });
         }
@@ -527,6 +536,14 @@ export class VideoHearingsService {
             acc.push(request);
             return acc;
         }, []);
+    }
+
+    mapInterpreterLanguageCode(interpreterLanguage: InterpreterSelectedDto): string {
+        if (interpreterLanguage == null) {
+            return null;
+        }
+
+        return interpreterLanguage.spokenLanguageCode || interpreterLanguage.signLanguageCode;
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
@@ -633,6 +650,11 @@ export class VideoHearingsService {
         if (index !== -1) {
             this.modelHearing.judiciaryParticipants.splice(index, 1);
         }
+    }
+
+    isTotalHearingMoreThanThreshold(): boolean {
+        const totalHearings = this.modelHearing.hearingsInGroup.length;
+        return totalHearings >= this.totalHearingsCountThreshold;
     }
 
     isBookingServiceDegraded(): Observable<boolean> {

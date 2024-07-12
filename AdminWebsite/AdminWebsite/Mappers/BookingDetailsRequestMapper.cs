@@ -62,24 +62,13 @@ public static class BookingDetailsRequestMapper
             Participants = bookingDetails.Participants?
                 .Select(p => p.MapToV2())
                 .ToList(),
-            JudiciaryParticipants = bookingDetails.JudiciaryParticipants.Select(jp => new V1.JudiciaryParticipantRequest
-            {
-                DisplayName = jp.DisplayName,
-                HearingRoleCode = Enum.Parse<JudiciaryParticipantHearingRoleCode>(jp.Role, ignoreCase:true),
-                PersonalCode = jp.PersonalCode,
-                ContactTelephone = jp.OptionalContactTelephone,
-                ContactEmail = jp.OptionalContactEmail
-            }).ToList(),
+            JudiciaryParticipants = bookingDetails.JudiciaryParticipants.Select(jp => jp.MapToV1()).ToList(),
             HearingRoomName = bookingDetails.HearingRoomName,
             OtherInformation = bookingDetails.OtherInformation,
             CreatedBy = bookingDetails.CreatedBy,
             AudioRecordingRequired = bookingDetails.AudioRecordingRequired,
             IsMultiDayHearing = bookingDetails.IsMultiDayHearing,
-            Endpoints = bookingDetails.Endpoints?.Select(e => new V2.EndpointRequestV2
-            {
-                DisplayName = e.DisplayName,
-                DefenceAdvocateContactEmail = e.DefenceAdvocateContactEmail,
-            }).ToList(),
+            Endpoints = bookingDetails.Endpoints?.Select(e => e.MapToV2()).ToList(),
             LinkedParticipants = bookingDetails.LinkedParticipants?.Select(lp => lp.MapToV2()).ToList()
         };
     }

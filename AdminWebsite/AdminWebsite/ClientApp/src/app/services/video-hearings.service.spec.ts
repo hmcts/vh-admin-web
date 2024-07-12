@@ -25,6 +25,7 @@ import { lastValueFrom, map, of, scheduled } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 import { HealthCheckClient } from './clients/health-check-client';
 
 describe('Video hearing service', () => {
@@ -289,6 +290,7 @@ describe('Video hearing service', () => {
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participant.user_role_name = 'Individual';
+        participant.interpreter_language = null;
         participants.push(participant);
 
         const judgeParticipant = new ParticipantResponse();
@@ -303,6 +305,7 @@ describe('Video hearing service', () => {
         judgeParticipant.case_role_name = null;
         judgeParticipant.hearing_role_name = null;
         judgeParticipant.user_role_name = 'Judge';
+        judgeParticipant.interpreter_language = null;
         participants.push(judgeParticipant);
 
         const model = service.mapParticipantResponseToParticipantModel(participants);
@@ -318,6 +321,7 @@ describe('Video hearing service', () => {
         expect(model[0].case_role_name).toEqual(participant.case_role_name);
         expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
         expect(model[0].is_judge).toBeFalse();
+        expect(model[0].interpretation_language).toBeNull();
 
         expect(model[1].title).toEqual(judgeParticipant.title);
         expect(model[1].first_name).toEqual(judgeParticipant.first_name);
@@ -330,6 +334,7 @@ describe('Video hearing service', () => {
         expect(model[1].case_role_name).toEqual(judgeParticipant.case_role_name);
         expect(model[1].hearing_role_name).toEqual(judgeParticipant.hearing_role_name);
         expect(model[1].is_judge).toBeTrue();
+        expect(model[1].interpretation_language).toBeNull();
     });
 
     it('should map ParticipantModel toParticipantResponse', () => {
@@ -374,6 +379,12 @@ describe('Video hearing service', () => {
         participant.phone = '123123123';
         participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
+        const interpretationLanguage: InterpreterSelectedDto = {
+            signLanguageCode: null,
+            spokenLanguageCode: 'fr',
+            interpreterRequired: true
+        };
+        participant.interpretation_language = interpretationLanguage;
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();
         linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
@@ -428,6 +439,7 @@ describe('Video hearing service', () => {
         expect(actualEndpoint).toEqual(expectedEndpoint);
         expect(actualLinkedParticipants.linked_id).toEqual(expectedLinkedParticipants.linkedParticipantId);
         expect(actualLinkedParticipants.type).toEqual(expectedLinkedParticipants.linkType);
+        expect(actualParticipant.interpreter_language_code).toEqual(expectedParticipant.interpretation_language.spokenLanguageCode);
     });
 
     it('should map Existing hearing', () => {
@@ -499,10 +511,12 @@ describe('Video hearing service', () => {
         const endpoints: EndpointResponse[] = [];
         const endpoint = new EndpointResponse();
         endpoint.display_name = 'endpoint 001';
+        endpoint.interpreter_language = null;
         endpoints.push(endpoint);
 
         const model = service.mapEndpointResponseToEndpointModel(endpoints, []);
         expect(model[0].displayName).toEqual(endpoint.display_name);
+        expect(model[0].interpretationLanguage).toBeNull();
     });
 
     it('should map EndpointModel toEndpointResponse', () => {
@@ -967,6 +981,158 @@ describe('Video hearing service', () => {
                 update_future_days: updateFutureDays
             });
             expect(clientApiSpy.cancelMultiDayHearing).toHaveBeenCalledWith(hearingId, expectedRequest);
+        });
+    });
+
+    describe('isTotalHearingMoreThanThreshold', () => {
+        it('should return false if booking is multiday and the total days are less than 40', () => {
+            const hearing = new HearingModel();
+            hearing.hearing_id = 'SomeGuid';
+            hearing.hearingsInGroup = [];
+
+            for (let i = 0; i < 39; i++) {
+                const model = new HearingModel();
+                model.status = BookingStatus.Booked;
+                model.hearing_id = 'guid' + i;
+                hearing.hearingsInGroup.push(model);
+            }
+            sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
+
+            service = new VideoHearingsService(clientApiSpy);
+
+            expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
+        });
+        it('should return true if booking is multiday and the total days are more than 40', () => {
+            const hearing = new HearingModel();
+            hearing.hearing_id = 'SomeGuid';
+            hearing.hearingsInGroup = [];
+
+            for (let i = 0; i < 50; i++) {
+                const model = new HearingModel();
+                model.status = BookingStatus.Booked;
+                model.hearing_id = 'guid' + i;
+                hearing.hearingsInGroup.push(model);
+            }
+            sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
+
+            service = new VideoHearingsService(clientApiSpy);
+
+            expect(service.isTotalHearingMoreThanThreshold()).toBe(true);
+        });
+    });
+
+    describe('mapJudicialMemberDtoToJudiciaryParticipantRequest', () => {
+        it('should map judicial member dto', () => {
+            // Arrange
+            const dtos: JudicialMemberDto[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const dto = new JudicialMemberDto('FirstName', 'LastName', 'FullName', 'Email', '1234', 'PersonalCode', true);
+            dto.interpretationLanguage = language;
+            dtos.push(dto);
+
+            // Act
+            const result = service.mapJudicialMemberDtoToJudiciaryParticipantRequest(dtos);
+
+            // Assert
+            expect(result.length).toBe(dtos.length);
+            expect(result[0].personal_code).toBe(dto.personalCode);
+            expect(result[0].display_name).toBe(dto.displayName);
+            expect(result[0].role).toBe(dto.roleCode);
+            expect(result[0].optional_contact_email).toBe(dto.optionalContactEmail);
+            expect(result[0].optional_contact_telephone).toBe(dto.optionalContactNumber);
+            expect(result[0].interpreter_language_code).toBe(dto.interpretationLanguage.spokenLanguageCode);
+        });
+    });
+
+    describe('mapParticipants', () => {
+        it('should map participants', () => {
+            // Arrange
+            const participants: ParticipantModel[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const participant = new ParticipantModel({
+                interpretation_language: language
+            });
+            participants.push(participant);
+
+            // Act
+            const result = service.mapParticipants(participants);
+
+            // Assert
+            expect(result.length).toBe(participants.length);
+            expect(result[0].interpreter_language_code).toBe(participant.interpretation_language.spokenLanguageCode);
+        });
+    });
+
+    describe('mapEndpoints', () => {
+        it('should map endpoints', () => {
+            // Arrange
+            const endpoints: EndpointModel[] = [];
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const endpoint = new EndpointModel();
+            endpoint.interpretationLanguage = language;
+            endpoints.push(endpoint);
+
+            // Act
+            const result = service.mapEndpoints(endpoints);
+
+            // Assert
+            expect(result.length).toBe(endpoints.length);
+            expect(result[0].interpreter_language_code).toBe(endpoint.interpretationLanguage.spokenLanguageCode);
+        });
+    });
+
+    describe('mapInterpreterLanguageCode', () => {
+        it('should return spoken language code when specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: null,
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBe(language.spokenLanguageCode);
+        });
+
+        it('should return sign language code when specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = {
+                signLanguageCode: 'bfi',
+                spokenLanguageCode: null,
+                interpreterRequired: true
+            };
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBe(language.signLanguageCode);
+        });
+
+        it('should return null when no language specified', () => {
+            // Arrange
+            const language: InterpreterSelectedDto = null;
+
+            // Act
+            const result = service.mapInterpreterLanguageCode(language);
+
+            // Assert
+            expect(result).toBeNull();
         });
     });
 

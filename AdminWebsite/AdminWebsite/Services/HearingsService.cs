@@ -254,7 +254,8 @@ namespace AdminWebsite.Services
             var addEndpointRequest = new AddEndpointRequest
             {
                 DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
+                InterpreterLanguageCode = endpoint.InterpreterLanguageCode
             };
             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
         }
@@ -291,7 +292,8 @@ namespace AdminWebsite.Services
             {
                 Id = endpoint.Id.Value,
                 DisplayName = endpoint.DisplayName,
-                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail
+                DefenceAdvocateContactEmail = endpoint.DefenceAdvocateContactEmail,
+                InterpreterLanguageCode = endpoint.InterpreterLanguageCode
             };
 
             return updateEndpointRequest;

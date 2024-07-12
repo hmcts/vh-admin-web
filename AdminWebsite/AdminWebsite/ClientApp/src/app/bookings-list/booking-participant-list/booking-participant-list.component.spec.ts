@@ -149,7 +149,8 @@ describe('BookingParticipantListComponent', () => {
                     },
                     showCaseRole(): boolean {
                         return false;
-                    }
+                    },
+                    InterpretationLanguage: null
                 });
             });
             return participantsArray;

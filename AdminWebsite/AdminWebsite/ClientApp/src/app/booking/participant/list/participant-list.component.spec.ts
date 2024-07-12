@@ -13,6 +13,7 @@ import { JudicialMemberDto } from '../../judicial-office-holders/models/add-judi
 import { HearingRoleCodes } from 'src/app/common/model/hearing-roles.model';
 import { FeatureFlags, LaunchDarklyService } from '../../../services/launch-darkly.service';
 import { of } from 'rxjs';
+import { InterpreterSelectedDto } from '../../interpreter-form/interpreter-selected.model';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -123,6 +124,35 @@ describe('ParticipantListComponent', () => {
             expect(component.sortedJudiciaryMembers[1].display_name).toEqual(johPm1.displayName);
             expect(component.sortedJudiciaryMembers[2].hearing_role_code).toEqual('PanelMember');
             expect(component.sortedJudiciaryMembers[2].display_name).toEqual(johPm2.displayName);
+        });
+
+        it('should call sortJudiciaryMembers when interpreter language changes', () => {
+            // arrange
+            const oldInterpreterLanguage: InterpreterSelectedDto = {
+                spokenLanguageCode: 'fr',
+                interpreterRequired: true
+            };
+            const newInterpreterLanguage: InterpreterSelectedDto = {
+                spokenLanguageCode: 'spa',
+                interpreterRequired: true
+            };
+            const joh = new JudicialMemberDto('Test PM 1', 'User PM 1', 'Test User PM 1', 'testpm1@test.com', '1234567890', '2345', false);
+            joh.roleCode = 'PanelMember';
+            const existingJoh = ParticipantModel.fromJudicialMember(joh, false);
+            existingJoh.interpretation_language = oldInterpreterLanguage;
+            const updatedJoh = { ...joh };
+            updatedJoh.interpretationLanguage = newInterpreterLanguage;
+
+            component.sortedJudiciaryMembers = [existingJoh];
+            component.hearing.judiciaryParticipants = [updatedJoh];
+
+            // act
+            component.ngDoCheck();
+
+            // assert
+            expect(component.sortedJudiciaryMembers[0].interpretation_language.spokenLanguageCode).toEqual(
+                newInterpreterLanguage.spokenLanguageCode
+            );
         });
 
         it('should call sortJudiciaryMembers once for multiple ngDoChecks when judiciary participant list changes and participants have same display name', () => {

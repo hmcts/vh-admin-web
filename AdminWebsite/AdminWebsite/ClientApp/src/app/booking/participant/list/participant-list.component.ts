@@ -45,11 +45,21 @@ export class ParticipantListComponent implements OnInit, OnChanges, DoCheck, OnD
 
         const judicialMembersLocal =
             this.hearing?.judiciaryParticipants
-                ?.map(j => ({ email: j.email, displayName: j.displayName, role: j.roleCode }))
+                ?.map(j => ({
+                    email: j.email,
+                    displayName: j.displayName,
+                    role: j.roleCode,
+                    interpretationLanguage: j.interpretationLanguage
+                }))
                 .sort(this.sortByDisplayNameThenByEmail()) ?? [];
         const sortedJudicialMembersLocal =
             this.sortedJudiciaryMembers
-                ?.map(j => ({ email: j.email, displayName: j.display_name, role: j.hearing_role_code }))
+                ?.map(j => ({
+                    email: j.email,
+                    displayName: j.display_name,
+                    role: j.hearing_role_code,
+                    interpretationLanguage: j.interpretation_language
+                }))
                 .sort(this.sortByDisplayNameThenByEmail()) ?? [];
 
         const judiciaryEmailListChanged = JSON.stringify(judicialMembersLocal) !== JSON.stringify(sortedJudicialMembersLocal);
