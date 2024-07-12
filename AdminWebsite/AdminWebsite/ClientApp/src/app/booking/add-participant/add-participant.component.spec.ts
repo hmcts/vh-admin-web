@@ -1225,8 +1225,8 @@ describe('AddParticipantComponent edit mode', () => {
             })
         ];
         videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(roles));
-        const mappedHearingRoles = new ParticipantService(loggerSpy).mapParticipantHearingRoles(roles);
-        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
+        const hearingRolesMapped = new ParticipantService(loggerSpy).mapParticipantHearingRoles(roles);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(hearingRolesMapped);
 
         component.ngOnInit();
         component.ngAfterViewInit();
