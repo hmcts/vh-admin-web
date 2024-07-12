@@ -10,7 +10,7 @@ export const Constants = {
     Representative: 'Representative',
     PleaseSelectPattern: '^((?!Please select).)*$',
     TextInputPattern: /^[^%{}~|]+$/,
-    TextInputPatternDisplayName: /^([-A-Za-z0-9 ',._])*$/,
+    TextInputPatternDisplayName: /[\p{L} 0-9]+/,
     TextInputPatternName: /^(?!.*[^\w\s'.-]{2})\w+(?:[\s'._-]\w+)*$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
     EmailPattern: /^[!#$%'*/-9=?A-Z^-~-]+(?:\.[!#$%'*/-9=?A-Z^-~-]+)*@[a-zA-Z0-9]+([a-zA-Z0-9-]+)*(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/,
