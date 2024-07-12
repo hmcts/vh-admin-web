@@ -1907,15 +1907,15 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
     it('should indicate that role Representative is Representative', () => {
-        const result = component.isRoleRepresentative('Representative', 'Applicant');
+        const result = component.isRoleRepresentative('Representative');
         expect(result).toBe(true);
     });
     it('should indicate that role Barrister is Representative', () => {
-        const result = component.isRoleRepresentative('Barrister', 'Applicant');
+        const result = component.isRoleRepresentative('Barrister');
         expect(result).toBe(true);
     });
     it('should indicate that role is not representative', () => {
-        const result = component.isRoleRepresentative('someRole', 'Applicant');
+        const result = component.isRoleRepresentative('someRole');
         expect(result).toBe(false);
     });
     it('should not navigate to next page if no participants in the hearing', () => {

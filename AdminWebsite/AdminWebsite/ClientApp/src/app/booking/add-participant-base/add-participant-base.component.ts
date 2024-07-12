@@ -221,7 +221,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         }
         // if it's added in the existing hearing participant, then allowed all fields to edit.
         this.resetPartyAndRole();
-        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name, this.party.value);
+        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
         const formControlsObj = {
             party: this.participantDetails.case_role_name,
             role: this.participantDetails.hearing_role_name,
@@ -361,7 +361,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
         return hearingHasInterpreter;
     }
 
-    isRoleRepresentative(hearingRole: string, party: string): boolean {
+    isRoleRepresentative(hearingRole: string): boolean {
         const role = this.hearingRoles.find(x => x.name === hearingRole);
 
         if (!role) {
@@ -374,7 +374,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
     roleSelected() {
         this.isInterpreter = this.isRoleInterpreter(this.role.value);
         this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-        if (!this.isRoleRepresentative(this.role.value, this.party.value)) {
+        if (!this.isRoleRepresentative(this.role.value)) {
             this.companyName.clearValidators();
             this.representing.clearValidators();
 
@@ -401,7 +401,7 @@ export abstract class AddParticipantBaseDirective extends BookingBaseComponent i
             this.companyNameIndividual.setValue('');
         }
         this.showDetails = true;
-        this.isRepresentative = this.isRoleRepresentative(this.role.value, this.party.value);
+        this.isRepresentative = this.isRoleRepresentative(this.role.value);
         this.setInterpreterForValidation();
         this.setRepresenteeLabel();
     }
