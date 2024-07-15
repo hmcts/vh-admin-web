@@ -141,6 +141,13 @@ describe('HearingDetailsComponent', () => {
         const result = component.getDefenceAdvocateByContactEmail('madeup@doesnotexist.com');
         expect(result).toBe('');
     });
+    describe('work allocation ', () => {
+        it('should show allocated to label', async () => {
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#hearing-allocated-to'));
+            expect(divToHide).toBeTruthy();
+        });
+    });
 });
 describe('HearingDetailsComponent join by phone', () => {
     const clientSettings = new ClientSettingsResponse({

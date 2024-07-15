@@ -887,6 +887,11 @@ describe('BookingsListComponent', () => {
         });
     });
 
+    it('should onClear', () => {
+        const csoMenu = onClearTest();
+        expect(csoMenu).toHaveBeenCalledTimes(1);
+    });
+
     function onClearTest() {
         const formBuilder = new FormBuilder();
         const bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', [
@@ -1211,6 +1216,13 @@ describe('BookingsListComponent', () => {
             component.searchForm.controls['noAllocated'].setValue(false);
             component.onChangeNoAllocated();
             expect(bookingPersistService.selectedUsers.length).toEqual(count);
+        });
+
+        it('should show allocated label to', async () => {
+            await component.ngOnInit();
+            fixture.detectChanges();
+            const divToHide = fixture.debugElement.query(By.css('#allocated-to-' + bookingData.BookingsDetails[0].HearingId));
+            expect(divToHide).toBeTruthy();
         });
     });
 });

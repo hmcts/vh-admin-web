@@ -33,4 +33,19 @@ describe('LaunchDarklyService', () => {
 
         expect(ldClientSpy.close).toHaveBeenCalled();
     });
+
+    it('should return a given flag', fakeAsync(() => {
+        service.client = ldClientSpy;
+        const flagKey = FeatureFlags.interpreterEnhancements;
+        const keyParam = `change:${flagKey}`;
+        ldClientSpy.on.withArgs(keyParam, jasmine.anything()).and.returnValue();
+        ldClientSpy.waitUntilReady.and.returnValue(Promise.resolve());
+        ldClientSpy.variation.withArgs(flagKey, jasmine.any(Boolean)).and.returnValue(true);
+
+        let result: boolean;
+        service.getFlag<boolean>(flagKey).subscribe(val => (result = val));
+        tick();
+
+        expect(result).toBe(true);
+    }));
 });
