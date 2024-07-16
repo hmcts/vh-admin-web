@@ -16,7 +16,8 @@ import {
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest
+    UpdateHearingInGroupRequest,
+    AppHealthStatusResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -26,12 +27,10 @@ import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
-import { HealthCheckClient } from './clients/health-check-client';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
-    let healthCheckClientSpy: jasmine.SpyObj<HealthCheckClient>;
     const newRequestKey = 'bh-newRequest';
     const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     const conferencePhoneNumberWelshKey = 'conferencePhoneNumberWelshKey';
@@ -48,10 +47,10 @@ describe('Video hearing service', () => {
             'rebookHearing',
             'getHearingRoles',
             'editMultiDayHearing',
-            'cancelMultiDayHearing'
+            'cancelMultiDayHearing',
+            'getBookingQueueState'
         ]);
-        healthCheckClientSpy = jasmine.createSpyObj<HealthCheckClient>(['getHealth']);
-        service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
+        service = new VideoHearingsService(clientApiSpy);
     });
 
     afterEach(() => {
@@ -998,7 +997,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
+            service = new VideoHearingsService(clientApiSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(false);
         });
@@ -1015,7 +1014,7 @@ describe('Video hearing service', () => {
             }
             sessionStorage.setItem(newRequestKey, JSON.stringify(hearing));
 
-            service = new VideoHearingsService(clientApiSpy, healthCheckClientSpy);
+            service = new VideoHearingsService(clientApiSpy);
 
             expect(service.isTotalHearingMoreThanThreshold()).toBe(true);
         });
@@ -1138,16 +1137,16 @@ describe('Video hearing service', () => {
 
     describe('isBookingServiceDegraded', () => {
         it('should return true if booking service is degraded', () => {
-            const healthResponse = { status: 'Healthy', details: [{ key: 'Bookings API', value: 'Degraded' }] };
-            healthCheckClientSpy.getHealth.and.returnValue(of(healthResponse));
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: 'degraded' });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
             service.isBookingServiceDegraded().subscribe(result => {
                 expect(result).toBeTrue();
             });
         });
 
         it('should return false if booking service is not degraded', () => {
-            const healthResponse = { status: 'Healthy', details: [{ key: 'Bookings API', value: null }] };
-            healthCheckClientSpy.getHealth.and.returnValue(of(healthResponse));
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: null });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
             service.isBookingServiceDegraded().subscribe(result => {
                 expect(result).toBeFalse();
             });
