@@ -79,7 +79,8 @@ export const Constants = {
         Winger: 'Winger',
         PanelMember: 'Panel Member',
         Observer: 'Observer',
-        Interpreter: 'Interpreter'
+        Interpreter: 'Interpreter',
+        Representative: 'Representative'
     },
     UserRoles: {
         Judge: 'Judge',
