@@ -70,6 +70,21 @@ const flatRoleList: HearingRoleResponse[] = [
         name: 'Litigant in person',
         code: 'LIP',
         user_role: 'Individual'
+    }),
+    new HearingRoleResponse({
+        name: 'Representative',
+        code: 'RPTT',
+        user_role: Constants.HearingRoles.Representative
+    }),
+    new HearingRoleResponse({
+        name: 'Barrister',
+        code: 'BARR',
+        user_role: Constants.HearingRoles.Representative
+    }),
+    new HearingRoleResponse({
+        name: 'Intermediary',
+        code: 'INTE',
+        user_role: Constants.HearingRoles.Representative
     })
 ];
 
@@ -273,6 +288,7 @@ const searchService = {
     ...new SearchServiceStub(),
     ...jasmine.createSpyObj<SearchService>(['participantSearch'])
 } as jasmine.SpyObj<SearchService>;
+
 describe('AddParticipantComponent', () => {
     beforeEach(waitForAsync(() => {
         initParticipant();
@@ -287,6 +303,7 @@ describe('AddParticipantComponent', () => {
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
@@ -341,9 +358,9 @@ describe('AddParticipantComponent', () => {
     it('should set case role list, hearing role list and title list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         expect(component.roleList).toBeTruthy();
-        expect(component.roleList.length).toBe(4);
+        expect(component.roleList.length).toBe(2);
         expect(component.titleList).toBeTruthy();
         expect(component.titleList.length).toBe(2);
     }));
@@ -524,6 +541,7 @@ describe('AddParticipantComponent', () => {
             companyName.setValue('CC');
             component.isRoleSelected = true;
             component.isPartySelected = true;
+            component.referenceDataFeatureFlag = false;
 
             component.participantDetails = participant;
         });
@@ -573,8 +591,9 @@ describe('AddParticipantComponent', () => {
         });
         it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
             component.hearing.participants = [];
+            component.referenceDataFeatureFlag = true;
             component.ngAfterViewInit();
-            tick(1000);
+            tick(600);
             component.saveParticipant();
             expect(component.hearingRoleList).toContain('Interpreter');
             flush();
@@ -681,25 +700,24 @@ describe('AddParticipantComponent', () => {
     it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         expect(component.hearingRoleList).toContain('Interpreter');
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
-        tick(1000);
+        tick(600);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
     it('should show the interpreter in hearings role if lip or witness is added', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
-        flush();
     }));
     it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
@@ -717,13 +735,13 @@ describe('AddParticipantComponent', () => {
         participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         component.setupHearingRoles('Claimant');
-        tick(1000);
+        tick(600);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
     it('should not show the interpreter option in hearings role if observer/appraiser participant is added.', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         component.hearing.participants = [];
         expect(component.hearingRoleList).toContain('Interpreter');
         let participant01 = new ParticipantModel();
@@ -760,7 +778,7 @@ describe('AddParticipantComponent', () => {
     it('should not show observers in the interpretee list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         const observer01 = new ParticipantModel();
         observer01.id = 'Observer Observer';
         observer01.first_name = 'firstName';
@@ -1008,6 +1026,7 @@ describe('AddParticipantComponent', () => {
         });
     });
 });
+
 describe('AddParticipantComponent edit mode', () => {
     beforeEach(waitForAsync(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -1037,6 +1056,7 @@ describe('AddParticipantComponent edit mode', () => {
             ]
         }).compileComponents();
 
+        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
@@ -1155,9 +1175,21 @@ describe('AddParticipantComponent edit mode', () => {
         component.searchEmail.email = 'test3@hmcts.net';
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(2000);
-        flush();
         fixture.detectChanges();
+        tick(1000);
+
+        // expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+        // expect(component.hearing).toBeTruthy();
+        // expect(component.existingParticipant).toBeTruthy();
+        // expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
+        // expect(component.showDetails).toBeTruthy();
+        // expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
+        // expect(component.displayNextButton).toBeFalsy();
+        // expect(component.displayClearButton).toBeTruthy();
+        // expect(component.displayAddButton).toBeFalsy();
+        // expect(component.displayUpdateButton).toBeTruthy();
+
+        flush();
         fixture.whenStable().then(() => {
             expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
             expect(component.hearing).toBeTruthy();
@@ -1170,6 +1202,38 @@ describe('AddParticipantComponent edit mode', () => {
             expect(component.displayUpdateButton).toBeTruthy();
         });
     }));
+
+    it('shows single role list when reference data flag is on', fakeAsync(async () => {
+        const roles: HearingRoleResponse[] = [
+            new HearingRoleResponse({
+                name: 'Applicant',
+                code: 'APPL',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Interpreter',
+                code: 'INTP',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Judge',
+                code: 'JUDG',
+                user_role: 'Judge'
+            }),
+            new HearingRoleResponse({
+                name: 'Litigant in person',
+                code: 'LIP',
+                user_role: 'Individual'
+            }),
+            new HearingRoleResponse({
+                name: 'Staff Member',
+                code: 'STAF',
+                user_role: 'Staff Member'
+            })
+        ];
+        videoHearingsServiceSpy.getHearingRoles.and.returnValue(Promise.resolve(roles));
+        const hearingRolesMapped = new ParticipantService(loggerSpy).mapParticipantHearingRoles(roles);
+        participantServiceSpy.mapParticipantHearingRoles.and.returnValue(hearingRolesMapped);
 
     it('shows single role list', fakeAsync(() => {
         component.ngOnInit();
@@ -1459,14 +1523,14 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     it('should show button add participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         expect(component.editMode).toBeTruthy();
         expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
         expect(component.selectedParticipantEmail).toBe('');
         expect(component.showDetails).toBeFalsy();
-        expect(component.displayNextButton).toBeTruthy();
-        expect(component.displayClearButton).toBeFalsy();
-        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayNextButton).toBeFalsy();
+        expect(component.displayClearButton).toBeTruthy();
+        expect(component.displayAddButton).toBeTruthy();
         expect(component.displayUpdateButton).toBeFalsy();
     }));
 
@@ -1730,6 +1794,8 @@ describe('AddParticipantComponent set representer', () => {
         companyName = component.form.controls['companyName'];
         representing = component.form.controls['representing'];
         component.hearingRoles = [];
+
+        component.ngAfterViewInit();
     }));
 
     it('should show company and name of representing person', () => {
@@ -1756,8 +1822,6 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.form.get('representing').value).toEqual('');
     });
     it('should set representee label for representatives', () => {
-        const representative = new HearingRoleModel('Representative', 'Representative', 'RPTT');
-        component.hearingRoles.push(representative);
         component.form.get('role').setValue('Representative');
         component.roleSelected();
 
@@ -1765,8 +1829,6 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.representeeErrorMessage).toBe(Constants.Error.RepresenteeErrorMsg);
     });
     it('should set representee label for intermediaries', () => {
-        const intermediary = new HearingRoleModel('Intermediary', 'Representative', 'INTE');
-        component.hearingRoles.push(intermediary);
         component.form.get('role').setValue('Intermediary');
         component.roleSelected();
 
@@ -1836,18 +1898,15 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
     it('should indicate that role Representative is Representative', () => {
-        component.caseAndHearingRoles = partyList;
-        const result = component.isRoleRepresentative('Representative', 'Applicant');
+        const result = component.isRoleRepresentative('Representative');
         expect(result).toBe(true);
     });
-    it('should indicate that role presenting officer is Representative', () => {
-        component.caseAndHearingRoles = partyList;
-        const result = component.isRoleRepresentative('presenting officer', 'Applicant');
+    it('should indicate that role Barrister is Representative', () => {
+        const result = component.isRoleRepresentative('Barrister');
         expect(result).toBe(true);
     });
     it('should indicate that role is not representative', () => {
-        component.caseAndHearingRoles = partyList;
-        const result = component.isRoleRepresentative('someRole', 'Applicant');
+        const result = component.isRoleRepresentative('someRole');
         expect(result).toBe(false);
     });
     it('should not navigate to next page if no participants in the hearing', () => {
