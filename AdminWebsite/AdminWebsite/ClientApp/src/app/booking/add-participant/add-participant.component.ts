@@ -508,7 +508,7 @@ export class AddParticipantComponent extends AddParticipantBaseDirective impleme
         }
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
         newParticipant.display_name = this.displayName.value;
-        if (this.isRoleRepresentative(this.role.value, this.party.value)) {
+        if (this.isRoleRepresentative(this.role.value)) {
             newParticipant.company = this.companyName.value;
         } else {
             newParticipant.company = this.companyNameIndividual.value;
