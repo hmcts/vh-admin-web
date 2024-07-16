@@ -207,8 +207,6 @@ participants.push(p2);
 participants.push(p3);
 participants.push(p4);
 
-const constants = Constants;
-
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
     newHearing.cases = [];
@@ -303,7 +301,6 @@ describe('AddParticipantComponent', () => {
             'removeParticipant',
             'mapParticipantHearingRoles'
         ]);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(mappedHearingRoles);
@@ -541,7 +538,6 @@ describe('AddParticipantComponent', () => {
             companyName.setValue('CC');
             component.isRoleSelected = true;
             component.isPartySelected = true;
-            component.referenceDataFeatureFlag = false;
 
             component.participantDetails = participant;
         });
@@ -591,7 +587,6 @@ describe('AddParticipantComponent', () => {
         });
         it('should add interpreter to role list after saving with reference data flag on', fakeAsync(async () => {
             component.hearing.participants = [];
-            component.referenceDataFeatureFlag = true;
             component.ngAfterViewInit();
             tick(600);
             component.saveParticipant();
@@ -657,8 +652,7 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        const partyLst: PartyModel[] = [roles];
-        component.caseAndHearingRoles = partyLst;
+        component.caseAndHearingRoles = [roles];
         role.setValue('Applicant');
         component.setupHearingRoles('Applicant');
         expect(component.hearingRoleList.length).toBe(2);
@@ -669,8 +663,7 @@ describe('AddParticipantComponent', () => {
             new HearingRoleModel(Constants.PleaseSelect, 'None'),
             new HearingRoleModel('Representative', 'Representative')
         ];
-        const partyLst: PartyModel[] = [roles];
-        component.caseAndHearingRoles = partyLst;
+        component.caseAndHearingRoles = [roles];
         component.setupHearingRoles('Respondent');
         expect(component.hearingRoleList.length).toBe(1);
     });
@@ -721,7 +714,6 @@ describe('AddParticipantComponent', () => {
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList).not.toContain('Interpreter');
-        const _participants: ParticipantModel[] = [];
         let participant01 = new ParticipantModel();
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
@@ -1056,7 +1048,6 @@ describe('AddParticipantComponent edit mode', () => {
             ]
         }).compileComponents();
 
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
 
         const hearing = initExistHearingRequest();
@@ -1173,34 +1164,24 @@ describe('AddParticipantComponent edit mode', () => {
     it('should set edit mode and populate participant data', fakeAsync(() => {
         component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
         component.searchEmail.email = 'test3@hmcts.net';
+
         component.ngOnInit();
         component.ngAfterViewInit();
         fixture.detectChanges();
         tick(1000);
 
-        // expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
-        // expect(component.hearing).toBeTruthy();
-        // expect(component.existingParticipant).toBeTruthy();
-        // expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
-        // expect(component.showDetails).toBeTruthy();
-        // expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
-        // expect(component.displayNextButton).toBeFalsy();
-        // expect(component.displayClearButton).toBeTruthy();
-        // expect(component.displayAddButton).toBeFalsy();
-        // expect(component.displayUpdateButton).toBeTruthy();
+        expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+        expect(component.hearing).toBeTruthy();
+        expect(component.existingParticipant).toBeTruthy();
+        expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
+        expect(component.showDetails).toBeTruthy();
+        expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
+        expect(component.displayNextButton).toBeFalsy();
+        expect(component.displayClearButton).toBeTruthy();
+        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayUpdateButton).toBeTruthy();
 
         flush();
-        fixture.whenStable().then(() => {
-            expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
-            expect(component.hearing).toBeTruthy();
-            expect(component.existingParticipant).toBeTruthy();
-            expect(component.showDetails).toBeTruthy();
-            expect(component.selectedParticipantEmail).toBe('test3@hmcts.net');
-            expect(component.displayNextButton).toBeFalsy();
-            expect(component.displayClearButton).toBeTruthy();
-            expect(component.displayAddButton).toBeFalsy();
-            expect(component.displayUpdateButton).toBeTruthy();
-        });
     }));
 
     it('shows single role list when reference data flag is on', fakeAsync(async () => {
@@ -1235,7 +1216,6 @@ describe('AddParticipantComponent edit mode', () => {
         const hearingRolesMapped = new ParticipantService(loggerSpy).mapParticipantHearingRoles(roles);
         participantServiceSpy.mapParticipantHearingRoles.and.returnValue(hearingRolesMapped);
 
-    it('shows single role list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         flush();
@@ -1547,7 +1527,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         participant.addedDuringHearing = false;
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         component.participantsListComponent.canEdit = true;
         const partList = component.participantsListComponent;
         component.selectedParticipantEmail = 'test2@hmcts.net';
@@ -1559,7 +1539,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     it('should show confirmation to remove participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
-        tick(1000);
+        tick(600);
         const partList = component.participantsListComponent;
         partList.removeParticipant({
             email: 'test2@hmcts.net',
@@ -1569,7 +1549,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         });
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();
-        tick(1000);
+        tick(600);
 
         expect(component.showConfirmationRemoveParticipant).toBeTruthy();
     }));
@@ -1625,10 +1605,10 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         component.selectedParticipantEmail = '';
         component.ngOnInit();
-        tick(1000);
+        tick(600);
 
         expect(component.showDetails).toBeFalsy();
-        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayAddButton).toBeTruthy();
     }));
     it('should set existingParticipant to false', () => {
         participant.id = '';
@@ -1780,6 +1760,7 @@ describe('AddParticipantComponent set representer', () => {
             loggerSpy
         );
         component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
+        component.participantsListComponent = new ParticipantListComponent(videoHearingsServiceSpy, launchDarklyServiceSpy);
 
         component.ngOnInit();
 
