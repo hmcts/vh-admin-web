@@ -184,7 +184,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
             hearing.Success.Should().Be(false);
-            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Never);
+            _conferenceDetailsServiceMock.Verify(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false), Times.Once);
             _bookingsApiClientMock.Verify(x => x.GetHearingDetailsByIdV2Async(It.IsAny<Guid>()), Times.Once);
         }
 
