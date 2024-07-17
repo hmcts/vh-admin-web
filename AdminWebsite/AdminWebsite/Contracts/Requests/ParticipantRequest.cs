@@ -11,8 +11,9 @@ public class ParticipantRequest
     public string ContactEmail { get; set; }
     public string TelephoneNumber { get; set; }
     public string Username { get; set; }
+    
     [StringLength(255, ErrorMessage = "Display name max length is 255 characters")]
-    [RegularExpression("^([-A-Za-z0-9 \',._])*$")]
+    [RegularExpression(@"^[\p{L}\p{N}\s',._-]+$")]
     public string DisplayName { get; set; }
     public string CaseRoleName { get; set; }
     public string HearingRoleName { get; set; }
