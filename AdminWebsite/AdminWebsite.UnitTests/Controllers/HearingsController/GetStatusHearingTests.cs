@@ -10,6 +10,7 @@ using VideoApi.Contract.Responses;
 using AdminWebsite.Security;
 using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using BookingsApi.Contract.V2.Responses;
@@ -274,6 +275,46 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         }
 
+        [Test]
+        public async Task Should_return_ok_status_with_success_when_users_not_created_for_successful_multi_day_booking()
+        {
+            // Users for multi day bookings are created as part of the clone process rather than the first day of the multi-day,
+            // so don't wait for them to be created
+            
+            // Arrange
+            _vhExistingHearingV2.GroupId = _vhExistingHearingV2.Id; // Multi day hearing
+            _vhExistingHearingV2.Status = BookingStatusV2.Created;
+            
+            foreach (var participant in _vhExistingHearing.Participants)
+            {
+                // Contact email is same as username, so user not created
+                participant.Username = participant.ContactEmail;
+            }
+            
+            // Indicate a successful booking
+            var conferenceResponse = new ConferenceDetailsResponse
+            {
+                MeetingRoom = new()
+                {
+                    AdminUri = "AdminUri",
+                    ParticipantUri = "ParticipantUri",
+                    JudgeUri = "JudgeUri",
+                    PexipNode = "PexipNode"
+                }
+            };
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(_guid, false))
+                .ReturnsAsync(conferenceResponse);
+            
+            // Act
+            var result = await _controller.GetHearingConferenceStatus(_guid);
+            
+            // Assert
+            var okRequestResult = (OkObjectResult)result;
+            okRequestResult.StatusCode.Should().Be(200);
+
+            var hearing = (UpdateBookingStatusResponse)((OkObjectResult)result).Value;
+            hearing.Success.Should().Be(true);
+        }
         private HearingDetailsResponseV2 GetHearingDetailsResponseV2(BookingsApi.Contract.V2.Enums.BookingStatusV2 status)
         {
             _guid = Guid.NewGuid();
