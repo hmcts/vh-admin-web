@@ -114,7 +114,7 @@
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break" id="otherInformation">{{ otherInformation.OtherInformation }}</div>
     </div>
-    <span is="degradedMessage" *ngIf="bookingIsDegraded" class="govuk-error-message"
+    <span id="degradedMessage" *ngIf="bookingIsDegraded" class="govuk-error-message"
       >The booking service is currently unavailable, please contact the service desk</span
     >
     <div class="sk-top">
