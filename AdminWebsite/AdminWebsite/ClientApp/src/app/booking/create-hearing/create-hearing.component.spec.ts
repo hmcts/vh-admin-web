@@ -131,6 +131,44 @@ describe('CreateHearingComponent with multiple case types', () => {
         component.failedSubmission = true;
         expect(component.caseNumberInvalid).toBeTruthy();
     });
+    it('should validate case type', () => {
+        const caseTypeValue = 'Tax';
+        expect(caseNumberControl.valid).toBeFalsy();
+        caseTypeControl.setValue(caseTypeValue);
+        expect(component.selectedCaseType).toBe(caseTypeValue);
+        expect(caseTypeControl.valid).toBeTruthy();
+    });
+
+    it('should validate hearing type', () => {
+        expect(hearingTypeControl.valid).toBeTruthy();
+        hearingTypeControl.setValue(2);
+        expect(hearingTypeControl.valid).toBeTruthy();
+    });
+
+    it('should set hearing type to please select when case type changes', () => {
+        const caseTypeValue = 'Generic';
+        caseTypeControl.setValue(caseTypeValue);
+        expect(component.selectedCaseType).toBe(caseTypeValue);
+        expect(caseTypeControl.valid).toBeTruthy();
+        expect(component.hearingType.value).toBe(null);
+        expect(hearingTypeControl.valid).toBeTruthy();
+    });
+
+    it('should update hearing request when form is valid', () => {
+        expect(component.form.valid).toBeFalsy();
+
+        caseNameControl.setValue('Captain America vs The World');
+        caseNumberControl.setValue('12345');
+        caseTypeControl.setValue('Tax');
+        hearingTypeControl.setValue(2);
+
+        expect(component.form.valid).toBeTruthy();
+        component.saveHearingDetails();
+        expect(component.hearing.hearing_type_id).toBe(2);
+        const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === component.hearing.hearing_type_id).name;
+        expect(component.hearing.hearing_type_name).toBe(hearingTypeName);
+        expect(component.hearing.cases.length).toBe(1);
+    });
 });
 
 describe('CreateHearingComponent with single case type', () => {
@@ -173,6 +211,15 @@ describe('CreateHearingComponent with single case type', () => {
         component.ngOnInit();
         fixture.detectChanges();
     });
+
+    it('should set case type when single item returned', fakeAsync(() => {
+        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
+        fixture.detectChanges();
+        tick();
+        fixture.detectChanges();
+        expect(component.availableHearingTypes.length).toBe(1);
+        expect(component.selectedCaseType).toBeDefined();
+    }));
 
     it('should show cancel booking confirmation pop up', () => {
         component.editMode = false;
@@ -242,6 +289,11 @@ describe('CreateHearingComponent with existing request in session', () => {
     afterEach(() => {
         sessionStorage.clear();
     });
+
+    it('should repopulate form with existing request', fakeAsync(() => {
+        expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
+        expect(component.caseName.value).toBe(existingRequest.cases[0].name);
+    }));
 
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;

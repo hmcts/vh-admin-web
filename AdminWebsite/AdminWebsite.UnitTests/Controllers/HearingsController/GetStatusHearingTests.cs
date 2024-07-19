@@ -121,6 +121,25 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
+        public async Task Should_return_BadRequest_when_issue_with_finding_hearing_with_video_api()
+        {
+
+            ConferenceDetailsResponse conferenceResponse = new ConferenceDetailsResponse();
+            conferenceResponse.MeetingRoom = new MeetingRoomResponse();
+
+
+            // Arrange
+            _vhExistingHearing.Status = BookingStatus.Created;
+            _conferenceDetailsServiceMock.Setup(x => x.GetConferenceDetailsByHearingId(It.IsAny<Guid>(), false)).Throws(new VideoApiException("Error", 400, null, null, null));
+            // Act
+            var result = await _controller.GetHearingConferenceStatus(_guid);
+
+            // Assert
+            var badRequest = (BadRequestObjectResult)result;
+            badRequest.StatusCode.Should().Be(400);
+        }
+        
+        [Test]
         public async Task Should_return_ok_true_status_when_booking_status_is_created_and_has_valid_room()
         {
             ConferenceDetailsResponse conferenceResponse = new() { MeetingRoom = new() { 

@@ -1,14 +1,15 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Mvc;
 using AdminWebsite.Controllers;
+using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using BookingsApi.Client;
 using BookingsApi.Contract.Interfaces.Response;
+using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Responses;
 using HearingTypeResponse = BookingsApi.Contract.V1.Responses.HearingTypeResponse;
@@ -119,6 +120,47 @@ namespace AdminWebsite.UnitTests.Controllers
             
         }
 
+        [Test]
+        public async Task should_return_list_of_available_languages()
+        {
+            // Arrange
+            var languages = new List<InterpreterLanguagesResponse>
+            {
+                new()
+                {
+                    Code = "en", Value = "English", WelshValue = "Saesneg", Type = InterpreterType.Verbal, Live = true
+                },
+                new()
+                {
+                    Code = "cy", Value = "Welsh", WelshValue = "Cymraeg", Type = InterpreterType.Verbal, Live = true
+                },
+                new()
+                {
+                    Code = "fr", Value = "French", WelshValue = "Ffrangeg", Type = InterpreterType.Verbal, Live = true
+                },
+                new()
+                {
+                    Code = "bsl", Value = "British Sign Language", WelshValue = "Iaith Arwyddion Prydain",
+                    Type = InterpreterType.Sign, Live = true
+                },
+                new()
+                {
+                    Code = "isl", Value = "Icelandic Sign Language", WelshValue = "Iaith Arwyddion Gwlad yr Iâ",
+                    Type = InterpreterType.Sign, Live = true
+                },
+            };
+
+            var expected = languages.Select(AvailableLanguageResponseMapper.Map).ToList();
+            _bookingsApiClientMock.Setup(x => x.GetAvailableInterpreterLanguagesAsync()).ReturnsAsync(languages);
+            
+            
+            // Act
+            var result = await _controller.GetAvailableLanguages();
+            
+            // Assert
+            var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
+            okObjectResult.Value.Should().BeEquivalentTo(expected);
+        }
         private static List<CaseTypeResponse> GetCaseTypesList()
         {
             return new List<CaseTypeResponse>
