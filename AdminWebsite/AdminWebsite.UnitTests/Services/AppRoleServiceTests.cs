@@ -106,9 +106,13 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_return_an_empty_list_of_claims_if_no_justice_user_is_found()
+        public async Task should_return_a_non_default_list_of_claims_if_no_justice_user_is_found()
         {
             // arrange
+            var defaultClaimForNonExistentJusticeUser = new List<Claim>()
+            {
+                new (ClaimTypes.Role, "EmptyClaimToAvoidDefaultListValue")
+            };
             var username = "random@claims.com";
             var uniqueId = Guid.NewGuid().ToString();
             var apiException = new BookingsApiException<string>("Conflict", (int) HttpStatusCode.NotFound,
@@ -120,7 +124,7 @@ namespace AdminWebsite.UnitTests.Services
             var claims = await _sut.GetClaimsForUserAsync(uniqueId, username);
 
             // assert
-            claims.Should().BeEmpty();
+            claims.Should().BeEquivalentTo(defaultClaimForNonExistentJusticeUser);
         }
 
     }
