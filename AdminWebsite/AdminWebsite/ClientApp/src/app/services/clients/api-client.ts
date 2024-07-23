@@ -679,6 +679,94 @@ export class BHClient extends ApiClientBase {
     /**
      * @return OK
      */
+    getBookingQueueState(): Observable<AppHealthStatusResponse> {
+        let url_ = this.baseUrl + '/api/health/bqs';
+        url_ = url_.replace(/[?&]$/, '');
+
+        let options_: any = {
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                Accept: 'application/json'
+            })
+        };
+
+        return _observableFrom(this.transformOptions(options_))
+            .pipe(
+                _observableMergeMap(transformedOptions_ => {
+                    return this.http.request('get', url_, transformedOptions_);
+                })
+            )
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processGetBookingQueueState(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processGetBookingQueueState(response_ as any);
+                        } catch (e) {
+                            return _observableThrow(e) as any as Observable<AppHealthStatusResponse>;
+                        }
+                    } else return _observableThrow(response_) as any as Observable<AppHealthStatusResponse>;
+                })
+            );
+    }
+
+    protected processGetBookingQueueState(response: HttpResponseBase): Observable<AppHealthStatusResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse
+                ? response.body
+                : (response as any).error instanceof Blob
+                ? (response as any).error
+                : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 500) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result500: any = null;
+                    let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result500 = UnexpectedErrorResponse.fromJS(resultData500);
+                    return throwException('Internal Server Error', status, _responseText, _headers, result500);
+                })
+            );
+        } else if (status === 200) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    let result200: any = null;
+                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result200 = AppHealthStatusResponse.fromJS(resultData200);
+                    return _observableOf(result200);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap((_responseText: string) => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     getHearingRoles(): Observable<HearingRoleResponse[]> {
         let url_ = this.baseUrl + '/api/hearingroles';
         url_ = url_.replace(/[?&]$/, '');
@@ -6189,6 +6277,45 @@ export interface IAllocationHearingsResponse {
     has_non_availability_clash?: boolean | undefined;
     /** True if the allocated CSO has more than 3 concurrent hearings assigned. Null if the hearing has no allocated CSO */
     concurrent_hearings_count?: number | undefined;
+}
+
+export class AppHealthStatusResponse implements IAppHealthStatusResponse {
+    name?: string | undefined;
+    state?: string | undefined;
+
+    constructor(data?: IAppHealthStatusResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data['name'];
+            this.state = _data['state'];
+        }
+    }
+
+    static fromJS(data: any): AppHealthStatusResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new AppHealthStatusResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['name'] = this.name;
+        data['state'] = this.state;
+        return data;
+    }
+}
+
+export interface IAppHealthStatusResponse {
+    name?: string | undefined;
+    state?: string | undefined;
 }
 
 /** Defines an available language supported for interpretation */
