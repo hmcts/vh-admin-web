@@ -15,7 +15,7 @@ namespace AdminWebsite.Models
         /// </summary>
         /// 
         [StringLength(255, ErrorMessage = "Display name max length is 255 characters")]
-        [RegularExpression("^([-A-Za-z0-9 ',._])*$")]
+        [RegularExpression(@"^[\p{L}\p{N}\s',._-]+$")]
         public string DisplayName { get; set; }
         /// <summary>
         ///     The username of the participant
