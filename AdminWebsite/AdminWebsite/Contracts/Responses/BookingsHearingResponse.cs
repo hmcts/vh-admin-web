@@ -1,5 +1,6 @@
 using System;
-using BookingsApi.Contract.V1.Enums;
+using AdminWebsite.Contracts.Enums;
+using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
 
 namespace AdminWebsite.Contracts.Responses;
 
@@ -28,4 +29,5 @@ public class BookingsHearingResponse
     public Guid? GroupId { get; set; }
     public string CourtRoomAccount { get; set; }
     public string AllocatedTo { get; set; }
+    public VideoSupplier? ConferenceSupplier { get; set; }
 }

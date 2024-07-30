@@ -13,7 +13,9 @@ export const FeatureFlags = {
     audioSearch: 'hide-audio-search-tile',
     useV2Api: 'use-bookings-api-v2',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements',
-    interpreterEnhancements: 'interpreter-enhancements'
+    interpreterEnhancements: 'interpreter-enhancements',
+    vodafone: 'vodafone',
+    supplierOverrides: 'supported-supplier-overrides'
 };
 
 @Injectable({

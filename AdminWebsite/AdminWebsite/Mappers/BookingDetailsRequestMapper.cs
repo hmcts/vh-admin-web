@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using AdminWebsite.Contracts.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
+using BookingsApi.Contract.V2.Enums;
 using V1 = BookingsApi.Contract.V1.Requests;
 using V2 = BookingsApi.Contract.V2.Requests;
 
@@ -69,7 +70,8 @@ public static class BookingDetailsRequestMapper
             AudioRecordingRequired = bookingDetails.AudioRecordingRequired,
             IsMultiDayHearing = bookingDetails.IsMultiDayHearing,
             Endpoints = bookingDetails.Endpoints?.Select(e => e.MapToV2()).ToList(),
-            LinkedParticipants = bookingDetails.LinkedParticipants?.Select(lp => lp.MapToV2()).ToList()
+            LinkedParticipants = bookingDetails.LinkedParticipants?.Select(lp => lp.MapToV2()).ToList(),
+             BookingSupplier = (BookingSupplier)bookingDetails.ConferenceSupplier
         };
     }
 }

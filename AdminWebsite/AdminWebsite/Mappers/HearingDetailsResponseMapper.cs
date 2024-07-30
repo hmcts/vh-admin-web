@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.V2.Enums;
 using V1 = BookingsApi.Contract.V1.Responses;
@@ -9,6 +10,8 @@ namespace AdminWebsite.Mappers;
 
 public static class HearingDetailsResponseMapper
 {
+    
+    [Obsolete("Use Map(this V2.HearingDetailsResponse hearingDetails) instead")]
     public static HearingDetailsResponse Map(this V1.HearingDetailsResponse hearingDetails)
     {
         return new HearingDetailsResponse
@@ -70,12 +73,13 @@ public static class HearingDetailsResponseMapper
             UpdatedDate = hearingDetails.UpdatedDate,
             ConfirmedBy = hearingDetails.ConfirmedBy,
             ConfirmedDate = hearingDetails.ConfirmedDate,
-            Status = (Contracts.Enums.BookingStatus)hearingDetails.Status,
+            Status = (BookingStatus)hearingDetails.Status,
             AudioRecordingRequired = hearingDetails.AudioRecordingRequired,
             CancelReason = hearingDetails.CancelReason,
             Endpoints = hearingDetails.Endpoints?.Select(e => e.Map()).ToList(),
             JudiciaryParticipants = hearingDetails.JudiciaryParticipants?.Select(j => j.Map()).ToList(),
-            GroupId = hearingDetails.GroupId
+            GroupId = hearingDetails.GroupId,
+            ConferenceSupplier = Enum.TryParse<VideoSupplier>(hearingDetails.BookingSupplier.ToString(), out var supplier) ? supplier : VideoSupplier.Kinly
         };
     }
 

@@ -5,19 +5,22 @@ export class MockValues {
         `
     [
       {
-        "code": "BTA",
+        "code": null,
+        "service_id": "BTA",
         "group": "Tax",
         "id": 1,
         "name": "Basic Tax Appeals"
       },
       {
-        "code": "SAJ",
+        "code": null,
+        "service_id": "ZZY1",
         "group": "Generic",
         "id": 2,
         "name": "Automated Test"
       },
       {
-        "code": "FDAH",
+        "code": null,
+        "service_id": "FDAH",
         "group": "Financial Remedy",
         "id": 3,
         "name": "First Directions Appointment Hearing"
@@ -30,7 +33,8 @@ export class MockValues {
         `
     [
       {
-        "code": "BTA",
+        "code": null,
+        "service_id": "BTA",
         "group": "Tax",
         "id": 1,
         "name": "Basic Tax Appeals"
@@ -43,11 +47,13 @@ export class MockValues {
         `[
         {
            "id":1,
-           "name":"Manchester Civil Justice Centre"
+           "name":"Manchester Civil Justice Centre",
+           "code": "326944"
         },
         {
            "id":2,
-           "name":"Birmingham Civil Justice Centre"
+           "name":"Birmingham Civil Justice Centre",
+           "code": "231596"
         }
      ]`
     );

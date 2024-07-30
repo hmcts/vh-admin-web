@@ -8,3 +8,9 @@ public enum BookingStatus
     BookedWithoutJudge = 5,
     ConfirmedWithoutJudge = 6
 }
+
+public enum VideoSupplier
+{
+    Kinly = 1,
+    Vodafone = 2
+}
