@@ -79,13 +79,17 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             });
 
         const vodafoneToggle$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.vodafone);
-        const supplierOverridesToggle$ = this.launchDarklyService
-            .getFlag<string>(FeatureFlags.supplierOverrides)
-            .pipe(map(flag => JSON.parse(flag) as ServiceIds));
+        const supplierOverridesToggle$ = this.launchDarklyService.getFlag<ServiceIds>(FeatureFlags.supplierOverrides, { serviceIds: [] });
 
         combineLatest([vodafoneToggle$, supplierOverridesToggle$]).subscribe(([vodafoneToggle, supplierOverrides]) => {
             this.vodafoneToggle = vodafoneToggle;
             this.supportedSupplierOverrides = supplierOverrides;
+            if (this.form && !this.form.contains('supplier')) {
+                this.form.addControl('supplier', this.fb.control(this.hearing?.supplier ?? this.retrieveDefaultSupplier()));
+                if (this.isExistingHearingOrParticipantsAdded()) {
+                    this.form.get('supplier').disable();
+                }
+            }
         });
 
         this.failedSubmission = false;
@@ -136,7 +140,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         if (!firstCase) {
             firstCase = new CaseModel();
         }
-        const defaultSupplier = this.retrieveDefaultSupplier();
         this.form = this.fb.group({
             caseName: [firstCase.name, [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
             caseNumber: [
@@ -144,27 +147,18 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
-            hearingType: [this.hearing.hearing_type_id, this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]],
-            supplier: [defaultSupplier]
+            hearingType: [this.hearing.hearing_type_id, this.refDataEnabled ? [] : [Validators.required, Validators.min(1)]]
         });
 
         if (this.isExistingHearingOrParticipantsAdded()) {
-            ['caseType', 'hearingType', 'supplier'].forEach(k => {
+            ['caseType', 'hearingType'].forEach(k => {
                 this.form.get(k).disable();
             });
         }
     }
 
     retrieveDefaultSupplier(): VideoSupplier {
-        let defaultSupplier: VideoSupplier;
-        if (this.isExistingHearing) {
-            defaultSupplier = this.hearing.supplier;
-        } else if (this.vodafoneToggle) {
-            defaultSupplier = VideoSupplier.Vodafone;
-        } else {
-            defaultSupplier = VideoSupplier.Kinly;
-        }
-        return defaultSupplier;
+        return this.vodafoneToggle ? VideoSupplier.Vodafone : VideoSupplier.Kinly;
     }
 
     get caseName() {
@@ -287,7 +281,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         const hearingTypeGroup = this.availableHearingTypes.find(c => c.group === this.hearing.case_type);
         // hearing type group will be null if editing an expired case type
         this.hearing.case_type_service_id = hearingTypeGroup?.service_id ?? this.hearing.case_type_service_id;
-        this.hearing.supplier = this.form.getRawValue().supplier;
+        this.hearing.supplier = this.form.getRawValue().supplier ?? this.retrieveDefaultSupplier();
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
     }
@@ -334,6 +328,17 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.logger.debug(`${this.loggerPrefix} Only one available case type. Setting case type`);
         } else {
             this.availableCaseTypes.unshift(Constants.PleaseSelect);
+        }
+        this.displaySupplierOverrideIfSupported();
+    }
+
+    private displaySupplierOverrideIfSupported() {
+        if (!this.selectedCaseType) {
+            return;
+        }
+        const serviceId = this.availableHearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+        if (serviceId && this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
+            this.displayOverrideSupplier = true;
         }
     }
 

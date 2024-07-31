@@ -21,6 +21,7 @@ import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { By } from '@angular/platform-browser';
 import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 import { VideoSupplier } from 'src/app/services/clients/api-client';
+import { ServiceIds } from '../models/supplier-override';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
@@ -45,6 +46,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+const defaultOverrideValue: ServiceIds = { serviceIds: [] };
 
 describe('CreateHearingComponent with multiple case types', () => {
     let component: CreateHearingComponent;
@@ -61,7 +63,9 @@ describe('CreateHearingComponent with multiple case types', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.supplierOverrides).and.returnValue(of('{"serviceIds": []}'));
+        launchDarklyServiceSpy.getFlag
+            .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
+            .and.returnValue(of(defaultOverrideValue));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -189,7 +193,9 @@ describe('CreateHearingComponent with multiple case types', () => {
     describe('supplier overrides', () => {
         beforeEach(() => {
             launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(true));
-            launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.supplierOverrides).and.returnValue(of('{"serviceIds": ["ZZY1"]}'));
+            launchDarklyServiceSpy.getFlag
+                .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
+                .and.returnValue(of({ serviceIds: ['ZZY1'] }));
 
             component.ngOnInit();
             fixture.detectChanges();
@@ -221,18 +227,10 @@ describe('CreateHearingComponent with multiple case types', () => {
                 expect(defaultSupplier).toBe(VideoSupplier.Kinly);
             });
 
-            it('should return Vodafone if feature toggle is on and is a new hearing', () => {
+            it('should return Vodafone if feature toggle is on', () => {
                 component.vodafoneToggle = true;
                 const defaultSupplier = component.retrieveDefaultSupplier();
                 expect(defaultSupplier).toBe(VideoSupplier.Vodafone);
-            });
-
-            it('should return the existing supplier on the hearing if it is an existing hearing', () => {
-                component.vodafoneToggle = true;
-                component.isExistingHearing = true;
-                component.hearing.supplier = VideoSupplier.Kinly;
-                const defaultSupplier = component.retrieveDefaultSupplier();
-                expect(defaultSupplier).toBe(VideoSupplier.Kinly);
             });
         });
     });
@@ -248,7 +246,9 @@ describe('CreateHearingComponent with single case type', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.supplierOverrides).and.returnValue(of('{"serviceIds": []}'));
+        launchDarklyServiceSpy.getFlag
+            .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
+            .and.returnValue(of(defaultOverrideValue));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -311,7 +311,9 @@ describe('CreateHearingComponent with ref data toggle on', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.supplierOverrides).and.returnValue(of('{"serviceIds": []}'));
+        launchDarklyServiceSpy.getFlag
+            .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
+            .and.returnValue(of(defaultOverrideValue));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',
@@ -366,7 +368,9 @@ describe('CreateHearingComponent with existing request in session', () => {
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(false));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.supplierOverrides).and.returnValue(of('{"serviceIds": []}'));
+        launchDarklyServiceSpy.getFlag
+            .withArgs(FeatureFlags.supplierOverrides, defaultOverrideValue)
+            .and.returnValue(of(defaultOverrideValue));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
             'getHearingTypes',

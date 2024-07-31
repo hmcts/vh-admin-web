@@ -15,7 +15,6 @@ export class HearingModel {
         this.hearing_dates = [];
         this.hearing_id = '';
         this.judiciaryParticipants = [];
-        this.supplier = VideoSupplier.Kinly;
     }
     hearing_id?: string;
     scheduled_date_time?: Date;

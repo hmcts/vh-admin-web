@@ -15,7 +15,7 @@ export const FeatureFlags = {
     multiDayBookingEnhancements: 'multi-day-booking-enhancements',
     interpreterEnhancements: 'interpreter-enhancements',
     vodafone: 'vodafone',
-    supplierOverrides: 'supported-supplier-overrides'
+    supplierOverrides: 'supported-override-supplier'
 };
 
 @Injectable({
