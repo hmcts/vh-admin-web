@@ -89,6 +89,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 if (this.isExistingHearingOrParticipantsAdded()) {
                     this.form.get('supplier').disable();
                 }
+            } else if (this.form && this.form.contains('supplier')) {
+                this.form.removeControl('supplier');
+                this.hearing.supplier = this.retrieveDefaultSupplier();
             }
         });
 
@@ -313,6 +316,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 this.displayOverrideSupplier = true;
             }
             this.filterHearingTypes();
+            this.displaySupplierOverrideIfSupported();
         });
 
         this.availableHearingTypes = hearingTypes;
@@ -339,6 +343,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         const serviceId = this.availableHearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
         if (serviceId && this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
             this.displayOverrideSupplier = true;
+        } else {
+            this.displayOverrideSupplier = false;
+            this.form.get('supplier')?.setValue(this.retrieveDefaultSupplier(), { emitEvent: false });
         }
     }
 
