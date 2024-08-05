@@ -16,7 +16,6 @@ describe('DashboardComponent', () => {
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(waitForAsync(() => {
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.audioSearch).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.dom1Integration).and.returnValue(of(false));
 
@@ -130,36 +129,6 @@ describe('DashboardComponent', () => {
         );
         await component.ngOnInit();
         expect(component.showWorkAllocation).toBeFalsy();
-    });
-
-    it('should not show work allocation tile if feature is switched off', async () => {
-        userIdentitySpy.getUserInformation.and.returnValue(
-            of(
-                new UserProfileResponse({
-                    is_case_administrator: true,
-                    is_vh_officer_administrator_role: true
-                })
-            )
-        );
-
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(false));
-
-        await component.ngOnInit();
-        expect(component.showWorkAllocation).toBeFalsy();
-    });
-
-    it('should show work allocation tile if feature is switched on and user is Team Leader', async () => {
-        userIdentitySpy.getUserInformation.and.returnValue(
-            of(
-                new UserProfileResponse({
-                    is_vh_team_leader: true
-                })
-            )
-        );
-
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vhoWorkAllocation).and.returnValue(of(true));
-        await component.ngOnInit();
-        expect(component.showWorkAllocation).toBeTruthy();
     });
 
     it('should unsubscribe from launch darkly flag changes', () => {

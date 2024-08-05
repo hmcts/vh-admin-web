@@ -2,15 +2,14 @@ import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { lastValueFrom, Observable, Subject, Subscription, takeUntil } from 'rxjs';
+import { lastValueFrom, Observable, Subject, Subscription } from 'rxjs';
 import { Logger } from 'src/app/services/logger';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingsResponse, JusticeUserResponse } from '../../services/clients/api-client';
+import { BookingsResponse } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import * as moment from 'moment';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
@@ -40,15 +39,12 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     bookingResponse: BookingsModel;
     $subcription: Subscription;
     searchForm: FormGroup;
-    enableSearchFeature: boolean;
     title = this.initialTitle;
     selectedVenueIds: [];
     selectedCaseTypes: string[];
     selectedUserIds: [];
     showSearch = false;
     today = new Date();
-    vhoWorkAllocationFeature = false;
-    isV2 = false;
 
     destroyed$ = new Subject<void>();
 
@@ -62,7 +58,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
         private formBuilder: FormBuilder,
-        private lanchDarklyService: LaunchDarklyService,
         private router: Router,
         private logger: Logger,
         private datePipe: DatePipe,
@@ -70,7 +65,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.subscribeToFeatureFlags();
         this.searchForm = this.initializeForm();
         this.showSearch = this.bookingPersistService.showSearch;
         this.logger.debug(`${this.loggerPrefix} Loading bookings list component`);
@@ -181,27 +175,19 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         if (endDate && !startDate) {
             startDate = moment(endDate).startOf('day').toDate();
         }
-        let bookingsList$: Observable<BookingsResponse>;
-
-        if (this.enableSearchFeature) {
-            // new feature
-            bookingsList$ = this.bookingsListService.getBookingsList(
-                this.cursor,
-                this.limit,
-                caseNumber,
-                venueIds,
-                caseTypes,
-                users,
-                startDate,
-                endDate,
-                lastName,
-                noJudge,
-                noAllocated
-            );
-        } else {
-            // previous implementation
-            bookingsList$ = this.bookingsListService.getBookingsList(this.cursor, this.limit);
-        }
+        const bookingsList$: Observable<BookingsResponse> = this.bookingsListService.getBookingsList(
+            this.cursor,
+            this.limit,
+            caseNumber,
+            venueIds,
+            caseTypes,
+            users,
+            startDate,
+            endDate,
+            lastName,
+            noJudge,
+            noAllocated
+        );
 
         this.$subcription = bookingsList$.subscribe({
             next: book => self.loadData(book),
@@ -256,9 +242,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             this.bookingPersistService.selectedCaseTypes = [];
             this.caseTypeMenu.clear();
             this.bookingPersistService.selectedUsers = [];
-            if (this.workAllocationEnabled()) {
-                this.csoMenu.clear();
-            }
+            this.csoMenu.clear();
             this.bookingPersistService.startDate = null;
             this.bookingPersistService.endDate = null;
             this.bookingPersistService.participantLastName = '';
@@ -450,10 +434,6 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         this.destroyed$.complete();
     }
 
-    getFullName(item: JusticeUserResponse) {
-        return item.first_name + ' ' + item.lastname;
-    }
-
     selectedUsersEmitter($event: string[]) {
         this.bookingPersistService.selectedUsers = $event;
         this.onSelectUserChange();
@@ -479,38 +459,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
         }
     }
 
-    workAllocationEnabled(): boolean {
-        return this.vhoWorkAllocationFeature;
-    }
-
     selectedCaseTypesEmitter($event: string[]) {
         this.bookingPersistService.selectedCaseTypes = $event;
     }
 
     selectedVenueEmitter($event: number[]) {
         this.bookingPersistService.selectedVenueIds = $event;
-    }
-
-    subscribeToFeatureFlags() {
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.adminSearch)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.enableSearchFeature = flag;
-            });
-
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.vhoWorkAllocation)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.vhoWorkAllocationFeature = flag;
-            });
-
-        this.lanchDarklyService
-            .getFlag<boolean>(FeatureFlags.useV2Api)
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(flag => {
-                this.isV2 = flag;
-            });
     }
 }

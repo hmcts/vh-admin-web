@@ -23,7 +23,6 @@ import { createMultiDayHearing } from 'src/app/testing/helpers/hearing.helpers';
 
 function initHearingRequest(): HearingModel {
     const newHearing = new HearingModel();
-    newHearing.hearing_type_id = -1;
     newHearing.hearing_venue_id = -1;
     newHearing.scheduled_duration = 0;
     return newHearing;
@@ -31,7 +30,6 @@ function initHearingRequest(): HearingModel {
 
 function initExistingHearingRequest(): HearingModel {
     const existingRequest = new HearingModel();
-    existingRequest.hearing_type_id = 2;
     existingRequest.hearing_venue_id = 1;
     existingRequest.case_type = 'Generic';
 
@@ -57,7 +55,6 @@ describe('CreateHearingComponent with multiple case types', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -97,19 +94,9 @@ describe('CreateHearingComponent with multiple case types', () => {
         hearingTypeControl = component.form.controls['hearingType'];
     });
 
-    it('should create', () => {
-        fixture.detectChanges();
-        expect(component).toBeTruthy();
-        expect(component.caseNumber.value).toBeNull();
-        expect(component.caseName.value).toBeNull();
-        expect(component.caseType.value).toBe('Please select');
-        expect(component.hearingType.value).toBe(null);
-    });
-
     it('should not set case type when multiple items returned', () => {
         fixture.detectChanges();
         expect(component).toBeTruthy();
-        expect(component.availableHearingTypes.length).toBe(3);
     });
 
     it('should fail validation when form is empty', () => {
@@ -153,7 +140,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     });
 
     it('should validate hearing type', () => {
-        expect(hearingTypeControl.valid).toBeFalsy();
+        expect(hearingTypeControl.valid).toBeTruthy();
         hearingTypeControl.setValue(2);
         expect(hearingTypeControl.valid).toBeTruthy();
     });
@@ -164,7 +151,7 @@ describe('CreateHearingComponent with multiple case types', () => {
         expect(component.selectedCaseType).toBe(caseTypeValue);
         expect(caseTypeControl.valid).toBeTruthy();
         expect(component.hearingType.value).toBe(null);
-        expect(hearingTypeControl.valid).toBeFalsy();
+        expect(hearingTypeControl.valid).toBeTruthy();
     });
 
     it('should update hearing request when form is valid', () => {
@@ -191,7 +178,6 @@ describe('CreateHearingComponent with single case type', () => {
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -244,68 +230,15 @@ describe('CreateHearingComponent with single case type', () => {
     });
 });
 
-describe('CreateHearingComponent with ref data toggle on', () => {
-    let component: CreateHearingComponent;
-    let fixture: ComponentFixture<CreateHearingComponent>;
-    let hearingTypeControl: AbstractControl;
-    const newHearing = initHearingRequest();
-
-    beforeEach(() => {
-        launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(true));
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
-
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged'
-        ]);
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
-
-        TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: LaunchDarklyService, useValue: launchDarklyServiceSpy }
-            ],
-            declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
-        }).compileComponents();
-
-        fixture = TestBed.createComponent(CreateHearingComponent);
-        component = fixture.componentInstance;
-        component.ngOnInit();
-        fixture.detectChanges();
-
-        hearingTypeControl = component.form.controls['hearingType'];
-    });
-
-    it('should pass validation when no hearing type is not set', () => {
-        expect(hearingTypeControl.valid).toBeTruthy();
-        hearingTypeControl.setValue(2);
-        expect(hearingTypeControl.valid).toBeTruthy();
-    });
-});
-
 describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     let caseNameElement: HTMLInputElement;
     let caseNumberElement: HTMLInputElement;
     const existingRequest = initExistingHearingRequest();
-    existingRequest.hearing_type_name = 'Automated Test';
 
     beforeEach(() => {
         launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
-        launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.useV2Api).and.returnValue(of(false));
         launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(false));
 
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -360,7 +293,6 @@ describe('CreateHearingComponent with existing request in session', () => {
     it('should repopulate form with existing request', fakeAsync(() => {
         expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
         expect(component.caseName.value).toBe(existingRequest.cases[0].name);
-        expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
     }));
 
     it('should hide cancel and discard pop up confirmation', () => {

@@ -12,7 +12,6 @@ import { EditParticipantSearchComponent } from './edit-participant/edit-particip
 import { EditParticipantComponent } from './edit-participant/edit-participant/edit-participant.component';
 import { HomeComponent } from './home/home.component';
 import { AdminGuard } from './security/guards/admin.guard';
-import { WorkAllocationFeatureGuard } from './security/guards/work-allocation-feature.guard';
 import { VhOfficerAdminGuard } from './security/guards/vh-officer-admin.guard';
 import { LoginComponent } from './security/login.component';
 import { ReformLoginComponent } from './security/reform-login.component';
@@ -38,7 +37,7 @@ export const routes: Routes = [
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
     {
         path: 'work-allocation',
-        canActivate: [AuthGuard, VhOfficerAdminGuard, WorkAllocationFeatureGuard],
+        canActivate: [AuthGuard, VhOfficerAdminGuard],
         loadChildren: () => import('./work-allocation/work-allocation.module').then(m => m.WorkAllocationModule)
     },
     {

@@ -1,24 +1,18 @@
-using AdminWebsite.Models;
 using AdminWebsite.Services;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Requests;
-using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Security;
 using AdminWebsite.UnitTests.Helper;
-using BookingsApi.Client;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using Autofac.Extras.Moq;
-using VideoApi.Contract.Responses;
-using BookingsApi.Contract.V1.Enums;
+using BookingsApi.Client;
 using BookingsApi.Contract.V2.Requests;
+using Microsoft.AspNetCore.Mvc;
+using VideoApi.Contract.Responses;
 using LinkedParticipantType = AdminWebsite.Contracts.Enums.LinkedParticipantType;
-using V1 = BookingsApi.Contract.V1.Requests;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -47,200 +41,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         TelephoneConferenceId = "expected_conference_phone_id"
                     }
                 });
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
-
-        [Test]
-        public async Task Should_book_hearing_for_single_day()
-        {
-            // Arrange
-            var bookingDetails = InitHearingForTest();
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-            
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                .WithEndPoints(2)
-                .WithParticipant("Representative", "username1@hmcts.net")
-                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Staff Member","staff.member@hmcts.net")
-                .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-
-            
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-            
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
-                options => options.ExcludingMissingMembers());
-            
-            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-
-            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
         
         [Test]
-        public async Task Should_book_hearing_without_judge()
+        public async Task Should_book_hearing()
         {
             // Arrange
-            var bookingDetails = InitHearingForTest();
-            //remove judge
-            bookingDetails.Participants.Remove(bookingDetails.Participants.Find(e => e.HearingRoleName == "Judge"));
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                .WithEndPoints(2)
-                .WithParticipant("Representative", "username1@hmcts.net")
-                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Staff Member", "staff.member@hmcts.net");
-            
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-            
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-            
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
-                options => options.ExcludingMissingMembers());
-            
-            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-
-            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
-        
-        [Test]
-        public async Task Should_book_hearing_for_single_day_without_endpoints()
-        {
-            // Arrange
-            var bookingDetails = InitHearingForTest();
-            bookingDetails.Endpoints = null;
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-            
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                .WithEndPoints(2)
-                .WithParticipant("Representative", "username1@hmcts.net")
-                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-            
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
-                options => options.ExcludingMissingMembers());
-            
-            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-            
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Never);
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_book_hearing_for_multi_day()
-        {
-            // Arrange
-            const int expectedMultiDayHearingDuration = 3;
-            DateTime expectedStartDate = new DateTime(2021, 5, 10, 0, 0, 1, DateTimeKind.Utc);
-            DateTime expectedEndDate = expectedStartDate.AddDays(expectedMultiDayHearingDuration - 1);
-
-            var bookingDetails = InitHearingForTest();
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                IsMultiDay = true,
-                MultiHearingDetails = new MultiHearingRequest
-                {
-                    StartDate = expectedStartDate,
-                    EndDate = expectedEndDate
-                },
-                BookingDetails = bookingDetails
-            };
-
-            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
-            
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-
-            // setup response
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                .WithEndPoints(2)
-                .WithParticipant("Representative", "username1@hmcts.net")
-                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
-                .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            
-            _mocker.Mock<IBookingsApiClient>()
-                .Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-            
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-            createdObjectResult.Value.Should().BeEquivalentTo(hearingDetailsResponse,
-                options => options.ExcludingMissingMembers());
-            
-            bookingDetails.CreatedBy.Should().Be(_expectedUserIdentityName);
-            bookingDetails.Participants.Exists(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-            
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_book_hearing_with_use_v2_api_flag_on()
-        {
-            // Arrange
-            _mocker.Mock<IFeatureToggles>().Setup(x => x.UseV2Api()).Returns(true);
             var bookingDetails = InitHearingForV2Test();
             
             var bookingRequest = new BookHearingRequest
@@ -281,78 +88,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingWithCodeAsync(It.IsAny<BookNewHearingRequestV2>()), Times.Once);
         }
-        
-        [Test]
-        public async Task Should_catch_bookings_api_exceptions_and_return_bad_request_if_that_was_the_status_code()
-        {
-            // Arrange
-            var bookingDetails = InitHearingForTest();
-            
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-
-            _mocker.Mock<IUserAccountService>().Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>())).ReturnsAsync(Guid.NewGuid().ToString());
-
-            const string key = "ScheduledDateTime";
-            const string errorMessage = "ScheduledDateTime cannot be in the past";
-            var validationProblemDetails = new ValidationProblemDetails(new Dictionary<string, string[]>
-            {
-                {key, [errorMessage] },
-            });
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .Throws(ClientException.ForBookingsAPIValidation(validationProblemDetails));
-            
-            // Act
-            var result = await _controller.Post(bookingRequest);
-
-            // Assert
-            result.Result.Should().NotBeNull();
-            var objectResult = (ObjectResult)result.Result;
-            
-            var validationProblems = (ValidationProblemDetails)objectResult.Value;
-            validationProblems.Should().NotBeNull();
-            validationProblems!.Errors.ContainsKey(key).Should().BeTrue();
-            validationProblems.Errors[key][0].Should().Be(errorMessage);
-
-            _mocker.Mock<IHearingsService>().Verify(x => x.AssignEndpointDefenceAdvocates(It.IsAny<List<EndpointRequest>>(), It.Is<IReadOnlyCollection<AdminWebsite.Contracts.Requests.ParticipantRequest>>(x => x.SequenceEqual(bookingDetails.Participants.AsReadOnly()))), Times.Once);
-
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_handle_failed_booking_request()
-        {
-            var bookingDetails = InitHearingForTest();
-
-            var bookingRequest = new BookHearingRequest
-            {
-                BookingDetails = bookingDetails
-            };
-
-            var hearingDetailsResponse = 
-                HearingResponseBuilder.Build()
-                .WithParticipant("Judge", "manual.judge@hmcts.net");
-
-            hearingDetailsResponse.Status = BookingStatus.Failed;
-
-            _mocker.Mock<IBookingsApiClient>().Setup(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
-
-            _mocker.Mock<IUserIdentity>().Setup(x => x.GetUserIdentityName()).Returns(_expectedUserIdentityName);
-
-            var result = await _controller.Post(bookingRequest);
-
-            var response = ((ObjectResult)result.Result)?.Value as HearingDetailsResponse;
-
-            response.Status.Should().Be((AdminWebsite.Contracts.Enums.BookingStatus)BookingStatus.Failed);
-
-            ((ObjectResult)result.Result).StatusCode.Should().Be(201);
-          
-            _mocker.Mock<IBookingsApiClient>().Verify(x => x.BookNewHearingAsync(It.IsAny<V1.BookNewHearingRequest>()), Times.Once);
-        }
-
 
         private BookingDetailsRequest InitHearingForTest()
         {

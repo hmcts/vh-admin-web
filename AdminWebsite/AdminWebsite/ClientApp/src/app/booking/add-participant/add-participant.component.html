@@ -36,24 +36,6 @@
   <div class="govuk-grid-column-one-half" id="add-participant-component">
     <h2 class="govuk-heading-m">Add a participant</h2>
     <form [formGroup]="form" (ngSubmit)="saveParticipant()" autocomplete="off">
-      <div
-        *ngIf="!referenceDataFeatureFlag"
-        class="govuk-form-group"
-        [ngClass]="{ 'govuk-form-group--error': partyInvalid || !isPartySelected }"
-      >
-        <legend id="party-error" *ngIf="partyInvalid || !isPartySelected">
-          <span class="govuk-error-message">
-            {{ constants.Error.PartyErrorMsg }}
-          </span>
-        </legend>
-        <label class="govuk-label" for="party"> Party </label>
-        <select id="party" formControlName="party" (change)="partySelected()" class="govuk-select vh-input-w390">
-          <option *ngFor="let prt of roleList" [ngValue]="prt">
-            {{ prt }}
-          </option>
-        </select>
-      </div>
-
       <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': roleInvalid || !isRoleSelected }">
         <legend id="role-error" *ngIf="roleInvalid || !isRoleSelected">
           <span class="govuk-error-message">
