@@ -16,7 +16,8 @@ import {
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest
+    UpdateHearingInGroupRequest,
+    AppHealthStatusResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -46,7 +47,8 @@ describe('Video hearing service', () => {
             'rebookHearing',
             'getHearingRoles',
             'editMultiDayHearing',
-            'cancelMultiDayHearing'
+            'cancelMultiDayHearing',
+            'getBookingQueueState'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -1128,6 +1130,24 @@ describe('Video hearing service', () => {
 
             // Assert
             expect(result).toBeNull();
+        });
+    });
+
+    describe('isBookingServiceDegraded', () => {
+        it('should return true if booking service is degraded', () => {
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: 'degraded' });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeTrue();
+            });
+        });
+
+        it('should return false if booking service is not degraded', () => {
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: null });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeFalse();
+            });
         });
     });
 });

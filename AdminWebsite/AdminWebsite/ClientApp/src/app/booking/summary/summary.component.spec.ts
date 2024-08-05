@@ -120,8 +120,10 @@ const videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService> = jasmine.cr
     'isHearingAboutToStart',
     'getStatus',
     'updateFailedStatus',
-    'updateMultiDayHearing'
+    'updateMultiDayHearing',
+    'isBookingServiceDegraded'
 ]);
+videoHearingsServiceSpy.isBookingServiceDegraded.and.returnValue(of(false));
 const launchDarklyServiceSpy = jasmine.createSpyObj<LaunchDarklyService>('LaunchDarklyService', ['getFlag']);
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.multiDayBookingEnhancements).and.returnValue(of(true));
 launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.interpreterEnhancements).and.returnValue(of(false));
@@ -617,6 +619,16 @@ describe('SummaryComponent with valid request', () => {
         component.ngOnInit();
         component.navToAddJudge();
         expect(routerSpy.navigate).toHaveBeenCalled();
+    });
+
+    it('should disable saving, if the booking service is degraded', async () => {
+        // arrange
+        videoHearingsServiceSpy.isBookingServiceDegraded.and.returnValue(of(true));
+        component.ngOnInit();
+        fixture.detectChanges();
+        // check if the save button is disabled
+        const saveButton = fixture.nativeElement.querySelector('#bookButton');
+        expect(saveButton.disabled).toBeTrue();
     });
 });
 

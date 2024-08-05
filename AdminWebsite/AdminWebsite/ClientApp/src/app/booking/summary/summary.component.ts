@@ -76,6 +76,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     multiDayBookingEnhancementsEnabled: boolean;
 
     destroyed$ = new Subject<void>();
+    bookingIsDegraded: boolean;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -120,6 +121,15 @@ export class SummaryComponent implements OnInit, OnDestroy {
         combineLatest([multiDayBookingEnhancementsFlag$]).subscribe(([multiDayBookingEnhancementsFlag]) => {
             this.multiDayBookingEnhancementsEnabled = multiDayBookingEnhancementsFlag;
             this.retrieveHearingSummary();
+        });
+
+        this.hearingService.isBookingServiceDegraded().subscribe({
+            next: isDegraded => {
+                this.bookingIsDegraded = isDegraded;
+            },
+            error: error => {
+                this.logger.error(`${this.loggerPrefix} Failed to check if Bookings API is degraded.`, error);
+            }
         });
     }
 

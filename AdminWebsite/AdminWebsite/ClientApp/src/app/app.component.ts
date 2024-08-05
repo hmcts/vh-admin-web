@@ -6,9 +6,6 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
-import { AuthStateResult, EventTypes, OidcClientNotification, PublicEventsService } from 'angular-auth-oidc-client';
-import { filter } from 'rxjs/operators';
-import { Logger } from './services/logger';
 import { SecurityService } from './security/services/security.service';
 
 @Component({

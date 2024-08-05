@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Middleware;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -83,6 +84,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<AzureAdConfiguration>();
             serviceCollection.AddScoped<IAppRoleService, AppRoleService>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
+            serviceCollection.AddTransient<VhApiLoggingDelegatingHandler>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();
@@ -90,6 +92,7 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
+                .AddHttpMessageHandler<VhApiLoggingDelegatingHandler>()
                 .AddTypedClient(httpClient =>
                 {
                     var client = BookingsApiClient.GetClient(httpClient);
@@ -100,6 +103,7 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
+                .AddHttpMessageHandler<VhApiLoggingDelegatingHandler>()
                 .AddTypedClient(httpClient =>
                 {
                     var client = UserApiClient.GetClient(httpClient);
@@ -110,6 +114,7 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
+                .AddHttpMessageHandler<VhApiLoggingDelegatingHandler>()
                 .AddTypedClient(httpClient =>
                 {
                     var client = VideoApiClient.GetClient(httpClient);
@@ -120,6 +125,7 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<INotificationApiClient, NotificationApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())
+                .AddHttpMessageHandler<VhApiLoggingDelegatingHandler>()
                 .AddTypedClient(httpClient =>
                 {
                     var client = NotificationApiClient.GetClient(httpClient);
