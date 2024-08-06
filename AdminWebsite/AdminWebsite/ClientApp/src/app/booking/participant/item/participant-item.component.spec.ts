@@ -11,6 +11,7 @@ import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { LaunchDarklyService } from '../../../services/launch-darkly.service';
 import { of } from 'rxjs';
+import { VideoSupplier } from 'src/app/services/clients/api-client';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -58,7 +59,8 @@ describe('ParticipantItemComponent', () => {
         component = debugElement.componentInstance;
         component.hearing = {
             updated_date: new Date(),
-            other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789'
+            other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789',
+            supplier: VideoSupplier.Kinly
         };
 
         fixture.detectChanges();

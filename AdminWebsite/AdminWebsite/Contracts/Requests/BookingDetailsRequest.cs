@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using AdminWebsite.Contracts.Enums;
 
 namespace AdminWebsite.Contracts.Requests;
 
@@ -23,6 +24,7 @@ public class BookingDetailsRequest
     public bool AudioRecordingRequired { get; set; }
     [DefaultValue(false)]
     public bool IsMultiDayHearing { get; set; }
+    public VideoSupplier ConferenceSupplier { get; set; }
     public List<EndpointRequest> Endpoints { get; set; }
     public List<LinkedParticipantRequest> LinkedParticipants { get; set; }
 }

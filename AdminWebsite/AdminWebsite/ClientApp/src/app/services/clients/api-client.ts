@@ -5322,6 +5322,11 @@ export enum LinkedParticipantType {
     Interpreter = 'Interpreter'
 }
 
+export enum VideoSupplier {
+    Kinly = 'Kinly',
+    Vodafone = 'Vodafone'
+}
+
 /** Create a new Justice User */
 export class AddNewJusticeUserRequest implements IAddNewJusticeUserRequest {
     /** The user's first name */
@@ -5457,6 +5462,7 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
     created_by?: string | undefined;
     audio_recording_required?: boolean;
     is_multi_day_hearing?: boolean;
+    conference_supplier?: VideoSupplier;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
 
@@ -5499,6 +5505,7 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
             this.created_by = _data['created_by'];
             this.audio_recording_required = _data['audio_recording_required'];
             this.is_multi_day_hearing = _data['is_multi_day_hearing'] !== undefined ? _data['is_multi_day_hearing'] : false;
+            this.conference_supplier = _data['conference_supplier'];
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointRequest.fromJS(item));
@@ -5544,6 +5551,7 @@ export class BookingDetailsRequest implements IBookingDetailsRequest {
         data['created_by'] = this.created_by;
         data['audio_recording_required'] = this.audio_recording_required;
         data['is_multi_day_hearing'] = this.is_multi_day_hearing;
+        data['conference_supplier'] = this.conference_supplier;
         if (Array.isArray(this.endpoints)) {
             data['endpoints'] = [];
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
@@ -5573,6 +5581,7 @@ export interface IBookingDetailsRequest {
     created_by?: string | undefined;
     audio_recording_required?: boolean;
     is_multi_day_hearing?: boolean;
+    conference_supplier?: VideoSupplier;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
 }
@@ -6497,6 +6506,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     group_id?: string | undefined;
     court_room_account?: string | undefined;
     allocated_to?: string | undefined;
+    conference_supplier?: VideoSupplier;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -6531,6 +6541,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.group_id = _data['group_id'];
             this.court_room_account = _data['court_room_account'];
             this.allocated_to = _data['allocated_to'];
+            this.conference_supplier = _data['conference_supplier'];
         }
     }
 
@@ -6566,6 +6577,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data['group_id'] = this.group_id;
         data['court_room_account'] = this.court_room_account;
         data['allocated_to'] = this.allocated_to;
+        data['conference_supplier'] = this.conference_supplier;
         return data;
     }
 }
@@ -6594,6 +6606,7 @@ export interface IBookingsHearingResponse {
     group_id?: string | undefined;
     court_room_account?: string | undefined;
     allocated_to?: string | undefined;
+    conference_supplier?: VideoSupplier;
 }
 
 export class BookingsResponse implements IBookingsResponse {
@@ -6944,6 +6957,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     /** Scheduled datetime of the last day of the multi day hearing, if applicable */
     multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
     hearings_in_group?: HearingDetailsResponse[] | undefined;
+    conference_supplier?: VideoSupplier;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -7005,6 +7019,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 this.hearings_in_group = [] as any;
                 for (let item of _data['hearings_in_group']) this.hearings_in_group!.push(HearingDetailsResponse.fromJS(item));
             }
+            this.conference_supplier = _data['conference_supplier'];
         }
     }
 
@@ -7065,6 +7080,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             data['hearings_in_group'] = [];
             for (let item of this.hearings_in_group) data['hearings_in_group'].push(item.toJSON());
         }
+        data['conference_supplier'] = this.conference_supplier;
         return data;
     }
 }
@@ -7106,6 +7122,7 @@ export interface IHearingDetailsResponse {
     /** Scheduled datetime of the last day of the multi day hearing, if applicable */
     multi_day_hearing_last_day_scheduled_date_time?: Date | undefined;
     hearings_in_group?: HearingDetailsResponse[] | undefined;
+    conference_supplier?: VideoSupplier;
 }
 
 export class HearingRoleResponse implements IHearingRoleResponse {

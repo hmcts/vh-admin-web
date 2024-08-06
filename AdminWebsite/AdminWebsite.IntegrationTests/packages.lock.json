@@ -113,8 +113,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "2.1.6",
-        "contentHash": "UtsbVvREEVFOlJJI8JdLJ2WmeO3NrrhRdqV/ZYi4b/HJx3KOI8oHXXKFBDGhFf1PTu0hr9Z5lTGvqD0xfC7JJg==",
+        "resolved": "2.2.6",
+        "contentHash": "Xb9lRlLo13cBqekpIekQfeiSRlAk5Fl9JqS5Rp5WKcGFBcHG7YV5S1HMSCw63L/EDHmlpfqpZCYv2osxCdHi1Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1197,8 +1197,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "1.52.1",
-        "contentHash": "6bAI+nGpBq8ed3AB3ycG2Jnd/UUcIzT2cYG3pEX37IeU+OKGDfB3s/fmzJ40Dm+/LEYKL5w15dTxSn9q0k5CIw==",
+        "resolved": "1.52.4",
+        "contentHash": "xp9gHhPZwSxFHVBHIYVwyrOKXxkSFBT6PYG093PHI+w043S2a0JP2TFqoGB1h9i2+M9ie4eOc3GN8ujR6iA0gQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2162,8 +2162,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.49.2",
-        "contentHash": "TFEUJyqJfSpu4iDsK9wZSV+GsHvMSLalWZNRg3AMJL3ID2YEMLxnwIT7G9HmKpw0qN67odlhFBydVMFI9S8kWQ==",
+        "resolved": "1.49.6",
+        "contentHash": "XgPR6E9T0nk4BzEOWXr7rYJHxhLkgnrxwqcW92hdlfOCwLCNrA178LWHt50bzLxl0jt9iiVSAWEbPTFtL3x2yg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -2182,8 +2182,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.51.4",
-        "contentHash": "tgm/MUTZRe6K+Ckfz4UAA855aKlOhCLLD/pDgEwvCSclgS9imJhZjfh6we9cBPfFITpPydbJw63eKs8azKoNig==",
+        "resolved": "2.2.3",
+        "contentHash": "c2iPHXag1QXGumuftWvmQGSTeXrQJf3t8irkoNnjC8uL8mG485vlni26jPQjABqhtuDefc9DROLwjzymwP3+/A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2193,7 +2193,7 @@
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[8.0.1, )",
-          "BookingsApi.Client": "[2.1.6, )",
+          "BookingsApi.Client": "[2.2.6, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "LaunchDarkly.ServerSdk": "[8.5.0, )",
           "MicroElements.Swashbuckle.FluentValidation": "[6.0.0, )",
@@ -2208,16 +2208,16 @@
           "Microsoft.OpenApi": "[1.6.14, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.20.1, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",
-          "NotificationApi.Client": "[1.52.1, )",
+          "NotificationApi.Client": "[1.52.4, )",
           "Polly": "[8.4.0, )",
           "Swashbuckle.AspNetCore": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Annotations": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
-          "UserApi.Client": "[1.49.2, )",
+          "UserApi.Client": "[1.49.6, )",
           "VH.Core.Configuration": "[0.1.13, )",
-          "VideoApi.Client": "[1.51.4, )"
+          "VideoApi.Client": "[2.2.3, )"
         }
       },
       "adminwebsite.testing.common": {
