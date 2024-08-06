@@ -83,7 +83,7 @@ export class InterpreterFormComponent implements OnInit, OnDestroy, OnChanges {
             return;
         }
         this.displayForm = interpreterSelected.interpreterRequired;
-        this.form.reset({
+        this.form.setValue({
             signLanguageCode: interpreterSelected.signLanguageCode,
             spokenLanguageCode: interpreterSelected.spokenLanguageCode
         });
