@@ -10,6 +10,8 @@ using BookingsApi.Contract.V1.Enums;
 using BookingsApi.Contract.V1.Responses;
 using Autofac.Extras.Moq;
 using VideoApi.Contract.Responses;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -50,10 +52,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _guid = Guid.NewGuid();
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
+                Cases = new List<CaseResponse>
                 {
-                    new BookingsApi.Contract.V1.Responses.CaseResponse()
-                        {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
+                    new CaseResponse {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
                 CaseTypeName = "Generic",
                 CreatedBy = "CaseAdministrator",
@@ -63,30 +64,33 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 OtherInformation = "Any other information about the hearing",
-                Participants = new List<ParticipantResponse>()
-                {
-                    new ParticipantResponse()
+                Participants =
+                [
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net",
                         DisplayName = "Judge Lumb", FirstName = "Judge", HearingRoleName = "Judge",
                         LastName = "Lumb", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Judge", Username = "Judge.Lumb@hmcts.net"
                     },
-                    new ParticipantResponse()
+
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Applicant", ContactEmail = "test.Applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hmcts.net"
                     },
-                    new ParticipantResponse()
+
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
                         LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Respondent@hmcts.net"
-                    },
-                },
+                    }
+
+                ],
                 ScheduledDateTime = DateTime.UtcNow.AddDays(10),
                 ScheduledDuration = 60,
                 Status = BookingStatus.Booked,

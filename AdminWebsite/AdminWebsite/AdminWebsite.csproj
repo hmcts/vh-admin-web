@@ -30,7 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="8.0.1" />
-    <PackageReference Include="BookingsApi.Client" Version="2.2.6-pr-0880-0005" />
+    <PackageReference Include="BookingsApi.Client" Version="2.2.6" />
     <PackageReference Include="LaunchDarkly.ServerSdk" Version="8.5.0" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.61.0" />
@@ -44,7 +44,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.4" />
     <PackageReference Include="Microsoft.Graph" Version="5.52.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.14" />
-    <PackageReference Include="NotificationApi.Client" Version="1.52.1" />
+    <PackageReference Include="NotificationApi.Client" Version="1.52.4" />
     <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
     <PackageReference Include="Polly" Version="8.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
@@ -56,9 +56,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="TimeZoneConverter" Version="6.1.0" />
-    <PackageReference Include="UserApi.Client" Version="1.49.2" />
+    <PackageReference Include="UserApi.Client" Version="1.49.6" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.13" />
-    <PackageReference Include="VideoApi.Client" Version="1.51.4" />
+    <PackageReference Include="VideoApi.Client" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>

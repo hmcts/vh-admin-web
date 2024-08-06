@@ -1,19 +1,15 @@
-using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
-using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helper;
 using Autofac.Extras.Moq;
 using BookingsApi.Client;
-using BookingsApi.Contract.V1.Requests;
-using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VideoApi.Contract.Responses;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -43,10 +39,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new HearingDetailsResponse
                 {
-                    Participants = new List<ParticipantResponse>
-                    {
-                        new ParticipantResponse {HearingRoleName = "Judge"}
-                    }
+                    Participants = [new ParticipantResponse { HearingRoleName = "Judge" }]
                 });
             _mocker.Mock<IFeatureToggles>().Setup(e => e.BookAndConfirmToggle()).Returns(true);
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
