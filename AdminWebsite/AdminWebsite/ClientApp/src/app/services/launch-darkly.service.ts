@@ -9,7 +9,9 @@ export const FeatureFlags = {
     audioSearch: 'hide-audio-search-tile',
     dom1Integration: 'dom1',
     multiDayBookingEnhancements: 'multi-day-booking-enhancements',
-    interpreterEnhancements: 'interpreter-enhancements'
+    interpreterEnhancements: 'interpreter-enhancements',
+    vodafone: 'vodafone',
+    supplierOverrides: 'supported-override-supplier'
 };
 
 @Injectable({

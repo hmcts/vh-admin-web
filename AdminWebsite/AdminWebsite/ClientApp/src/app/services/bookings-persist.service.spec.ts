@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { VideoSupplier } from './clients/api-client';
 
 function MockGroupedBookings(hearings: BookingsDetailsModel[]): BookingsListModel {
     const model = new BookingsListModel(new Date());
@@ -81,7 +82,8 @@ describe('BookingsPersistService', () => {
         it('should not update if there are no loaded hearings', () => {
             const model: HearingModel = {
                 updated_date: new Date(),
-                audio_recording_required: true
+                audio_recording_required: true,
+                supplier: VideoSupplier.Kinly
             };
             service.updateBooking(model);
             expect(service.bookingList.length).toBe(0);

@@ -60,4 +60,9 @@ public class HearingDetailsResponse
     /// </summary>
     public DateTime? MultiDayHearingLastDayScheduledDateTime { get; set; }
     public List<HearingDetailsResponse> HearingsInGroup { get; set; }
+    
+    /// <summary>
+    /// The supplier with whom the conference has been booked with
+    /// </summary>
+    public VideoSupplier ConferenceSupplier { get; set; }
 }

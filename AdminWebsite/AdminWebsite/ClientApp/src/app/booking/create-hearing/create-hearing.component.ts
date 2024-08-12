@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse, VideoSupplier } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -13,8 +13,9 @@ import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { Logger } from 'src/app/services/logger';
 import { FeatureFlags, LaunchDarklyService } from '../../services/launch-darkly.service';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { ServiceIds } from '../models/supplier-override';
 
 @Component({
     selector: 'app-create-hearing',
@@ -34,6 +35,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     hasSaved: boolean;
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
+
+    refDataEnabled: boolean;
+    vodafoneToggle = false;
+    supportedSupplierOverrides: ServiceIds = { serviceIds: [] };
+    displayOverrideSupplier = false;
+    supplierOptions = VideoSupplier;
 
     private multiDayEnhancementsEnabled: boolean;
 
@@ -58,6 +65,24 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             .subscribe(flag => {
                 this.multiDayEnhancementsEnabled = flag;
             });
+
+        const vodafoneToggle$ = this.launchDarklyService.getFlag<boolean>(FeatureFlags.vodafone);
+        const supplierOverridesToggle$ = this.launchDarklyService.getFlag<ServiceIds>(FeatureFlags.supplierOverrides, { serviceIds: [] });
+
+        combineLatest([vodafoneToggle$, supplierOverridesToggle$]).subscribe(([vodafoneToggle, supplierOverrides]) => {
+            this.vodafoneToggle = vodafoneToggle;
+            this.supportedSupplierOverrides = supplierOverrides;
+            if (this.form && !this.form.contains('supplier')) {
+                this.form.addControl('supplier', this.fb.control(this.hearing?.supplier ?? this.retrieveDefaultSupplier()));
+                if (this.isExistingHearingOrParticipantsAdded()) {
+                    this.form.get('supplier').disable();
+                }
+            } else if (this.form && this.form.contains('supplier')) {
+                this.form.removeControl('supplier');
+                this.hearing.supplier = this.retrieveDefaultSupplier();
+            }
+        });
+
         this.failedSubmission = false;
         this.checkForExistingRequestOrCreateNew();
         this.initForm();
@@ -123,6 +148,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 this.form.get(k).disable();
             });
         }
+    }
+
+    retrieveDefaultSupplier(): VideoSupplier {
+        return this.vodafoneToggle ? VideoSupplier.Vodafone : VideoSupplier.Kinly;
     }
 
     get caseName() {

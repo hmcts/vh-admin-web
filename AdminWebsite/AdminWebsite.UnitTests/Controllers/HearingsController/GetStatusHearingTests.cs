@@ -3,7 +3,6 @@ using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
-using Autofac.Extras.Moq;
 using BookingsApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
@@ -14,6 +13,8 @@ using BookingsApi.Contract.V2.Enums;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using BookingsApi.Contract.V2.Responses;
+using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -27,14 +28,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private HearingDetailsResponseV2 _vhExistingHearingV2;
         private Mock<IFeatureToggles> _featureFlag;
         private Guid _guid;
-        
-        private AutoMock _mocker;
 
         [SetUp]
         public void Setup()
         {
-            
-            _mocker = AutoMock.GetLoose();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _conferenceDetailsServiceMock = new Mock<IConferenceDetailsService>();
             _hearingServiceMock = new Mock<IHearingsService>();
@@ -55,9 +52,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _guid = Guid.NewGuid();
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsApi.Contract.V1.Responses.CaseResponse>()
+                Cases = new List<CaseResponse>
                 {
-                    new BookingsApi.Contract.V1.Responses.CaseResponse
+                    new CaseResponse
                         {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
                 CaseTypeName = "Generic",
@@ -68,29 +65,33 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 OtherInformation = "Any other information about the hearing",
-                Participants = new List<ParticipantResponse>
-                {
-                    new()
+                Participants =
+                [
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net", DisplayName = "Judge Lumb",
                         FirstName = "Judge", HearingRoleName = "Judge", LastName = "Lumb", MiddleNames = string.Empty,
-                        TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hearings.net", UserRoleName = "Judge"
+                        TelephoneNumber = string.Empty, Title = "Judge", Username = "Judge.Lumb@hearings.net",
+                        UserRoleName = "Judge"
                     },
-                    new()
+
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Applicant", ContactEmail = "test.applicant@hmcts.net",
                         DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
                         LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hearings.net", UserRoleName = "Individual"
                     },
-                    new()
+
+                    new ParticipantResponse
                     {
                         CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
                         DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
                         LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Respondent@hearings.net", UserRoleName = "Represntative"
-                    },
-                },
+                    }
+
+                ],
                 ScheduledDateTime = DateTime.UtcNow.AddDays(10),
                 ScheduledDuration = 60,
                 Status = BookingStatus.Booked,

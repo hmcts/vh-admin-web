@@ -3,6 +3,7 @@ import { ParticipantModel } from './participant.model';
 import { EndpointModel } from './endpoint.model';
 import { LinkedParticipantModel } from './linked-participant.model';
 import { JudicialMemberDto } from 'src/app/booking/judicial-office-holders/models/add-judicial-member.model';
+import { VideoSupplier } from 'src/app/services/clients/api-client';
 
 export class HearingModel {
     constructor() {
@@ -50,4 +51,5 @@ export class HearingModel {
     multiDayHearingLastDayScheduledDateTime?: Date;
     hearingsInGroup?: HearingModel[];
     originalScheduledDateTime?: Date;
+    supplier: VideoSupplier;
 }

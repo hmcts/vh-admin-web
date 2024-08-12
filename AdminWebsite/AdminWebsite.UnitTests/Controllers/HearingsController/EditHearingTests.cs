@@ -19,7 +19,6 @@ using BookingsApi.Contract.V1.Responses;
 using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Requests;
 using BookingsApi.Contract.V2.Responses;
-using NotificationApi.Client;
 using VideoApi.Contract.Consts;
 using VideoApi.Contract.Responses;
 using BookingStatus = BookingsApi.Contract.V1.Enums.BookingStatus;
@@ -28,6 +27,7 @@ using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
 using JudiciaryParticipantRequest = AdminWebsite.Contracts.Requests.JudiciaryParticipantRequest;
 using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
 using LinkedParticipantType = BookingsApi.Contract.V1.Enums.LinkedParticipantType;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 using RoleNames = AdminWebsite.Contracts.Enums.RoleNames;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -121,16 +121,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Id = _validId,
                 GroupId = _validId,
-                Participants = new List<ParticipantResponse>
-                {
+                Participants = [
                     new ParticipantResponse
                     {
                         Id = Guid.NewGuid(),
                         UserRoleName = "Individual",
                         ContactEmail = "old@domain.net",
                         Username = "old@domain.net"
-                    }
-                },
+                    }],
                 Cases = cases,
                 CaseTypeName = "Unit Test",
                 ScheduledDateTime = DateTime.UtcNow.AddHours(3),
