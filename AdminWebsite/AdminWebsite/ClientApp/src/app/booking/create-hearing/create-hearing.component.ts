@@ -30,13 +30,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     availableHearingTypes: HearingTypeResponse[];
     availableCaseTypes: string[];
     selectedCaseType: string;
-    selectedHearingType: string;
     filteredHearingTypes: HearingTypeResponse[] = [];
     hasSaved: boolean;
     isExistingHearing: boolean;
     destroyed$ = new Subject<void>();
 
-    refDataEnabled: boolean;
     vodafoneToggle = false;
     supportedSupplierOverrides: ServiceIds = { serviceIds: [] };
     displayOverrideSupplier = false;
@@ -111,7 +109,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.selectedCaseType = Constants.PleaseSelect;
         }
 
-        if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
+        if (!!this.hearing.case_type) {
             this.selectedCaseType = this.hearing.case_type;
             this.logger.debug(`${this.loggerPrefix} Updating selected case type to current hearing case type.`, {
                 hearing: this.hearing.hearing_id
@@ -300,7 +298,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.logger.debug(`${this.loggerPrefix} Updating selected case type`, {
                 caseType: this.selectedCaseType
             });
+            const serviceId = hearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+            if (this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
+                this.displayOverrideSupplier = true;
+            }
             this.filterHearingTypes();
+            this.displaySupplierOverrideIfSupported();
         });
 
         this.availableHearingTypes = hearingTypes;
@@ -316,6 +319,20 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             this.logger.debug(`${this.loggerPrefix} Only one available case type. Setting case type`);
         } else {
             this.availableCaseTypes.unshift(Constants.PleaseSelect);
+        }
+        this.displaySupplierOverrideIfSupported();
+    }
+
+    private displaySupplierOverrideIfSupported() {
+        if (!this.selectedCaseType) {
+            return;
+        }
+        const serviceId = this.availableHearingTypes.find(h => h.group === this.selectedCaseType)?.service_id;
+        if (serviceId && this.supportedSupplierOverrides.serviceIds.includes(serviceId)) {
+            this.displayOverrideSupplier = true;
+        } else {
+            this.displayOverrideSupplier = false;
+            this.form.get('supplier')?.setValue(this.retrieveDefaultSupplier(), { emitEvent: false });
         }
     }
 

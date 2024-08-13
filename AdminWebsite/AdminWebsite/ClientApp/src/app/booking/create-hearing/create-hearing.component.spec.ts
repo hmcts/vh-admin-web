@@ -146,37 +146,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         expect(caseTypeControl.valid).toBeTruthy();
     });
 
-    it('should validate hearing type', () => {
-        expect(hearingTypeControl.valid).toBeTruthy();
-        hearingTypeControl.setValue(2);
-        expect(hearingTypeControl.valid).toBeTruthy();
-    });
-
-    it('should set hearing type to please select when case type changes', () => {
-        const caseTypeValue = 'Generic';
-        caseTypeControl.setValue(caseTypeValue);
-        expect(component.selectedCaseType).toBe(caseTypeValue);
-        expect(caseTypeControl.valid).toBeTruthy();
-        expect(component.hearingType.value).toBe(null);
-        expect(hearingTypeControl.valid).toBeTruthy();
-    });
-
-    it('should update hearing request when form is valid', () => {
-        expect(component.form.valid).toBeFalsy();
-
-        caseNameControl.setValue('Captain America vs The World');
-        caseNumberControl.setValue('12345');
-        caseTypeControl.setValue('Tax');
-        hearingTypeControl.setValue(2);
-
-        expect(component.form.valid).toBeTruthy();
-        component.saveHearingDetails();
-        expect(component.hearing.hearing_type_id).toBe(2);
-        const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === component.hearing.hearing_type_id).name;
-        expect(component.hearing.hearing_type_name).toBe(hearingTypeName);
-        expect(component.hearing.cases.length).toBe(1);
-    });
-
     describe('supplier overrides', () => {
         beforeEach(() => {
             launchDarklyServiceSpy.getFlag.withArgs(FeatureFlags.vodafone).and.returnValue(of(true));
