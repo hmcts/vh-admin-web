@@ -14,9 +14,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[1.52.2, )",
-        "resolved": "1.52.2",
-        "contentHash": "TUHNSqHwu8nxw6rWN1LNCrpi8IZtGVUuRhrFtDEeF7ePjtrEMgNSxRaqw/+CXaAhRI5yTLmL60fGoYJGaclEeg==",
+        "requested": "[2.1.1-beta0001, )",
+        "resolved": "2.1.1-beta0001",
+        "contentHash": "tBhNR/TQ9CXp17VKONm4PGcZjTyWGWZ1RhR19JKISmXeL1FRZZi4iuNNwT1MiWIKCP/JrNmMI5z8WEzdiT2LYg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -154,9 +154,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.2, )",
-        "resolved": "1.44.2",
-        "contentHash": "zZ/reiiXi7niCDE+SObUbeGnq5ON394jHg4YCZX2ZNOM1tz0wnIendQOPOSl4IMuHsLYr/xv6rOB0VqnFdjH/A==",
+        "requested": "[1.52.1-beta0003, )",
+        "resolved": "1.52.1-beta0003",
+        "contentHash": "FHuGWwGrP8E1G3h/m962r7DJX+/HnBYaSrF5cJUmu9wOjRMEn2arxWLv/EoA7k7dAHrTfiZH2HyYuhCLXRMgWw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.1"
@@ -231,9 +231,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.44.2, )",
-        "resolved": "1.44.2",
-        "contentHash": "sL9YCnF9D1MuXULRgMkz8pbUfuevzX78BLMtIbJcRLgOsv0X+FCIEImQa6ytPmqjQhl5PpuP/s72uC9bSzdxIA==",
+        "requested": "[1.44.2-beta0002, )",
+        "resolved": "1.44.2-beta0002",
+        "contentHash": "rdXpMOmGv/dUycj7LjibCsJLVW2Hjuy5GoMWCRGME3oI3o2qVrlqgNE4JT4ChbhbgDR0rU2hL5aN23ymn5vvuA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -253,9 +253,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.49.4, )",
-        "resolved": "1.49.4",
-        "contentHash": "THMXshzCq8bHCsoU+p79Vmoyh0XoIfFkd13VFve8dzZC/wgE9Z6XmNSRt7SahDgkIlAhOucQVv2TE8avp869MQ==",
+        "requested": "[1.51.2-beta0002, )",
+        "resolved": "1.51.2-beta0002",
+        "contentHash": "oCaTxAfh5fvHPOweKflYOfARFd+WyYyucRCNXiLMucYDQkixFEAazuhdcMQq8xFtyEnaSFD0yWvXkwOJRV6ZUA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
