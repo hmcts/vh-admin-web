@@ -30,11 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="8.0.1" />
-<<<<<<< HEAD
-    <PackageReference Include="BookingsApi.Client" Version="2.2.1-pr-0874-0003" />
-=======
-    <PackageReference Include="BookingsApi.Client" Version="2.2.6" />
->>>>>>> master
+    <PackageReference Include="BookingsApi.Client" Version="2.2.10-pr-0883-0005" />
     <PackageReference Include="LaunchDarkly.ServerSdk" Version="8.5.0" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.61.0" />
@@ -63,7 +59,6 @@
     <PackageReference Include="UserApi.Client" Version="1.49.6" />
     <PackageReference Include="VH.Core.Configuration" Version="0.1.13" />
     <PackageReference Include="VideoApi.Client" Version="2.2.3" />
-    <PackageReference Include="BookingsApi.Client" Version="2.2.1-pr-0874-0003" />
   </ItemGroup>
 
   <ItemGroup>

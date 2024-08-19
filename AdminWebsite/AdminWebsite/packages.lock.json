@@ -14,9 +14,9 @@
       },
       "BookingsApi.Client": {
         "type": "Direct",
-        "requested": "[2.2.1-pr-0874-0003, )",
-        "resolved": "2.2.1-pr-0874-0003",
-        "contentHash": "TJasTjgixKWsiYLw3B+gxJlmkJExkKiw892TNadXWF09Nn8CdM6g1Aun6mUp6kBelbYOZ5QajrOkjS3BWlbBfA==",
+        "requested": "[2.2.10-pr-0883-0005, )",
+        "resolved": "2.2.10-pr-0883-0005",
+        "contentHash": "9arcMbkMkUnm/EFP0CQxB6Z79dpK6td+nCIGXrCEqtPhVeTVPlWLA/Wrp2dz894KCblC5WspwtFtosYP7Jcb7Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -260,12 +260,6 @@
         "requested": "[2.2.3, )",
         "resolved": "2.2.3",
         "contentHash": "c2iPHXag1QXGumuftWvmQGSTeXrQJf3t8irkoNnjC8uL8mG485vlni26jPQjABqhtuDefc9DROLwjzymwP3+/A==",
-        "requested": "[2.2.6, )",
-        "resolved": "2.2.6",
-        "contentHash": "Xb9lRlLo13cBqekpIekQfeiSRlAk5Fl9JqS5Rp5WKcGFBcHG7YV5S1HMSCw63L/EDHmlpfqpZCYv2osxCdHi1Q==",
-        "requested": "[2.2.1-pr-0874-0003, )",
-        "resolved": "2.2.1-pr-0874-0003",
-        "contentHash": "TJasTjgixKWsiYLw3B+gxJlmkJExkKiw892TNadXWF09Nn8CdM6g1Aun6mUp6kBelbYOZ5QajrOkjS3BWlbBfA==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"

@@ -71,7 +71,7 @@ public static class BookingDetailsRequestMapper
             IsMultiDayHearing = bookingDetails.IsMultiDayHearing,
             Endpoints = bookingDetails.Endpoints?.Select(e => e.MapToV2()).ToList(),
             LinkedParticipants = bookingDetails.LinkedParticipants?.Select(lp => lp.MapToV2()).ToList(),
-             BookingSupplier = (BookingSupplier)bookingDetails.ConferenceSupplier
+            BookingSupplier = (BookingSupplier)bookingDetails.ConferenceSupplier
         };
     }
 }

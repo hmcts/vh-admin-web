@@ -109,8 +109,8 @@
       },
       "BookingsApi.Client": {
         "type": "Transitive",
-        "resolved": "2.2.1-pr-0874-0003",
-        "contentHash": "TJasTjgixKWsiYLw3B+gxJlmkJExkKiw892TNadXWF09Nn8CdM6g1Aun6mUp6kBelbYOZ5QajrOkjS3BWlbBfA==",
+        "resolved": "2.2.10-pr-0883-0005",
+        "contentHash": "9arcMbkMkUnm/EFP0CQxB6Z79dpK6td+nCIGXrCEqtPhVeTVPlWLA/Wrp2dz894KCblC5WspwtFtosYP7Jcb7Q==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -1096,8 +1096,8 @@
       },
       "NotificationApi.Client": {
         "type": "Transitive",
-        "resolved": "1.52.1",
-        "contentHash": "6bAI+nGpBq8ed3AB3ycG2Jnd/UUcIzT2cYG3pEX37IeU+OKGDfB3s/fmzJ40Dm+/LEYKL5w15dTxSn9q0k5CIw==",
+        "resolved": "1.52.4",
+        "contentHash": "xp9gHhPZwSxFHVBHIYVwyrOKXxkSFBT6PYG093PHI+w043S2a0JP2TFqoGB1h9i2+M9ie4eOc3GN8ujR6iA0gQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2193,8 +2193,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.49.2",
-        "contentHash": "TFEUJyqJfSpu4iDsK9wZSV+GsHvMSLalWZNRg3AMJL3ID2YEMLxnwIT7G9HmKpw0qN67odlhFBydVMFI9S8kWQ==",
+        "resolved": "1.49.6",
+        "contentHash": "XgPR6E9T0nk4BzEOWXr7rYJHxhLkgnrxwqcW92hdlfOCwLCNrA178LWHt50bzLxl0jt9iiVSAWEbPTFtL3x2yg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5"
         }
@@ -2213,8 +2213,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.51.4",
-        "contentHash": "tgm/MUTZRe6K+Ckfz4UAA855aKlOhCLLD/pDgEwvCSclgS9imJhZjfh6we9cBPfFITpPydbJw63eKs8azKoNig==",
+        "resolved": "2.2.3",
+        "contentHash": "c2iPHXag1QXGumuftWvmQGSTeXrQJf3t8irkoNnjC8uL8mG485vlni26jPQjABqhtuDefc9DROLwjzymwP3+/A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2224,7 +2224,7 @@
         "type": "Project",
         "dependencies": {
           "AspNetCore.HealthChecks.Uris": "[8.0.1, )",
-          "BookingsApi.Client": "[2.2.1-pr-0874-0003, )",
+          "BookingsApi.Client": "[2.2.10-pr-0883-0005, )",
           "FluentValidation.AspNetCore": "[11.3.0, )",
           "LaunchDarkly.ServerSdk": "[8.5.0, )",
           "MicroElements.Swashbuckle.FluentValidation": "[6.0.0, )",
