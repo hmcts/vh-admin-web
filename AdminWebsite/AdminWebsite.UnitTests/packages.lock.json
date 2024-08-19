@@ -2239,16 +2239,16 @@
           "Microsoft.OpenApi": "[1.6.14, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.20.1, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",
-          "NotificationApi.Client": "[1.52.1, )",
+          "NotificationApi.Client": "[1.52.4, )",
           "Polly": "[8.4.0, )",
           "Swashbuckle.AspNetCore": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Annotations": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
-          "UserApi.Client": "[1.49.2, )",
+          "UserApi.Client": "[1.49.6, )",
           "VH.Core.Configuration": "[0.1.13, )",
-          "VideoApi.Client": "[1.51.4, )"
+          "VideoApi.Client": "[2.2.3, )"
         }
       },
       "adminwebsite.testing.common": {

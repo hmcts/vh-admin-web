@@ -2,6 +2,7 @@ using System.Linq;
 using BookingsApi.Contract.V1.Requests;
 using BookingsApi.Contract.V1.Requests.Enums;
 using BookingsApi.Contract.V1.Responses;
+using BookingsApi.Contract.V2.Enums;
 using BookingsApi.Contract.V2.Responses;
 using FizzWare.NBuilder;
 
@@ -32,6 +33,13 @@ namespace AdminWebsite.UnitTests.Helper
 
             hearingDetailsResponse.Endpoints = endPoints;
 
+            return hearingDetailsResponse;
+        }
+
+        public static HearingDetailsResponseV2 WithSupplier(this HearingDetailsResponseV2 hearingDetailsResponse,
+            BookingSupplier supplier)
+        {
+            hearingDetailsResponse.BookingSupplier = supplier;
             return hearingDetailsResponse;
         }
 

@@ -10,6 +10,7 @@ using FizzWare.NBuilder;
 using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
 using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {

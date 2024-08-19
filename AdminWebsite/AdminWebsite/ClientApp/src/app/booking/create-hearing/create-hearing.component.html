@@ -90,6 +90,14 @@
     </div>
   </div>
 
+  <div class="govuk-form-group" *ngIf="displayOverrideSupplier">
+    <label class="govuk-label govuk-!-width-one-half" for="conferenceSupplier"> Conference Supplier</label>
+    <select id="conferenceSupplier" class="govuk-select govuk-!-width-one-half" formControlName="supplier">
+      <option [value]="supplierOptions.Kinly">Kinly</option>
+      <option [value]="supplierOptions.Vodafone">Vodafone</option>
+    </select>
+  </div>
+
   <div *ngIf="!refDataEnabled" [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
     <!--suppress XmlDuplicatedId -->

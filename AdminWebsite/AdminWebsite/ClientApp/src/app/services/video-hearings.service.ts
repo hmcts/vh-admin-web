@@ -39,6 +39,7 @@ import { LinkedParticipantModel } from '../common/model/linked-participant.model
 import { Constants } from '../common/constants';
 import * as moment from 'moment';
 import { JudicialMemberDto } from '../booking/judicial-office-holders/models/add-judicial-member.model';
+import { map } from 'rxjs/operators';
 import { InterpreterSelectedDto } from '../booking/interpreter-form/interpreter-selected.model';
 
 @Injectable({
@@ -340,6 +341,7 @@ export class VideoHearingsService {
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
         newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
         newHearingRequest.judiciary_participants = this.mapJudicialMemberDtoToJudiciaryParticipantRequest(newRequest.judiciaryParticipants);
+        newHearingRequest.conference_supplier = newRequest.supplier;
 
         return newHearingRequest;
     }
@@ -653,5 +655,9 @@ export class VideoHearingsService {
     isTotalHearingMoreThanThreshold(): boolean {
         const totalHearings = this.modelHearing.hearingsInGroup.length;
         return totalHearings >= this.totalHearingsCountThreshold;
+    }
+
+    isBookingServiceDegraded(): Observable<boolean> {
+        return this.bhClient.getBookingQueueState().pipe(map(response => response.state?.toLowerCase() === 'degraded'));
     }
 }

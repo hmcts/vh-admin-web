@@ -13,9 +13,8 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VideoApi.Contract.Responses;
-using CaseResponse = BookingsApi.Contract.V1.Responses.CaseResponse;
 using EndpointResponse = BookingsApi.Contract.V1.Responses.EndpointResponse;
-using LinkedParticipantResponse = BookingsApi.Contract.V1.Responses.LinkedParticipantResponse;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -117,19 +116,20 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 };
         
-                hearing.Endpoints = new List<EndpointResponse>
-                {
-                    new()
+                hearing.Endpoints =
+                [
+                    new EndpointResponse
                     {
                         Id = Guid.NewGuid(),
                         DisplayName = "Endpoint A"
                     },
-                    new()
+
+                    new EndpointResponse
                     {
                         Id = Guid.NewGuid(),
                         DisplayName = "Endpoint B"
                     }
-                };
+                ];
                 
                 hearing.GroupId = groupId;
                 hearing.ScheduledDateTime = date;

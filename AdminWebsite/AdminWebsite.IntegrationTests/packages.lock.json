@@ -2182,8 +2182,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.51.4",
-        "contentHash": "tgm/MUTZRe6K+Ckfz4UAA855aKlOhCLLD/pDgEwvCSclgS9imJhZjfh6we9cBPfFITpPydbJw63eKs8azKoNig==",
+        "resolved": "2.2.3",
+        "contentHash": "c2iPHXag1QXGumuftWvmQGSTeXrQJf3t8irkoNnjC8uL8mG485vlni26jPQjABqhtuDefc9DROLwjzymwP3+/A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "13.0.3"
@@ -2208,16 +2208,16 @@
           "Microsoft.OpenApi": "[1.6.14, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.20.1, )",
           "NWebsec.AspNetCore.Middleware": "[3.0.0, )",
-          "NotificationApi.Client": "[1.52.1, )",
+          "NotificationApi.Client": "[1.52.4, )",
           "Polly": "[8.4.0, )",
           "Swashbuckle.AspNetCore": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Annotations": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.6.1, )",
           "Swashbuckle.AspNetCore.Swagger": "[6.6.1, )",
           "TimeZoneConverter": "[6.1.0, )",
-          "UserApi.Client": "[1.49.2, )",
+          "UserApi.Client": "[1.49.6, )",
           "VH.Core.Configuration": "[0.1.13, )",
-          "VideoApi.Client": "[1.51.4, )"
+          "VideoApi.Client": "[2.2.3, )"
         }
       },
       "adminwebsite.testing.common": {

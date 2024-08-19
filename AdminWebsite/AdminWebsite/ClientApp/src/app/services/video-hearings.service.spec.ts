@@ -16,7 +16,9 @@ import {
     JudiciaryParticipantResponse,
     EditMultiDayHearingRequest,
     CancelMultiDayHearingRequest,
-    UpdateHearingInGroupRequest
+    UpdateHearingInGroupRequest,
+    AppHealthStatusResponse,
+    VideoSupplier
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -46,7 +48,8 @@ describe('Video hearing service', () => {
             'rebookHearing',
             'getHearingRoles',
             'editMultiDayHearing',
-            'cancelMultiDayHearing'
+            'cancelMultiDayHearing',
+            'getBookingQueueState'
         ]);
         service = new VideoHearingsService(clientApiSpy);
     });
@@ -178,6 +181,7 @@ describe('Video hearing service', () => {
         model.cases = [caseModel];
         model.participants = [];
         model.audio_recording_required = true;
+        model.supplier = VideoSupplier.Vodafone;
         const request = service.mapHearing(model);
 
         expect(request.case_type_name).toBe('Tax');
@@ -190,6 +194,7 @@ describe('Video hearing service', () => {
         expect(request.scheduled_date_time).toEqual(new Date(date));
         expect(request.scheduled_duration).toBe(30);
         expect(request.audio_recording_required).toBe(true);
+        expect(request.conference_supplier).toBe(VideoSupplier.Vodafone);
     });
 
     describe('mapHearingDetailsResponseToHearingModel', () => {
@@ -1130,6 +1135,24 @@ describe('Video hearing service', () => {
 
             // Assert
             expect(result).toBeNull();
+        });
+    });
+
+    describe('isBookingServiceDegraded', () => {
+        it('should return true if booking service is degraded', () => {
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: 'degraded' });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeTrue();
+            });
+        });
+
+        it('should return false if booking service is not degraded', () => {
+            const healthResponse = new AppHealthStatusResponse({ name: 'Bookings API', state: null });
+            clientApiSpy.getBookingQueueState.and.returnValue(of(healthResponse));
+            service.isBookingServiceDegraded().subscribe(result => {
+                expect(result).toBeFalse();
+            });
         });
     });
 });

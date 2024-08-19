@@ -8,6 +8,7 @@ using BookingsApi.Contract.V1.Requests.Enums;
 using Autofac.Extras.Moq;
 using BookingsApi.Contract.V1.Responses;
 using VideoApi.Contract.Responses;
+using ParticipantResponse = BookingsApi.Contract.V1.Responses.ParticipantResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -36,10 +37,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _mocker.Mock<IBookingsApiClient>().Setup(bs => bs.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new HearingDetailsResponse
                 {
-                    Participants = new List<ParticipantResponse>
-                    {
-                        new ParticipantResponse {HearingRoleName = "Judge"}
-                    }
+                    Participants = [new ParticipantResponse { HearingRoleName = "Judge" }]
                 });
             _controller = _mocker.Create<AdminWebsite.Controllers.HearingsController>();
         }
