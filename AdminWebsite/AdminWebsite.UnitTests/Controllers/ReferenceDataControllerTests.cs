@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
@@ -8,6 +9,7 @@ using AdminWebsite.Controllers;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
+using AdminWebsite.Services;
 using BookingsApi.Client;
 using BookingsApi.Contract.Interfaces.Response;
 using BookingsApi.Contract.V1.Enums;
@@ -20,6 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers
     public class ReferenceDataControllerTests
     {
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
+        private Mock<IReferenceDataService> _referenceDataServiceMock;
         private Mock<IUserIdentity> _userIdentityMock;
         private Mock<IFeatureToggles> _featureTogglesMock;
         private ReferenceDataController _controller;
@@ -32,6 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClientMock = _mocker.Mock<IBookingsApiClient>();
             _userIdentityMock = _mocker.Mock<IUserIdentity>();
             _featureTogglesMock = _mocker.Mock<IFeatureToggles>();
+            _referenceDataServiceMock = _mocker.Mock<IReferenceDataService>();
             _controller = _mocker.Create<ReferenceDataController>();
         }
 
@@ -39,7 +43,8 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Should_return_a_list_of_venues()
         {
             var hearingVenues = Builder<HearingVenueResponse>.CreateListOfSize(2).Build().ToList();
-            _bookingsApiClientMock.Setup(x => x.GetHearingVenuesAsync(true)).ReturnsAsync(hearingVenues);
+            _referenceDataServiceMock.Setup(x => x.GetHearingVenuesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(hearingVenues);
 
             var response = _controller.GetCourts();
             var result = (OkObjectResult)response.Result.Result;
@@ -55,8 +60,8 @@ namespace AdminWebsite.UnitTests.Controllers
             var includeDeleted = true;
             _userIdentityMock.Setup(x => x.IsATeamLead())
                 .Returns(true);
-            _bookingsApiClientMock.Setup(x =>
-                    x.GetCaseTypesAsync(includeDeleted))
+            _referenceDataServiceMock.Setup(x =>
+                    x.GetNonDeletedCaseTypesAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(GetCaseTypesList());
 
             // Act
@@ -65,7 +70,6 @@ namespace AdminWebsite.UnitTests.Controllers
             // Assert
             var okObjectResult = result.Result.Should().BeAssignableTo<OkObjectResult>().Which;
             okObjectResult.Value.Should().BeEquivalentTo(GetHearingTypes());
-            _bookingsApiClientMock.Verify(x => x.GetCaseTypesAsync(includeDeleted), Times.Once);
         }
 
         [TestCase(true)]
@@ -148,7 +152,8 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             var expected = languages.Select(AvailableLanguageResponseMapper.Map).ToList();
-            _bookingsApiClientMock.Setup(x => x.GetAvailableInterpreterLanguagesAsync()).ReturnsAsync(languages);
+            _referenceDataServiceMock.Setup(x => x.GetInterpreterLanguagesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(languages);
             
             
             // Act
