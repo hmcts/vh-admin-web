@@ -25,6 +25,7 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IPublicHolidayRetriever _publicHolidayRetriever;
+        private readonly IReferenceDataService _referenceDataService;
         private readonly IFeatureToggles _featureToggles;
 
         /// <summary>
@@ -33,10 +34,12 @@ namespace AdminWebsite.Controllers
         public ReferenceDataController(
             IBookingsApiClient bookingsApiClient, 
             IPublicHolidayRetriever publicHolidayRetriever,
+            IReferenceDataService referenceDataService,
             IFeatureToggles featureToggles)
         {
             _bookingsApiClient = bookingsApiClient;
             _publicHolidayRetriever = publicHolidayRetriever;
+            _referenceDataService = referenceDataService;
             _featureToggles = featureToggles;
         }
 
@@ -49,7 +52,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes([FromQuery] bool includeDeleted = false)
         {
-            var caseTypes = await _bookingsApiClient.GetCaseTypesAsync(includeDeleted);
+            var caseTypes = await _referenceDataService.GetNonDeletedCaseTypesAsync();
             var result = caseTypes.SelectMany(caseType => caseType.HearingTypes
                 .Select(hearingType => new HearingTypeResponse
             {
@@ -128,7 +131,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingVenueResponse>>> GetCourts()
         {
-            var response = await _bookingsApiClient.GetHearingVenuesAsync(true);
+            var response = await _referenceDataService.GetHearingVenuesAsync();
             return Ok(response);
         }
 
@@ -154,7 +157,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(IList<AvailableLanguageResponse>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IList<AvailableLanguageResponse>>> GetAvailableLanguages()
         {
-            var response = await _bookingsApiClient.GetAvailableInterpreterLanguagesAsync();
+            var response = await _referenceDataService.GetInterpreterLanguagesAsync();
             return Ok(response.OrderBy(x => x.Value).Select(AvailableLanguageResponseMapper.Map).ToList());
         }
     }

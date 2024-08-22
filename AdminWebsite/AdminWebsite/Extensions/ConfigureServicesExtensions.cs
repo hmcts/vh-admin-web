@@ -84,6 +84,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<AzureAdConfiguration>();
             serviceCollection.AddScoped<IAppRoleService, AppRoleService>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
+            serviceCollection.AddScoped<IReferenceDataService, ReferenceDataService>();
             serviceCollection.AddTransient<VhApiLoggingDelegatingHandler>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
