@@ -116,12 +116,7 @@
     <h1 class="govuk-heading-l">{{ title }}</h1>
   </div>
   <div class="govuk-grid-column-one-half">
-    <button
-      *ngIf="!showSearch"
-      id="openSearchPanelButton"
-      class="govuk-button vh-btnpanel vh-right-align"
-      (click)="openSearchPanel()"
-    >
+    <button *ngIf="!showSearch" id="openSearchPanelButton" class="govuk-button vh-btnpanel vh-right-align" (click)="openSearchPanel()">
       <img src="assets/images/searchicon.png" alt="search" class="vh-searchicon" />Search
     </button>
   </div>
