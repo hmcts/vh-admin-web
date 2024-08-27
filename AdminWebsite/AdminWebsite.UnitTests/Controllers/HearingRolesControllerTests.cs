@@ -1,6 +1,7 @@
+using System.Threading;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
-using BookingsApi.Client;
+using AdminWebsite.Services;
 using BookingsApi.Contract.V2.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,14 +9,14 @@ namespace AdminWebsite.UnitTests.Controllers
 {
     public class HearingRolesControllerTests
     {
-        private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<IReferenceDataService> _referenceDataService;
         private HearingRolesController _controller;
 
         [SetUp]
         public void Setup()
         {
-            _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _controller = new HearingRolesController(_bookingsApiClient.Object);
+            _referenceDataService = new Mock<IReferenceDataService>();
+            _controller = new HearingRolesController(_referenceDataService.Object);
         }
         
         [Test]
@@ -44,10 +45,10 @@ namespace AdminWebsite.UnitTests.Controllers
                 }
             };
             
-            _bookingsApiClient.Setup(x => x.GetHearingRolesAsync()).ReturnsAsync(roles);
+            _referenceDataService.Setup(x => x.GetHearingRolesAsync(CancellationToken.None)).ReturnsAsync(roles);
             
             // Act
-            var response = await _controller.GetHearingRoles();
+            var response = await _controller.GetHearingRoles(CancellationToken.None);
 
             // Assert
             var okResult = (OkObjectResult)response;
