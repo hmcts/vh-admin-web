@@ -1,25 +1,19 @@
 ﻿using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
-using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using NotificationApi.Client;
-using BookingsApi.Client;
-using VideoApi.Client;
-using VideoApi.Contract.Responses;
-using Microsoft.Extensions.Options;
-using AdminWebsite.Configuration;
 using Autofac.Extras.Moq;
+using Microsoft.AspNetCore.Mvc;
+using VideoApi.Client;
+using VideoApi.Contract.Requests;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class GetTelephoneConferenceIdTest
     {
-        private AutoMock _mocker;
-        private AdminWebsite.Controllers.HearingsController _controller;
         private ConferenceDetailsResponse _conference;
+        private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
+        private AutoMock _mocker;
 
         [SetUp]
         public void Setup()
@@ -61,7 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void Should_return_not_found_if_no_meeting_room_exists()
         {
             _conference.MeetingRoom.PexipNode = null;
-            _mocker.Mock<IVideoApiClient>().Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>())).ReturnsAsync(_conference);
+            _mocker.Mock<IVideoApiClient>().Setup(x => x.GetConferenceDetailsByHearingRefIdsAsync(It.IsAny<GetConferencesByHearingIdsRequest>())).ReturnsAsync([_conference]);
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (NotFoundResult)result.Result;
             okRequestResult.StatusCode.Should().Be(404);
