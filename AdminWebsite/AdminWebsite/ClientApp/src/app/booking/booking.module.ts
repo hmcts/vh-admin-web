@@ -26,6 +26,7 @@ import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/vide
 import { InterpreterFormComponent } from './interpreter-form/interpreter-form.component';
 import { SpecialMeasuresComponent } from './special-measures/special-measures.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { SpecialMeasuresFormComponent } from './special-measures/special-measures-form.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -47,6 +48,7 @@ export const Components: Type<any>[] = [
     EndpointsComponent,
     MultiDayHearingScheduleComponent,
     SpecialMeasuresComponent,
+    SpecialMeasuresFormComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
     VideoEndpointItemComponent,

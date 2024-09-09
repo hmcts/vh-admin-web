@@ -1,0 +1,59 @@
+<div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': false }">
+  <form [formGroup]="form">
+    <label class="govuk-label" for="special-measures-participant"> Participant / Endpoint </label>
+    <select class="govuk-select" id="special-measures-participant" name="displayName" formControlName="displayName">
+      <option [value]="null">None</option>
+      <option *ngFor="let participant of allParticipants" [value]="participant.displayName">
+        {{ participant.displayName }} {{ participant.contactEmail ? '(' + participant.contactEmail + ')' : '' }}
+      </option>
+    </select>
+  </form>
+</div>
+
+<ng-container *ngIf="availableProtectParticipantFromList.length > 0">
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="protect-participant-from"> Protect from: </label>
+    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+      <ng-select
+        [id]="'protect-participant-from'"
+        [items]="availableProtectParticipantFromList"
+        [multiple]="true"
+        bindLabel="displayName"
+        [closeOnSelect]="false"
+        class="custom"
+        [(ngModel)]="selectedProtectParticipantFromList"
+      >
+        <!-- header template, shown before the list -->
+        <ng-template ng-header-tmp>
+          <div class="govuk-button-group govuk-!-margin-top-3 govuk-!-margin-bottom-0">
+            <button (click)="selectAll()" class="govuk-button" data-module="govuk-button">Select All</button>
+            <button (click)="unselectAll()" class="govuk-button govuk-button--secondary" data-module="govuk-button">Unselect All</button>
+          </div>
+        </ng-template>
+
+        <!-- selected itemtemplate, similar to the default but with the govuk style -->
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ng-value">
+            <span aria-hidden="true" class="ng-value-icon left">×</span>
+            <span class="govuk-body govuk-!-padding-left-1">{{ item.displayName }}</span>
+          </div>
+        </ng-template>
+
+        <!-- availavle item template -->
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <div class="govuk-checkboxes__item">
+            <input
+              class="govuk-checkboxes__input"
+              id="item-{{ index }}"
+              type="checkbox"
+              [checked]="item$.selected"
+              [attr.aria-label]="'Participant display name ' + item.displayName"
+            />
+            <label class="govuk-label govuk-checkboxes__label" for="item-{{ index }}"> {{ item.displayName }} </label>
+          </div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+  <button type="submit" id="confirmSpecialMeasuresBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>
+</ng-container>
