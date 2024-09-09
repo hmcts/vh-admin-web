@@ -29,6 +29,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     participants: ParticipantModel[] = [];
 
     multiDayBookingEnhancementsEnabled: boolean;
+    specialMeasuresEnabled = false;
     videoEndpoints: VideoAccessPointDto[];
     videoEndpointToEdit: VideoAccessPointDto;
 
@@ -55,6 +56,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             .subscribe(result => {
                 this.multiDayBookingEnhancementsEnabled = result;
             });
+        this.featureService
+            .getFlag<boolean>(FeatureFlags.specialMeasures)
+            .pipe(first())
+            .subscribe(result => {
+                this.specialMeasuresEnabled = result;
+            });
         super.ngOnInit();
     }
 
@@ -73,8 +80,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
             this.router.navigate([PageUrls.Summary]);
         } else {
-            this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
-            this.router.navigate([PageUrls.OtherInformation]);
+            if (this.specialMeasuresEnabled) {
+                this.logger.debug(`${this.loggerPrefix} Proceeding to special measures.`);
+                this.router.navigate([PageUrls.SpecialMeasures]);
+            } else {
+                this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
+                this.router.navigate([PageUrls.OtherInformation]);
+            }
         }
     }
 

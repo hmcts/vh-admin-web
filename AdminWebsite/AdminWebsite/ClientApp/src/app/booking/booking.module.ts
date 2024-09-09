@@ -24,6 +24,8 @@ import { VideoEndpointFormComponent } from './endpoints/video-endpoint-form/vide
 import { VideoEndpointListComponent } from './endpoints/video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/video-endpoint-item.component';
 import { InterpreterFormComponent } from './interpreter-form/interpreter-form.component';
+import { SpecialMeasuresComponent } from './special-measures/special-measures.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -44,6 +46,7 @@ export const Components: Type<any>[] = [
     ParticipantItemComponent,
     EndpointsComponent,
     MultiDayHearingScheduleComponent,
+    SpecialMeasuresComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
     VideoEndpointItemComponent,
@@ -51,7 +54,7 @@ export const Components: Type<any>[] = [
 ];
 
 @NgModule({
-    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage],
+    imports: [SharedModule, BookingRoutingModule, PopupModule, NgOptimizedImage, NgSelectModule],
     declarations: Components,
     exports: Components
 })

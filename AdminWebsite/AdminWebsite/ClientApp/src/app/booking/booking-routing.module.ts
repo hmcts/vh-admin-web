@@ -13,6 +13,7 @@ import { AddJudicialOfficeHoldersComponent } from './judicial-office-holders/add
 import { LastMinuteAmendmentsGuard } from '../security/guards/last-minute-amendments.guard';
 import { AdminGuard } from '../security/guards/admin.guard';
 import { AuthGuard } from '../security/guards/auth.guard';
+import { SpecialMeasuresComponent } from './special-measures/special-measures.component';
 
 export const routes: Routes = [
     {
@@ -38,6 +39,11 @@ export const routes: Routes = [
         data: { exceptionToRuleCheck: true }
     },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
+    {
+        path: 'special-measures',
+        component: SpecialMeasuresComponent,
+        canActivate: [AuthGuard, AdminGuard, LastMinuteAmendmentsGuard]
+    },
     { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
     {
         path: 'other-information',
