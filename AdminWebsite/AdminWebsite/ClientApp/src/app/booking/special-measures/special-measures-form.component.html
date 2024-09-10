@@ -1,5 +1,5 @@
-<div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': false }">
-  <form [formGroup]="form">
+<form [formGroup]="form">
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': false }">
     <label class="govuk-label" for="special-measures-participant"> Participant / Endpoint </label>
     <select class="govuk-select" id="special-measures-participant" name="displayName" formControlName="displayName">
       <option [value]="null">None</option>
@@ -7,10 +7,24 @@
         {{ participant.displayName }} {{ participant.contactEmail ? '(' + participant.contactEmail + ')' : '' }}
       </option>
     </select>
-  </form>
-</div>
+  </div>
+  <div *ngIf="displayMeasureType" class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+      <div class="govuk-radios" data-module="govuk-radios">
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="protectFromAll" type="radio" value="All" formControlName="measureType" />
+          <label class="govuk-label govuk-radios__label" for="protectFromAll"> All </label>
+        </div>
+        <div class="govuk-radios__item">
+          <input class="govuk-radios__input" id="protectFromSpecific" type="radio" value="Specific" formControlName="measureType" />
+          <label class="govuk-label govuk-radios__label" for="protectFromSpecific-2"> Specific </label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</form>
 
-<ng-container *ngIf="availableProtectParticipantFromList.length > 0">
+<ng-container *ngIf="displayProtectFromList">
   <div class="govuk-form-group">
     <label class="govuk-label" for="protect-participant-from"> Protect from: </label>
     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
@@ -55,5 +69,6 @@
       </ng-select>
     </div>
   </div>
-  <button type="submit" id="confirmSpecialMeasuresBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>
 </ng-container>
+
+<button type="submit" id="confirmSpecialMeasuresBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>

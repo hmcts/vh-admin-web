@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { Logger } from 'src/app/services/logger';
+import { SelectedSpecialMeasuresuremensDto, SpecialMeasureType } from './special-measures.model';
 
 @Component({
     selector: 'app-special-measures-form',
@@ -11,12 +12,14 @@ import { Logger } from 'src/app/services/logger';
 })
 export class SpecialMeasuresFormComponent {
     @Input() set hearing(hearing: HearingModel) {
-        this.allParticipants = hearing.participants.map(participant => {
-            return {
-                contactEmail: participant.email,
-                displayName: participant.display_name
-            } as GenericParticipantsModel;
-        });
+        this.allParticipants = hearing.participants
+            .filter(x => x.email)
+            .map(participant => {
+                return {
+                    contactEmail: participant.email,
+                    displayName: participant.display_name
+                } as GenericParticipantsModel;
+            });
 
         const mappedEndpoints = hearing.endpoints.map(endpoint => {
             return {
@@ -30,8 +33,10 @@ export class SpecialMeasuresFormComponent {
         this.cdRef.detectChanges();
     }
 
-    @Output() specialMeasurementSaved = new EventEmitter<SpecialMeasuresuremensDto>();
+    @Output() specialMeasurementSaved = new EventEmitter<SelectedSpecialMeasuresuremensDto>();
 
+    displayMeasureType = false;
+    displayProtectFromList = false;
     allParticipants: GenericParticipantsModel[];
     availableProtectParticipantFromList: GenericParticipantsModel[] = [];
     selectedProtectParticipantFromList: GenericParticipantsModel[] = [];
@@ -45,12 +50,14 @@ export class SpecialMeasuresFormComponent {
 
     createForm() {
         this.form = this.formBuilder.group<SpecialMeasuresSelectParticipantForm>({
-            displayName: new FormControl(null)
+            displayName: new FormControl(null),
+            measureType: new FormControl('All')
         });
 
         this.form.controls.displayName.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
             if (value === 'null') {
                 this.availableProtectParticipantFromList = [];
+                this.displayMeasureType = false;
                 return;
             }
             if (value) {
@@ -58,12 +65,26 @@ export class SpecialMeasuresFormComponent {
                 this.onParticipantSelected(particpant);
             }
         });
+
+        this.form.controls.measureType.valueChanges.pipe(takeUntil(this.destroyed$)).subscribe(value => {
+            this.onMeasureTypeSelected(value);
+        });
+    }
+
+    onMeasureTypeSelected(measureType: SpecialMeasureType) {
+        this.displayProtectFromList = measureType === 'Specific';
+        if (measureType === 'Specific') {
+            const particpant = this.allParticipants.find(participant => participant.displayName === this.form.value.displayName);
+            this.initaliseSpecialMeasures(particpant.displayName);
+            this.selectedProtectParticipantFromList = [];
+        }
     }
 
     onParticipantSelected(participant: GenericParticipantsModel): void {
-        this.logger.debug(`${this.loggerPrefix} Participant selected: ${participant.displayName}`);
-        this.initaliseSpecialMeasures(participant.displayName);
-        this.selectedProtectParticipantFromList = [];
+        // this.logger.debug(`${this.loggerPrefix} Participant selected: ${participant.displayName}`);
+        // this.initaliseSpecialMeasures(participant.displayName);
+        // this.selectedProtectParticipantFromList = [];
+        this.displayMeasureType = true;
     }
 
     initaliseSpecialMeasures(displayName: string) {
@@ -81,25 +102,22 @@ export class SpecialMeasuresFormComponent {
     onSave() {
         this.specialMeasurementSaved.emit({
             participantDisplayName: this.form.controls.displayName.value,
-            protectFrom: this.selectedProtectParticipantFromList
+            protectFrom: this.selectedProtectParticipantFromList,
+            measureType: this.form.controls.measureType.value
         });
-        this.form.reset({ displayName: null });
+        this.form.reset({ displayName: null, measureType: 'All' });
+        this.selectedProtectParticipantFromList = [];
+        this.displayMeasureType = false;
+        this.displayProtectFromList = false;
     }
 }
 
 interface SpecialMeasuresSelectParticipantForm {
     displayName: FormControl<string>;
+    measureType: FormControl<SpecialMeasureType>;
 }
 
 interface GenericParticipantsModel {
     displayName: string;
     contactEmail: string;
-}
-
-export interface SpecialMeasuresuremensDto {
-    participantDisplayName: string;
-    protectFrom: {
-        contactEmail: string;
-        displayName: string;
-    }[];
 }
