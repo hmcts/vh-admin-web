@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
-using Microsoft.Extensions.Options;
 using VideoApi.Client;
+using VideoApi.Contract.Requests;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Services
@@ -12,7 +11,7 @@ namespace AdminWebsite.UnitTests.Services
     {
         private AutoMock _mocker;
         private ConferenceDetailsService _serviceUnderTest;
-        
+
         [SetUp]
         public void SetUp()
         {
@@ -21,131 +20,21 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_call_polly_wait_retry_and_return_expected_response()
-        {
-            Guid hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = new MeetingRoomResponse
-                {
-                    JudgeUri = "judge",
-                    ParticipantUri = "participant",
-                    PexipNode = "pexip"
-                }
-            };
-            
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-            (
-            It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-            It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-            ))
-            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-            {
-                sleepDuration(1);
-                retryAction(1);
-                handleResultCondition(expectedConferenceDetailsResponse);
-                await executeFunction();
-            })
-            .ReturnsAsync(expectedConferenceDetailsResponse);
-
-            var response = await _serviceUnderTest.GetConferenceDetailsByHearingIdWithRetry(hearingId, "error message");
-            
-            _mocker.Mock<IPollyRetryService>().Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-               (
-                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-               ), Times.AtLeastOnce);
-
-            response.Should().Be(expectedConferenceDetailsResponse);
-        }
-
-        [Test]
-        public async Task Should_call_polly_wait_retry_and_return_failed_response()
-        {
-            Guid hearingId = Guid.NewGuid();
-            var failedConferenceDetailsResponse = new ConferenceDetailsResponse
-            {
-                Id = Guid.NewGuid(),
-                HearingId = hearingId,
-                MeetingRoom = null
-            };
-
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-            (
-            It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-            It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-            ))
-            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-            {
-                sleepDuration(1);
-                retryAction(1);
-                handleResultCondition(failedConferenceDetailsResponse);
-                await executeFunction();
-            })
-            .ReturnsAsync(failedConferenceDetailsResponse);
-
-            var response = await _serviceUnderTest.GetConferenceDetailsByHearingIdWithRetry(hearingId, "error message");
-
-            _mocker.Mock<IPollyRetryService>().Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-               (
-                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-               ), Times.Exactly(1));
-
-            response.Should().Be(failedConferenceDetailsResponse);
-        }
-
-        [Test]
-        public async Task Should_return_an_empty_respons_if_an_exception_is_thrown()
-        {
-            Guid hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse();
-            
-            _mocker.Mock<IPollyRetryService>().Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-            (
-            It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-            It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-            ))
-            .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
-                Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
-            {
-                sleepDuration(1);
-                retryAction(7);
-                handleResultCondition(expectedConferenceDetailsResponse);
-                await executeFunction();
-            })
-            .ThrowsAsync(new VideoApiException("", 400, "", null, null));
-
-            var response = await _serviceUnderTest.GetConferenceDetailsByHearingIdWithRetry(hearingId, "error message");
-            
-            _mocker.Mock<IPollyRetryService>().Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-               (
-                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
-               ), Times.AtLeastOnce);
-
-            response.Should().BeEquivalentTo(expectedConferenceDetailsResponse);
-        }
-        
-        [Test]
         public async Task Should_return_response_from_video_api_client()
         {
-            Guid hearingId = Guid.NewGuid();
-            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse();
+            var hearingId = Guid.NewGuid();
+
+            var expectedResult = new ConferenceDetailsResponse { HearingId = hearingId };
 
             _mocker.Mock<IVideoApiClient>()
-                .Setup(x => x.GetConferenceByHearingRefIdAsync(hearingId, false))
-                .ReturnsAsync(expectedConferenceDetailsResponse);
+                .Setup(x => x.GetConferenceDetailsByHearingRefIdsAsync(It.IsAny<GetConferencesByHearingIdsRequest>()))
+                .ReturnsAsync(new List<ConferenceDetailsResponse> { expectedResult});
             
             var response = await _serviceUnderTest.GetConferenceDetailsByHearingId(hearingId);
             
-            _mocker.Mock<IVideoApiClient>().Verify(x => x.GetConferenceByHearingRefIdAsync(hearingId, false), Times.Once);
+            _mocker.Mock<IVideoApiClient>().Verify(x => x.GetConferenceDetailsByHearingRefIdsAsync(It.IsAny<GetConferencesByHearingIdsRequest>()), Times.Once);
 
-            response.Should().BeEquivalentTo(expectedConferenceDetailsResponse);
+            response.Should().BeEquivalentTo(expectedResult);
         }
     }
 }
