@@ -1,0 +1,23 @@
+<app-breadcrumb [canNavigate]="true"></app-breadcrumb>
+<h1 class="govuk-heading-l">Book a video hearing</h1>
+
+<h2 class="govuk-heading-m">Screening (Special Measure)</h2>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <app-screening-form [hearing]="hearing" (screeningSaved)="onScreeningSaved($event)"></app-screening-form>
+
+    <div class="govuk-!-margin-top-8 govuk-button-group">
+      <button id="nextButton" type="button" class="govuk-button" data-module="govuk-button">Next</button>
+      <button id="cancelButton" type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">Cancel</button>
+    </div>
+  </div>
+
+  <div class="govuk-grid-column-one-half">
+    <app-screening-list
+      [hearing]="hearing"
+      (deleteEndpointScreening)="onDeleteEndpointScreening($event)"
+      (deleteParticipantScreening)="ondDeleteParticipantScreening($event)"
+    ></app-screening-list>
+  </div>
+</div>

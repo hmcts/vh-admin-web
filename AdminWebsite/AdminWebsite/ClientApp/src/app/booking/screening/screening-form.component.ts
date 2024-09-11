@@ -3,14 +3,14 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { Logger } from 'src/app/services/logger';
-import { SelectedSpecialMeasuresuremensDto, SpecialMeasureType } from './special-measures.model';
+import { ProtectFrom, SelectedScreeningDto, ScreeningType } from './screening.model';
 
 @Component({
-    selector: 'app-special-measures-form',
-    templateUrl: './special-measures-form.component.html',
-    styleUrls: ['./special-measures-form.component.scss']
+    selector: 'app-screening-form',
+    templateUrl: './screening-form.component.html',
+    styleUrls: ['./screening-form.component.scss']
 })
-export class SpecialMeasuresFormComponent {
+export class ScreeningFormComponent {
     @Input() set hearing(hearing: HearingModel) {
         this.allParticipants = hearing.participants
             .filter(x => x.email)
@@ -33,7 +33,7 @@ export class SpecialMeasuresFormComponent {
         this.cdRef.detectChanges();
     }
 
-    @Output() specialMeasurementSaved = new EventEmitter<SelectedSpecialMeasuresuremensDto>();
+    @Output() screeningSaved = new EventEmitter<SelectedScreeningDto>();
 
     displayMeasureType = false;
     displayProtectFromList = false;
@@ -42,14 +42,14 @@ export class SpecialMeasuresFormComponent {
     selectedProtectParticipantFromList: GenericParticipantsModel[] = [];
 
     destroyed$ = new Subject<void>();
-    form: FormGroup<SpecialMeasuresSelectParticipantForm>;
+    form: FormGroup<ScreeningSelectParticipantForm>;
 
     private readonly loggerPrefix: string = '[Booking] Special Measures Form -';
 
     constructor(private formBuilder: FormBuilder, private cdRef: ChangeDetectorRef, private logger: Logger) {}
 
     createForm() {
-        this.form = this.formBuilder.group<SpecialMeasuresSelectParticipantForm>({
+        this.form = this.formBuilder.group<ScreeningSelectParticipantForm>({
             displayName: new FormControl(null),
             measureType: new FormControl('All')
         });
@@ -61,8 +61,7 @@ export class SpecialMeasuresFormComponent {
                 return;
             }
             if (value) {
-                const particpant = this.allParticipants.find(participant => participant.displayName === value);
-                this.onParticipantSelected(particpant);
+                this.onParticipantSelected();
             }
         });
 
@@ -71,23 +70,20 @@ export class SpecialMeasuresFormComponent {
         });
     }
 
-    onMeasureTypeSelected(measureType: SpecialMeasureType) {
+    onMeasureTypeSelected(measureType: ScreeningType) {
         this.displayProtectFromList = measureType === 'Specific';
         if (measureType === 'Specific') {
             const particpant = this.allParticipants.find(participant => participant.displayName === this.form.value.displayName);
-            this.initaliseSpecialMeasures(particpant.displayName);
+            this.initaliseScreening(particpant.displayName);
             this.selectedProtectParticipantFromList = [];
         }
     }
 
-    onParticipantSelected(participant: GenericParticipantsModel): void {
-        // this.logger.debug(`${this.loggerPrefix} Participant selected: ${participant.displayName}`);
-        // this.initaliseSpecialMeasures(participant.displayName);
-        // this.selectedProtectParticipantFromList = [];
+    onParticipantSelected(): void {
         this.displayMeasureType = true;
     }
 
-    initaliseSpecialMeasures(displayName: string) {
+    initaliseScreening(displayName: string) {
         this.availableProtectParticipantFromList = this.allParticipants.filter(participant => participant.displayName !== displayName);
     }
 
@@ -100,9 +96,21 @@ export class SpecialMeasuresFormComponent {
     }
 
     onSave() {
-        this.specialMeasurementSaved.emit({
+        const protectFromMapped: ProtectFrom[] = this.selectedProtectParticipantFromList.map(participant => {
+            if (participant.contactEmail === null) {
+                return {
+                    participantContactEmail: null,
+                    endpointDisplayName: participant.displayName
+                };
+            }
+            return {
+                participantContactEmail: participant.contactEmail,
+                endpointDisplayName: null
+            };
+        });
+        this.screeningSaved.emit({
             participantDisplayName: this.form.controls.displayName.value,
-            protectFrom: this.selectedProtectParticipantFromList,
+            protectFrom: protectFromMapped,
             measureType: this.form.controls.measureType.value
         });
         this.form.reset({ displayName: null, measureType: 'All' });
@@ -112,9 +120,9 @@ export class SpecialMeasuresFormComponent {
     }
 }
 
-interface SpecialMeasuresSelectParticipantForm {
+interface ScreeningSelectParticipantForm {
     displayName: FormControl<string>;
-    measureType: FormControl<SpecialMeasureType>;
+    measureType: FormControl<ScreeningType>;
 }
 
 interface GenericParticipantsModel {

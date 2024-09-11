@@ -1,4 +1,5 @@
 import { InterpreterSelectedDto } from 'src/app/booking/interpreter-form/interpreter-selected.model';
+import { ScreeningDto } from 'src/app/booking/screening/screening.model';
 
 export class EndpointModel {
     id?: string | undefined;
@@ -12,4 +13,5 @@ export class EndpointModel {
     username?: string | undefined;
     contactEmail?: string | undefined;
     interpretationLanguage: InterpreterSelectedDto;
+    screening?: ScreeningDto;
 }

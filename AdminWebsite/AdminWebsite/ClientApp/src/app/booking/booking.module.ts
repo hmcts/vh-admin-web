@@ -24,9 +24,11 @@ import { VideoEndpointFormComponent } from './endpoints/video-endpoint-form/vide
 import { VideoEndpointListComponent } from './endpoints/video-endpoint-list/video-endpoint-list.component';
 import { VideoEndpointItemComponent } from './endpoints/video-endpoint-item/video-endpoint-item.component';
 import { InterpreterFormComponent } from './interpreter-form/interpreter-form.component';
-import { SpecialMeasuresComponent } from './special-measures/special-measures.component';
+import { ScreeningComponent } from './screening/screening.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { SpecialMeasuresFormComponent } from './special-measures/special-measures-form.component';
+import { ScreeningFormComponent } from './screening/screening-form.component';
+import { ScreeningListComponent } from './screening/screening-list.component';
+import { ScreeningListItemComponent } from './screening/screening-list-item.component';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -47,8 +49,10 @@ export const Components: Type<any>[] = [
     ParticipantItemComponent,
     EndpointsComponent,
     MultiDayHearingScheduleComponent,
-    SpecialMeasuresComponent,
-    SpecialMeasuresFormComponent,
+    ScreeningComponent,
+    ScreeningFormComponent,
+    ScreeningListComponent,
+    ScreeningListItemComponent,
     VideoEndpointFormComponent,
     VideoEndpointListComponent,
     VideoEndpointItemComponent,

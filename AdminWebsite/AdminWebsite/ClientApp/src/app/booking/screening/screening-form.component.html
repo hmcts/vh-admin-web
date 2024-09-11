@@ -1,8 +1,8 @@
 <form [formGroup]="form">
   <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': false }">
-    <label class="govuk-label" for="special-measures-participant"> Participant / Endpoint </label>
-    <select class="govuk-select" id="special-measures-participant" name="displayName" formControlName="displayName">
-      <option [value]="null">None</option>
+    <label class="govuk-label" for="screening-participant"> Participant / Endpoint </label>
+    <select class="govuk-select" id="screening-participant" name="displayName" formControlName="displayName">
+      <option [value]="null">Please select</option>
       <option *ngFor="let participant of allParticipants" [value]="participant.displayName">
         {{ participant.displayName }} {{ participant.contactEmail ? '(' + participant.contactEmail + ')' : '' }}
       </option>
@@ -17,7 +17,7 @@
         </div>
         <div class="govuk-radios__item">
           <input class="govuk-radios__input" id="protectFromSpecific" type="radio" value="Specific" formControlName="measureType" />
-          <label class="govuk-label govuk-radios__label" for="protectFromSpecific-2"> Specific </label>
+          <label class="govuk-label govuk-radios__label" for="protectFromSpecific"> Specific </label>
         </div>
       </div>
     </fieldset>
@@ -26,7 +26,7 @@
 
 <ng-container *ngIf="displayProtectFromList">
   <div class="govuk-form-group">
-    <label class="govuk-label" for="protect-participant-from"> Protect from: </label>
+    <label class="govuk-label" [for]="'protect-participant-from'"> Protect from: </label>
     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
       <ng-select
         [id]="'protect-participant-from'"
@@ -71,4 +71,4 @@
   </div>
 </ng-container>
 
-<button type="submit" id="confirmSpecialMeasuresBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>
+<button type="submit" id="confirmScreeningBtn" class="govuk-button" data-module="govuk-button" (click)="onSave()">Save</button>

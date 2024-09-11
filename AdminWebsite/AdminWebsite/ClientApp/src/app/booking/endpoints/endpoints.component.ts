@@ -29,7 +29,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     participants: ParticipantModel[] = [];
 
     multiDayBookingEnhancementsEnabled: boolean;
-    specialMeasuresEnabled = false;
+    specialMeasureEnabled = false;
     videoEndpoints: VideoAccessPointDto[];
     videoEndpointToEdit: VideoAccessPointDto;
 
@@ -60,7 +60,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             .getFlag<boolean>(FeatureFlags.specialMeasures)
             .pipe(first())
             .subscribe(result => {
-                this.specialMeasuresEnabled = result;
+                this.specialMeasureEnabled = result;
             });
         super.ngOnInit();
     }
@@ -80,9 +80,9 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
             this.router.navigate([PageUrls.Summary]);
         } else {
-            if (this.specialMeasuresEnabled) {
-                this.logger.debug(`${this.loggerPrefix} Proceeding to special measures.`);
-                this.router.navigate([PageUrls.SpecialMeasures]);
+            if (this.specialMeasureEnabled) {
+                this.logger.debug(`${this.loggerPrefix} Proceeding to screening.`);
+                this.router.navigate([PageUrls.Screening]);
             } else {
                 this.logger.debug(`${this.loggerPrefix} Proceeding to other information.`);
                 this.router.navigate([PageUrls.OtherInformation]);
@@ -100,6 +100,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
             endpointModel.displayName = vapDto.displayName;
             endpointModel.defenceAdvocate = vapDto.defenceAdvocate?.email;
             endpointModel.interpretationLanguage = vapDto.interpretationLanguage;
+            endpointModel.screening = vapDto.screening;
             newEndpointsArray.push(endpointModel);
         }
 
@@ -186,6 +187,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.videoEndpoints = this.hearing.endpoints.map(e => {
             const defenceAdvocate = this.participants.find(p => p.email === e.defenceAdvocate);
             return {
+                ...e,
                 id: e.id,
                 displayName: e.displayName,
                 defenceAdvocate: defenceAdvocate
@@ -194,7 +196,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
                           email: defenceAdvocate?.email
                       }
                     : null,
-                interpretationLanguage: e.interpretationLanguage
+                interpretationLanguage: e.interpretationLanguage,
+                screening: e.screening
             };
         });
     }
